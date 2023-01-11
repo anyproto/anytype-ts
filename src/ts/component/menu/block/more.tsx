@@ -6,15 +6,11 @@ import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } 
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
-interface Props extends I.Menu {
-	history?: any;
-};
-
-class MenuBlockMore extends React.Component<Props> {
+class MenuBlockMore extends React.Component<I.Menu> {
 	
 	n: number = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);

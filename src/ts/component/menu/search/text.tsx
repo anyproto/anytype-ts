@@ -17,7 +17,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 	last: string = '';
 	n: number = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onClear = this.onClear.bind(this);

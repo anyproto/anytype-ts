@@ -5,13 +5,11 @@ import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import * as Docs from 'Docs';
 
-interface Props extends I.Menu {};
-
 class MenuOnboarding extends React.Component<I.Menu> {
 
 	node: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onClose = this.onClose.bind(this)

@@ -1,22 +1,20 @@
 import * as React from 'react';
-import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { dbStore, blockStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
 import { I, translate } from 'Lib';
 import Empty from '../empty';
 import Row from './list/row';
 
-interface Props extends I.ViewComponent {};
-
 const HEIGHT = 32;
 
-const ViewList = observer(class ViewList extends React.Component<Props> {
+const ViewList = observer(class ViewList extends React.Component<I.ViewComponent> {
 
 	ref: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.ViewComponent) {
 		super (props);
 
 		this.loadMoreRows = this.loadMoreRows.bind(this);

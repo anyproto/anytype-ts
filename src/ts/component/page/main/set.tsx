@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
+import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
 import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
 import { blockStore } from 'Store';
@@ -9,15 +9,11 @@ import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 import Errors from 'json/error.json';
 
-interface Props extends I.PageComponent {
-	rootId: string;
-};
-
 interface State {
 	isDeleted: boolean;
 };
 
-const PageMainSet = observer(class PageMainSet extends React.Component<Props, State> {
+const PageMainSet = observer(class PageMainSet extends React.Component<I.PageComponent, State> {
 
 	_isMounted: boolean = false;
 	node: any = null;
@@ -32,7 +28,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<Props, St
 		isDeleted: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 		
 		this.resize = this.resize.bind(this);

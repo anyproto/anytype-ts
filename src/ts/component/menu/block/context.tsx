@@ -1,16 +1,14 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'Lib';
 import { blockStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
-const MenuBlockContext = observer(class MenuBlockContext extends React.Component<Props> {
+const MenuBlockContext = observer(class MenuBlockContext extends React.Component<I.Menu> {
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onMark = this.onMark.bind(this);

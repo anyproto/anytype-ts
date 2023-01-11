@@ -24,7 +24,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		iconSize: 24,
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);

@@ -2,17 +2,14 @@ import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
 import { I, Util, Onboarding, keyboard, analytics, Renderer } from 'Lib';
 import { popupStore, blockStore, detailStore } from 'Store';
-
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
-interface Props extends I.Menu {};
-
-class MenuHelp extends React.Component<Props> {
+class MenuHelp extends React.Component<I.Menu> {
 
 	n: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);

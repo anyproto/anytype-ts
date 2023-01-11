@@ -14,7 +14,7 @@ interface Props {
 
 const ItemObject = observer(class ItemObject extends React.Component<Props> {
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);

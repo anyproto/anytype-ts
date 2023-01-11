@@ -33,10 +33,6 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		className: '',
 	};
 	
-	constructor (props: any) {
-		super(props);
-	};
-	
 	render () {
 		const { loading } = this.state;
 		const { rootId, className, onClick } = this.props;

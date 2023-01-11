@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { I, DataUtil } from 'Lib';
 import { Icon } from 'Component';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.HeaderComponent {};
-
-const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<Props> {
+const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<I.HeaderComponent> {
 	
-	constructor (props: any) {
+	constructor (props: I.HeaderComponent) {
 		super(props);
 		
 		this.onSettings = this.onSettings.bind(this);

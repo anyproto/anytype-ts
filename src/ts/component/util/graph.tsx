@@ -74,7 +74,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		filter: '',
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onMessage = this.onMessage.bind(this);

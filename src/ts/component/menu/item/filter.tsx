@@ -21,10 +21,6 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 
 	_isMounted: boolean = false;
 
-	constructor (props: any) {
-		super(props);
-	};
-
 	render () {
 		let { id, index, relation, condition, quickOption, value, subId, readonly, style, onOver, onClick, onRemove } = this.props;
 		let conditionOptions = Relation.filterConditionsByType(relation.format);

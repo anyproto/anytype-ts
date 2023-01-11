@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { SortableHandle } from 'react-sortable-hoc';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject } from 'Component';
 import { I } from 'Lib';
 import { menuStore } from 'Store';
@@ -11,15 +11,15 @@ interface Props {
 	name: string;
 	readonly: boolean;
 	onClick?: (e: any) => void;
-}
+};
 
 const HeadHandle = observer(class HeadHandle extends React.Component<Props> {
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onMouseDown = this.onMouseDown.bind(this);
-	}
+	};
 
 	render () {
 		const { format, name, readonly, onClick } = this.props;

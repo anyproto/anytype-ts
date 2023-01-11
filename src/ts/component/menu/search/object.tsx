@@ -7,8 +7,6 @@ import { I, C, keyboard, Util, DataUtil, ObjectUtil, Preview, analytics, Action,
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 interface State {
 	loading: boolean;
 };
@@ -19,7 +17,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 
-const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
+const MenuSearchObject = observer(class MenuSearchObject extends React.Component<I.Menu, State> {
 
 	state = {
 		loading: false,
@@ -36,7 +34,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	timeoutFilter: number = 0;
 	offset: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);

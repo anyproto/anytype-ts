@@ -3,11 +3,9 @@ import { Icon } from 'Component';
 import { I } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Cell {};
+const CellCheckbox = observer(class CellCheckbox extends React.Component<I.Cell> {
 
-const CellCheckbox = observer(class CellCheckbox extends React.Component<Props> {
-
-	constructor (props: any) {
+	constructor (props: I.Cell) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);

@@ -26,7 +26,7 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 	_isMounted: boolean = false;
 	id: string = '';
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onMore = this.onMore.bind(this);

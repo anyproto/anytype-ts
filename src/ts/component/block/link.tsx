@@ -6,14 +6,12 @@ import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, DataUtil, ObjectUtil, translate, keyboard, focus } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {};
-
-const BlockLink = observer(class BlockLink extends React.Component<Props> {
+const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	
 	_isMounted: boolean = false;
 	node: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);

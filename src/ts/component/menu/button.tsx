@@ -3,13 +3,11 @@ import { MenuItemVertical } from 'Component';
 import { I } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
-
-const MenuButton = observer(class MenuButton extends React.Component<Props> {
+const MenuButton = observer(class MenuButton extends React.Component<I.Menu> {
 
 	_isMounted: boolean = false;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onSelect = this.onSelect.bind(this);

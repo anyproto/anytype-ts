@@ -5,20 +5,17 @@ import { observer } from 'mobx-react';
 import { I, C, Util, DataUtil, Storage, translate } from 'Lib';
 import Errors from 'json/error.json';
 
-interface Props extends I.Menu {};
-
 interface State {
     error: string;
 };
 
-
-const MenuAccountSelect = observer(class MenuAccountSelect extends React.Component<Props, State> {
+const MenuAccountSelect = observer(class MenuAccountSelect extends React.Component<I.Menu, State> {
 
     state = {
         error: ''
     };
 
-    constructor (props: any) {
+    constructor (props: I.Menu) {
         super(props);
 
         this.onSelect = this.onSelect.bind(this);

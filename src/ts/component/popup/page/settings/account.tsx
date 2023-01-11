@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Icon, Title, Label } from 'Component';
 import { I, C, Storage, translate, Util, analytics } from 'Lib';
 import { authStore, commonStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Head from './head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
+interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 	setPinConfirmed: (v: boolean) => void;
@@ -28,7 +26,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		error: '',
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onLogout = this.onLogout.bind(this);

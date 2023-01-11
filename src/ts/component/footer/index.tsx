@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { I, sidebar } from 'Lib';
 import { menuStore } from 'Store';
 
@@ -21,7 +20,7 @@ class Footer extends React.Component<Props> {
 
 	refChild: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onHelp = this.onHelp.bind(this);

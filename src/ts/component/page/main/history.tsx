@@ -7,10 +7,6 @@ import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
-interface Props extends I.PageComponent {
-	rootId: string;
-}
-
 interface State {
 	versions: I.HistoryVersion[];
 	loading: boolean;
@@ -20,7 +16,7 @@ interface State {
 const LIMIT = 100;
 const GROUP_OFFSET = 300;
 
-const PageMainHistory = observer(class PageMainHistory extends React.Component<Props, State> {
+const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
 
 	node: any = null;
 	state = {
@@ -36,7 +32,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	scrollRight: number = 0;
 	lastId: string = '';
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);

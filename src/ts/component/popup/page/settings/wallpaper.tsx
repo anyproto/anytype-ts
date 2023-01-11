@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Cover, Title, Label } from 'Component';
 import { I, C, DataUtil, ObjectUtil, translate, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
@@ -7,7 +6,7 @@ import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 import Head from './head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
+interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 	setLoading: (v: boolean) => void;
@@ -15,7 +14,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 
 const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper extends React.Component<Props> {
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onCover = this.onCover.bind(this);

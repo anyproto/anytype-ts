@@ -21,7 +21,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	composition: boolean = false;
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);

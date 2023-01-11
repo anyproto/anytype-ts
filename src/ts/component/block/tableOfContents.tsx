@@ -3,13 +3,11 @@ import { I, focus, DataUtil, Util } from 'Lib';
 import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
-
-const BlockTableOfContents = observer(class BlockTableOfContents extends React.Component<Props> {
+const BlockTableOfContents = observer(class BlockTableOfContents extends React.Component<I.BlockComponent> {
 
 	_isMounted: boolean = false;
 
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);

@@ -1,19 +1,15 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, C, DataUtil, Util, focus, analytics, Relation, keyboard, translate } from 'Lib';
+import { I, C, Util, focus, analytics, Relation, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { menuStore, detailStore, dbStore, blockStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
-interface Props extends I.BlockComponent {}
-
-
-const BlockRelation = observer(class BlockRelation extends React.Component<Props> {
+const BlockRelation = observer(class BlockRelation extends React.Component<I.BlockComponent> {
 
 	refCell: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 
 		this.onKeyDown = this.onKeyDown.bind(this);

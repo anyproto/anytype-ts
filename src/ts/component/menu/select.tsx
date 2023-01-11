@@ -1,11 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { I, Util, Relation, keyboard } from 'Lib';
-
-interface Props extends I.Menu {}
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 28;
@@ -13,7 +11,7 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
-const MenuSelect = observer(class MenuSelect extends React.Component<Props> {
+const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 	_isMounted: boolean = false;	
 	n: number = -1;
@@ -23,7 +21,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props> {
 	refList: any = null;
 	top: number = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);

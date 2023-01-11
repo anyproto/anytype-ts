@@ -27,7 +27,7 @@ class Drag extends React.Component<Props> {
 	fill: any = null;
 	icon: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.start = this.start.bind(this);

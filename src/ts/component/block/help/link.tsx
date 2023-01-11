@@ -10,7 +10,7 @@ interface Props {
 
 class ContentLink extends React.Component<Props> {
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);

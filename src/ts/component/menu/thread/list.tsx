@@ -13,7 +13,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 	timeoutMenu: number = 0;
 	timeoutClose: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onMouseEnter = this.onMouseEnter.bind(this);

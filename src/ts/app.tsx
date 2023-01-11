@@ -239,10 +239,6 @@ Sentry.init({
 
 class RoutePage extends React.Component<RouteComponentProps> { 
 
-	constructor (props: any) {
-		super(props);
-	};
-
 	render () {
 		return (
 			<SelectionProvider>

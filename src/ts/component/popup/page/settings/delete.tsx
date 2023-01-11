@@ -17,7 +17,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 	refCheckbox: any = null;
 	node: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onDelete = this.onDelete.bind(this);

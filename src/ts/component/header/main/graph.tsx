@@ -5,13 +5,11 @@ import { Icon, IconObject } from 'Component';
 import { I, ObjectUtil, Preview, keyboard } from 'Lib';
 import { detailStore, popupStore } from 'Store';
 
-interface Props extends I.HeaderComponent {};
-
-const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<Props> {
+const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.HeaderComponent) {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);

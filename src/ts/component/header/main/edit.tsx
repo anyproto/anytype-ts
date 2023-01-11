@@ -6,13 +6,11 @@ import { I, DataUtil, ObjectUtil, Preview, keyboard } from 'Lib';
 import { blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.HeaderComponent {};
-
-const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<Props> {
+const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.HeaderComponent> {
 
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.HeaderComponent) {
 		super(props);
 		
 		this.onMore = this.onMore.bind(this);

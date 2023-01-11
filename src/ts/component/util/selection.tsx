@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { blockStore, menuStore, popupStore } from 'Store';
 
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component<object, object> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component {
 
 	_isMounted = false;
 	x: number = 0;

@@ -19,7 +19,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		filter: '',
 	};
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);

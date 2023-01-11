@@ -7,12 +7,10 @@ import { I, C, Util, MenuUtil, keyboard, Relation } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 const HEIGHT = 28;
 const LIMIT = 40;
 
-const MenuOptionList = observer(class MenuOptionList extends React.Component<Props> {
+const MenuOptionList = observer(class MenuOptionList extends React.Component<I.Menu> {
 	
 	_isMounted: boolean = false;
 	refFilter: any = null;
@@ -21,7 +19,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	n: number = 0;
 	filter: string = '';
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);

@@ -13,7 +13,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 
 const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect extends React.Component<Props> {
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onSelectPin = this.onSelectPin.bind(this);

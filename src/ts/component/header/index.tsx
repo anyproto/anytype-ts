@@ -27,7 +27,7 @@ class Header extends React.Component<Props> {
 
 	refChild: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onHome = this.onHome.bind(this);

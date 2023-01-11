@@ -31,6 +31,10 @@ for (let lang of langs) {
 
 const BlockText = observer(class BlockText extends React.Component<Props> {
 
+	public static defaultProps = {
+		onKeyDown: (e: any, text: string, marks: I.Mark[], range: I.TextRange) => {},
+	};
+
 	_isMounted: boolean = false;
 	node: any = null;
 	refLang: any = null;
@@ -45,11 +49,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	preventMenu: boolean = false;
 	frame: number = 0;
 
-	public static defaultProps = {
-		onKeyDown: (e: any, text: string, marks: I.Mark[], range: I.TextRange) => {},
-	};
-
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onMouseDown = this.onMouseDown.bind(this);

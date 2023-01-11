@@ -30,8 +30,6 @@ const PREFIX = 'menuBlockRelationView';
 
 const MenuItemRelationView = observer(class MenuItemRelationView extends React.Component<Props> {
 
-	_isMounted: boolean = false;
-
 	public static defaultProps = {
 		readonly: true,
 		canEdit: false,
@@ -45,7 +43,9 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		onCellChange: () => {},
 	};
 
-	constructor (props: any) {
+	_isMounted: boolean = false;
+
+	constructor (props: Props) {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);
