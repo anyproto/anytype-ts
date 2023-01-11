@@ -18,42 +18,43 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 		const { account } = authStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 
+		let rows = [
+			{ id: 'personal', title: 'popupSettingsPersonalTitle', icon: 'personal'},
+			{ id: 'appearance', title: 'popupSettingsAppearanceTitle', icon: 'appearance'},
+			{ id: 'importIndex', title: 'popupSettingsImportTitle', icon: 'import'},
+			{ id: 'exportMarkdown', title: 'popupSettingsExportTitle', icon: 'export'}
+		];
+
+		if (account) {
+			rows.unshift({ id: 'account', title: 'popupSettingsAccountTitle', icon: ''});
+		};
+
+		const Row = (row: any) => {
+			let icon = <Icon className={row.icon} />;
+
+			if (row.id === 'account') {
+				icon = <IconObject object={profile} size={32} />;
+			};
+
+			return (
+				<div className="row" onClick={() => { onPage(row.id); }}>
+					{icon}
+					<Label text={translate(row.title)} />
+					<Icon className="arrow" />
+				</div>
+			);
+		};
+
 		return (
 			<div>
 				<Title text={translate('popupSettingsTitle')} />
 
 				<div className="rows">
-					{account ? (
-						<div className="row" onClick={() => { onPage('account'); }}>
-							<IconObject object={profile} size={32} />
-							<Label text={translate('popupSettingsAccountTitle')} />
-							<Icon className="arrow" />
-						</div>
-					) : ''}
-
-					<div className="row" onClick={() => { onPage('personal'); }}>
-						<Icon className="personal" />
-						<Label text={translate('popupSettingsPersonalTitle')} />
-						<Icon className="arrow" />
-					</div>
-
-					<div className="row" onClick={() => { onPage('appearance'); }}>
-						<Icon className="appearance" />
-						<Label text={translate('popupSettingsAppearanceTitle')} />
-						<Icon className="arrow" />
-					</div>
-
-					<div className="row" onClick={() => { onPage('importIndex'); }}>
-						<Icon className="import" />
-						<Label text={translate('popupSettingsImportTitle')} />
-						<Icon className="arrow" />
-					</div>
-
-					<div className="row" onClick={() => { onPage('exportMarkdown'); }}>
-						<Icon className="export" />
-						<Label text={translate('popupSettingsExportTitle')} />
-						<Icon className="arrow" />
-					</div>
+					{
+						rows.map((row: any, idx: number) => {
+							return <Row key={idx} {...row} />;
+						})
+					}
 				</div>
 			</div>
 		);
