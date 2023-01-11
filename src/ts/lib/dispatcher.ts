@@ -28,9 +28,9 @@ class Dispatcher {
 
 	service: any = null;
 	stream: any = null;
-	timeoutStream: number = 0;
+	timeoutStream = 0;
 	timeoutEvent: any = {};
-	reconnects: number = 0;
+	reconnects = 0;
 
 	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
@@ -168,16 +168,16 @@ class Dispatcher {
 		};
 
 		let blocks: any[] = [];
-		let id: string = '';
+		let id = '';
 		let block: any = null;
 		let details: any = null;
-		let viewId: string = '';
+		let viewId = '';
 		let keys: string[] = [];
 		let ids: string[] = [];
 		let subIds: string[] = [];
 		let uniqueSubIds: string[] = [];
-		let subId: string = '';
-		let afterId: string = '';
+		let subId = '';
+		let afterId = '';
 		let content: any = {};
 
 		messages.sort((c1: any, c2: any) => { return this.sort(c1, c2); });

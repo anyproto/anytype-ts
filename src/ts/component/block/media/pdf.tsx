@@ -21,7 +21,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 		page: 1,
 	};
 	node: any = null;
-	height: number = 0;
+	height = 0;
 
 	constructor (props: I.BlockComponent) {
 		super(props);

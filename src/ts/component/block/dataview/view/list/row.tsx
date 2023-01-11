@@ -12,7 +12,7 @@ interface Props extends I.ViewComponent {
 
 const Row = observer(class Row extends React.Component<Props> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 
 	render () {

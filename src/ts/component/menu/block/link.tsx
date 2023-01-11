@@ -24,14 +24,14 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		loading: false,
 	};
 
-	_isMounted: boolean = false;	
-	filter: string = '';
+	_isMounted = false;	
+	filter = '';
 	index: any = null;
 	cache: any = {};
 	items: any[] = [];
 	n: number = -1;
-	top: number = 0;
-	offset: number = 0;
+	top = 0;
+	offset = 0;
 	refList: any = null;
 	refFilter: any = null;
 

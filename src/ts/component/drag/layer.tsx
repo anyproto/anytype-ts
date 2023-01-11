@@ -16,7 +16,7 @@ interface State {
 
 class DragLayer extends React.Component<object, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		rootId: '',

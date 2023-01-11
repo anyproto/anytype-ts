@@ -17,7 +17,7 @@ const LIMIT_HEIGHT = 14;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		loading: false,
@@ -25,12 +25,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 	refFilter: any = null;
 	refList: any = null;
-	timeout: number = 0;
+	timeout = 0;
 	cache: any = {};
 	items: any[] = [];
 	n: number = -1;
-	top: number = 0;
-	offset: number = 0;
+	top = 0;
+	offset = 0;
 	
 	constructor (props: I.Popup) {
 		super (props);

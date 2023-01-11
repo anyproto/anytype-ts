@@ -10,8 +10,8 @@ const MENU_ID = 'threadStatus';
 const MenuThreadList = observer(class MenuThreadList extends React.Component<I.Menu> {
 
 	node: any = null;
-	timeoutMenu: number = 0;
-	timeoutClose: number = 0;
+	timeoutMenu = 0;
+	timeoutClose = 0;
 
 	constructor (props: I.Menu) {
 		super(props);

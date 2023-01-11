@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent> {
 
-	timeout: number = 0;
+	timeout = 0;
 
 	constructor (props: I.HeaderComponent) {
 		super(props);

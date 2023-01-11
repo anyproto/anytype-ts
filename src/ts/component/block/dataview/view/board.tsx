@@ -20,17 +20,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	node: any = null;
 	cache: any = {};
-	frame: number = 0;
-	groupRelationKey: string = '';
+	frame = 0;
+	groupRelationKey = '';
 	newIndex: number = -1;
-	newGroupId: string = '';
+	newGroupId = '';
 	state = {
 		loading: false,
 	};
 	columnRefs: any = {};
-	isDraggingColumn: boolean = false;
-	isDraggingCard: boolean = false;
-	ox: number = 0;
+	isDraggingColumn = false;
+	isDraggingCard = false;
+	ox = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);

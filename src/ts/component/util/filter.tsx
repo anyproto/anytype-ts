@@ -29,7 +29,7 @@ class Filter extends React.Component<Props> {
 	};
 	
 	node: any = null;
-	isFocused: boolean = false;
+	isFocused = false;
 	placeholder: any = null;
 	ref: any = null;
 

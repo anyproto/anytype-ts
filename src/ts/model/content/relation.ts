@@ -3,7 +3,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentRelation implements I.ContentRelation {
 	
-	key: string = '';
+	key = '';
 	
 	constructor (props: I.ContentRelation) {
 		this.key = String(props.key || '');

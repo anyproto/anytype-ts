@@ -14,11 +14,11 @@ const MAX_HEIGHT = 396;
 
 const PageMainMedia = observer(class PageMainMedia extends React.Component<I.PageComponent, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	id: string = '';
+	id = '';
 	refHeader: any = null;
-	loading: boolean = false;
+	loading = false;
 
 	state = {
 		isDeleted: false,

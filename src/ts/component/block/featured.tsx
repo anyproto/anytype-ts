@@ -15,10 +15,10 @@ const SOURCE_LIMIT = 1;
 
 const BlockFeatured = observer(class BlockFeatured extends React.Component<Props> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	cellRefs: Map<string, any> = new Map();
 	menuContext: any = null;
-	setId: string = '';
+	setId = '';
 
 	public static defaultProps = {
 		iconSize: 24,

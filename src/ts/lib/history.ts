@@ -1,7 +1,7 @@
 class History {
 
 	list: string[] = [];
-	index: number = 0;
+	index = 0;
 
 	clear () {
 		this.list = []

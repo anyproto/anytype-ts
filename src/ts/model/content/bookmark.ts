@@ -3,9 +3,9 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentBookmark implements I.ContentBookmark {
 	
-	targetObjectId: string = '';
+	targetObjectId = '';
 	state: I.BookmarkState = I.BookmarkState.Empty;
-	url: string = '';
+	url = '';
 	
 	constructor (props: I.ContentBookmark) {
 		this.targetObjectId = String(props.targetObjectId || '');

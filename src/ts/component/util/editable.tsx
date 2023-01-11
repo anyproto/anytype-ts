@@ -25,11 +25,11 @@ interface Props {
 
 class Editable extends React.Component<Props> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	placeholder: any = null;
 	editable: any = null;
-	composition: boolean = false;
+	composition = false;
 
 	constructor (props: Props) {
 		super(props);

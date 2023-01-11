@@ -49,7 +49,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		match: null,
 	};
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 		
 	constructor (props: Props) {
 		super(props);

@@ -5,13 +5,13 @@ const BORDER = 100;
 
 class ScrollOnMove {
 	
-	timeout: number = 0;
-	viewportWidth: number = 0;
-	viewportHeight: number = 0;
-	documentWidth: number = 0;
-	documentHeight: number = 0;
-	isPopup: boolean = false;
-	frame: number = 0;
+	timeout = 0;
+	viewportWidth = 0;
+	viewportHeight = 0;
+	documentWidth = 0;
+	documentHeight = 0;
+	isPopup = false;
+	frame = 0;
 
 	onMouseDown (e: any, isPopup: boolean) {
 		this.isPopup = isPopup;

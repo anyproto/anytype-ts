@@ -26,7 +26,7 @@ enum Panel {
 
 const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		loading: false,
@@ -35,13 +35,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		pagesOut: [] as I.PageInfo[],
 		n: 0,
 	};
-	id: string = '';
-	timeout: number = 0;
+	id = '';
+	timeout = 0;
 	panel: Panel = Panel.Left;
 	cacheIn: any = {};
 	cacheOut: any = {};
-	focus: boolean = false;
-	select: boolean = false;
+	focus = false;
+	select = false;
 	refHeader: any = null;
 	
 	constructor (props: I.PageComponent) {

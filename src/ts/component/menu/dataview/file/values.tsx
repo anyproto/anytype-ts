@@ -12,7 +12,7 @@ const MENU_ID = 'dataviewFileList';
 
 const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<I.Menu> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 
 	constructor (props: I.Menu) {

@@ -3,7 +3,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentLatex implements I.ContentLatex {
 	
-	text: string = '';
+	text = '';
 	
 	constructor (props: I.ContentLatex) {
 		this.text = String(props.text || '');

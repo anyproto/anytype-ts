@@ -21,9 +21,9 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 
 class Popup extends React.Component<Props> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	isAnimating: boolean = false;
+	isAnimating = false;
 
 	constructor (props: Props) {
 		super(props);

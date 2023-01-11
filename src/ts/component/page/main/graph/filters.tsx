@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 
 const GraphFilters = observer(class PreviewObject extends React.Component<I.PageComponent> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 
 	render () {
 		return (

@@ -10,7 +10,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	
 	n: number = -1;
 	ref: any = null;
-	isFocused: boolean = false;
+	isFocused = false;
 	param: any = {};
 
 	constructor (props: I.Menu) {

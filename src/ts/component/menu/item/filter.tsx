@@ -19,7 +19,7 @@ interface Props extends I.Filter {
 
 const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Props> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 
 	render () {
 		let { id, index, relation, condition, quickOption, value, subId, readonly, style, onOver, onClick, onRemove } = this.props;

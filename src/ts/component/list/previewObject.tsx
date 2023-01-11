@@ -21,10 +21,10 @@ class ListObjectPreview extends React.Component<Props> {
 	};
 	
 	node: any = null;
-	n: number = 0;
-	page: number = 0;
-	maxPage: number = 0;
-	timeout: number = 0;
+	n = 0;
+	page = 0;
+	maxPage = 0;
+	timeout = 0;
 	refObj: any = {};
 
 	render () {

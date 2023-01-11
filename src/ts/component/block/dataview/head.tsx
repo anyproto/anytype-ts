@@ -18,10 +18,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	state = {
 		isEditing: false,
 	};
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	menuContext: any = null;
-	timeout: number = 0;
+	timeout = 0;
 	ref: any = null;
 	range: I.TextRange = null;
 

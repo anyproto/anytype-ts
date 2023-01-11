@@ -8,9 +8,9 @@ import Constant from 'json/constant.json';
 
 const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	div: number = 0;
+	div = 0;
 	speed: number = 1;
 
 	constructor (props: I.BlockComponent) {

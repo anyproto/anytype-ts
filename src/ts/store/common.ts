@@ -30,21 +30,21 @@ class CommonStore {
     public coverObj: Cover = { id: '', type: 0, image: '' };
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
-    public gatewayUrl: string = '';
+    public gatewayUrl = '';
     public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
 	public toastObj: I.Toast = null;
     public configObj: any = {};
-    public cellId: string = '';
-	public themeId: string = '';
-	public nativeThemeIsDark: boolean = false;
-	public typeId: string = '';
-	public pinTimeId: number = 0;
-	public isFullScreen: boolean = false;
-	public autoSidebarValue: boolean = false;
-	public redirect: string = '';
+    public cellId = '';
+	public themeId = '';
+	public nativeThemeIsDark = false;
+	public typeId = '';
+	public pinTimeId = 0;
+	public isFullScreen = false;
+	public autoSidebarValue = false;
+	public redirect = '';
 	public languages: string[] = [];
-	public workspaceId: string = '';
-	public token: string = '';
+	public workspaceId = '';
+	public token = '';
 
     constructor() {
         makeObservable(this, {

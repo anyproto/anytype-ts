@@ -15,10 +15,10 @@ const LIMIT = 20;
 
 const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	n: number = 0;
-	top: number = 0;
+	n = 0;
+	top = 0;
 	refList: any = null;
 	cache: any = {};
 	

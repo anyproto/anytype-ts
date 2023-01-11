@@ -3,7 +3,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentTableRow implements I.ContentTableRow {
 	
-	isHeader: boolean = false;
+	isHeader = false;
 	
 	constructor (props: I.ContentTableRow) {
 		this.isHeader = Boolean(props.isHeader);

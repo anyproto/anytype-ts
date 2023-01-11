@@ -7,7 +7,7 @@ import { I, Util, keyboard, translate } from 'Lib';
 
 const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	ref: any = null;
 

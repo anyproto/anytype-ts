@@ -14,8 +14,8 @@ class MenuSearchText extends React.Component<I.Menu> {
 	
 	node: any = null;
 	ref: any = null;
-	last: string = '';
-	n: number = 0;
+	last = '';
+	n = 0;
 	
 	constructor (props: I.Menu) {
 		super(props);

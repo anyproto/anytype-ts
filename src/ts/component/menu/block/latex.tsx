@@ -14,12 +14,12 @@ const LIMIT = 40;
 
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.Menu> {
 	
-	_isMounted: boolean = false;
-	emptyLength: number = 0;
+	_isMounted = false;
+	emptyLength = 0;
 	refList: any = null;
 	cache: any = {};
-	n: number = 0;
-	filter: string = '';
+	n = 0;
+	filter = '';
 	
 	constructor (props: I.Menu) {
 		super(props);

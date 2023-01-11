@@ -11,12 +11,12 @@ const TIMEOUT = 500;
 
 const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<I.Menu> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	timeoutChange: number = 0;
+	timeoutChange = 0;
 	refValue: any = null;
 	range: any = null;
-	n: number = 0;
+	n = 0;
 
 	constructor (props: I.Menu) {
 		super(props);

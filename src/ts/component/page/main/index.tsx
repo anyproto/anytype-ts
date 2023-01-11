@@ -14,11 +14,11 @@ interface State {
 
 const PageMainIndex = observer(class PageMainIndex extends React.Component<I.PageComponent, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	refFilter: any = null;
-	id: string = '';
-	timeoutFilter: number = 0;
+	id = '';
+	timeoutFilter = 0;
 	selected: string[] = [];
 
 	state = {

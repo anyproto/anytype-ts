@@ -32,7 +32,7 @@ class Cell extends React.Component<Props> {
 	};
 
 	ref: any = null;
-	timeout: number = 0;
+	timeout = 0;
 	
 	constructor (props: Props) {
 		super(props);

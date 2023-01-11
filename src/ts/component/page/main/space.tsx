@@ -15,11 +15,11 @@ interface State {
 
 const PageMainSpace = observer(class PageMainSpace extends React.Component<I.PageComponent, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	id: string = '';
-	loading: boolean = false;
-	timeout: number = 0;
+	id = '';
+	loading = false;
+	timeout = 0;
 	refHeader: any = null;
 	refHead: any = null;
 

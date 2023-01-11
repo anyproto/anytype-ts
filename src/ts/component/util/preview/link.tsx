@@ -21,7 +21,7 @@ const ALLOWED_SCHEME = [ 'http', 'https' ];
 
 const PreviewLink = observer(class PreviewLink extends React.Component<Props, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		loading: false,

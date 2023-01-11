@@ -20,14 +20,14 @@ const NO_TEMPLATES = [
 
 const PageMainType = observer(class PageMainType extends React.Component<I.PageComponent, State> {
 
-	_isMounted: boolean = false;
-	id: string = '';
+	_isMounted = false;
+	id = '';
 	refHeader: any = null;
 	refHead: any = null;
 	refListPreview: any = null;
-	loading: boolean = false;
-	timeout: number = 0;
-	page: number = 0;
+	loading = false;
+	timeout = 0;
+	page = 0;
 
 	state = {
 		isDeleted: false,

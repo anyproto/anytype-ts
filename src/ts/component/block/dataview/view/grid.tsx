@@ -20,7 +20,7 @@ const PADDING = 46;
 const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 
 	node: any = null;
-	ox: number = 0;
+	ox = 0;
 
 	constructor (props: Props) {
 		super (props);

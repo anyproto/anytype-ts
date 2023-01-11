@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 
 const BlockImage = observer(class BlockImage extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	
 	constructor (props: I.BlockComponent) {

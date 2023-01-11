@@ -24,14 +24,14 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		loading: false,
 	};
 
-	_isMounted: boolean = false;	
-	filter: string = '';
+	_isMounted = false;	
+	filter = '';
 	cache: any = {};
-	offset: number = 0;
+	offset = 0;
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
-	top: number = 0;
+	top = 0;
 	n: number = -1;
 
 	constructor (props: I.Menu) {

@@ -70,7 +70,7 @@ const Components: any = {
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	refChild: any = null;
 	refSidebar: any = null;
 

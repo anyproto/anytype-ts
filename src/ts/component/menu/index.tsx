@@ -144,11 +144,11 @@ const Components: any = {
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	timeoutPoly: number = 0;
+	timeoutPoly = 0;
 	ref: any = null;
-	isAnimating: boolean = false;
+	isAnimating = false;
 	poly: any = null;
 
 	state = {

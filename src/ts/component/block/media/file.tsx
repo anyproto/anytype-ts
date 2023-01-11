@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 const BlockFile = observer(class BlockFile extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 
 	constructor (props: I.BlockComponent) {
 		super(props);

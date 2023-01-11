@@ -32,10 +32,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		loading: false,
 	};
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	top: number = 0;
-	offset: number = 0;
+	top = 0;
+	offset = 0;
 	cache: any = null;
 	refList: any = null;
 	refFilter: any = null;

@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 
 const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.HeaderComponent> {
 
-	timeout: number = 0;
+	timeout = 0;
 
 	constructor (props: I.HeaderComponent) {
 		super(props);

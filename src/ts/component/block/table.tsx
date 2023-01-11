@@ -14,17 +14,17 @@ const SNAP = 10;
 
 const BlockTable = observer(class BlockTable extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	offsetX: number = 0;
+	offsetX = 0;
 	cache: any = {};
-	scrollX: number = 0;
-	frame: number = 0;
-	hoverId: string = '';
+	scrollX = 0;
+	frame = 0;
+	hoverId = '';
 	position: I.BlockPosition = I.BlockPosition.None;
 	frames: any[] = [];
-	rowId: string = '';
-	cellId: string = '';
+	rowId = '';
+	cellId = '';
 
 	constructor (props: I.BlockComponent) {
 		super(props);

@@ -16,7 +16,7 @@ interface State {
 
 class PopupHelp extends React.Component<Props, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		showFull: false,

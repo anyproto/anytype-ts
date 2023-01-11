@@ -18,8 +18,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	refHeader: any = null;
 	refGraph: any = null;
 	refPanel: any = null;
-	loading: boolean = false;
-	timeoutLoading: number = 0;
+	loading = false;
+	timeoutLoading = 0;
 
 	constructor (props: I.PageComponent) {
 		super(props);

@@ -8,7 +8,7 @@ class MenuStore {
 
     public menuList: I.Menu[] = [];
 
-    timeout: number = 0;
+    timeout = 0;
 
     constructor () {
         makeObservable(this, {

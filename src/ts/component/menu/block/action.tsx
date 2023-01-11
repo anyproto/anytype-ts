@@ -11,7 +11,7 @@ interface State {
 
 class MenuBlockAction extends React.Component<I.Menu, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	n: number = -1;
 	refFilter: any = null;
