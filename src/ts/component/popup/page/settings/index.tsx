@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Title, Label } from 'Component';
+import {Icon, Title, Label, IconObject} from 'Component';
 import { I, translate } from 'Lib';
-import { authStore } from 'Store';
+import {authStore, blockStore, detailStore} from 'Store';
 import { observer } from 'mobx-react';
+import Constant from "json/constant.json";
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
@@ -15,6 +16,7 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 	render () {
 		const { onPage } = this.props;
 		const { account } = authStore;
+		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 
 		return (
 			<div>
@@ -23,7 +25,7 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 				<div className="rows">
 					{account ? (
 						<div className="row" onClick={() => { onPage('account'); }}>
-							<Icon className="account" />
+							<IconObject object={profile} size={32} />
 							<Label text={translate('popupSettingsAccountTitle')} />
 							<Icon className="arrow" />
 						</div>

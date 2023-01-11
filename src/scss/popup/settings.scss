@@ -53,7 +53,7 @@
 			.row.red { color: $colorRed; }
 
 			.row {
-				.icon { width: 28px; height: 28px; margin: 0px 12px 0px 0px; vertical-align: top; }
+				.icon, .iconObject { width: 28px; height: 28px; margin: 0px 12px 0px 0px; vertical-align: top; }
 				.icon.account { background-image: url('~img/icon/popup/settings/account.svg'); }
 				.icon.personal { background-image: url('~img/icon/popup/settings/personal.svg'); }
 				.icon.appearance { background-image: url('~img/icon/popup/settings/appearance.svg'); }
