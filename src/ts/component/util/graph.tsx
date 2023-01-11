@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import * as d3 from 'd3';
+import { observer } from 'mobx-react';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
@@ -19,6 +18,7 @@ const FONT = 'Helvetica';
 
 const Graph = observer(class Graph extends React.Component<Props, object> {
 
+	node: any = null;
 	canvas: any = null;
 	simulation: any = null;
 	width: number = 0;
@@ -85,7 +85,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 		const { isPopup } = this.props;
 
 		return (
-			<div id="graphWrapper">
+			<div ref={node => this.node = node} id="graphWrapper">
 				<div id={'graph' + (isPopup ? '-popup' : '')} />
 			</div>
 		);
@@ -101,7 +101,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 
 	init () {
 		const { data, isPopup } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
 		const transform: any = {};
@@ -237,7 +237,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 
 	onDragMove (e: any, d: any) {
 		const p = d3.pointer(e, d3.select(this.canvas));
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const offset = node.offset();
 		const id = this.subject.id;
 		const x = p[0] - offset.left;
@@ -381,7 +381,7 @@ const Graph = observer(class Graph extends React.Component<Props, object> {
 	};
 
 	resize () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const density = window.devicePixelRatio;
 
 		this.width = node.width();

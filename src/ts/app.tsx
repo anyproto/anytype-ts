@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
@@ -264,6 +263,7 @@ class App extends React.Component<object, State> {
 	state = {
 		loading: true
 	};
+	node: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -293,7 +293,7 @@ class App extends React.Component<object, State> {
 		return (
 			<Router history={history}>
 				<Provider {...rootStore}>
-					<div>
+					<div ref={node => this.node = node}>
 						{loading ? (
 							<div id="root-loader" className="loaderWrapper">
 								<div className="inner">
@@ -389,7 +389,7 @@ class App extends React.Component<object, State> {
 	};
 
 	checkMaximized () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const icon = node.find('#minmax');
 		const isMaximized = window.Electron.isMaximized();
 
@@ -406,7 +406,7 @@ class App extends React.Component<object, State> {
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', (e: any, text: string) => { commonStore.progressClear(); });
+		Renderer.on('update-downloaded', () => { commonStore.progressClear(); });
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('import', this.onImport);
@@ -435,7 +435,7 @@ class App extends React.Component<object, State> {
 	onInit (e: any, data: any) {
 		const { dataPath, config, isDark, isChild, route, account, phrase, languages, isPinChecked } = data;
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const loader = node.find('#root-loader');
 		const anim = loader.find('.anim');
 		const accountId = Storage.get('accountId');

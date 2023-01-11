@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
 import { I, C, focus, Util, translate, analytics, Renderer } from 'Lib';
 import { commonStore, detailStore } from 'Store';
@@ -12,6 +11,7 @@ interface Props extends I.BlockComponent {};
 const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, object> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 
 	constructor (props: any) {
 		super(props);
@@ -111,7 +111,14 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		};
 
 		return (
-			<div className={[ 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div 
+				ref={node => this.node = node}
+				className={[ 'focusable', 'c' + block.id ].join(' ')} 
+				tabIndex={0} 
+				onKeyDown={this.onKeyDown} 
+				onKeyUp={this.onKeyUp} 
+				onFocus={this.onFocus}
+			>
 				{element}
 			</div>
 		);
@@ -195,7 +202,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.off('resize').on('resize', (e: any) => { this.resize(); });
 	};
 	
@@ -204,7 +211,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.off('resize');
 	};
 	
@@ -214,7 +221,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<Props
 		};
 
 		const { getWrapperWidth } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const inner = node.find('.inner');
 		const rect = (node.get(0) as Element).getBoundingClientRect();
 		const width = rect.width;

@@ -1,11 +1,10 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { RouteComponentProps } from 'react-router';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import Prism from 'prismjs';
 import katex from 'katex';
 import raf from 'raf';
+import { RouteComponentProps } from 'react-router';
+import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, keyboard, Util, C, focus, Renderer } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
@@ -15,6 +14,7 @@ import Constant from 'json/constant.json';
 interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const BlockLatex = observer(class BlockLatex extends React.Component<Props, object> {
+	
 	_isMounted: boolean = false;
 	range: any = { start: 0, end: 0 };
 	text: string = '';
@@ -49,6 +49,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, obje
 
 		return (
 			<div 
+				ref={node => this.node = node}
 				tabIndex={0} 
 				className={cn.join(' ')}
 				onKeyDown={this.onKeyDownBlock} 
@@ -85,20 +86,20 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, obje
 		this._isMounted = true;
 
 		const { block } = this.props;
+		const node = $(this.node);
 
 		this.win = $(window);
-		this.node = $(ReactDOM.findDOMNode(this));
 		this.text = String(block.content.text || '');
-		this.empty = this.node.find('#empty');
-		this.value = this.node.find('#value');
-		this.input = this.node.find('#input').get(0);
+		this.empty = node.find('#empty');
+		this.value = node.find('#value');
+		this.input = node.find('#input').get(0);
 
 		const length = this.text.length;
 
 		this.setRange({ start: length, end: length });
 		this.setValue(this.text);
 
-		this.node.off('resize').on('resize', (e: any) => { this.resize(); });
+		node.off('resize').on('resize', (e: any) => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -149,7 +150,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, obje
 	};
 
 	setEditing (v: boolean) {
-		v ? this.node.addClass('isEditing') : this.node.removeClass('isEditing');
+		const node = $(this.node);
+		v ? node.addClass('isEditing') : node.removeClass('isEditing');
 	};
 
 	onFocusBlock () {
@@ -162,7 +164,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, obje
 	onKeyDownBlock (e: any) {
 		const { rootId, onKeyDown } = this.props;
 		const cmd = keyboard.cmdKey();
-		const isEditing = this.node.hasClass('isEditing');
+		const node = $(this.node);
+		const isEditing = node.hasClass('isEditing');
 
 		if (isEditing) {
 			// Undo
@@ -185,7 +188,8 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props, obje
 	
 	onKeyUpBlock (e: any) {
 		const { onKeyUp } = this.props;
-		const isEditing = this.node.hasClass('isEditing');
+		const node = $(this.node);
+		const isEditing = node.hasClass('isEditing');
 
 		if (onKeyUp && !isEditing) {
 			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);

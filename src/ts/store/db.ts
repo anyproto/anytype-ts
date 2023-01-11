@@ -52,8 +52,8 @@ class DbStore {
 	};
 
 	relationListDelete (rootId: string, blockId: string, keys: string[]) {
-		let key = this.getId(rootId, blockId);
-		let relations = this.getObjectRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
+		const key = this.getId(rootId, blockId);
+		const relations = this.getObjectRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
 		
 		this.relationMap.set(key, relations.map((it: any) => { 
 			return { relationKey: it.relationKey, format: it.format };
@@ -69,7 +69,7 @@ class DbStore {
 			return new M.View(it); 
 		});
 
-		for (let item of list) {
+		for (const item of list) {
 			const check = this.getView(rootId, blockId, item.id);
 			if (check) {
 				this.viewUpdate(rootId, blockId, item);
@@ -181,11 +181,10 @@ class DbStore {
 	groupsAdd (rootId: string, blockId: string, groups: any[]) {
 		const list = this.getGroups(rootId, blockId);
 
-		for (let group of groups) {
+		for (const group of groups) {
 			if (list.find(it => it.id == group.id)) {
 				continue;
 			};
-
 			list.push(group);
 		};
 

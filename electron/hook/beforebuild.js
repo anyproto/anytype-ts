@@ -1,34 +1,33 @@
-const fs = require('fs');
-
-function copy (oldPath, newPath, callback) {
-	const readStream = fs.createReadStream(oldPath);
-	const writeStream = fs.createWriteStream(newPath);
-
-	readStream.on('error', callback);
-	readStream.pipe(writeStream);
-
-	writeStream.on('error', callback);
-	writeStream.on('close', function () { callback(); });
-};
+const fs = require('fs-extra');
 
 exports.default = async function (context) {
     const { platform, arch } = context;
 
-    console.log('Build BeforeBuild', platform.name, arch);
-	let folder = '';
+    console.log('[BeforeBuild] platform:', platform.name, 'arch:', arch);
 
+	let folder = '';
 	if (platform.name == 'mac') {
-		folder = arch == 'arm64' ? 'darwin-arm' : 'darwin-amd';
+		folder = `darwin-${arch == 'arm64' ? 'arm' : 'amd'}`;
 	} else 
 	if (platform.name == 'linux') {
-		folder = arch == 'arm64' ? 'linux-arm' : 'linux-amd';
-	} else {
+		folder = `linux-${arch == 'arm64' ? 'arm' : 'amd'}`;
+	};
+
+	console.log('[BeforeBuild] folder:', folder);
+
+	if (!folder) {
 		return;
 	};
 
-	if (fs.existsSync('./' + folder)) {
-		copy('./' + folder, './dist', () => {});
-	} else {
-		console.log('arch-specific folder not found');
-	};
+	const files = [ 'anytypeHelper', 'anytypeHelper.exe' ];
+
+	files.forEach(it => {
+		const src = `./${folder}/${it}`;
+		const dst = `./dist/${it}`;
+
+		if (fs.existsSync(src)) {
+			fs.copySync(src, dst);
+			fs.removeSync(src);
+		};
+	});
 };

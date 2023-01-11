@@ -82,7 +82,7 @@ class MenuStore {
 	};
 
     isOpenList (ids: string[]) {
-		for (let id of ids) {
+		for (const id of ids) {
 			if (this.isOpen(id)) {
 				return true;
 			};
@@ -135,14 +135,11 @@ class MenuStore {
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
-		const items = ids && ids.length ? this.menuList.filter((it: I.Menu) => { return ids.includes(it.id); }) : this.menuList;
+		const items = ids && ids.length ? this.menuList.filter(it => ids.includes(it.id)) : this.menuList;
+
+		items.forEach(it => { this.close(it.id); });
 
 		this.clearTimeout();
-
-		for (let item of items) {
-			this.close(item.id);
-		};
-
 		if (callBack) {
 			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
 		};

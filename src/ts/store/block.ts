@@ -230,7 +230,7 @@ class BlockStore {
 			return null;
 		};
 
-		let ret = list[idx + dir];
+		const ret = list[idx + dir];
 		if (check && ret) {
 			return check(ret) ? ret : this.getNextBlock(rootId, ret.id, dir, check, list);
 		} else {
@@ -269,17 +269,16 @@ class BlockStore {
 		const unwrap = (list: any) => {
 			list = list || [];
 
-			let ret = [] as any[];
-			for (let item of list) {
+			const ret = [] as any[];
+			for (const item of list) {
 				for (let i = 0; i < item.childBlocks.length; i++) {
-					let child = item.childBlocks[i];
+					const child = item.childBlocks[i];
 					if (child.isLayoutDiv()) {
 						item.childBlocks.splice(i, 1);
 						i--;
 						item.childBlocks = item.childBlocks.concat(unwrap(child.childBlocks));
 					};
 				};
-
 				ret.push(item);
 			};
 			return ret;
@@ -289,7 +288,7 @@ class BlockStore {
 			list = list || [];
 
 			let n = 0;
-			for (let item of list) {
+			for (const item of list) {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
 						n++;
@@ -308,7 +307,7 @@ class BlockStore {
 
     getTree (rootId: string, list: any[]): any[] {
 		list = Util.objectCopy(list || []);
-		for (let item of list) {
+		for (const item of list) {
 			item.childBlocks = this.getTree(item.id, this.getChildren(rootId, item.id));
 		};
 		return list;
@@ -318,7 +317,7 @@ class BlockStore {
 		const map = this.getMap(rootId);
 		const ret: any = {};
 
-		for (let [ id, item ] of map.entries()) {
+		for (const [ id, item ] of map.entries()) {
 			ret[id] = this.getLeaf(rootId, id);
 			if (ret[id]) {
 				ret[id].parentId = String(item.parentId || '');
@@ -389,8 +388,7 @@ class BlockStore {
 		const blocks = Util.objectCopy(this.getBlocks(rootId, it => it.isText()));
 
 		for (const block of blocks) {
-			let text = block.content.text;
-			let marks = block.content.marks || [];
+			const marks = block.content.marks || [];
 
 			if (!marks.length) {
 				continue;
@@ -398,10 +396,11 @@ class BlockStore {
 
 			marks.sort(Mark.sort);
 
+			let { text } = block.content;
 			let update = false;
 
 			for (let n = 0; n < marks.length; ++n) {
-				let mark = marks[n];
+				const mark = marks[n];
 				if ((mark.type != I.MarkType.Mention) || !mark.param) {
 					continue;
 				};
@@ -413,9 +412,9 @@ class BlockStore {
 					continue;
 				};
 
-				let old = text.substr(from, to - from);
-				let name = Util.shorten(object.name, 30);
+				const old = text.substr(from, to - from);
 
+				let name = Util.shorten(object.name, 30);
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
@@ -428,7 +427,7 @@ class BlockStore {
 						mark.range.to -= d;
 
 						for (let i = 0; i < marks.length; ++i) {
-							let m = marks[i];
+							const m = marks[i];
 							if ((n == i) || (m.range.to <= from)) {
 								continue;
 							};
@@ -444,7 +443,7 @@ class BlockStore {
 			};
 
 			if (update) {
-				this.update(rootId, { id: block.id, content: { ...block.content, text: text, marks: marks } });
+				this.update(rootId, { id: block.id, content: { ...block.content, text, marks } });
 			};
 		};
 	};

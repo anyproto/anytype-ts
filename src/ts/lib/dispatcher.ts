@@ -83,15 +83,16 @@ class Dispatcher {
 	};
 
 	eventType (v: number): string {
-		let t = '';
-		let V = Events.Event.Message.ValueCase;
+		const V = Events.Event.Message.ValueCase;
 
+		let t = '';
 		if (v == V.ACCOUNTSHOW)					 t = 'accountShow';
 		if (v == V.ACCOUNTDETAILS)				 t = 'accountDetails';
 		if (v == V.ACCOUNTUPDATE)				 t = 'accountUpdate';
 		if (v == V.ACCOUNTCONFIGUPDATE)			 t = 'accountConfigUpdate';
 
 		if (v == V.THREADSTATUS)				 t = 'threadStatus';
+
 		if (v == V.BLOCKADD)					 t = 'blockAdd';
 		if (v == V.BLOCKDELETE)					 t = 'blockDelete';
 		if (v == V.BLOCKSETFIELDS)				 t = 'blockSetFields';
@@ -129,7 +130,6 @@ class Dispatcher {
 		if (v == V.PROCESSNEW)					 t = 'processNew';
 		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
 		if (v == V.PROCESSDONE)					 t = 'processDone';
-		if (v == V.THREADSTATUS)				 t = 'threadStatus';
 
 		if (v == V.OBJECTSHOW)					 t = 'objectShow';
 		if (v == V.OBJECTREMOVE)				 t = 'objectRemove';
@@ -183,10 +183,11 @@ class Dispatcher {
 
 		messages.sort((c1: any, c2: any) => { return this.sort(c1, c2); });
 
-		for (let message of messages) {
-			let type = this.eventType(message.getValueCase());
-			let fn = 'get' + Util.ucFirst(type);
-			let data = message[fn] ? message[fn]() : {};
+		for (const message of messages) {
+			const type = this.eventType(message.getValueCase());
+			const fn = 'get' + Util.ucFirst(type);
+			const data = message[fn] ? message[fn]() : {};
+			
 			let needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
 
 			// Do not log breadcrumbs details to clean up logs
@@ -623,10 +624,10 @@ class Dispatcher {
 					};
 
 					changes.forEach((it: any) => {
-						let op = it.getOp();
-						let ids = it.getIdsList() || [];
-						let afterId = it.getAfterid();
-						let idx = afterId ? el.objectIds.indexOf(afterId) : 0;
+						const op = it.getOp();
+						const ids = it.getIdsList() || [];
+						const afterId = it.getAfterid();
+						const idx = afterId ? el.objectIds.indexOf(afterId) : 0;
 
 						switch (op) {
 							case I.SliceOperation.Add:
@@ -689,7 +690,7 @@ class Dispatcher {
 					block = blockStore.getLeaf(rootId, id);
 
 					details = {};
-					for (let item of (data.getDetailsList() || [])) {
+					for (const item of (data.getDetailsList() || [])) {
 						details[item.getKey()] = Decode.decodeValue(item.getValue());
 					};
 
@@ -832,16 +833,12 @@ class Dispatcher {
 			return;
 		};
 
-		let records = dbStore.getRecords(sid, '');
-		let oldIndex = records.indexOf(id);
-		let newIndex = 0;
+		const records = dbStore.getRecords(sid, '');
+		const oldIndex = records.indexOf(id);
+		const newIndex = afterId ? records.indexOf(afterId) : 0;
 
 		if (isAdding && (oldIndex >= 0)) {
 			return;
-		};
-
-		if (afterId) {
-			newIndex = records.indexOf(afterId);
 		};
 
 		if (oldIndex < 0) {
@@ -854,17 +851,16 @@ class Dispatcher {
 	};
 
 	sort (c1: any, c2: any) {
-		let idx1 = SORT_IDS.findIndex(it => it == this.eventType(c1.getValueCase()));
-		let idx2 = SORT_IDS.findIndex(it => it == this.eventType(c2.getValueCase()));
-
+		const idx1 = SORT_IDS.findIndex(it => it == this.eventType(c1.getValueCase()));
+		const idx2 = SORT_IDS.findIndex(it => it == this.eventType(c2.getValueCase()));
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
 		return 0;
 	};
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
-		let { blocks, details, restrictions, relationLinks } = objectView;
-		const root = blocks.find(it => it.id == rootId);
+		const { details, restrictions, relationLinks } = objectView;
+		const root = objectView.blocks.find(it => it.id == rootId);
 		const structure: any[] = [];
 		const contextId = [ rootId, traceId ].filter(it => it).join('-');
 
@@ -883,7 +879,7 @@ class Dispatcher {
 			root.layout = object.layout;
 		};
 
-		blocks = blocks.map((it: any) => {
+		const blocks = objectView.blocks.map((it: any) => {
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(contextId, it.id, it.content.relationLinks);
 				dbStore.viewsSet(contextId, it.id, it.content.views);
@@ -920,7 +916,8 @@ class Dispatcher {
 			return;
 		};
 
-		let t0 = performance.now();
+		const t0 = performance.now();
+
 		let t1 = 0;
 		let t2 = 0;
 		let d = null;
@@ -944,11 +941,11 @@ class Dispatcher {
 					return;
 				};
 
-				let message: any = {};
-				let err = response.getError();
-				let code = err ? err.getCode() : 0;
-				let description = err ? err.getDescription() : '';
+				const err = response.getError();
+				const code = err ? err.getCode() : 0;
+				const description = err ? err.getDescription() : '';
 
+				let message: any = {};
 				if (!code && Response[type]) {
 					message = Response[type](response);
 				};

@@ -7,9 +7,9 @@ const Rpc = Commands.Rpc;
 const Mapper = {
 
 	BlockType: (v: number): I.BlockType => {
-		let t = I.BlockType.Empty;
-		let V = Model.Block.ContentCase;
+		const V = Model.Block.ContentCase;
 
+		let t = I.BlockType.Empty;
 		if (v == V.SMARTBLOCK)			 t = I.BlockType.Page;
 		if (v == V.TEXT)				 t = I.BlockType.Text;
 		if (v == V.FILE)				 t = I.BlockType.File;
@@ -29,9 +29,9 @@ const Mapper = {
 	},
 
 	BoardGroupType (v: number) {
-		let t = '';
-		let V = Model.Block.Content.Dataview.Group.ValueCase;
+		const V = Model.Block.Content.Dataview.Group.ValueCase;
 
+		let t = '';
 		if (v == V.STATUS)	 t = 'status';
 		if (v == V.TAG)		 t = 'tag';
 		if (v == V.CHECKBOX) t = 'checkbox';
@@ -463,24 +463,30 @@ const Mapper = {
 	To: {
 
 		Range: (obj: any) => {
-			let ret = new Model.Range();
-			ret.setFrom(obj.from);
-			ret.setTo(obj.to);
-			return ret;
+			const item = new Model.Range();
+
+			item.setFrom(obj.from);
+			item.setTo(obj.to);
+
+			return item;
 		},
 
 		Mark: (obj: any) => {
 			const item = new Model.Block.Content.Text.Mark();
+
 			item.setType(obj.type);
 			item.setParam(obj.param);
 			item.setRange(Mapper.To.Range(obj.range));
+
 			return item;
 		},
 
 		Details: (obj: any) => {
 			const item = new Rpc.Object.SetDetails.Detail();
+
 			item.setKey(obj.key);
 			item.setValue(Encode.encodeValue(obj.value));
+
 			return item;
 		},
 
@@ -614,7 +620,7 @@ const Mapper = {
 		Block: (obj: any) => {
 			obj.content = Util.objectCopy(obj.content || {});
 	
-			let block = new Model.Block();
+			const block = new Model.Block();
 	
 			block.setId(obj.id);
 			block.setAlign(obj.hAlign);
