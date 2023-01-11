@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Popup } from 'Component';
 import { popupStore } from 'Store';
 import { I } from 'Lib';
 
-interface Props extends I.PageComponent {};
-
-const ListPopup = observer(class ListPopup extends React.Component<Props> {
+const ListPopup = observer(class ListPopup extends React.Component<I.PageComponent> {
 
 	render () {
 		const { list } = popupStore;

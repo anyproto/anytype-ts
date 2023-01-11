@@ -9,8 +9,6 @@ import Constant from 'json/constant.json';
 
 pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
 
-interface Props extends I.BlockComponent {};
-
 interface State {
 	pages: number;
 	page: number;

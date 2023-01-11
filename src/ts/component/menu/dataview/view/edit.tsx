@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, DataUtil, MenuUtil, Relation } from 'Lib';
 import { Input, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
@@ -13,7 +13,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	isFocused: boolean = false;
 	param: any = {};
 
-	constructor(props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
