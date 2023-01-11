@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Loader } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -63,6 +63,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	render () {
 		const { rootId, block, isPopup, isInline, isDragging } = this.props;
 		const { loading } = this.state;
+		const { targetObjectId } = block.content;
 		const views = dbStore.getViews(rootId, block.id);
 		const sources = this.getSources();
 
@@ -73,6 +74,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView();
 		if (!view) {
 			return null;
+		};
+
+		let types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
+		let relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+
+		if (isInline && targetObjectId) {
+			types = Relation.getSetOfObjects(rootId, targetObjectId, Constant.typeId.type);
+			relations = Relation.getSetOfObjects(rootId, targetObjectId, Constant.typeId.relation);
 		};
 
 		let { groupRelationKey } = view;
@@ -139,7 +148,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (loading) {
 				body = <Loader id="set-loader" />
-			} else {
+			} else
+			if (!types.length && !relations.length) {
+				body = (
+					<Empty
+						{...this.props}
+						title="Type or relation has been deleted"
+						description="Visit the Marketplace to re-install these entities or select another source."
+						button="Select source"
+						withButton={true}
+						onClick={this.onEmpty}
+					/>
+				);
+			}
+			else {
 				body = (
 					<div className="content">
 						<ViewComponent 
