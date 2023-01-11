@@ -86,7 +86,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

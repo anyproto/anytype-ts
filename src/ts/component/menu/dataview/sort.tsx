@@ -89,7 +89,6 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<Item key={item.id} {...item} index={param.index} style={param.style} />
 				</CellMeasurer>
@@ -106,8 +105,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
+							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
 							{({ onRowsRendered, registerChild }) => (

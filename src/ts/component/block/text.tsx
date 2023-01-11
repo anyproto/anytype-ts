@@ -161,17 +161,17 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 				
 			case I.TextStyle.Bulleted: {
-				marker = { type: I.TextStyle.Bulleted, className: 'bullet', active: false, onClick: () => {} };
+				marker = { type: I.TextStyle.Bulleted, className: 'bullet' };
 				break;
 			};
 				
 			case I.TextStyle.Numbered: {
-				marker = { type: I.TextStyle.Numbered, className: 'number', active: false, onClick: () => {} };
+				marker = { type: I.TextStyle.Numbered, className: 'number' };
 				break;
 			};
 				
 			case I.TextStyle.Toggle: {
-				marker = { type: I.TextStyle.Toggle, className: 'toggle', active: false, onClick: this.onToggle };
+				marker = { type: I.TextStyle.Toggle, className: 'toggle', onClick: this.onToggle };
 				break;
 			};
 				

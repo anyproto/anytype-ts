@@ -97,7 +97,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

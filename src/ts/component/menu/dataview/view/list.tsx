@@ -77,7 +77,6 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -94,8 +93,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
+							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
 							{({ onRowsRendered, registerChild }) => (

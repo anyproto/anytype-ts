@@ -80,7 +80,6 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -92,8 +91,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 				{items.length ? (
 					<InfiniteLoader
 						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
+						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
 						{({ onRowsRendered, registerChild }) => (

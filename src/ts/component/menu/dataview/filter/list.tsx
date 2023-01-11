@@ -60,7 +60,6 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<Item 
 						key={item.id} 
@@ -87,8 +86,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
+							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
 							{({ onRowsRendered, registerChild }) => (

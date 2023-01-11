@@ -58,8 +58,8 @@ class InputWithFile extends React.Component<Props, State> {
 		const { icon, textUrl, textFile, withFile, readonly } = this.props;
 		const cn = [ 'inputWithFile', 'resizable' ];		
 		const or = ` ${translate('commonOr')} `;
-		const onBlur = focused ? this.onBlur : () => {};
-		const onFocus = focused ? () => {} : this.onFocus;
+		const onBlur = focused ? this.onBlur : null;
+		const onFocus = !focused ? this.onFocus : null;
 		const isSmall = size == Size.Small;
 		const isIcon = size == Size.Icon;
 
@@ -102,14 +102,22 @@ class InputWithFile extends React.Component<Props, State> {
 				<div id="text" className="txt">
 					<form id="form" onSubmit={this.onSubmit}>
 						{focused ? (
-							<span>
-								<Input id="url" ref={(ref: any) => { this.refUrl = ref; }} placeholder={placeholder} onPaste={(e: any) => { this.onChangeUrl(e, true); }} onFocus={onFocus} onBlur={onBlur} />
+							<React.Fragment>
+								<Input 
+									id="url" 
+									ref={(ref: any) => { this.refUrl = ref; }}
+									placeholder={placeholder}
+									onPaste={(e: any) => { this.onChangeUrl(e, true); }} 
+									onFocus={onFocus} 
+									onBlur={onBlur} 
+								/>
 								<Button type="input" className="dn" />
-							</span>
+							</React.Fragment>
 						) : (
 							<span className="urlToggle" onClick={this.onFocus}>{textUrl + (withFile && isSmall ? or : '')}</span>
 						)}
 					</form>
+
 					{withFile ? (
 						<span className="fileWrap" onMouseDown={this.onClickFile}>
 							{!isSmall ? <span>&nbsp;{translate('commonOr')}&nbsp;</span> : ''}

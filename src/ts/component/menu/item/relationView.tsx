@@ -36,11 +36,6 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		canFav: false,
 		isFeatured: false,
 		classNameWrap: '',
-		onEdit: () => {},
-		onRef: () => {},
-		onFav: () => {},
-		onCellClick: () => {},
-		onCellChange: () => {},
 	};
 
 	_isMounted: boolean = false;

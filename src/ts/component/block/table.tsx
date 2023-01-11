@@ -44,7 +44,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		this.onCellEnter = this.onCellEnter.bind(this);
 		this.onCellLeave = this.onCellLeave.bind(this);
 		this.onCellKeyDown = this.onCellKeyDown.bind(this);
-		this.onCellKeyUp = this.onCellKeyUp.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStartRow = this.onDragStartRow.bind(this);
@@ -100,7 +99,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 											onCellEnter={this.onCellEnter}
 											onCellLeave={this.onCellLeave}
 											onCellKeyDown={this.onCellKeyDown}
-											onCellKeyUp={this.onCellKeyUp}
 											onResizeStart={this.onResizeStart}
 											onDragStartRow={this.onDragStartRow}
 											onDragStartColumn={this.onDragStartColumn}
@@ -779,9 +777,6 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		if (!ret) {
 			onKeyDown(e, text, marks, range, props);
 		};
-	};
-
-	onCellKeyUp (e: any, rowId: string, columnId: string, id: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
 	};
 
 	setEditing (id: string) {

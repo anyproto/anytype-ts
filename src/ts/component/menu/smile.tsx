@@ -88,7 +88,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<div style={param.style}>
 						{item.isSection ? (
@@ -130,7 +129,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}
-						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => !!items[index]}
 					>
 						{({ onRowsRendered, registerChild }) => (

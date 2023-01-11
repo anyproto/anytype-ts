@@ -83,7 +83,6 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={index}
-					hasFixedWidth={() => {}}
 				>
 					<Node 
 						{...node}
@@ -109,8 +108,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 				) : (
 					<InfiniteLoader
 						rowCount={nodes.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
+						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
 						{({ onRowsRendered }) => (

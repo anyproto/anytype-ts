@@ -97,7 +97,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

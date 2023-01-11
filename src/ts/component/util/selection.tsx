@@ -5,9 +5,13 @@ import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { blockStore, menuStore, popupStore } from 'Store';
 
+interface Props {
+	children?: React.ReactNode;
+};
+
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<Props> {
 
 	_isMounted = false;
 	x: number = 0;
@@ -28,7 +32,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	isSelecting: boolean = false;
 	isSelectionPrevented: boolean = false;
 	
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onMouseDown = this.onMouseDown.bind(this);

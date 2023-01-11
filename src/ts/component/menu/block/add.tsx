@@ -154,7 +154,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -169,8 +168,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
+							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
 							{({ onRowsRendered, registerChild }) => (

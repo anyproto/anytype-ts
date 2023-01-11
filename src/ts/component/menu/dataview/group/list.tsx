@@ -99,7 +99,6 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<Item key={item.id} {...item} index={param.index} style={param.style} />
 				</CellMeasurer>
@@ -111,8 +110,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
+						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
 						{({ onRowsRendered, registerChild }) => (

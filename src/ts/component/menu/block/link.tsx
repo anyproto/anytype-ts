@@ -106,7 +106,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

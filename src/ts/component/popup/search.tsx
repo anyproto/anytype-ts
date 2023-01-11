@@ -102,7 +102,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

@@ -86,7 +86,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -96,8 +95,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const List = SortableContainer((item: any) => (
 			<InfiniteLoader
 				rowCount={items.length}
-				loadMoreRows={() => {}}
-				isRowLoaded={() => { return true; }}
+				isRowLoaded={() => true}
 				threshold={LIMIT}
 			>
 				{({ onRowsRendered, registerChild }) => (

@@ -247,7 +247,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<div className={cn.join(' ')} style={param.style}>
 						{item.children.map((item: any, i: number) => {
@@ -275,8 +274,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={({ index }) => true}
+							isRowLoaded={() => true}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">

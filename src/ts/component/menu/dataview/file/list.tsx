@@ -81,7 +81,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { I } from 'Lib';
 import { Icon, Block } from 'Component';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponentTable {
@@ -11,7 +10,6 @@ interface Props extends I.BlockComponentTable {
 	columnIdx: number;
 	column: I.Block;
 };
-
 
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props> {
 
@@ -24,7 +22,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 	render () {
 		const { 
 			readonly, block, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
-			onCellLeave, onCellKeyDown, onCellKeyUp, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle, onCellUpdate
+			onCellLeave, onCellKeyDown, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle, onCellUpdate
 		} = this.props;
 
 		if (!row || !column) {
@@ -41,8 +39,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		};
 
 		const Handle = (item: any) => {
-			let onDragStart: any = () => {};
-			let onClick: any = () => {};
+			let onDragStart = null;
+			let onClick = null;
 			let cn = [ 'handle' ];
 			let canDrag = true;
 
@@ -139,9 +137,6 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 						className="noPlus"
 						onKeyDown={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
 							onCellKeyDown(e, row.id, column.id, cellId, text, marks, range, props);
-						}}
-						onKeyUp={(e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => { 
-							onCellKeyUp(e, row.id, column.id, cellId, text, marks, range, props);
 						}}
 						onUpdate={() => { onCellUpdate(cellId); }}
 						onFocus={(e: any) => { onCellFocus(e, row.id, column.id, cellId); }}

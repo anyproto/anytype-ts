@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'Lib';
-import { blockStore, menuStore, commonStore } from 'Store';
+import { blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuBlockContext = observer(class MenuBlockContext extends React.Component<I.Menu> {
@@ -18,7 +18,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { range } = focus.state;
-		const { config } = commonStore;
 		const { blockId, rootId, marks, isInsideTable } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
@@ -33,6 +32,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 		const canTurn = block.canTurn() && !isInsideTable;
 		const hasMore = !isInsideTable;
+		const canHaveMarks = block.canHaveMarks();
 
 		const color = (
 			<div className={[ 'inner', 'textColor', 'textColor-' + (colorMark.param || 'default') ].join(' ')} />
@@ -63,37 +63,77 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					</div>
 				) : ''}
 				
-				{block.canHaveMarks() && markActions.length ? (
-					<div className="section">
-						{markActions.map((action: any, i: number) => {
-							let cn = [ action.icon ];
-							let isSet = false;
+				{canHaveMarks ? (
+					<React.Fragment>
+						{markActions.length ? (
+							<div className="section">
+								{markActions.map((action: any, i: number) => {
+									const cn = [ action.icon ];
 
-							if (action.type == I.MarkType.Link) {
-								const inRange = Mark.getInRange(marks, I.MarkType.Link, range) || Mark.getInRange(marks, I.MarkType.Object, range);
-								isSet = inRange && inRange.param;
-							} else {
-								isSet = Mark.getInRange(marks, action.type, range);
-							};
-							if (isSet) {
-								cn.push('active');
-							};
-							return <Icon id={`button-${blockId}-${action.type}`} key={i} className={cn.join(' ')} tooltip={action.name} tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, action.type); }} />;
-						})}
-					</div>
-				) : ''}
-				
-				{block.canHaveMarks() ? (
-					<div className="section">
-						<Icon id={`button-${blockId}-${I.MarkType.Color}`} className="color" inner={color} tooltip="Сolor" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, I.MarkType.Color); }} />
-						<Icon id={`button-${blockId}-${I.MarkType.BgColor}`} className="color" inner={background} tooltip="Background" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} />
-					</div>
+									let isSet = false;
+									if (action.type == I.MarkType.Link) {
+										const inRange = Mark.getInRange(marks, I.MarkType.Link, range) || Mark.getInRange(marks, I.MarkType.Object, range);
+										isSet = inRange && inRange.param;
+									} else {
+										isSet = Mark.getInRange(marks, action.type, range);
+									};
+
+									if (isSet) {
+										cn.push('active');
+									};
+
+									return (
+										<Icon 
+											id={`button-${blockId}-${action.type}`} 
+											key={i} 
+											className={cn.join(' ')} 
+											tooltip={action.name}
+											tooltipY={I.MenuDirection.Top}
+											onMouseDown={(e: any) => { this.onMark(e, action.type); }} 
+										/>
+									);
+								})}
+							</div>
+						) : ''}
+
+						<div className="section">
+							<Icon 
+								id={`button-${blockId}-${I.MarkType.Color}`}
+								className="color"
+								inner={color}
+								tooltip="Сolor"
+								tooltipY={I.MenuDirection.Top}
+								onMouseDown={(e: any) => { this.onMark(e, I.MarkType.Color); }} 
+							/>
+
+							<Icon
+								id={`button-${blockId}-${I.MarkType.BgColor}`}
+								className="color"
+								inner={background} 
+								tooltip="Background"
+								tooltipY={I.MenuDirection.Top}
+								onMouseDown={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} 
+							/>
+						</div>
+					</React.Fragment>
 				) : ''}
 				
 				{hasMore ? (
 					<div className="section">
-						<Icon id={'button-' + blockId + '-comment'} className="comment dn" tooltip="Comment" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => {}} />
-						<Icon id={'button-' + blockId + '-more'} className="more" tooltip="More options" tooltipY={I.MenuDirection.Top}  onMouseDown={(e: any) => { this.onMark(e, 'more'); }} />
+						<Icon
+							id={`button-${blockId}-comment`}
+							className="comment dn"
+							tooltip="Comment"
+							tooltipY={I.MenuDirection.Top}
+						/>
+
+						<Icon 
+							id={`button-${blockId}-more`}
+							className="more"
+							tooltip="More options"
+							tooltipY={I.MenuDirection.Top}
+							onMouseDown={(e: any) => { this.onMark(e, 'more'); }}
+						/>
 					</div>
 				) : ''}
 			</div>

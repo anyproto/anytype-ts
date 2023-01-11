@@ -92,7 +92,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
