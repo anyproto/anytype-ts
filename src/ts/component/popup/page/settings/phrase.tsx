@@ -111,8 +111,12 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		this.refPhrase.setValue(authStore.phrase);
 		this.refPhrase.select();
 
+		Util.clipboardCopy({ text: authStore.phrase });
+		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
+
 		phrase.removeClass('isBlurred');
 		button.text(translate('popupSettingsPhraseHidePhrase'));
+		analytics.event('KeychainCopy', { type: 'ScreenSettings' });
 	};
 
 	onBlur () {
@@ -127,13 +131,15 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		button.text(translate('popupSettingsPhraseShowPhrase'));
 	};
 
-	onCopy (e: any) {
-		this.refPhrase.focus();
+	onCopy () {
+		const node = $(this.node);
+		const phrase = node.find('#phrase');
 
-		Util.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
-
-		analytics.event('KeychainCopy', { type: 'ScreenSettings' });
+		if (phrase.hasClass('isBlurred')) {
+			this.onFocus();
+		} else {
+			this.onBlur();
+		};
 	};
 
 	onCode () {
