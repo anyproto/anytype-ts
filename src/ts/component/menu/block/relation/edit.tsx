@@ -14,7 +14,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	objectTypes: string[] = [];
 	ref: any = null;
 	
-	constructor(props: I.Menu) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onRelationType = this.onRelationType.bind(this);

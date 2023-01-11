@@ -18,7 +18,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	columnWidth: number = 0;
 	columnCount: number = 0;
 
-	constructor(props: I.ViewComponent) {
+	constructor (props: I.ViewComponent) {
 		super(props);
 
 		this.cache = new CellMeasurerCache({

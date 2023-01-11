@@ -8,7 +8,7 @@ const PopupPrompt = observer(class PopupPrompt extends React.Component<I.Popup> 
 	
 	refValue: any = null;
 	
-	constructor(props: I.Popup) {
+	constructor (props: I.Popup) {
 		super(props);
 		
 		this.onSubmit = this.onSubmit.bind(this);

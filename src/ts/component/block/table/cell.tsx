@@ -15,7 +15,7 @@ interface Props extends I.BlockComponentTable {
 
 const BlockTableCell = observer(class BlockTableCell extends React.Component<Props> {
 
-	constructor(props: Props) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onMouseDown = this.onMouseDown.bind(this);
