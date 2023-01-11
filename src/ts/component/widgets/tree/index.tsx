@@ -108,6 +108,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 				) : (
 					<InfiniteLoader
 						rowCount={nodes.length}
+						loadMoreRows={() => {}}
 						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
