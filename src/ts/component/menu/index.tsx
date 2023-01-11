@@ -529,7 +529,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
 
-			let css: any = { left: x, top: y };
+			const css: any = { left: x, top: y };
 			if (param.width) {
 				css.width = param.width;
 			};
@@ -728,7 +728,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 			this.setActive(null, true);
 
-			let item = items[this.ref.n];
+			const item = items[this.ref.n];
 			if (!item) {
 				return;
 			};
@@ -756,7 +756,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 			this.setActive(null, true);
 
-			let item = items[this.ref.n];
+			const item = items[this.ref.n];
 			if (!item) {
 				return;
 			};

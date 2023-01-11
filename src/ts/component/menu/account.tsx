@@ -102,7 +102,7 @@ const MenuAccount = observer(class MenuAccount extends React.Component<I.Menu, S
 		});
 	};
 	
-	onAdd (e: any) {
+	onAdd () {
 		Util.route('/auth/register/add');
 	};
 	

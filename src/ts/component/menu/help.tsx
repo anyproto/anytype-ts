@@ -68,11 +68,11 @@ class MenuHelp extends React.Component<I.Menu> {
 		const btn = <Button color="orange" className="c16" text={window.Electron.version.app} />;
 
 		return [
-			{ id: 'whatsNew', name: 'What\'s new', document: 'whatsNew', caption: btn, withCaption: true },
+			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn, withCaption: true },
 			{ id: 'community', name: 'Anytype Community' },
 			{ isDiv: true },
 			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space', withCaption: true },
-			{ id: 'hints', name: 'Show hints' },
+			{ id: 'hints', name: 'Show Hints' },
 			{ id: 'tutorial', name: 'Help & Tutorials' },
 		];
 	};

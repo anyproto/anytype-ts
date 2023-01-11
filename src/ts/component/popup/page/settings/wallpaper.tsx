@@ -23,8 +23,8 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 
 	render () {
 		const { cover } = commonStore;
+		const covers = [];
 
-		let covers = [];
 		if (cover.type == I.CoverType.Upload) {
 			covers.push(cover);
 		};
@@ -32,7 +32,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 			covers.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 		};
 
-		let sections = [
+		const sections = [
 			{ name: translate('popupSettingsPicture'), children: covers },
 			{ 
 				name: translate('popupSettingsGradient'), 

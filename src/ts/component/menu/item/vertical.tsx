@@ -8,11 +8,11 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 	node: any = null;
 
 	render () {
-		let { 
+		const { 
 			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, 
 			className, style, iconSize, switchValue, readonly, forceLetter, onClick, onSwitch, onMouseEnter, onMouseLeave,
 		} = this.props;
-		let cn = [ 'item' ];
+		const cn = [ 'item' ];
 
 		if (className) {
 			cn.push(className);
