@@ -14,8 +14,8 @@ class DragBox extends React.Component<Props> {
 	cache: any = {};
 	ox = 0;
 	oy = 0;
-	oldIndex: number = -1;
-	newIndex: number = -1;
+	oldIndex = -1;
+	newIndex = -1;
 	
 	constructor (props: Props) {
 		super(props);

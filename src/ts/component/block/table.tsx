@@ -505,8 +505,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let position: I.BlockPosition = I.BlockPosition.None;
 		let next: any = null;
-		let idx: number = -1;
-		let nextIdx: number = -1;
+		let idx = -1;
+		let nextIdx = -1;
 
 		switch (item.id) {
 			case 'columnBefore':

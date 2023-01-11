@@ -27,7 +27,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
-	n: number = -1;
+	n = -1;
 	offset = 0;
 	timeoutFilter = 0;
 

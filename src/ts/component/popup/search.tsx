@@ -28,7 +28,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	timeout = 0;
 	cache: any = {};
 	items: any[] = [];
-	n: number = -1;
+	n = -1;
 	top = 0;
 	offset = 0;
 	

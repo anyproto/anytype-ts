@@ -29,7 +29,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 	refFilter: any = null;
 	refList: any = null;
 	top = 0;
-	n: number = -1;
+	n = -1;
 
 	constructor (props: I.Menu) {
 		super(props);

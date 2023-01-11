@@ -26,7 +26,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	index: any = null;
 	cache: any = {};
 	items: any = [];
-	n: number = -1;
+	n = -1;
 	offset = 0;
 	refList: any = null;
 

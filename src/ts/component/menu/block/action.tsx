@@ -13,7 +13,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	
 	_isMounted = false;
 	node: any = null;
-	n: number = -1;
+	n = -1;
 	refFilter: any = null;
 	state = {
 		filter: '',

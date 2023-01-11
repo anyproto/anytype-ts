@@ -11,7 +11,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	refName: any = null;
 	color: string = null;
 	timeout = 0;
-	n: number = -1;
+	n = -1;
 
 	render () {
 		const { param } = this.props;

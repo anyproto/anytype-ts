@@ -10,7 +10,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 	color: string = null;
 	isHidden = false;
 	timeout = 0;
-	n: number = -1;
+	n = -1;
 
 	render () {
 		const sections = this.getSections();

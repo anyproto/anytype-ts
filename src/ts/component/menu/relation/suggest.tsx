@@ -27,7 +27,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
-	n: number = -1;
+	n = -1;
 	offset = 0;
 	timeoutFilter = 0;
 

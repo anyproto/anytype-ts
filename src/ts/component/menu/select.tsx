@@ -14,7 +14,7 @@ const LIMIT = 10;
 const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 	_isMounted = false;	
-	n: number = -1;
+	n = -1;
 	cache: any = null;
 	filter = '';
 	refFilter: any = null;

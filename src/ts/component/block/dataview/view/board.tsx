@@ -22,7 +22,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	cache: any = {};
 	frame = 0;
 	groupRelationKey = '';
-	newIndex: number = -1;
+	newIndex = -1;
 	newGroupId = '';
 	state = {
 		loading: false,
