@@ -31,7 +31,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	refList: any = null;
 
 	id = '';
-	skin: number = 1;
+	skin = 1;
 	timeoutMenu = 0;
 	timeoutFilter = 0;
 	cache: any = null;

@@ -11,7 +11,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	_isMounted = false;
 	node: any = null;
 	div = 0;
-	speed: number = 1;
+	speed = 1;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
