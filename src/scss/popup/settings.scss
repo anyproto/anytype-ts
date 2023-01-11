@@ -98,7 +98,18 @@
 		}
 
 		.tabAccount {
+			.userInfo { display: flex; align-items: flex-end; }
 			.userInfo {
+				.userPic { flex-shrink: 0; width: 80px; margin-right: 24px; cursor: pointer; }
+				.userPic:after {
+					content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
+					background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
+					transition: $transitionFast; opacity: 0;
+				}
+				.userPic:hover:after { opacity: 1; }
+
+				.userName { width: 100%; padding-bottom: 12px; border-bottom: 1px solid $colorBorderLight; }
+				.userName .input { padding: 0; @include text-header2; }
 			}
 		}
 
