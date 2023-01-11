@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Button, Input, Label, Icon } from 'Component';
-import { I, translate } from 'Lib';
+import { I, C, translate } from 'Lib';
 import { commonStore } from 'Store';
-
 import Head from '../head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
+interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
@@ -67,8 +66,18 @@ class PopupSettingsPageImportNotion extends React.Component<Props, object> {
 	};
 
 	onImport (): void {
-		commonStore.tokenSet(this.ref.getValue());
-		this.props.onPage('importNotionWarning');
+		const token = this.ref.getValue();
+
+		commonStore.tokenSet(token);
+
+		C.ImportNotionTokenValidate(token, (message: any) => {
+			if (message.error.code) {
+				this.ref.setError('Sorry, token not found. Please check Notion integrations.');
+				return;
+			};
+
+			this.props.onPage('importNotionWarning');
+		});
 	};
 
 };

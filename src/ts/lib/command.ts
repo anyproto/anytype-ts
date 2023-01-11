@@ -1429,6 +1429,14 @@ const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
 	dispatcher.request(UnsplashDownload.name, request, callBack);
 };
 
+const ImportNotionTokenValidate = (token: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Import.Notion.TokenValidate.Request();
+	
+	request.setApikey(token);
+
+	dispatcher.request(ImportNotionTokenValidate.name, request, callBack);
+};
+
 // ---------------------- DEBUG ---------------------- //
 
 const DebugSync = (limit: number, callBack?: (message: any) => void) => {
@@ -1493,6 +1501,7 @@ export {
 	FileDrop,
 	FileListOffload,
 
+	ImportNotionTokenValidate,
 	NavigationGetObjectInfoWithLinks,
 
 	BlockListDelete,
