@@ -9,8 +9,6 @@ import { I, C, Relation, Util, keyboard, analytics } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 const HEIGHT = 48;
 const LIMIT = 20;
 

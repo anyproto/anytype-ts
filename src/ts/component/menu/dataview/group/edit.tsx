@@ -5,9 +5,7 @@ import { I, C, DataUtil, MenuUtil, keyboard, Relation } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import { dbStore } from 'Store';
 
-interface Props extends I.Menu {};
-
-const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props> {
+const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Menu> {
 	
 	color: string = null;
 	isHidden: boolean = false;

@@ -6,9 +6,7 @@ import { Input, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
-const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> {
+const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu> {
 	
 	n: number = -1;
 	ref: any = null;
