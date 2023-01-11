@@ -66,6 +66,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { targetObjectId } = block.content;
 		const views = dbStore.getViews(rootId, block.id);
 		const sources = this.getSources();
+		const targetId = isInline ? targetObjectId : rootId;
 
 		if (!views.length) {
 			return null;
@@ -76,13 +77,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		let types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
-		let relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
-
-		if (isInline && targetObjectId) {
-			types = Relation.getSetOfObjects(rootId, targetObjectId, Constant.typeId.type);
-			relations = Relation.getSetOfObjects(rootId, targetObjectId, Constant.typeId.relation);
-		};
+		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.relation);
 
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
@@ -714,14 +710,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 				],
 				canAdd: true,
-				onSelect: (item: any) => {
+				onSelect: (item: any, isNew: boolean) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 						if (message.views && message.views.length) {
 							this.getData(message.views[0].id, 0, true);
 						};
 					});
 
-					analytics.event('InlineSetSetSource');
+					analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
 				}
 			}
 		}, param || {});
