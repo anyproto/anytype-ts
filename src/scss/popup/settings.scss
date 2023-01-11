@@ -290,7 +290,7 @@
 			.list {
 				li { margin: 0px 0px 48px 0px; }
 				li:last-child { margin: 0px; }
-				img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; }
+				img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; border: 1px solid $colorVeryLightGrey; border-radius: 6px; }
 			}
 		}
 
