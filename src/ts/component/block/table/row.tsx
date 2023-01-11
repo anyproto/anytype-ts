@@ -2,14 +2,13 @@ import * as React from 'react';
 import { I } from 'Lib';
 import { observer } from 'mobx-react';
 import { blockStore } from 'Store';
-
 import Cell from './cell';
 
 interface Props extends I.BlockComponentTable {
 	onRowUpdate: (rowId: string) => void;
 };
 
-const BlockTableRow = observer(class BlockTableRow extends React.Component<Props, object> {
+const BlockTableRow = observer(class BlockTableRow extends React.Component<Props> {
 
 	render () {
 		const { rootId, block, index, getData } = this.props;

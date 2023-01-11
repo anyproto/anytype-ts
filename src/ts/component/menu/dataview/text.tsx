@@ -1,20 +1,17 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { setRange } from 'selection-ranges';
 import { Editable } from 'Component';
 import { I, Util, keyboard, translate } from 'Lib';
 
-interface Props extends I.Menu {}
-
-const MenuText = observer(class MenuText extends React.Component<Props, object> {
+const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	ref: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onInput = this.onInput.bind(this);
@@ -30,7 +27,7 @@ const MenuText = observer(class MenuText extends React.Component<Props, object> 
 
 		return (
 			<Editable
-				ref={(ref: any) => { this.ref = ref; }}
+				ref={node => this.node = node}
 				id="input"
 				placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
 				onFocus={this.onFocus}

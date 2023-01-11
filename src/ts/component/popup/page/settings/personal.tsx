@@ -1,23 +1,19 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Icon, Title, Label, Switch, Select } from 'Component';
 import { I, translate, analytics, Renderer } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Head from './head';
-
 import Constant from 'json/constant.json';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
+interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 };
 
+const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<Props> {
 
-const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<Props, object> {
-
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onType = this.onType.bind(this);

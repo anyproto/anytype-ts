@@ -4,14 +4,11 @@ import $ from 'jquery';
 import { Title, Label, Input, Button } from 'Component';
 import { I, translate } from 'Lib';
 
-interface Props extends I.Popup {};
-
-
-const PopupPrompt = observer(class PopupPrompt extends React.Component<Props, object> {
+const PopupPrompt = observer(class PopupPrompt extends React.Component<I.Popup> {
 	
 	refValue: any = null;
 	
-	constructor(props: any) {
+	constructor (props: I.Popup) {
 		super(props);
 		
 		this.onSubmit = this.onSubmit.bind(this);

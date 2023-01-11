@@ -8,11 +8,6 @@ import HeadSimple from 'Component/page/head/simple';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
-interface Props extends I.PageComponent {
-	rootId: string;
-	isPopup?: boolean;
-};
-
 interface State {
 	isDeleted: boolean;
 };
@@ -23,7 +18,7 @@ const NO_TEMPLATES = [
 	Constant.typeId.bookmark,
 ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
 
-const PageMainType = observer(class PageMainType extends React.Component<Props, State> {
+const PageMainType = observer(class PageMainType extends React.Component<I.PageComponent, State> {
 
 	_isMounted: boolean = false;
 	id: string = '';
@@ -38,7 +33,7 @@ const PageMainType = observer(class PageMainType extends React.Component<Props, 
 		isDeleted: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 		
 		this.onTemplateAdd = this.onTemplateAdd.bind(this);

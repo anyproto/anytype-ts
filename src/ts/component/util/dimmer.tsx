@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 
@@ -11,6 +10,7 @@ interface Props {
 class Dimmer extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 
 	render () {
 		const { className, onClick } = this.props;
@@ -21,7 +21,11 @@ class Dimmer extends React.Component<Props> {
 		};
 		
 		return (
-			<div id="dimmer" className={cn.join(' ')} onClick={onClick} />
+			<div 
+				ref={node => this.node = node}
+				id="dimmer" className={cn.join(' ')} 
+				onClick={onClick} 
+			/>
 		);
 	};
 	
@@ -40,8 +44,7 @@ class Dimmer extends React.Component<Props> {
 				return;
 			};
 			
-			const node = $(ReactDOM.findDOMNode(this)); 
-			node.addClass('show'); 
+			$(this.node).addClass('show'); 
 		});
 	};
 	

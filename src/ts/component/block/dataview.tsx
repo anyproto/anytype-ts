@@ -42,7 +42,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	creating: boolean = false;
 	frame: number = 0;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.getData = this.getData.bind(this);

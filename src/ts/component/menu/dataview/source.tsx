@@ -7,7 +7,7 @@ import { keyboard } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const MenuSource = observer(class MenuSource extends React.Component<I.Menu, object> {
+const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	
 	n: number = 0;
 

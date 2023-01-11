@@ -1,20 +1,13 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import $ from 'jquery';
 import { Loader, } from 'Component';
 import { I } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Popup, RouteComponentProps<any> {}; 
-
 const BORDER = 16;
 
-class PopupPreview extends React.Component<Props, object> {
-	
-	constructor (props: any) {
-		super (props);
-	};
+class PopupPreview extends React.Component<I.Popup> {
 	
 	render () {
 		const { param } = this.props;

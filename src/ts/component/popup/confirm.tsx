@@ -3,11 +3,9 @@ import { Title, Icon, Label, Button } from 'Component';
 import { I, keyboard, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup {};
+const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup> {
 
-const PopupConfirm = observer(class PopupConfirm extends React.Component<Props, object> {
-
-	constructor(props: any) {
+	constructor (props: I.Popup) {
 		super(props);
 		
 		this.onConfirm = this.onConfirm.bind(this);

@@ -7,12 +7,10 @@ import { I, C, Util, MenuUtil, keyboard, Relation } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 const HEIGHT = 28;
 const LIMIT = 40;
 
-const MenuOptionList = observer(class MenuOptionList extends React.Component<Props, object> {
+const MenuOptionList = observer(class MenuOptionList extends React.Component<I.Menu> {
 	
 	_isMounted: boolean = false;
 	refFilter: any = null;
@@ -21,7 +19,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 	n: number = 0;
 	filter: string = '';
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
@@ -78,7 +76,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -100,8 +97,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<Pro
 					{items.length ? (
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
+							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
 							{({ onRowsRendered, registerChild }) => (

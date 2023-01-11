@@ -11,7 +11,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
 };
 
-class PopupSettingsPageImportNotionHelp extends React.Component<Props, object> {
+class PopupSettingsPageImportNotionHelp extends React.Component<Props> {
 
 	render () {
 		return (

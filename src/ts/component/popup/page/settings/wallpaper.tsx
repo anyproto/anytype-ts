@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Cover, Title, Label } from 'Component';
 import { I, C, DataUtil, ObjectUtil, translate, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
@@ -7,15 +6,15 @@ import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 import Head from './head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
+interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 	setLoading: (v: boolean) => void;
 };
 
-const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper extends React.Component<Props, object> {
+const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper extends React.Component<Props> {
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onCover = this.onCover.bind(this);
@@ -24,8 +23,8 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 
 	render () {
 		const { cover } = commonStore;
+		const covers = [];
 
-		let covers = [];
 		if (cover.type == I.CoverType.Upload) {
 			covers.push(cover);
 		};
@@ -33,7 +32,7 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 			covers.push({ id: 'c' + i, image: '', type: I.CoverType.Image });
 		};
 
-		let sections = [
+		const sections = [
 			{ name: translate('popupSettingsPicture'), children: covers },
 			{ 
 				name: translate('popupSettingsGradient'), 

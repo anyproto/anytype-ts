@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Textarea, Button } from 'Component';
 import { I, C, translate, analytics, Util, Preview } from 'Lib';
@@ -22,13 +21,14 @@ interface State {
 
 const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends React.Component<Props, State> {
 
+	node: any = null;
 	refPhrase: any = null;
 	state = {
 		entropy: '',
 		showCode: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);
@@ -39,7 +39,9 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 
 	render () {
 		return (
-			<div>
+			<div
+				ref={node => this.node = node}
+			>
 				<Head {...this.props} returnTo="account" name={translate('popupSettingsAccountTitle')} />
 				
 				<Title text={translate('popupSettingsPhraseTitle')} />
@@ -82,7 +84,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	onFocus () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
 		this.refPhrase.setValue(authStore.phrase);
@@ -92,7 +94,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	onBlur () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
 		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));

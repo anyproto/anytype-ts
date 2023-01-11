@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Editable } from 'Component';
-import {I, C, keyboard, DataUtil, ObjectUtil, analytics, Relation} from 'Lib';
+import { I, C, keyboard, DataUtil, ObjectUtil, analytics } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -19,12 +19,13 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		isEditing: false,
 	};
 	_isMounted: boolean = false;
+	node: any = null;
 	menuContext: any = null;
 	timeout: number = 0;
 	ref: any = null;
 	range: I.TextRange = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
@@ -58,7 +59,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		};
 
 		return (
-			<div className={cn.join(' ')}>
+			<div 
+				ref={node => this.node = node}
+				className={cn.join(' ')}
+			>
 				<div id="head-title-wrapper" className="side left">
 					<IconObject
 						id={`icon-set-${block.id}`}
@@ -314,6 +318,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		if (targetObjectId) {
 			DataUtil.blockSetText(targetObjectId, 'title', this.getValue(), [], true);
+		};
+		
+		if (this.ref) {
+			this.ref.placeholderHide();
 		};
 	};
 

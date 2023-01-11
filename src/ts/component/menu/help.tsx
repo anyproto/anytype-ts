@@ -2,17 +2,14 @@ import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
 import { I, Util, Onboarding, keyboard, analytics, Renderer } from 'Lib';
 import { popupStore, blockStore, detailStore } from 'Store';
-
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
-interface Props extends I.Menu {};
-
-class MenuHelp extends React.Component<Props, object> {
+class MenuHelp extends React.Component<I.Menu> {
 
 	n: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
@@ -71,11 +68,11 @@ class MenuHelp extends React.Component<Props, object> {
 		const btn = <Button color="orange" className="c16" text={window.Electron.version.app} />;
 
 		return [
-			{ id: 'whatsNew', name: 'What\'s new', document: 'whatsNew', caption: btn, withCaption: true },
+			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn, withCaption: true },
 			{ id: 'community', name: 'Anytype Community' },
 			{ isDiv: true },
 			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space', withCaption: true },
-			{ id: 'hints', name: 'Show hints' },
+			{ id: 'hints', name: 'Show Hints' },
 			{ id: 'tutorial', name: 'Help & Tutorials' },
 		];
 	};

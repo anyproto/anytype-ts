@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Inputmask from 'inputmask';
 import { I, keyboard } from 'Lib';
@@ -37,6 +36,7 @@ interface State {
 class Input extends React.Component<Props, State> {
 	
 	_isMounted = false;
+	node: any = null;
 	mask: any = null;
 
 	public static defaultProps = {
@@ -49,7 +49,7 @@ class Input extends React.Component<Props, State> {
 		type: ''
 	};
 	
-	constructor (props: any) {
+	constructor (props: Props) {
         super(props);
 
 		this.onChange = this.onChange.bind(this);
@@ -75,6 +75,7 @@ class Input extends React.Component<Props, State> {
 		
 		return (
 			<input
+				ref={node => this.node = node}
 				type={type}
 				name={name}
 				id={id}
@@ -121,7 +122,7 @@ class Input extends React.Component<Props, State> {
 
 		maskOptions = maskOptions || {};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		new Inputmask(maskOptions.mask, maskOptions).mask(node.get(0));
 	};
 
@@ -180,7 +181,7 @@ class Input extends React.Component<Props, State> {
 	};
 
 	getInputElement() {
-		return $(ReactDOM.findDOMNode(this)).get(0) as HTMLInputElement;
+		return $(this.node).get(0) as HTMLInputElement;
 	}
 	
 	focus () {
@@ -199,7 +200,7 @@ class Input extends React.Component<Props, State> {
 				return;
 			};
 			
-			$(ReactDOM.findDOMNode(this)).blur(); 
+			$(this.node).blur(); 
 		});
 	};
 	
@@ -237,7 +238,7 @@ class Input extends React.Component<Props, State> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		v ? node.addClass('withError') : node.removeClass('withError');
 	};
 
@@ -259,7 +260,7 @@ class Input extends React.Component<Props, State> {
 			return;
 		};
 
-		$(ReactDOM.findDOMNode(this)).addClass(v);
+		$(this.node).addClass(v);
 	};
 	
 	removeClass (v: string) {
@@ -267,7 +268,7 @@ class Input extends React.Component<Props, State> {
 			return;
 		};
 
-		$(ReactDOM.findDOMNode(this)).removeClass(v);
+		$(this.node).removeClass(v);
 	};
 	
 };

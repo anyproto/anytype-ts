@@ -4,19 +4,17 @@ import { Icon } from 'Component';
 import { C, Util, ObjectUtil, I, translate, analytics } from 'Lib';
 import { detailStore } from 'Store';
 
-interface Props extends I.HeaderComponent {};
-
 interface State {
 	version: I.HistoryVersion;
 };
 
-const HeaderMainHistory = observer(class HeaderMainHistory extends React.Component<Props, State> {
+const HeaderMainHistory = observer(class HeaderMainHistory extends React.Component<I.HeaderComponent, State> {
 
 	state = {
 		version: null,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.HeaderComponent) {
 		super(props);
 
 		this.onBack = this.onBack.bind(this);

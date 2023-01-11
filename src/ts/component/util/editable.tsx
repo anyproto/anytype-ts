@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { getRange, setRange } from 'selection-ranges';
 import { I, Mark } from 'Lib';
 
@@ -24,9 +23,10 @@ interface Props {
 	onCompositionEnd?: (e: any) => void;
 };
 
-class Editable extends React.Component<Props, {}> {
+class Editable extends React.Component<Props> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	placeholder: any = null;
 	editable: any = null;
 	composition: boolean = false;
@@ -89,7 +89,10 @@ class Editable extends React.Component<Props, {}> {
 		};
 
 		return (
-			<div className={cnw.join(' ')}>
+			<div 
+				ref={node => this.node = node}
+				className={cnw.join(' ')}
+			>
 				{editor}
 				<div id="placeholder" className={cnp.join(' ')}>{placeholder}</div>
 			</div>
@@ -97,7 +100,7 @@ class Editable extends React.Component<Props, {}> {
 	};
 
 	componentDidMount () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this._isMounted = true;
 		this.placeholder = node.find('#placeholder');

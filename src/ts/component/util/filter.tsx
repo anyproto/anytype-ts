@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Input, Icon } from 'Component';
 import { I, translate } from 'Lib';
@@ -21,8 +20,7 @@ interface Props {
 	onClear?(): void;
 };
 
-
-class Filter extends React.Component<Props, object> {
+class Filter extends React.Component<Props> {
 
 	public static defaultProps = {
 		className: '',
@@ -30,11 +28,12 @@ class Filter extends React.Component<Props, object> {
 		placeholder: translate('commonFilterClick'),
 	};
 	
+	node: any = null;
 	isFocused: boolean = false;
 	placeholder: any = null;
 	ref: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);
@@ -45,10 +44,19 @@ class Filter extends React.Component<Props, object> {
 	
 	render () {
 		const { id, value, icon, placeholder, className, inputClassName, onKeyDown, onKeyUp, onClick } = this.props;
-		const cn = [ 'filter', className ];
+		const cn = [ 'filter' ];
+
+		if (className) {
+			cn.push(className);
+		};
 
 		return (
-			<div id={id} className={cn.join(' ')} onClick={onClick}>
+			<div
+				ref={node => this.node = node}
+				id={id} 
+				className={cn.join(' ')}
+				onClick={onClick}
+			>
 				<div className="inner">
 					{icon ? <Icon className={icon} /> : ''}
 
@@ -75,7 +83,7 @@ class Filter extends React.Component<Props, object> {
 	};
 
 	componentDidMount() {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this.ref.setValue(this.props.value);
 		this.placeholder = node.find('#placeholder');
@@ -132,12 +140,12 @@ class Filter extends React.Component<Props, object> {
 	};
 
 	addFocusedClass () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.addClass('isFocused');
 	};
 
 	removeFocusedClass () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.removeClass('isFocused');
 	};
 
@@ -168,7 +176,7 @@ class Filter extends React.Component<Props, object> {
 	};
 
 	checkButton () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const v = this.getValue();
 
 		v ? node.addClass('active') : node.removeClass('active');

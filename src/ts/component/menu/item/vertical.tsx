@@ -1,19 +1,18 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Icon, IconObject, Switch } from 'Component';
 import { I } from 'Lib';
 
-interface Props extends I.MenuItem {};
+class MenuItemVertical extends React.Component<I.MenuItem> {
 
-class MenuItemVertical extends React.Component<Props, object> {
+	node: any = null;
 
 	render () {
-		let { 
+		const { 
 			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, 
 			className, style, iconSize, switchValue, readonly, forceLetter, onClick, onSwitch, onMouseEnter, onMouseLeave,
 		} = this.props;
-		let cn = [ 'item' ];
+		const cn = [ 'item' ];
 
 		if (className) {
 			cn.push(className);
@@ -109,6 +108,7 @@ class MenuItemVertical extends React.Component<Props, object> {
 
 		return (
 			<div 
+				ref={node => this.node = node}
 				id={'item-' + id} 
 				className={cn.join(' ')} 
 				onMouseDown={!withSwitch ? onClick : undefined} 
@@ -132,7 +132,7 @@ class MenuItemVertical extends React.Component<Props, object> {
 	};
 
 	resize () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		if (node.hasClass('withIcon')) {
 			return;

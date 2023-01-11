@@ -3,7 +3,6 @@ import { I, DataUtil, keyboard, Relation, Dataview } from 'Lib';
 import { SortableElement } from 'react-sortable-hoc';
 import { menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Handle from './handle';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
@@ -13,9 +12,9 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
-const HeadCell = observer(class HeadCell extends React.Component<Props, object> {
+const HeadCell = observer(class HeadCell extends React.Component<Props> {
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);

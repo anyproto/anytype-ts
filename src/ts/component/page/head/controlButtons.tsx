@@ -3,29 +3,27 @@ import { Icon } from 'Component';
 import { I, DataUtil, ObjectUtil, translate, analytics, focus } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props {
 	rootId: string;
 	readonly?: boolean;
-	onIcon: (e: any) => void;
-	onCoverOpen: () => void;
-	onCoverClose: () => void;
-	onCoverSelect: (item: any) => void;
-	onLayout: (e: any) => void;
-	onRelation: (e: any) => void;
-	onEdit: (e: any) => void;
-	onUploadStart: (e: any) => void;
-	onUpload: (type: I.CoverType, hash: string) => void;
+	onIcon?: (e: any) => void;
+	onCoverOpen?: () => void;
+	onCoverClose?: () => void;
+	onCoverSelect?: (item: any) => void;
+	onLayout?: (e: any) => void;
+	onRelation?: (e: any) => void;
+	onEdit?: (e: any) => void;
+	onUploadStart?: (e: any) => void;
+	onUpload?: (type: I.CoverType, hash: string) => void;
 };
 
-
-const ControlButtons = observer(class ControlButtons extends React.Component<Props, object> {
+const ControlButtons = observer(class ControlButtons extends React.Component<Props> {
 	
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onIcon = this.onIcon.bind(this);

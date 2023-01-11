@@ -2,13 +2,11 @@ import * as React from 'react';
 import { I, focus } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {}
-
-const BlockDiv = observer(class BlockDiv extends React.Component<Props, object> {
+const BlockDiv = observer(class BlockDiv extends React.Component<I.BlockComponent> {
 
 	_isMounted: boolean = false;
 
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);

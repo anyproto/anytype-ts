@@ -12,7 +12,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onExport: (format: I.ExportFormat, param: any) => void;
 };
 
-const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMarkdown extends React.Component<Props, object> {
+const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMarkdown extends React.Component<Props> {
 
 	zip = false;
 	nested = false;

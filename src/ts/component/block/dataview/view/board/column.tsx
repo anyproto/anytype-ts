@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Loader, LoadMore } from 'Component';
@@ -26,6 +25,7 @@ interface State {
 
 const Column = observer(class Column extends React.Component<Props, State> {
 
+	node: any = null;
 	cache: any = {};
 	width: number = 0;
 	columnWidth: number = 0;
@@ -35,7 +35,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		loading: false,
 	};
 
-	constructor(props: Props) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onLoadMore = this.onLoadMore.bind(this);
@@ -71,6 +71,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 		return (
 			<div 
+				ref={node => this.node = node} 
 				id={'column-' + id} 
 				className={cn.join(' ')}
 				data-id={id}
@@ -230,7 +231,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	onMore (e: any) {
 		const { rootId, block, id, getView } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		node.addClass('active');
 

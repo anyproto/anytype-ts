@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
@@ -7,10 +6,6 @@ import { I, M, C, Util, DataUtil, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-
-interface Props extends I.PageComponent {
-	rootId: string;
-}
 
 interface State {
 	versions: I.HistoryVersion[];
@@ -21,8 +16,9 @@ interface State {
 const LIMIT = 100;
 const GROUP_OFFSET = 300;
 
-const PageMainHistory = observer(class PageMainHistory extends React.Component<Props, State> {
+const PageMainHistory = observer(class PageMainHistory extends React.Component<I.PageComponent, State> {
 
+	node: any = null;
 	state = {
 		versions: [] as I.HistoryVersion[],
 		loading: false,
@@ -36,7 +32,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	scrollRight: number = 0;
 	lastId: string = '';
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.getWrapperWidth = this.getWrapperWidth.bind(this);
@@ -105,7 +101,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		};
 		
 		return (
-			<div>
+			<div ref={node => this.node = node}>
 				<Header component="mainHistory" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div id="body" className="flex">
@@ -157,7 +153,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 
 	componentDidUpdate () {
 		const rootId = this.getRootId();
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const sideLeft = node.find('#body > #sideLeft');
 		const sideRight = node.find('#body > #sideRight');
 
@@ -181,7 +177,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	};
 
 	onScrollLeft () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const sideLeft = node.find('#sideLeft');
 		
 		this.scrollLeft = sideLeft.scrollTop();
@@ -190,7 +186,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	onScrollRight () {
 		const { versions } = this.state;
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const sideRight = node.find('#sideRight');
 		const wrap = sideRight.find('.wrap');
 		const sections = wrap.find('.section');
@@ -236,7 +232,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		};
 
 		const group = month.list.find((it: any) => { return it.groupId == version.groupId; });
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const sideRight = node.find('#sideRight');
 		const item = sideRight.find('#item-' + version.id);
 
@@ -255,7 +251,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 	toggleChildren (e: any, id: string) {
 		e.stopPropagation();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const sideRight = node.find('#sideRight');
 		const item = sideRight.find('#item-' + id);
 		const children = sideRight.find('#children-' + id);
@@ -390,7 +386,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<P
 		const { isPopup } = this.props;
 
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const sideLeft = node.find('#body > #sideLeft');
 		const sideRight = node.find('#body > #sideRight');
 		const cover = node.find('.block.blockCover');

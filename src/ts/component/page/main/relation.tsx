@@ -6,15 +6,11 @@ import { detailStore, dbStore } from 'Store';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
 
-interface Props extends I.PageComponent {
-	rootId?: string;
-};
-
 interface State {
 	isDeleted: boolean;
 };
 
-const PageMainRelation = observer(class PageMainRelation extends React.Component<Props, State> {
+const PageMainRelation = observer(class PageMainRelation extends React.Component<I.PageComponent, State> {
 
 	id: string = '';
 	refHeader: any = null;
@@ -25,7 +21,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		isDeleted: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onCreate = this.onCreate.bind(this);

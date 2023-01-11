@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
@@ -9,15 +8,12 @@ import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
-interface Props extends I.ViewComponent {
-	className?: string;
-};
-
-const Controls = observer(class Controls extends React.Component<Props, object> {
+const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.ViewComponent) {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
@@ -87,7 +83,10 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 		));
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div
+				ref={node => this.node = node}
+				className={cn.join(' ')}
+			>
 				<div className="sides">
 					<div id="sideLeft" className="side left">
 						<div 
@@ -152,7 +151,7 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 		const { rootId, block, readonly, getData, getView, getSources } = this.props;
 		const view = getView();
 		const obj = $(element);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		const param: any = { 
 			element,
@@ -316,7 +315,7 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 		};
 
 		const { isPopup, isInline } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
 		const container = Util.getPageContainer(isPopup);

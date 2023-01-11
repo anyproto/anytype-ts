@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { IconObject, Block, Button, Editable } from 'Component';
@@ -15,13 +14,14 @@ interface Props {
 
 const EDITOR_IDS = [ 'title', 'description' ];
 
-const HeadSimple = observer(class Controls extends React.Component<Props, object> {
+const HeadSimple = observer(class Controls extends React.Component<Props> {
 	
 	_isMounted: boolean = false;
 	refEditable: any = {};
+	node: any = null;
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
@@ -82,7 +82,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props, object
 		};
 
 		return (
-			<div className="headSimple">
+			<div ref={node => this.node = node} className="headSimple">
 				{check.withIcon ? (
 					<div className="side left">
 						<IconObject 

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 
@@ -7,15 +6,19 @@ interface Props {
 	text: string;
 };
 
-class EmptySearch extends React.Component<Props, object> {
+class EmptySearch extends React.Component<Props> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 
 	render () {
 		const { text } = this.props;
 		
 		return (
-			<div className="emptySearch">
+			<div 
+				ref={node => this.node = node}
+				className="emptySearch"
+			>
 				<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
 			</div>
 		);
@@ -40,7 +43,7 @@ class EmptySearch extends React.Component<Props, object> {
 				return;
 			};
 
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			node.css({ lineHeight: node.height() + 'px' });
 		});
 	};

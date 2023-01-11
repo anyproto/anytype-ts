@@ -3,9 +3,7 @@ import { Icon } from 'Component';
 import { I, sidebar } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.FooterComponent {};
-
-const FooterMainEdit = observer(class FooterMainEdit extends React.Component<Props, object> {
+const FooterMainEdit = observer(class FooterMainEdit extends React.Component<I.FooterComponent> {
 	
 	render () {
 		const { onHelp } = this.props;

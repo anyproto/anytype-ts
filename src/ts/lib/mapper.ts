@@ -124,11 +124,11 @@ const Mapper = {
 			};
 		},
 
-		BlockPage: (obj: any) => {
+		BlockPage: () => {
 			return {};
 		},
 
-		BlockFeatured: (obj: any) => {
+		BlockFeatured: () => {
 			return {};
 		},
 
@@ -210,15 +210,15 @@ const Mapper = {
 			};
 		},
 
-		BlockTableOfContents: (obj: any) => {
+		BlockTableOfContents: () => {
 			return {};
 		},
 
-		BlockTable: (obj: any) => {
+		BlockTable: () => {
 			return {};
 		},
 	
-		BlockTableColumn: (obj: any) => {
+		BlockTableColumn: () => {
 			return {};
 		},
 
@@ -591,7 +591,7 @@ const Mapper = {
 			return content;
 		},
 
-		BlockTable: (obj: any) => {
+		BlockTable: () => {
 			const content = new Model.Block.Content.Table();
 
 			return content;
@@ -605,13 +605,13 @@ const Mapper = {
 			return content;
 		},
 
-		BlockTableColumn: (obj: any) => {
+		BlockTableColumn: () => {
 			const content = new Model.Block.Content.TableColumn();
 
 			return content;
 		},
 
-		BlockTableOfContents: (obj: any) => {
+		BlockTableOfContents: () => {
 			const content = new Model.Block.Content.TableOfContents();
 	
 			return content;

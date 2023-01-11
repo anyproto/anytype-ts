@@ -4,13 +4,11 @@ import { MenuItemVertical } from 'Component';
 import { I, keyboard, MenuUtil } from 'Lib';
 import { blockStore } from 'Store';
 
-interface Props extends I.Menu {};
-
-class MenuBlockHAlign extends React.Component<Props, object> {
+class MenuBlockHAlign extends React.Component<I.Menu> {
 	
 	n: number = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);

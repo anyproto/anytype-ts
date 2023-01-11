@@ -5,14 +5,12 @@ import { MenuItemVertical } from 'Component';
 import { I, C, keyboard, Util, MenuUtil } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 
-interface Props extends I.Menu {};
-
-const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<Props, object> {
+const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<I.Menu> {
 
 	_isMounted: boolean = false;
 	n: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.rebind = this.rebind.bind(this);

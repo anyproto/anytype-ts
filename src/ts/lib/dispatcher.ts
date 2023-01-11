@@ -1,9 +1,8 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
 import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action, Dataview } from 'Lib';
-import { set, observable } from 'mobx';
+import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
-
 import Constant from 'json/constant.json';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');

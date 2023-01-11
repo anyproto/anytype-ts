@@ -2,9 +2,7 @@ import * as React from 'react';
 import { Icon } from 'Component';
 import { I } from 'Lib';
 
-interface Props extends I.FooterComponent  {};
-
-class FooterMainIndex extends React.Component<Props, object> {
+class FooterMainIndex extends React.Component<I.FooterComponent> {
 	
 	render () {
 		const { onHelp } = this.props;

@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Label, Pin, Error } from 'Component';
 import { I, Storage, translate } from 'Lib';
 import { observer } from 'mobx-react';
-
 import Head from '../head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
+interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 	setConfirmPin: (v: () => void) => void;
@@ -23,7 +21,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 		error: '',
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onCheckPin = this.onCheckPin.bind(this);

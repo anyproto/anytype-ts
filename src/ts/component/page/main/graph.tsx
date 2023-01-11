@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
@@ -8,12 +7,9 @@ import { blockStore, detailStore, menuStore, commonStore } from 'Store';
 import Panel from './graph/panel';
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {
-	rootId: string;
-};
+const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, object> {
-
+	node: any = null;
 	data: any = {
 		nodes: [],
 		edges: [],
@@ -25,7 +21,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	loading: boolean = false;
 	timeoutLoading: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onSwitch = this.onSwitch.bind(this);
@@ -40,7 +36,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const rootId = this.getRootId();
 
 		return (
-			<div className="body">
+			<div 
+				ref={node => this.node = node} 
+				className="body"
+			>
 				<Header component="mainGraph" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 				<Loader id="loader" />
 
@@ -195,7 +194,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	setLoading (v: boolean) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const loader = node.find('#loader');
 
 		this.loading = v;

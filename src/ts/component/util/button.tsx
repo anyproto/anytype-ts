@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I, Preview } from 'Lib';
 import { Icon } from 'Component';
 
@@ -17,7 +16,9 @@ interface Props {
 	onClick?(e: any): void;
 };
 
-class Button extends React.Component<Props, object> {
+class Button extends React.Component<Props> {
+
+	node: any = null;
 
 	public static defaultProps = {
 		subType: 'submit',
@@ -27,7 +28,7 @@ class Button extends React.Component<Props, object> {
 		tooltipY: I.MenuDirection.Bottom,
     };
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -44,7 +45,14 @@ class Button extends React.Component<Props, object> {
 		
 			default:
 				content = (
-					<div id={id} className={cn.join(' ')} onMouseDown={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+					<div 
+						ref={node => this.node = node}
+						id={id} 
+						className={cn.join(' ')} 
+						onMouseDown={onClick} 
+						onMouseEnter={this.onMouseEnter} 
+						onMouseLeave={this.onMouseLeave}
+					>
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
 					</div>
@@ -54,6 +62,7 @@ class Button extends React.Component<Props, object> {
 			case 'input':
 				content = (
 					<input 
+						ref={node => this.node = node}
 						id={id} 
 						type={subType} 
 						value={text} 
@@ -71,7 +80,7 @@ class Button extends React.Component<Props, object> {
 
 	onMouseEnter (e: any) {
 		const { tooltip, tooltipX, tooltipY } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		if (tooltip) {
 			Preview.tooltipShow(tooltip, node, tooltipX, tooltipY);

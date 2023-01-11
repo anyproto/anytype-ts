@@ -1,16 +1,15 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Icon } from 'Component';
 import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import * as Docs from 'Docs';
 
-interface Props extends I.Menu {};
+class MenuOnboarding extends React.Component<I.Menu> {
 
-class MenuOnboarding extends React.Component<Props, object> {
+	node: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onClose = this.onClose.bind(this)
@@ -33,7 +32,10 @@ class MenuOnboarding extends React.Component<Props, object> {
 		);
 
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
 				<div className="descr" dangerouslySetInnerHTML={{ __html: item.description }} />
 
@@ -60,13 +62,13 @@ class MenuOnboarding extends React.Component<Props, object> {
 
 	componentDidMount () {
 		this.rebind();
-		Util.renderLinks($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(this.node));
 	};
 
 	componentDidUpdate () {
 		const { param, position } = this.props;
 		const { data } = param;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		if (data.onShow) {
 			data.onShow();

@@ -41,7 +41,7 @@ class Select extends React.Component<Props, State> {
 		options: [] as I.Option[]
 	};
 	
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.show = this.show.bind(this);
