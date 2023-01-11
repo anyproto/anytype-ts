@@ -4,7 +4,7 @@ import { I, ObjectUtil, keyboard } from 'Lib';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
-const HeaderMainStore = observer(class HeaderMainStore extends React.Component<v> {
+const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent> {
 
 	timeout: number = 0;
 
