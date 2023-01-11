@@ -1,4 +1,5 @@
 import * as React from 'react';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Filter, Button, EmptySearch } from 'Component';
@@ -25,14 +26,13 @@ const Tabs = [
 	{ id: Tab.Relation, name: 'Relations' },
 ];
 
-const LIMIT = 3;
-
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
 
 	state = {
 		loading: false,
 	};
 
+	_isMounted: boolean = false;
 	node: any = null;
 	top: number = 0;
 	offset: number = 0;
@@ -41,8 +41,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	refFilter: any = null;
 	tab: Tab = Tab.Type;
 	view: View = View.Marketplace;
-
-	_isMounted: boolean = false;
+	frame = 0;
+	limit = 0;
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -65,6 +65,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const views = this.getViews();
 		const items = this.getItems();
 		const sources = this.getSources();
+		const limit = this.getLimit();
 
 		let Item = null;
 		let title = '';
@@ -175,8 +176,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		const rowRenderer = (param: any) => {
-			let item = items[param.index];
-			let cn = [ 'row' ];
+			const item = items[param.index];
+			const cn = [ 'row' ];
+			const style = { ...param.style, gridTemplateColumns: `repeat(${limit}, minmax(0, 1fr))` };
 
 			if (item.className) {
 				cn.push(item.className);
@@ -190,7 +192,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					columnIndex={0}
 					rowIndex={param.index}
 				>
-					<div className={cn.join(' ')} style={param.style}>
+					<div className={cn.join(' ')} style={style}>
 						{item.children.map((item: any, i: number) => {
 							if (item.id == 'mid') {
 								return <Mid key={i} {...item} />;
@@ -479,6 +481,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const { profile } = blockStore;
 		const { loading } = this.state;
 		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
+		const limit = this.getLimit();
 
 		records.sort((c1: any, c2: any) => {
 			const cr1 = c1.creator;
@@ -504,14 +507,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			row.children.push(item);
 
 			n++;
-			if (n == LIMIT) {
+			if (n == limit) {
 				ret.push(row);
 				row = { children: [] };
 				n = 0;
 			};
 		};
 
-		if (row.children.length < LIMIT) {
+		if (row.children.length < limit) {
 			ret.push(row);
 		};
 
@@ -581,6 +584,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 	};
 
+	getLimit () {
+		const ww = $(window).width();
+		const size = Constant.size.store;
+		const maxWidth = ww - size.border * 2;
+
+		return Math.floor(maxWidth / (size.width + size.margin));
+	};
+
 	resize () {
 		const win = $(window);
 		const container = Util.getPageContainer(this.props.isPopup);
@@ -590,6 +601,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
+		const limit = this.getLimit();
 		
 		let wh = isPopup ? container.height() : win.height();
 		if (platform == I.Platform.Windows) {
@@ -604,6 +616,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		} else {
 			body.css({ height: '' });
 			content.css({ minHeight: '', height: '' });
+		};
+
+		if (limit != this.limit) {
+			this.limit = limit;
+
+			raf.cancel(this.frame);
+			this.frame = raf(() => { this.forceUpdate(); });
 		};
 	};
 
