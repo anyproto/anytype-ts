@@ -24,8 +24,7 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 		return (
 			<div>
 				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
-				<Title text="Caution" />
-				<Label text="Some data imported from Notion will have differences in Anytype" />
+				<Title text="Some data formats will be imported as text" />
 
 				<div className="listWrapper">
 					<ol className="list">
@@ -33,10 +32,10 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 							All <b>@mentions</b> will be converted to text
 						</li>
 						<li className="label">
-							<b>Date range</b> will be imported as text
+							<b>Date ranges</b> will be imported as text
 						</li>
 						<li className="label">
-							<b>Formulas and rollups</b> will be places as values
+							<b>Formulas and rollups</b> will be placed as values
 						</li>
 						<li className="label">
 							<b>Databases</b> will look as Objects with Relations in Anytype documents
@@ -53,7 +52,7 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 		const { close, onImport } = this.props;
 
 		close();
-		onImport(I.ImportType.Notion, { apiKey: commonStore.token });
+		onImport(I.ImportType.Notion, { apiKey: commonStore.notionToken });
 	};
 
 };

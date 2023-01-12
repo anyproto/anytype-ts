@@ -278,7 +278,7 @@
 	"popupSettingsPinVerify": { "en": "To continue, first verify that it's you. Enter current pin code" },
 	"popupSettingsPinError": { "en": "Incorrect pin" },
 	"popupSettingsImportTitle": { "en": "Import" },
-	"popupSettingsImportText": { "en": "Choose application or format, which data you want to import" },
+	"popupSettingsImportText": { "en": "Choose application or format of data source" },
 	"popupSettingsImportHow": { "en": "How to import from Notion" },
 	"popupSettingsImportFirst": { "en": "First you need to export data." },
 	"popupSettingsImportGetTitle": { "en": "Get all data:" },

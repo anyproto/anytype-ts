@@ -82,6 +82,7 @@
 
 		.tabImportNotionHelp {
 			.icon.notion { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
+			.list img { border-color: $colorLinePrimary; }
 		}
 
 		.tabImportNotionWarning {
