@@ -287,6 +287,7 @@ const Mapper = {
 
 		Filter: (obj: any): I.Filter => {
 			return {
+				id: obj.getId(),
 				relationKey: obj.getRelationkey(),
 				operator: obj.getOperator(),
 				condition: obj.getCondition(),
@@ -305,8 +306,16 @@ const Mapper = {
 		},
 
 		View: (obj: any): I.View => {
-			return {
+			return Object.assign({
 				id: obj.getId(),
+				sorts: obj.getSortsList().map(Mapper.From.Sort),
+				filters: obj.getFiltersList().map(Mapper.From.Filter),
+				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
+			}, Mapper.From.ViewFields(obj));
+		},
+
+		ViewFields: (obj: any): any => {
+			return {
 				type: obj.getType(),
 				name: obj.getName(),
 				coverRelationKey: obj.getCoverrelationkey(),
@@ -315,9 +324,6 @@ const Mapper = {
 				hideIcon: obj.getHideicon(),
 				groupRelationKey: obj.getGrouprelationkey(),
 				groupBackgroundColors: obj.getGroupbackgroundcolors(),
-				sorts: obj.getSortsList().map(Mapper.From.Sort),
-				filters: obj.getFiltersList().map(Mapper.From.Filter),
-				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
 			};
 		},
 
@@ -657,6 +663,7 @@ const Mapper = {
 		Filter: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Filter();
 			
+			item.setId(obj.id);
 			item.setRelationkey(obj.relationKey);
 			item.setFormat(obj.format);
 			item.setOperator(obj.operator);
