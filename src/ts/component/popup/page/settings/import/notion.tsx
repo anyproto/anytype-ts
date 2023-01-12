@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { Title, Button, Input, Label, Icon } from 'Component';
+import { Title, Button, Input, Label, Icon, Error } from 'Component';
 import { I, C, translate } from 'Lib';
 import { commonStore } from 'Store';
 import Head from '../head';
@@ -11,9 +10,16 @@ interface Props extends I.Popup {
 	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
 };
 
-class PopupSettingsPageImportNotion extends React.Component<Props, object> {
+interface State {
+	error: string;
+};
+
+class PopupSettingsPageImportNotion extends React.Component<Props, State> {
 
 	ref: any = null;
+	state: State = {
+		error: '',
+	};
 
 	constructor (props: Props) {
 		super(props);
@@ -23,6 +29,7 @@ class PopupSettingsPageImportNotion extends React.Component<Props, object> {
 
 	render () {
 		const { onPage } = this.props;
+		const { error } = this.state;
 
 		return (
 			<div>
@@ -31,11 +38,14 @@ class PopupSettingsPageImportNotion extends React.Component<Props, object> {
 				<Label className="center" text="Import your Notion files through the Notion API with 2 simple steps" />
 
 				<div className="inputWrapper flex">
-					<Input 
-						ref={(ref: any) => { this.ref = ref; }} 
-						type="password"
-						placeholder="Paste your integration token"
-					/>
+					<div className="errorWrapper">
+						<Input 
+							ref={(ref: any) => { this.ref = ref; }} 
+							type="password"
+							placeholder="Paste your integration token"
+						/>
+						{error ? <Error text={error} /> : ''}
+					</div>
 					<Button text={translate('popupSettingsImportOk')} onClick={this.onImport} />
 				</div>
 
@@ -73,7 +83,8 @@ class PopupSettingsPageImportNotion extends React.Component<Props, object> {
 
 		C.ObjectImportNotionValidateToken(token, (message: any) => {
 			if (message.error.code) {
-				this.ref.setError('Sorry, token not found. Please check Notion integrations.');
+				this.ref.setError(true);
+				this.setState({ error: message.error.description });
 				return;
 			};
 

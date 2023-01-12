@@ -1132,7 +1132,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Notion.ValidateToken.Request();
 	
-	request.setApikey(token);
+	request.setToken(token);
 
 	dispatcher.request(ObjectImportNotionValidateToken.name, request, callBack);
 };
