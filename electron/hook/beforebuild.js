@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const path = require('path');
 
 exports.default = async function (context) {
     const { platform, arch } = context;
@@ -22,8 +23,8 @@ exports.default = async function (context) {
 	const files = [ 'anytypeHelper', 'anytypeHelper.exe' ];
 
 	files.forEach(it => {
-		const src = `./${folder}/${it}`;
-		const dst = `./dist/${it}`;
+		const src = path.join(__dirname, folder, it);
+		const dst = path.join(__dirname, 'dist', it);
 
 		if (fs.existsSync(src)) {
 			fs.copySync(src, dst);
