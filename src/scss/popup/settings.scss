@@ -44,7 +44,7 @@
 		.sectionName.center { text-align: center; }
 
 		.tabIndex { padding: 24px 48px 48px 48px; }
-		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete, .tabExportMarkdown {
+		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete, .tabExportMarkdown, .tabSpaceIndex, .tabSpaceInvite, .tabSpaceTeam, .tabSpaceLeave {
 			.row { 
 				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;
@@ -341,5 +341,22 @@
 			.button { margin-top: 25px; }
 		}
 
+		.tabSpaceInvite, .tabSpaceLeave {
+			.title { text-align: left; }
+		}
+
+		.tabSpaceInvite {
+			.memberTypeDescription { margin: 20px 0px 28px; }
+		}
+
+		.tabSpaceLeave {
+			.leaveSpaceDescription { margin-bottom: 28px; }
+		}
+
+		.tabSpaceTeam {
+			.title { padding-bottom: 4px; }
+			.spaceTeamCounter { text-align: center; margin-bottom: 20px; color: $colorDarkGrey; }
+			.buttons { text-align: center; }
+		}
 	}
 }
