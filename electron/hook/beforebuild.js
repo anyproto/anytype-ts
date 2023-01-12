@@ -27,7 +27,10 @@ exports.default = async function (context) {
 
 		if (fs.existsSync(src)) {
 			fs.copySync(src, dst);
+			console.log('[BeforeBuild] copy', src, dst);
+
 			fs.removeSync(src);
+			console.log('[BeforeBuild] remove', src);
 		};
 	});
 };
