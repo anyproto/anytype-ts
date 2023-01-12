@@ -1129,6 +1129,14 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 	dispatcher.request(ObjectImport.name, request, callBack);
 };
 
+const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Import.Notion.ValidateToken.Request();
+	
+	request.setApikey(token);
+
+	dispatcher.request(ObjectImportNotionValidateToken.name, request, callBack);
+};
+
 const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
@@ -1429,14 +1437,6 @@ const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
 	dispatcher.request(UnsplashDownload.name, request, callBack);
 };
 
-const ImportNotionTokenValidate = (token: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Import.Notion.TokenValidate.Request();
-	
-	request.setApikey(token);
-
-	dispatcher.request(ImportNotionTokenValidate.name, request, callBack);
-};
-
 // ---------------------- DEBUG ---------------------- //
 
 const DebugSync = (limit: number, callBack?: (message: any) => void) => {
@@ -1501,7 +1501,6 @@ export {
 	FileDrop,
 	FileListOffload,
 
-	ImportNotionTokenValidate,
 	NavigationGetObjectInfoWithLinks,
 
 	BlockListDelete,
@@ -1612,6 +1611,7 @@ export {
 
 	ObjectImportList,
 	ObjectImport,
+	ObjectImportNotionValidateToken,
 
 	ObjectCreate,
 	ObjectCreateSet,

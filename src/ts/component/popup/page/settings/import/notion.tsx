@@ -33,6 +33,7 @@ class PopupSettingsPageImportNotion extends React.Component<Props, object> {
 				<div className="inputWrapper flex">
 					<Input 
 						ref={(ref: any) => { this.ref = ref; }} 
+						type="password"
 						placeholder="Paste your integration token"
 					/>
 					<Button text={translate('popupSettingsImportOk')} onClick={this.onImport} />
@@ -68,9 +69,9 @@ class PopupSettingsPageImportNotion extends React.Component<Props, object> {
 	onImport (): void {
 		const token = this.ref.getValue();
 
-		commonStore.tokenSet(token);
+		commonStore.notionTokenSet(token);
 
-		C.ImportNotionTokenValidate(token, (message: any) => {
+		C.ObjectImportNotionValidateToken(token, (message: any) => {
 			if (message.error.code) {
 				this.ref.setError('Sorry, token not found. Please check Notion integrations.');
 				return;
