@@ -52,7 +52,7 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 		const { close, onImport } = this.props;
 
 		close();
-		onImport(I.ImportType.Notion, { apiKey: commonStore.token });
+		onImport(I.ImportType.Notion, { apiKey: commonStore.notionToken });
 	};
 
 };
