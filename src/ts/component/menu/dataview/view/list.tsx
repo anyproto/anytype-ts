@@ -311,15 +311,17 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const { selection } = dataset;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const { oldIndex, newIndex } = result;
+		const views = dbStore.getViews(rootId, blockId);
+		const oldIndex = result.oldIndex - 1;
+		const newIndex = result.newIndex - 1;
 
-		let views = dbStore.getViews(rootId, blockId);
-		let view = views[oldIndex];
-		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
+		console.log(views, oldIndex, newIndex);
+
+		const view = views[oldIndex];
+		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, blockId, ids);
 		C.BlockDataviewViewSetPosition(rootId, blockId, view.id, newIndex);
-
 		selection.preventSelect(false);
 	};
 
