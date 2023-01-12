@@ -17,8 +17,7 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 		const { onPage } = this.props;
 		const { account } = authStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-
-		let rows = [
+		const rows = [
 			{ id: 'personal', title: 'popupSettingsPersonalTitle', icon: 'personal'},
 			{ id: 'appearance', title: 'popupSettingsAppearanceTitle', icon: 'appearance'},
 			{ id: 'importIndex', title: 'popupSettingsImportTitle', icon: 'import'},

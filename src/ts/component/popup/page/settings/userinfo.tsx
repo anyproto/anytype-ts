@@ -69,12 +69,12 @@ class PopupSettingsUserInfo extends React.Component<Props, object> {
     onUserpicUpload (rootId) {
         const { setLoading } = this.props;
 
-        const options: any = {
+        const options = {
             properties: [ 'openFile' ],
             filters: [ { name: '', extensions: Constant.extension.cover } ]
         };
 
-        window.Electron.showOpenDialog(options).then((result: any) => {
+        window.Electron.showOpenDialog(options).then((result) => {
             const files = result.filePaths;
             if ((files == undefined) || !files.length) {
                 return;
