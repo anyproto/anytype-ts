@@ -356,6 +356,14 @@
 		.tabSpaceTeam {
 			.title { padding-bottom: 4px; }
 			.spaceTeamCounter { text-align: center; margin-bottom: 20px; color: $colorDarkGrey; }
+
+			.rows { max-height: 310px; min-height: 60px; height: 100%; margin-bottom: 12px; }
+			.row { height: 44px; border-bottom: 0; padding-top: 8px; padding-bottom: 8px; }
+			.row {
+				.left { display: flex; }
+				.right { font-size: 14px; }
+			}
+
 			.buttons { text-align: center; }
 		}
 	}

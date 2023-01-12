@@ -35,12 +35,12 @@ const PopupSettingsSpaceInvite = observer(class PopupSettingsSpaceInvite extends
                                 id="memberType"
                                 value={this.memberType}
                                 options={memberTypes}
+                                arrowClassName="light"
+                                horizontal={I.MenuDirection.Right}
                                 onChange={(v: any) => {
                                     this.memberType = v;
                                     this.forceUpdate();
                                 }}
-                                arrowClassName="light"
-                                horizontal={I.MenuDirection.Right}
                             />
                         </div>
                     </div>
