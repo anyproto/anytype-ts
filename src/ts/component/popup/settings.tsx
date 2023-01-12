@@ -33,7 +33,6 @@ interface State {
 	loading: boolean;
 };
 
-
 const Components: any = {
 	index:				 PageIndex,
 	account:			 PageAccount,

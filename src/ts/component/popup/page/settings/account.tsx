@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Icon, Title, Label } from 'Component';
 import { I, C, Storage, translate, Util, analytics } from 'Lib';
-import { authStore, blockStore, commonStore, detailStore, popupStore } from 'Store';
+import { authStore, commonStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Head from './head';
-import UserInfo from './userinfo';
-import Constant from "json/constant.json";
+import UserInfo from '../../settings/userinfo';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
+interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 	setPinConfirmed: (v: boolean) => void;
@@ -48,7 +45,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const pin = Storage.get('pin');
 		const canDelete = account.status.type == I.AccountStatusType.Active;
 		const canMove = config.experimental;
-		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 
 		return (
 			<div>
@@ -57,7 +53,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 				{error ? <div className="message">{error}</div> : ''}
 
-				<UserInfo {...this.props} profile={profile} />
+				<UserInfo {...this.props} />
 
 				<div className="rows">
 					<Label className="sectionName" text="Access" />
