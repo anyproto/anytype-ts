@@ -258,6 +258,7 @@
 			.inputWrapper { 
 				.input { height: 40px; border: 1px solid $colorBorderDark; border-radius: 6px; }
 				.button { margin: 0px; flex-shrink: 0; }
+				.errorWrapper { flex-grow: 1; }
 				.error { @include text-small; margin: 2px 0px 0px 0px; }
 			}
 			.line { height: 1px; background: $colorBorderLight; margin: 0px 0px 24px 0px; }

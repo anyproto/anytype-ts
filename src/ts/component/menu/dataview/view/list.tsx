@@ -314,9 +314,6 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		const views = dbStore.getViews(rootId, blockId);
 		const oldIndex = result.oldIndex - 1;
 		const newIndex = result.newIndex - 1;
-
-		console.log(views, oldIndex, newIndex);
-
 		const view = views[oldIndex];
 		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
