@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import * as d3 from 'd3';
+import { observer } from 'mobx-react';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
@@ -17,6 +16,7 @@ interface Props {
 
 const Graph = observer(class Graph extends React.Component<Props> {
 
+	node: any = null;
 	canvas: any = null;
 	edges: any[] = [];
 	nodes: any[] = [];
@@ -42,7 +42,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		};
 
 		return (
-			<div id="graphWrapper">
+			<div 
+				ref={node => this.node = node} 
+				id="graphWrapper"
+			>
 				<div id={id.join('-')} />
 			</div>
 		);
@@ -72,7 +75,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	init () {
 		const { data, isPopup } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
 		const transform: any = {};
@@ -197,7 +200,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	onDragMove (e: any, d: any) {
 		const p = d3.pointer(e, d3.select(this.canvas));
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const { left, top } = node.offset();
 
 		this.send('onDragMove', { 
@@ -333,7 +336,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	resize () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this.send('onResize', { 
 			width: node.width(), 

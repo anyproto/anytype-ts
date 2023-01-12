@@ -36,12 +36,13 @@ class PopupShortcut extends React.Component<Props, State> {
 		);
 
 		const Section = (item: any) => {
-			let cn = [ 'section' ];
+			const cn = [ 'section' ];
 			if (item.className) {
 				cn.push(item.className);
 			};
+
 			return (
-				<div className={[ 'section', (item.className || '') ].join(' ')}>
+				<div className={cn.join(' ')}>
 					{item.name ? <div className="name">{item.name}</div> : ''}
 					{item.description ? <div className="descr">{item.description}</div> : ''}
 					<div className="items">
@@ -97,8 +98,8 @@ class PopupShortcut extends React.Component<Props, State> {
 	};
 
 	getSections (id: string) {
-		let cmd = '&#8984;';
-		let sections = {
+		const cmd = '&#8984;';
+		const sections = {
 
 			main: [
 				{

@@ -59,7 +59,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		let value = null;
 		let Item = null;
 		let list = [];
-		let onSubmit = (e: any) => { this.onSubmit(e, item); };
+		let onSubmit = (e: any) => { this.onSubmit(e); };
 
 		const ItemAdd = (item: any) => (
 			<div 
@@ -90,7 +90,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 								this.props.setHover({ id: 'tag-' + element.id }); 
 							}}
 						>
-							<div className="clickable" onClick={(e: any) => { this.onTag(e, element); }}>
+							<div className="clickable" onClick={this.onTag}>
 								<Tag
 									text={element.name}
 									color={element.color}
@@ -108,7 +108,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 
 				value = (
 					<React.Fragment>
-						<ItemAdd onClick={(e: any) => { this.onTag(e, item); }} />
+						<ItemAdd onClick={this.onTag} />
 						{list.map((element: any) => (
 							<Item key={element.id} {...element} />
 						))}
@@ -223,7 +223,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				break;
 		};
 
-		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].indexOf(item.condition) >= 0) {
+		if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(item.condition)) {
 			value = null;
 		};
 
@@ -475,7 +475,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		this.onChange('value', value);
 	};
 
-	onSubmit (e: any, item: any) {
+	onSubmit (e: any) {
 		e.preventDefault();
 
 		const { param, close } = this.props;
@@ -538,7 +538,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		});
 	};
 
-	onTag (e: any, element: any) {
+	onTag () {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, itemId } = data;

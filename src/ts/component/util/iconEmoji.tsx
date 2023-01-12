@@ -3,7 +3,6 @@ import { Emoji } from 'emoji-mart';
 import { commonStore, menuStore } from 'Store';
 import { SmileUtil } from 'Lib';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -26,7 +25,7 @@ interface Props {
 const IconSrc = {
 };
 
-const IconEmoji = observer(class IconEmoji extends React.Component<Props, object> {
+const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 	
 	public static defaultProps = {
 		offsetX: 0,
@@ -39,9 +38,8 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props, object
 	
 	render () {
 		const { id, size, icon, hash, native, asImage, className, canEdit, menuId, iconClass } = this.props;
-		
-		let cn = [ 'iconEmoji' ];
-		let css = { lineHeight: size + 'px' };
+		const cn = [ 'iconEmoji' ];
+		const css = { lineHeight: size + 'px' };
 
 		if (className) {
 			cn.push(className);

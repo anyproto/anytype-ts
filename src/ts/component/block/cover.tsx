@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader } from 'Component';
 import { I, C, Util, DataUtil, ObjectUtil, focus, translate } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
@@ -9,17 +8,15 @@ import ControlButtons  from 'Component/page/head/controlButtons';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
-interface Props extends I.BlockComponent {};
-
 interface State {
 	isEditing: boolean;
 	justUploaded: boolean;
 };
 
-
-const BlockCover = observer(class BlockCover extends React.Component<Props, State> {
+const BlockCover = observer(class BlockCover extends React.Component<I.BlockComponent, State> {
 	
 	_isMounted = false;
+	node: any = null;
 	state = {
 		isEditing: false,
 		justUploaded: false,
@@ -36,7 +33,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	coords: { x: number, y: number } = { x: 0, y: 0 };
 	old: any = null;
 	
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onIcon = this.onIcon.bind(this);
@@ -150,6 +147,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 		return (
 			<div 
+				ref={node => this.node = node}
 				className={[ 'wrap', (isEditing ? 'isEditing' : '') ].join(' ')} 
 				onMouseDown={this.onDragStart} 
 				onDragOver={this.onDragOver} 
@@ -168,14 +166,14 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		this._isMounted = true;
 		this.resize();
 
-		Util.renderLinks($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(this.node));
 		$(window).off('resize.cover').on('resize.cover', () => { this.resize(); });
 	};
 	
 	componentDidUpdate () {
 		this.resize();
 
-		Util.renderLinks($(ReactDOM.findDOMNode(this)));
+		Util.renderLinks($(this.node));
 	};
 	
 	componentWillUnmount () {
@@ -193,7 +191,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 	
 	onIconPage () {
 		const { rootId, block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const elements = node.find('#elements');
 		
 		menuStore.open('smile', { 
@@ -244,7 +242,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 	onLayout (e: any) {
 		const { rootId, block } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const elements = node.find('#elements');
 		const object = detailStore.get(rootId, rootId, []);
 		
@@ -266,7 +264,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 
 	onRelation () {
 		const { isPopup, rootId, readonly } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const elements = node.find('#elements');
 		const container = Util.getScrollContainer(isPopup);
 		const cnw = [ 'fixed' ];
@@ -310,7 +308,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#elements').addClass('hover');
 
 		focus.clear(true);
@@ -321,7 +319,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#elements').removeClass('hover');
 	};
 
@@ -348,7 +346,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const loader = node.find('#cover-loader');
 
 		v ? loader.show() : loader.hide();
@@ -409,7 +407,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const isImage = DataUtil.coverIsImage(coverType);
 		
 		if (!isImage || !node.hasClass('wrap')) {
@@ -467,7 +465,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		this.x = e.pageX - this.rect.x - this.x;
 		this.y = e.pageY - this.rect.y - this.y;
@@ -502,7 +500,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		if (selection) {
 			selection.preventSelect(true);
@@ -535,7 +533,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return false;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'coverX', 'coverY' ], true);
 		const { coverX, coverY } = object;
@@ -577,7 +575,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.addClass('isDraggingOver');
 	};
 	
@@ -588,7 +586,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.removeClass('isDraggingOver');
 	};
 	
@@ -601,7 +599,7 @@ const BlockCover = observer(class BlockCover extends React.Component<Props, Stat
 		
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');
 		preventCommonDrop(true);

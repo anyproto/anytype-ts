@@ -1,16 +1,14 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
-import $ from 'jquery';
-import raf from 'raf';
 import { I, history as historyPopup, Util } from 'Lib';
 import { Page } from 'Component';
 import { menuStore } from 'Store';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
-
-const PopupPage = observer(class PopupPage extends React.Component<Props, object> {
+const PopupPage = observer(class PopupPage extends React.Component<Props> {
 
 	_isMounted: boolean = false;
 	ref: any = null;
@@ -66,9 +64,9 @@ const PopupPage = observer(class PopupPage extends React.Component<Props, object
 		win.on('resize.popupPage', () => { this.resize(); });
 
 		obj.find('.innerWrap').on('scroll.common', () => {
-			for (let menu of menuStore.list) {
-				win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
-			};
+			menuStore.list.forEach(it => {
+				win.trigger('resize.' + Util.toCamelCase(`menu-${it.id}`));
+			});
 		});
 	};
 

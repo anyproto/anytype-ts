@@ -436,7 +436,7 @@ class MenuBlockAction extends React.Component<Props, State> {
 		};
 
 		switch (item.itemId) {
-			case 'turnStyle':
+			case 'turnStyle': {
 				menuId = 'blockStyle';
 
 				if (item.isDiv || item.isFile) {
@@ -472,8 +472,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 					}
 				});
 				break;
+			};
 
-			case 'turnObject':
+			case 'turnObject': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
@@ -484,8 +485,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 					},
 				});
 				break;
+			};
 
-			case 'move':
+			case 'move': {
 				types = DataUtil.getObjectTypesForNewObject().map(it => it.id); 
 				menuId = 'searchObject';
 
@@ -510,8 +512,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 					onSelect: () => { close(); }
 				});
 				break;
-				
-			case 'color':
+			};
+
+			case 'color': {
 				menuId = 'blockColor';
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -525,8 +528,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 					}
 				});
 				break;
+			};
 				
-			case 'background':
+			case 'background': {
 				ids = DataUtil.selectionGet(blockId, false, this.props);
 				menuId = 'blockBackground';
 
@@ -543,8 +547,9 @@ class MenuBlockAction extends React.Component<Props, State> {
 					}
 				});
 				break;
-				
-			case 'align':
+			};
+
+			case 'align': {
 				menuId = 'blockAlign';
 				menuParam.offsetY = 0;
 				menuParam.vertical = I.MenuDirection.Center;
@@ -562,13 +567,15 @@ class MenuBlockAction extends React.Component<Props, State> {
 					}
 				});
 				break;
+			};
 
-			case 'linkSettings':
+			case 'linkSettings': {
 				menuId = 'blockLinkSettings';
 				menuParam.subIds = [ 'select' ];
 				menuParam.offsetY = 0;
 				menuParam.vertical = I.MenuDirection.Center;
 				break;
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
@@ -595,37 +602,43 @@ class MenuBlockAction extends React.Component<Props, State> {
 		const ids = DataUtil.selectionGet(blockId, false, data);
 
 		switch (item.itemId) {
-			case 'download':
+			case 'download': {
 				Action.download(block, 'menu');
 				break;
+			};
 
-			case 'openBookmarkAsObject':
+			case 'openBookmarkAsObject': {
 				ObjectUtil.openPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
 
 				analytics.event('OpenAsObject', { type: block.type });
 				break;
+			};
 
-			case 'openFileAsObject':
+			case 'openFileAsObject': {
 				ObjectUtil.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 
 				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 				break;
+			};
 					
-			case 'copy':
+			case 'copy': {
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom);
 				break;
+			};
 				
-			case 'remove':
+			case 'remove': {
 				Action.remove(rootId, blockId, ids);
 				break;
+			};
 			
-			case 'clear':
+			case 'clear': {
 				C.BlockTextListClearStyle(rootId, blockIds, () => {
 					analytics.event('ClearBlockStyle', { count: blockIds.length });
 				});
 				break;
+			};
 				
-			default:
+			default: {
 				// Text colors
 				if (item.isTextColor) {
 					C.BlockTextListSetColor(rootId, blockIds, item.value);
@@ -662,8 +675,8 @@ class MenuBlockAction extends React.Component<Props, State> {
 				if (item.isObject) {
 					this.moveToPage(item.objectTypeId);
 				};
-			
 				break;
+			};
 		};
 
 		close();

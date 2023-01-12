@@ -24,22 +24,21 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 		return (
 			<div>
 				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
-				<Title text="Caution" />
-				<Label text="Some data imported from Notion will have differences in Anytype" />
+				<Title text="Some data formats will be imported as text" />
 
 				<div className="listWrapper">
 					<ol className="list">
-						<li>
-							<Label text="Some @persons are mentioned in the imported documents" />
-							<Label className="grey" text="Persons names will be written as plain text in Anytype documents." />
+						<li className="label">
+							All <b>@mentions</b> will be converted to text
 						</li>
-						<li>
-							<Label text="Internal links can be missed" />
-							<Label className="grey" text="Links to documents that aren't included in this export will be converted as a plain text." />
+						<li className="label">
+							<b>Date ranges</b> will be imported as text
 						</li>
-						<li>
-							<Label text="Databases will be converted into Simple Tables" />
-							<Label className="grey" text="Anytype doesn't support Notion's format of databases. So that, they will be appear as tables." />
+						<li className="label">
+							<b>Formulas and rollups</b> will be placed as values
+						</li>
+						<li className="label">
+							<b>Databases</b> will look as Objects with Relations in Anytype documents
 						</li>
 					</ol>
 				</div>
