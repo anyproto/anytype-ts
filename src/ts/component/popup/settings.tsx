@@ -127,8 +127,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { data } = param;
 		const { page } = data;
 
-		// this.onPage(page || 'index');
-		this.onPage(page || 'spaceIndex');
+		this.onPage(page || 'index');
 		this.rebind();
 
 		keyboard.disableNavigation(true);

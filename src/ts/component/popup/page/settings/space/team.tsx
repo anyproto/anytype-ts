@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Label, Select, Button, IconObject, ObjectName } from 'Component';
+import { Title, Label, Select, Button, IconObject, ObjectName, Filter } from 'Component';
 import { C, I, translate, Util } from 'Lib';
 import $ from "jquery";
 import { observer } from 'mobx-react';
@@ -14,18 +14,23 @@ interface Props extends I.Popup {
 
 const HEIGHT = 44;
 const LIMIT = 5;
+const FILTER_LIMIT = 20;
 
 const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends React.Component<Props> {
 
     team: any[] = [];
+    total: number = 0;
     cache: any = {};
     refList: any = null;
     top: number = 0;
+    filter: string = '';
+    refFilter: any = {};
 
     constructor (props: any) {
         super(props);
 
         this.onScroll = this.onScroll.bind(this);
+        this.loadProfiles = this.loadProfiles.bind(this);
     }
 
     render () {
@@ -34,7 +39,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
             name: 'Anytype Space',
         };
 
-        const memberTypes = [
+        const memberOptions = [
             { id: 'reader', name: 'Reader'},
             { id: 'editor', name: 'Editor'},
             { id: 'admin', name: 'Admin'},
@@ -60,7 +65,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
                         <Select
                             id="memberType"
                             value={'reader'}
-                            options={memberTypes}
+                            options={memberOptions}
                             arrowClassName="light"
                             horizontal={I.MenuDirection.Right}
                             onChange={(v: any) => {
@@ -91,7 +96,14 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
             <div>
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
                 <Title text={Util.sprintf(translate('popupSettingsSpaceTeam'), space.name)} />
-                <Label className="spaceTeamCounter" text={`${this.team.length} ${translate('popupSettingsSpaceTeamMembers')}`} />
+
+                <Label className="spaceTeamCounter" text={Util.sprintf(translate('popupSettingsSpaceTeamMembers'), this.total)} />
+
+                { this.total > FILTER_LIMIT ? <Filter
+                    ref={(ref: any) => { this.refFilter = ref; }}
+                    value={this.filter}
+                    onChange={this.loadProfiles}
+                /> : ''}
 
                 <div className="rows" id="spaceTeamMembers" style={{ height: listHeight }}>
                     <InfiniteLoader
@@ -131,7 +143,9 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
     };
 
     componentDidMount() {
-        this.loadProfiles();
+        this.loadProfiles('', () => {
+            this.total = this.team.length;
+        });
     };
 
     componentDidUpdate() {
@@ -150,12 +164,12 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
         };
     };
 
-    loadProfiles () {
+    loadProfiles (filter: string, cb?: () => void) {
         const filters = [
             { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: 'ot-profile' }
         ];
 
-        C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
+        C.ObjectSearch(filters, [], [], filter, 0, 0, (message: any) => {
             if (message.error.code || !message.records.length) {
                 return;
             };
@@ -167,6 +181,10 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
                 defaultHeight: HEIGHT,
                 keyMapper: (i: number) => { return (this.team[i] || {}).id; },
             });
+
+            if (cb) {
+                cb();
+            };
 
             this.forceUpdate();
         });

@@ -303,7 +303,7 @@
 	"popupSettingsSpaceHomepageTitle":  { "en":  "Home page" },
 	"popupSettingsSpaceTeam": { "en":  "%s team" },
 	"popupSettingsSpaceTeamTitle": { "en":  "Space team" },
-	"popupSettingsSpaceTeamMembers": { "en":  "members" },
+	"popupSettingsSpaceTeamMembers": { "en":  "%s members" },
 	"popupSettingsSpaceTeamButton": { "en":  "Invite members" },
 	"popupSettingsSpaceLeave": { "en":  "Leave %s?" },
 	"popupSettingsSpaceLeaveTitle": { "en":  "Leave space" },
