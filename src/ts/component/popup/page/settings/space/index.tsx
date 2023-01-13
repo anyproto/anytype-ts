@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Icon, Title, Label, IconObject } from 'Component';
-import {analytics, C, I, translate} from 'Lib';
+import { Icon, Title, Label, Input, IconObject } from 'Component';
+import { analytics, C, DataUtil, I, ObjectUtil, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import {detailStore, menuStore} from 'Store';
+import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Popup {
@@ -12,38 +12,26 @@ interface Props extends I.Popup {
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<Props> {
 
+    name: string = 'Anytype Space';
+    nameRef: any = {};
     homePage: any = null;
     team: any[] = [];
-    isAdmin: boolean = true;
+    isAdmin: boolean = false;
 
     constructor (props: any) {
         super(props);
 
         this.onHomePage = this.onHomePage.bind(this);
+        this.onIconClick = this.onIconClick.bind(this);
+        this.onUpload = this.onUpload.bind(this);
     };
 
     render () {
         const { onPage } = this.props;
 
-        const space = {
-            name: 'Anytype Space',
-            homepage: 'Bla bla page',
-            team: []
-        };
+        const cnIcon = ['spaceIcon'];
 
-        let teamPreview = (
-            <div className="spaceTeamPreview">
-                {
-                    this.team.slice(0,3).map((el, i) => (
-                        <IconObject size={32} key={i} object={el} />
-                    ))
-                }
-            </div>
-        );
-
-        if (!this.team.length) {
-            teamPreview = <Icon className="arrow light" />;
-        };
+        let title = <Title text={this.name} />;
 
         let spaceLeave = (
             <div className="row red" onClick={() => { onPage('spaceLeave'); }}>
@@ -52,6 +40,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
         );
 
         if (this.isAdmin) {
+            cnIcon.push('canEdit');
+
+            title = <Input
+                className="title spaceTitleInput"
+                ref={ref => this.nameRef = ref}
+                value={this.name}
+                placeholder={DataUtil.defaultName('page')}
+                onKeyUp={this.onName}
+            />;
+
             spaceLeave = (
                 <div className="row red" onClick={() => { onPage('spaceRemove'); }}>
                     <Label text={translate('popupSettingsSpaceRemoveTitle')} />
@@ -59,9 +57,29 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
             );
         };
 
+        const teamPreview = this.team.length ? (
+            <div className="spaceTeamPreview">
+                {
+                    this.team.slice(0,3).map((el, i) => (
+                        <IconObject size={32} key={i} object={el} />
+                    ))
+                }
+            </div>
+        ) : <Icon className="arrow light" />;
+
         return (
             <div>
-                <Title text={space.name} />
+                <div className="spaceSettingsHeader">
+                    <IconObject
+                        id="spacePic"
+                        className={cnIcon.join(' ')}
+                        size={96}
+                        object={{name: this.name, layout: I.ObjectLayout.Human, id: 'randomIdOfTheTestObject'}}
+                        onClick={this.onIconClick}
+                    />
+
+                    {title}
+                </div>
 
                 <div className="rows">
                     <div className="row" onClick={() => { onPage('spaceInvite'); }}>
@@ -102,6 +120,72 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
         this.loadProfiles();
     };
 
+    onIconClick () {
+        const { getId } = this.props;
+
+        if (!this.isAdmin) {
+            return;
+        }
+
+        // if (!object.iconImage) {
+        //     this.onUpload(object.id);
+        //     return;
+        // };
+
+        const options = [
+            { id: 'upload', name: 'Change' },
+            { id: 'remove', name: 'Remove' }
+        ];
+
+        menuStore.open('select', {
+            element: `#${getId()} #spacePic`,
+            horizontal: I.MenuDirection.Center,
+            data: {
+                value: '',
+                options,
+                onSelect: (e: any, item: any) => {
+                    switch (item.id) {
+                        case 'upload': {
+                            // this.onUpload(object.id);
+                            break;
+                        };
+
+                        case 'remove': {
+                            // ObjectUtil.setIcon(object.id, '', '');
+                            break;
+                        };
+                    };
+                },
+            }
+        });
+    };
+
+    onUpload () {
+        const options = {
+            properties: [ 'openFile' ],
+            filters: [ { name: '', extensions: Constant.extension.image } ]
+        };
+
+        window.Electron.showOpenDialog(options).then((result) => {
+            const files = result.filePaths;
+            if ((files == undefined) || !files.length) {
+                return;
+            };
+
+            this.setState({ loading: true });
+
+            C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
+                if (message.error.code) {
+                    return;
+                };
+
+                // ObjectUtil.setIcon(rootId, '', message.hash, () => {
+                //     this.setState({ loading: false });
+                // });
+            });
+        });
+    };
+
     onHomePage () {
         const { getId } = this.props;
 
@@ -120,6 +204,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
                 }
             }
         });
+    };
+
+    onName (v: string) {
+        // set space name
     };
 
     loadProfiles () {

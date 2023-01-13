@@ -342,11 +342,22 @@
 		}
 
 		.tabSpaceIndex {
-			.row {
-				.spaceTeamPreview .iconObject { margin-right: -4px; box-shadow: 0 0 0 2px $colorWhite; }
-				.spaceTeamPreview .iconObject .img {}
+			.spaceSettingsHeader { text-align: center; }
+			.spaceSettingsHeader {
+				.spaceIcon { margin: 0px auto 20px; }
+				.spaceIcon.canEdit { cursor: pointer; }
+				.spaceIcon.canEdit:after {
+					content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
+					background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
+					transition: $transitionFast; opacity: 0;
+				}
+				.spaceIcon.canEdit:hover:after { opacity: 1; }
+
+				.title { margin-bottom: 12px; padding: 8px 0px 16px; height: auto; }
+				.spaceTitleInput { border-bottom: 1px solid $colorBorderDark; width: 384px; }
 			}
 
+			.row .spaceTeamPreview .iconObject { margin-right: -4px; box-shadow: 0 0 0 2px $colorWhite; }
 		}
 
 		.tabSpaceInvite, .tabSpaceLeave, .tabSpaceRemove {
