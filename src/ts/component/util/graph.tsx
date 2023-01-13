@@ -26,6 +26,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	images: any = {};
 	subject: any = null;
 	isDragging: boolean = false;
+	isPreview = false;
 	ids: string[] = [];
 
 	constructor (props: Props) {
@@ -241,9 +242,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		el.css({ left: x, top: y });
 		body.append(el).addClass('cp');
+
+		this.isPreview = true;
 	};
 
 	onPreviewHide () {
+		if (!this.isPreview) {
+			return;
+		};
+
 		$('body').removeClass('cp');
 		$('#graphPreview').remove();
 	};
@@ -269,6 +276,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				if (!this.isDragging) {
 					this.subject = this.nodes.find(d => d.id == data.node);
 					this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+				};
+				break;
+
+			case 'onDragMove':
+				if (this.isDragging) {
+					this.onPreviewHide();
 				};
 				break;
 
