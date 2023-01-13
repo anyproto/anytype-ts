@@ -466,6 +466,8 @@ onDragStart = ({ active }) => {
 };
 
 onDragMove = ({ subjectId, x, y }) => {
+	this.postMessage({ id: 'onDragMove' });
+
 	if (!subjectId) {
 		return;
 	};
@@ -480,7 +482,6 @@ onDragMove = ({ subjectId, x, y }) => {
 	d.fx = transform.invertX(x) - radius / 2;
 	d.fy = transform.invertY(y) - radius / 2;
 
-	this.postMessage({ id: 'onDragMove' });
 	redraw();
 };
 
