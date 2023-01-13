@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
@@ -7,15 +6,14 @@ import { I, C, DataUtil, ObjectUtil, Onboarding, focus, keyboard, analytics, his
 import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.BlockComponent {}
+const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
 
-const BlockType = observer(class BlockType extends React.Component<Props, object> {
+	_isMounted = false;
+	node: any = null;
+	n = 0;
+	isFocused = false;
 
-	_isMounted: boolean = false;
-	n: number = 0;
-	isFocused: boolean = false;
-
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);
@@ -45,7 +43,13 @@ const BlockType = observer(class BlockType extends React.Component<Props, object
 		};
 		
 		return (
-			<div className={cn.join(' ')} tabIndex={0} onFocus={this.onFocus} onKeyDown={this.onKeyDown}>
+			<div 
+				ref={node => this.node = node}
+				className={cn.join(' ')} 
+				tabIndex={0} 
+				onFocus={this.onFocus} 
+				onKeyDown={this.onKeyDown}
+			>
 				{items.map((item: any, i: number) => (
 					<Item key={i} {...item} />
 				))}
@@ -159,7 +163,7 @@ const BlockType = observer(class BlockType extends React.Component<Props, object
 	};
 
 	setHover (item?: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		node.find('.item.hover').removeClass('hover');
 		if (item) {

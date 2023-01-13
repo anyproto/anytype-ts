@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
@@ -10,19 +9,18 @@ import { I, C, Relation, Util, keyboard, analytics } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 const HEIGHT = 48;
 const LIMIT = 20;
 
-const MenuSort = observer(class MenuSort extends React.Component<Props, object> {
+const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	
-	n: number = 0;
-	top: number = 0;
+	node: any = null;
+	n = 0;
+	top = 0;
 	cache: any = {};
 	refList: any = null;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onAdd = this.onAdd.bind(this);
@@ -91,7 +89,6 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, object> 
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<Item key={item.id} {...item} index={param.index} style={param.style} />
 				</CellMeasurer>
@@ -108,8 +105,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, object> 
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
+							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
 							{({ onRowsRendered, registerChild }) => (
@@ -138,7 +134,10 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, object> 
 		});
 		
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<List 
 					axis="y"
 					lockAxis="y"
@@ -149,7 +148,7 @@ const MenuSort = observer(class MenuSort extends React.Component<Props, object> 
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+					helperContainer={() => { return $(this.node).find('.items').get(0); }}
 				/>
 				{allowedView ? (
 					<div className="bottom">

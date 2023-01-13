@@ -28,9 +28,7 @@ interface Props {
 
 const PREFIX = 'menuBlockRelationView';
 
-const MenuItemRelationView = observer(class MenuItemRelationView extends React.Component<Props, object> {
-
-	_isMounted: boolean = false;
+const MenuItemRelationView = observer(class MenuItemRelationView extends React.Component<Props> {
 
 	public static defaultProps = {
 		readonly: true,
@@ -38,14 +36,11 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		canFav: false,
 		isFeatured: false,
 		classNameWrap: '',
-		onEdit: () => {},
-		onRef: () => {},
-		onFav: () => {},
-		onCellClick: () => {},
-		onCellChange: () => {},
 	};
 
-	constructor (props: any) {
+	_isMounted = false;
+
+	constructor (props: Props) {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
@@ -9,15 +8,12 @@ import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
-interface Props extends I.ViewComponent {
-	className?: string;
-};
+const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
 
-const Controls = observer(class Controls extends React.Component<Props, object> {
+	_isMounted = false;
+	node: any = null;
 
-	_isMounted: boolean = false;
-
-	constructor (props: any) {
+	constructor (props: I.ViewComponent) {
 		super(props);
 
 		this.onButton = this.onButton.bind(this);
@@ -87,14 +83,17 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 		));
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div
+				ref={node => this.node = node}
+				className={cn.join(' ')}
+			>
 				<div className="sides">
 					<div id="sideLeft" className="side left">
 						<div 
 							id="view-selector"
 							className="viewSelect select"
-							onClick={(e: any) => { this.onButton(e, '#view-selector', 'dataviewViewList', false); }} 
-							onContextMenu={(e: any) => { this.onViewEdit(e, '#view-selector', view); }}
+							onClick={(e: any) => { this.onButton(e, `#block-${block.id} #view-selector`, 'dataviewViewList', false); }}
+							onContextMenu={(e: any) => { this.onViewEdit(e, `#block-${block.id} #view-selector`, view); }}
 						>
 							<div className="name">{view.name}</div>
 							<Icon className="arrow light" />
@@ -149,10 +148,10 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 			return;
 		};
 
-		const { rootId, block, readonly, getData, getView } = this.props;
+		const { rootId, block, readonly, getData, getView, getSources } = this.props;
 		const view = getView();
 		const obj = $(element);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		const param: any = { 
 			element,
@@ -168,11 +167,12 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 				obj.removeClass('active');
 			},
 			data: {
-				readonly: readonly,
-				rootId: rootId,
+				readonly,
+				rootId,
 				blockId: block.id, 
-				getData: getData,
-				getView: getView,
+				getData,
+				getView,
+				getSources,
 				view: observable.box(view),
 			},
 		};
@@ -207,10 +207,11 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 	onViewAdd (e: any) {
 		e.persist();
 
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, getSources } = this.props;
 		const view = getView();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
+		const sources = getSources();
 
 		for (let relation of relations) {
 			if (relation.isHidden || !relation.isVisible) {
@@ -235,7 +236,7 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 			]
 		};
 
-		C.BlockDataviewViewCreate(rootId, block.id, newView, (message: any) => {
+		C.BlockDataviewViewCreate(rootId, block.id, newView, sources, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -261,7 +262,7 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 	onViewEdit (e: any, element: string, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView, getData } = this.props;
+		const { rootId, block, getView, getData, getSources } = this.props;
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const view = dbStore.getView(rootId, block.id, item.id);
 
@@ -272,12 +273,13 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
 			data: {
-				rootId: rootId,
+				rootId,
 				blockId: block.id,
 				readonly: !allowed,
 				view: observable.box(view),
-				getView: getView,
-				getData: getData,
+				getView,
+				getData,
+				getSources,
 				onSave: () => { this.forceUpdate(); },
 			}
 		});
@@ -313,7 +315,7 @@ const Controls = observer(class Controls extends React.Component<Props, object> 
 		};
 
 		const { isPopup, isInline } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
 		const container = Util.getPageContainer(isPopup);

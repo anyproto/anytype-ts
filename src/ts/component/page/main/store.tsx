@@ -1,15 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Label, Icon, IconObject, Cover, Header, Filter } from 'Component';
+import { Title, Icon, IconObject, Header, Filter, Button, EmptySearch } from 'Component';
 import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
-
-interface Props extends I.PageComponent {
-	isPopup?: boolean;
-};
 
 interface State {
 	loading: boolean;
@@ -17,7 +13,6 @@ interface State {
 
 enum Tab {
 	Type = 'type',
-	Template = 'template',
 	Relation = 'relation',
 };
 
@@ -27,48 +22,29 @@ enum View {
 };
 
 const Tabs = [
-	{ 
-		id: Tab.Type, name: 'Types', active: 'library',
-		children: [
-			{ id: 'market', name: 'Marketplace', disabled: true },
-			{ id: 'library', name: 'Library' },
-		]
-	},
-	/*
-	{ 
-		id: Tab.Template, 'name': 'Templates', active: 'library', 
-		children: [
-			{ id: 'market', name: 'Marketplace' },
-			{ id: 'library', name: 'Library' },
-		], 
-	},
-	*/
-	{ 
-		id: Tab.Relation, 'name': 'Relations', active: 'library', 
-		children: [
-			{ id: 'market', name: 'Marketplace', disabled: true },
-			{ id: 'library', name: 'Library' },
-		], 
-	},
+	{ id: Tab.Type, name: 'Types' },
+	{ id: Tab.Relation, name: 'Relations' },
 ];
 
-const PageMainStore = observer(class PageMainStore extends React.Component<Props, State> {
+const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
 
 	state = {
 		loading: false,
 	};
 
-	top: number = 0;
-	offset: number = 0;
+	_isMounted = false;
+	node: any = null;
+	top = 0;
+	offset = 0;
 	cache: any = null;
 	refList: any = null;
 	refFilter: any = null;
 	tab: Tab = Tab.Type;
 	view: View = View.Marketplace;
+	frame = 0;
+	limit = 0;
 
-	_isMounted: boolean = false;
-
-	constructor (props: Props) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.getRowHeight = this.getRowHeight.bind(this);
@@ -76,7 +52,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		this.onScroll = this.onScroll.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterFocus = this.onFilterFocus.bind(this);
+		this.onFilterBlur = this.onFilterBlur.bind(this);
 		this.onFilterClear = this.onFilterClear.bind(this);
+		this.onFilterClick = this.onFilterClick.bind(this);
 	};
 	
 	render () {
@@ -86,50 +64,53 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 		const views = this.getViews();
 		const items = this.getItems();
+		const sources = this.getSources();
+		const limit = this.getLimit();
 
 		let Item = null;
 		let title = '';
-		let description = '';
 		let placeholder = '';
+		let textService = '';
+		let textInstalled = '';
+		let textInstall = '';
+		let textEmpty = '';
 
 		switch (this.tab) {
 			case Tab.Type:
-				title = 'Types Library';
-				description = 'Types are like categories that help you group and manage your Objects.<br/>Create your own or add some from our Marketplace.';
+				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
 				placeholder = 'Search or create a new type...';
+				textService = 'Service type';
+				textInstalled = 'Type is installed';
+				textInstall = 'Install type';
+				textEmpty = '<b>Your type list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
 				break;
 
 			case Tab.Relation:
-				title = 'Relations library';
-				description = 'Use Relations to define connections and properties of Objects. Create your own or add some from our Marketplace.';
+				title = 'All objects are connected.<br />Use relations to build connections between objects.';
 				placeholder = 'Search or create a new relation...';
+				textService = 'Service relation';
+				textInstalled = 'Relation is installed';
+				textInstall = 'Install relation';
+				textEmpty = '<b>Your relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
 				break;
 		};
 
 		const Mid = () => (
 			<div className="mid">
 				<Title text={title} />
-				<Label text={description} />
 				<Filter 
 					ref={(ref: any) => { this.refFilter = ref; }}
 					id="store-filter"
 					icon="search"
 					placeholder={placeholder}
+					onClick={this.onFilterClick}
 					onFocus={this.onFilterFocus}
+					onBlur={this.onFilterBlur}
 					onChange={this.onFilterChange}
 					onClear={this.onFilterClear}
 				/>
 			</div>
 		);
-
-		const Author = (item: any) => {
-			if (item._empty_) {
-				return null;
-			};
-			return (
-				<div className="author">{item.name}</div>
-			);
-		};
 
 		const TabList = (item: any) => (
 			<div className="tabs">
@@ -148,82 +129,44 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		switch (this.tab) {
 
 			default:
-			case Tab.Type:
 				Item = (item: any) => {
-					const author = detailStore.get(Constant.subId.store, item.creator, []);
 					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
+					const icons: any[] = [];
+					const buttons: any[] = [];
 
-					return (
-						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<IconObject size={64} iconSize={40} object={item} />
-							<div className="info">
-								<div className="txt">
-									<div className="name">{item.name}</div>
-									<div className="descr">{item.description}</div>
-									<Author {...author} />
-								</div>
+					switch (this.view) {
+						case View.Library:
+							if (allowedDelete) {
+								buttons.push({ text: 'Remove', onClick: (e: any) => { this.onRemove(e, item); } });
+							} else {
+								icons.push({ className: 'lock', tooltip: textService });
+							};
+							break;
 
-								<div className="buttons">
-									<Icon 
-										className={allowedDelete ? 'remove' : 'lock'} 
-										tooltip={allowedDelete ? 'Delete type' : 'Service type'} 
-										onClick={(e: any) => { this.onRemove(e, item); }} 
-									/>
-								</div>
-
-								<div className="line" />
-							</div>
-						</div>
-					);
-				};
-				break;
-
-			case Tab.Template:
-				Item = (item: any) => {
-					const { name, description, coverType, coverId, coverX, coverY, coverScale } = item;
-					const author = detailStore.get(Constant.subId.store, item.creator, []);
-					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
-
-					return (
-						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<div className="img">
-								{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
-							</div>
-							<div className="info">
-								<div className="name">{name}</div>
-								<div className="descr">{description}</div>
-								<Author {...author} />
-							</div>
-						</div>
-					);
-				};
-				break;
-
-			case Tab.Relation:
-				Item = (item: any) => {
-					const { name, description } = item;
-					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
-					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
+						case View.Marketplace:
+							if (sources.includes(item.id)) {
+								icons.push({ className: 'check', tooltip: textInstalled });
+							} else {
+								icons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
+							};
+							break;
+					};
 					
 					return (
-						<div className={cn.join(' ')} onClick={(e: any) => { this.onClick(e, item); }}>
-							<IconObject size={48} iconSize={28} object={item} />
-							<div className="info">
-								<div className="txt">
-									<div className="name">{name}</div>
-									<div className="descr">{description}</div>
-								</div>
+						<div className={cn.join(' ')}>
+							<div className="flex" onClick={(e: any) => { this.onClick(e, item); }}>
+								<IconObject iconSize={20} object={item} />
+								<div className="name">{item.name}</div>
+							</div>
 
-								<div className="buttons">
-									<Icon 
-										className={allowedDelete ? 'remove' : 'lock'} 
-										tooltip={allowedDelete ? 'Delete relation' : 'Service relation'} 
-										onClick={(e: any) => { this.onRemove(e, item); }} 
-									/>
-								</div>
-
-								<div className="line" />
+							<div className="buttons">
+								{buttons.map((button: any, i: number) => (
+									<Button key={i} {...button} />
+								))}
+								{icons.map((button: any, i: number) => (
+									<Icon key={i} {...button} />
+								))}
 							</div>
 						</div>
 					);
@@ -233,8 +176,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		const rowRenderer = (param: any) => {
-			let item = items[param.index];
-			let cn = [ 'row' ];
+			const item = items[param.index];
+			const cn = [ 'row' ];
+			const style = { ...param.style, gridTemplateColumns: `repeat(${limit}, minmax(0, 1fr))` };
 
 			if (item.className) {
 				cn.push(item.className);
@@ -247,15 +191,17 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
-					<div className={cn.join(' ')} style={param.style}>
+					<div className={cn.join(' ')} style={style}>
 						{item.children.map((item: any, i: number) => {
 							if (item.id == 'mid') {
 								return <Mid key={i} {...item} />;
 							};
 							if (item.id == 'tabs') {
 								return <TabList key={i} {...item} />;
+							};
+							if (item.id == 'empty') {
+								return <EmptySearch key={i} text={textEmpty} />;
 							};
 							return <Item key={i} {...item} />;
 						})}
@@ -265,7 +211,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		return (
-			<div className={[ 'wrapper', this.tab, this.view ].join(' ')}>
+			<div 
+				ref={node => this.node = node}
+				className={[ 'wrapper', this.tab, this.view ].join(' ')}
+			>
 				<Header component="mainStore" {...this.props} tabs={Tabs} tab={this.tab} onTab={this.onTab} />
 
 				<div className="body">
@@ -273,7 +222,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 						<InfiniteLoader
 							rowCount={items.length}
 							loadMoreRows={() => {}}
-							isRowLoaded={({ index }) => true}
+							isRowLoaded={() => true}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">
@@ -284,7 +233,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={this.getRowHeight}
+											rowHeight={({ index }) => { return this.getRowHeight(items[index]); }}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
@@ -320,7 +269,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		const { isPopup } = this.props;
 
 		this.resize();
-		this.refList.recomputeRowHeights();
+		if (this.refList) {
+			this.refList.recomputeRowHeights();
+		};
 
 		Onboarding.start(Util.toCamelCase('store-' + this.tab), isPopup);
 	};
@@ -331,43 +282,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		menuStore.closeAll(Constant.menuIds.store);
 	};
 
-	getRowHeight (param: any) {
-		const { index } = param;
-
+	getRowHeight (item: any) {
 		let h = 0;
-
-		switch (index) {
-			// Mid
-			case 0:
-				switch (this.tab) {
-					case Tab.Type: h = 264; break;
-					case Tab.Template: h = 280; break;
-					case Tab.Relation: h = 264; break;
-				};
-				break;
-
-			// Tabs
-			case 1:
-				h = 70;
-				break;
-
-			default:
-				switch (this.tab) {
-					case Tab.Type: h = 96; break;
-					case Tab.Template: h = 280; break;
-					case Tab.Relation: h = 64; break;
-				};
-				break;
+		switch (item.id) {
+			case 'mid':		 h = 308; break;
+			case 'tabs':	 h = 52; break;
+			case 'empty':	 h = 190; break;
+			default:		 h = 64; break;
 		};
 		return h;
-	};
-
-	getRowLimit () {
-		let l = 0;
-		if (this.tab == Tab.Type) l = 2;
-		if (this.tab == Tab.Template) l = 3;
-		if (this.tab == Tab.Relation) l = 3;
-		return l;
 	};
 
 	onTab (id: Tab) {
@@ -398,7 +321,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		});
 	};
 
-	onCreateTemplate () {
+	onFilterClick () {
+		const node = $(this.node);
+		const filter = node.find('#store-filter');
+		const input = filter.find('#input');
+
+		input.show();
+		this.refFilter.focus();
 	};
 
 	onFilterChange (v: string) {
@@ -410,11 +339,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	};
 
 	onFilterFocus (e: any) {
+		const node = $(this.node);
+		const filter = node.find('#store-filter');
+
 		const menuParam: any = {
-			element: '#store-filter',
+			element: filter,
 			commonFilter: true,
 			horizontal: I.MenuDirection.Center,
-			width: 386,
+			width: filter.outerWidth(),
 			offsetY: 4,
 			data: {
 				filter: this.refFilter.getValue(),
@@ -444,6 +376,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		menuStore.open(this.getMenuId(), menuParam);
 	};
 
+	onFilterBlur () {
+		const node = $(this.node);
+		const filter = node.find('#store-filter');
+		const input = filter.find('#input');
+
+		input.css({ display: '' });
+	};
+
 	getMenuId () {
 		let menuId = '';
 		switch (this.tab) {
@@ -467,27 +407,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			{ type: I.SortType.Desc, relationKey: 'createdDate' },
 		];
 
-		let sources: any[] = [];
-		let keys: string[] = Constant.defaultRelationKeys.concat([ 'creator' ]);
+		let keys: string[] = Constant.defaultRelationKeys;
 
 		switch (this.view) {
 			case View.Marketplace:
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
-
-				switch (this.tab) {
-					case Tab.Type:
-						sources = dbStore.getTypes();
-						break;
-
-					case Tab.Relation:
-						sources = dbStore.getRelations();
-						break;
-				};
-
-				sources = sources.filter(it => it.sourceObject).map(it => it.sourceObject);
-				if (sources.length) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources });
-				};
 				break;
 
 			case View.Library:
@@ -534,7 +458,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case View.Marketplace:
 				switch (this.tab) {
 					case Tab.Type:		 type = Constant.storeTypeId.type; break;
-					case Tab.Template:	 type = Constant.storeTypeId.template; break;
 					case Tab.Relation:	 type = Constant.storeTypeId.relation; break;
 				};
 				break;
@@ -542,7 +465,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 			case View.Library:
 				switch (this.tab) {
 					case Tab.Type:		 type = Constant.typeId.type; break;
-					case Tab.Template:	 type = Constant.typeId.template; break;
 					case Tab.Relation:	 type = Constant.typeId.relation; break;
 				};
 				break;
@@ -552,8 +474,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 
 	getItems () {
 		const { profile } = blockStore;
-		const limit = this.getRowLimit();
+		const { loading } = this.state;
 		const records = dbStore.getRecords(Constant.subId.store, '').map(id => detailStore.get(Constant.subId.store, id));
+		const limit = this.getLimit();
 
 		records.sort((c1: any, c2: any) => {
 			const cr1 = c1.creator;
@@ -565,11 +488,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		});
 
 		let ret: any[] = [
-			{ className: 'block', children: [ { id: 'mid' } ] },
-			{ className: 'block', children: [ { id: 'tabs' } ] }
+			{ id: 'mid', className: 'block', children: [ { id: 'mid' } ] },
+			{ id: 'tabs', className: 'block', children: [ { id: 'tabs' } ] }
 		];
 		let n = 0;
 		let row = { children: [] };
+
+		if (!loading && !records.length) {
+			ret.push({ id: 'empty', className: 'block', children: [ { id: 'empty' } ] },);
+		};
 
 		for (let item of records) {
 			row.children.push(item);
@@ -603,8 +530,31 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 				break;
 		};
 
-		views.push({ id: View.Marketplace, name: 'Marketplace' });
+		views.push({ id: View.Marketplace, name: 'Anytype library' });
 		return views;
+	};
+
+	getSources (): string[] {
+		let sources: any[] = []
+
+		switch (this.tab) {
+			case Tab.Type:
+				sources = dbStore.getTypes();
+				break;
+
+			case Tab.Relation:
+				sources = dbStore.getRelations();
+				break;
+		};
+
+		return sources.map(it => it.sourceObject).filter(it => it);
+	};
+
+	onInstall (e: any, item: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		Action.install(item);
 	};
 
 	onRemove (e: any, item: any) {
@@ -629,15 +579,24 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 	};
 
+	getLimit () {
+		const ww = $(window).width();
+		const size = Constant.size.store;
+		const maxWidth = ww - size.border * 2;
+
+		return Math.floor(maxWidth / (size.width + size.margin));
+	};
+
 	resize () {
 		const win = $(window);
 		const container = Util.getPageContainer(this.props.isPopup);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = Util.sizeHeader();
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
+		const limit = this.getLimit();
 		
 		let wh = isPopup ? container.height() : win.height();
 		if (platform == I.Platform.Windows) {
@@ -652,6 +611,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		} else {
 			body.css({ height: '' });
 			content.css({ minHeight: '', height: '' });
+		};
+
+		if (limit != this.limit) {
+			this.limit = limit;
+
+			raf.cancel(this.frame);
+			this.frame = raf(() => { this.forceUpdate(); });
 		};
 	};
 

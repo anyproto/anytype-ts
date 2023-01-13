@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { I, C, analytics, Util, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
@@ -22,8 +21,9 @@ interface Props extends I.Cell {
 	maxWidth?: number;
 };
 
-class Cell extends React.Component<Props, object> {
+class Cell extends React.Component<Props> {
 
+	node: any = null;
 	public static defaultProps = {
 		index: 0,
 		canOpen: true,
@@ -32,9 +32,9 @@ class Cell extends React.Component<Props, object> {
 	};
 
 	ref: any = null;
-	timeout: number = 0;
+	timeout = 0;
 	
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
@@ -105,6 +105,7 @@ class Cell extends React.Component<Props, object> {
 
 		return (
 			<div 
+				ref={node => this.node = node} 
 				id={elementId} 
 				className={cn.join(' ')} 
 				onClick={onClick} 
@@ -136,7 +137,7 @@ class Cell extends React.Component<Props, object> {
 	checkIcon () {
 		const relation = this.getRelation();
 		if (relation && (relation.format == I.RelationType.ShortText)) {
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const icon = node.find('.iconObject');
 
 			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');

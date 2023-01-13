@@ -7,8 +7,6 @@ import { I, analytics, keyboard, DataUtil, Action, Util } from 'Lib';
 import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 interface State {
 	loading: boolean;
 };
@@ -17,23 +15,23 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
-const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<Props, State> {
+const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Component<I.Menu, State> {
 
 	state = {
 		loading: false,
 	};
 
-	_isMounted: boolean = false;
-	filter: string = '';
+	_isMounted = false;
+	filter = '';
 	cache: any = null;
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
-	n: number = -1;
-	offset: number = 0;
-	timeoutFilter: number = 0;
+	n = -1;
+	offset = 0;
+	timeoutFilter = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
@@ -99,7 +97,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { Util } from 'Lib';
 
 interface Props {
@@ -8,16 +7,17 @@ interface Props {
 	onClick?(e: any, id: string): void;
 };
 
-class DragBox extends React.Component<Props, object> {
+class DragBox extends React.Component<Props> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
+	node: any = null;
 	cache: any = {};
-	ox: number = 0;
-	oy: number = 0;
-	oldIndex: number = -1;
-	newIndex: number = -1;
+	ox = 0;
+	oy = 0;
+	oldIndex = -1;
+	newIndex = -1;
 	
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onDragStart = this.onDragStart.bind(this);
@@ -33,7 +33,10 @@ class DragBox extends React.Component<Props, object> {
 		});
 
 		return (
-			<span className="dragbox">
+			<span 
+				ref={node => this.node = node}
+				className="dragbox"
+			>
 				{children}
 			</span>
 		);
@@ -67,7 +70,7 @@ class DragBox extends React.Component<Props, object> {
 		};
 
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const items = node.find('.isDraggable');
 		const element = $(e.currentTarget);
 		const clone = element.clone();
@@ -108,7 +111,7 @@ class DragBox extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const items = node.find('.isDraggable');
 		const clone = node.find('.isDraggable.isClone');
 		const width = clone.outerWidth();
@@ -140,7 +143,7 @@ class DragBox extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const { onDragEnd } = this.props;
 
 		node.find('.isDraggable.isClone').remove();

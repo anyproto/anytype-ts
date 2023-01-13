@@ -5,19 +5,17 @@ import { IconObject } from 'Component';
 import { I, DataUtil, ObjectUtil, translate, Relation } from 'Lib';
 import { detailStore } from 'Store';
 
-interface Props extends I.Cell {};
-
 interface State { 
 	isEditing: boolean; 
 };
 
-const CellFile = observer(class CellFile extends React.Component<Props, State> {
+const CellFile = observer(class CellFile extends React.Component<I.Cell, State> {
 
 	state = {
 		isEditing: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.Cell) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);

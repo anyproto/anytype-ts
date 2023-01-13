@@ -3,7 +3,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentLink implements I.ContentLink {
 	
-	targetBlockId: string = '';
+	targetBlockId = '';
 	iconSize: I.LinkIconSize = I.LinkIconSize.None;
 	cardStyle: I.LinkCardStyle = I.LinkCardStyle.Text;
 	description: I.LinkDescription = I.LinkDescription.None;

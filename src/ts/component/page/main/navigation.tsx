@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -8,11 +7,6 @@ import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDesc
 import { I, C, DataUtil, ObjectUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
-
-interface Props extends I.PageComponent {
-	rootId: string;
-	matchPopup?: any;
-};
 
 interface State {
 	loading: boolean;
@@ -30,9 +24,10 @@ enum Panel {
 	Right = 3,
 };
 
-const PageMainNavigation = observer(class PageMainNavigation extends React.Component<Props, State> {
+const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
+	node: any = null;
 	state = {
 		loading: false,
 		info: null,
@@ -40,16 +35,16 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		pagesOut: [] as I.PageInfo[],
 		n: 0,
 	};
-	id: string = '';
-	timeout: number = 0;
+	id = '';
+	timeout = 0;
 	panel: Panel = Panel.Left;
 	cacheIn: any = {};
 	cacheOut: any = {};
-	focus: boolean = false;
-	select: boolean = false;
+	focus = false;
+	select = false;
 	refHeader: any = null;
 	
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super (props);
 
 		this.onConfirm = this.onConfirm.bind(this);
@@ -97,7 +92,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					cache={cache}
 					columnIndex={0}
 					rowIndex={index}
-					hasFixedWidth={() => {}}
 				>
 					<div className="row" style={style}>
 						<Item {...list[index]} index={index} panel={panel} />
@@ -155,7 +149,10 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		return (
-			<div className="wrapper">
+			<div 
+				ref={node => this.node = node} 
+				className="wrapper"
+			>
 				<Header component="mainNavigation" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				{loading ? <Loader id="loader" /> : ''}
@@ -169,7 +166,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 								) : (
 									<InfiniteLoader
 										rowCount={pagesIn.length}
-										loadMoreRows={() => {}}
 										isRowLoaded={({ index }) => !!pagesIn[index]}
 									>
 										{({ onRowsRendered, registerChild }) => (
@@ -211,7 +207,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 						) : (
 							<InfiniteLoader
 								rowCount={pagesOut.length}
-								loadMoreRows={() => {}}
 								isRowLoaded={({ index }) => !!pagesOut[index]}
 							>
 								{({ onRowsRendered, registerChild }) => (
@@ -321,7 +316,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const obj = Util.getPageContainer(this.props.isPopup);
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
 
@@ -440,12 +435,12 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		this.unsetActive();
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find(`#panel-${this.panel} #item-${item.id}`).addClass('active');
 	};
 
 	unsetActive () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('.active').removeClass('active');
 	};
 

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
@@ -9,23 +8,22 @@ import { I, Relation, ObjectUtil, translate, Util, keyboard, analytics } from 'L
 import { menuStore, detailStore } from 'Store';
 import ItemObject from './item/object';
 
-interface Props extends I.Cell {};
-
 interface State { 
 	isEditing: boolean; 
 };
 
 const MAX_LENGTH = 320;
 
-const CellObject = observer(class CellObject extends React.Component<Props, State> {
+const CellObject = observer(class CellObject extends React.Component<I.Cell, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
+	node: any = null;
 	state = {
 		isEditing: false,
 	};
-	timeoutFilter: number = 0;
+	timeoutFilter = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Cell) {
 		super(props);
 	
 		this.onClick = this.onClick.bind(this);
@@ -41,7 +39,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 
 	render () {
 		const { isEditing } = this.state;
-		const { rootId, subId, getRecord, index, relation, iconSize, elementMapper, arrayLimit } = this.props;
+		const { getRecord, index, relation, iconSize, elementMapper, arrayLimit } = this.props;
 		const record = getRecord(index);
 		const cn = [ 'wrap' ];
 
@@ -128,7 +126,10 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 		};
 
 		return (
-			<div className={cn.join(' ')}>
+			<div
+				ref={node => this.node = node}
+				className={cn.join(' ')}
+			>
 				{content}
 			</div>
 		);
@@ -186,7 +187,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = this.getValue();
 		const list = node.find('#list');
 		const placeholder = node.find('#placeholder');
@@ -227,7 +228,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const list = node.find('#list');
 		const items = list.find('.itemWrap');
 		const entry = node.find('#entry');
@@ -269,7 +270,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const entry = node.find('#entry');
 		
 		if (entry.length) {
@@ -287,7 +288,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const entry = node.find('#entry');
 
 		if (entry.length && (entry.text().length >= MAX_LENGTH)) {
@@ -300,7 +301,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		keyboard.shortcut('enter', e, (pressed: string) => {
 			e.preventDefault();
@@ -397,7 +398,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#entry').text(' ');
 
 		menuStore.updateData('dataviewObjectList', { filter: '' });
@@ -409,7 +410,7 @@ const CellObject = observer(class CellObject extends React.Component<Props, Stat
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#entry').blur();
 	};
 

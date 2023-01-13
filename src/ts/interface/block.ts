@@ -79,7 +79,6 @@ export interface BlockComponent {
 	onBlur?(e: any): void;
 	onCopy?(e: any, cut: boolean): void;
 	onUpdate?(): void;
-	getWrapper?(): any;
 	getWrapperWidth?(): number;
 	blockRemove?(focused?: I.Block): void;
 };

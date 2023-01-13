@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Cell, Cover, Icon } from 'Component';
@@ -12,9 +11,10 @@ interface Props extends I.ViewComponent {
 	style?: any;
 };
 
-const Card = observer(class Card extends React.Component<Props, object> {
+const Card = observer(class Card extends React.Component<Props> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
+	node: any = null;
 
 	render () {
 		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, isInline } = this.props;
@@ -112,6 +112,7 @@ const Card = observer(class Card extends React.Component<Props, object> {
 
 		return (
 			<div 
+				ref={node => this.node = node} 
 				className={cn.join(' ')} 
 				style={style} 
 				onClick={(e: any) => { this.onClick(e); }}
@@ -140,7 +141,7 @@ const Card = observer(class Card extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const last = node.find('.cellContent:not(.isEmpty)').last();
 
 		node.find('.cellContent').removeClass('last');

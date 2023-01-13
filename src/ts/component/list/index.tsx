@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -20,9 +19,10 @@ interface Props {
 	helperContainer?(): any;
 };
 
-const ListIndex = observer(class ListIndex extends React.Component<Props, object> {
+const ListIndex = observer(class ListIndex extends React.Component<Props> {
 	
-	timeout: number = 0;
+	node: any = null;
+	timeout = 0;
 
 	render () {
 		const { onClick, onSelect, onMore, helperContainer, getList, onSortStart, onSortEnd, canDrag } = this.props;
@@ -105,7 +105,10 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, object
 		});
 
 		return (
-			<div className="list">
+			<div 
+				ref={node => this.node = node}
+				className="list"
+			>
 				<List 
 					axis="xy" 
 					transitionDuration={150}
@@ -132,7 +135,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, object
 	};
 	
 	onMouseEnter (e: any, item: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const el = node.find('#item-' + item.id);
 
 		window.clearTimeout(this.timeout);
@@ -141,7 +144,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props, object
 	};
 
 	onMouseLeave (e: any, item: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => {

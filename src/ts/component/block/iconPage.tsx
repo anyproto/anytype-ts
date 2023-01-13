@@ -4,11 +4,9 @@ import { I, ObjectUtil } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.BlockComponent {};
+const BlockIconPage = observer(class BlockIconPage extends React.Component<I.BlockComponent> {
 
-const BlockIconPage = observer(class BlockIconPage extends React.Component<Props, object> {
-
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onSelect = this.onSelect.bind(this);

@@ -124,11 +124,11 @@ const Mapper = {
 			};
 		},
 
-		BlockPage: (obj: any) => {
+		BlockPage: () => {
 			return {};
 		},
 
-		BlockFeatured: (obj: any) => {
+		BlockFeatured: () => {
 			return {};
 		},
 
@@ -194,6 +194,7 @@ const Mapper = {
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
 				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
+				targetObjectId: obj.getTargetobjectid() || ''
 			};
 		},
 
@@ -209,15 +210,15 @@ const Mapper = {
 			};
 		},
 
-		BlockTableOfContents: (obj: any) => {
+		BlockTableOfContents: () => {
 			return {};
 		},
 
-		BlockTable: (obj: any) => {
+		BlockTable: () => {
 			return {};
 		},
 	
-		BlockTableColumn: (obj: any) => {
+		BlockTableColumn: () => {
 			return {};
 		},
 
@@ -404,7 +405,7 @@ const Mapper = {
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
-				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions())
 			};
 		},
 
@@ -583,13 +584,14 @@ const Mapper = {
 
 		BlockDataview: (obj: any) => {
 			const content = new Model.Block.Content.Dataview();
-	
+
+			content.setTargetobjectid(obj.targetObjectId);
 			content.setViewsList(obj.views.map(Mapper.To.View));
 	
 			return content;
 		},
 
-		BlockTable: (obj: any) => {
+		BlockTable: () => {
 			const content = new Model.Block.Content.Table();
 
 			return content;
@@ -603,13 +605,13 @@ const Mapper = {
 			return content;
 		},
 
-		BlockTableColumn: (obj: any) => {
+		BlockTableColumn: () => {
 			const content = new Model.Block.Content.TableColumn();
 
 			return content;
 		},
 
-		BlockTableOfContents: (obj: any) => {
+		BlockTableOfContents: () => {
 			const content = new Model.Block.Content.TableOfContents();
 	
 			return content;

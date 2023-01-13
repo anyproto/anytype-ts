@@ -5,14 +5,12 @@ import { I, C, DataUtil, MenuUtil, keyboard, Relation } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import { dbStore } from 'Store';
 
-interface Props extends I.Menu {};
-
-const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<Props, object> {
+const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Menu> {
 	
 	color: string = null;
-	isHidden: boolean = false;
-	timeout: number = 0;
-	n: number = -1;
+	isHidden = false;
+	timeout = 0;
+	n = -1;
 
 	render () {
 		const sections = this.getSections();

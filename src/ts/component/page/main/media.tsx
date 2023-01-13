@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
@@ -7,29 +6,25 @@ import { I, M, C, Util, crumbs, Action, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
-interface Props extends I.PageComponent {
-	rootId: string;
-};
-
 interface State {
 	isDeleted: boolean;
 };
 
-
 const MAX_HEIGHT = 396;
 
-const PageMainMedia = observer(class PageMainMedia extends React.Component<Props, State> {
+const PageMainMedia = observer(class PageMainMedia extends React.Component<I.PageComponent, State> {
 
-	_isMounted: boolean = false;
-	id: string = '';
+	_isMounted = false;
+	node: any = null;
+	id = '';
 	refHeader: any = null;
-	loading: boolean = false;
+	loading = false;
 
 	state = {
 		isDeleted: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);
@@ -94,7 +89,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 		};
 
 		return (
-			<div>
+			<div ref={node => this.node = node}>
 				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div id="blocks" className={cn.join(' ')}>
@@ -203,7 +198,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 	};
 
 	rebind () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const img = node.find('img.media');
 		const wrap = node.find('.block.blockMedia .wrapContent');
 
@@ -261,7 +256,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<Props
 
 	resize () {
 		const { isPopup } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
 		const container = Util.getScrollContainer(isPopup);

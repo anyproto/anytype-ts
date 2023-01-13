@@ -10,26 +10,26 @@ class Keyboard {
 		page: { x: 0, y: 0 },
 		client: { x: 0, y: 0 },
 	};
-	timeoutPin: number = 0;
-	timeoutSidebarHide: number = 0;
-	timeoutSidebarAnim: number = 0;
+	timeoutPin = 0;
+	timeoutSidebarHide = 0;
+	timeoutSidebarAnim = 0;
 	pressed: string[] = [];
 	match: any = {};
 	matchPopup: any = {};
 	source: any = null;
 	selection: any = null;
 	
-	isDragging: boolean = false;
-	isResizing: boolean = false;
-	isFocused: boolean = false;
-	isPreviewDisabled: boolean = false;
-	isMouseDisabled: boolean = false;
-	isNavigationDisabled: boolean = false;
-	isPinChecked: boolean = false;
-	isBlurDisabled: boolean = false;
-	isCloseDisabled: boolean = false;
-	isContextCloseDisabled: boolean = false;
-	isContextOpenDisabled: boolean = false;
+	isDragging = false;
+	isResizing = false;
+	isFocused = false;
+	isPreviewDisabled = false;
+	isMouseDisabled = false;
+	isNavigationDisabled = false;
+	isPinChecked = false;
+	isBlurDisabled = false;
+	isCloseDisabled = false;
+	isContextCloseDisabled = false;
+	isContextOpenDisabled = false;
 	
 	init () {
 		this.unbind();
@@ -38,8 +38,7 @@ class Keyboard {
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
-		win.on('scroll.common', (e: any) => { this.onScroll(e); });
-
+		win.on('scroll.common', () => { this.onScroll(); });
 		win.off('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', (e: any) => {
@@ -63,7 +62,7 @@ class Keyboard {
 		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
 	};
 
-	onScroll (e: any) {
+	onScroll () {
 		Preview.tooltipHide(false);
 
 		$(window).trigger('resize.menuOnboarding');

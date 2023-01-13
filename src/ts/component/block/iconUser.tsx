@@ -3,23 +3,19 @@ import { IconObject, Loader } from 'Component';
 import { I, C, ObjectUtil } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
-
-interface Props extends I.BlockComponent {};
 
 interface State {
 	loading: boolean;
 };
 
-
-const BlockIconUser = observer(class BlockIconUser extends React.Component<Props, State> {
+const BlockIconUser = observer(class BlockIconUser extends React.Component<I.BlockComponent, State> {
 
 	state = {
 		loading: false
 	};
 
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);

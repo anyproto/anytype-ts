@@ -1,34 +1,38 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import { I, M, focus, keyboard, scrollOnMove, Util } from 'Lib';
 import { blockStore, menuStore, popupStore } from 'Store';
 
+interface Props {
+	children?: React.ReactNode;
+};
+
 const THRESHOLD = 10;
 
-const SelectionProvider = observer(class SelectionProvider extends React.Component<object, object> {
+const SelectionProvider = observer(class SelectionProvider extends React.Component<Props> {
 
 	_isMounted = false;
-	x: number = 0;
-	y: number = 0;
-	dir: number = 0;
-	moved: boolean = false;
-	focused: string = '';
+	x = 0;
+	y = 0;
+	dir = 0;
+	moved = false;
+	focused = '';
 	range: any = null;
 	nodes: any[] = [];
-	top: number = 0;
+	top = 0;
 	containerOffset = null;
-	frame: number = 0;
+	frame = 0;
 
 	cache: Map<string, any> = new Map();
 	ids: Map<string, string[]> = new Map();
 	idsOnStart: Map<string, string[]> = new Map();
 
-	isSelecting: boolean = false;
-	isSelectionPrevented: boolean = false;
+	isSelecting = false;
+	isSelectionPrevented = false;
 	
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onMouseDown = this.onMouseDown.bind(this);

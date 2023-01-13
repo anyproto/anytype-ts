@@ -25,7 +25,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	worker: any = null;
 	images: any = {};
 	subject: any = null;
-	isDragging: boolean = false;
+	isDragging = false;
 	isPreview = false;
 	ids: string[] = [];
 

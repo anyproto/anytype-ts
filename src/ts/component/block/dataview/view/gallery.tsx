@@ -1,7 +1,7 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
-import $ from 'jquery';
 import { I, Relation, DataUtil } from 'Lib';
 import { dbStore, detailStore, blockStore } from 'Store';
 import { LoadMore } from 'Component';
@@ -9,18 +9,16 @@ import Empty from '../empty';
 import Card from './gallery/card';
 import Constant from 'json/constant.json';
 
-interface Props extends I.ViewComponent {};
-
-const ViewGallery = observer(class ViewGallery extends React.Component<Props, object> {
+const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewComponent> {
 
 	cache: any = {};
 	cellPositioner: any = null;
 	ref: any = null;
-	width: number = 0;
-	columnWidth: number = 0;
-	columnCount: number = 0;
+	width = 0;
+	columnWidth = 0;
+	columnCount = 0;
 
-	constructor(props: Props) {
+	constructor (props: I.ViewComponent) {
 		super(props);
 
 		this.cache = new CellMeasurerCache({

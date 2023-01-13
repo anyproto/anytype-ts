@@ -1,33 +1,29 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { InputWithFile, Loader, Error, Pager } from 'Component';
 import { I, C, translate, focus, Action, Util, ObjectUtil, FileUtil, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
-
 import Constant from 'json/constant.json';
 
 pdfjs.GlobalWorkerOptions.workerSrc = 'workers/pdf.min.js';
-
-interface Props extends I.BlockComponent {};
-
 
 interface State {
 	pages: number;
 	page: number;
 };
 
-const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
+const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponent, State> {
 	
 	state = {
 		pages: 0,
 		page: 1,
 	};
-	height: number = 0;
+	node: any = null;
+	height = 0;
 
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);
@@ -134,7 +130,14 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className={[ 'focusable', 'c' + id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div 
+				ref={node => this.node = node}
+				className={[ 'focusable', 'c' + id ].join(' ')} 
+				tabIndex={0} 
+				onKeyDown={this.onKeyDown} 
+				onKeyUp={this.onKeyUp} 
+				onFocus={this.onFocus}
+			>
 				{element}
 			</div>
 		);
@@ -193,7 +196,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<Props, State> {
 	};
 
 	onPageRender () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const wrap = node.find('.wrap');
 
 		this.height = wrap.outerHeight();

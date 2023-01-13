@@ -1,17 +1,24 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import raf from 'raf';
 
-class Frame extends React.Component<object, object> {
+interface Props {
+	children?: React.ReactNode;
+};
 
-	_isMounted: boolean = false;
+class Frame extends React.Component<Props> {
+
+	_isMounted = false;
+	node: any = null;
 
 	render () {
 		const { children } = this.props;
 
 		return (
-			<div className="frame">
+			<div
+				ref={node => this.node = node}
+				className="frame"
+			>
 				{children}
 			</div>
 		);
@@ -40,7 +47,7 @@ class Frame extends React.Component<object, object> {
 				return;
 			};
 			
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			node.css({ 
 				marginTop: -node.outerHeight() / 2,
 				marginLeft: -node.outerWidth() / 2

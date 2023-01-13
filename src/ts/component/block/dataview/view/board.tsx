@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { set } from 'mobx';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -13,30 +12,27 @@ import Empty from '../empty';
 import Column from './board/column';
 import Constant from 'json/constant.json';
 
-interface Props extends I.ViewComponent {
-	dataset?: any;
-};
-
 interface State {
 	loading: boolean;
 };
 
-const ViewBoard = observer(class ViewBoard extends React.Component<Props, State> {
+const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewComponent, State> {
 
+	node: any = null;
 	cache: any = {};
-	frame: number = 0;
-	groupRelationKey: string = '';
-	newIndex: number = -1;
-	newGroupId: string = '';
+	frame = 0;
+	groupRelationKey = '';
+	newIndex = -1;
+	newGroupId = '';
 	state = {
 		loading: false,
 	};
 	columnRefs: any = {};
-	isDraggingColumn: boolean = false;
-	isDraggingCard: boolean = false;
-	ox: number = 0;
+	isDraggingColumn = false;
+	isDraggingCard = false;
+	ox = 0;
 
-	constructor (props: any) {
+	constructor (props: I.ViewComponent) {
 		super(props);
 		
 		this.onView = this.onView.bind(this);
@@ -66,7 +62,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		};
 
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node} 
+				className="wrap"
+			>
 				<div id="scroll" className="scroll">
 					<div className="viewItem viewBoard">
 						{loading ? <Loader /> : (
@@ -120,17 +119,19 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	rebind () {
 		this.unbind();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#scroll').on('scroll', (e: any) => { this.onScrollView(); });
 	};
 
 	unbind () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#scroll').off('scroll');
 	};
 
 	loadGroupList () {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, isInline } = this.props;
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 		const view = getView();
 		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
 
@@ -156,7 +157,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		this.setState({ loading: true });
 
-		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, block.content.sources, (message: any) => {
+		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, object.setOf || [], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -198,7 +199,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const element = node.find(`#card-${groupId}-add`);
 		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
@@ -275,7 +276,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	initCacheColumn () {
 		const groups = this.getGroups(true);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this.cache = {};
 		groups.forEach((group: any, i: number) => {
@@ -304,7 +305,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	initCacheCard () {
 		const groups = this.getGroups(false);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this.cache = {};
 
@@ -343,7 +344,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		const { dataset } = this.props;
 		const { selection, preventCommonDrop } = dataset || {};
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const viewItem = node.find('.viewItem');
 		const clone = target.clone();
 		
@@ -370,7 +371,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 		const { dataset } = this.props;
 		const { selection, preventCommonDrop } = dataset || {};
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		$('body').removeClass('grab');
 		$(window).off('dragend.board drag.board').trigger('mouseup.selection');
@@ -390,7 +391,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	onDragStartColumn (e: any, groupId: string) {
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this.onDragStartCommon(e, node.find(`#column-${groupId}`));
 		this.initCacheColumn();
@@ -401,7 +402,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	onDragMoveColumn (e: any, groupId: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const current = this.cache[groupId];
 		const groups = this.getGroups(false);
 
@@ -475,7 +476,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 	};
 
 	onDragMoveCard (e: any, record: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const current = this.cache[record.id];
 
 		if (!current) {
@@ -620,7 +621,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	onScrollView () {
 		const groups = this.getGroups(false);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		if (this.isDraggingColumn) {
 			groups.forEach((group: any, i: number) => {
@@ -686,7 +687,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<Props, State>
 
 	resize () {
 		const { isPopup, isInline } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const scroll = node.find('.scroll');
 		const viewItem = node.find('.viewItem');
 		const container = Util.getPageContainer(isPopup);

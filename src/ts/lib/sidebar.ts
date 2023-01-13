@@ -21,11 +21,11 @@ class Sidebar {
 
 	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: null };
 	obj: any = null;
-	fixed: boolean = false;
-	animating: boolean = false;
+	fixed = false;
+	animating = false;
 
-	timeoutHide: number = 0;
-	timeoutAnim: number = 0;
+	timeoutHide = 0;
+	timeoutAnim = 0;
 
 	init () {
 		this.obj = $('#sidebar');

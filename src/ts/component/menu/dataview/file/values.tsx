@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -9,15 +8,14 @@ import { I, C, Util, DataUtil, ObjectUtil, Relation, Renderer } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 const MENU_ID = 'dataviewFileList';
 
-const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<Props, object> {
+const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends React.Component<I.Menu> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
+	node: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onSortStart = this.onSortStart.bind(this);
@@ -93,7 +91,10 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		});
 
 		return (
-			<div className="items">
+			<div 
+				ref={node => this.node = node}
+				className="items"
+			>
 				<div className="section">
 					<MenuItemVertical id="add" icon="plus" name="Add" onClick={this.onAdd} />
 					<MenuItemVertical id="upload" icon="upload" name="Upload" onClick={this.onUpload} />
@@ -111,7 +112,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							onSortEnd={this.onSortEnd}
 							useDragHandle={true}
 							helperClass="isDragging"
-							helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
+							helperContainer={() => { return $(this.node).get(0); }}
 						/>
 					</div>
 				) : ''}

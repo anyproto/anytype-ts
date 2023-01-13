@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
@@ -7,13 +6,9 @@ import { Header, Graph, Icon, Loader } from 'Component';
 import { blockStore, detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {
-	rootId: string;
-	matchPopup?: any;
-};
+const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 
-const PageMainGraph = observer(class PageMainGraph extends React.Component<Props, object> {
-
+	node: any = null;
 	data: any = {
 		nodes: [],
 		edges: [],
@@ -22,10 +17,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	refHeader: any = null;
 	refGraph: any = null;
 	refPanel: any = null;
-	loading: boolean = false;
-	timeoutLoading: number = 0;
+	loading = false;
+	timeoutLoading = 0;
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onClickObject = this.onClickObject.bind(this);
@@ -38,7 +33,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		const rootId = this.getRootId();
 
 		return (
-			<div className="body">
+			<div 
+				ref={node => this.node = node} 
+				className="body"
+			>
 				<Header component="mainGraph" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 				<Loader id="loader" />
 
@@ -175,7 +173,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	};
 
 	setLoading (v: boolean) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const loader = node.find('#loader');
 
 		this.loading = v;
@@ -191,7 +189,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	resize () {
 		const win = $(window);
 		const obj = Util.getPageContainer(this.props.isPopup);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
 		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !obj.hasClass('full');

@@ -3,10 +3,10 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentFile implements I.ContentFile {
 	
-	hash: string = '';
-	name: string = '';
-	mime: string = '';
-	size: number = 0;
+	hash = '';
+	name = '';
+	mime = '';
+	size = 0;
 	type: I.FileType = I.FileType.None;
 	style: I.FileStyle = I.FileStyle.Auto;
 	state: I.FileState = I.FileState.Empty;

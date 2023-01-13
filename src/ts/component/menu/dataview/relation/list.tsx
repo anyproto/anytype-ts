@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -10,19 +9,18 @@ import { I, C, Relation, keyboard, Dataview } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuRelationList = observer(class MenuRelationList extends React.Component<Props, object> {
+const MenuRelationList = observer(class MenuRelationList extends React.Component<I.Menu> {
 	
-	n: number = 0;
-	top: number = 0;
+	node: any = null;
+	n = 0;
+	top = 0;
 	cache: any = {};
 	refList: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onAdd = this.onAdd.bind(this);
@@ -91,7 +89,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<Item key={item.id} {...item} index={param.index} style={param.style} />
 				</CellMeasurer>
@@ -102,8 +99,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			<div className="items">
 				<InfiniteLoader
 					rowCount={items.length}
-					loadMoreRows={() => {}}
-					isRowLoaded={() => { return true; }}
+					isRowLoaded={() => true}
 					threshold={LIMIT}
 				>
 					{({ onRowsRendered, registerChild }) => (
@@ -130,7 +126,10 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		));
 		
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<List 
 					axis="y" 
 					lockAxis="y"
@@ -141,7 +140,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+					helperContainer={() => { return $(this.node).find('.items').get(0); }}
 				/>
 				{!readonly && allowedView ? (
 					<div className="bottom">

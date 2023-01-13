@@ -249,6 +249,12 @@
 			"margin": 16,
 			"border": 72,
 			"titleY": 142
+		},
+
+		"store": {
+			"width": 200,
+			"margin": 32,
+			"border": 80
 		}
 	},
 

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
@@ -18,11 +17,12 @@ interface Props extends I.ViewComponent {
 
 const PADDING = 46;
 
-const ViewGrid = observer(class ViewGrid extends React.Component<Props, object> {
+const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 
-	ox: number = 0;
+	node: any = null;
+	ox = 0;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super (props);
 
 		this.cellPosition = this.cellPosition.bind(this);
@@ -80,7 +80,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, object> 
 			content = (
 				<InfiniteLoader
 					isRowLoaded={({ index }) => !!records[index]}
-					loadMoreRows={() => {}}
 					rowCount={total}
 					threshold={10}
 				>
@@ -126,7 +125,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, object> 
 		};
 
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<div id="scroll" className="scroll">
 					<div id="scrollWrap" className="scrollWrap">
 						<div className="viewItem viewGrid">
@@ -182,14 +184,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, object> 
 	};
 
 	rebind () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this.unbind();
 		node.find('#scroll').on('scroll', () => { this.onScroll(); });
 	};
 
 	unbind () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		node.find('#scroll').off('scroll');
 	};
@@ -209,7 +211,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, object> 
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const view = getView();
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
@@ -252,7 +254,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, object> 
 	resizeColumns (relationKey: string, width: number) {
 		const { getView } = this.props;
 		const view = getView();
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const relations = view.getVisibleRelations();
 		const size = Constant.size.dataview.cell;
 		const widths = this.getColumnWidths(relationKey, width);
@@ -297,7 +299,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, object> 
 		};
 
 		const { isPopup } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const content = cell.find('.cellContent');
 		const x = cell.position().left;
@@ -318,7 +320,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props, object> 
 		e.stopPropagation();
 
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const el = node.find(`#${Relation.cellId('head', relationKey, '')}`);
 		const offset = el.offset();
 

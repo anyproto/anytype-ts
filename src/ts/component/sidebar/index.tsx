@@ -1,6 +1,4 @@
-// Third Party
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { keyboard, sidebar, I, Preview } from 'Lib';
@@ -11,10 +9,12 @@ interface Props {
 	dataset?: any;
 };
 
-const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
-	private _isMounted: boolean = false;
-    ox: number = 0;
-	oy: number = 0;
+const Sidebar = observer(class Sidebar extends React.Component<Props> {
+	
+	private _isMounted = false;
+	node: any = null;
+    ox = 0;
+	oy = 0;
     refFooter: React.Ref<HTMLUnknownElement> = null;
 
     constructor (props: Props) {
@@ -26,11 +26,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 		this.onResizeMove = this.onResizeMove.bind(this)
 		this.onResizeEnd = this.onResizeEnd.bind(this)
 	};
+
     render() {
         const cn = [ 'sidebar' ];
 
         return (
             <div 
+				ref={node => this.node = node}
                 id="sidebar" 
                 className={cn.join(' ')} 
             >
@@ -39,8 +41,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
                 <Footer ref={(ref: any) => { this.refFooter = ref; }} />
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
 				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
-            </div>);
-    }
+            </div>
+		);
+    };
 
 	// Lifecycle Methods
 
@@ -50,7 +53,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 		sidebar.init();
 		this.rebind();
 	};
-
 
 	componentWillUnmount (): void {
 		this._isMounted = false;
@@ -63,7 +65,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		node.find('.item.hover').removeClass('hover');
 
@@ -71,7 +73,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 			node.find(`.item.c${id}`).addClass('hover');
 		};
 	};
-
 
 	rebind ():  void {
 		this.unbind();
@@ -92,7 +93,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 		const { selection } = dataset || {};
 
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const offset = node.offset();
 
 		this.ox = e.pageX - offset.left;
@@ -143,7 +144,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props, object> {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const { fixed } = sidebar.data;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const win = $(window);
 		const body = $('body');
 		const offset = node.offset();

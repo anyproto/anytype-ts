@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { observable } from 'mobx';
@@ -8,22 +7,22 @@ import $ from 'jquery';
 import arrayMove from 'array-move';
 import { Icon } from 'Component';
 import { I, C, Util, keyboard, Relation, analytics } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
-
-interface Props extends I.Menu {};
+import {menuStore, dbStore, blockStore, detailStore} from 'Store';
+import Constant from "json/constant.json";
 
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuViewList = observer(class MenuViewList extends React.Component<Props> {
+const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu> {
 	
-	_isMounted: boolean = false;
-	n: number = 0;
-	top: number = 0;
+	_isMounted = false;
+	node: any = null;
+	n = 0;
+	top = 0;
 	refList: any = null;
 	cache: any = {};
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
@@ -69,7 +68,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			if (item.isSection) {
 				content = <div className="sectionName" style={param.style}>{item.name}</div>;
 			} else {
-				content = <Item key={item.id} {...item} index={param.index} style={param.style} />;
+				content = <Item key={item.id} {...item} index={param.index - 1} style={param.style} />;
 			};
 
 			return (
@@ -79,7 +78,6 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -96,8 +94,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
+							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
 							{({ onRowsRendered, registerChild }) => (
@@ -126,7 +123,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 		});
 		
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<List 
 					axis="y" 
 					transitionDuration={150}
@@ -135,8 +135,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 					onSortStart={this.onSortStart}
 					onSortEnd={this.onSortEnd}
 					helperClass="isDragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+					helperContainer={() => { return $(this.node).find('.items').get(0); }}
 				/>
+
 				{allowed ? (
 					<div className="bottom">
 						<div className="line" />
@@ -215,8 +216,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 	onAdd () {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView, getData, getSources } = data;
 		const view = getView();
+		const sources = getSources();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
@@ -241,7 +243,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<Props> 
 			filters,
 		};
 
-		C.BlockDataviewViewCreate(rootId, blockId, newView, (message: any) => {
+		C.BlockDataviewViewCreate(rootId, blockId, newView, sources, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

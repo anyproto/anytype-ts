@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
@@ -10,25 +9,24 @@ import { menuStore, blockStore } from 'Store';
 import Row from './table/row';
 import Constant from 'json/constant.json';
 
-interface Props extends I.BlockComponent {};
-
 const PADDING = 46;
 const SNAP = 10;
 
-const BlockTable = observer(class BlockTable extends React.Component<Props, object> {
+const BlockTable = observer(class BlockTable extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
-	offsetX: number = 0;
+	_isMounted = false;
+	node: any = null;
+	offsetX = 0;
 	cache: any = {};
-	scrollX: number = 0;
-	frame: number = 0;
-	hoverId: string = '';
+	scrollX = 0;
+	frame = 0;
+	hoverId = '';
 	position: I.BlockPosition = I.BlockPosition.None;
 	frames: any[] = [];
-	rowId: string = '';
-	cellId: string = '';
+	rowId = '';
+	cellId = '';
 
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 
 		this.onSortStart = this.onSortStart.bind(this);
@@ -46,7 +44,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		this.onCellEnter = this.onCellEnter.bind(this);
 		this.onCellLeave = this.onCellLeave.bind(this);
 		this.onCellKeyDown = this.onCellKeyDown.bind(this);
-		this.onCellKeyUp = this.onCellKeyUp.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onDragStartRow = this.onDragStartRow.bind(this);
@@ -70,6 +67,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 
 		return (
 			<div 
+				ref={node => this.node = node} 
 				id="wrap"
 				tabIndex={0} 
 				className={cn.join(' ')}
@@ -101,7 +99,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 											onCellEnter={this.onCellEnter}
 											onCellLeave={this.onCellLeave}
 											onCellKeyDown={this.onCellKeyDown}
-											onCellKeyUp={this.onCellKeyUp}
 											onResizeStart={this.onResizeStart}
 											onDragStartRow={this.onDragStartRow}
 											onDragStartColumn={this.onDragStartColumn}
@@ -137,7 +134,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 	};
 
 	componentDidUpdate () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const wrap = node.find('#scrollWrap');
 
 		this.initSize();
@@ -159,7 +156,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 	rebind () {
 		const { block } = this.props;
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this.unbind();
 
@@ -258,7 +255,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 
 		const { rootId } = this.props;
 		const current: any = blockStore.getLeaf(rootId, cellId) || {};
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const subIds = [ 'select2', 'blockColor', 'blockBackground' ];
 		const options: any[] = this.getOptions(type, rowId, columnId, cellId);
 		
@@ -508,8 +505,8 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 
 		let position: I.BlockPosition = I.BlockPosition.None;
 		let next: any = null;
-		let idx: number = -1;
-		let nextIdx: number = -1;
+		let idx = -1;
+		let nextIdx = -1;
 
 		switch (item.id) {
 			case 'columnBefore':
@@ -589,7 +586,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 
 		this.onOptionsClose();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const table = node.find('#table');
 
 		switch (type) {
@@ -628,7 +625,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const table = node.find('#table');
 	
 		table.find('.isHighlightedColumn').removeClass('isHighlightedColumn isFirst isLast');
@@ -724,7 +721,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const plusC = node.find('#plus-c');
 		const plusV = node.find('#plus-v');
 		const plusH = node.find('#plus-h');
@@ -751,7 +748,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const plusC = node.find('#plus-c');
 		const plusV = node.find('#plus-v');
 		const plusH = node.find('#plus-h');
@@ -782,9 +779,6 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		};
 	};
 
-	onCellKeyUp (e: any, rowId: string, columnId: string, id: string, text: string, marks: I.Mark[], range: I.TextRange, props: any) {
-	};
-
 	setEditing (id: string) {
 		if (!this._isMounted) {
 			return;
@@ -792,7 +786,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 
 		this.cellId = id;
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('.cell.isEditing').removeClass('isEditing');
 
 		if (id) {
@@ -815,7 +809,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 
 		const win = $(window);
 		const body = $('body');
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const el = node.find(`.cell.column${id}`);
 
 		if (el.length) {
@@ -876,7 +870,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const rows = node.find('.row');
 
 		rows.css({ gridTemplateColumns: widths.map(it => it + 'px').join(' ') });
@@ -887,7 +881,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 
 		const { rows, columns } = this.getData();
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const table = $('<div />').addClass('table isClone');
 		const widths = this.getColumnWidths();
 		const idx = columns.findIndex(it => it.id == id);
@@ -962,7 +956,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 	onDragEndColumn (e: any, id: string) {
 		e.preventDefault();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const win = $(window);
 
 		if (this.frame) {
@@ -985,7 +979,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		e.stopPropagation();
 
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const layer = $('<div />');
 		const el = node.find(`#row-${id}`);
 		const clone = el.clone();
@@ -1056,7 +1050,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 	onDragEndRow (e: any, id: string) {
 		e.preventDefault();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const win = $(window);
 
 		if (this.frame) {
@@ -1080,7 +1074,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const wrap = node.find('#scrollWrap');
 
 		this.scrollX = wrap.scrollLeft();
@@ -1094,7 +1088,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		this.cache = {};
 
 		const { rows, columns } = this.getData();
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		switch (type) {
 			case I.BlockType.TableColumn: {
@@ -1196,7 +1190,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		};
 
 		const { columns } = this.getData();
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const rows = node.find('.row');
 		const sizes = [];
 
@@ -1386,7 +1380,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 	};
 
 	frameAdd (type: I.BlockType, rowId: string, columnId: string, cellId: string, position: I.BlockPosition) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const table = node.find('#table');
 		const frameContainer = node.find('#selectionFrameContainer');
 		const containerOffset = frameContainer.offset();
@@ -1480,7 +1474,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 	};
 
 	frameRemove (positions: I.BlockPosition[]) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const frameContainer = node.find('#selectionFrameContainer');
 
 		this.frames = this.frames.filter(it => !positions.includes(it.position));
@@ -1492,7 +1486,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 	};
 
 	frameRender (item: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const frameContainer = node.find('#selectionFrameContainer');
 		const c = this.getClassByPosition(item.position);
 
@@ -1521,7 +1515,7 @@ const BlockTable = observer(class BlockTable extends React.Component<Props, obje
 		const { isPopup, rootId, block, getWrapperWidth } = this.props;
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const wrap = node.find('#scrollWrap');
 		const row = node.find('.row').first();
 

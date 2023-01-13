@@ -1,20 +1,19 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Label } from 'Component';
 import { Util, C, Storage } from 'Lib';
 import { commonStore } from 'Store';
 
-
-const Progress = observer(class Progress extends React.Component<object, object> {
+const Progress = observer(class Progress extends React.Component {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
+	node: any = null;
 	obj: any = null;
-	dx: number = 0;
-	dy: number = 0;
-	width: number = 0;
-	height: number = 0;
+	dx = 0;
+	dy = 0;
+	width = 0;
+	height = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -35,7 +34,10 @@ const Progress = observer(class Progress extends React.Component<object, object>
 		const cn = [ 'progress', (isUnlocked ? 'isUnlocked' : '') ];
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div 
+				ref={node => this.node = node} 
+				className={cn.join(' ')}
+			>
 				<div id="inner" className="inner" onMouseDown={this.onDragStart}>
 					<Label text={text} />
 					{canCancel ? <Icon className="close" onClick={this.onCancel} /> : ''}
@@ -59,7 +61,7 @@ const Progress = observer(class Progress extends React.Component<object, object>
 
 		const { current, total } = progress;
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		node.removeClass('hide');
 		this.resize();
@@ -90,7 +92,7 @@ const Progress = observer(class Progress extends React.Component<object, object>
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const coords = Storage.get('progress');
 
 		this.obj = node.find('#inner');

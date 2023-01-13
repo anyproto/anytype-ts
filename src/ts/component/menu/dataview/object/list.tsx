@@ -7,8 +7,6 @@ import { I, Util, keyboard, DataUtil, ObjectUtil, Relation, translate } from 'Li
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 interface State {
 	loading: boolean;
 };
@@ -20,23 +18,23 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 
-const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<Props, State> {
+const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends React.Component<I.Menu, State> {
 
 	state = {
 		loading: false,
 	};
 
-	_isMounted: boolean = false;	
-	filter: string = '';
+	_isMounted = false;	
+	filter = '';
 	cache: any = {};
-	offset: number = 0;
+	offset = 0;
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
-	top: number = 0;
-	n: number = -1;
+	top = 0;
+	n = -1;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.loadMoreRows = this.loadMoreRows.bind(this);
@@ -94,7 +92,6 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

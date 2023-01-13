@@ -72,6 +72,7 @@ import 'scss/page/main/media.scss';
 import 'scss/page/main/store.scss';
 import 'scss/page/main/graph.scss';
 import 'scss/page/main/navigation.scss';
+import 'scss/page/main/block.scss';
 
 import 'scss/block/common.scss';
 import 'scss/block/text.scss';
@@ -237,11 +238,7 @@ Sentry.init({
 });
 */
 
-class RoutePage extends React.Component<RouteComponentProps, object> { 
-
-	constructor (props: any) {
-		super(props);
-	};
+class RoutePage extends React.Component<RouteComponentProps> { 
 
 	render () {
 		return (

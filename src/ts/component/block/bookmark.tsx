@@ -5,15 +5,12 @@ import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } fro
 import { I, C, focus, Util, translate, analytics, Renderer } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 
-interface Props extends I.BlockComponent {};
+const BlockBookmark = observer(class BlockBookmark extends React.Component<I.BlockComponent> {
 
-
-const BlockBookmark = observer(class BlockBookmark extends React.Component<Props, object> {
-
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 		
 		this.onKeyDown = this.onKeyDown.bind(this);

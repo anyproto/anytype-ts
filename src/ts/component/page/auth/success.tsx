@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Component';
@@ -8,6 +7,7 @@ import { commonStore, authStore } from 'Store';
 
 const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I.PageComponent, object> {
 
+	node: any = null;
 	refPhrase: any = null;
 
 	constructor (props: I.PageComponent) {
@@ -23,7 +23,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 		const { cover } = commonStore;
 
 		return (
-			<div>
+			<div ref={node => this.node = node}>
 				<Cover {...cover} />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
@@ -64,7 +64,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	};
 
 	onFocus (e: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
 		this.refPhrase.setValue(authStore.phrase);
@@ -74,7 +74,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	};
 
 	onBlur (e: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
 		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));

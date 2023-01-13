@@ -1,13 +1,10 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { I, C, DataUtil, analytics, Util, translate, ObjectUtil } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
-
-interface Props extends I.Menu {};
 
 enum Tab {
 	Gallery	 = 0,
@@ -23,20 +20,21 @@ interface State {
 
 const LIMIT = 36;
 
-const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Props, State> {
+const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.Menu, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
+	node: any = null;
 	state = {
 		filter: '',
 		loading: false,
 	};
 	items: any[] = [];
-	filter: string = '';
+	filter = '';
 	refFilter: any = null;
-	timeout: number = 0;
+	timeout = 0;
 	tab: Tab = Tab.Gallery;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onUpload = this.onUpload.bind(this);
@@ -128,7 +126,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		};
 
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				<div className="head">
 					{tabs.map((item: any, i: number) => (
 						<div 
@@ -345,7 +346,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const zone = node.find('.dropzone');
 
 		zone.addClass('isDraggingOver');
@@ -356,7 +357,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const zone = node.find('.dropzone');
 
 		zone.removeClass('isDraggingOver');
@@ -372,7 +373,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<Pro
 		const { rootId } = data;
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const zone = node.find('.dropzone');
 		
 		zone.removeClass('isDraggingOver');

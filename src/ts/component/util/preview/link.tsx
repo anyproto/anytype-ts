@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Icon, Loader } from 'Component';
 import { C, Util } from 'Lib';
@@ -22,7 +21,8 @@ const ALLOWED_SCHEME = [ 'http', 'https' ];
 
 const PreviewLink = observer(class PreviewLink extends React.Component<Props, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
+	node: any = null;
 	state = {
 		loading: false,
 		title: '',
@@ -37,7 +37,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 		const { loading, title, description, faviconUrl, imageUrl } = this.state;
 		
 		return (
-			<div className="previewLink">
+			<div ref={node => this.node = node} className="previewLink">
 				{loading ? <Loader /> : (
 					<React.Fragment>
 						{imageUrl ? <div className="img" style={{ backgroundImage: `url("${imageUrl}")` }} /> : ''}
@@ -63,7 +63,7 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 	componentDidUpdate () {
 		const { position } = this.props;
 		const { imageUrl } = this.state;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		imageUrl ? node.addClass('withImage') : node.removeClass('withImage');
 

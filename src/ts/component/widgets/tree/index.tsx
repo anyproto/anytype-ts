@@ -1,6 +1,5 @@
 // Third Party
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 
@@ -37,14 +36,15 @@ const SKIP_TYPES_LOAD = [
 ]; // Types of objects to skip loading
 
 const Tree = observer(class Tree extends React.Component<Props, State> {
-	private _isMounted: boolean = false;
+	private _isMounted = false;
+	node: any = null;
 	state = {
 		loading: false,
 	};
-	scrollTop: number = 0;
-	id: string = '';
+	scrollTop = 0;
+	id = '';
 	cache: CellMeasurerCache = {};
-	subId: string = '';
+	subId = '';
 	subscriptionIds: { [ key: string ]: string } = {};
 	branches: string[] = [];
 	refList: React.Ref<HTMLElement> = null;
@@ -83,7 +83,6 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={index}
-					hasFixedWidth={() => {}}
 				>
 					<Node 
 						{...node}
@@ -99,14 +98,18 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 		};
 
 		return (
-			<div id="body" className="body">
+			<div 
+				ref={node => this.node = node}
+				id="body" 
+				className="body"
+			>
 				{loading ? (
 					<Loader />
 				) : (
 					<InfiniteLoader
 						rowCount={nodes.length}
 						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
+						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
 						{({ onRowsRendered }) => (
@@ -165,7 +168,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 
 	// Restores the scroll position and the keyboard focus
 	restoreUIState () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const body = node.find('#body');
 
 		this.id = keyboard.getRootId();
@@ -382,7 +385,7 @@ const Tree = observer(class Tree extends React.Component<Props, State> {
 			return;
 		};
 
-		const DOMnode = $(ReactDOM.findDOMNode(this));
+		const DOMnode = $(this.node);
 
 		DOMnode.find('.item.hover').removeClass('hover');
 

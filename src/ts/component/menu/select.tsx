@@ -1,11 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { I, Util, Relation, keyboard } from 'Lib';
-
-interface Props extends I.Menu {}
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 28;
@@ -13,17 +11,17 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
-const MenuSelect = observer(class MenuSelect extends React.Component<Props, object> {
+const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
-	_isMounted: boolean = false;	
-	n: number = -1;
+	_isMounted = false;	
+	n = -1;
 	cache: any = null;
-	filter: string = '';
+	filter = '';
 	refFilter: any = null;
 	refList: any = null;
-	top: number = 0;
+	top = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
@@ -87,7 +85,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, obje
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -111,7 +108,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<Props, obje
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}
-						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => !!items[index]}
 					>
 						{({ onRowsRendered, registerChild }) => (

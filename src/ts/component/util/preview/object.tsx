@@ -25,16 +25,12 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	state = {
 		loading: false,
 	};
-	isOpen: boolean = false;
-	_isMounted: boolean = false;
-	id: string = '';
+	isOpen = false;
+	_isMounted = false;
+	id = '';
 
 	public static defaultProps = {
 		className: '',
-	};
-	
-	constructor (props: any) {
-		super(props);
 	};
 	
 	render () {

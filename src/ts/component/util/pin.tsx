@@ -13,7 +13,7 @@ interface Props {
 };
 
 
-class Pin extends React.Component<Props, object> {
+class Pin extends React.Component<Props> {
 
 	public static defaultProps = {
 		size: Constant.pinSize,
@@ -21,9 +21,9 @@ class Pin extends React.Component<Props, object> {
 		value: '',
 	};
 
-	n: number = 0;
+	n = 0;
 	refObj: any = {};
-	timeout: number = 0;
+	timeout = 0;
 
 	render () {
 		const { size } = this.props;

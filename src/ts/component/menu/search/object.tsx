@@ -7,8 +7,6 @@ import { I, C, keyboard, Util, DataUtil, ObjectUtil, Preview, analytics, Action,
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 interface State {
 	loading: boolean;
 };
@@ -19,24 +17,24 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 
-const MenuSearchObject = observer(class MenuSearchObject extends React.Component<Props, State> {
+const MenuSearchObject = observer(class MenuSearchObject extends React.Component<I.Menu, State> {
 
 	state = {
 		loading: false,
 	};
 
-	_isMounted: boolean = false;	
-	filter: string = '';
+	_isMounted = false;	
+	filter = '';
 	index: any = null;
 	cache: any = {};
 	items: any = [];
 	refFilter: any = null;
 	refList: any = null;
-	n: number = -1;
-	timeoutFilter: number = 0;
-	offset: number = 0;
+	n = -1;
+	timeoutFilter = 0;
+	offset = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
@@ -63,6 +61,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type = dbStore.getType(item.type);
+			const checkbox = value && value.length && value.includes(item.id);
 			const cn = [];
 
 			let content = null;
@@ -88,9 +87,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				if (item.isHidden) {
 					cn.push('isHidden');
 				};
-				if (value == item.id) {
-					cn.push('active');
-				};
 
 				if (isBig && !item.isAdd) {
 					props.withDescription = true;
@@ -112,6 +108,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}
+						checkbox={checkbox}
 						className={cn.join(' ')}
 					/>
 				);
@@ -124,7 +121,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -480,9 +476,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
+		const { loading } = this.state;
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
-		const height = items.length ? items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44)) : 300;
+
+		let height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
+		if (loading) {
+			height += 40;
+		};
+		if (!loading && !items.length) {
+			height = 300;
+		};
 
 		obj.css({ height });
 		position();

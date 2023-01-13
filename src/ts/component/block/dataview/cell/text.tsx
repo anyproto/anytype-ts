@@ -6,17 +6,15 @@ import { Icon, Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Cell {};
-
 interface State { 
 	isEditing: boolean; 
 };
 
 const MENU_ID = 'dataviewCalendar';
 
-const CellText = observer(class CellText extends React.Component<Props, State> {
+const CellText = observer(class CellText extends React.Component<I.Cell, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	state = {
 		isEditing: false,
 	};
@@ -24,7 +22,7 @@ const CellText = observer(class CellText extends React.Component<Props, State> {
 	ref: any = null;
 	value: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Cell) {
 		super(props);
 
 		this.onKeyUp = this.onKeyUp.bind(this);

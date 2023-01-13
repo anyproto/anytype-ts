@@ -4,11 +4,9 @@ import { Button, Label } from 'Component';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
+const MenuAccountPath = observer(class MenuAccountPath extends React.Component<I.Menu> {
 
-const MenuAccountPath = observer(class MenuAccountPath extends React.Component<Props, object> {
-
-    constructor (props: any) {
+    constructor (props: I.Menu) {
         super(props);
 
         this.onClick = this.onClick.bind(this);

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, M, C, DataUtil, ObjectUtil, analytics } from 'Lib';
@@ -10,11 +9,12 @@ interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
 };
 
-const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, object> {
+const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> {
 	
+	node: any = null;
 	refDrag: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.setPercent = this.setPercent.bind(this);
@@ -63,7 +63,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 		}
 
 		return (
-			<div>
+			<div ref={node => this.node = node}>
 				<div id="editorSize" className="dragWrap">
 					<Drag 
 						ref={(ref: any) => { this.refDrag = ref; }} 
@@ -112,10 +112,10 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 	};
 
 	init () {
-		const { rootId, getWrapper } = this.props;
+		const { rootId } = this.props;
 		const check = DataUtil.checkDetails(rootId);
 
-		getWrapper().attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
 		$(window).trigger('resize.editor');
 	};
 
@@ -147,7 +147,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props, 
 	};
 
 	setPercent (v: number) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#dragValue');
 
 		value.text(Math.ceil(v * 100) + '%');

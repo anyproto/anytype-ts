@@ -39,20 +39,20 @@ class CommonStore {
 
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
-    public gatewayUrl: string = '';
+    public gatewayUrl = '';
 	public toastObj: I.Toast = null;
     public configObj: any = {};
-    public cellId: string = '';
-	public themeId: string = '';
-	public nativeThemeIsDark: boolean = false;
-	public typeId: string = '';
-	public pinTimeId: number = 0;
-	public isFullScreen: boolean = false;
-	public autoSidebarValue: boolean = false;
-	public redirect: string = '';
+    public cellId = '';
+	public themeId = '';
+	public nativeThemeIsDark = false;
+	public typeId = '';
+	public pinTimeId = 0;
+	public isFullScreen = false;
+	public autoSidebarValue = false;
+	public redirect = '';
 	public languages: string[] = [];
-	public workspaceId: string = '';
-	public notionToken: string = '';
+	public workspaceId = '';
+	public notionToken = '';
 
 	public coverObj: Cover = { 
 		id: '', 

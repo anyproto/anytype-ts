@@ -32,6 +32,7 @@ import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
+import PageMainBlock from './main/block';
 
 import Constant from 'json/constant.json';
 
@@ -64,13 +65,12 @@ const Components: any = {
 	'main/graph':			 PageMainGraph,
 	'main/navigation':		 PageMainNavigation,
 	'main/create':			 PageMainCreate,
+	'main/block':			 PageMainBlock,
 };
 
-interface Props extends I.PageComponent {};
+const Page = observer(class Page extends React.Component<I.PageComponent> {
 
-const Page = observer(class Page extends React.Component<Props, object> {
-
-	_isMounted: boolean = false;
+	_isMounted = false;
 	refChild: any = null;
 	refSidebar: any = null;
 

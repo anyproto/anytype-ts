@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
@@ -8,7 +7,6 @@ import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
 
-interface Props extends I.Menu {};
 interface State {
 	filter: string;
 	page: number;
@@ -21,8 +19,9 @@ const HEIGHT_SECTION = 40;
 const HEIGHT_ITEM = 40;
 const ID_RECENT = 'recent';
 
-class MenuSmile extends React.Component<Props, State> {
+class MenuSmile extends React.Component<I.Menu, State> {
 
+	node: any = null;
 	state = {
 		filter: '',
 		page: 0,
@@ -31,14 +30,14 @@ class MenuSmile extends React.Component<Props, State> {
 	refFilter: any = null;
 	refList: any = null;
 
-	id: string = '';
-	skin: number = 1;
-	timeoutMenu: number = 0;
-	timeoutFilter: number = 0;
+	id = '';
+	skin = 1;
+	timeoutMenu = 0;
+	timeoutFilter = 0;
 	cache: any = null;
 	groupCache: any[] = [];
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onKeyUp = this.onKeyUp.bind(this);
@@ -89,7 +88,6 @@ class MenuSmile extends React.Component<Props, State> {
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<div style={param.style}>
 						{item.isSection ? (
@@ -109,7 +107,10 @@ class MenuSmile extends React.Component<Props, State> {
 		};
 		
 		return (
-			<div className="wrap">
+			<div 
+				ref={node => this.node = node}
+				className="wrap"
+			>
 				{!noHead ? (
 					<div className="head">
 						<div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div>
@@ -128,7 +129,6 @@ class MenuSmile extends React.Component<Props, State> {
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}
-						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => !!items[index]}
 					>
 						{({ onRowsRendered, registerChild }) => (
@@ -197,7 +197,7 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 	
 	componentDidUpdate () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		if (this.id) {
 			node.find(`#item-${this.id}`).addClass('active');
@@ -528,7 +528,7 @@ class MenuSmile extends React.Component<Props, State> {
 	};
 
 	setActiveGroup (id: string) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const foot = node.find('#foot');
 
 		foot.find('.active').removeClass('active');

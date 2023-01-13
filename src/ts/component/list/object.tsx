@@ -11,7 +11,7 @@ interface Props {
 
 const LIMIT = 50;
 
-const ListObject = observer(class ListObject extends React.Component<Props, object> {
+const ListObject = observer(class ListObject extends React.Component<Props> {
 
 	render () {
 		const { rootId } = this.props;

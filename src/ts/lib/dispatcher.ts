@@ -1,9 +1,8 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
 import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action, Dataview } from 'Lib';
-import { set, observable } from 'mobx';
+import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
-
 import Constant from 'json/constant.json';
 
 const Service = require('lib/pb/protos/service/service_grpc_web_pb');
@@ -29,9 +28,9 @@ class Dispatcher {
 
 	service: any = null;
 	stream: any = null;
-	timeoutStream: number = 0;
+	timeoutStream = 0;
 	timeoutEvent: any = {};
-	reconnects: number = 0;
+	reconnects = 0;
 
 	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
@@ -114,6 +113,7 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
 		if (v == V.BLOCKDATAVIEWSOURCESET)		 t = 'blockDataviewSourceSet';
+		if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'blockDataviewTargetObjectIdSet';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
@@ -168,16 +168,16 @@ class Dispatcher {
 		};
 
 		let blocks: any[] = [];
-		let id: string = '';
+		let id = '';
 		let block: any = null;
 		let details: any = null;
-		let viewId: string = '';
+		let viewId = '';
 		let keys: string[] = [];
 		let ids: string[] = [];
 		let subIds: string[] = [];
 		let uniqueSubIds: string[] = [];
-		let subId: string = '';
-		let afterId: string = '';
+		let subId = '';
+		let afterId = '';
 		let content: any = {};
 
 		messages.sort((c1: any, c2: any) => { return this.sort(c1, c2); });
@@ -193,7 +193,7 @@ class Dispatcher {
 			if (rootId.match('virtualBreadcrumbs')) {
 				needLog = false;
 			};
-			
+
 			switch (type) {
 
 				case 'accountShow': {
@@ -325,7 +325,7 @@ class Dispatcher {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -376,7 +376,19 @@ class Dispatcher {
 						block.content.style = data.getStyle().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
+					break;
+				};
+
+				case 'blockDataviewTargetObjectIdSet': {
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					block.content.targetObjectId = data.getTargetobjectid();
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -415,7 +427,7 @@ class Dispatcher {
 						block.content.state = data.getState().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -433,6 +445,8 @@ class Dispatcher {
 					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
 					};
+
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -552,12 +566,13 @@ class Dispatcher {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 
-					if (!block || !block.id) {
+					if (!block) {
 						break;
 					};
 
 					block.content.sources = data.getSourceList();
-					blockStore.update(rootId, block);
+
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 

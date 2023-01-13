@@ -6,14 +6,12 @@ import { I, C, MenuUtil, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
 
-interface Props extends I.Menu {};
-
-const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<Props, object> {
+const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.Menu> {
 	
 	refName: any = null;
 	color: string = null;
-	timeout: number = 0;
-	n: number = -1;
+	timeout = 0;
+	n = -1;
 
 	render () {
 		const { param } = this.props;

@@ -7,8 +7,6 @@ import { I, Util, Relation, keyboard, DataUtil } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 interface State {
 	loading: boolean;
 };
@@ -17,23 +15,23 @@ const HEIGHT = 28;
 const MENU_ID = 'dataviewFileValues';
 const LIMIT_HEIGHT = 20;
 
-const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.Component<Props, State> {
+const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.Component<I.Menu, State> {
 
 	state = {
 		loading: false,
 	};
 
-	_isMounted: boolean = false;	
-	filter: string = '';
+	_isMounted = false;	
+	filter = '';
 	cache: any = {};
-	offset: number = 0;
+	offset = 0;
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
-	top: number = 0;
-	n: number = -1;
+	top = 0;
+	n = -1;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.loadMoreRows = this.loadMoreRows.bind(this);
@@ -83,7 +81,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

@@ -246,9 +246,9 @@ html.themeDark {
 
         .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
 
-        .tabs { background: $colorBgIcon; color: $colorSecondary; }
+        .tabs { color: $colorSecondary; }
         .tabs {
-            .tab.active { background: $colorHover; color: $colorPrimary; }
+            .tab.active, .tab:hover { color: $colorPrimary; border-color: $colorLinePrimary; }
         }
     }
 	.header.isCommon.active {

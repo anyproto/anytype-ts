@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Input, Icon } from 'Component';
 import { I, translate } from 'Lib';
@@ -12,6 +11,7 @@ interface Props {
 	value?: string;
 	placeholder?: string;
 	placeholderFocus?: string;
+	onClick?(e: any): void;
 	onFocus?(e: any): void;
 	onBlur?(e: any): void;
 	onKeyDown?(e: any, v: string): void;
@@ -20,8 +20,7 @@ interface Props {
 	onClear?(): void;
 };
 
-
-class Filter extends React.Component<Props, object> {
+class Filter extends React.Component<Props> {
 
 	public static defaultProps = {
 		className: '',
@@ -29,10 +28,12 @@ class Filter extends React.Component<Props, object> {
 		placeholder: translate('commonFilterClick'),
 	};
 	
-	isFocused: boolean = false;
+	node: any = null;
+	isFocused = false;
+	placeholder: any = null;
 	ref: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);
@@ -42,24 +43,38 @@ class Filter extends React.Component<Props, object> {
 	};
 	
 	render () {
-		const { id, value, icon, placeholder, className, inputClassName, onKeyDown, onKeyUp } = this.props;
-		const cn = [ 'filter', className ];
+		const { id, value, icon, placeholder, className, inputClassName, onKeyDown, onKeyUp, onClick } = this.props;
+		const cn = [ 'filter' ];
+
+		if (className) {
+			cn.push(className);
+		};
 
 		return (
-			<div id={id} className={cn.join(' ')}>
+			<div
+				ref={node => this.node = node}
+				id={id} 
+				className={cn.join(' ')}
+				onClick={onClick}
+			>
 				<div className="inner">
 					{icon ? <Icon className={icon} /> : ''}
-					<Input 
-						ref={(ref: any) => { this.ref = ref; }} 
-						className={inputClassName}
-						placeholder={placeholder} 
-						value={value}
-						onFocus={this.onFocus} 
-						onBlur={this.onBlur} 
-						onChange={this.onChange} 
-						onKeyDown={onKeyDown}
-						onKeyUp={onKeyUp}
-					/>
+
+					<div className="filterInputWrap">
+						<Input 
+							ref={(ref: any) => { this.ref = ref; }}
+							id="input"
+							className={inputClassName}
+							value={value}
+							onFocus={this.onFocus} 
+							onBlur={this.onBlur} 
+							onChange={this.onChange} 
+							onKeyDown={onKeyDown}
+							onKeyUp={onKeyUp}
+						/>
+						<div id="placeholder" className="placeholder">{placeholder}</div>
+					</div>
+
 					<Icon className="clear" onClick={this.onClear} />
 				</div>
 				<div className="line" />
@@ -68,7 +83,11 @@ class Filter extends React.Component<Props, object> {
 	};
 
 	componentDidMount() {
+		const node = $(this.node);
+
 		this.ref.setValue(this.props.value);
+		this.placeholder = node.find('#placeholder');
+		this.resize();
 	};
 
 	componentDidUpdate () {
@@ -76,11 +95,13 @@ class Filter extends React.Component<Props, object> {
 	};
 
 	focus () {
+		this.addFocusedClass();
 		this.ref.focus();
 		this.checkButton();
 	};
 
 	blur () {
+		this.removeFocusedClass();
 		this.ref.blur();
 	};
 
@@ -92,12 +113,10 @@ class Filter extends React.Component<Props, object> {
 		const { placeholderFocus, onFocus } = this.props;
 
 		this.isFocused = true;
+		this.addFocusedClass();
 
 		if (placeholderFocus) {
-			const node = $(ReactDOM.findDOMNode(this));
-			const input = node.find('.input');
-
-			input.attr({ placeholder: placeholderFocus });
+			this.placeholderSet(placeholderFocus);
 		};
 
 		if (onFocus) { 
@@ -109,12 +128,10 @@ class Filter extends React.Component<Props, object> {
 		const { placeholderFocus, placeholder, onBlur } = this.props;
 
 		this.isFocused = false;
+		this.removeFocusedClass();
 
 		if (placeholderFocus) {
-			const node = $(ReactDOM.findDOMNode(this));
-			const input = node.find('.input');
-
-			input.attr({ placeholder: placeholder });
+			this.placeholderSet(placeholder);
 		};
 
 		if (onBlur) {
@@ -122,7 +139,18 @@ class Filter extends React.Component<Props, object> {
 		};
 	};
 
+	addFocusedClass () {
+		const node = $(this.node);
+		node.addClass('isFocused');
+	};
+
+	removeFocusedClass () {
+		const node = $(this.node);
+		node.removeClass('isFocused');
+	};
+
 	onClear (e: any) {
+		e.preventDefault();
 		e.stopPropagation();
 
 		const { onClear } = this.props;
@@ -140,6 +168,7 @@ class Filter extends React.Component<Props, object> {
 		const { onChange } = this.props;
 
 		this.checkButton();
+		this.placeholderCheck();
 
 		if (onChange) {
 			onChange(v);
@@ -147,7 +176,7 @@ class Filter extends React.Component<Props, object> {
 	};
 
 	checkButton () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const v = this.getValue();
 
 		v ? node.addClass('active') : node.removeClass('active');
@@ -156,10 +185,31 @@ class Filter extends React.Component<Props, object> {
 	setValue (v: string) {
 		this.ref.setValue(v);
 		this.checkButton();
+		this.placeholderCheck();
 	};
 
 	getValue () {
 		return this.ref.getValue();
+	};
+
+	placeholderCheck () {
+		this.getValue() ? this.placeholderHide() : this.placeholderShow();	
+	};
+
+	placeholderSet (v: string) {
+		this.placeholder.text(v);
+	};
+	
+	placeholderHide () {
+		this.placeholder.hide();
+	};
+
+	placeholderShow () {
+		this.placeholder.show();
+	};
+
+	resize () {
+		this.placeholder.css({ lineHeight: this.placeholder.height() + 'px' });
 	};
 
 };

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Loader, LoadMore } from 'Component';
@@ -8,6 +7,7 @@ import { dbStore, detailStore, menuStore } from 'Store';
 
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
+import Constant from "json/constant.json";
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -25,16 +25,17 @@ interface State {
 
 const Column = observer(class Column extends React.Component<Props, State> {
 
+	node: any = null;
 	cache: any = {};
-	width: number = 0;
-	columnWidth: number = 0;
-	columnCount: number = 0;
-	offset: number = 0;
+	width = 0;
+	columnWidth = 0;
+	columnCount = 0;
+	offset = 0;
 	state = {
 		loading: false,
 	};
 
-	constructor(props: Props) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onLoadMore = this.onLoadMore.bind(this);
@@ -70,6 +71,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 		return (
 			<div 
+				ref={node => this.node = node} 
 				id={'column-' + id} 
 				className={cn.join(' ')}
 				data-id={id}
@@ -143,7 +145,9 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean) {
-		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit } = this.props;
+		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit, rootId, isInline } = this.props;
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		
@@ -195,7 +199,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			filters,
 			sorts,
 			keys: getKeys(view.id),
-			sources: block.content.sources,
+			sources: object.setOf || [],
 			limit,
 			ignoreHidden: true,
 			ignoreDeleted: true,
@@ -227,7 +231,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	onMore (e: any) {
 		const { rootId, block, id, getView } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		node.addClass('active');
 

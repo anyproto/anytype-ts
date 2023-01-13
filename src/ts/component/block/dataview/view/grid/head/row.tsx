@@ -16,7 +16,7 @@ interface Props extends I.ViewComponent {
 };
 
 
-const HeadRow = observer(class HeadRow extends React.Component<Props, object> {
+const HeadRow = observer(class HeadRow extends React.Component<Props> {
 
 	render () {
 		const { rootId, block, readonly, getView, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths } = this.props;

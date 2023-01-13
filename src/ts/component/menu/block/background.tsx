@@ -3,13 +3,11 @@ import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { I, keyboard, MenuUtil } from 'Lib';
 
-interface Props extends I.Menu {};
-
-class MenuBlockBackground extends React.Component<Props, object> {
+class MenuBlockBackground extends React.Component<I.Menu> {
 	
-	n: number = 0;
+	n = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);

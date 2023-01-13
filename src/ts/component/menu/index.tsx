@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
@@ -72,8 +71,6 @@ import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 
 import Constant from 'json/constant.json';
-
-interface Props extends I.Menu {};
 
 interface State {
 	tab: string;
@@ -149,19 +146,20 @@ const Components: any = {
 	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
 };
 
-const Menu = observer(class Menu extends React.Component<Props, State> {
+const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
-	_isMounted: boolean = false;
-	timeoutPoly: number = 0;
+	_isMounted = false;
+	node: any = null;
+	timeoutPoly = 0;
 	ref: any = null;
-	isAnimating: boolean = false;
+	isAnimating = false;
 	poly: any = null;
 
 	state = {
 		tab: '',
 	};
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.position = this.position.bind(this);
@@ -237,7 +235,11 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 		);
 
 		return (
-			<div id={menuId + '-wrap'} className="menuWrap">
+			<div 
+				ref={node => this.node = node}
+				id={menuId + '-wrap'} 
+				className="menuWrap"
+			>
 				<div id={menuId} className={cn.join(' ')} onMouseLeave={this.onMouseLeave}>
 					{tabs.length ? (
 						<div className="tabs">
@@ -311,7 +313,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 	componentDidUpdate () {
 		const { param } = this.props;
 		const { noAnimation, element } = param;
-		const node = $(ReactDOM.findDOMNode(this)); 
+		const node = $(this.node); 
 		const menu = node.find('.menu');
 
 		this.setClass();
@@ -357,7 +359,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 		const { param } = this.props;
 		const { classNameWrap } = param;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const cn = [ 'menuWrap' ];
 
 		if (classNameWrap) {
@@ -418,7 +420,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			};
 
 			const win = $(window);
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const menu = node.find('.menu');
 			const arrow = menu.find('#arrowDirection');
 			const ww = win.width();
@@ -531,7 +533,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			if (undefined !== fixedX) x = fixedX;
 			if (undefined !== fixedY) y = fixedY;
 
-			let css: any = { left: x, top: y };
+			const css: any = { left: x, top: y };
 			if (param.width) {
 				css.width = param.width;
 			};
@@ -730,7 +732,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 			this.setActive(null, true);
 
-			let item = items[this.ref.n];
+			const item = items[this.ref.n];
 			if (!item) {
 				return;
 			};
@@ -758,7 +760,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 
 			this.setActive(null, true);
 
-			let item = items[this.ref.n];
+			const item = items[this.ref.n];
 			if (!item) {
 				return;
 			};
@@ -868,7 +870,7 @@ const Menu = observer(class Menu extends React.Component<Props, State> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const menu = node.find('.menu');
 		
 		menu.find('.item.hover').removeClass('hover');

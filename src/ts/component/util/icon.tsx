@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { I, Preview } from 'Lib';
 
@@ -22,14 +21,16 @@ interface Props {
 	onContextMenu?(e: any): void;
 };
 
-class Icon extends React.Component<Props, object> {
+class Icon extends React.Component<Props> {
 	
 	public static defaultProps = {
 		tooltipX: I.MenuDirection.Center,
 		tooltipY: I.MenuDirection.Bottom,
 	};
+
+	node: any = null;
 	
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onMouseDown = this.onMouseDown.bind(this);
@@ -52,7 +53,19 @@ class Icon extends React.Component<Props, object> {
 		};
 		
 		return (
-			<div id={id} draggable={draggable} onMouseDown={this.onMouseDown} onContextMenu={this.onContextMenu} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={onClick} onDragStart={onDragStart} className={cn.join(' ')} style={style}>
+			<div 
+				ref={node => this.node = node}
+				id={id} 
+				draggable={draggable} 
+				onMouseDown={this.onMouseDown} 
+				onContextMenu={this.onContextMenu} 
+				onMouseEnter={this.onMouseEnter} 
+				onMouseLeave={this.onMouseLeave} 
+				onClick={onClick} 
+				onDragStart={onDragStart} 
+				className={cn.join(' ')} 
+				style={style}
+			>
 				{arrow ? <div className="icon arrow" /> : ''}
 				{inner ? inner : null}
 			</div>
@@ -65,7 +78,7 @@ class Icon extends React.Component<Props, object> {
 	
 	onMouseEnter (e: any) {
 		const { tooltip, tooltipX, tooltipY, onMouseEnter } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		if (tooltip) {
 			Preview.tooltipShow(tooltip, node, tooltipX, tooltipY);

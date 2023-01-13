@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ListIndex, Cover, Header, Footer, Filter, EmptySearch } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'Store';
@@ -15,10 +14,11 @@ interface State {
 
 const PageMainIndex = observer(class PageMainIndex extends React.Component<I.PageComponent, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
+	node: any = null;
 	refFilter: any = null;
-	id: string = '';
-	timeoutFilter: number = 0;
+	id = '';
+	timeoutFilter = 0;
 	selected: string[] = [];
 
 	state = {
@@ -137,7 +137,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		};
 
 		return (
-			<div>
+			<div ref={node => this.node = node}>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="mainIndex" />
 				<Footer {...this.props} component="mainIndex" />
@@ -185,6 +185,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 								{(tab.id == I.TabIndex.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
+
 						<div id="selectWrap" className="tabWrap">
 							<div className="tabs">
 								<div id="selectCnt" className="side left" />
@@ -198,6 +199,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 								</div>
 							</div>
 						</div>
+
 						{content}
 					</div>
 				</div>
@@ -221,7 +223,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 	
 	componentDidUpdate () {
 		if (this.id) {
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const item = node.find(`#item-${this.id}`);
 
 			item.addClass('hover');
@@ -261,7 +263,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 	onScroll () {
 		const win = $(window);
 		const top = win.scrollTop();
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const list = node.find('#documents');
 
 		if (!list.length) {
@@ -405,7 +407,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 	onSearch (e: any) {
 		e.stopPropagation();
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const searchWrap = node.find('#searchWrap');
 
 		if (searchWrap.hasClass('active')) {
@@ -422,7 +424,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 	};
 
 	onFilterClear () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const searchWrap = node.find('#searchWrap');
 
 		searchWrap.removeClass('active');
@@ -452,6 +454,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 			element: '#button-account',
 			horizontal: I.MenuDirection.Right
 		});
+	};
+
+	onStore (e: any) {
+		ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store });
 	};
 	
 	onProfile (e: any) {
@@ -512,7 +518,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 	};
 
 	selectionRender () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const wrapper = node.find('#documents');
 		const cnt = node.find('#selectCnt');
 		const selectAll = node.find('#button-selectAll');
@@ -634,10 +640,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		this.selectionRender();
 	};
 
-	onStore (e: any) {
-		ObjectUtil.openPopup({ layout: I.ObjectLayout.Store });
-	};
-	
 	onAdd (e: any) {
 		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
 			ObjectUtil.openPopup({ id: message.targetId });
@@ -837,7 +839,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		const win = $(window);
 		const wh = win.height();
 		const ww = win.width();
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const title = node.find('#title');
 		const body = node.find('#body');
 		const documents = node.find('#documents');
