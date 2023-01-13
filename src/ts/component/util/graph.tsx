@@ -1,7 +1,9 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
+import { PreviewObject } from 'Component';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
@@ -223,10 +225,40 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.send('onZoom', { transform: transform });
   	};
 
+	onPreviewShow ({ x, y }) {
+		const { isPopup } = this.props;
+		const body = $('body');
+		const container = Util.getPageContainer(isPopup);
+		const { left, top } = container.offset();
+		
+		let el = $('#graphPreview');
+		if (!el.length) {
+			el = $('<div />');
+				el.attr({ id: 'graphPreview' }).css({ 
+				position: 'fixed', 
+				zIndex: 1000,
+			});
+
+			ReactDOM.render(<PreviewObject rootId={this.subject.id} />, el.get(0));
+		};
+
+		el.css({ 
+			left: x + left + 10, 
+			top: y + top + 10,
+		});
+
+		body.append(el);
+		body.addClass('cp');
+	};
+
+	onPreviewHide () {
+		$('body').removeClass('cp');
+		$('#graphPreview').remove();
+	};
+
 	onMessage ({ data }) {
 		const { root } = blockStore;
 		const { isPopup, onClick, onContextMenu, onSelect } = this.props;
-		const body = $('body');
 
 		switch (data.id) {
 			case 'onClick':
@@ -244,7 +276,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			case 'onMouseMove':
 				if (!this.isDragging) {
 					this.subject = this.nodes.find(d => d.id == data.node);
-					this.subject ? body.addClass('cp') : body.removeClass('cp');
+					this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
 				};
 				break;
 

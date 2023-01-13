@@ -515,6 +515,8 @@ onMouseMove = ({ x, y }) => {
 	};
 
 	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x, y });
+
+	redraw();
 };
 
 onContextMenu = ({ x, y }) => {
