@@ -9,7 +9,7 @@ interface Props extends I.Popup {
     onPage: (id: string) => void;
 };
 
-const PopupSettingsSpaceLeave = observer(class PopupSettingsSpaceLeave extends React.Component<Props> {
+const PopupSettingsSpaceRemove = observer(class PopupSettingsSpaceRemove extends React.Component<Props> {
 
     render () {
         const space = {
@@ -19,15 +19,15 @@ const PopupSettingsSpaceLeave = observer(class PopupSettingsSpaceLeave extends R
         return (
             <div>
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-                <Title text={Util.sprintf(translate('popupSettingsSpaceLeave'), space.name)} />
+                <Title text={Util.sprintf(translate('popupSettingsSpaceRemove'), space.name)} />
 
-                <Label className="leaveSpaceDescription" text={translate('popupSettingsSpaceLeaveText')} />
+                <Label className="leaveSpaceDescription" text={translate('popupSettingsSpaceRemoveText')} />
 
-                <Button className="blank red" text={translate('popupSettingsSpaceLeaveButton')} />
+                <Button className="blank red" text={translate('popupSettingsSpaceRemoveButton')} />
             </div>
         );
     };
 
 });
 
-export default PopupSettingsSpaceLeave;
+export default PopupSettingsSpaceRemove;

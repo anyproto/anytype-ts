@@ -32,8 +32,6 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
         const { onPage } = this.props;
         const space = {
             name: 'Anytype Space',
-            homepage: 'Bla bla page',
-            team: []
         };
 
         const memberTypes = [
@@ -92,7 +90,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
         return (
             <div>
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-                <Title text={`${space.name} team`} />
+                <Title text={Util.sprintf(translate('popupSettingsSpaceTeam'), space.name)} />
                 <Label className="spaceTeamCounter" text={`${this.team.length} ${translate('popupSettingsSpaceTeamMembers')}`} />
 
                 <div className="rows" id="spaceTeamMembers" style={{ height: listHeight }}>

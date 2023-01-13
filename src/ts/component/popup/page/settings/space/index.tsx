@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Icon, Title, Label } from 'Component';
-import { analytics, I, translate } from 'Lib';
+import { Icon, Title, Label, IconObject } from 'Component';
+import {analytics, C, I, translate} from 'Lib';
 import { observer } from 'mobx-react';
-import { menuStore } from 'Store';
+import {detailStore, menuStore} from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Popup {
@@ -13,6 +13,8 @@ interface Props extends I.Popup {
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<Props> {
 
     homePage: any = null;
+    team: any[] = [];
+    isAdmin: boolean = true;
 
     constructor (props: any) {
         super(props);
@@ -27,6 +29,34 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
             name: 'Anytype Space',
             homepage: 'Bla bla page',
             team: []
+        };
+
+        let teamPreview = (
+            <div className="spaceTeamPreview">
+                {
+                    this.team.slice(0,3).map((el, i) => (
+                        <IconObject size={32} key={i} object={el} />
+                    ))
+                }
+            </div>
+        );
+
+        if (!this.team.length) {
+            teamPreview = <Icon className="arrow light" />;
+        };
+
+        let spaceLeave = (
+            <div className="row red" onClick={() => { onPage('spaceLeave'); }}>
+                <Label text={translate('popupSettingsSpaceLeaveTitle')} />
+            </div>
+        );
+
+        if (this.isAdmin) {
+            spaceLeave = (
+                <div className="row red" onClick={() => { onPage('spaceRemove'); }}>
+                    <Label text={translate('popupSettingsSpaceRemoveTitle')} />
+                </div>
+            );
         };
 
         return (
@@ -53,16 +83,23 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
                         </div>
                     </div>
 
-                    <div className="row" onClick={() => { onPage('spaceTeam'); }}>
-                        <Label text={translate('popupSettingsSpaceTeamTitle')} />
+                    <div className="row flex" onClick={() => { onPage('spaceTeam'); }}>
+                        <div className="side left">
+                            <Label text={translate('popupSettingsSpaceTeamTitle')} />
+                        </div>
+                        <div className="side right">
+                            {teamPreview}
+                        </div>
                     </div>
 
-                    <div className="row red" onClick={() => { onPage('spaceLeave'); }}>
-                        <Label text={translate('popupSettingsSpaceLeaveTitle')} />
-                    </div>
+                    {spaceLeave}
                 </div>
             </div>
         );
+    };
+
+    componentDidMount() {
+        this.loadProfiles();
     };
 
     onHomePage () {
@@ -82,6 +119,21 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
                     this.forceUpdate();
                 }
             }
+        });
+    };
+
+    loadProfiles () {
+        const filters = [
+            { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: 'ot-profile' }
+        ];
+
+        C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
+            if (message.error.code || !message.records.length) {
+                return;
+            };
+
+            this.team = message.records.map(it => detailStore.check(it)).filter(it => !it._empty_);
+            this.forceUpdate();
         });
     };
 

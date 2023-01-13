@@ -29,8 +29,9 @@ import PageExportMarkdown from './page/settings/export/markdown';
 
 import PageSpaceIndex from './page/settings/space/index';
 import PageSpaceInvite from './page/settings/space/invite';
-import PageSpaceLeave from './page/settings/space/leave';
 import PageSpaceTeam from './page/settings/space/team';
+import PageSpaceLeave from './page/settings/space/leave';
+import PageSpaceRemove from './page/settings/space/remove';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
@@ -62,8 +63,9 @@ const Components: any = {
 
 	spaceIndex:			 PageSpaceIndex,
 	spaceInvite:		 PageSpaceInvite,
+	spaceTeam:		 	 PageSpaceTeam,
 	spaceLeave:		 	 PageSpaceLeave,
-	spaceTeam:		 	 PageSpaceTeam
+	spaceRemove:		 PageSpaceRemove,
 };
 
 const PopupSettings = observer(class PopupSettings extends React.Component<Props, State> {
@@ -125,7 +127,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 		const { data } = param;
 		const { page } = data;
 
-		this.onPage(page || 'index');
+		// this.onPage(page || 'index');
+		this.onPage(page || 'spaceIndex');
 		this.rebind();
 
 		keyboard.disableNavigation(true);
