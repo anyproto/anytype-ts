@@ -365,16 +365,16 @@
 		}
 
 		.tabSpaceInvite {
-			.memberTypeDescription { margin: 20px 0px 28px; }
+			.label.description { margin: 20px 0px 28px; }
 		}
 
 		.tabSpaceLeave, .tabSpaceRemove {
-			.leaveSpaceDescription { margin-bottom: 28px; }
+			.label { margin-bottom: 28px; }
 		}
 
 		.tabSpaceTeam {
 			.title { padding-bottom: 4px; }
-			.spaceTeamCounter { text-align: center; margin-bottom: 20px; color: $colorDarkGrey; }
+			.label.counter { text-align: center; margin-bottom: 20px; color: $colorDarkGrey; }
 
 			.filter { margin-bottom: 8px; padding: 0px; }
 			.rows { max-height: 310px; min-height: 60px; height: 100%; margin-bottom: 12px; }

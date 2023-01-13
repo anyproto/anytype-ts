@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Label, Select, Button } from 'Component';
+import { Title, Label, Button } from 'Component';
 import { I, translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
@@ -20,9 +20,7 @@ const PopupSettingsSpaceLeave = observer(class PopupSettingsSpaceLeave extends R
             <div>
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
                 <Title text={Util.sprintf(translate('popupSettingsSpaceLeave'), space.name)} />
-
-                <Label className="leaveSpaceDescription" text={translate('popupSettingsSpaceLeaveText')} />
-
+                <Label text={translate('popupSettingsSpaceLeaveText')} />
                 <Button className="blank red" text={translate('popupSettingsSpaceLeaveButton')} />
             </div>
         );

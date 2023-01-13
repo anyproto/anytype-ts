@@ -46,8 +46,7 @@ const PopupSettingsSpaceInvite = observer(class PopupSettingsSpaceInvite extends
                     </div>
                 </div>
 
-                <Label className="memberTypeDescription" text={translate(`popupSettingsSpaceInviteMemberTypeText${Util.toUpperCamelCase(this.memberType)}`)} />
-
+                <Label className="description" text={translate(`popupSettingsSpaceInviteMemberTypeText${Util.toUpperCamelCase(this.memberType)}`)} />
                 <Button text={translate('popupSettingsSpaceInviteButton')} />
             </div>
         );
