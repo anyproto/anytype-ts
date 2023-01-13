@@ -225,30 +225,22 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.send('onZoom', { transform: transform });
   	};
 
-	onPreviewShow ({ x, y }) {
+	onPreviewShow (data: any) {
 		const { isPopup } = this.props;
 		const body = $('body');
 		const container = Util.getPageContainer(isPopup);
 		const { left, top } = container.offset();
-		
+		const x = data.x + left + 10;
+		const y = data.y + top + 10;
+
 		let el = $('#graphPreview');
 		if (!el.length) {
-			el = $('<div />');
-				el.attr({ id: 'graphPreview' }).css({ 
-				position: 'fixed', 
-				zIndex: 1000,
-			});
-
+			el = $('<div id="graphPreview" />');
 			ReactDOM.render(<PreviewObject rootId={this.subject.id} />, el.get(0));
 		};
 
-		el.css({ 
-			left: x + left + 10, 
-			top: y + top + 10,
-		});
-
-		body.append(el);
-		body.addClass('cp');
+		el.css({ left: x, top: y });
+		body.append(el).addClass('cp');
 	};
 
 	onPreviewHide () {
