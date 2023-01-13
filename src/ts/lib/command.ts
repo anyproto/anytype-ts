@@ -1129,6 +1129,14 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 	dispatcher.request(ObjectImport.name, request, callBack);
 };
 
+const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Import.Notion.ValidateToken.Request();
+	
+	request.setToken(token);
+
+	dispatcher.request(ObjectImportNotionValidateToken.name, request, callBack);
+};
+
 const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
 	details = details.map(Mapper.To.Details);
 
@@ -1603,6 +1611,7 @@ export {
 
 	ObjectImportList,
 	ObjectImport,
+	ObjectImportNotionValidateToken,
 
 	ObjectCreate,
 	ObjectCreateSet,

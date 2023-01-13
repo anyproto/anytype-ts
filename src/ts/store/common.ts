@@ -52,7 +52,7 @@ class CommonStore {
 	public redirect: string = '';
 	public languages: string[] = [];
 	public workspaceId: string = '';
-	public token: string = '';
+	public notionToken: string = '';
 
 	public coverObj: Cover = { 
 		id: '', 
@@ -328,8 +328,8 @@ class CommonStore {
 		this.redirect = v;
 	};
 
-	tokenSet (v: string) {
-		this.token = v;
+	notionTokenSet (v: string) {
+		this.notionToken = v;
 	};
 
 	getThemeClass () {

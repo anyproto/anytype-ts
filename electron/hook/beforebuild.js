@@ -23,8 +23,8 @@ exports.default = async function (context) {
 	const files = [ 'anytypeHelper', 'anytypeHelper.exe' ];
 
 	files.forEach(it => {
-		const src = path.join(__dirname, folder, it);
-		const dst = path.join(__dirname, 'dist', it);
+		const src = `./${folder}/${it}`;
+		const dst = `./dist/${it}`;
 
 		if (fs.existsSync(src)) {
 			fs.copySync(src, dst);
