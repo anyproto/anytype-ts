@@ -5,7 +5,6 @@ import { observer } from 'mobx-react';
 import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
 import { blockStore, detailStore, menuStore, commonStore } from 'Store';
-import Panel from './graph/panel';
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -44,31 +43,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 				<Loader id="loader" />
 
 				<div className="wrapper">
-					<div className="side left">
-						<Graph 
-							key="graph"
-							{...this.props} 
-							ref={(ref: any) => { this.refGraph = ref; }} 
-							rootId={rootId} 
-							data={this.data}
-							onClick={this.onClickObject}
-							onSelect={this.onSelect}
-							onContextMenu={this.onContextMenu}
-						/>
-					</div>
-
-					<div id="sideRight" className="side right">
-						{this.refGraph ? (
-							<Panel
-								key="panel"
-								{...this.props} 
-								ref={(ref: any) => { this.refPanel = ref; }}
-								data={this.refGraph.forceProps}
-								onContextMenu={this.onContextMenu}
-								togglePanel={this.togglePanel}
-							/>
-						) : ''}
-					</div>
+					<Graph 
+						key="graph"
+						{...this.props} 
+						ref={(ref: any) => { this.refGraph = ref; }} 
+						rootId={rootId} 
+						data={this.data}
+						onClick={this.onClickObject}
+						onSelect={this.onSelect}
+						onContextMenu={this.onContextMenu}
+					/>
 				</div>
 
 				<div id="footer" className="footer footerMainGraph">
@@ -233,9 +217,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		if (this.refGraph) {
 			this.refGraph.resize();
 		};
-		if (this.refPanel) {
-			this.refPanel.resize();
-		};
 	};
 
 	togglePanel (v: boolean) {
@@ -250,9 +231,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 		this.ids = [];
 		this.togglePanel(true);
 
-		if (this.refPanel) {
-			this.refPanel.setState({ view: I.GraphView.Preview, rootId: object.id });
-		};
 		if (this.refGraph) {
 			this.refGraph.send('onSetSelected', { ids: this.ids });
 		};
