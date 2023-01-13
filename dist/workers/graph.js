@@ -36,18 +36,17 @@ const forceProps = {
 		distanceMax: 200,
 	},
 	collide: {
-		strength: 0.5,
+		strength: 1,
 		iterations: 1,
-		radius: 10,
 	},
 	link: {
-		strength: 0.5,
+		strength: 1,
 		distance: 30,
 		iterations: 1,
 	},
 	forceX: {
 		strength: 0.1,
-		x: 0.4,
+		x: 0.45,
 	},
 	forceY: {
 		strength: 0.1,
@@ -93,12 +92,15 @@ init = (param) => {
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
+	simulation.alphaDecay(0.1);
+	simulation.velocityDecay(0.3);
 
 	initForces();
 
 	simulation.on('tick', () => { redraw(); });
-	simulation.on('end', () => { simulation.alphaTarget(1); });
-	simulation.tick(100);
+	//simulation.on('end', () => { simulation.alphaTarget(0); });
+	simulation.tick();
+	restart(0);
 };
 
 initColor = (theme) => {
@@ -222,13 +224,13 @@ updateForces = () => {
 
 	simulation.force('collide')
 	.strength(collide.strength)
-	.radius(collide.radius)
+	.radius(d => d.radius)
 	.iterations(collide.iterations);
 
 	simulation.force('link')
 	.id(d => d.id)
 	.distance(link.distance)
-	.strength(link.strength)
+	.strength(d => d.isOrphan ? 0 : link.strength)
 	.iterations(link.iterations)
 	.links(edges);
 
@@ -435,17 +437,18 @@ drawNode = (d) => {
 		const { top, bottom, left, right } = util.textMetrics(d.shortName);
 		const tw = right - left;
 		const th = bottom - top;
+		const offset = 4 / transform.k;
 
 		// Rectangle
 		ctx.save();
 		ctx.translate(d.x, d.y);
 		ctx.fillStyle = Color.bg;
-		util.rect(left, top + diameter, tw, th);
+		util.rect(left, top + diameter + offset, tw, th);
 		ctx.fill();
 
 		// Label
 		ctx.fillStyle = colorText;
-		ctx.fillText(d.shortName, 0, diameter + 4 / transform.k);
+		ctx.fillText(d.shortName, 0, diameter + offset);
 		ctx.restore();
 	};
 };
