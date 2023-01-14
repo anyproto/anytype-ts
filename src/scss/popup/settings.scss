@@ -354,10 +354,10 @@
 				.spaceIcon.canEdit:hover:after { opacity: 1; }
 
 				.title { margin-bottom: 12px; padding: 8px 0px 16px; height: auto; }
-				.spaceTitleInput { border-bottom: 1px solid $colorBorderDark; width: 384px; }
+				.input.title { border-bottom: 1px solid $colorBorderDark; width: 384px; }
 			}
 
-			.row .spaceTeamPreview .iconObject { margin-right: -4px; box-shadow: 0 0 0 2px $colorWhite; }
+			.row .team .iconObject { margin-right: -4px; box-shadow: 0 0 0 2px $colorWhite; }
 		}
 
 		.tabSpaceInvite, .tabSpaceLeave, .tabSpaceRemove {

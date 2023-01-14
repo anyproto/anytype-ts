@@ -13,7 +13,7 @@ interface Props extends I.Popup {
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<Props> {
 
     name: string = 'Anytype Space';
-    nameRef: any = {};
+    refName: any = {};
     homePage: any = null;
     team: any[] = [];
     isAdmin: boolean = false;
@@ -28,27 +28,28 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
     render () {
         const { onPage } = this.props;
-
         const cnIcon = ['spaceIcon'];
 
         let title = <Title text={this.name} />;
-
         let spaceLeave = (
             <div className="row red" onClick={() => { onPage('spaceLeave'); }}>
                 <Label text={translate('popupSettingsSpaceLeaveTitle')} />
             </div>
         );
+		let preview = null;
 
         if (this.isAdmin) {
             cnIcon.push('canEdit');
 
-            title = <Input
-                className="title spaceTitleInput"
-                ref={ref => this.nameRef = ref}
-                value={this.name}
-                placeholder={DataUtil.defaultName('page')}
-                onKeyUp={this.onName}
-            />;
+            title = (
+				<Input
+					className="title"
+					ref={ref => this.refName = ref}
+					value={this.name}
+					placeholder={DataUtil.defaultName('page')}
+					onKeyUp={this.onName}
+            	/>
+			);
 
             spaceLeave = (
                 <div className="row red" onClick={() => { onPage('spaceRemove'); }}>
@@ -57,15 +58,15 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
             );
         };
 
-        const teamPreview = this.team.length ? (
-            <div className="spaceTeamPreview">
-                {
-                    this.team.slice(0,3).map((el, i) => (
-                        <IconObject size={32} key={i} object={el} />
-                    ))
-                }
-            </div>
-        ) : <Icon className="arrow light" />;
+		if (this.team.length) {
+			preview = (
+				<div className="team">
+					{this.team.slice(0, 3).map((el: any, i: number) => (
+						<IconObject size={32} key={i} object={el} />
+					))}
+				</div>
+			);
+		};
 
         return (
             <div>
@@ -106,7 +107,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
                             <Label text={translate('popupSettingsSpaceTeamTitle')} />
                         </div>
                         <div className="side right">
-                            {teamPreview}
+                            {preview || <Icon className="arrow light" />}
                         </div>
                     </div>
 
@@ -125,12 +126,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
         if (!this.isAdmin) {
             return;
-        }
-
-        // if (!object.iconImage) {
-        //     this.onUpload(object.id);
-        //     return;
-        // };
+        };
 
         const options = [
             { id: 'upload', name: 'Change' },
