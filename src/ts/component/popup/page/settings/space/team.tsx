@@ -32,7 +32,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 
     render () {
 		if (!this.cache) {
-			return;
+			return null;
 		};
 
         const { onPage } = this.props;
