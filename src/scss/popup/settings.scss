@@ -377,8 +377,9 @@
 			.label.counter { text-align: center; margin-bottom: 20px; color: $colorDarkGrey; }
 
 			.filter { margin-bottom: 8px; padding: 0px; }
-			.rows { max-height: 310px; min-height: 60px; height: 100%; margin-bottom: 12px; }
-			.row { height: 44px; border-bottom: 0px; padding-top: 8px; padding-bottom: 8px; }
+
+			.rows { height: 100%; margin-bottom: 12px; }
+			.row { height: 44px; border: 0px; padding: 8px 0px; }
 			.row {
 				.left { display: flex; }
 				.right { font-size: 14px; }

@@ -17,6 +17,7 @@ const FILTER_LIMIT = 20;
 
 const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends React.Component<Props> {
 
+	node: any = null;
     team: any[] = [];
     cache: any = null;
     top = 0;
@@ -49,7 +50,6 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
         ];
 
         const length = this.team.length;
-        const listHeight = length ? length > LIMIT ? LIMIT * HEIGHT : length * HEIGHT : HEIGHT;
 
         const Member = (item: any) => {
             return (
@@ -94,7 +94,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
         };
 
         return (
-            <div>
+            <div ref={node => this.node = node}>
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
                 <Title text={Util.sprintf(translate('popupSettingsSpaceTeam'), space.name)} />
 
@@ -108,11 +108,11 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
                 	/>
 				) : ''}
 
-                <div className="rows" id="spaceTeamMembers" style={{ height: listHeight }}>
+                <div id="list" className="rows">
                     <InfiniteLoader
                         isRowLoaded={({ index }) => !!this.team[index]}
                         loadMoreRows={() => {}}
-                        rowCount={this.team.length}
+                        rowCount={length}
                         threshold={LIMIT}
                     >
                         {({ onRowsRendered, registerChild }) => {
@@ -124,7 +124,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
                                             height={Number(height) || 0}
                                             width={Number(width) || 0}
                                             deferredMeasurmentCache={this.cache}
-                                            rowCount={this.team.length}
+                                            rowCount={length}
                                             rowHeight={HEIGHT}
                                             onRowsRendered={onRowsRendered}
                                             rowRenderer={rowRenderer}
@@ -161,7 +161,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 			this.forceUpdate();
 		};
 
-        position();
+		this.resize();
 
         if (this.refList && this.top) {
             this.refList.scrollToPosition(this.top);
@@ -189,6 +189,17 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
             this.forceUpdate();
         });
     };
+
+	resize () {
+		const { position } = this.props;
+		const node = $(this.node);
+		const list = node.find('#list');
+		const length = this.team.length;
+		const height = Math.min(HEIGHT * LIMIT, Math.max(HEIGHT, length * HEIGHT));
+
+		list.css({ height });
+		position();
+	};
 
 });
 
