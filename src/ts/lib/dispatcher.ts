@@ -443,7 +443,7 @@ class Dispatcher {
 						break;
 					};
 
-					blockStore.update(rootId, { bgColor: data.getBackgroundcolor() });
+					blockStore.update(rootId, { id, bgColor: data.getBackgroundcolor() });
 					break;
 				};
 
@@ -454,7 +454,7 @@ class Dispatcher {
 						break;
 					};
 
-					blockStore.update(rootId, { hAlign: data.getAlign() });
+					blockStore.update(rootId, { id, hAlign: data.getAlign() });
 					break;
 				};
 
@@ -465,7 +465,7 @@ class Dispatcher {
 						break;
 					};
 
-					blockStore.update(rootId, { vAlign: data.getVerticalalign() });
+					blockStore.update(rootId, { id, vAlign: data.getVerticalalign() });
 					break;
 				};
 
