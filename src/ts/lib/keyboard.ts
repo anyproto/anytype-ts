@@ -455,10 +455,8 @@ class Keyboard {
 	};
 
 	printRemove () {
-		const { theme } = commonStore;
-
 		$('html').removeClass('withPopup printMedia print save');
-		Util.addBodyClass('theme', theme);
+		commonStore.setThemeClass();
 		$(window).trigger('resize');
 	};
 

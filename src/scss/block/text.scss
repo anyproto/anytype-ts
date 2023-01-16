@@ -89,10 +89,9 @@
 	.block.blockText > .wrapContent > .selectable > .dropTarget #value.isFocused { background: none; }
 
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
-	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget #value { min-height: 24px; cursor: text !important; user-select: text !important; }
-	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget > .flex > .placeholder { display: none; }
+	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget #value { min-height: 1em; cursor: text !important; user-select: text !important; }
+	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget #placeholder { display: none; }
 	.block.blockText.isReadonly.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
-	.block.blockText.isReadonly.textTitle > .wrapContent > .selectable > .dropTarget > .flex #value { min-height: 1em; }
 
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
 

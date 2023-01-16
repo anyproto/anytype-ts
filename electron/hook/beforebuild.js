@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const path = require('path');
 
 exports.default = async function (context) {
     const { platform, arch } = context;
@@ -27,7 +28,7 @@ exports.default = async function (context) {
 
 		if (fs.existsSync(src)) {
 			fs.copySync(src, dst);
-			fs.removeSync(src);
+			console.log('[BeforeBuild] copy', src, dst);
 		};
 	});
 };
