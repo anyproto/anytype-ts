@@ -407,7 +407,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = detailStore.get(rootId, mark.param, [ 'layout', 'name' ], true);
+				const object = detailStore.get(rootId, mark.param, [ 'layout', 'name', 'snippet', 'description' ], true);
 
 				if (object._empty_) {
 					continue;
