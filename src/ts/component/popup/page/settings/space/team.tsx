@@ -150,8 +150,6 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
     };
 
     componentDidUpdate() {
-        const { position } = this.props;
-
 		if (!this.cache) {
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
