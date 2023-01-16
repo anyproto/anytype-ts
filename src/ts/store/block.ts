@@ -78,8 +78,8 @@ class BlockStore {
 		};
 	};
 
-    update (rootId: string, param: any) {
-		const block = this.getLeaf(rootId, param.id);
+    update (rootId: string, blockId: string, param: any) {
+		const block = this.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
@@ -444,7 +444,7 @@ class BlockStore {
 			};
 
 			if (update) {
-				this.update(rootId, { id: block.id, content: { ...block.content, text, marks } });
+				this.updateContent(rootId, block.id, { text, marks });
 			};
 		};
 	};
