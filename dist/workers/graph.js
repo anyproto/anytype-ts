@@ -565,6 +565,7 @@ onRemoveNode = ({ ids }) => {
 
 onSetEdges = (param) => {
 	data.edges = param.edges;
+
 	updateForces();
 };
 
@@ -574,6 +575,21 @@ onSelected = ({ ids }) => {
 
 onResize = (data) => {
 	resize(data);
+};
+
+onSetRootId = ({ rootId }) => {
+	const active = nodes.find(d => d.isRoot);
+	if (active) {
+		delete(active.fx, active.fy);
+		active.isRoot = false;
+	};
+
+	const d = data.nodes.find(d => d.id == rootId);
+	if (d) {
+		d.isRoot = true;
+	};
+
+	updateForces();
 };
 
 restart = (alpha) => {

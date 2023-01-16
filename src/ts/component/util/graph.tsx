@@ -68,12 +68,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	rebind () {
+		const win = $(window);
+
 		this.unbind();
-		$(window).on('updateGraphSettings', () => { this.updateSettings(); });
+		win.on('updateGraphSettings', () => { this.updateSettings(); });
+		win.on('updateGraphRoot', (e: any, data: any) => { this.setRootId(data.id); });
 	};
 
 	unbind () {
-		$(window).off('updateGraphSettings');
+		$(window).off('updateGraphSettings updateGraphRoot');
 	};
 
 	init () {
@@ -364,6 +367,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		};
 
 		return src;
+	};
+
+	setRootId (id: string) {
+		this.send('onSetRootId', { rootId: id });
 	};
 
 	send (id: string, param: any, transfer?: any[]) {

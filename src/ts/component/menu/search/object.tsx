@@ -454,9 +454,19 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	onFilterChange (v: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onFilterChange } = data;
+
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.props.param.data.filter = this.refFilter.getValue();
+			const filter = this.refFilter.getValue();
+
+			this.props.param.data.filter = filter;
+
+			if (onFilterChange) {
+				onFilterChange(filter);
+			};
 		}, 500);
 	};
 

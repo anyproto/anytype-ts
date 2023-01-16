@@ -121,21 +121,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	load () {
-		const { workspace } = commonStore;
-		const skipTypes = [ Constant.typeId.space ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
-		const skipIds = [ '_anytype_profile', blockStore.profile ];
-		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
-			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
-		];
-
 		this.setLoading(true);
 
-		C.ObjectGraph(filters, 0, [], Constant.graphRelationKeys, (message: any) => {
+		C.ObjectGraph(DataUtil.graphFilters(), 0, [], Constant.graphRelationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

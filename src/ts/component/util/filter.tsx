@@ -87,6 +87,7 @@ class Filter extends React.Component<Props> {
 
 		this.ref.setValue(this.props.value);
 		this.placeholder = node.find('#placeholder');
+		this.checkButton();
 		this.resize();
 	};
 
@@ -168,7 +169,6 @@ class Filter extends React.Component<Props> {
 		const { onChange } = this.props;
 
 		this.checkButton();
-		this.placeholderCheck();
 
 		if (onChange) {
 			onChange(v);
@@ -177,15 +177,14 @@ class Filter extends React.Component<Props> {
 
 	checkButton () {
 		const node = $(this.node);
-		const v = this.getValue();
 
-		v ? node.addClass('active') : node.removeClass('active');
+		this.getValue() ? node.addClass('active') : node.removeClass('active');
+		this.placeholderCheck();
 	};
 
 	setValue (v: string) {
 		this.ref.setValue(v);
 		this.checkButton();
-		this.placeholderCheck();
 	};
 
 	getValue () {

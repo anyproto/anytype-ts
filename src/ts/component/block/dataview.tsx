@@ -665,7 +665,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onSourceSelect (element: any, param: Partial<I.MenuParam>) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
-
 		const menuParam = Object.assign({
 			element: $(element),
 			className: 'single',
