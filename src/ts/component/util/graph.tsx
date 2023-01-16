@@ -28,6 +28,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	isDragging = false;
 	isPreview = false;
 	ids: string[] = [];
+	timeoutPreview = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -278,7 +279,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			case 'onMouseMove':
 				if (!this.isDragging) {
 					this.subject = this.nodes.find(d => d.id == data.node);
-					this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+
+					window.clearTimeout(this.timeoutPreview);
+
+					if (this.subject) {
+						this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 100);
+					} else {
+						this.onPreviewHide();
+					};
 				};
 				break;
 
