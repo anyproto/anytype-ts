@@ -119,6 +119,13 @@ initColor = (theme) => {
 
 		case 'dark':
 			Color = {
+				bg: '#1e1e1b',
+				link: '#cbc9bd',
+				arrow: '#aca996',
+				node: '#aca996',
+				text: '#929082',
+				highlight: '#ffb522',
+				green: '#57c600',
 			};
 			break;
 	};
