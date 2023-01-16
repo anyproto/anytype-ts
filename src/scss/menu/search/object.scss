@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuSearchObject { width: 360px; }
 	.menu.menuSearchObject {
-		.content {  transition: none; padding: 8px 0px 0px 0px; }
+		.content { transition: none; padding: 8px 0px 0px 0px; max-height: unset; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.wrap.withLabel {
 			.ReactVirtualized__List { padding-top: 0px; }

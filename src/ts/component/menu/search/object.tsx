@@ -13,7 +13,7 @@ interface State {
 	loading: boolean;
 };
 
-const LIMIT_HEIGHT = 10;
+const LIMIT = 10;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
@@ -155,7 +155,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							rowCount={items.length + 1}
 							loadMoreRows={this.loadMoreRows}
 							isRowLoaded={({ index }) => !!this.items[index]}
-							threshold={LIMIT_HEIGHT}
+							threshold={LIMIT}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">
@@ -480,7 +480,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
-		const items = this.getItems();
+		const items = this.getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
 		const height = items.length ? items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44)) : 300;
 
