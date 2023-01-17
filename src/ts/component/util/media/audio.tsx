@@ -4,11 +4,15 @@ import $ from 'jquery';
 import { Icon, Drag } from 'Component';
 import { I, Util} from 'Lib';
 import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
 
-const BlockAudioControls = observer(class BlockAudioControls extends React.Component<I.BlockComponent> {
+interface Props {
+    playlist: any[],
+    onPlay?(): void,
+    onPause?(): void
+};
 
-    _isMounted = false;
+class MediaAudio extends React.Component<Props> {
+
     node: any = null;
     volume = 0;
     playOnSeek = false;
@@ -16,7 +20,7 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     refVolume: any = null;
     audioNode: HTMLAudioElement;
 
-    constructor (props: I.BlockComponent) {
+    constructor (props) {
         super(props);
 
         this.onPlay = this.onPlay.bind(this);
@@ -24,48 +28,46 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     };
 
     render () {
-        const { block } = this.props;
-        const { content } = block;
-        const { name } = content;
+        const { playlist } = this.props;
+        const { hash, name } = playlist[0]
 
         return (
-            <div className="audioControls">
-                <Icon className="play" onClick={this.onPlay} />
-                <div className="name">
-                    <span>{name}</span>
+            <div ref={(ref: any) => { this.node = ref; }} className="wrap resizable audio">
+                <audio id="audio" preload="auto" src={commonStore.fileUrl(hash)} />
+
+                <div className="audioControls">
+                    <Icon className="play" onClick={this.onPlay} />
+                    <div className="name">
+                        <span>{name}</span>
+                    </div>
+
+                    <Drag
+                        id="time"
+                        ref={(ref: any) => { this.refTime = ref; }}
+                        value={0}
+                        onStart={(e: any, v: number) => { this.onTime(v); }}
+                        onMove={(e: any, v: number) => { this.onTime(v); }}
+                        onEnd={(e: any, v: number) => { this.onTimeEnd(v); }}
+                    />
+
+                    <div className="time">
+                        <span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
+                        <span id="timeTotal" className="total">0:00</span>
+                    </div>
+
+                    <Icon className="volume" onClick={this.onMute} />
+                    <Drag
+                        id="volume"
+                        ref={(ref: any) => { this.refVolume = ref; }}
+                        value={1}
+                        onMove={(e: any, v: number) => { this.onVolume(v); }}
+                    />
                 </div>
-
-                <Drag
-                    id="time"
-                    ref={(ref: any) => { this.refTime = ref; }}
-                    value={0}
-                    onStart={(e: any, v: number) => { this.onTime(v); }}
-                    onMove={(e: any, v: number) => { this.onTime(v); }}
-                    onEnd={(e: any, v: number) => { this.onTimeEnd(v); }}
-                />
-
-                <div className="time">
-                    <span id="timeCurrent" className="current">0:00</span>&nbsp;/&nbsp;
-                    <span id="timeTotal" className="total">0:00</span>
-                </div>
-
-                <Icon className="volume" onClick={this.onMute} />
-                <Drag
-                    id="volume"
-                    ref={(ref: any) => { this.refVolume = ref; }}
-                    value={1}
-                    onMove={(e: any, v: number) => { this.onVolume(v); }}
-                />
             </div>
         );
     };
 
     componentDidMount () {
-        this._isMounted = true;
-
-        const { block } = this.props;
-        this.node = $('#blockAudio-' + block.id);
-
         this.resize();
         this.rebind();
     };
@@ -76,14 +78,11 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     };
 
     componentWillUnmount () {
-        this._isMounted = false;
         this.unbind();
     };
 
     rebind () {
-        if (!this._isMounted) {
-            return;
-        };
+        const { onPlay, onPause } = this.props;
 
         this.unbind();
 
@@ -92,26 +91,24 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
         const el = node.find('#audio');
         this.audioNode = el.get(0) as HTMLAudioElement;
 
-        node.on('resize', (e: any, oe: any) => { this.resize(); });
-
         if (el.length) {
             el.on('canplay timeupdate', () => { this.onTimeUpdate(); });
             el.on('play', () => {
-                node.addClass('isPlaying');
                 icon.addClass('active');
+                if (onPlay) {
+                    onPlay();
+                };
             });
             el.on('ended pause', () => {
-                node.removeClass('isPlaying');
                 icon.removeClass('active');
+                if (onPause) {
+                    onPause();
+                };
             });
         };
     };
 
     unbind () {
-        if (!this._isMounted) {
-            return;
-        };
-
         const node = $(this.node);
         const el = node.find('#audio');
 
@@ -121,10 +118,6 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     };
 
     resize () {
-        if (!this._isMounted) {
-            return;
-        };
-
         if (this.refTime) {
             this.refTime.resize();
         };
@@ -135,10 +128,6 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     };
 
     onPlay () {
-        if (!this._isMounted) {
-            return;
-        };
-
         const el = this.audioNode;
         const paused = el.paused;
 
@@ -147,26 +136,14 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     };
 
     play () {
-        if (!this._isMounted) {
-            return;
-        };
-
         this.audioNode.play();
     };
 
     pause () {
-        if (!this._isMounted) {
-            return;
-        };
-
         this.audioNode.pause();
     };
 
     onMute () {
-        if (!this._isMounted) {
-            return;
-        };
-
         const el = this.audioNode;
 
         el.volume = el.volume ? 0 : (this.volume || 1);
@@ -176,10 +153,6 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     };
 
     onVolume (v: number) {
-        if (!this._isMounted) {
-            return;
-        };
-
         const el = this.audioNode;
 
         this.volume = el.volume = v;
@@ -187,10 +160,6 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     };
 
     setVolumeIcon () {
-        if (!this._isMounted) {
-            return;
-        };
-
         const el = this.audioNode;
         const node = $(this.node);
         const icon = node.find('.icon.volume');
@@ -199,10 +168,6 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     };
 
     onTime (v: number) {
-        if (!this._isMounted) {
-            return;
-        };
-
         const el = this.audioNode;
         const paused = el.paused;
 
@@ -221,10 +186,6 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
     };
 
     onTimeUpdate () {
-        if (!this._isMounted) {
-            return;
-        };
-
         const el = this.audioNode;
         if (!el) {
             return;
@@ -252,6 +213,6 @@ const BlockAudioControls = observer(class BlockAudioControls extends React.Compo
         return { m, s };
     };
 
-});
+};
 
-export default BlockAudioControls;
+export default MediaAudio;

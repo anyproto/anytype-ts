@@ -1,19 +1,23 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { InputWithFile, Loader, Error } from 'Component';
+import { InputWithFile, Loader, Error, MediaAudio } from 'Component';
 import { I, translate, focus, Util, keyboard, Action } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import BlockAudioControls from './controls';
+import $ from "jquery";
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 
-	refControls: any = null;
+	_isMounted: boolean = false;
+	node: any = null;
+	refPlayer: any = null;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
-		
+
+		this.onPlay = this.onPlay.bind(this);
+		this.onPause = this.onPause.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
@@ -53,19 +57,18 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 				break;
 				
 			case I.FileState.Done:
-				element = (
-					<div className="wrap resizable audio">
-						<audio id="audio" preload="auto" src={commonStore.fileUrl(hash)} />
-
-						<BlockAudioControls ref={node => this.refControls = node} {...this.props} />
-					</div>
-				);
+				element = <MediaAudio
+					ref={node => this.refPlayer = node}
+					playlist={[{name: name, hash: hash}]}
+					onPlay={this.onPlay}
+					onPause={this.onPause}
+				/>;
 				break;
 		};
 		
 		return (
 			<div
-				id={'blockAudio-' + block.id}
+				ref={node => this.node = node}
 				className={[ 'focusable', 'c' + id ].join(' ')}
 				tabIndex={0}
 				onKeyDown={this.onKeyDown}
@@ -77,6 +80,57 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 		);
 	};
 
+	componentDidMount () {
+		this._isMounted = true;
+
+		this.rebind();
+	};
+
+	componentDidUpdate () {
+		this.rebind();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+		this.unbind();
+	};
+
+	rebind () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		$(this.node).on('resize', (e: any, oe: any) => {
+			if (this.refPlayer) {
+				this.refPlayer.resize();
+			};
+		});
+	};
+
+	unbind () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		$(this.node).off('resize');
+	};
+
+	onPlay () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		$(this.node).addClass('isPlaying');
+	};
+
+	onPause () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		$(this.node).removeClass('isPlaying');
+	};
+
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
 
@@ -86,7 +140,9 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 			e.preventDefault();
 			e.stopPropagation();
 
-			this.refControls.onPlay();
+			if (this.refPlayer) {
+				this.refPlayer.onPlay();
+			};
 			ret = true;
 		});
 
