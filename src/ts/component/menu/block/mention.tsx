@@ -45,9 +45,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type = dbStore.getType(item.type);
+			const cn = [];
 
 			let content = null;
-
 			if (item.isDiv) {
 				content = (
 					<div className="separator" style={param.style}>
@@ -55,8 +55,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					</div>
 				);
 			} else {
-				let cn = [];
-				if (item.itemId == 'add') {
+				if (item.id == 'add') {
 					cn.push('add');
 				};
 				if (item.isHidden) {
@@ -66,7 +65,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				content = (
 					<MenuItemVertical 
 						id={item.id}
-						object={item.itemId == 'add' ? undefined : item}
+						object={item.id == 'add' ? undefined : item}
 						icon={item.icon}
 						name={<ObjectName object={item} />}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
@@ -188,7 +187,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			});
 		};
 
-		return MenuUtil.sectionsMap(sections);
+		return sections;
 	};
 
 	getItems () {
@@ -206,7 +205,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { data } = param;
 		const { skipIds } = data;
 		const filter = this.getFilter();
-
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes(), },
 		];
@@ -270,7 +268,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			return;
 		};
 
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		const { from } = commonStore.filter;
@@ -292,7 +290,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			onChange(name + ' ', marks, from, to + 1);
 		};
 
-		if (item.itemId == 'add') {
+		if (item.id == 'add') {
 			const type = dbStore.getType(commonStore.type);
 			const name = this.getFilter();
 
@@ -311,10 +309,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				});
 			});
 		} else {
-			cb(item.itemId, item.name);
+			cb(item.id, item.name);
 		};
 
-		this.props.close();
+		close();
 	};
 
 	getRowHeight (item: any) {
