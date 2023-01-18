@@ -10,24 +10,23 @@
 
 .header {
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; }
-	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; -webkit-app-region: no-drag; }
+	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; }
 	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
-	.side.right { padding: 0px 10px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; -webkit-app-region: no-drag; }
+	.side.right { padding: 0px 10px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; }
 
 	.path { 
 		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; transition: $transitionFast;
 		@include text-overflow-nw; padding: 0px 6px;
 	}
 
-	.tabs { white-space: nowrap; background: $colorBorderLight; display: inline-block; height: 28px; padding: 2px; border-radius: 6px; }
+	.tabs { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; height: 100%; }
 	.tabs {
 		.tab { 
-			display: inline-block; margin-right: 4px; width: 124px; border-radius: 4px; height: 24px; line-height: 24px;
-			font-weight: 500; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
-			vertical-align: top;
+			font-weight: 600; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
+			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%;
 		}
-		.tab.active { background: $colorWhite; color: $colorBlack; }
-		.tab:last-child { margin: 0px; }
+		.tab:hover { color: $colorBlack; }
+		.tab.active { color: $colorBlack; border-bottom: 1px solid $colorBlack; }
 	}
 
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }

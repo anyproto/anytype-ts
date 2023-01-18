@@ -135,6 +135,9 @@ class Analytics {
 				if (data.type == I.BlockType.Div) {
 					data.style = I.DivStyle[data.style];
 				} else
+				if (data.type == I.BlockType.Dataview) {
+					data.style = I.ViewType[data.style];
+				} else
 				if (data.type == I.BlockType.File) {
 					if (undefined !== data.params?.fileType) {
 						data.fileType = Number(data.params.fileType) || 0;

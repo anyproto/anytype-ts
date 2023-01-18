@@ -7,7 +7,8 @@ import $ from 'jquery';
 import arrayMove from 'array-move';
 import { Icon } from 'Component';
 import { I, C, Util, keyboard, Relation, analytics } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
+import {menuStore, dbStore, blockStore, detailStore} from 'Store';
+import Constant from "json/constant.json";
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -67,7 +68,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			if (item.isSection) {
 				content = <div className="sectionName" style={param.style}>{item.name}</div>;
 			} else {
-				content = <Item key={item.id} {...item} index={param.index} style={param.style} />;
+				content = <Item key={item.id} {...item} index={param.index - 1} style={param.style} />;
 			};
 
 			return (
@@ -136,6 +137,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 					helperClass="isDragging"
 					helperContainer={() => { return $(this.node).find('.items').get(0); }}
 				/>
+
 				{allowed ? (
 					<div className="bottom">
 						<div className="line" />
@@ -214,8 +216,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	onAdd () {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView, getData, getSources } = data;
 		const view = getView();
+		const sources = getSources();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
@@ -240,7 +243,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			filters,
 		};
 
-		C.BlockDataviewViewCreate(rootId, blockId, newView, (message: any) => {
+		C.BlockDataviewViewCreate(rootId, blockId, newView, sources, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

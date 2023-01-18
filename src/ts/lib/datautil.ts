@@ -764,7 +764,7 @@ class DataUtil {
 		};
 
 		if (ignoreDeleted) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!withArchived) {

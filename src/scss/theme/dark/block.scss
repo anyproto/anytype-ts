@@ -94,6 +94,9 @@
 		}
 
 		.dataviewHead { border-color: $colorLineSecondary; }
+		.dataviewHead {
+			.iconWrap:hover { background-color: $colorHover; }
+		}
 
         .dataviewControls {
             .line { background: $colorLineSecondary; }

@@ -1,4 +1,4 @@
-import { dbStore, commonStore, blockStore } from 'Store';
+import {dbStore, commonStore, blockStore, detailStore} from 'Store';
 import { I, M, C, Util, DataUtil, Relation } from 'Lib';
 
 import Constant from 'json/constant.json';
@@ -107,6 +107,8 @@ class Dataview {
 		const { rootId, blockId, newViewId, keys, offset, limit, clear } = param;
 		const view = dbStore.getView(rootId, blockId, newViewId);
 		const block = blockStore.getLeaf(rootId, blockId);
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId);
 
 		if (!view || !block) {
 			return;
@@ -145,7 +147,7 @@ class Dataview {
 			filters: view.filters.map(mapper),
 			sorts: view.sorts.map(mapper),
 			keys,
-			sources: block.content.sources,
+			sources: object.setOf,
 			limit,
 			offset,
 			ignoreDeleted: true,

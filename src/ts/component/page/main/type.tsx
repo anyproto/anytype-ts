@@ -113,6 +113,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									</div>
 								) : ''}
 							</div>
+
 							{totalTemplate ? (
 								<div className="content">
 									<ListObjectPreview 

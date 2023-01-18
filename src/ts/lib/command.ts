@@ -243,6 +243,16 @@ const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosit
 	dispatcher.request(BlockCreate.name, request, callBack);
 };
 
+const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: string, targetObjectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.CreateFromExistingObject.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setTargetobjectid(targetObjectId);
+
+	dispatcher.request(BlockDataviewCreateFromExistingObject.name, request, callBack);
+};
+
 // ---------------------- BLOCK TEXT ---------------------- //
 
 const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
@@ -748,12 +758,13 @@ const BlockListSetVerticalAlign = (contextId: string, blockIds: string[], align:
 	dispatcher.request(BlockListSetVerticalAlign.name, request, callBack);
 };
 
-const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, callBack?: (message: any) => void) => {
+const BlockDataviewViewCreate = (contextId: string, blockId: string, view: any, sources: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.View.Create.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setView(Mapper.To.View(view));
+	request.setSourceList(sources);
 
 	dispatcher.request(BlockDataviewViewCreate.name, request, callBack);
 };
@@ -822,16 +833,6 @@ const BlockDataviewObjectOrderUpdate = (contextId: string, blockId: string, orde
 	dispatcher.request(BlockDataviewObjectOrderUpdate.name, request, callBack);
 };
 
-
-const BlockDataviewRelationListAvailable = (contextId: string, blockId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.Relation.ListAvailable.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-
-	dispatcher.request(BlockDataviewRelationListAvailable.name, request, callBack);
-};
-
 const BlockRelationSetKey = (contextId: string, blockId: string, relationKey: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockRelation.SetKey.Request();
 	
@@ -860,16 +861,6 @@ const BlockDataviewRelationDelete = (contextId: string, blockId: string, relatio
 	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(BlockDataviewRelationDelete.name, request, callBack);
-};
-
-const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.SetSource.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setSourceList(sources);
-
-	dispatcher.request(BlockDataviewSetSource.name, request, callBack);
 };
 
 // ---------------------- HISTORY ---------------------- //
@@ -1084,15 +1075,6 @@ const ObjectRedo = (contextId: string, callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectRedo.name, request, callBack);
 };
 
-const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SetObjectType.Request();
-	
-	request.setContextid(contextId);
-	request.setObjecttypeurl(url);
-
-	dispatcher.request(ObjectSetObjectType.name, request, callBack);
-};
-
 const ObjectImportList = (callBack?: (message: any) => void) => {
 	const request = new Commands.Empty();
 	
@@ -1135,6 +1117,24 @@ const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any
 	request.setToken(token);
 
 	dispatcher.request(ObjectImportNotionValidateToken.name, request, callBack);
+};
+
+const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SetObjectType.Request();
+	
+	request.setContextid(contextId);
+	request.setObjecttypeurl(url);
+
+	dispatcher.request(ObjectSetObjectType.name, request, callBack);
+};
+
+const ObjectSetSource = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.SetSource.Request();
+	
+	request.setContextid(contextId);
+	request.setSourceList(sources);
+
+	dispatcher.request(ObjectSetSource.name, request, callBack);
 };
 
 const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
@@ -1563,6 +1563,8 @@ export {
 	BlockTableRowListClean,
 	BlockTableRowSetHeader,
 
+	BlockDataviewCreateFromExistingObject,
+
 	BlockDataviewViewCreate,
 	BlockDataviewViewUpdate,
 	BlockDataviewViewDelete,
@@ -1574,9 +1576,6 @@ export {
 
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationDelete,
-	BlockDataviewRelationListAvailable,
-
-	BlockDataviewSetSource,
 
 	HistoryGetVersions,	
 	HistoryShowVersion,
@@ -1630,6 +1629,7 @@ export {
 	ObjectSetLayout,
 	ObjectSetIsFavorite,
 	ObjectSetIsArchived,
+	ObjectSetSource,
 
 	ObjectListDuplicate,
 	ObjectListDelete,

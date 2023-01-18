@@ -185,6 +185,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 								{(tab.id == I.TabIndex.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
+
 						<div id="selectWrap" className="tabWrap">
 							<div className="tabs">
 								<div id="selectCnt" className="side left" />
@@ -198,6 +199,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 								</div>
 							</div>
 						</div>
+
 						{content}
 					</div>
 				</div>
@@ -453,6 +455,10 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 			horizontal: I.MenuDirection.Right
 		});
 	};
+
+	onStore (e: any) {
+		ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store });
+	};
 	
 	onProfile (e: any) {
 		const object = detailStore.get(Constant.subId.profile, blockStore.profile);
@@ -634,10 +640,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		this.selectionRender();
 	};
 
-	onStore (e: any) {
-		ObjectUtil.openPopup({ layout: I.ObjectLayout.Store });
-	};
-	
 	onAdd (e: any) {
 		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
 			ObjectUtil.openPopup({ id: message.targetId });

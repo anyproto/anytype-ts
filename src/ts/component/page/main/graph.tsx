@@ -7,12 +7,7 @@ import { blockStore, detailStore, menuStore, commonStore } from 'Store';
 import Panel from './graph/panel';
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {
-	rootId: string;
-	matchPopup?: any;
-};
-
-const PageMainGraph = observer(class PageMainGraph extends React.Component<Props> {
+const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 
 	node: any = null;
 	data: any = {
@@ -26,7 +21,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<Props
 	loading: boolean = false;
 	timeoutLoading: number = 0;
 
-	constructor (props: Props) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onSwitch = this.onSwitch.bind(this);

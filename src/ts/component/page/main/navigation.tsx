@@ -8,10 +8,6 @@ import { I, C, DataUtil, ObjectUtil, Util, keyboard, Key, focus, translate, side
 import { blockStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {
-	matchPopup?: any;
-};
-
 interface State {
 	loading: boolean;
 	info: I.PageInfo;
@@ -28,7 +24,7 @@ enum Panel {
 	Right = 3,
 };
 
-const PageMainNavigation = observer(class PageMainNavigation extends React.Component<Props, State> {
+const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
 	
 	_isMounted: boolean = false;
 	node: any = null;
@@ -48,7 +44,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	select: boolean = false;
 	refHeader: any = null;
 	
-	constructor (props: Props) {
+	constructor (props: I.PageComponent) {
 		super (props);
 
 		this.onConfirm = this.onConfirm.bind(this);
