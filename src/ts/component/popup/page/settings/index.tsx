@@ -16,8 +16,8 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 		const { onPage } = this.props;
 		const { account } = authStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const rows = [
-			{ id: 'spaceIndex', title: 'popupSettingsSpaceTitle', icon: '' },
+		
+		let rows = [
 			{ id: 'personal', title: 'popupSettingsPersonalTitle', icon: 'personal' },
 			{ id: 'appearance', title: 'popupSettingsAppearanceTitle', icon: 'appearance' },
 			{ id: 'importIndex', title: 'popupSettingsImportTitle', icon: 'import' },
@@ -25,7 +25,10 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 		];
 
 		if (account) {
-			rows.unshift({ id: 'account', title: 'popupSettingsAccountTitle', icon: '' });
+			rows = [
+				{ id: 'account', title: 'popupSettingsAccountTitle', icon: '' },
+				//{ id: 'spaceIndex', title: 'popupSettingsSpaceTitle', icon: '' },
+			].concat(rows);
 		};
 
 		const Row = (row: any) => {
