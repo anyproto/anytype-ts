@@ -27,6 +27,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	subject: any = null;
 	isDragging = false;
 	isPreview = false;
+	isPreviewDisabled = false;
 	ids: string[] = [];
 	timeoutPreview = 0;
 
@@ -231,6 +232,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
   	};
 
 	onPreviewShow (data: any) {
+		if (this.isPreviewDisabled) {
+			return;
+		};
+
 		const { isPopup } = this.props;
 		const body = $('body');
 		const container = Util.getPageContainer(isPopup);
@@ -297,11 +302,19 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				break;
 
 			case 'onContextMenu':
-				if (data.node == root) {
+				if (!data.node || (data.node == root)) {
 					break;
 				};
 
+				this.onPreviewHide();
+
 				onContextMenu(data.node, {
+					onOpen: () => {
+						this.isPreviewDisabled = true;
+					},
+					onClose: () => {
+						this.isPreviewDisabled = false;
+					},
 					recalcRect: () => { 
 						const rect = { width: 0, height: 0, x: data.x, y: data.y };
 

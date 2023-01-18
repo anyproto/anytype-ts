@@ -91,10 +91,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	rebind () {
-		const win = $(window);
-
 		this.unbind();
-		win.on(`keydown.graph`, (e: any) => { this.onKeyDown(e); });
+		$(window).on(`keydown.graph`, (e: any) => { this.onKeyDown(e); });
 	};
 
 	onKeyDown (e: any) {
@@ -105,19 +103,21 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		keyboard.shortcut('escape', e, (pressed: string) => {
 			this.ids = [];
-			this.refGraph.send('onSetSelected', { ids: this.ids });
+			this.refGraph.send('onSetSelected', { ids: [] });
 		});
 
-		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-			C.ObjectListSetIsArchived(this.ids, true, (message: any) => {
-				if (!message.error.code) {
-					this.data.nodes = this.data.nodes.filter(d => !this.ids.includes(d.id));
-					this.refGraph.send('onRemoveNode', { ids: this.ids });
-				};
+		if (this.ids.length) {
+			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+				C.ObjectListSetIsArchived(this.ids, true, (message: any) => {
+					if (!message.error.code) {
+						this.data.nodes = this.data.nodes.filter(d => !this.ids.includes(d.id));
+						this.refGraph.send('onRemoveNode', { ids: this.ids });
+					};
+				});
+				
+				analytics.event('MoveToBin', { count: length });
 			});
-			
-			analytics.event('MoveToBin', { count: length });
-		});
+		};
 	};
 
 	load () {
