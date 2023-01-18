@@ -61,7 +61,7 @@ export default [
 	bullet(`Fixed: Closing Anytype on Mac while in fullscreen mode no longer causes an error. Thanks, ${link('https://community.anytype.io/t/closing-anytype-in-full-screen-causes-an-error/7650', '@ShukantP')}!`),
 	bullet(`Fixed: Menu no longer closes when clicking/hovering on &quot;Select Relation Type&quot; while creating new Relations. Thanks, ${link('https://community.anytype.io/t/clicking-on-select-relation-type-closes-the-menu/7571', '@kerbless')}!`),
 	bullet(`Fixed: Search is no longer accessible from the tray menu when pin-code is locked. Thanks, ${link('https://community.anytype.io/t/you-can-access-objects-while-app-is-locked/7867', '@sambouwer')}!`),
-	bullet(`Fixed: LaTex blocks now close correctly when clicking on another LaTex block. Thanks, ${link('https://community.anytype.io/t/latex-block-closing-issue/7398', '@Karthik')}!`),
+	bullet(`Fixed: LaTeX blocks now close correctly when clicking on another LaTeX block. Thanks, ${link('https://community.anytype.io/t/latex-block-closing-issue/7398', '@Karthik')}!`),
 	bullet(`Fixed: Forward navigation button is now working properly. Thanks, ${link('https://community.anytype.io/t/forward-button-is-always-gray/7797', '@gdbb')}!`),
 	bullet(`Fixed: Global search hotkey is now working correctly when search results are in focus. Thanks, ${link('https://community.anytype.io/t/global-search-hotkey-not-working-when-search-results-are-in-focus/7554', '@Flip')}!`),
 	bullet(`Fixed: Using the keyboard to create an Object, then typing without clicking somewhere no longer edits the title of the parent Object. Thanks, ${link('https://community.anytype.io/t/creating-task-and-typing-changes-title-of-parent-object/7688', '@Flip!')}`),
