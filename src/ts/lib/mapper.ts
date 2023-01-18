@@ -663,12 +663,12 @@ const Mapper = {
 			const item = new Model.Block.Content.Dataview.Filter();
 			
 			item.setRelationkey(obj.relationKey);
-			// item.setFormat(obj.format);
+			item.setFormat(obj.format);
 			item.setOperator(obj.operator);
 			item.setCondition(obj.condition);
 			item.setQuickoption(obj.quickOption);
 			item.setValue(Encode.encodeValue(obj.value));
-			// item.setIncludetime(obj.includeTime);
+			item.setIncludetime(obj.includeTime);
 
 			return item;
 		},
@@ -679,8 +679,8 @@ const Mapper = {
 			item.setRelationkey(obj.relationKey);
 			item.setType(obj.type);
 			item.setCustomorderList((obj.customOrder || []).map(Encode.encodeValue));
-			// item.setFormat(obj.format);
-			// item.setIncludetime(obj.includeTime);
+			item.setFormat(obj.format);
+			item.setIncludetime(obj.includeTime);
 
 			return item;
 		},
