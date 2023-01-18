@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Icon, Title, Label } from 'Component';
 import { I, Util, translate } from 'Lib';
+import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
@@ -15,10 +16,14 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	render () {
 		const { onPage } = this.props;
+		const { config } = commonStore;
 		const items = [
-			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
 		];
+
+		if (config.experimental) {
+			 items.unshift({ id: 'notion', name: 'Notion' });
+		};
 
 		const Item = (item: any) => {
 			return (
