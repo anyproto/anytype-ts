@@ -99,6 +99,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			<div className="items">
 				<InfiniteLoader
 					rowCount={items.length}
+					loadMoreRows={() => {}}
 					isRowLoaded={() => true}
 					threshold={LIMIT}
 				>

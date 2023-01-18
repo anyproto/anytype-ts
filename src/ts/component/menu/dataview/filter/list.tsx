@@ -85,6 +85,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
+							loadMoreRows={() => {}}
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>

@@ -105,6 +105,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
+							loadMoreRows={() => {}}
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>

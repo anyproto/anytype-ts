@@ -91,6 +91,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 				{items.length ? (
 					<InfiniteLoader
 						rowCount={items.length}
+						loadMoreRows={() => {}}
 						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>

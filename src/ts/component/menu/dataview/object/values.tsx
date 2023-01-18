@@ -95,6 +95,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const List = SortableContainer((item: any) => (
 			<InfiniteLoader
 				rowCount={items.length}
+				loadMoreRows={() => {}}
 				isRowLoaded={() => true}
 				threshold={LIMIT}
 			>
