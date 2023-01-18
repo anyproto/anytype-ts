@@ -48,16 +48,9 @@ const Card = observer(class Card extends React.Component<Props> {
 		if (view.coverRelationKey) {
 			cover = <BlankCover />;
 
-			if (view.coverRelationKey == 'pageCover') {
-				const { coverType, coverId, coverX, coverY, coverScale } = record;
-				if (coverId && coverType) {
-					cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} />;
-				};
-			} else {
-				const coverNode = this.getCover();
-				if (coverNode) {
-					cover = coverNode;
-				};
+			const coverNode = this.getCover();
+			if (coverNode) {
+				cover = coverNode;
 			};
 		};
 
@@ -183,6 +176,13 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		const cn = ['cover', 'type1'];
 		let cover = null;
+
+		if (view.coverRelationKey == 'pageCover') {
+			const { coverType, coverId, coverX, coverY, coverScale } = record;
+			if (coverId && coverType) {
+				return <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} />;
+			};
+		}
 
 		for (let id of value) {
 			const f = detailStore.get(subId, id, []);
