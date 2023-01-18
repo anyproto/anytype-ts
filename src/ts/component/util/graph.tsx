@@ -260,6 +260,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
+		window.clearTimeout(this.timeoutPreview);
 		$('body').removeClass('cp');
 		$('#graphPreview').remove();
 	};
@@ -285,9 +286,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				if (!this.isDragging) {
 					this.subject = this.nodes.find(d => d.id == data.node);
 
-					window.clearTimeout(this.timeoutPreview);
-
 					if (this.subject) {
+						window.clearTimeout(this.timeoutPreview);
 						this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
 					} else {
 						this.onPreviewHide();
