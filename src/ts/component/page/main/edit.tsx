@@ -9,13 +9,12 @@ interface Props extends I.PageComponent {
 	refSidebar?: any;
 };
 
-
-class PageMainEdit extends React.Component<Props, object> {
+class PageMainEdit extends React.Component<Props> {
 	
 	refHeader: any = null;
 	refFooter: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);

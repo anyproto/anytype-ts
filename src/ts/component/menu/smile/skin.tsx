@@ -1,23 +1,14 @@
 import * as React from 'react';
-import { Emoji } from 'emoji-mart';
 import { IconObject } from 'Component';
 import { I, SmileUtil } from 'Lib';
-import { commonStore } from 'Store';
-import { observer } from 'mobx-react';
 
-interface Props extends I.Menu {};
-
-class MenuSmileSkin extends React.Component<Props, object> {
+class MenuSmileSkin extends React.Component<I.Menu> {
 
 	ref: any = null;
 	state = {
 		filter: ''
 	};
 
-	constructor (props: any) {
-		super(props);
-	};
-	
 	render () {
 		const { param } = this.props;
 		const { data } = param;

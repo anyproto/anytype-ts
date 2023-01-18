@@ -8,7 +8,7 @@ interface Props {
 	onPage: (id: string) => void;
 };
 
-class PopupSettingsHead extends React.Component<Props, object> {
+class PopupSettingsHead extends React.Component<Props> {
 
 	render () {
 		const { name, returnTo, prevPage, onPage } = this.props;

@@ -7,14 +7,11 @@ import { Util, keyboard } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
-
-const MenuSource = observer(class MenuSource extends React.Component<Props, object> {
+const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	
 	n: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.save = this.save.bind(this);

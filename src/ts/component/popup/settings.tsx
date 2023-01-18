@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { RouteComponentProps } from 'react-router';
 import $ from 'jquery';
 import { Loader } from 'Component';
 import { I, C, Storage, Util, analytics, Action, keyboard } from 'Lib';
@@ -32,8 +31,6 @@ import PageSpaceInvite from './page/settings/space/invite';
 import PageSpaceTeam from './page/settings/space/team';
 import PageSpaceLeave from './page/settings/space/leave';
 import PageSpaceRemove from './page/settings/space/remove';
-
-interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	loading: boolean;
@@ -68,7 +65,7 @@ const Components: any = {
 	spaceRemove:		 PageSpaceRemove,
 };
 
-const PopupSettings = observer(class PopupSettings extends React.Component<Props, State> {
+const PopupSettings = observer(class PopupSettings extends React.Component<I.Popup, State> {
 
 	refPhrase: any = null;
 	state = {
@@ -78,7 +75,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<Props
 	pinConfirmed: boolean = false;
 	onConfirmPin: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Popup) {
 		super(props);
 
 		this.onPage = this.onPage.bind(this);

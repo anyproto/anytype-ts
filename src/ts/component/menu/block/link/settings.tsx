@@ -6,14 +6,12 @@ import { I, C, Util, DataUtil, MenuUtil, keyboard, Relation } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
-const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<Props, object> {
+const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
 	
 	n: number = 0;
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.rebind = this.rebind.bind(this);

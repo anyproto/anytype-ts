@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
 import { keyboard } from 'Lib';
@@ -14,13 +13,14 @@ interface Props {
 
 const WIDTH = 344;
 
-class ListObjectPreview extends React.Component<Props, object> {
+class ListObjectPreview extends React.Component<Props> {
 
 	public static defaultProps = {
 		offsetX: 0,
 		canAdd: false,
 	};
 	
+	node: any = null;
 	n: number = 0;
 	page: number = 0;
 	maxPage: number = 0;
@@ -55,7 +55,10 @@ class ListObjectPreview extends React.Component<Props, object> {
 		);
 
 		return (
-			<div className="listPreviewObject">
+			<div 
+				ref={node => this.node = node}
+				className="listPreviewObject"
+			>
 				<div className="wrap">
 					<div id="scroll" className="scroll">
 						{items.map((item: any, i: number) => (
@@ -84,7 +87,7 @@ class ListObjectPreview extends React.Component<Props, object> {
 		const { getItems, canAdd } = this.props;
 		const items = getItems();
 		const length = items.length + (canAdd ? 1 : 0);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const cnt = Math.floor(node.width() / WIDTH);
 
 		return Math.max(0, Math.ceil(length / cnt) - 1);
@@ -99,7 +102,7 @@ class ListObjectPreview extends React.Component<Props, object> {
 	};
 
 	onMouseLeave (e: any, item: any) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('.item.hover').removeClass('hover');
 	};
 
@@ -119,7 +122,7 @@ class ListObjectPreview extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		node.find('.item.hover').removeClass('hover');
 		node.find('#item-' + item.id).addClass('hover');
@@ -152,7 +155,7 @@ class ListObjectPreview extends React.Component<Props, object> {
 
 	onArrow (dir: number) {
 		const { offsetX } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const arrowLeft = node.find('#arrowLeft');
 		const arrowRight = node.find('#arrowRight');
@@ -184,7 +187,7 @@ class ListObjectPreview extends React.Component<Props, object> {
 	};
 
 	resize () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const arrowLeft = node.find('#arrowLeft');
 		const arrowRight = node.find('#arrowRight');
 		const isFirst = this.page == 0;

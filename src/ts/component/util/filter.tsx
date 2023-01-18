@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Input, Icon } from 'Component';
 import { I, translate } from 'Lib';
@@ -21,7 +20,7 @@ interface Props {
 };
 
 
-class Filter extends React.Component<Props, object> {
+class Filter extends React.Component<Props> {
 
 	public static defaultProps = {
 		className: '',
@@ -29,10 +28,11 @@ class Filter extends React.Component<Props, object> {
 		placeholder: translate('commonFilterClick'),
 	};
 	
+	node: any = null;
 	isFocused: boolean = false;
 	ref: any = null;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);
@@ -43,10 +43,18 @@ class Filter extends React.Component<Props, object> {
 	
 	render () {
 		const { id, value, icon, placeholder, className, inputClassName, onKeyDown, onKeyUp } = this.props;
-		const cn = [ 'filter', className ];
+		const cn = [ 'filter' ];
+
+		if (className) {
+			cn.push(className);
+		};
 
 		return (
-			<div id={id} className={cn.join(' ')}>
+			<div
+				ref={node => this.node = node}
+				id={id} 
+				className={cn.join(' ')}
+			>
 				<div className="inner">
 					{icon ? <Icon className={icon} /> : ''}
 					<Input 
@@ -94,7 +102,7 @@ class Filter extends React.Component<Props, object> {
 		this.isFocused = true;
 
 		if (placeholderFocus) {
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const input = node.find('.input');
 
 			input.attr({ placeholder: placeholderFocus });
@@ -111,7 +119,7 @@ class Filter extends React.Component<Props, object> {
 		this.isFocused = false;
 
 		if (placeholderFocus) {
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const input = node.find('.input');
 
 			input.attr({ placeholder: placeholder });
@@ -147,7 +155,7 @@ class Filter extends React.Component<Props, object> {
 	};
 
 	checkButton () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const v = this.getValue();
 
 		v ? node.addClass('active') : node.removeClass('active');

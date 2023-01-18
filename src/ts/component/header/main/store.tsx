@@ -4,13 +4,11 @@ import { I, ObjectUtil, keyboard } from 'Lib';
 import { popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.HeaderComponent {};
-
-const HeaderMainStore = observer(class HeaderMainStore extends React.Component<Props, object> {
+const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent> {
 
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.HeaderComponent) {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);

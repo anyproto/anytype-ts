@@ -3,13 +3,11 @@ import { Input, Button, Loader } from 'Component';
 import { I, C, keyboard, translate } from 'Lib';
 import { popupStore } from 'Store';
 
-interface Props extends I.Menu {};
-
 interface State { 
 	loading: boolean;
 };
 
-class MenuDataviewCreateBookmark extends React.Component<Props, State> {
+class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 	
 	ref: any = null;
 
@@ -17,7 +15,7 @@ class MenuDataviewCreateBookmark extends React.Component<Props, State> {
 		loading: false,
 	};
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onSubmit = this.onSubmit.bind(this);

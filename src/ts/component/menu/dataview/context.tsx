@@ -5,15 +5,11 @@ import { I, C, keyboard, analytics, ObjectUtil, focus } from 'Lib';
 import { detailStore, menuStore, blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {
-	history?: any;
-};
-
-class MenuContext extends React.Component<Props, object> {
+class MenuContext extends React.Component<I.Menu> {
 	
 	n: number = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);

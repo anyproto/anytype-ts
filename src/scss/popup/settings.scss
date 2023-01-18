@@ -245,19 +245,12 @@
 			.item:nth-child(4n + 4) { margin-right: 0px; }
 			.item:hover { border-color: $colorBlack; }
 
-			.item.disabled { cursor: no-drop;  }
-			.item.disabled:hover { border-color: $colorBorderLight;  }
-
 			.item {
 				.icon { 
 					width: 28px; margin-bottom: 6px; height: 32px; background-size: contain; 
 					background-position: top center;
 				}
 				.name { @include text-small; }
-				.soon { 
-					font-weight: 500; font-size: 9px; line-height: 18px; letter-spacing: 0.4px; text-transform: uppercase; color: $colorMediumGrey; 
-					position: absolute; top: 3px; right: 9px;
-				}
 			}
 
 			.item.notion .icon {  background-image: url('~img/icon/popup/settings/import/notion.svg'); }

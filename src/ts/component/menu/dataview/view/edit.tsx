@@ -1,21 +1,19 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, DataUtil, MenuUtil, Relation } from 'Lib';
 import { Input, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
-const MenuViewEdit = observer(class MenuViewEdit extends React.Component<Props> {
+const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu> {
 	
 	n: number = -1;
 	ref: any = null;
 	isFocused: boolean = false;
 	param: any = {};
 
-	constructor(props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);

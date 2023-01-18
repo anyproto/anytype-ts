@@ -38,8 +38,7 @@ class Keyboard {
 		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
 		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
 		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
-		win.on('scroll.common', (e: any) => { this.onScroll(e); });
-
+		win.on('scroll.common', () => { this.onScroll(); });
 		win.off('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', (e: any) => {
@@ -63,7 +62,7 @@ class Keyboard {
 		$(window).off('keyup.common keydown.common mousedown.common scroll.common mousemove.common blur.common');
 	};
 
-	onScroll (e: any) {
+	onScroll () {
 		Preview.tooltipHide(false);
 
 		$(window).trigger('resize.menuOnboarding');

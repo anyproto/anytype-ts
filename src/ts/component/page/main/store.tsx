@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Label, Icon, IconObject, Cover, Header, Filter } from 'Component';
@@ -58,6 +57,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		loading: false,
 	};
 
+	node: any = null;
 	top: number = 0;
 	offset: number = 0;
 	cache: any = null;
@@ -247,7 +247,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<div className={cn.join(' ')} style={param.style}>
 						{item.children.map((item: any, i: number) => {
@@ -265,15 +264,17 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 		};
 
 		return (
-			<div className={[ 'wrapper', this.tab, this.view ].join(' ')}>
+			<div 
+				ref={node => this.node = node}
+				className={[ 'wrapper', this.tab, this.view ].join(' ')}
+			>
 				<Header component="mainStore" {...this.props} tabs={Tabs} tab={this.tab} onTab={this.onTab} />
 
 				<div className="body">
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={({ index }) => true}
+							isRowLoaded={() => true}
 						>
 							{({ onRowsRendered, registerChild }) => (
 								<AutoSizer className="scrollArea">
@@ -637,7 +638,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<Props
 	resize () {
 		const win = $(window);
 		const container = Util.getPageContainer(this.props.isPopup);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = Util.sizeHeader();

@@ -7,8 +7,6 @@ import { commonStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 interface State {
 	loading: boolean;
 };
@@ -17,7 +15,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT_HEIGHT = 10;
 
-const MenuBlockMention = observer(class MenuBlockMention extends React.Component<Props, State> {
+const MenuBlockMention = observer(class MenuBlockMention extends React.Component<I.Menu, State> {
 
 	state = {
 		loading: false,
@@ -32,7 +30,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	offset: number = 0;
 	refList: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);
@@ -88,7 +86,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>

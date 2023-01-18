@@ -1,25 +1,19 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Icon, Button } from 'Component';
-import { I, C, keyboard, Dataview } from 'Lib';
+import { Icon } from 'Component';
+import { I, C, keyboard } from 'Lib';
 import { menuStore, blockStore } from 'Store';
-import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
-interface Props extends I.ViewComponent {
-};
-
-
-const Head = observer(class Head extends React.Component<Props, object> {
+const Head = observer(class Head extends React.Component<I.ViewComponent> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	menuContext: any = null;
 	composition: boolean = false;
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.ViewComponent) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
@@ -44,7 +38,10 @@ const Head = observer(class Head extends React.Component<Props, object> {
 		};
 		
 		return (
-			<div className={cn.join(' ')}>
+			<div 
+				ref={node => this.node = node}
+				className={cn.join(' ')}
+			>
 				<div id="title" className="title">
 					<div 
 						className="value" 
@@ -186,7 +183,7 @@ const Head = observer(class Head extends React.Component<Props, object> {
 			return '';
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const value = node.find('#title');
 
 		return value.length ? String(value.get(0).innerText || '') : '';
@@ -202,7 +199,7 @@ const Head = observer(class Head extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#placeholder').hide();
 	};
 	
@@ -211,7 +208,7 @@ const Head = observer(class Head extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.find('#placeholder').show();
 	};
 

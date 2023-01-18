@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
@@ -9,20 +8,19 @@ import { Icon, IconObject, ObjectName } from 'Component';
 import { I, ObjectUtil, keyboard, Relation } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 
-interface Props extends I.Menu {};
-
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuObjectValues = observer(class MenuObjectValues extends React.Component<Props> {
+const MenuObjectValues = observer(class MenuObjectValues extends React.Component<I.Menu> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	n: number = 0;
 	top: number = 0;
 	cache: any = {};
 	refList: any = null;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
@@ -88,7 +86,6 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -98,8 +95,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const List = SortableContainer((item: any) => (
 			<InfiniteLoader
 				rowCount={items.length}
-				loadMoreRows={() => {}}
-				isRowLoaded={() => { return true; }}
+				isRowLoaded={() => true}
 				threshold={LIMIT}
 			>
 				{({ onRowsRendered, registerChild }) => (
@@ -126,6 +122,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		
 		return (
 			<List 
+				ref={node => this.node = node}
 				axis="y" 
 				transitionDuration={150}
 				distance={10}
@@ -133,7 +130,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				onSortStart={this.onSortStart}
 				onSortEnd={this.onSortEnd}
 				helperClass="isDragging"
-				helperContainer={() => { return $(ReactDOM.findDOMNode(this)).get(0); }}
+				helperContainer={() => { return $(this.node).get(0); }}
 			/>
 		);
 	};

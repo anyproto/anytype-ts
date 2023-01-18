@@ -1,20 +1,18 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import katex from 'katex';
+import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { I, keyboard, DataUtil, MenuUtil } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Sections from 'json/latex.json';
-
-interface Props extends I.Menu {};
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_BIG = 80;
 const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
-const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Props, object> {
+const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.Menu> {
 	
 	_isMounted: boolean = false;
 	emptyLength: number = 0;
@@ -23,7 +21,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 	n: number = 0;
 	filter: string = '';
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
@@ -82,7 +80,6 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -94,8 +91,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<Pro
 				{items.length ? (
 					<InfiniteLoader
 						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
+						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
 						{({ onRowsRendered, registerChild }) => (

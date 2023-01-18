@@ -1,12 +1,10 @@
 import * as React from 'react';
-import {I, Action, keyboard, Storage, Renderer} from 'Lib';
+import { I, Action, keyboard } from 'Lib';
 import { Title, Select, Button, Switch } from 'Component';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup {};
-
-const PopupExport = observer(class PopupExport extends React.Component<Props, object> {
+const PopupExport = observer(class PopupExport extends React.Component<I.Popup> {
 
 	format: I.ExportFormat = I.ExportFormat.Markdown;
 	zip: boolean = false;
@@ -16,7 +14,7 @@ const PopupExport = observer(class PopupExport extends React.Component<Props, ob
 	pageSize: any = { id: 'A4', name: 'A4'};
 	printBackground: boolean = true;
 
-	constructor(props: any) {
+	constructor (props: I.Popup) {
 		super(props);
 
 		this.onConfirm = this.onConfirm.bind(this);

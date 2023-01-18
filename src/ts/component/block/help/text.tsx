@@ -9,7 +9,7 @@ interface Props {
 	color?: string;
 };
 
-class ContentText extends React.Component<Props, object> {
+class ContentText extends React.Component<Props> {
 
 	public static defaultProps = {
 		text: '&nbsp;',

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
@@ -11,19 +10,18 @@ import { I, C, DataUtil, keyboard, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuGroupList = observer(class MenuGroupList extends React.Component<Props, object> {
+const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Menu> {
 	
+	node: any = null;
 	n: number = 0;
 	top: number = 0;
 	cache: any = {};
 	refList: any = null;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onSortStart = this.onSortStart.bind(this);
@@ -60,6 +58,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 
 			return (
 				<div 
+					ref={node => this.node = node}
 					id={'item-' + item.id} 
 					className={cn.join(' ')} 
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
@@ -100,7 +99,6 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={param.index}
-					hasFixedWidth={() => {}}
 				>
 					<Item key={item.id} {...item} index={param.index} style={param.style} />
 				</CellMeasurer>
@@ -112,8 +110,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => { return true; }}
+						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
 						{({ onRowsRendered, registerChild }) => (
@@ -152,7 +149,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<Props
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(ReactDOM.findDOMNode(this)).find('.items').get(0); }}
+					helperContainer={() => { return $(this.node).find('.items').get(0); }}
 				/>
 			</div>
 		);

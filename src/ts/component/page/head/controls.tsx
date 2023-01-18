@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
@@ -21,11 +20,12 @@ interface State {
 const Controls = observer(class Controls extends React.Component<Props, State> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	state = {
 		loading: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onIcon = this.onIcon.bind(this);
@@ -58,6 +58,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 		return (
 			<div 
+				ref={node => this.node = node}
 				className={cn.join(' ')}
 				onDragOver={this.onDragOver} 
 				onDragLeave={this.onDragLeave} 
@@ -73,7 +74,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					onCoverSelect={this.onCoverSelect}
 					onLayout={this.onLayout}
 					onRelation={this.onRelation}
-					onEdit={() => {}}
 					onUploadStart={this.onUploadStart}
 					onUpload={this.onUpload}
 				/>
@@ -103,7 +103,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	
 	onIconPage () {
 		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		menuStore.open('smile', { 
 			element: '.editorControls #button-icon',
@@ -154,7 +154,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.addClass('hover');
 	};
 
@@ -163,7 +163,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.removeClass('hover');
 	};
 
@@ -175,7 +175,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	onLayout (e: any) {
 		const { rootId, onLayoutSelect } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const object = detailStore.get(rootId, rootId, []);
 		
 		menuStore.open('blockLayout', { 
@@ -197,7 +197,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 	onRelation (e: any) {
 		const { isPopup, rootId, readonly } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const cnw = [ 'fixed' ];
 
 		if (!isPopup) {
@@ -242,7 +242,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.addClass('isDraggingOver');
 	};
 	
@@ -251,7 +251,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return;
 		};
 		
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		node.removeClass('isDraggingOver');
 	};
 	
@@ -263,7 +263,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId, dataset } = this.props;
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		node.removeClass('isDraggingOver');
 		preventCommonDrop(true);

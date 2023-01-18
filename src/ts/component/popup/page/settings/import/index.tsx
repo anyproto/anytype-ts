@@ -4,7 +4,6 @@ import { Icon, Title, Label } from 'Component';
 import { I, Util, translate } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Head from '../head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -13,7 +12,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onImport: (type: I.ImportType, param: any) => void;
 };
 
-const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex extends React.Component<Props, object> {
+const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex extends React.Component<Props> {
 
 	render () {
 		const { onPage } = this.props;
@@ -27,17 +26,8 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		};
 
 		const Item = (item: any) => {
-			let cn = [ 'item', item.id ];
-			let onClick = () => { onPage(Util.toCamelCase('import-' + item.id)); };
-			
-			if (item.disabled) {
-				cn.push('disabled');
-				onClick = null;
-			};
-
 			return (
-				<div className={cn.join(' ')} onClick={onClick} >
-					{item.disabled ? <div className="soon">{translate('commonSoon')}</div> : ''}
+				<div className={[ 'item', item.id ].join(' ')} onClick={() => { onPage(Util.toCamelCase('import-' + item.id)); }} >
 					<div className="txt">
 						<Icon />
 						<div className="name">{item.name}</div>

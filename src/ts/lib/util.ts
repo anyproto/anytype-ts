@@ -61,9 +61,11 @@ class Util {
 		
 			if (!minWidth) {
 				minWidth = 0;
-			} else if (minWidth == '*') {
+			} else 
+			if (minWidth == '*') {
 				minWidth = +a[i++];
-			} else if (minWidth.charAt(0) == '*') {
+			} else 
+			if (minWidth.charAt(0) == '*') {
 				minWidth = +a[minWidth.slice(1, -1)];
 			} else {
 				minWidth = +minWidth;

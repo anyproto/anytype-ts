@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { IconEmoji } from 'Component';
@@ -148,6 +147,7 @@ const Theme = {
 
 const IconObject = observer(class IconObject extends React.Component<Props> {
 
+	node: any = null;
 	public static defaultProps = {
 		size: 20,
 		offsetX: 0,
@@ -294,6 +294,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		return (
 			<div 
+				ref={node => this.node = node}
 				id={this.props.id} 
 				className={cn.join(' ')} 
 				onClick={this.onClick}
@@ -482,7 +483,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	onMouseEnter (e: any) {
 		const { tooltip, tooltipY, onMouseEnter } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		if (tooltip) {
 			Preview.tooltipShow(tooltip, node, I.MenuDirection.Center, tooltipY);

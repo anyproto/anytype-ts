@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { I, Preview, DataUtil, translate } from 'Lib';
@@ -10,16 +9,17 @@ interface Props {
 	className?: string;
 	rootId: string;
 	onClick: (e: any) => void;
-}
+};
 
-
-const Sync = observer(class Sync extends React.Component<Props, object> {
+const Sync = observer(class Sync extends React.Component<Props> {
 
 	public static defaultProps = {
 		className: '',
 	};
 
-	constructor (props: any) {
+	node: any = null;
+
+	constructor (props: Props) {
 		super(props);
 
 		this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -32,9 +32,21 @@ const Sync = observer(class Sync extends React.Component<Props, object> {
 		const thread = authStore.threadGet(rootId);
 		const disabled = account?.status?.type != I.AccountStatusType.Active;
 		const status = disabled ? I.ThreadStatus.Disabled : ((thread.summary || {}).status || I.ThreadStatus.Unknown);
+		const cn = [ 'sync' ];
+
+		if (className) {
+			cn.push(className);
+		};
 		
 		return (
-			<div id={id} className={[ 'sync', className ].join(' ')} onClick={onClick} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+			<div 
+				ref={node => this.node = node}
+				id={id} 
+				className={cn.join(' ')} 
+				onClick={onClick} 
+				onMouseEnter={this.onMouseEnter} 
+				onMouseLeave={this.onMouseLeave}
+			>
 				<div className={[ 'bullet', DataUtil.threadColor(status) ].join(' ')} />
 				{translate('syncStatus' + status)}
 			</div>
@@ -43,7 +55,7 @@ const Sync = observer(class Sync extends React.Component<Props, object> {
 
 	onMouseEnter (e: any) {
 		const { rootId } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const thread = authStore.threadGet(rootId);
 		const { summary } = thread;
 

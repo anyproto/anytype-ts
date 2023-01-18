@@ -1,21 +1,19 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
 import { authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, DataUtil, translate, Util } from 'Lib';
 
-interface Props extends I.Menu {}
-
 const MENU_ID = 'threadStatus';
 
-const MenuThreadList = observer(class MenuThreadList extends React.Component<Props, object> {
+const MenuThreadList = observer(class MenuThreadList extends React.Component<I.Menu> {
 
+	node: any = null;
 	timeoutMenu: number = 0;
 	timeoutClose: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 
 		this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -50,7 +48,10 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<Pro
 		);
 
 		return (
-			<div className="items">
+			<div 
+				ref={node => this.node = node}
+				className="items"
+			>
 				<div 
 					id="item-cafe" 
 					className="item" 
@@ -116,7 +117,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<Pro
 
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const item = node.find('#item-' + id);
 
 		if (!item.length) {

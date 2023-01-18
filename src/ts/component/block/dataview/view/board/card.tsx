@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { I, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -12,9 +11,10 @@ interface Props extends I.ViewComponent {
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
-const Card = observer(class Card extends React.Component<Props, object> {
+const Card = observer(class Card extends React.Component<Props> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 
 	render () {
 		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline } = this.props;
@@ -66,6 +66,7 @@ const Card = observer(class Card extends React.Component<Props, object> {
 
 		return (
 			<div 
+				ref={node => this.node = node} 
 				id={`card-${record.id}`}
 				className={cn.join(' ')} 
 				data-id={record.id}
@@ -121,7 +122,7 @@ const Card = observer(class Card extends React.Component<Props, object> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const last = node.find('.cellContent:not(.isEmpty)').last();
 
 		node.find('.cellContent').removeClass('last');

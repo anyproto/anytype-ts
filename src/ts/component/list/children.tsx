@@ -1,21 +1,20 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Block } from 'Component';
 import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import { I, C, focus, translate } from 'Lib';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {
+interface Props extends I.BlockComponent {
 	onMouseMove? (e: any): void;
 	onMouseLeave? (e: any): void;
 	onResizeStart? (e: any, index: number): void;
 };
 
-const ListChildren = observer(class ListChildren extends React.Component<Props, object> {
+const ListChildren = observer(class ListChildren extends React.Component<Props> {
 	
 	refObj: any = {};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onEmptyToggle = this.onEmptyToggle.bind(this);

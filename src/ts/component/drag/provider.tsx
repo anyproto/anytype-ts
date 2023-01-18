@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import $ from 'jquery';
@@ -7,7 +6,6 @@ import raf from 'raf';
 import { DragLayer } from 'Component';
 import { I, C, focus, keyboard, Util, scrollOnMove, Action, Preview } from 'Lib';
 import { blockStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -17,8 +15,9 @@ interface Props {
 
 const OFFSET = 100;
 
-const DragProvider = observer(class DragProvider extends React.Component<Props, object> {
+const DragProvider = observer(class DragProvider extends React.Component<Props> {
 
+	node: any = null;
 	refLayer: any = null;
 	commonDropPrevented: boolean = false;
 	position: I.BlockPosition = I.BlockPosition.None;
@@ -31,7 +30,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onDragOver = this.onDragOver.bind(this);
@@ -44,8 +43,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 
 	render () {
 		const children = this.injectProps(this.props.children);
+
 		return (
-			<div 
+			<div
+				ref={node => this.node = node}
 				id="dragProvider" 
 				className="dragProvider" 
 				onDragOver={this.onDragOver} 
@@ -62,7 +63,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const rootId = keyboard.getRootId();
 
 		this.init = true;
@@ -188,7 +189,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const isPopup = keyboard.isPopup();
 		const { selection } = dataset || {};
 		const win = $(window);
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const container = Util.getScrollContainer(isPopup);
 		const sidebar = $('#sidebar');
 		const layer = $('#dragLayer');
@@ -257,7 +258,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props, 
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const isPopup = keyboard.isPopup();
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const container = Util.getScrollContainer(isPopup);
 		const sidebar = $('#sidebar');
 		const body = $('body');

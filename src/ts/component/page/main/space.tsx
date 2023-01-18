@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, ListObjectPreview, Deleted } from 'Component';
@@ -10,17 +9,14 @@ import HeadSimple from 'Component/page/head/simple';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
-interface Props extends I.PageComponent {
-	rootId: string;
-};
-
 interface State {
 	isDeleted: boolean;
 };
 
-const PageMainSpace = observer(class PageMainSpace extends React.Component<Props, State> {
+const PageMainSpace = observer(class PageMainSpace extends React.Component<I.PageComponent, State> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	id: string = '';
 	loading: boolean = false;
 	timeout: number = 0;
@@ -31,7 +27,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		isDeleted: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: I.PageComponent) {
 		super(props);
 		
 		this.resize = this.resize.bind(this);
@@ -56,7 +52,10 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		const highlighted = dbStore.getRecords(subIdHighlighted, '').map(id => detailStore.get(subIdHighlighted, id, []));
 
 		return (
-			<div className={[ 'setWrapper', check.className ].join(' ')}>
+			<div 
+				ref={node => this.node = node}
+				className={[ 'setWrapper', check.className ].join(' ')}
+			>
 				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
@@ -193,7 +192,7 @@ const PageMainSpace = observer(class PageMainSpace extends React.Component<Props
 		
 		const win = $(window);
 		const { isPopup } = this.props;
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const cover = node.find('.block.blockCover');
 		const container = Util.getPageContainer(isPopup);
 		const header = container.find('#header');

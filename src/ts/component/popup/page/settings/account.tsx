@@ -27,7 +27,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		error: '',
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onLogout = this.onLogout.bind(this);

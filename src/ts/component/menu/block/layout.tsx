@@ -6,13 +6,11 @@ import { I, keyboard, analytics, DataUtil, ObjectUtil, MenuUtil } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
-class MenuBlockLayout extends React.Component<Props, object> {
+class MenuBlockLayout extends React.Component<I.Menu> {
 	
 	n: number = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);

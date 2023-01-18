@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
@@ -25,13 +24,14 @@ const QRColor = {
 
 const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends React.Component<Props, State> {
 
+	node: any = null;
 	refPhrase: any = null;
 	state = {
 		entropy: '',
 		showCode: false,
 	};
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);
@@ -46,7 +46,9 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		const { phrase } = authStore;
 
 		return (
-			<div>
+			<div
+				ref={node => this.node = node}
+			>
 				<Head {...this.props} returnTo="account" name={translate('popupSettingsAccountTitle')} />
 				
 				<Title text={translate('popupSettingsPhraseTitle')} />
@@ -102,7 +104,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	};
 
 	onFocus () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
 		this.refPhrase.setValue(authStore.phrase);
@@ -112,7 +114,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	};
 
 	onBlur () {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
 		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));

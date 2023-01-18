@@ -13,7 +13,7 @@ interface Props {
 };
 
 
-class Pin extends React.Component<Props, object> {
+class Pin extends React.Component<Props> {
 
 	public static defaultProps = {
 		size: Constant.pinSize,

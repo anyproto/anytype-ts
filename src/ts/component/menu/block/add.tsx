@@ -7,15 +7,13 @@ import { I, Mark, keyboard, C, focus, Action, Util, DataUtil, MenuUtil, ObjectUt
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Menu {};
-
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 42;
 const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_RELATION = 32;
 const LIMIT = 40;
 
-const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, object> {
+const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu> {
 	
 	_isMounted = false;
 	emptyLength: number = 0;
@@ -25,7 +23,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 	n: number = 0;
 	filter: string = '';
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
@@ -156,7 +154,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					cache={this.cache}
 					columnIndex={0}
 					rowIndex={index}
-					hasFixedWidth={() => {}}
 				>
 					{content}
 				</CellMeasurer>
@@ -171,8 +168,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<Props, 
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length}
-							loadMoreRows={() => {}}
-							isRowLoaded={() => { return true; }}
+							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
 							{({ onRowsRendered, registerChild }) => (

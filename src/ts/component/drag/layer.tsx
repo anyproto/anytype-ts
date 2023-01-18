@@ -17,6 +17,7 @@ interface State {
 class DragLayer extends React.Component<object, State> {
 	
 	_isMounted: boolean = false;
+	node: any = null;
 	state = {
 		rootId: '',
 		type: I.DropType.None,
@@ -88,7 +89,12 @@ class DragLayer extends React.Component<object, State> {
 		};
 		
 		return (
-			<div id="dragLayer" className="dragLayer" style={{ width: width }}>
+			<div 
+				ref={node => this.node = node}
+				id="dragLayer" 
+				className="dragLayer" 
+				style={{ width }}
+			>
 				<div className="inner">
 					{content}
 				</div>
@@ -105,7 +111,7 @@ class DragLayer extends React.Component<object, State> {
 			return;
 		};
 
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 		
 		node.find('.block').attr({ id: '' });
 		node.find('.selectable').attr({ id: '' });

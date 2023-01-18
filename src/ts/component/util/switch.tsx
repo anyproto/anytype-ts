@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
 interface Props {
 	id?: string;
@@ -10,16 +9,17 @@ interface Props {
 	onChange?(e: any, value: boolean): void;
 };
 
-class Switch extends React.Component<Props, object> {
+class Switch extends React.Component<Props> {
 
 	public static defaultProps = {
 		value: false,
 		color: 'orange',
 	};
 
+	node: any = null;
 	value: boolean = false;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 		
 		this.onChange = this.onChange.bind(this);
@@ -37,7 +37,12 @@ class Switch extends React.Component<Props, object> {
 		};
 		
 		return (
-			<div id={id} className={cn.join(' ')} onClick={this.onChange}>
+			<div 
+				ref={node => this.node = node}
+				id={id} 
+				className={cn.join(' ')} 
+				onClick={this.onChange}
+			>
 				<div className="inner" />
 			</div>
 		);
@@ -67,7 +72,7 @@ class Switch extends React.Component<Props, object> {
 	};
 	
 	setValue (value: boolean) {
-		const node = $(ReactDOM.findDOMNode(this));
+		const node = $(this.node);
 
 		this.value = value;
 		value ? node.addClass('active') : node.removeClass('active');

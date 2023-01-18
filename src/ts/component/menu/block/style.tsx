@@ -5,13 +5,11 @@ import { MenuItemVertical } from 'Component';
 import { I, keyboard, MenuUtil, analytics } from 'Lib';
 import { blockStore } from 'Store';
 
-interface Props extends I.Menu {}
-
-const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<Props, object> {
+const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.Menu> {
 	
 	n: number = 0;
 	
-	constructor (props: any) {
+	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onClick = this.onClick.bind(this);

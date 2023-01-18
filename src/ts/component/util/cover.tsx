@@ -20,7 +20,7 @@ interface Props {
 	onMouseDown?(e: any): void;
 };
 
-class Cover extends React.Component<Props, object> {
+class Cover extends React.Component<Props> {
 
 	private static defaultProps = {
 		type: 0,

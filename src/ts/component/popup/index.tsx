@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router';
 import $ from 'jquery';
 import raf from 'raf';
@@ -20,12 +19,13 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
-class Popup extends React.Component<Props, object> {
+class Popup extends React.Component<Props> {
 
 	_isMounted: boolean = false;
+	node: any = null;
 	isAnimating: boolean = false;
 
-	constructor (props: any) {
+	constructor (props: Props) {
 		super(props);
 
 		this.position = this.position.bind(this);
@@ -60,7 +60,11 @@ class Popup extends React.Component<Props, object> {
 		};
 
 		return (
-			<div id={popupId} className={cn.join(' ')}>
+			<div 
+				ref={node => this.node = node}
+				id={popupId} 
+				className={cn.join(' ')}
+			>
 				<div id={popupId + '-innerWrap'} className="innerWrap">
 					<div className="content">
 						<Component 
@@ -110,7 +114,7 @@ class Popup extends React.Component<Props, object> {
 				return;
 			};
 			
-			const node = $(ReactDOM.findDOMNode(this)); 
+			const node = $(this.node); 
 			const wrap = node.find('.innerWrap');
 
 			node.addClass('show');
@@ -133,7 +137,7 @@ class Popup extends React.Component<Props, object> {
 				return;
 			};
 					
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const inner = node.find('.innerWrap');
 
 			inner.css({ 

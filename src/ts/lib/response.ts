@@ -231,10 +231,6 @@ const BlockDataviewViewCreate = (response: any) => {
 	};
 };
 
-const BlockDataviewRelationListAvailable = (response: any) => {
-	return {};
-};
-
 const HistoryGetVersions = (response: any) => {
 	return {
 		versions: (response.getVersionsList() || []).map(Mapper.From.HistoryVersion),
@@ -410,8 +406,6 @@ export {
 	
 	BlockCreate,
 	BlockDataviewViewCreate,
-
-	BlockDataviewRelationListAvailable,
 
 	BlockListDuplicate,
 	BlockListConvertToObjects,

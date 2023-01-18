@@ -5,13 +5,11 @@ import { I, ObjectUtil, Preview, keyboard } from 'Lib';
 import { detailStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.HeaderComponent {};
-
-const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<Props, object> {
+const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent> {
 
 	timeout: number = 0;
 
-	constructor (props: any) {
+	constructor (props: I.HeaderComponent) {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);

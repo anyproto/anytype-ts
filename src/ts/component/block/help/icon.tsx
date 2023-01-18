@@ -5,7 +5,7 @@ interface Props {
 	icon?: string;
 };
 
-class ContentIcon extends React.Component<Props, object> {
+class ContentIcon extends React.Component<Props> {
 
 	render () {
 		const { icon } = this.props;
