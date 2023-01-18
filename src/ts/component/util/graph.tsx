@@ -288,7 +288,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					window.clearTimeout(this.timeoutPreview);
 
 					if (this.subject) {
-						this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 100);
+						this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
 					} else {
 						this.onPreviewHide();
 					};
@@ -296,9 +296,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				break;
 
 			case 'onDragMove':
-				if (this.isDragging) {
-					this.onPreviewHide();
-				};
+				this.onPreviewHide();
 				break;
 
 			case 'onContextMenu':

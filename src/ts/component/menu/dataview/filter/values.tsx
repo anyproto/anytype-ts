@@ -447,7 +447,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				item[k] = Relation.formatValue(relation, item[k], false);
 			};
 
-			view.setFilter(itemId, item);
+			view.setFilter(item);
 			analytics.event('ChangeFilterValue', { condition: item.condition });
 
 			save();
@@ -480,7 +480,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { data } = param;
 		const { getView, itemId } = data;
 
-		getView().setFilter(itemId, { value: this.refValue.getValue() });
+		getView().setFilter({ id: itemId, value: this.refValue.getValue() });
 		close();
 	};
 

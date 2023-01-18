@@ -7,6 +7,7 @@ import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
 	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
+	onSourceTypeSelect?(element: any, rootId: string): void;
 };
 
 interface State {
@@ -238,25 +239,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	onSource (e: any) {
-		const { block, getData, getView } = this.props;
+		const { block, onSourceTypeSelect } = this.props;
 		const { targetObjectId } = block.content;
-		const view = getView();
 
-		menuStore.closeAll(null, () => {
-			menuStore.open('dataviewSource', {
-				element: `#block-${block.id} #head-source-select`,
-				className: 'big single',
-				horizontal: I.MenuDirection.Left,
-				data: {
-					targetObjectId,
-					objectId: targetObjectId,
-					blockId: Constant.blockId.dataview,
-					onSave: (() => {
-						getData(view.id, 0, true);
-					}),
-				}
-			});
-		});
+		onSourceTypeSelect(`#block-${block.id} #head-source-select`, targetObjectId);
 	};
 
 	onFocus (e: any) {

@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Loader } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -56,13 +56,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
 		this.onSourceSelect = this.onSourceSelect.bind(this);
+		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
+		this.onEmpty = this.onEmpty.bind(this);
 	};
 
 	render () {
 		const { rootId, block, isPopup, isInline, isDragging } = this.props;
 		const { loading } = this.state;
+		const { targetObjectId } = block.content;
 		const views = dbStore.getViews(rootId, block.id);
 		const sources = this.getSources();
+		const targetId = isInline ? targetObjectId : rootId;
 
 		if (!views.length) {
 			return null;
@@ -72,6 +76,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!view) {
 			return null;
 		};
+
+		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.relation);
 
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
@@ -112,6 +119,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
 					onSourceSelect={this.onSourceSelect}
+					onSourceTypeSelect={this.onSourceTypeSelect}
 					className={className}
 					isInline={isInline}
 				/>
@@ -136,7 +144,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			if (loading) {
 				body = <Loader id="set-loader" />
-			} else {
+			} else
+			if (!types.length && !relations.length) {
+				body = (
+					<Empty
+						{...this.props}
+						title="Type or relation has been deleted"
+						description="Visit the Marketplace to re-install these entities or select another source."
+						button="Select source"
+						withButton={true}
+						onClick={this.onEmpty}
+					/>
+				);
+			}
+			else {
 				body = (
 					<div className="content">
 						<ViewComponent 
@@ -176,7 +197,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						description="Select object source or connect existing set"
 						button="Select source"
 						withButton={true}
-						onClick={(e: any) => { this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center }); }}
+						onClick={this.onEmpty}
 					/>
 				</React.Fragment>
 			);
@@ -251,7 +272,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.unbind();
 		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
 		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
-		win.on(`updateDataviewData.${block.id}`, () => { this.getData(this.getView().id, 0, true); });
+		win.on(`updateDataviewData.${block.id}`, () => { this.getData(this.getView().id, 0, true);});
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
 		});
@@ -439,6 +460,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 		return object.setOf || [];
+	};
+
+	onEmpty (e: any) {
+		const { rootId, isInline } = this.props;
+
+		if (isInline) {
+			this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center });
+		} else {
+			this.onSourceTypeSelect(e.currentTarget, rootId);
+		};
 	};
 
 	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
@@ -678,19 +709,36 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 				],
 				canAdd: true,
-				onSelect: (item: any) => {
+				onSelect: (item: any, isNew: boolean) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 						if (message.views && message.views.length) {
 							this.getData(message.views[0].id, 0, true);
 						};
 					});
 
-					analytics.event('InlineSetSetSource');
+					analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
 				}
 			}
 		}, param || {});
 
 		menuStore.open('searchObject', menuParam);
+	};
+
+	onSourceTypeSelect (element: any, rootId: string) {
+		const { block, isInline } = this.props;
+
+		menuStore.closeAll(null, () => {
+			menuStore.open('dataviewSource', {
+				element: $(element),
+				className: 'big single',
+				horizontal: I.MenuDirection.Left,
+				data: {
+					rootId,
+					objectId: rootId,
+					blockId: isInline ? block.id : Constant.blockId.dataview,
+				}
+			});
+		});
 	};
 
 	getIdPrefix () {

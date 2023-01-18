@@ -41,7 +41,7 @@ const forceProps = {
 	},
 	link: {
 		strength: 1,
-		distance: 30,
+		distance: 80,
 		iterations: 1,
 	},
 	forceX: {
@@ -147,6 +147,8 @@ updateSettings = (param) => {
 
 	if (needUpdate) {
 		updateForces();
+	} else {
+		redraw();
 	};
 };
 
