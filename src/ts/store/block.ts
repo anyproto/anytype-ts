@@ -78,11 +78,12 @@ class BlockStore {
 		};
 	};
 
-    update (rootId: string, param: any) {
-		const block = this.getLeaf(rootId, param.id);
+    update (rootId: string, blockId: string, param: any) {
+		const block = this.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
+
 		set(block, param);
 	};
 
@@ -406,7 +407,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = detailStore.get(rootId, mark.param, [ 'layout', 'name' ], true);
+				const object = detailStore.get(rootId, mark.param, [ 'layout', 'name', 'snippet', 'description' ], true);
 
 				if (object._empty_) {
 					continue;
@@ -443,7 +444,7 @@ class BlockStore {
 			};
 
 			if (update) {
-				this.update(rootId, { id: block.id, content: { ...block.content, text, marks } });
+				this.updateContent(rootId, block.id, { text, marks });
 			};
 		};
 	};

@@ -37,11 +37,12 @@
 .iconObject.c48 { display: block; width: 48px; height: 48px; border-radius: 0px; overflow: hidden; }
 .iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
+.iconObject.c80 { display: block; width: 80px; height: 80px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c112 { display: block; width: 112px; height: 112px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
 
-.iconObject.c56, .iconObject.c96, .iconObject.c128 {
+.iconObject.c56, .iconObject.c80, .iconObject.c96, .iconObject.c128 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
 } 
 

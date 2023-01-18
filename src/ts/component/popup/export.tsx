@@ -121,8 +121,8 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 							id="format" 
 							value={this.format} 
 							options={formats} 
-							onChange={(v: any) => { 
-								this.format = v; 
+							onChange={(v: any) => {
+								this.format = v;
 								this.save();
 								this.forceUpdate();
 							}} 

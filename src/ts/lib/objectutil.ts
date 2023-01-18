@@ -175,7 +175,7 @@ class ObjectUtil {
 	};
 
 	setLayout (rootId: string, layout: I.ObjectLayout, callBack?: (message: any) => void) {
-		blockStore.update(rootId, { id: rootId, layout: layout });
+		blockStore.update(rootId, rootId, { layout });
 		C.ObjectSetLayout(rootId, layout, callBack);
 	};
 
