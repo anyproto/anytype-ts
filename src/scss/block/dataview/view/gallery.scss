@@ -37,6 +37,9 @@
 						}
 					}
 				}
+				.cover.coverAudio {
+					.mediaAudio { padding: 8px 16px; }
+				}
 			}
 			.card:hover { border: 1px solid $colorBorderDark; }
 			.card:hover {

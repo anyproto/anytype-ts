@@ -1,5 +1,6 @@
 @import "~scss/_vars";
 
+.mediaAudio { width: 100%; }
 .mediaAudio {
     .audioControls { width: 100%; min-width: 160px; position: relative; text-align: left; color: $colorBlack; }
     .audioControls {
@@ -7,7 +8,7 @@
             @include text-common; display: inline-block; vertical-align: top;
             line-height: 20px; width: calc(100% - 26px);
         }
-        .name span { display: inline-block; min-width: 100%; height: 100%; }
+        .name span { display: inline-block; min-width: 100%; height: 100%; @include clamp1; }
         .icon { vertical-align: top; transition: none; }
         .icon.play {
             width: 20px; height: 20px; margin-right: 6px; background-image: url('~img/icon/audio/play.svg');
