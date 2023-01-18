@@ -9,7 +9,7 @@ import $ from "jquery";
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	refPlayer: any = null;
 

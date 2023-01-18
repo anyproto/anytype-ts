@@ -8,7 +8,6 @@ interface Props {
     playlist: any[],
     onPlay?(): void,
     onPause?(): void,
-    minimal?: boolean,
 };
 
 class MediaAudio extends React.Component<Props> {
@@ -18,6 +17,7 @@ class MediaAudio extends React.Component<Props> {
     playOnSeek = false;
     refTime: any = null;
     refVolume: any = null;
+    current: any = { name: '', src: ''};
     audioNode: HTMLAudioElement;
 
     constructor (props) {
@@ -28,17 +28,14 @@ class MediaAudio extends React.Component<Props> {
     };
 
     render () {
-        const { playlist, minimal } = this.props;
-        const { name, src } = playlist[0]
-
         return (
             <div ref={(ref: any) => { this.node = ref; }} className="wrap resizable audio mediaAudio">
-                <audio id="audio" preload="auto" src={src} />
+                <audio id="audio" preload="auto" src={this.current.src} />
 
                 <div className="controls">
                     <Icon className="play" onClick={this.onPlay} />
                     <div className="name">
-                        <span>{name}</span>
+                        <span>{this.current.name}</span>
                     </div>
 
                     <Drag
@@ -68,6 +65,10 @@ class MediaAudio extends React.Component<Props> {
     };
 
     componentDidMount () {
+        const { playlist } = this.props;
+
+        this.current = playlist[0];
+
         this.resize();
         this.rebind();
     };
@@ -144,11 +145,8 @@ class MediaAudio extends React.Component<Props> {
     };
 
     onMute () {
-        const el = this.audioNode;
-
-        el.volume = el.volume ? 0 : (this.volume || 1);
-
-        this.refVolume.setValue(el.volume);
+        this.audioNode.volume = this.audioNode.volume ? 0 : (this.volume || 1);
+        this.refVolume.setValue(this.audioNode.volume);
         this.setVolumeIcon();
     };
 
@@ -160,23 +158,21 @@ class MediaAudio extends React.Component<Props> {
     };
 
     setVolumeIcon () {
-        const el = this.audioNode;
         const node = $(this.node);
         const icon = node.find('.icon.volume');
 
-        el.volume ? icon.removeClass('active') : icon.addClass('active');
+        this.audioNode.volume ? icon.removeClass('active') : icon.addClass('active');
     };
 
     onTime (v: number) {
-        const el = this.audioNode;
-        const paused = el.paused;
+        const paused = this.audioNode.paused;
 
         if (!paused) {
             this.pause();
             this.playOnSeek = true;
         };
 
-        el.currentTime = Number(v * el.duration) || 0;
+        this.audioNode.currentTime = Number(v * this.audioNode.duration) || 0;
     };
 
     onTimeEnd (v: number) {
