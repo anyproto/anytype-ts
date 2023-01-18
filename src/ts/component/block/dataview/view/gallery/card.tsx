@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, Cover, Icon, MediaAudio } from 'Component';
+import { Cell, Cover, Icon, MediaAudio, MediaVideo } from 'Component';
 import { I, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -157,7 +157,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			return;
 		};
 
-		if ($(e.target).parents('.mediaAudio').length) {
+		if ($(e.target).parents('.controls').length) {
 			return;
 		};
 
@@ -197,6 +197,11 @@ const Card = observer(class Card extends React.Component<Props> {
 					case Constant.typeId.audio:
 						cn.push('coverAudio');
 						cover = <MediaAudio playlist={[{name: f.name, src: commonStore.fileUrl(f.id)}]} />;
+						break;
+
+					case Constant.typeId.video:
+						cn.push('coverVideo');
+						cover = <MediaVideo src={commonStore.fileUrl(f.id)} />;
 						break;
 				};
 

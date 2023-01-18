@@ -73,6 +73,7 @@ import ObjectName from './util/object/name';
 import ObjectDescription from './util/object/description';
 
 import MediaAudio from './util/media/audio';
+import MediaVideo from './util/media/video';
 
 export {
 	Page,
@@ -141,4 +142,5 @@ export {
 	MenuItemVertical,
 
 	MediaAudio,
+	MediaVideo
 };

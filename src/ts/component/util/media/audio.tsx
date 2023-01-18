@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Drag } from 'Component';
 import { I, Util} from 'Lib';
-import { commonStore } from 'Store';
 
 interface Props {
     playlist: any[],
