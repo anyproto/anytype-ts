@@ -14,7 +14,7 @@ const MENU_ID = 'dataviewCalendar';
 
 const CellText = observer(class CellText extends React.Component<I.Cell, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	state = {
 		isEditing: false,
 	};

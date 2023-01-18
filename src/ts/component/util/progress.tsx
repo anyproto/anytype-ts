@@ -7,13 +7,13 @@ import { commonStore } from 'Store';
 
 const Progress = observer(class Progress extends React.Component {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	obj: any = null;
-	dx: number = 0;
-	dy: number = 0;
-	width: number = 0;
-	height: number = 0;
+	dx = 0;
+	dy = 0;
+	width = 0;
+	height = 0;
 
 	constructor (props: any) {
 		super(props);

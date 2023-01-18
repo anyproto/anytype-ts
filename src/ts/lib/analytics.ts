@@ -14,7 +14,7 @@ const KEY_ORIGINAL_ID = 'analyticsOriginalId';
 
 class Analytics {
 	
-	isInit: boolean =  false;
+	isInit = false;
 	instance: any = null;
 
 	debug() {

@@ -16,12 +16,12 @@ const MAX_LENGTH = 320;
 
 const CellObject = observer(class CellObject extends React.Component<I.Cell, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		isEditing: false,
 	};
-	timeoutFilter: number = 0;
+	timeoutFilter = 0;
 
 	constructor (props: I.Cell) {
 		super(props);

@@ -15,7 +15,7 @@ class PopupShortcut extends React.Component<Props, State> {
 	state = {
 		page: 'main',
 	};
-	_isMounted: boolean = false;
+	_isMounted = false;
 
 	render () {
 		const { page } = this.state;

@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 
 const MenuButton = observer(class MenuButton extends React.Component<I.Menu> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	
 	constructor (props: I.Menu) {
 		super(props);

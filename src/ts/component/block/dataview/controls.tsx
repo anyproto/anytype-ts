@@ -10,7 +10,7 @@ import arrayMove from 'array-move';
 
 const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 
 	constructor (props: I.ViewComponent) {

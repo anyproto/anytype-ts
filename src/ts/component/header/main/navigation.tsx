@@ -1,24 +1,19 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { Icon, IconObject } from 'Component';
-import { I, ObjectUtil, Preview, keyboard } from 'Lib';
-import { detailStore, popupStore } from 'Store';
+import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
+import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent> {
 
-	timeout: number = 0;
-
 	constructor (props: I.HeaderComponent) {
 		super(props);
-		
+
 		this.onOpen = this.onOpen.bind(this);
-		this.onPathOver = this.onPathOver.bind(this);
-		this.onPathOut = this.onPathOut.bind(this);
 	};
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onGraph, onSearch } = this.props;
+		const { rootId, onHome, onForward, onBack, onGraph, onSearch, onPathOver, onPathOut } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
 		return (
@@ -32,7 +27,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 				</div>
 
 				<div className="side center">
-					<div id="path" className="path" onClick={onSearch} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
+					<div id="path" className="path" onClick={onSearch} onMouseOver={onPathOver} onMouseOut={onPathOut}>
 						<div className="inner">
 							<IconObject object={object} size={18} />
 							<div className="name">{object.name}</div>
@@ -45,20 +40,14 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 		);
 	};
 
+	componentDidMount(): void {
+		if (!this.props.isPopup) {
+			DataUtil.setWindowTitleText('Navigation');
+		};
+	};
+
 	onOpen () {
-		const { rootId } = this.props;
-
-		popupStore.closeAll(null, () => {
-			ObjectUtil.openRoute({ id: rootId, layout: I.ObjectLayout.Navigation });
-		});
-	};
-
-	onPathOver (e: any) {
-		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
-	};
-
-	onPathOut () {
-		Preview.tooltipHide(false);
+		ObjectUtil.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 
 });

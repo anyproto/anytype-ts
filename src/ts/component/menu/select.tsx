@@ -13,13 +13,13 @@ const LIMIT = 10;
 
 const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
-	_isMounted: boolean = false;	
-	n: number = -1;
+	_isMounted = false;	
+	n = -1;
 	cache: any = null;
-	filter: string = '';
+	filter = '';
 	refFilter: any = null;
 	refList: any = null;
-	top: number = 0;
+	top = 0;
 	
 	constructor (props: I.Menu) {
 		super(props);

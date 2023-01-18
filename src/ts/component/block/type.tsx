@@ -8,10 +8,10 @@ import Constant from 'json/constant.json';
 
 const BlockType = observer(class BlockType extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	n: number = 0;
-	isFocused: boolean = false;
+	n = 0;
+	isFocused = false;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -214,8 +214,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				};
 
 				ObjectUtil.openEvent(e, { id: message.objectId, layout: I.ObjectLayout.Set });
-
-				console.log({ id: message.objectId, layout: I.ObjectLayout.Set });
 
 				analytics.event('CreateObject', {
 					route: 'SelectType',

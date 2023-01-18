@@ -6,17 +6,17 @@ import { keyboard } from 'Lib';
 
 class AuthStore {
 	
-	public walletPathValue: string = '';
-	public accountPathValue: string = '';
+	public walletPathValue = '';
+	public accountPathValue = '';
 	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
-	public pin: string = '';
-	public icon: string = '';
-	public preview: string = '';
-	public name: string = '';
-	public phrase: string = '';
-	public code: string = '';
-	public token: string = '';
+	public pin = '';
+	public icon = '';
+	public preview = '';
+	public name = '';
+	public phrase = '';
+	public code = '';
+	public token = '';
 	public threadMap: Map<string, any> = new Map();
 
 	constructor () {

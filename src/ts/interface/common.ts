@@ -1,4 +1,5 @@
 import { RouteComponentProps } from 'react-router';
+import { I } from 'Lib';
 
 export enum Platform {
 	Windows = 'Windows',
@@ -137,12 +138,16 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	tabs?: any[];
 	tab?: string;
 	onTab?: (id: string) => void;
-	onHome?: (e: any) => void;
-	onForward?: (e: any) => void;
-	onBack?: (e: any) => void;
-	onSearch?: (e: any) => void;
-	onNavigation?: (e: any) => void;
-	onGraph?: (e: any) => void;
+	onHome?: () => void;
+	onForward?: () => void;
+	onBack?: () => void;
+	onSearch?: () => void;
+	onNavigation?: () => void;
+	onGraph?: () => void;
+	onStore?: () => void;
+	onPathOver?: (e: any) => void;
+	onPathOut?: () => void;
+	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
 };
 
 export interface PageComponent extends RouteComponentProps<any> {

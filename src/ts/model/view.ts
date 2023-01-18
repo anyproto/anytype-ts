@@ -4,15 +4,15 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class View implements I.View {
 	
-	id: string = '';
-	name: string = '';
+	id = '';
+	name = '';
 	type: I.ViewType = I.ViewType.Grid;
-	coverRelationKey: string = '';
-	coverFit: boolean = false;
+	coverRelationKey = '';
+	coverFit = false;
 	cardSize: I.CardSize = I.CardSize.Small;
-	hideIcon: boolean = false;
-	groupRelationKey: string = '';
-	groupBackgroundColors: boolean = false;
+	hideIcon = false;
+	groupRelationKey = '';
+	groupBackgroundColors = false;
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];

@@ -32,10 +32,10 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		loading: false,
 	};
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	top: number = 0;
-	offset: number = 0;
+	top = 0;
+	offset = 0;
 	cache: any = null;
 	refList: any = null;
 	refFilter: any = null;
@@ -253,7 +253,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { isPopup } = this.props;
 		const items = this.getItems();
 
 		this.cache = new CellMeasurerCache({
@@ -264,10 +263,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.resize();
 		this.onTab(Storage.get('tabStore') || Tab.Type);
-
-		if (!isPopup) {
-			DataUtil.setWindowTitleText('Library');
-		};
 	};
 
 	componentDidUpdate () {

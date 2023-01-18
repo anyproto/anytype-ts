@@ -12,9 +12,9 @@ interface State {
 
 class PopupTemplate extends React.Component<I.Popup, State> {
 
-	_isMounted: boolean = false;
-	page: number = 0;
-	n: number = 0;
+	_isMounted = false;
+	page = 0;
+	n = 0;
 	ref: any = null;
 
 	state = {

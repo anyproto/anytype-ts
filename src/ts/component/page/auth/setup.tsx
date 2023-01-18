@@ -15,8 +15,8 @@ interface State {
 const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.PageComponent, State> {
 
 	node: any = null;
-	i: number = 0;
-	t: number = 0;
+	i = 0;
+	t = 0;
 	state = {
 		index: 0,
 		error: '',

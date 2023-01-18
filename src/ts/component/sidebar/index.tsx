@@ -11,10 +11,10 @@ interface Props {
 
 const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	
-	private _isMounted: boolean = false;
+	private _isMounted = false;
 	node: any = null;
-    ox: number = 0;
-	oy: number = 0;
+    ox = 0;
+	oy = 0;
     refFooter: React.Ref<HTMLUnknownElement> = null;
 
     constructor (props: Props) {

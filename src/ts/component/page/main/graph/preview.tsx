@@ -22,9 +22,9 @@ const GraphPreview = observer(class PreviewObject extends React.Component<Props,
 	state = {
 		loading: false,
 	};
-	isOpen: boolean = false;
-	_isMounted: boolean = false;
-	id: string = '';
+	isOpen = false;
+	_isMounted = false;
+	id = '';
 
 	constructor (props: Props) {
 		super(props);

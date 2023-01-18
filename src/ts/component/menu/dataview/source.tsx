@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 
 const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	
-	n: number = 0;
+	n = 0;
 
 	constructor (props: I.Menu) {
 		super(props);

@@ -27,15 +27,15 @@ const ContentModel = {
 
 class Block implements I.Block {
 	
-	id: string = '';
+	id = '';
 	layout: I.ObjectLayout = I.ObjectLayout.Page;
-	parentId: string = '';
+	parentId = '';
 	type: I.BlockType = I.BlockType.Empty;
 	childrenIds: string[] = [];
 	hAlign: I.BlockHAlign = I.BlockHAlign.Left;
 	vAlign: I.BlockVAlign = I.BlockVAlign.Top;
 
-	bgColor: string = '';
+	bgColor = '';
 	fields: any = {};
 	content: any = {};
 	

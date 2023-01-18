@@ -15,10 +15,10 @@ interface Props extends I.BlockComponent, RouteComponentProps<any> {};
 
 const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	range: any = { start: 0, end: 0 };
-	text: string = '';
-	timeout: number = 0;
+	text = '';
+	timeout = 0;
 	node: any = null;
 	win: any = null;
 	input: any = null;

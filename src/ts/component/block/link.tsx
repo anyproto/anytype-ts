@@ -8,7 +8,7 @@ import { detailStore, blockStore, dbStore } from 'Store';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 
 	constructor (props: I.BlockComponent) {

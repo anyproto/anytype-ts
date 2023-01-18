@@ -3,15 +3,15 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class AccountInfo implements I.AccountInfo {
 	
-	homeObjectId: string = ''
-	profileObjectId: string = '';
-	gatewayUrl: string = '';
-	marketplaceTypeObjectId: string = '';
-	marketplaceTemplateObjectId: string = '';
-	marketplaceRelationObjectId: string = '';
-	deviceId: string = '';
-	localStoragePath: string = '';
-	accountSpaceId: string = '';
+	homeObjectId = '';
+	profileObjectId = '';
+	gatewayUrl = '';
+	marketplaceTypeObjectId = '';
+	marketplaceTemplateObjectId = '';
+	marketplaceRelationObjectId = '';
+	deviceId = '';
+	localStoragePath = '';
+	accountSpaceId = '';
 	
 	constructor (props: I.AccountInfo) {
 		this.homeObjectId = String(props.homeObjectId || '');
@@ -44,8 +44,8 @@ class AccountInfo implements I.AccountInfo {
 
 class AccountConfig implements I.AccountConfig {
 	
-	allowSpaces: boolean = false;
-	allowBeta: boolean = false;
+	allowSpaces = false;
+	allowBeta = false;
 	
 	constructor (props: I.AccountConfig) {
 		this.allowSpaces = Boolean(props.allowSpaces);
@@ -65,7 +65,7 @@ class AccountConfig implements I.AccountConfig {
 class AccountStatus implements I.AccountStatus {
 	
 	type: I.AccountStatusType = I.AccountStatusType.Active;
-	date: number = 0;
+	date = 0;
 	
 	constructor (props: I.AccountStatus) {
 		this.type = Number(props.type) || I.AccountStatusType.Active;
@@ -84,7 +84,7 @@ class AccountStatus implements I.AccountStatus {
 
 class Account implements I.Account {
 	
-	id: string = '';
+	id = '';
 	info: I.AccountInfo = null;
 	config: I.AccountConfig = null;
 	status: I.AccountStatus = null;

@@ -8,10 +8,10 @@ import Constant from 'json/constant.json';
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	volume: number = 0;
-	playOnSeek: boolean = false;
+	volume = 0;
+	playOnSeek = false;
 	refTime: any = null;
 	refVolume: any = null;
 	audioNode: HTMLAudioElement;

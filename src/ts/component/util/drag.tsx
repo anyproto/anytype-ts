@@ -18,10 +18,10 @@ class Drag extends React.Component<Props> {
 		className: '',
 	};
 	
-	value: number = 0;
-	ox: number = 0;
-	nw: number = 0;
-	iw: number = 0;
+	value = 0;
+	ox = 0;
+	nw = 0;
+	iw = 0;
 	node: any = null;
 	back: any = null;
 	fill: any = null;

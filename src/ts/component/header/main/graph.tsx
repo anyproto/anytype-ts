@@ -1,66 +1,94 @@
 import * as React from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { Icon, IconObject } from 'Component';
-import { I, ObjectUtil, Preview, keyboard } from 'Lib';
-import { detailStore, popupStore } from 'Store';
+import { Icon } from 'Component';
+import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
+import { commonStore, menuStore } from 'Store';
 
-const HeaderMainGraph = observer(class HeaderMainGraph extends React.Component<I.HeaderComponent> {
+class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
-	timeout: number = 0;
+	refFilter: any = null;
 
 	constructor (props: I.HeaderComponent) {
 		super(props);
 		
+		this.onSearch = this.onSearch.bind(this);
+		this.onFilter = this.onFilter.bind(this);
+		this.onSettings = this.onSettings.bind(this);
 		this.onOpen = this.onOpen.bind(this);
-		this.onPathOver = this.onPathOver.bind(this);
-		this.onPathOut = this.onPathOut.bind(this);
 	};
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onNavigation, onSearch } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const { onHome, onForward, onBack } = this.props;
+		const { graph } = commonStore;
 
 		return (
-			<React.Fragment>
+			<div className="sides">
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={onHome} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
-					<Icon className="nav big" tooltip="Navigation" onClick={onNavigation} />
 				</div>
 
-				<div className="side center">
-					<div id="path" className="path" onClick={onSearch} onMouseOver={this.onPathOver} onMouseOut={this.onPathOut}>
-						<div className="inner">
-							<IconObject object={object} size={18} />
-							<div className="name">{object.name}</div>
-						</div>
-					</div>
-				</div>
+				<div className="side center" />
 
-				<div className="side right" />
-			</React.Fragment>
+				<div className="side right">
+					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onSearch} />
+					<Icon id="button-header-filter" className="filter big" tooltip="Filters" onClick={this.onFilter} />
+					<Icon id="button-header-settings" className="settings big" tooltip="Settings" onClick={this.onSettings} />
+				</div>
+			</div>
 		);
 	};
 
-	onOpen () {
-		const { rootId } = this.props;
+	componentDidMount(): void {
+		const { isPopup } = this.props;
 
-		popupStore.closeAll(null, () => {
-			ObjectUtil.openRoute({ id: rootId, layout: I.ObjectLayout.Graph });
+		if (!isPopup) {
+			DataUtil.setWindowTitleText('Graph');
+		};
+	};
+
+	onOpen () {
+		ObjectUtil.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Graph });
+	};
+
+	onSearch () {
+		const { rootId, onGraph } = this.props;
+		const { graph } = commonStore;
+		const menuParam = Object.assign({
+			element: '#button-header-search',
+			className: 'fromHeader',
+			horizontal: I.MenuDirection.Right,
+			data: {
+				rootId,
+				blockId: rootId,
+				blockIds: [ rootId ],
+				filters: DataUtil.graphFilters(),
+				filter: graph.filter,
+				canAdd: true,
+				onSelect: (item: any) => {
+					$(window).trigger('updateGraphRoot', { id: item.id });
+				},
+				onFilterChange: (v: string) => {
+					commonStore.graphSet({ filter: v });
+				},
+			}
+		});
+
+		menuStore.open('searchObject', menuParam);
+	};
+
+	onFilter () {
+	};
+
+	onSettings () {
+		const { menuOpen } = this.props;
+
+		menuOpen('graphSettings', '#button-header-settings', {
+			horizontal: I.MenuDirection.Right,
 		});
 	};
 
-	onPathOver (e: any) {
-		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
-	};
-
-	onPathOut () {
-		Preview.tooltipHide(false);
-	};
-
-});
+};
 
 export default HeaderMainGraph;

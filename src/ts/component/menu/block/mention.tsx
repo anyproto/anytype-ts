@@ -21,13 +21,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		loading: false,
 	};
 
-	_isMounted: boolean = false;	
-	filter: string = '';
+	_isMounted = false;	
+	filter = '';
 	index: any = null;
 	cache: any = {};
 	items: any = [];
-	n: number = -1;
-	offset: number = 0;
+	n = -1;
+	offset = 0;
 	refList: any = null;
 
 	constructor (props: I.Menu) {

@@ -22,16 +22,16 @@ const LIMIT = 36;
 
 const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.Menu, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		filter: '',
 		loading: false,
 	};
 	items: any[] = [];
-	filter: string = '';
+	filter = '';
 	refFilter: any = null;
-	timeout: number = 0;
+	timeout = 0;
 	tab: Tab = Tab.Gallery;
 
 	constructor (props: I.Menu) {

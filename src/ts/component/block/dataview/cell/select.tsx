@@ -15,7 +15,7 @@ const MAX_LENGTH = 320;
 
 const CellSelect = observer(class CellSelect extends React.Component<I.Cell, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		isEditing: false,

@@ -27,10 +27,10 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	node: any = null;
 	cache: any = {};
-	width: number = 0;
-	columnWidth: number = 0;
-	columnCount: number = 0;
-	offset: number = 0;
+	width = 0;
+	columnWidth = 0;
+	columnCount = 0;
+	offset = 0;
 	state = {
 		loading: false,
 	};

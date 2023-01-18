@@ -8,9 +8,9 @@ import { dbStore } from 'Store';
 const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Menu> {
 	
 	color: string = null;
-	isHidden: boolean = false;
-	timeout: number = 0;
-	n: number = -1;
+	isHidden = false;
+	timeout = 0;
+	n = -1;
 
 	render () {
 		const sections = this.getSections();

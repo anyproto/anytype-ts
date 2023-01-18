@@ -1,21 +1,18 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, keyboard } from 'Lib';
-import { popupStore } from 'Store';
+import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
 const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent> {
 
-	timeout: number = 0;
-
 	constructor (props: I.HeaderComponent) {
 		super(props);
-		
+
 		this.onOpen = this.onOpen.bind(this);
 	};
 
 	render () {
-		const { tabs, tab, onTab, onHome, onForward, onBack } = this.props;
+		const { tabs, tab, onTab, onHome, onForward, onBack, onStore } = this.props;
 		
 		return (
 			<React.Fragment>
@@ -41,10 +38,14 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 		);
 	};
 
+	componentDidMount(): void {
+		if (!this.props.isPopup) {
+			DataUtil.setWindowTitleText('Library');
+		};
+	};
+
 	onOpen () {
-		popupStore.closeAll(null, () => {
-			ObjectUtil.openRoute({ layout: I.ObjectLayout.Store });
-		});
+		ObjectUtil.openRoute({ layout: I.ObjectLayout.Navigation });
 	};
 
 });

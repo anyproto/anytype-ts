@@ -12,12 +12,12 @@ const LIMIT = 40;
 
 const MenuOptionList = observer(class MenuOptionList extends React.Component<I.Menu> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	refFilter: any = null;
 	refList: any = null;
 	cache: any = {};
-	n: number = 0;
-	filter: string = '';
+	n = 0;
+	filter = '';
 	
 	constructor (props: I.Menu) {
 		super(props);

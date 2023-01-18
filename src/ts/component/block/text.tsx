@@ -35,19 +35,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		onKeyDown: (e: any, text: string, marks: I.Mark[], range: I.TextRange) => {},
 	};
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	refLang: any = null;
 	refEditable: any = null;
-	timeoutContext: number = 0;
-	timeoutClick: number = 0;
-	timeoutFilter: number = 0;
+	timeoutContext = 0;
+	timeoutClick = 0;
+	timeoutFilter = 0;
 	marks: I.Mark[] = [];
-	text: string = '';
-	clicks: number = 0;
-	preventSaveOnBlur: boolean = false;
-	preventMenu: boolean = false;
-	frame: number = 0;
+	text = '';
+	clicks = 0;
+	preventSaveOnBlur = false;
+	preventMenu = false;
+	frame = 0;
 
 	constructor (props: Props) {
 		super(props);

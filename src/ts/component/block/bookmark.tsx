@@ -7,7 +7,7 @@ import { commonStore, detailStore } from 'Store';
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 
 	constructor (props: I.BlockComponent) {

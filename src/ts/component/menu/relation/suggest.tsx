@@ -21,15 +21,15 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		loading: false,
 	};
 
-	_isMounted: boolean = false;
-	filter: string = '';
+	_isMounted = false;
+	filter = '';
 	cache: any = null;
 	items: any[] = [];
 	refFilter: any = null;
 	refList: any = null;
-	n: number = -1;
-	offset: number = 0;
-	timeoutFilter: number = 0;
+	n = -1;
+	offset = 0;
+	timeoutFilter = 0;
 
 	constructor (props: I.Menu) {
 		super(props);

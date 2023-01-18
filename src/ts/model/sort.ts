@@ -3,9 +3,9 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class Sort implements I.Sort {
 
-	relationKey: string = '';
+	relationKey = '';
 	type: I.SortType = I.SortType.Asc;
-	includeTime: boolean = false;
+	includeTime = false;
 	customOrder: string[] = [];
 
 	constructor (props: I.Sort) {

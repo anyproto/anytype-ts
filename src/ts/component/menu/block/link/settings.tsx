@@ -8,8 +8,8 @@ import Constant from 'json/constant.json';
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
 	
-	n: number = 0;
-	timeout: number = 0;
+	n = 0;
+	timeout = 0;
 
 	constructor (props: I.Menu) {
 		super(props);

@@ -15,14 +15,14 @@ interface State {
 
 const PageMainSet = observer(class PageMainSet extends React.Component<I.PageComponent, State> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	id: string = '';
+	id = '';
 	refHeader: any = null;
 	refHead: any = null;
-	loading: boolean = false;
-	composition: boolean = false;
-	timeout: number = 0;
+	loading = false;
+	composition = false;
+	timeout = 0;
 
 	state = {
 		isDeleted: false,

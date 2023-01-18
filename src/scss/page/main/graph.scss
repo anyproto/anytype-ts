@@ -8,36 +8,8 @@
 	}
 
     .wrapper { display: flex; height: 100%; overflow: hidden; }
-    .wrapper {
-        .side { height: 100%; }
-        .side.left { width: 100%; }
-        .side.right { 
-            width: 268px; overflow: overlay; border-left: 1px solid $colorBorderLight; position: relative; 
-            z-index: 21; position: absolute; right: 0px; top: 0px; display: none; background: $colorWhite;
-        }
-        .side.right {
-            .bottom { position: absolute; left: 0px; bottom: 0px; padding: 14px 16px; width: 100%; border-top: 1px solid $colorBorderLight; }
-            .bottom {
-                .icon.search { 
-                    width: 20px; height: 20px; margin-right: 8px; vertical-align: top; background-image: url('~img/icon/graph/search.svg');
-                }
 
-                .filter { padding: 0px; background: $colorWhite; width: calc(100% - 28px); display: inline-block; vertical-align: top; }
-                .filter {
-                    .inner { height: auto; }
-                    .input { height: 20px; line-height: 20px; }
-                    .icon.clear { top: 0px; }
-                    .line { display: none; }
-                }
-            }
-        }
-    }
-
-    .wrapper.withPanel {
-        .side.right { display: block; }
-    }
-
-    #graphWrapper { height: 100%; }
+    #graphWrapper { width: 100%; height: 100%; }
     #graph { width: 100%; height: 100%; }
     canvas { width: 100%; height: 100%; background: $colorWhite; display: block; }
 
@@ -82,70 +54,6 @@
         .icon.link { background-image: url('~img/icon/graph/link.svg'); }
         .icon.relation { background-image: url('~img/icon/graph/relation.svg'); }
         .icon.orphan { background-image: url('~img/icon/graph/orphan.svg'); }
-    }
-
-    .panelPreview { padding: 24px; }
-    .panelPreview {
-        .loaderWrapper { width: 100%; height: 100%; }
-        .cover { position: absolute; height: 86px; }
-		.icon.more { 
-			width: 28px; height: 28px; background-size: 20px; background-image: url('~img/icon/menu/action/more0.svg'); position: absolute; right: 10px; top: 10px;
-			cursor: pointer; transition: $transitionFast; border-radius: 6px; z-index: 2;
-		}
-		.icon.more:hover { background-color: $colorHover; }
-
-        .block {
-			.wrapMenu { display: none; }
-			.wrapContent { width: 100%; }
-		}
-		.block.blockFeatured { padding: 0px; margin: 0px; line-height: 28px; @include text-small; line-height: 22px; }
-        .block.blockFeatured {
-            .cellContent { padding: 2.5px 6px; }
-            .cellContent {
-                .over { display: inline; }
-                .tagItem { @include text-small; margin: 2px 6px 0px 0px; }
-                .more { margin-top: 2px; }
-            }
-            .cellContent:hover { background: none; }
-
-            .bullet { margin: 0px; }
-        }
-
-        .heading { display: block; margin-bottom: 14px; position: relative; z-index: 1; word-wrap: break-word; }
-        .heading {
-            .iconObject { display: inline-block; background-color: $colorVeryLightGrey; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px $colorWhite inset; }
-			.iconObject.isTask, .iconObject.isBookmark { background: none; margin: 0px; }
-
-            .title { display: block; @include text-header3; font-weight: bold; position: relative; }
-            .icon.checkbox { position: static; width: 20px; height: 20px; background-image: url('~img/icon/object/checkbox0.svg') !important; }
-            .icon.checkbox.active { background-image: url('~img/icon/object/checkbox1.svg') !important; }
-
-            .description { 
-                @include text-common; margin: 4px 0px 12px 0px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; 
-                display: -webkit-box; overflow: hidden;
-            }
-            .description:empty { display: none; }
-            .author { @include text-very-small; color: $colorMediumGrey; }
-        }
-
-        .buttons { margin-top: 24px; }
-        .buttons {
-            .button { width: calc(50% - 4px); height: 32px; line-height: 28px; margin-right: 8px; border-radius: 4px; }
-            .button:last-child { margin: 0px; }
-        }
-    }
-    .panelPreview.withCover { padding-top: 110px; }
-    .panelPreview.withIconAndCover { padding-top: 56px; }
-    .panelPreview.isTask, .panelPreview.isBookmark {
-		.titleWrap { display: flex; gap: 0px 6px; }
-        .title { width: calc(100% - 26px); display: inline-block; vertical-align: middle; }
-    }
-
-    .input-drag { height: 12px; }
-    .input-drag {
-        .icon { border-color: $colorBlack; background: $colorBlack; }
-        .fill { background: $colorBlack; }
-        .back { background: $colorBorderLight; }
     }
 }
 

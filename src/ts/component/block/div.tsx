@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 
 const BlockDiv = observer(class BlockDiv extends React.Component<I.BlockComponent> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 
 	constructor (props: I.BlockComponent) {
 		super(props);

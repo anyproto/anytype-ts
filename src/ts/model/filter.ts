@@ -3,7 +3,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class Filter implements I.Filter {
 
-	relationKey: string = '';
+	relationKey = '';
 	operator: I.FilterOperator = I.FilterOperator.And;
 	condition: I.FilterCondition = I.FilterCondition.None;
 	quickOption: I.FilterQuickOption = I.FilterQuickOption.ExactDate;

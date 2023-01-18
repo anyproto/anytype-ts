@@ -1,27 +1,23 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
+import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
 import { I, C, Util, crumbs, Action } from 'Lib';
 import { blockStore } from 'Store';
 import Errors from 'json/error.json';
 
-interface Props extends I.PageComponent {
-	rootId: string;
-};
-
 interface State {
 	isDeleted: boolean;
 };
 
-const PageMainBlock = observer(class PageMainBlock extends React.Component<Props, State> {
+const PageMainBlock = observer(class PageMainBlock extends React.Component<I.PageComponent, State> {
 
-	_isMounted: boolean = false;
-	id: string = '';
+	_isMounted = false;
+	node: any = null;
+	id = '';
 	refHeader: any = null;
-	loading: boolean = false;
+	loading = false;
 
 	state = {
 		isDeleted: false,
@@ -49,7 +45,10 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<Props
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		return (
-			<div className="setWrapper">
+			<div 
+				ref={node => this.node = node}
+				className="setWrapper"
+			>
 				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
@@ -147,7 +146,7 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<Props
 		const { isPopup } = this.props;
 		
 		raf(() => {
-			const node = $(ReactDOM.findDOMNode(this));
+			const node = $(this.node);
 			const container = Util.getPageContainer(isPopup);
 			const header = container.find('#header');
 			const hh = isPopup ? header.height() : Util.sizeHeader();

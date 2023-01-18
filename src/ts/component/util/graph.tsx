@@ -1,7 +1,9 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
+import { PreviewObject } from 'Component';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
@@ -14,65 +16,20 @@ interface Props {
 	onSelect?: (id: string) => void;
 };
 
-const FONT = 'Helvetica';
-
 const Graph = observer(class Graph extends React.Component<Props> {
 
 	node: any = null;
 	canvas: any = null;
-	simulation: any = null;
-	width: number = 0;
-	height: number = 0;
 	edges: any[] = [];
 	nodes: any[] = [];
-	zoom: any = null;
 	worker: any = null;
 	images: any = {};
 	subject: any = null;
-	isDragging: boolean = false;
+	isDragging = false;
+	isPreview = false;
+	isPreviewDisabled = false;
 	ids: string[] = [];
-
-	forceProps: any = {
-		center: {
-			x: 0.5,
-			y: 0.5
-		},
-		charge: {
-			enabled: true,
-			strength: -30,
-			distanceMin: 20,
-			distanceMax: 200
-		},
-		collide: {
-			enabled: true,
-			strength: 0.3,
-			iterations: 1,
-			radius: 0.5
-		},
-		link: {
-			enabled: true,
-			strength: 0.3,
-			distance: 50,
-			iterations: 1,
-		},
-		forceX: {
-			enabled: true,
-			strength: 0.3,
-			x: 0.4,
-		},
-		forceY: {
-			enabled: true,
-			strength: 0.3,
-			y: 0.4,
-		},
-
-		orphans: true,
-		markers: true,
-		labels: true,
-		relations: true,
-		links: true,
-		filter: '',
-	};
+	timeoutPreview = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -83,12 +40,24 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	render () {
 		const { isPopup } = this.props;
+		const id = [ 'graph' ];
+
+		if (isPopup) {
+			id.push('popup');
+		};
 
 		return (
-			<div ref={node => this.node = node} id="graphWrapper">
-				<div id={'graph' + (isPopup ? '-popup' : '')} />
+			<div 
+				ref={node => this.node = node} 
+				id="graphWrapper"
+			>
+				<div id={id.join('-')} />
 			</div>
 		);
+	};
+
+	componentDidMount () {
+		this.rebind();
 	};
 
 	componentWillUnmount () {
@@ -97,6 +66,19 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		};
 
 		$('body').removeClass('cp');
+		this.unbind();
+	};
+
+	rebind () {
+		const win = $(window);
+
+		this.unbind();
+		win.on('updateGraphSettings', () => { this.updateSettings(); });
+		win.on('updateGraphRoot', (e: any, data: any) => { this.setRootId(data.id); });
+	};
+
+	unbind () {
+		$(window).off('updateGraphSettings updateGraphRoot');
 	};
 
 	init () {
@@ -105,40 +87,36 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
 		const transform: any = {};
-		
-		this.width = node.width();
-		this.height = node.height();
-		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
-
+		const width = node.width();
+		const height = node.height();
+		const zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
 		const scale = transform.k || 5;
-		const w = this.width;
-		const h = this.height;
-		const x = transform.x || -w * 2;
-		const y = transform.y || -h * 2;
+		const x = transform.x || -width * 2;
+		const y = transform.y || -height * 2;
 
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
 
 		this.canvas = d3.select(elementId).append('canvas')
-		.attr('width', (this.width * density) + 'px')
-		.attr('height', (this.height * density) + 'px')
+		.attr('width', (width * density) + 'px')
+		.attr('height', (height * density) + 'px')
 		.node();
 
 		const transfer = node.find('canvas').get(0).transferControlToOffscreen();
 
 		this.worker = new Worker('workers/graph.js');
 		this.worker.onerror = (e: any) => { console.log(e); };
-		this.worker.addEventListener('message', (data) => { this.onMessage(data); });
+		this.worker.addEventListener('message', (data: any) => { this.onMessage(data); });
 
 		this.send('init', { 
 			canvas: transfer, 
-			width: this.width,
-			height: this.height,
+			width,
+			height,
 			density,
 			nodes: this.nodes,
 			edges: this.edges,
-			forceProps: this.forceProps,
 			theme: commonStore.getThemeClass(),
+			settings: commonStore.graph,
 		}, [ transfer ]);
 
 		d3.select(this.canvas)
@@ -148,8 +126,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			on('drag', (e: any, d: any) => this.onDragMove(e, d)).
 			on('end', (e: any, d: any) => this.onDragEnd(e, d))
 		)
-        .call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
+        .call(zoom)
+		.call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
@@ -166,16 +144,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	nodeMapper (d: any) {
 		const { rootId } = this.props;
-		const sourceCnt = this.edges.filter(it => it.source == d.id).length;
-		const targetCnt = this.edges.filter(it => it.target == d.id).length;
 
 		d.layout = Number(d.layout) || 0;
-		d.radius = Math.max(3, Math.min(8, sourceCnt + targetCnt));
+		d.radius = 5;
 		d.isRoot = d.id == rootId;
-		d.isOrphan = !targetCnt && !sourceCnt;
 		d.src = this.imageSrc(d);
-		d.sourceCnt = sourceCnt;
-		d.targetCnt = targetCnt;
 
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
@@ -184,9 +157,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		};
 
 		d.name = SmileUtil.strip(d.name);
-		d.shortName = Util.shorten(d.name, 16);
-		d.letter = d.name.trim().substr(0, 1).toUpperCase();
-		d.font = `${d.radius}px ${FONT}`;
+		d.shortName = Util.shorten(d.name, 24);
 
 		// Clear icon props to fix image size
 		if (d.layout == I.ObjectLayout.Task) {
@@ -224,8 +195,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		return d;
 	};
 
-	updateProps () {
-		this.send('updateProps', { forceProps: this.forceProps } );
+	updateSettings () {
+		this.send('updateSettings', commonStore.graph);
 	};
 
 	onDragStart (e: any, d: any) {
@@ -238,16 +209,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onDragMove (e: any, d: any) {
 		const p = d3.pointer(e, d3.select(this.canvas));
 		const node = $(this.node);
-		const offset = node.offset();
-		const id = this.subject.id;
-		const x = p[0] - offset.left;
-		const y = p[1] - offset.top;
+		const { left, top } = node.offset();
 
 		this.send('onDragMove', { 
-			subjectId: id, 
+			subjectId: this.subject.id, 
 			active: e.active, 
-			x: x, 
-			y: y,
+			x: p[0] - left, 
+			y: p[1] - top,
 		});
 	};
 			
@@ -263,10 +231,42 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.send('onZoom', { transform: transform });
   	};
 
+	onPreviewShow (data: any) {
+		if (this.isPreviewDisabled) {
+			return;
+		};
+
+		const { isPopup } = this.props;
+		const body = $('body');
+		const container = Util.getPageContainer(isPopup);
+		const { left, top } = container.offset();
+		const x = data.x + left + 10;
+		const y = data.y + top + 10;
+
+		let el = $('#graphPreview');
+		if (!el.length) {
+			el = $('<div id="graphPreview" />');
+			ReactDOM.render(<PreviewObject rootId={this.subject.id} />, el.get(0));
+		};
+
+		el.css({ left: x, top: y });
+		body.append(el).addClass('cp');
+
+		this.isPreview = true;
+	};
+
+	onPreviewHide () {
+		if (!this.isPreview) {
+			return;
+		};
+
+		$('body').removeClass('cp');
+		$('#graphPreview').remove();
+	};
+
 	onMessage ({ data }) {
 		const { root } = blockStore;
 		const { isPopup, onClick, onContextMenu, onSelect } = this.props;
-		const body = $('body');
 
 		switch (data.id) {
 			case 'onClick':
@@ -284,16 +284,37 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			case 'onMouseMove':
 				if (!this.isDragging) {
 					this.subject = this.nodes.find(d => d.id == data.node);
-					this.subject ? body.addClass('cp') : body.removeClass('cp');
+
+					window.clearTimeout(this.timeoutPreview);
+
+					if (this.subject) {
+						this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 100);
+					} else {
+						this.onPreviewHide();
+					};
+				};
+				break;
+
+			case 'onDragMove':
+				if (this.isDragging) {
+					this.onPreviewHide();
 				};
 				break;
 
 			case 'onContextMenu':
-				if (data.node == root) {
+				if (!data.node || (data.node == root)) {
 					break;
 				};
 
+				this.onPreviewHide();
+
 				onContextMenu(data.node, {
+					onOpen: () => {
+						this.isPreviewDisabled = true;
+					},
+					onClose: () => {
+						this.isPreviewDisabled = false;
+					},
 					recalcRect: () => { 
 						const rect = { width: 0, height: 0, x: data.x, y: data.y };
 
@@ -326,7 +347,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				break;
 
 			case I.ObjectLayout.Task:
-				src = `img/icon/checkbox${Number(d.done) || 0}.svg`;
+				src = `img/icon/graph/task.svg`;
 				break;
 
 			case I.ObjectLayout.File:
@@ -346,7 +367,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				break;
 
 			case I.ObjectLayout.Note:
-				src = 'img/icon/note.svg';
 				break;
 
 			case I.ObjectLayout.Bookmark:
@@ -364,14 +384,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					};
 					src = src.replace(/^.\//, '');
 				};
-		
-				if (!src) {
-					src = 'img/icon/page.svg';
-				};		
 				break;
 		};
 
 		return src;
+	};
+
+	setRootId (id: string) {
+		this.send('onSetRootId', { rootId: id });
 	};
 
 	send (id: string, param: any, transfer?: any[]) {
@@ -382,12 +402,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	resize () {
 		const node = $(this.node);
-		const density = window.devicePixelRatio;
 
-		this.width = node.width();
-		this.height = node.height();
-
-		this.send('onResize', { width: this.width, height: this.height, density: density });
+		this.send('onResize', { 
+			width: node.width(), 
+			height: node.height(), 
+			density: window.devicePixelRatio,
+		});
 	};
 
 });

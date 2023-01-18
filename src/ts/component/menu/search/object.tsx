@@ -23,16 +23,16 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		loading: false,
 	};
 
-	_isMounted: boolean = false;	
-	filter: string = '';
+	_isMounted = false;	
+	filter = '';
 	index: any = null;
 	cache: any = {};
 	items: any = [];
 	refFilter: any = null;
 	refList: any = null;
-	n: number = -1;
-	timeoutFilter: number = 0;
-	offset: number = 0;
+	n = -1;
+	timeoutFilter = 0;
+	offset = 0;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -454,9 +454,19 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	onFilterChange (v: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onFilterChange } = data;
+
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.props.param.data.filter = this.refFilter.getValue();
+			const filter = this.refFilter.getValue();
+
+			this.props.param.data.filter = filter;
+
+			if (onFilterChange) {
+				onFilterChange(filter);
+			};
 		}, 500);
 	};
 

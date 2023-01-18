@@ -71,8 +71,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	state = {
 		loading: false,
 	};
-	prevPage: string = '';
-	pinConfirmed: boolean = false;
+	prevPage = '';
+	pinConfirmed = false;
 	onConfirmPin: any = null;
 
 	constructor (props: I.Popup) {

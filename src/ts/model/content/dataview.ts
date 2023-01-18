@@ -10,7 +10,7 @@ class BlockContentDataview implements I.ContentDataview {
 	relationLinks: any[] = [];
 	groupOrder: any[] = [];
 	objectOrder: any[] = [];
-	targetObjectId: string = '';
+	targetObjectId = '';
 	
 	constructor (props: I.ContentDataview) {
 		this.sources = props.sources || [];

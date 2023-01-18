@@ -7,9 +7,9 @@ import Constant from 'json/constant.json';
 
 class BlockStore {
 
-    public rootId: string = '';
-    public profileId: string = '';
-    public recentId: string = '';
+    public rootId = '';
+    public profileId = '';
+    public recentId = '';
 
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
     public blockMap: Map<string, Map<string, I.Block>> = new Map();

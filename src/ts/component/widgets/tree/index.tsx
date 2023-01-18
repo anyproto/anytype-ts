@@ -36,15 +36,15 @@ const SKIP_TYPES_LOAD = [
 ]; // Types of objects to skip loading
 
 const Tree = observer(class Tree extends React.Component<Props, State> {
-	private _isMounted: boolean = false;
+	private _isMounted = false;
 	node: any = null;
 	state = {
 		loading: false,
 	};
-	scrollTop: number = 0;
-	id: string = '';
+	scrollTop = 0;
+	id = '';
 	cache: CellMeasurerCache = {};
-	subId: string = '';
+	subId = '';
 	subscriptionIds: { [ key: string ]: string } = {};
 	branches: string[] = [];
 	refList: React.Ref<HTMLElement> = null;

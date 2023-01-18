@@ -16,8 +16,8 @@ const LIMIT = 20;
 const MenuFilterList = observer(class MenuFilterList extends React.Component<I.Menu> {
 	
 	node: any = null;
-	n: number = 0;
-	top: number = 0;
+	n = 0;
+	top = 0;
 	cache: any = {};
 	refList: any = null;
 

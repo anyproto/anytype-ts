@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { I, ObjectUtil, Util, keyboard, sidebar } from 'Lib';
+import { I, ObjectUtil, Util, keyboard, sidebar, Preview } from 'Lib';
+import { menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainIndex from './main/index';
@@ -34,6 +35,10 @@ class Header extends React.Component<Props> {
 		this.onSearch = this.onSearch.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onGraph = this.onGraph.bind(this);
+		this.onStore = this.onStore.bind(this);
+		this.onPathOver = this.onPathOver.bind(this);
+		this.onPathOut = this.onPathOut.bind(this);
+		this.menuOpen = this.menuOpen.bind(this);
 	};
 	
 	render () {
@@ -56,6 +61,8 @@ class Header extends React.Component<Props> {
 					onSearch={this.onSearch}
 					onNavigation={this.onNavigation}
 					onGraph={this.onGraph}
+					onStore={this.onStore}
+					menuOpen={this.menuOpen}
 				/>
 			</div>
 		);
@@ -70,23 +77,58 @@ class Header extends React.Component<Props> {
 		this.refChild.forceUpdate();
 	};
 
-	onHome (e: any) {
+	onHome () {
 		Util.route('/main/index');
 	};
 	
-	onSearch (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
+	onSearch () {
 		keyboard.onSearchPopup();
 	};
 
-	onNavigation (e: any) {
+	onNavigation () {
 		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 	
-	onGraph (e: any) {
+	onGraph () {
 		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
+	};
+
+	onStore () {
+		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Store });
+	};
+
+	onPathOver (e: any) {
+		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+	};
+
+	onPathOut () {
+		Preview.tooltipHide(false);
+	};
+
+	menuOpen (id: string, elementId: string, param: Partial<I.MenuParam>) {
+		if (menuStore.isOpen()) {
+			menuStore.closeAll();
+			return;
+		};
+
+		const { isPopup } = this.props;
+		const st = $(window).scrollTop();
+		const element = $(`${this.getContainer()} ${elementId}`);
+		const menuParam: any = Object.assign({
+			element,
+			offsetY: 4,
+		}, param);
+
+		if (!isPopup) {
+			menuParam.fixedY = element.offset().top + element.height() - st;
+			menuParam.classNameWrap = 'fixed fromHeader';
+		};
+
+		menuStore.closeAll(null, () => { menuStore.open(id, menuParam); });
+	};
+
+	getContainer () {
+		return (this.props.isPopup ? '.popup' : '') + ' .header';
 	};
 
 };

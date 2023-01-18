@@ -7,7 +7,7 @@ import { blockStore } from 'Store';
 
 const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.Menu> {
 	
-	n: number = 0;
+	n = 0;
 	
 	constructor (props: I.Menu) {
 		super(props);

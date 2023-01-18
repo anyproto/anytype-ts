@@ -3,7 +3,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockStructure implements I.BlockStructure {
 	
-	parentId: string = '';
+	parentId = '';
 	childrenIds: string[] = [];
 	
 	constructor (props: I.BlockStructure) {

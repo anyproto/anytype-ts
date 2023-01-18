@@ -16,12 +16,12 @@ const LIMIT = 40;
 const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu> {
 	
 	_isMounted = false;
-	emptyLength: number = 0;
-	timeout: number = 0;
+	emptyLength = 0;
+	timeout = 0;
 	cache: any = {};
 	refList: any = null;
-	n: number = 0;
-	filter: string = '';
+	n = 0;
+	filter = '';
 	
 	constructor (props: I.Menu) {
 		super(props);

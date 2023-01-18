@@ -22,7 +22,7 @@ interface Props {
 const ListIndex = observer(class ListIndex extends React.Component<Props> {
 	
 	node: any = null;
-	timeout: number = 0;
+	timeout = 0;
 
 	render () {
 		const { onClick, onSelect, onMore, helperContainer, getList, onSortStart, onSortEnd, canDrag } = this.props;

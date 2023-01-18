@@ -38,9 +38,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	refControls: any = null;
 	refCells: Map<string, any> = new Map();
 	menuContext: any = null;
-	viewId: string = '';
-	creating: boolean = false;
-	frame: number = 0;
+	viewId = '';
+	creating = false;
+	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -665,7 +665,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onSourceSelect (element: any, param: Partial<I.MenuParam>) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
-
 		const menuParam = Object.assign({
 			element: $(element),
 			className: 'single',

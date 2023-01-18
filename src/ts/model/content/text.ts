@@ -4,7 +4,7 @@ import { observable, intercept, makeObservable } from 'mobx';
 class Mark implements I.Mark {
 	
 	type: I.MarkType = I.MarkType.Strike;
-	param: string = '';
+	param = '';
 	range: I.TextRange = { from: 0, to: 0 };
 
 	constructor (props: I.Mark) {
@@ -25,12 +25,12 @@ class Mark implements I.Mark {
 
 class BlockContentText implements I.ContentText {
 	
-	text: string = '';
+	text = '';
 	style: I.TextStyle = I.TextStyle.Paragraph;
-	checked: boolean = false;
-	color: string = '';
-	iconEmoji: string = '';
-	iconImage: string = '';
+	checked = false;
+	color = '';
+	iconEmoji = '';
+	iconImage = '';
 	marks: I.Mark[] = [];
 
 	constructor (props: I.ContentText) {

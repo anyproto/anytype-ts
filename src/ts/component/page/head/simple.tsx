@@ -16,10 +16,10 @@ const EDITOR_IDS = [ 'title', 'description' ];
 
 const HeadSimple = observer(class Controls extends React.Component<Props> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	refEditable: any = {};
 	node: any = null;
-	timeout: number = 0;
+	timeout = 0;
 
 	constructor (props: Props) {
 		super(props);

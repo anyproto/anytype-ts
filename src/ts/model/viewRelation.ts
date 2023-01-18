@@ -3,10 +3,10 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class ViewRelation implements I.ViewRelation {
 
-	relationKey: string = '';
-	width: number = 0;
-	isVisible: boolean = false;
-	includeTime: boolean = false;
+	relationKey = '';
+	width = 0;
+	isVisible = false;
+	includeTime = false;
 	dateFormat: I.DateFormat = I.DateFormat.MonthAbbrBeforeDay;
 	timeFormat: I.TimeFormat = I.TimeFormat.H12;
 

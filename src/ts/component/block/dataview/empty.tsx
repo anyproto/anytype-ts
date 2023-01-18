@@ -3,9 +3,7 @@ import { I } from 'Lib';
 import { Label, Button } from 'Component';
 import { observer } from 'mobx-react';
 
-interface Props extends I.ViewEmpty {};
-
-const Empty = observer(class Empty extends React.Component<Props> {
+const Empty = observer(class Empty extends React.Component<I.ViewEmpty> {
 
 	public static defaultProps = {
 		withButton: true,

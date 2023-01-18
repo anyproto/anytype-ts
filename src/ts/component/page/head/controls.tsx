@@ -19,7 +19,7 @@ interface State {
 
 const Controls = observer(class Controls extends React.Component<Props, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		loading: false,

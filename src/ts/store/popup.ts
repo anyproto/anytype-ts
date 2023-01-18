@@ -8,7 +8,7 @@ class PopupStore {
 
     public popupList: I.Popup[] = [];
 
-    timeout: number = 0;
+    timeout = 0;
 
     constructor () {
         makeObservable(this, {

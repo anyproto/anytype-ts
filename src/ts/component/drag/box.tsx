@@ -9,13 +9,13 @@ interface Props {
 
 class DragBox extends React.Component<Props> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	cache: any = {};
-	ox: number = 0;
-	oy: number = 0;
-	oldIndex: number = -1;
-	newIndex: number = -1;
+	ox = 0;
+	oy = 0;
+	oldIndex = -1;
+	newIndex = -1;
 	
 	constructor (props: Props) {
 		super(props);
