@@ -157,7 +157,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			return;
 		};
 
-		if ($(e.target).parents('.audioControls').length) {
+		if ($(e.target).parents('.mediaAudio').length) {
 			return;
 		};
 

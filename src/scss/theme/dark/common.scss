@@ -70,8 +70,8 @@ html.themeDark {
     }
 
     .mediaAudio {
-        .audioControls { color: $colorPrimary; }
-        .audioControls {
+        .controls { color: $colorPrimary; }
+        .controls {
             .icon.play { background-image: url('#{$themePath}/icon/audio/play.svg'); }
             .icon.play.active { background-image: url('#{$themePath}/icon/audio/pause.svg'); }
 
@@ -81,10 +81,6 @@ html.themeDark {
             .input-drag {
                 .back { background: $colorHover; }
             }
-        }
-
-        .audioControls:hover {
-            #volume { opacity: 1; }
         }
     }
 

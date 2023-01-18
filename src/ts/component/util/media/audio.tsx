@@ -35,7 +35,7 @@ class MediaAudio extends React.Component<Props> {
             <div ref={(ref: any) => { this.node = ref; }} className="wrap resizable audio mediaAudio">
                 <audio id="audio" preload="auto" src={src} />
 
-                <div className="audioControls">
+                <div className="controls">
                     <Icon className="play" onClick={this.onPlay} />
                     <div className="name">
                         <span>{name}</span>
