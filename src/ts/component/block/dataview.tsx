@@ -463,12 +463,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onEmpty (e: any) {
-		const { rootId, isInline } = this.props;
+		const { isInline } = this.props;
 
 		if (isInline) {
 			this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center });
 		} else {
-			this.onSourceTypeSelect(e.currentTarget, rootId);
+			this.onSourceTypeSelect(e.currentTarget);
 		};
 	};
 
@@ -724,18 +724,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		menuStore.open('searchObject', menuParam);
 	};
 
-	onSourceTypeSelect (element: any, rootId: string) {
-		const { block, isInline } = this.props;
+	onSourceTypeSelect (element: any) {
+		const { rootId, block, isInline } = this.props;
+		const objectId = isInline ? block.content.targetObjectId : rootId;
+		const blockId = isInline ? block.id : Constant.blockId.dataview;
+
+		console.log(rootId, objectId, blockId);
 
 		menuStore.closeAll(null, () => {
 			menuStore.open('dataviewSource', {
 				element: $(element),
 				className: 'big single',
-				horizontal: I.MenuDirection.Left,
+				horizontal: I.MenuDirection.Center,
 				data: {
 					rootId,
-					objectId: rootId,
-					blockId: isInline ? block.id : Constant.blockId.dataview,
+					objectId,
+					blockId,
 				}
 			});
 		});
