@@ -7,7 +7,8 @@ import { commonStore } from 'Store';
 interface Props {
     playlist: any[],
     onPlay?(): void,
-    onPause?(): void
+    onPause?(): void,
+    minimal?: boolean,
 };
 
 class MediaAudio extends React.Component<Props> {
@@ -27,12 +28,12 @@ class MediaAudio extends React.Component<Props> {
     };
 
     render () {
-        const { playlist } = this.props;
-        const { hash, name } = playlist[0]
+        const { playlist, minimal } = this.props;
+        const { name, src } = playlist[0]
 
         return (
-            <div ref={(ref: any) => { this.node = ref; }} className="wrap resizable audio">
-                <audio id="audio" preload="auto" src={commonStore.fileUrl(hash)} />
+            <div ref={(ref: any) => { this.node = ref; }} className="wrap resizable audio mediaAudio">
+                <audio id="audio" preload="auto" src={src} />
 
                 <div className="audioControls">
                     <Icon className="play" onClick={this.onPlay} />

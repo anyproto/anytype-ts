@@ -61,18 +61,6 @@
 
         .loaderWrapper { border: 0px; }
 
-        .audioControls {
-			.icon.play { background-image: url('#{$themePath}/icon/audio/play.svg'); }
-			.icon.play.active { background-image: url('#{$themePath}/icon/audio/pause.svg'); }
-
-			.icon.volume { background-image: url('#{$themePath}/icon/audio/volume.svg'); }
-			.icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
-
-			.input-drag {
-				.back { background: $colorHover; }
-			}
-        }
-
         .wrap.broken { border-color: $colorLinePrimary; }
         .wrap.broken {
             img:before { background: $colorBgLight; }
