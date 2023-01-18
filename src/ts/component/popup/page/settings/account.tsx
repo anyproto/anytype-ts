@@ -4,6 +4,7 @@ import { I, C, Storage, translate, Util, analytics } from 'Lib';
 import { authStore, commonStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import Head from './head';
+import UserInfo from '../../settings/userinfo';
 
 interface Props extends I.Popup {
 	prevPage: string;
@@ -52,7 +53,11 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 				{error ? <div className="message">{error}</div> : ''}
 
+				<UserInfo {...this.props} />
+
 				<div className="rows">
+					<Label className="sectionName" text="Access" />
+
 					<div className="row" onClick={() => { onPage('phrase'); }}>
 						<Icon className="phrase" />
 						<Label text={translate('popupSettingsPhraseTitle')} />
@@ -63,7 +68,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						<Icon className="pin" />
 						<Label text={translate('popupSettingsPinTitle')} />
 						<div className="status">
-							{pin ? 'On' : 'Off'}
+							{pin ? 'on' : 'off'}
 						</div>
 						<Icon className="arrow" />
 					</div>
