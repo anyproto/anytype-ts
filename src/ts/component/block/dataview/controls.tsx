@@ -311,21 +311,29 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			return;
 		};
 
-		const { isPopup } = this.props;
+		const { isPopup, isInline } = this.props;
 		const node = $(this.node);
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
 		const container = Util.getPageContainer(isPopup);
+		const { left } = sideLeft.offset();
+		const sidebar = $('#sidebar');
 
 		sideLeft.removeClass('small');
 
-		let width = sideLeft.offset().left + sideLeft.outerWidth() + sideRight.outerWidth();
+		let width = sideLeft.outerWidth() + sideRight.outerWidth();
+		let offset = 0;
+		let sw = sidebar.outerWidth();
 
 		if (isPopup) {
-			width -= container.offset().left;
+			offset = container.offset().left;
 		};
 
-		if (width >= container.width()) {
+		if (left + width - offset - sw >= container.width()) {
+			sideLeft.addClass('small');
+		};
+
+		if (isInline && (width >= node.outerWidth())) {
 			sideLeft.addClass('small');
 		};
 	};

@@ -292,8 +292,7 @@ class Dispatcher {
 						break;
 					};
 
-					block.fields = data.hasFields() ? Decode.decodeStruct(data.getFields()) : {};
-					blockStore.update(rootId, block);
+					blockStore.update(rootId, id, { fields: data.hasFields() ? Decode.decodeStruct(data.getFields()) : {} });
 					break;
 				};
 
@@ -324,7 +323,7 @@ class Dispatcher {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, block.id, block.content);
 					break;
 				};
 
@@ -375,7 +374,7 @@ class Dispatcher {
 						block.content.style = data.getStyle().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -414,7 +413,7 @@ class Dispatcher {
 						block.content.state = data.getState().getValue();
 					};
 
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -442,7 +441,7 @@ class Dispatcher {
 						break;
 					};
 
-					blockStore.update(rootId, { bgColor: data.getBackgroundcolor() });
+					blockStore.update(rootId, id, { bgColor: data.getBackgroundcolor() });
 					break;
 				};
 
@@ -453,7 +452,7 @@ class Dispatcher {
 						break;
 					};
 
-					blockStore.update(rootId, { hAlign: data.getAlign() });
+					blockStore.update(rootId, id, { hAlign: data.getAlign() });
 					break;
 				};
 
@@ -464,7 +463,7 @@ class Dispatcher {
 						break;
 					};
 
-					blockStore.update(rootId, { vAlign: data.getVerticalalign() });
+					blockStore.update(rootId, id, { vAlign: data.getVerticalalign() });
 					break;
 				};
 
@@ -556,7 +555,7 @@ class Dispatcher {
 					};
 
 					block.content.sources = data.getSourceList();
-					blockStore.update(rootId, block);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -661,7 +660,7 @@ class Dispatcher {
 						detailStore.update(rootId, { id: id, details: details }, true);
 
 						if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, { id: rootId, layout: details.layout });
+							blockStore.update(rootId, rootId, { layout: details.layout });
 						};
 					};
 					break;
@@ -689,7 +688,7 @@ class Dispatcher {
 
 						if ((id == rootId) && block) {
 							if ((undefined !== details.layout) && (block.layout != details.layout)) {
-								blockStore.update(rootId, { id: rootId, layout: details.layout });
+								blockStore.update(rootId, rootId, { layout: details.layout });
 							};
 	
 							blockStore.checkTypeSelect(rootId);
