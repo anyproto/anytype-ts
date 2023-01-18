@@ -44,7 +44,7 @@
 		.sectionName.center { text-align: center; }
 
 		.tabIndex { padding: 24px 48px 48px 48px; }
-		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete, .tabExportMarkdown {
+		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete, .tabExportMarkdown, .tabSpaceIndex, .tabSpaceInvite, .tabSpaceTeam, .tabSpaceLeave, .tabSpaceRemove {
 			.row { 
 				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;
@@ -53,7 +53,7 @@
 			.row.red { color: $colorRed; }
 
 			.row {
-				.icon { width: 28px; height: 28px; margin: 0px 12px 0px 0px; vertical-align: top; }
+				.icon, .iconObject { width: 28px; height: 28px; margin: 0px 12px 0px 0px; vertical-align: top; }
 				.icon.account { background-image: url('~img/icon/popup/settings/account.svg'); }
 				.icon.personal { background-image: url('~img/icon/popup/settings/personal.svg'); }
 				.icon.appearance { background-image: url('~img/icon/popup/settings/appearance.svg'); }
@@ -95,6 +95,27 @@
 
 			.logout { color: $colorMediumGrey; cursor: pointer; text-align: center; @include text-paragraph; line-height: 28px; padding: 18px 0px; }
 			.logout:hover { color: $colorBlack; }
+		}
+
+		.tabAccount {
+			.userInfo { display: flex; align-items: flex-end; gap: 0px 24px; }
+			.userInfo {
+				.iconWrapper { position: relative; }
+				.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: rgba(255,255,255,0.3); }
+
+				.iconObject { flex-shrink: 0; width: 80px; cursor: pointer; }
+				.iconObject:after {
+					content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
+					background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
+					transition: $transitionFast; opacity: 0;
+				}
+				.iconObject:hover:after { opacity: 1; }
+
+				.name { width: 100%; padding-bottom: 12px; border-bottom: 1px solid $colorBorderLight; }
+				.name {
+					.input { padding: 0; @include text-header2; }
+				}
+			}
 		}
 
 		.tabDelete {
@@ -320,5 +341,51 @@
 			.button { margin-top: 25px; }
 		}
 
+		.tabSpaceIndex {
+			.spaceSettingsHeader { text-align: center; }
+			.spaceSettingsHeader {
+				.spaceIcon { margin: 0px auto 20px; }
+				.spaceIcon.canEdit { cursor: pointer; }
+				.spaceIcon.canEdit:after {
+					content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
+					background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
+					transition: $transitionFast; opacity: 0;
+				}
+				.spaceIcon.canEdit:hover:after { opacity: 1; }
+
+				.title { margin-bottom: 12px; padding: 8px 0px 16px; height: auto; }
+				.input.title { border-bottom: 1px solid $colorBorderDark; width: 384px; }
+			}
+
+			.row .team .iconObject { margin-right: -4px; box-shadow: 0 0 0 2px $colorWhite; }
+		}
+
+		.tabSpaceInvite, .tabSpaceLeave, .tabSpaceRemove {
+			.title { text-align: left; }
+		}
+
+		.tabSpaceInvite {
+			.label.description { margin: 20px 0px 28px; }
+		}
+
+		.tabSpaceLeave, .tabSpaceRemove {
+			.label { margin-bottom: 28px; }
+		}
+
+		.tabSpaceTeam {
+			.title { padding-bottom: 4px; }
+			.label.counter { text-align: center; margin-bottom: 20px; color: $colorDarkGrey; }
+
+			.filter { margin-bottom: 8px; padding: 0px; }
+
+			.rows { height: 100%; margin-bottom: 12px; }
+			.row { height: 44px; border: 0px; padding: 8px 0px; }
+			.row {
+				.left { display: flex; }
+				.right { font-size: 14px; }
+			}
+
+			.buttons { text-align: center; }
+		}
 	}
 }

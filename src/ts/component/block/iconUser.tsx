@@ -28,15 +28,15 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<Props
 	render (): any {
 		const { loading } = this.state;
 		const { rootId, readonly } = this.props;
-		
+
 		return (
 			<div className="wrap">
-				{loading ? <Loader/ > : ''}
-				<IconObject 
-					getObject={() => { return detailStore.get(rootId, rootId, []); }} 
+				{loading ? <Loader /> : ''}
+				<IconObject
+					getObject={() => { return detailStore.get(rootId, rootId, []); }}
 					className={readonly ? 'isReadonly' : ''}
-					onClick={this.onClick} 
-					size={128} 
+					onClick={this.onClick}
+					size={128}
 				/>
 			</div>
 		);

@@ -27,12 +27,17 @@ import PageImportMarkdown from './page/settings/import/markdown';
 
 import PageExportMarkdown from './page/settings/export/markdown';
 
+import PageSpaceIndex from './page/settings/space/index';
+import PageSpaceInvite from './page/settings/space/invite';
+import PageSpaceTeam from './page/settings/space/team';
+import PageSpaceLeave from './page/settings/space/leave';
+import PageSpaceRemove from './page/settings/space/remove';
+
 interface Props extends I.Popup, RouteComponentProps<any> {};
 
 interface State {
 	loading: boolean;
 };
-
 
 const Components: any = {
 	index:				 PageIndex,
@@ -55,6 +60,12 @@ const Components: any = {
 	importMarkdown:		 PageImportMarkdown,
 
 	exportMarkdown:		 PageExportMarkdown,
+
+	spaceIndex:			 PageSpaceIndex,
+	spaceInvite:		 PageSpaceInvite,
+	spaceTeam:		 	 PageSpaceTeam,
+	spaceLeave:		 	 PageSpaceLeave,
+	spaceRemove:		 PageSpaceRemove,
 };
 
 const PopupSettings = observer(class PopupSettings extends React.Component<Props, State> {
