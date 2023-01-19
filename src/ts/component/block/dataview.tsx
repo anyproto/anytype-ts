@@ -399,7 +399,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 
 			case I.ViewType.Board:
-				limit = isInline ? view.pageLimit : 50;
+				limit = view.pageLimit;
 				break;
 			
 			case I.ViewType.Gallery:

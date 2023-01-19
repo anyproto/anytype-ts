@@ -2,7 +2,7 @@ import { I, M, Util, DataUtil } from 'Lib';
 import { dbStore } from 'Store';
 import { observable, intercept, makeObservable } from 'mobx';
 
-const DEFAULT_LIMIT = 10;
+const DEFAULT_LIMIT = 50;
 
 class View implements I.View {
 	
