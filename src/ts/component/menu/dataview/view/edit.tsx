@@ -8,9 +8,9 @@ import Constant from 'json/constant.json';
 
 const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu> {
 	
-	n: number = -1;
+	n = -1;
 	ref: any = null;
-	isFocused: boolean = false;
+	isFocused = false;
 	param: any = {};
 
 	constructor (props: I.Menu) {
@@ -400,9 +400,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView, onSelect, onSave, readonly } = data;
+		const { rootId, blockId, getData, getView, getSources, onSelect, onSave, readonly } = data;
 		const view = data.view.get();
 		const current = getView();
+		const sources = getSources();
 
 		if (readonly || item.arrow) {
 			return;
@@ -420,7 +421,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 
 			switch (item.id) {
 				case 'copy': {
-					C.BlockDataviewViewCreate(rootId, blockId, view, (message: any) => {
+					C.BlockDataviewViewCreate(rootId, blockId, view, sources, (message: any) => {
 						if (onSave) {
 							onSave();
 						};

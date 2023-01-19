@@ -23,16 +23,16 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		loading: false,
 	};
 
-	_isMounted: boolean = false;	
-	filter: string = '';
+	_isMounted = false;	
+	filter = '';
 	index: any = null;
 	cache: any = {};
 	items: any = [];
 	refFilter: any = null;
 	refList: any = null;
-	n: number = -1;
-	timeoutFilter: number = 0;
-	offset: number = 0;
+	n = -1;
+	timeoutFilter = 0;
+	offset = 0;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -61,6 +61,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
 			const type = dbStore.getType(item.type);
+			const checkbox = value && value.length && value.includes(item.id);
 			const cn = [];
 
 			let content = null;
@@ -86,9 +87,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				if (item.isHidden) {
 					cn.push('isHidden');
 				};
-				if (value == item.id) {
-					cn.push('active');
-				};
 
 				if (isBig && !item.isAdd) {
 					props.withDescription = true;
@@ -110,6 +108,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
 						onClick={(e: any) => { this.onClick(e, item); }}
 						style={param.style}
+						checkbox={checkbox}
 						className={cn.join(' ')}
 					/>
 				);
@@ -365,9 +364,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		let newBlock: any = {};
 
-		const process = (target: any) => {
+		const process = (target: any, isNew: boolean) => {
 			if (onSelect) {
-				onSelect(target);
+				onSelect(target, isNew);
 			};
 
 			if (!type) {
@@ -446,18 +445,28 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (item.isAdd) {
 			ObjectUtil.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-				DataUtil.getObjectById(message.targetId, process);
+				DataUtil.getObjectById(message.targetId, (object: any) => { process(object, true); });
 				close();
 			});
 		} else {
-			process(item);
+			process(item, false);
 		};
 	};
 
 	onFilterChange (v: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onFilterChange } = data;
+
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.props.param.data.filter = this.refFilter.getValue();
+			const filter = this.refFilter.getValue();
+
+			this.props.param.data.filter = filter;
+
+			if (onFilterChange) {
+				onFilterChange(filter);
+			};
 		}, 500);
 	};
 
@@ -477,9 +486,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
+		const { loading } = this.state;
 		const items = this.getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
-		const height = items.length ? items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44)) : 300;
+
+		let height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
+		if (loading) {
+			height += 40;
+		};
+		if (!loading && !items.length) {
+			height = 300;
+		};
 
 		obj.css({ height });
 		position();

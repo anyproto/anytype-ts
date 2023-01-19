@@ -25,26 +25,58 @@ interface Cover {
 	type: I.CoverType;
 };
 
+interface Graph {
+	icon: boolean;
+	orphan: boolean;
+	marker: boolean;
+	label: boolean;
+	relation: boolean;
+	link: boolean;
+	filter: string;
+};
+
 class CommonStore {
 
-    public coverObj: Cover = { id: '', type: 0, image: '' };
     public progressObj: I.Progress = null;
     public filterObj: Filter = { from: 0, text: '' };
-    public gatewayUrl: string = '';
-    public previewObj: Preview = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
+    public gatewayUrl = '';
 	public toastObj: I.Toast = null;
     public configObj: any = {};
-    public cellId: string = '';
-	public themeId: string = '';
-	public nativeThemeIsDark: boolean = false;
-	public typeId: string = '';
-	public pinTimeId: number = 0;
-	public isFullScreen: boolean = false;
-	public autoSidebarValue: boolean = false;
-	public redirect: string = '';
+    public cellId = '';
+	public themeId = '';
+	public nativeThemeIsDark = false;
+	public typeId = '';
+	public pinTimeId = 0;
+	public isFullScreen = false;
+	public autoSidebarValue = false;
+	public redirect = '';
 	public languages: string[] = [];
-	public workspaceId: string = '';
-	public notionToken: string = '';
+	public workspaceId = '';
+	public notionToken = '';
+
+	public coverObj: Cover = { 
+		id: '', 
+		type: 0, 
+		image: '',
+	};
+
+	public previewObj: Preview = { 
+		type: 0, 
+		param: '', 
+		element: null, 
+		range: { from: 0, to: 0 }, 
+		marks: [],
+	};
+
+	public graphObj: Graph = { 
+		icon: true,
+		orphan: true,
+		marker: true,
+		label: true,
+		relation: true,
+		link: true,
+		filter: '',
+	};
 
     constructor() {
         makeObservable(this, {
@@ -154,6 +186,10 @@ class CommonStore {
 		return String(this.workspaceId || '');
 	};
 
+	get graph(): Graph {
+		return Object.assign(this.graphObj, Storage.get('graph') || {});
+	};
+
     coverSet (id: string, image: string, type: I.CoverType) {
 		this.coverObj = { id, image, type };
 	};
@@ -208,6 +244,13 @@ class CommonStore {
 
     previewSet (preview: Preview) {
 		this.previewObj = preview;
+	};
+
+	graphSet (graph: Partial<Graph>) {
+		this.graphObj = Object.assign(this.graphObj, graph);
+
+		Storage.set('graph', this.graphObj);
+		$(window).trigger('updateGraphSettings');
 	};
 
 	toastSet (toast: I.Toast) {

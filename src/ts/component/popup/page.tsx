@@ -10,7 +10,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 
 const PopupPage = observer(class PopupPage extends React.Component<Props> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	ref: any = null;
 
 	render () {

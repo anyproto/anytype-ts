@@ -210,14 +210,7 @@ class Relation {
 			case I.RelationType.Tag:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
-				if ('object' !== typeof(value)) {
-					value = value ? [ value ] : [];
-				};
-
-				value = Util.objectCopy(value || []);
-				value = Util.arrayUnique(value);
-				value = value.map(it => String(it || ''));
-				value = value.filter(it => it);
+				value = this.getArrayValue(Util.objectCopy(value));
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
@@ -398,7 +391,7 @@ class Relation {
 			value = [];
 		};
 
-		value = value.filter(it => !this.isEmpty(it));
+		value = value.map(it => String(it || '')).filter(it => !this.isEmpty(it));
 		return Util.arrayUnique(value);
 	};
 

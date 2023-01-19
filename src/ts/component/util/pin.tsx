@@ -21,9 +21,9 @@ class Pin extends React.Component<Props> {
 		value: '',
 	};
 
-	n: number = 0;
+	n = 0;
 	refObj: any = {};
-	timeout: number = 0;
+	timeout = 0;
 
 	render () {
 		const { size } = this.props;

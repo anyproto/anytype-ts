@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
-import { setRange } from 'selection-ranges';
+import { observer } from 'mobx-react';
+import { Editable } from 'Component';
 import { I, Util, keyboard, translate } from 'Lib';
 
 const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	ref: any = null;
 
@@ -26,25 +26,15 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		const relation = data.relation.get();
 
 		return (
-			<div
+			<Editable
 				ref={node => this.node = node}
-			>
-				<div 
-					id="input"
-					ref={(ref: any) => { this.ref = ref; }} 
-					contentEditable={true}
-					suppressContentEditableWarning={true}
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
-					onInput={this.onInput}
-					onPaste={this.onInput}
-				>
-					{value}
-				</div>
-				<div id="placeholder" className="placeholder">
-					{placeholder || translate(`placeholderCell${relation.format}`)}
-				</div>
-			</div>
+				id="input"
+				placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
+				onFocus={this.onFocus}
+				onBlur={this.onBlur}
+				onInput={this.onInput}
+				onPaste={this.onInput}
+			/>
 		);
 	};
 
@@ -54,14 +44,12 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { value } = data;
-		const node = $(this.node);
-		const input = node.find('#input').get(0);
 		const length = value.length;
 
-		window.setTimeout(() => {
-			input.focus({ preventScroll: true });
-			setRange(input, { start: length, end: length });
-		});
+		if (this.ref) {
+			this.ref.setValue(value);
+			this.ref.setRange({ from: length, to: length });
+		};
 
 		this.resize();
 		this.placeholderCheck();
@@ -74,7 +62,6 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 
 	onInput (e: any) {
 		this.resize();
-		this.placeholderCheck();
 	};
 
 	onFocus () {
@@ -95,36 +82,25 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	};
 
 	getValue (): string {
-		if (!this._isMounted) {
-			return '';
-		};
-		
-		const node = $(this.node);
-		const input = node.find('#input');
-
-		return String(input.get(0).innerText || '');
+		return this.ref ? this.ref.getTextValue() : '';
 	};
 
 	placeholderCheck () {
-		this.getValue() ? this.placeholderHide() : this.placeholderShow();			
+		if (this.ref) {
+			this.ref.placeholderCheck();
+		};
 	};
 
 	placeholderHide () {
-		if (!this._isMounted) {
-			return;
+		if (this.ref) {
+			this.ref.placeholderHide();
 		};
-
-		const node = $(this.node);
-		node.find('#placeholder').hide();
 	};
 	
 	placeholderShow () {
-		if (!this._isMounted) {
-			return;
+		if (this.ref) {
+			this.ref.placeholderShow();
 		};
-		
-		const node = $(this.node);
-		node.find('#placeholder').show();
 	};
 
 	resize () {
@@ -140,16 +116,13 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		const input = obj.find('#input');
 		const wh = win.height();
 		const hh = Util.sizeHeader();
-		const o = obj.offset();
 		const cell = $(`#${cellId}`);
-
-		input.css({ height: 'auto' });
 
 		raf(() => {
 			const sh = input.get(0).scrollHeight;
-			const height = Math.max(32, Math.min(wh - hh - o.top - 20, Math.max(cell.outerHeight(), sh)));
+			const height = Math.max(32, Math.min(wh - hh - 20, Math.max(cell.outerHeight(), sh)));
 
-			input.css({ height }).scrollTop(sh);
+			obj.css({ height });
 			position();
 		});
 	};

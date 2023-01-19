@@ -105,12 +105,18 @@
 
         .items {
             .item {
-                .info {
-                    .line { background: $colorLineSecondary; }
-                }
+                .flex { border-color: $colorLineSecondary; } 
+				.flex:hover {  border-color: $colorLinePrimary; background-color: $colorHover; }
 
 				.buttons {
-					.icon:hover { background-color: $colorHover; }
+					.icon.lock { background-image: url('#{$themePath}/icon/store/lock.svg'); }
+					.icon.check { background-image: url('#{$themePath}/icon/store/check0.svg'); }
+					.icon.check:hover { background-image: url('#{$themePath}/icon/store/check1.svg'); }
+					.icon.plus { background-image: url('#{$themePath}/icon/store/plus0.svg'); }
+					.icon.plus:hover { background-image: url('#{$themePath}/icon/store/plus1.svg'); }
+
+					.button { color: $colorSecondary; }
+					.button:hover { color: $colorPrimary; }
 				}
             }
         }

@@ -15,8 +15,8 @@ const LIMIT = 20;
 const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	
 	node: any = null;
-	n: number = 0;
-	top: number = 0;
+	n = 0;
+	top = 0;
 	cache: any = {};
 	refList: any = null;
 	
@@ -105,6 +105,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
+							loadMoreRows={() => {}}
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
@@ -250,7 +251,6 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 				...data,
 				options: this.getRelationOptions(),
 				value: item.relationKey,
-				save: this.save,
 				itemId: item.id,
 				onSelect: (e: any, el: any) => {
 					this.onChange(item.id, 'relationKey', el.id);
@@ -259,10 +259,10 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		});
 	};
 
-	onAdd (e: any) {
+	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, getView, blockId, getData } = data;
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
 
@@ -277,40 +277,40 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			type: I.SortType.Asc,
 		};
 
-		view.sorts.push(newItem);
-		content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+		C.BlockDataviewSortAdd(rootId, blockId, view.id, newItem, () => {
+			getData(view.id, 0, true);
 
-		analytics.event('AddSort', { type: newItem.type });
-		this.save();
+			content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+			analytics.event('AddSort', { type: newItem.type });
+		});
 	};
 
 	onChange (id: number, k: string, v: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const item = view.getSort(id);
 
-		if (k == 'relationKey') {
-			view.sorts = view.sorts.filter((it: I.Sort, i: number) => { return (i == id) || (it.relationKey != v); });
-		};
-		
 		item[k] = v;
 
-		analytics.event('ChangeSortValue', { type: item.type });
+		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item }, () => {
+			getData(view.id, 0, true);
+		});
 
-		this.save();
+		analytics.event('ChangeSortValue', { type: item.type });
 		this.forceUpdate();
 	};
 	
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 
-		view.sorts = view.sorts.filter((it: any, i: number) => { return i != item.id; });
-		this.save();
+		C.BlockDataviewSortRemove(rootId, blockId, view.id, [ item.relationKey ], () => {
+			getData(view.id, 0, true);
+		});
 
 		menuStore.close('select');
 		analytics.event('RemoveSort');
@@ -328,28 +328,16 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { param, dataset } = this.props;
 		const { selection } = dataset;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
-		this.save();
+		C.BlockDataviewViewRelationRemove(rootId, blockId, view.id, view.sorts.map(it => it.id), () => {
+			getData(view.id, 0, true);
+		});
 
 		selection.preventSelect(false);
 		analytics.event('RepositionSort');
-	};
-
-	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, onSave, getView, getData } = data;
-		const view = getView();
-
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-			if (onSave) {
-				onSave(message);
-			};
-			getData(view.id, 0);
-		});
 	};
 
 	onScroll ({ scrollTop }) {
@@ -365,7 +353,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const offset = 62;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 	

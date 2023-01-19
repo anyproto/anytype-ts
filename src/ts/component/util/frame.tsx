@@ -8,7 +8,7 @@ interface Props {
 
 class Frame extends React.Component<Props> {
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 
 	render () {

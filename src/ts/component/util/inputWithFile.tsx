@@ -35,7 +35,7 @@ class InputWithFile extends React.Component<Props, State> {
 		canResize: true,
 	};
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		focused: false,

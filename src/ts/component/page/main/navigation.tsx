@@ -8,10 +8,6 @@ import { I, C, DataUtil, ObjectUtil, Util, keyboard, Key, focus, translate, side
 import { blockStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {
-	matchPopup?: any;
-};
-
 interface State {
 	loading: boolean;
 	info: I.PageInfo;
@@ -28,9 +24,9 @@ enum Panel {
 	Right = 3,
 };
 
-const PageMainNavigation = observer(class PageMainNavigation extends React.Component<Props, State> {
+const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	state = {
 		loading: false,
@@ -39,16 +35,16 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		pagesOut: [] as I.PageInfo[],
 		n: 0,
 	};
-	id: string = '';
-	timeout: number = 0;
+	id = '';
+	timeout = 0;
 	panel: Panel = Panel.Left;
 	cacheIn: any = {};
 	cacheOut: any = {};
-	focus: boolean = false;
-	select: boolean = false;
+	focus = false;
+	select = false;
 	refHeader: any = null;
 	
-	constructor (props: Props) {
+	constructor (props: I.PageComponent) {
 		super (props);
 
 		this.onConfirm = this.onConfirm.bind(this);
@@ -170,6 +166,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 								) : (
 									<InfiniteLoader
 										rowCount={pagesIn.length}
+										loadMoreRows={() => {}}
 										isRowLoaded={({ index }) => !!pagesIn[index]}
 									>
 										{({ onRowsRendered, registerChild }) => (
@@ -211,6 +208,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 						) : (
 							<InfiniteLoader
 								rowCount={pagesOut.length}
+								loadMoreRows={() => {}}
 								isRowLoaded={({ index }) => !!pagesOut[index]}
 							>
 								{({ onRowsRendered, registerChild }) => (
@@ -254,7 +252,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 	
 	componentDidMount () {
-		const { isPopup } = this.props;
 		const rootId = this.getRootId();
 
 		this._isMounted = true;
@@ -264,10 +261,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		focus.clear(true);
 		keyboard.setFocus(true);
-
-		if (!isPopup) {
-			DataUtil.setWindowTitleText('Navigation');
-		};
 	};
 	
 	componentDidUpdate () {
@@ -325,8 +318,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			return;
 		};
 
-		const { isPopup } = this.props;
 		const node = $(this.node);
+		const obj = Util.getPageContainer(this.props.isPopup);
+		const isPopup = this.props.isPopup && !obj.hasClass('full');
 
 		raf(() => {
 			const container = Util.getScrollContainer(isPopup);

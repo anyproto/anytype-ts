@@ -14,9 +14,9 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	cache: any = {};
 	cellPositioner: any = null;
 	ref: any = null;
-	width: number = 0;
-	columnWidth: number = 0;
-	columnCount: number = 0;
+	width = 0;
+	columnWidth = 0;
+	columnCount = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);

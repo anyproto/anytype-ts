@@ -183,6 +183,11 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		let icon = null;
 		let icn = [];
+		let onLetter = () => {
+			cn.push('withLetter');
+			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+			icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
+		};
 
 		switch (layout) {
 			default:
@@ -195,9 +200,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else 
 				if (forceLetter) {
-					cn.push('withLetter');
-					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
+					onLetter();
 				};
 				break;
 			};
@@ -225,10 +228,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			case I.ObjectLayout.Type: {
 				if (iconEmoji) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
-				} else {
-					cn.push('withLetter');
-					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
+				} else 
+				if (forceLetter) {
+					onLetter();
 				};
 				break;
 			};
@@ -242,9 +244,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else 
 				if (forceLetter) {
-					cn.push('withLetter');
-					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-					icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
+					onLetter();
 				};
 				break;
 			};

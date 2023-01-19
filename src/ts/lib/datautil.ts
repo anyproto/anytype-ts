@@ -764,7 +764,7 @@ class DataUtil {
 		};
 
 		if (ignoreDeleted) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
 		if (!withArchived) {
@@ -838,6 +838,21 @@ class DataUtil {
 
 	setWindowTitleText (name: string) {
 		document.title = [ Util.shorten(name, 60), Constant.appName ].join(' - ');
+	};
+
+	graphFilters () {
+		const { workspace } = commonStore;
+		const skipTypes = [ Constant.typeId.space ].concat(this.getFileTypes()).concat(this.getSystemTypes());
+		const skipIds = [ '_anytype_profile', blockStore.profile ];
+
+		return [
+			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: false },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
+			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
+		];
 	};
 
 };

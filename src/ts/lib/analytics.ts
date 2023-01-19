@@ -14,7 +14,7 @@ const KEY_ORIGINAL_ID = 'analyticsOriginalId';
 
 class Analytics {
 	
-	isInit: boolean =  false;
+	isInit = false;
 	instance: any = null;
 
 	debug() {
@@ -134,6 +134,9 @@ class Analytics {
 				} else
 				if (data.type == I.BlockType.Div) {
 					data.style = I.DivStyle[data.style];
+				} else
+				if (data.type == I.BlockType.Dataview) {
+					data.style = I.ViewType[data.style];
 				} else
 				if (data.type == I.BlockType.File) {
 					if (undefined !== data.params?.fileType) {

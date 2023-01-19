@@ -20,17 +20,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	node: any = null;
 	cache: any = {};
-	frame: number = 0;
-	groupRelationKey: string = '';
-	newIndex: number = -1;
-	newGroupId: string = '';
+	frame = 0;
+	groupRelationKey = '';
+	newIndex = -1;
+	newGroupId = '';
 	state = {
 		loading: false,
 	};
 	columnRefs: any = {};
-	isDraggingColumn: boolean = false;
-	isDraggingCard: boolean = false;
-	ox: number = 0;
+	isDraggingColumn = false;
+	isDraggingCard = false;
+	ox = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
@@ -129,7 +129,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	loadGroupList () {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, isInline } = this.props;
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 		const view = getView();
 		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
 
@@ -155,7 +157,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		this.setState({ loading: true });
 
-		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, block.content.sources, (message: any) => {
+		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, object.setOf || [], (message: any) => {
 			if (message.error.code) {
 				return;
 			};

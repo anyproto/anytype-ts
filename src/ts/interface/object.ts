@@ -44,6 +44,7 @@ export enum ObjectLayout {
 	Graph		 = 101,
 	Store		 = 102,
 	History		 = 103,
+	Block		 = 104,
 
 	Video		 = 1000,
 	Audio		 = 1001,

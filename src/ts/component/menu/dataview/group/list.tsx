@@ -16,8 +16,8 @@ const LIMIT = 20;
 const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Menu> {
 	
 	node: any = null;
-	n: number = 0;
-	top: number = 0;
+	n = 0;
+	top = 0;
 	cache: any = {};
 	refList: any = null;
 
@@ -110,6 +110,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}
+						loadMoreRows={() => {}}
 						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>

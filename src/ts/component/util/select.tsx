@@ -35,7 +35,7 @@ class Select extends React.Component<Props, State> {
 		noFilter: true,
 	};
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	state = {
 		value: [],
 		options: [] as I.Option[]

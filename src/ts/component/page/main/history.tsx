@@ -28,9 +28,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	version: I.HistoryVersion = null;
 	refHeader: any = null;
 	refFooter: any = null;
-	scrollLeft: number = 0;
-	scrollRight: number = 0;
-	lastId: string = '';
+	scrollLeft = 0;
+	scrollRight = 0;
+	lastId = '';
 
 	constructor (props: I.PageComponent) {
 		super(props);

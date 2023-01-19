@@ -4,15 +4,15 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class View implements I.View {
 	
-	id: string = '';
-	name: string = '';
+	id = '';
+	name = '';
 	type: I.ViewType = I.ViewType.Grid;
-	coverRelationKey: string = '';
-	coverFit: boolean = false;
+	coverRelationKey = '';
+	coverFit = false;
 	cardSize: I.CardSize = I.CardSize.Small;
-	hideIcon: boolean = false;
-	groupRelationKey: string = '';
-	groupBackgroundColors: boolean = false;
+	hideIcon = false;
+	groupRelationKey = '';
+	groupBackgroundColors = false;
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
@@ -58,12 +58,16 @@ class View implements I.View {
 		return this.relations.find(it => it.relationKey == relationKey);
 	};
 
-	getFilter (index: number) {
-		return this.filters[index] || {};
+	getFilter (id: string) {
+		return this.filters.find(it => it.id == id);
 	};
 
-	setFilter (index: number, filter: any) {
-		this.filters[index] = Object.assign(this.getFilter(index), filter);
+	setFilter (filter: I.Filter) {
+		const obj = this.getFilter(filter.id);
+
+		if (obj) {
+			Object.assign(obj, filter);
+		};
 	};
 
 	getSort (index: number) {

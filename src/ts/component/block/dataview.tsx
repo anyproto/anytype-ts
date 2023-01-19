@@ -17,6 +17,7 @@ import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
+import Empty from './dataview/empty';
 
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	isInline?: boolean;
@@ -32,13 +33,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	state = {
 		loading: false,
 	};
-	viewRef: any = null;
-	controlRef: any = null;
-	headRef: any = null;
-	cellRefs: Map<string, any> = new Map();
-	viewId: string = '';
-	creating: boolean = false;
-	frame: number = 0;
+	refView: any = null;
+	refHead: any = null;
+	refControls: any = null;
+	refCells: Map<string, any> = new Map();
+	menuContext: any = null;
+	viewId = '';
+	creating = false;
+	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -46,18 +48,25 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getData = this.getData.bind(this);
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
+		this.getSources = this.getSources.bind(this);
 		this.getKeys = this.getKeys.bind(this);
 		this.getIdPrefix = this.getIdPrefix.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
+		this.onSourceSelect = this.onSourceSelect.bind(this);
+		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
+		this.onEmpty = this.onEmpty.bind(this);
 	};
 
 	render () {
 		const { rootId, block, isPopup, isInline, isDragging } = this.props;
 		const { loading } = this.state;
+		const { targetObjectId } = block.content;
 		const views = dbStore.getViews(rootId, block.id);
+		const sources = this.getSources();
+		const targetId = isInline ? targetObjectId : rootId;
 
 		if (!views.length) {
 			return null;
@@ -68,12 +77,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		let sources = block.content.sources || [];
+		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.relation);
+
 		let { groupRelationKey } = view;
 		let ViewComponent: any = null;
 		let className = Util.toCamelCase('view-' + I.ViewType[view.type]);
 		let head = null;
 		let controls = null;
+		let body = null;
 		let content = null;
 
 		switch (view.type) {
@@ -98,13 +110,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isInline) {
 			head = (
 				<Head 
-					ref={(ref: any) => { this.headRef = ref; }} 
+					ref={(ref: any) => { this.refHead = ref; }} 
 					{...this.props} 
 					readonly={false} 
 					getData={this.getData} 
 					getView={this.getView} 
+					getSources={this.getSources}
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
+					onSourceSelect={this.onSourceSelect}
+					onSourceTypeSelect={this.onSourceTypeSelect}
 					className={className}
 					isInline={isInline}
 				/>
@@ -114,12 +129,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!isDragging) {
 			controls = (
 				<Controls 
-					ref={(ref: any) => { this.controlRef = ref; }} 
+					ref={(ref: any) => { this.refControls = ref; }} 
 					{...this.props} 
 					className={className}
 					readonly={false} 
 					getData={this.getData} 
 					getView={this.getView} 
+					getSources={this.getSources}
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
 					isInline={isInline}
@@ -127,15 +143,27 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			);
 
 			if (loading) {
-				content = <Loader id="set-loader" />
-			} else 
-			if ((isInline && sources.length) || !isInline) {
-				content = (
+				body = <Loader id="set-loader" />
+			} else
+			if (!types.length && !relations.length) {
+				body = (
+					<Empty
+						{...this.props}
+						title="Type or relation has been deleted"
+						description="Visit the Marketplace to re-install these entities or select another source."
+						button="Select source"
+						withButton={true}
+						onClick={this.onEmpty}
+					/>
+				);
+			}
+			else {
+				body = (
 					<div className="content">
 						<ViewComponent 
 							key={'view' + view.id}
-							ref={(ref: any) => { this.viewRef = ref; }} 
-							onRef={(ref: any, id: string) => { this.cellRefs.set(id, ref); }} 
+							ref={(ref: any) => { this.refView = ref; }} 
+							onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
 							{...this.props} 
 							bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 							pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
@@ -143,6 +171,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							getData={this.getData} 
 							getRecord={this.getRecord}
 							getView={this.getView} 
+							getSources={this.getSources}
 							getKeys={this.getKeys}
 							getIdPrefix={this.getIdPrefix}
 							getLimit={() => this.getLimit(view.type)}
@@ -157,17 +186,41 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 
+		if (!sources.length) {
+			content = (
+				<React.Fragment>
+					{head}
+
+					<Empty
+						{...this.props}
+						title="No data source"
+						description="Select object source or connect existing set"
+						button="Select source"
+						withButton={true}
+						onClick={this.onEmpty}
+					/>
+				</React.Fragment>
+			);
+		} else {
+			content = (
+				<React.Fragment>
+					{head}
+					{controls}
+					{body}
+				</React.Fragment>
+			);
+		};
+
 		return (
 			<div>
-				{head}
-				{controls}
 				{content}
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		const { rootId, block, isPopup, isDragging } = this.props;
+		const { rootId, block, isPopup, isDragging, isInline } = this.props;
+		const { targetObjectId } = block.content;
 
 		if (isDragging) {
 			return;
@@ -194,7 +247,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
 		if (viewId != this.viewId) {
-			this.getData(viewId, 0, false);
+			this.getData(viewId, 0, true);
 		};
 
 		this.resize();
@@ -209,7 +262,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		$(window).off(`resize.${block.id} keydown.${block.id}`);
+		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id}`);
 	};
 
 	rebind () {
@@ -217,17 +270,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const win = $(window);
 
 		this.unbind();
-		win.on(`resize.${block.id}`, throttle((e: any) => { this.resize(); }, 20));
+		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
 		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
+		win.on(`updateDataviewData.${block.id}`, () => { this.getData(this.getView().id, 0, true);});
+		win.on(`setDataviewSource.${block.id}`, () => { 
+			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
+		});
 	};
 
 	onKeyDown (e: any) {
-		const { rootId, dataset } = this.props;
+		const { rootId, block, dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.cmdKey();
-		const ids = selection ? selection.get(I.SelectType.Block) : [];
+		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const length = ids.length;
+		const subId = dbStore.getSubId(rootId, block.id);
 
 		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
 			return;
@@ -235,6 +293,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (!this.creating) {
 			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRecordAdd(e, -1, true); });
+		};
+
+		if (!isInline) {
+			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+				selection.set(I.SelectType.Record, dbStore.getRecords(subId, ''));
+			});
 		};
 
 		if (length) {
@@ -281,6 +345,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const keys = this.getKeys(viewId);
+		const sources = this.getSources();
+
+		if (!sources.length) {
+			return;
+		}
 
 		if (clear) {
 			dbStore.recordsSet(subId, '', []);
@@ -289,11 +358,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		dbStore.metaSet(subId, '', { offset, viewId });
 
 		if ([ I.ViewType.Board ].includes(view.type)) {
-			if (this.viewRef && this.viewRef.loadGroupList) {
-				this.viewRef.loadGroupList();
+			if (this.refView && this.refView.loadGroupList) {
+				this.refView.loadGroupList();
 			} else {
 				this.viewId = '';
-				//this.forceUpdate();
 			};
 		} else {
 			if (clear) {
@@ -327,11 +395,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		switch (type) {
 			default:
-				limit = isInline ? 1 : 0;
+				limit = isInline ? 10 : 0;
 				break;
 
 			case I.ViewType.Board:
-				limit = isInline ? 3 : 50;
+				limit = isInline ? 10 : 50;
 				break;
 			
 			case I.ViewType.Gallery:
@@ -339,7 +407,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 
 			case I.ViewType.List:
-				limit = isInline ? 5 : 0;
+				limit = isInline ? 10 : 0;
 				break;
 		};
 		return limit;
@@ -380,6 +448,28 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getView (viewId?: string): I.View {
 		const { rootId, block } = this.props;
 		return Dataview.getView(rootId, block.id, viewId);
+	};
+
+	getSources (): string[] {
+		const { rootId, block, isInline } = this.props;
+		const { targetObjectId } = block.content;
+
+		if (isInline && !targetObjectId) {
+			return [];
+		};
+
+		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		return object.setOf || [];
+	};
+
+	onEmpty (e: any) {
+		const { isInline } = this.props;
+
+		if (isInline) {
+			this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center });
+		} else {
+			this.onSourceTypeSelect(e.currentTarget);
+		};
 	};
 
 	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
@@ -444,7 +534,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				const id = Relation.cellId(this.getIdPrefix(), 'name', newIndex);
-				const ref = this.cellRefs.get(id);
+				const ref = this.refCells.get(id);
 
 				if (ref && (view.type == I.ViewType.Grid)) {
 					window.setTimeout(() => { ref.onClick(e); }, 15);
@@ -527,7 +617,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
 		const id = Relation.cellId(this.getIdPrefix(), relationKey, index);
-		const ref = this.cellRefs.get(id);
+		const ref = this.refCells.get(id);
 		const record = this.getRecord(index);
 		const view = this.getView();
 
@@ -603,6 +693,58 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
+	onSourceSelect (element: any, param: Partial<I.MenuParam>) {
+		const { rootId, block } = this.props;
+		const { targetObjectId } = block.content;
+		const menuParam = Object.assign({
+			element: $(element),
+			className: 'single',
+			data: {
+				rootId,
+				blockId: block.id,
+				blockIds: [ block.id ],
+				value: [ targetObjectId ],
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+				],
+				canAdd: true,
+				onSelect: (item: any, isNew: boolean) => {
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
+						if (message.views && message.views.length) {
+							this.getData(message.views[0].id, 0, true);
+						};
+					});
+
+					analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
+				}
+			}
+		}, param || {});
+
+		menuStore.open('searchObject', menuParam);
+	};
+
+	onSourceTypeSelect (element: any) {
+		const { rootId, block, isInline } = this.props;
+		const objectId = isInline ? block.content.targetObjectId : rootId;
+		const blockId = isInline ? block.id : Constant.blockId.dataview;
+
+		console.log(rootId, objectId, blockId);
+
+		menuStore.closeAll(null, () => {
+			menuStore.open('dataviewSource', {
+				element: $(element),
+				className: 'big single',
+				horizontal: I.MenuDirection.Center,
+				data: {
+					rootId,
+					objectId,
+					blockId,
+				}
+			});
+		});
+	};
+
 	getIdPrefix () {
 		return [ 'dataviewCell', this.props.block.id ].join('-');
 	};
@@ -613,12 +755,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.frame = raf(() => {
-			if (this.controlRef && this.controlRef.resize) {
-				this.controlRef.resize();
+			if (this.refControls && this.refControls.resize) {
+				this.refControls.resize();
 			};
 
-			if (this.viewRef && this.viewRef.resize) {
-				this.viewRef.resize();
+			if (this.refView && this.refView.resize) {
+				this.refView.resize();
 			};
 		});
 	};

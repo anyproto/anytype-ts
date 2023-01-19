@@ -11,9 +11,9 @@ interface State {
 
 class MenuBlockAction extends React.Component<I.Menu, State> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	n: number = -1;
+	n = -1;
 	refFilter: any = null;
 	state = {
 		filter: '',
@@ -25,7 +25,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		this.rebind = this.rebind.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onClick = this.onClick.bind(this);
-		
 		this.onFilterFocus = this.onFilterFocus.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
 	};
@@ -202,6 +201,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const align = { id: 'align', icon: '', name: 'Align', children: [] };
 			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: MenuUtil.getBgColors() };
 			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: MenuUtil.getTextColors() };
+			const dataview = { id: 'dataview', icon: '', name: 'Dataview', children: MenuUtil.getDataviewActions() };
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -217,6 +217,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			let hasColor = true;
 			let hasBg = true;
 			let hasBookmark = true;
+			let hasDataview = true;
 
 			for (let id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
@@ -248,6 +249,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				if (!block.canHaveBackground())	 hasBg = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
+				if (!block.isDataview())		 hasDataview = false;
 
 				if (block.isTextTitle())		 hasAction = false;
 				if (block.isTextDescription())	 hasAction = false;
@@ -262,13 +264,17 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
 
+			if (hasDataview) {
+				sections.push(dataview);
+			};
+
 			if (hasAlign) {
 				align.children = MenuUtil.getAlign(hasQuote);
 				sections.push(align);
 			};
 			
 			if (hasAction) {
-				action.children = MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark });
+				action.children = MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark, hasDataview });
 				sections.push(action);
 			};
 
@@ -285,6 +291,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			let hasTurnDiv = true;
 			let hasText = true;
 			let hasBookmark = true;
+			let hasDataview = true;
 			let hasFile = true;
 			let hasLink = true;
 			let hasTitle = false;
@@ -321,6 +328,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				if (!block.isText())			 hasText = false;
 				if (!block.isFile())			 hasFile = false;
 				if (!block.isLink())			 hasLink = false;
+				if (!block.isDataview())		 hasDataview = false;
 				if (!block.canHaveAlign())		 hasAlign = false;
 				if (!block.canHaveColor())		 hasColor = false;
 				if (!block.canHaveBackground())	 hasBg = false;
@@ -331,7 +339,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			const section1: any = { 
-				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark, hasTurnObject })
+				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
+			};
+
+			if (hasDataview) {
+				section2.children = section2.children.concat(MenuUtil.getDataviewActions());
 			};
 
 			if (hasLink) {
@@ -576,6 +588,31 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.vertical = I.MenuDirection.Center;
 				break;
 			};
+
+			case 'dataviewSource': {
+				menuId = 'searchObject';
+				menuParam.className = 'single';
+
+				filters = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+				];
+
+				menuParam.data = Object.assign(menuParam.data, {
+					type: I.NavigationType.Move,
+					position: I.BlockPosition.Bottom,
+					rootId,
+					blockId: block.id,
+					value: [ block.content.targetObjectId ],
+					blockIds: [ block.id ],
+					filters,
+					canAdd: true,
+					onSelect: (item: any) => {
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id);
+					}
+				});
+				break;
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.itemId)) {
@@ -618,6 +655,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				ObjectUtil.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 
 				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
+				break;
+			};
+
+			case 'openDataviewFullscreen': {
+				ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
+				analytics.event('InlineSetOpenFullscreen');
 				break;
 			};
 					

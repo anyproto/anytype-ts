@@ -21,11 +21,11 @@ class Sidebar {
 
 	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: null };
 	obj: any = null;
-	fixed: boolean = false;
-	animating: boolean = false;
+	fixed = false;
+	animating = false;
 
-	timeoutHide: number = 0;
-	timeoutAnim: number = 0;
+	timeoutHide = 0;
+	timeoutAnim = 0;
 
 	init () {
 		this.obj = $('#sidebar');
@@ -38,7 +38,7 @@ class Sidebar {
 
 		const platform = Util.getPlatform();
 		const isWindows = platform == I.Platform.Windows;
-		const offset = isWindows ? 30 : 0;
+		const offset = isWindows ? Constant.size.headerWindows : 0;
 		const win = $(window);
 		const wh = win.height();
 		const height = this.maxHeight();
@@ -350,7 +350,7 @@ class Sidebar {
 		const head = this.obj.find('#head');
 		const platform = Util.getPlatform();
 
-		head.css({ height: this.data.fixed ? (platform == I.Platform.Windows ? 30 : Util.sizeHeader()) : 12 });
+		head.css({ height: this.data.fixed ? (platform == I.Platform.Windows ? Constant.size.headerWindows : Util.sizeHeader()) : 12 });
 	};
 
 	resizePage () {

@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 
 class MenuBlockLayout extends React.Component<I.Menu> {
 	
-	n: number = 0;
+	n = 0;
 	
 	constructor (props: I.Menu) {
 		super(props);

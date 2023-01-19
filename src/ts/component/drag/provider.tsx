@@ -19,13 +19,13 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	node: any = null;
 	refLayer: any = null;
-	commonDropPrevented: boolean = false;
+	commonDropPrevented = false;
 	position: I.BlockPosition = I.BlockPosition.None;
 	hoverData: any = null;
-	canDrop: boolean = false;
-	init: boolean = false;
-	top: number = 0;
-	frame: number = 0;
+	canDrop = false;
+	init = false;
+	top = 0;
+	frame = 0;
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();

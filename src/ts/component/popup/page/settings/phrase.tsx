@@ -69,7 +69,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 						/>
 					</div>
 
-					<Button color="blank" text={translate('popupSettingsPhraseCopy')} onClick={this.onCopy} />
+					<Button id="button-phrase" color="blank" text={translate('popupSettingsPhraseShowPhrase')} onClick={this.onCopy} />
 				</div>
 
 				<div className="sides">
@@ -85,7 +85,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 					</div>
 				</div>
 
-				<Button color="blank" text={translate('popupSettingsPhraseShowQR')} onClick={this.onCode} />
+				<Button id="button-qr" color="blank" text={translate(showCode ? 'popupSettingsPhraseHideQR' : 'popupSettingsPhraseShowQR')} onClick={this.onCode} />
 
 			</div>
 		);
@@ -106,30 +106,40 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	onFocus () {
 		const node = $(this.node);
 		const phrase = node.find('#phrase');
+		const button = node.find('#button-phrase');
 
 		this.refPhrase.setValue(authStore.phrase);
 		this.refPhrase.select();
 
+		Util.clipboardCopy({ text: authStore.phrase });
+		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
+
 		phrase.removeClass('isBlurred');
+		button.text(translate('popupSettingsPhraseHidePhrase'));
+		analytics.event('KeychainCopy', { type: 'ScreenSettings' });
 	};
 
 	onBlur () {
 		const node = $(this.node);
 		const phrase = node.find('#phrase');
+		const button = node.find('#button-phrase');
 
 		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));
 
 		phrase.addClass('isBlurred');
 		window.getSelection().removeAllRanges();
+		button.text(translate('popupSettingsPhraseShowPhrase'));
 	};
 
-	onCopy (e: any) {
-		this.refPhrase.focus();
+	onCopy () {
+		const node = $(this.node);
+		const phrase = node.find('#phrase');
 
-		Util.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
-
-		analytics.event('KeychainCopy', { type: 'ScreenSettings' });
+		if (phrase.hasClass('isBlurred')) {
+			this.onFocus();
+		} else {
+			this.onBlur();
+		};
 	};
 
 	onCode () {

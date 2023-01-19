@@ -156,6 +156,14 @@ const BlockCreate = (response: any) => {
 	};
 };
 
+const BlockDataviewCreateFromExistingObject = (response: any) => {
+	return {
+		blockId: response.getBlockid(),
+		targetObjectId: response.getTargetobjectid(),
+		views: (response.getViewList() || []).map(Mapper.From.View),
+	};
+};
+
 const BlockLinkCreateWithObject = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
@@ -405,6 +413,8 @@ export {
 	BlockLinkCreateWithObject,
 	
 	BlockCreate,
+
+	BlockDataviewCreateFromExistingObject,
 	BlockDataviewViewCreate,
 
 	BlockListDuplicate,

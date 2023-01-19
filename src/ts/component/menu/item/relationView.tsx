@@ -38,7 +38,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		classNameWrap: '',
 	};
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 
 	constructor (props: Props) {
 		super(props);

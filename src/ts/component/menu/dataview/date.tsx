@@ -7,8 +7,8 @@ import { menuStore, dbStore } from 'Store';
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<I.Menu> {
 
-	_isMounted: boolean = false;
-	n: number = 0;
+	_isMounted = false;
+	n = 0;
 
 	constructor (props: I.Menu) {
 		super(props);

@@ -1,65 +1,104 @@
 import * as React from 'react';
-import { Icon } from 'Component';
-import { I, C, keyboard } from 'Lib';
-import { menuStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
+import { Icon, IconObject, Editable } from 'Component';
+import { I, C, keyboard, DataUtil, ObjectUtil, analytics } from 'Lib';
+import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const Head = observer(class Head extends React.Component<I.ViewComponent> {
+interface Props extends I.ViewComponent {
+	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
+	onSourceTypeSelect?(element: any): void;
+};
 
-	_isMounted: boolean = false;
+interface State {
+	isEditing: boolean;
+};
+
+const Head = observer(class Head extends React.Component<Props, State> {
+
+	state = {
+		isEditing: false,
+	};
+	_isMounted = false;
 	node: any = null;
 	menuContext: any = null;
-	composition: boolean = false;
-	timeout: number = 0;
+	timeout = 0;
+	ref: any = null;
+	range: I.TextRange = null;
 
-	constructor (props: I.ViewComponent) {
+	constructor (props: Props) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
-		this.onOver = this.onOver.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onCompositionStart = this.onCompositionStart.bind(this);
-		this.onCompositionEnd = this.onCompositionEnd.bind(this);
+		this.onIconSelect = this.onIconSelect.bind(this);
+		this.onIconUpload = this.onIconUpload.bind(this);
+		this.onFullscreen = this.onFullscreen.bind(this);
+		this.onTitle = this.onTitle.bind(this);
+		this.onTitleOver = this.onTitleOver.bind(this);
+		this.onTitleSelect = this.onTitleSelect.bind(this);
+		this.onSource = this.onSource.bind(this);
 	};
 
 	render () {
-		const { rootId, block, readonly, getView, onRecordAdd, className } = this.props;
-		const sources = block.content.sources || [];
-		const view = getView();
-		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		const { rootId, block, readonly, getSources, className, onSourceSelect } = this.props;
+		const { isEditing } = this.state;
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId);
+		const sources = getSources();
 		const cn = [ 'dataviewHead' ];
 
 		if (className) {
 			cn.push(className);
 		};
-		
+
+		if (isEditing) {
+			cn.push('isEditing');
+		};
+
 		return (
 			<div 
 				ref={node => this.node = node}
 				className={cn.join(' ')}
 			>
-				<div id="title" className="title">
-					<div 
-						className="value" 
-						contentEditable="true" 
-						suppressContentEditableWarning={true}
-						onFocus={this.onFocus}
-						onBlur={this.onBlur}
-						onKeyDown={this.onKeyDown}
-						onKeyUp={this.onKeyUp}
-						onCompositionStart={this.onCompositionStart}
-						onCompositionEnd={this.onCompositionEnd}
+				<div id="head-title-wrapper" className="side left">
+					<IconObject
+						id={`icon-set-${block.id}`}
+						object={object} size={20}
+						iconSize={20}
+						canEdit={!readonly}
+						onSelect={this.onIconSelect}
+						onUpload={this.onIconUpload}
 					/>
-					<div id="placeholder" className="placeholder">New set</div>
-				</div>
 
-				<div id="head-source-select" className="iconWrap" onClick={this.onSelect}>
-					<Icon className="set" />
-					{sources.length}
+					<Editable
+						ref={(ref: any) => { this.ref = ref; }}
+						id="value"
+						classNameWrap="dataviewTitle"
+						readonly={readonly || !isEditing}
+						placeholder={DataUtil.defaultName('set')}
+						onFocus={this.onFocus}
+						onMouseDown={this.onTitle}
+						onBlur={this.onBlur}
+						onKeyUp={this.onKeyUp}
+						onSelect={this.onSelect}
+						onCompositionStart={this.onCompositionStart}
+					/>
+
+					{targetObjectId ? <React.Fragment>
+						<div id="head-source-select" className="iconWrap" onClick={this.onSource}>
+							<Icon className="set" />
+						</div>
+					</React.Fragment> : ''}
+
+				</div>
+				<div className="side right">
+					<div className="iconWrap" onClick={this.onFullscreen}>
+						<Icon className="expand" tooltip="Open fullscreen" />
+					</div>
 				</div>
 			</div>
 		);
@@ -67,6 +106,15 @@ const Head = observer(class Head extends React.Component<I.ViewComponent> {
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.setValue();
+	};
+
+	componentDidUpdate () {
+		this.setValue();
+
+		if (this.ref && this.range) {
+			this.ref.setRange(this.range);
+		};
 	};
 
 	componentWillUnmount () {
@@ -74,76 +122,126 @@ const Head = observer(class Head extends React.Component<I.ViewComponent> {
 		window.clearTimeout(this.timeout);
 	};
 
-	onSelect () {
-		const { block } = this.props;
+	onTitle (e: any) {
+		const { block, onSourceSelect } = this.props;
+		const { targetObjectId } = block.content;
+		const { isEditing } = this.state;
+		const element = `#block-${block.id} #head-title-wrapper`;
+
+		if (!targetObjectId) {
+			onSourceSelect(element, {horizontal: I.MenuDirection.Left});
+			return;
+		};
+
+		if (isEditing) {
+			return;
+		};
+
 		const options: any[] = [
-			{ id: 'new', name: 'Create new source', arrow: true },
-			{ id: 'existing', name: 'Link to source of another set', arrow: true }
+			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
+			{ id: 'changeSource', icon: 'folderBlank', name: 'Change source', arrow: true },
+			{ id: 'openSource', icon: 'expand', name: 'Open data source' }
 		];
-		
-		menuStore.open('select', { 
-			element: `#block-${block.id} #head-source-select`,
-			width: 256,
-			horizontal: I.MenuDirection.Center,
-			subIds: Constant.menuIds.dataviewHead,
+
+		menuStore.open('select', {
+			element: element,
+			horizontal: I.MenuDirection.Left,
+			offsetY: 4,
 			onOpen: (context: any) => {
 				this.menuContext = context;
 			},
 			data: {
-				options: options,
-				onOver: this.onOver,
+				options,
+				onOver: this.onTitleOver,
+				onSelect: this.onTitleSelect,
 			},
 		});
 	};
 
-	onOver (e: any, item: any) {
-		const { rootId, block } = this.props;
+	onTitleOver (e: any, item: any) {
+		const { rootId, block, getData } = this.props;
+
+		if (!item.arrow) {
+			menuStore.closeAll([ 'searchObject' ]);
+			return;
+		};
 
 		let menuId = '';
-		let menuParam = {
+		let menuParam: any = {
+			menuKey: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
-			className: 'big single',
 			vertical: I.MenuDirection.Center,
 			isSub: true,
-			data: {
-				isBig: true,
-				rootId: rootId,
-				blockId: block.id,
-				blockIds: [ block.id ],
-				rebind: this.menuContext.ref.rebind,
-			}
+			data: {},
 		};
 
 		switch (item.id) {
-			case 'new':
-				menuId = 'dataviewSource';
-				break;
-
-			case 'existing':
+			case 'changeSource':
 				menuId = 'searchObject';
+				menuParam.className = 'single';
 				menuParam.data = Object.assign(menuParam.data, {
+					rootId,
+					blockId: block.id,
+					blockIds: [ block.id ],
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 					],
-					keys: Constant.defaultRelationKeys.concat([ 'setOf' ]),
+					canAdd: true,
+					rebind: this.menuContext.ref.rebind,
 					onSelect: (item: any) => {
-						C.BlockDataviewSetSource(rootId, block.id, item.setOf);
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
+							if (message.views && message.views.length) {
+								getData(message.views[0].id, 0, true);
+							};
+						});
+
+						analytics.event('InlineSetSetSource');
+						this.menuContext.close();
 					}
 				});
 				break;
 		};
 
-		if (menuId && !menuStore.isOpen(menuId)) {
-			if (menuStore.isOpen(menuId)) {
-				menuStore.open(menuId, param);
-			} else {
-				menuStore.closeAll(Constant.menuIds.dataviewHead, () => {
-					menuStore.open(menuId, menuParam);
-				});
-			};
+		if (menuId && !menuStore.isOpen(menuId, item.id)) {
+			menuStore.closeAll([ 'searchObject' ], () => {
+				menuStore.open(menuId, menuParam);
+			});
 		};
+	};
+
+	onTitleSelect (e: any, item: any) {
+		if (item.arrow) {
+			return;
+		};
+
+		const { rootId, block } = this.props;
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId);
+		const length = this.getValue().length;
+
+		switch (item.id) {
+			case 'editTitle': {
+				this.setState({ isEditing: true }, () => {
+					this.ref.setRange({ from: length, to: length });
+				});
+				break;
+			};
+
+			case 'openSource': {
+				ObjectUtil.openAuto(object);
+				analytics.event('InlineSetOpenSource');
+				break;
+			};
+
+		};
+	};
+
+	onSource (e: any) {
+		const { block, onSourceTypeSelect } = this.props;
+
+		onSourceTypeSelect(`#block-${block.id} #head-source-select`);
 	};
 
 	onFocus (e: any) {
@@ -152,68 +250,89 @@ const Head = observer(class Head extends React.Component<I.ViewComponent> {
 
 	onBlur (e: any) {
 		keyboard.setFocus(false);
+		this.setState({ isEditing: false });
 	};
 
 	onCompositionStart (e: any) {
-		this.composition = true;
 		window.clearTimeout(this.timeout);
 	};
 
-	onCompositionEnd (e: any) {
-		this.composition = false;
-	};
-
-	onKeyDown (e: any) {
-		this.placeholderCheck();
-	};
-
 	onKeyUp (e: any) {
-		if (this.composition) {
-			return;
-		};
-
-		this.placeholderCheck();
-
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
-	getValue (): string {
-		if (!this._isMounted) {
-			return '';
+	onSelect (e: any) {
+		if (this.ref) {
+			this.range = this.ref.getRange();
 		};
-
-		const node = $(this.node);
-		const value = node.find('#title');
-
-		return value.length ? String(value.get(0).innerText || '') : '';
 	};
 
-	placeholderCheck () {
-		const value = this.getValue();
-		value ? this.placeholderHide() : this.placeholderShow();
-	};
-
-	placeholderHide () {
+	setValue () {
 		if (!this._isMounted) {
 			return;
 		};
 
-		const node = $(this.node);
-		node.find('#placeholder').hide();
-	};
-	
-	placeholderShow () {
-		if (!this._isMounted) {
+		const { rootId, block } = this.props;
+		const { targetObjectId } = block.content;
+
+		if (!targetObjectId) {
 			return;
 		};
 
-		const node = $(this.node);
-		node.find('#placeholder').show();
+		const object = detailStore.get(rootId, targetObjectId);
+		const { name } = object;
+
+		if (!name || (name == DataUtil.defaultName('page')) || (name == DataUtil.defaultName('set'))) {
+			return;
+		};
+
+		if (this.ref) {
+			this.ref.setValue(object.name);
+			this.ref.placeholderCheck();
+		};
+	};
+
+	getValue () {
+		return this.ref ? this.ref.getTextValue() : '';
 	};
 
 	save () {
-		//DataUtil.blockSetText(rootId, 'title', this.getValue(id), [], true);
+		const { block } = this.props;
+		const { targetObjectId } = block.content;
+
+		if (targetObjectId) {
+			DataUtil.blockSetText(targetObjectId, 'title', this.getValue(), [], true);
+		};
+		
+		if (this.ref) {
+			this.ref.placeholderHide();
+		};
+	};
+
+	onIconSelect (icon: string) {
+		const { block } = this.props;
+		const { targetObjectId } = block.content;
+
+		if (targetObjectId) {
+			ObjectUtil.setIcon(targetObjectId, icon, '');
+		};
+	};
+
+	onIconUpload (hash: string) {
+		const { block } = this.props;
+		const { targetObjectId } = block.content;
+
+		if (targetObjectId) {
+			ObjectUtil.setIcon(targetObjectId, '', hash);
+		};
+	};
+
+	onFullscreen () {
+		const { rootId, block } = this.props;
+
+		ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
+		analytics.event('InlineSetOpenFullscreen');
 	};
 
 });

@@ -7,12 +7,12 @@ import { observer } from 'mobx-react';
 const PopupExport = observer(class PopupExport extends React.Component<I.Popup> {
 
 	format: I.ExportFormat = I.ExportFormat.Markdown;
-	zip: boolean = false;
-	nested: boolean = false;
-	files: boolean = true;
-	landscape: boolean = false;
+	zip = false;
+	nested = false;
+	files = true;
+	landscape = false;
 	pageSize: any = { id: 'A4', name: 'A4'};
-	printBackground: boolean = true;
+	printBackground = true;
 
 	constructor (props: I.Popup) {
 		super(props);

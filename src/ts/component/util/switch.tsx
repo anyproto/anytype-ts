@@ -17,7 +17,7 @@ class Switch extends React.Component<Props> {
 	};
 
 	node: any = null;
-	value: boolean = false;
+	value = false;
 
 	constructor (props: Props) {
 		super(props);

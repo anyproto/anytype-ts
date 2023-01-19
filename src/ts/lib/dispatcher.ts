@@ -28,9 +28,9 @@ class Dispatcher {
 
 	service: any = null;
 	stream: any = null;
-	timeoutStream: number = 0;
+	timeoutStream = 0;
 	timeoutEvent: any = {};
-	reconnects: number = 0;
+	reconnects = 0;
 
 	init (address: string) {
 		this.service = new Service.ClientCommandsClient(address, null, null);
@@ -109,10 +109,12 @@ class Dispatcher {
 		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
+		if (v == V.BLOCKDATAVIEWVIEWUPDATE)		 t = 'blockDataviewViewUpdate';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
 		if (v == V.BLOCKDATAVIEWSOURCESET)		 t = 'blockDataviewSourceSet';
+		if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'blockDataviewTargetObjectIdSet';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
 		if (v == V.BLOCKDATAVIEWRELATIONDELETE)	 t = 'blockDataviewRelationDelete';
@@ -167,16 +169,16 @@ class Dispatcher {
 		};
 
 		let blocks: any[] = [];
-		let id: string = '';
+		let id = '';
 		let block: any = null;
 		let details: any = null;
-		let viewId: string = '';
+		let viewId = '';
 		let keys: string[] = [];
 		let ids: string[] = [];
 		let subIds: string[] = [];
 		let uniqueSubIds: string[] = [];
-		let subId: string = '';
-		let afterId: string = '';
+		let subId = '';
+		let afterId = '';
 		let content: any = {};
 
 		messages.sort((c1: any, c2: any) => { return this.sort(c1, c2); });
@@ -192,7 +194,7 @@ class Dispatcher {
 			if (rootId.match('virtualBreadcrumbs')) {
 				needLog = false;
 			};
-			
+
 			switch (type) {
 
 				case 'accountShow': {
@@ -323,7 +325,7 @@ class Dispatcher {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};
 
-					blockStore.updateContent(rootId, block.id, block.content);
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -374,6 +376,18 @@ class Dispatcher {
 						block.content.style = data.getStyle().getValue();
 					};
 
+					blockStore.updateContent(rootId, id, block.content);
+					break;
+				};
+
+				case 'blockDataviewTargetObjectIdSet': {
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					block.content.targetObjectId = data.getTargetobjectid();
 					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
@@ -431,6 +445,8 @@ class Dispatcher {
 					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
 					};
+
+					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
 
@@ -523,6 +539,87 @@ class Dispatcher {
 					break;
 				};
 
+				case 'blockDataviewViewUpdate': {
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					viewId = data.getViewid();
+
+					let view = dbStore.getView(rootId, id, viewId);
+					
+					if (data.hasFields()) {
+						view = Object.assign(view, Mapper.From.ViewFields(data.getFields()));
+					};
+
+					const keys = [ 
+						{ id: 'filter', field: 'filters', idField: 'id', mapper: 'Filter' },
+						{ id: 'sort', field: 'sorts', idField: 'relationKey', mapper: 'Sort' },
+						{ id: 'relation', field: 'relations', idField: 'relationKey', mapper: 'ViewRelation' },
+					];
+
+					keys.forEach(key => {
+						const items = data[Util.toCamelCase(`get-${key.id}-list`)]() || [];
+						const mapper = Mapper.From[key.mapper];
+
+						items.forEach((item: any) => {
+							let list = view[key.field];
+
+							if (item.hasAdd()) {
+								const op = item.getAdd();
+								const afterId = op.getAfterid();
+								const items = (op.getItemsList() || []).map(mapper);
+								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) : list.length;
+
+								items.forEach((item: any, i: number) => { 
+									list.splice(idx + i, 0, item);
+								});
+							};
+
+							if (item.hasMove()) {
+								const op = item.getMove();
+								const afterId = op.getAfterid();
+								const ids = op.getIdsList() || [];
+								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) : 0;
+
+								ids.forEach((id: string, i: number) => {
+									const oidx = list.findIndex(it => it[key.idField] == id);
+									if (oidx >= 0) {
+										list = arrayMove(list, oidx, idx + i + 1);
+									};
+								});
+							};
+
+							if (item.hasUpdate()) {
+								const op = item.getUpdate();
+
+								if (op.hasItem()) {
+									const idx = list.findIndex(it => it[key.idField] == op.getId());
+									if (idx >= 0) {
+										list[idx] = Mapper.From[key.mapper](op.getItem());
+									};
+								};
+							};
+
+							if (item.hasRemove()) {
+								const op = item.getRemove();
+								const ids = op.getIdsList() || [];
+
+								ids.forEach(id => { 
+									list = list.filter(it => it[key.idField] != id);
+								});
+							};
+
+							view[key.field] = list;
+						});
+					});
+
+					dbStore.viewUpdate(rootId, id, view);
+					break;
+				};
+
 				case 'blockDataviewViewDelete': {
 					id = data.getId();
 					subId = dbStore.getSubId(rootId, id);
@@ -550,7 +647,7 @@ class Dispatcher {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 
-					if (!block || !block.id) {
+					if (!block) {
 						break;
 					};
 

@@ -6,7 +6,7 @@ import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { observer, } from 'mobx-react';
 import { getRange } from 'selection-ranges';
-import { Select, Marker, Loader, IconObject, Icon } from 'Component';
+import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -35,19 +35,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		onKeyDown: (e: any, text: string, marks: I.Mark[], range: I.TextRange) => {},
 	};
 
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
 	refLang: any = null;
-	timeoutContext: number = 0;
-	timeoutClick: number = 0;
-	timeoutFilter: number = 0;
+	refEditable: any = null;
+	timeoutContext = 0;
+	timeoutClick = 0;
+	timeoutFilter = 0;
 	marks: I.Mark[] = [];
-	text: string = '';
-	clicks: number = 0;
-	composition: boolean = false;
-	preventSaveOnBlur: boolean = false;
-	preventMenu: boolean = false;
-	frame: number = 0;
+	text = '';
+	clicks = 0;
+	preventSaveOnBlur = false;
+	preventMenu = false;
+	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -68,9 +68,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.onCopy = this.onCopy.bind(this);
 		this.onSelectIcon = this.onSelectIcon.bind(this);
 		this.onUploadIcon = this.onUploadIcon.bind(this);
-
-		this.onCompositionStart = this.onCompositionStart.bind(this);
-		this.onCompositionEnd = this.onCompositionEnd.bind(this);
 	};
 
 	render () {
@@ -181,33 +178,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		};
 
-		let editor = null;
-
-		if (readonly) {
-			editor = <div id="value" className={cv.join(' ')} />;
-		} else {
-			editor = (
-				<div
-					id="value"
-					className={cv.join(' ')}
-					contentEditable={true}
-					suppressContentEditableWarning={true}
-					onKeyDown={this.onKeyDown}
-					onKeyUp={this.onKeyUp}
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
-					onSelect={this.onSelect}
-					onPaste={this.onPaste}
-					onMouseDown={this.onMouseDown}
-					onMouseUp={this.onMouseUp}
-					onInput={this.onInput}
-					onCompositionStart={this.onCompositionStart}
-					onCompositionEnd={this.onCompositionEnd}
-					onDragStart={(e: any) => { e.preventDefault(); }}
-				/>
-			);
-		};
-		
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -221,10 +191,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						{additional}
 					</div>
 				) : ''}
-				<div className="wrap">
-					<span id="placeholder" className={[ 'placeholder', 'c' + id ].join(' ')}>{placeholder}</span>
-					{editor}
-				</div>
+
+				<Editable 
+					ref={(ref: any) => { this.refEditable = ref; }}
+					id="value"
+					classNameEditor={cv.join(' ')}
+					classNamePlaceholder={'c' + id}
+					readonly={readonly}
+					placeholder={placeholder}
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
+					onSelect={this.onSelect}
+					onPaste={this.onPaste}
+					onMouseDown={this.onMouseDown}
+					onMouseUp={this.onMouseUp}
+					onInput={this.onInput}
+					onDragStart={(e: any) => { e.preventDefault(); }}
+				/>
 			</div>
 		);
 	};
@@ -266,19 +251,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this._isMounted = false;
 	};
 
-	onCompositionStart (e: any) {
-		this.composition = true;
-	};
-
-	onCompositionEnd (e: any) {
-		this.composition = false;
-	};
-	
 	setValue (v: string) {
 		const { block } = this.props;
 		const fields = block.fields || {};
-		const node = $(this.node);
-		const value = node.find('#value');
 		
 		let text = String(v || '');
 		if (text === '\n') {
@@ -310,7 +285,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			html = html.replace(/\n/g, '<br/>');
 		};
 
-		value.get(0).innerHTML = html;
+		if (this.refEditable) {
+			this.refEditable.setValue(html);
+		};
 
 		if (!block.isTextCode() && (html != text) && this.marks.length) {
 			if (this.frame) {
@@ -337,8 +314,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const { rootId } = this.props;
 		const node = $(this.node);
-		const value = node.find('#value');
-		const items = value.find('lnk');
+		const items = node.find('lnk');
 
 		if (!items.length) {
 			return;
@@ -403,8 +379,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const { rootId } = this.props;
 		const node = $(this.node);
-		const value = node.find('#value');
-		const items = value.find('obj');
+		const items = node.find('obj');
 
 		if (!items.length) {
 			return;
@@ -477,8 +452,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const node = $(this.node);
-		const value = node.find('#value');
-		const items = value.find('mention');
+		const items = node.find('mention');
 		
 		if (!items.length) {
 			return;
@@ -564,8 +538,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		const node = $(this.node);
-		const value = node.find('#value');
-		const items = value.find('emoji');
+		const items = node.find('emoji');
 		
 		if (!items.length) {
 			return;
@@ -615,34 +588,27 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	getValue (): string {
-		if (!this._isMounted) {
-			return '';
-		};
-		
-		const node = $(this.node);
-		const value = node.find('#value');
-		const obj = Mark.cleanHtml(value.html());
+		return this.refEditable ? this.refEditable.getTextValue() : '';
+	};
 
-		return String(obj.get(0).innerText || '');
+	getRange (): I.TextRange {
+		return this.refEditable ? this.refEditable.getRange() : null;
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
 		const { block } = this.props;
-		const node = $(this.node);
-		const value = node.find('#value');
+		const value = this.refEditable ? this.refEditable.getHtmlValue() : '';
 		const restricted: I.MarkType[] = [];
 
 		if (block.isTextHeader()) {
 			restricted.push(I.MarkType.Bold);
 		};
 		
-		return Mark.fromHtml(value.html(), restricted);
+		return Mark.fromHtml(value, restricted);
 	};
 
 	onInput (e: any) {
 		const { onUpdate } = this.props;
-		
-		this.placeholderCheck();
 
 		if (onUpdate) {
 			onUpdate();
@@ -651,11 +617,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onKeyDown (e: any) {
 		e.persist();
-
-		// Chinese IME is open
-		if (this.composition) {
-			return;
-		};
 
 		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
@@ -1344,47 +1305,29 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	placeholderCheck () {
-		this.getValue() ? this.placeholderHide() : this.placeholderShow();			
+		if (this.refEditable) {
+			this.refEditable.placeholderCheck();
+		};			
 	};
 
 	placeholderSet (v: string) {
-		if (!this._isMounted) {
-			return;
+		if (this.refEditable) {
+			this.refEditable.placeholderSet(v);
 		};
-		
-		const node = $(this.node);
-		node.find('#placeholder').text(v);
 	};
 	
 	placeholderHide () {
-		if (!this._isMounted) {
-			return;
+		if (this.refEditable) {
+			this.refEditable.placeholderHide();
 		};
-
-		const node = $(this.node);
-		node.find('#placeholder').hide();
 	};
 	
 	placeholderShow () {
-		if (!this._isMounted) {
-			return;
+		if (this.refEditable) {
+			this.refEditable.placeholderShow();
 		};
-		
-		const node = $(this.node);
-		node.find('#placeholder').show();
 	};
 	
-	getRange () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(this.node);
-		const range = getRange(node.find('#value').get(0) as Element);
-
-		return range ? { from: range.start, to: range.end } : null;
-	};
-
 });
 
 export default BlockText;

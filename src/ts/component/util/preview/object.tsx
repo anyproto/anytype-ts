@@ -25,9 +25,9 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	state = {
 		loading: false,
 	};
-	isOpen: boolean = false;
-	_isMounted: boolean = false;
-	id: string = '';
+	isOpen = false;
+	_isMounted = false;
+	id = '';
 
 	public static defaultProps = {
 		className: '',
@@ -357,7 +357,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	load () {
 		const { loading } = this.state;
-		const { rootId, position, setObject } = this.props;
+		const { rootId, setObject } = this.props;
 		const contextId = this.getRootId();
 
 		if (!this._isMounted || loading || (this.id == rootId)) {

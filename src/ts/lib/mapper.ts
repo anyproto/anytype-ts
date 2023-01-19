@@ -194,6 +194,7 @@ const Mapper = {
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
 				groupOrder: (obj.getGroupordersList() || []).map(Mapper.From.GroupOrder),
 				objectOrder: (obj.getObjectordersList() || []).map(Mapper.From.ObjectOrder),
+				targetObjectId: obj.getTargetobjectid() || ''
 			};
 		},
 
@@ -286,6 +287,7 @@ const Mapper = {
 
 		Filter: (obj: any): I.Filter => {
 			return {
+				id: obj.getId(),
 				relationKey: obj.getRelationkey(),
 				operator: obj.getOperator(),
 				condition: obj.getCondition(),
@@ -303,8 +305,16 @@ const Mapper = {
 		},
 
 		View: (obj: any): I.View => {
-			return {
+			return Object.assign({
 				id: obj.getId(),
+				sorts: obj.getSortsList().map(Mapper.From.Sort),
+				filters: obj.getFiltersList().map(Mapper.From.Filter),
+				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
+			}, Mapper.From.ViewFields(obj));
+		},
+
+		ViewFields: (obj: any): any => {
+			return {
 				type: obj.getType(),
 				name: obj.getName(),
 				coverRelationKey: obj.getCoverrelationkey(),
@@ -313,9 +323,6 @@ const Mapper = {
 				hideIcon: obj.getHideicon(),
 				groupRelationKey: obj.getGrouprelationkey(),
 				groupBackgroundColors: obj.getGroupbackgroundcolors(),
-				sorts: obj.getSortsList().map(Mapper.From.Sort),
-				filters: obj.getFiltersList().map(Mapper.From.Filter),
-				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
 			};
 		},
 
@@ -403,7 +410,7 @@ const Mapper = {
 				blocks: (obj.getBlocksList() || []).map(Mapper.From.Block),
 				details: (obj.getDetailsList() || []).map(Mapper.From.Details),
 				relationLinks: (obj.getRelationlinksList() || []).map(Mapper.From.RelationLink),
-				restrictions: Mapper.From.Restrictions(obj.getRestrictions()),
+				restrictions: Mapper.From.Restrictions(obj.getRestrictions())
 			};
 		},
 
@@ -582,7 +589,8 @@ const Mapper = {
 
 		BlockDataview: (obj: any) => {
 			const content = new Model.Block.Content.Dataview();
-	
+
+			content.setTargetobjectid(obj.targetObjectId);
 			content.setViewsList(obj.views.map(Mapper.To.View));
 	
 			return content;
@@ -660,6 +668,7 @@ const Mapper = {
 		Filter: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Filter();
 			
+			item.setId(obj.id);
 			item.setRelationkey(obj.relationKey);
 			item.setFormat(obj.format);
 			item.setOperator(obj.operator);

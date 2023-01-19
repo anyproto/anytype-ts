@@ -12,10 +12,10 @@ interface State {
 
 const PageMainRelation = observer(class PageMainRelation extends React.Component<I.PageComponent, State> {
 
-	id: string = '';
+	id = '';
 	refHeader: any = null;
 	refHead: any = null;
-	loading: boolean = false;
+	loading = false;
 
 	state = {
 		isDeleted: false,

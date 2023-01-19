@@ -16,15 +16,14 @@ const LIMIT = 20;
 const MenuFilterList = observer(class MenuFilterList extends React.Component<I.Menu> {
 	
 	node: any = null;
-	n: number = 0;
-	top: number = 0;
+	n = 0;
+	top = 0;
 	cache: any = {};
 	refList: any = null;
 
 	constructor (props: I.Menu) {
 		super(props);
 		
-		this.save = this.save.bind(this);
 		this.onAdd = this.onAdd.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onSortStart = this.onSortStart.bind(this);
@@ -86,6 +85,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
+							loadMoreRows={() => {}}
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
@@ -197,7 +197,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
 
@@ -216,21 +216,23 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			value: Relation.formatValue(first, null, false),
 		};
 
-		view.filters.push(newItem);
-		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
+		C.BlockDataviewFilterAdd(rootId, blockId, view.id, newItem, () => {
+			getData(view.id, 0);
+		});
 
+		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
 		analytics.event('AddFilter', { condition: newItem.condition });
-		this.save();
 	};
 
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 
-		view.filters = view.filters.filter((it: any, i: number) => { return i != item.id; });
-		this.save();
+		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => {
+			getData(view.id, 0);
+		});
 
 		menuStore.close('select');
 		analytics.event('RemoveFilter');
@@ -245,6 +247,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
+		const { rootId, blockId, getData, getView } = data;
+		const view = getView();
 
 		menuStore.open('dataviewFilterValues', {
 			element: `#${getId()} #item-${item.id}`,
@@ -252,7 +256,11 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			noFlipY: true,
 			data: {
 				...data,
-				save: this.save,
+				save: () => {
+					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, view.getFilter(item.id), () => {
+						getData(view.id, 0);
+					});
+				},
 				itemId: item.id,
 			}
 		});
@@ -269,31 +277,15 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const { param, dataset } = this.props;
 		const { selection } = dataset;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView, getData } = data;
 		const view = getView();
 		const { oldIndex, newIndex } = result;
-
-		view.filters = arrayMove(view.filters, oldIndex, newIndex);
-		this.save();
+		
+		view.filters = arrayMove(view.filters as I.Filter[], oldIndex, newIndex);
+		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => { getData(view.id, 0); });
 
 		selection.preventSelect(false);
 		analytics.event('RepositionFilter');
-	};
-
-	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { getView, getData, rootId, blockId, onSave } = data;
-		const view = getView();
-
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-			if (onSave) {
-				onSave(message);
-			};
-			window.setTimeout(() => { this.forceUpdate(); }, 50);
-
-			getData(view.id, 0);
-		});
 	};
 
 	getItems () {
@@ -306,11 +298,9 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			return [];
 		};
 
-		let n = 0;
 		return Util.objectCopy(view.filters || []).map((it: any) => {
 			return { 
 				...it, 
-				id: n++,
 				relation: dbStore.getRelationByKey(it.relationKey),
 			};
 		}).filter(it => it.relation);

@@ -13,10 +13,10 @@ const LIMIT = 20;
 
 const MenuObjectValues = observer(class MenuObjectValues extends React.Component<I.Menu> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	n: number = 0;
-	top: number = 0;
+	n = 0;
+	top = 0;
 	cache: any = {};
 	refList: any = null;
 	
@@ -95,6 +95,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const List = SortableContainer((item: any) => (
 			<InfiniteLoader
 				rowCount={items.length}
+				loadMoreRows={() => {}}
 				isRowLoaded={() => true}
 				threshold={LIMIT}
 			>

@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
 import { I, C, Relation } from 'Lib';
-import { Util, keyboard } from 'Lib';
+import { keyboard } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	
-	n: number = 0;
+	n = 0;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -20,8 +20,11 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 	
 	render () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, objectId } = data;
 		const items = this.getItems();
-		const types = this.getObjects().filter(it => it.type == Constant.typeId.type);
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		
 		const Item = (item: any) => {
 			const canDelete = item.id != 'type';
@@ -45,6 +48,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 					{items.map((item: any, i: number) => (
 						<Item key={i} {...item} />
 					))}
+
 					{!items.length ? (
 						<div className="item empty">
 							<div className="inner">Select one or more sources</div>
@@ -84,8 +88,6 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	};
 
 	rebind () {
-		const { getId } = this.props;
-
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
@@ -113,18 +115,14 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 					{ relationKey: 'name', type: I.SortType.Asc }
 				],
 				onSelect: (item: any) => {
-					const value = this.getObjects().filter((it: any) => { return it.type == Constant.typeId.relation; }).map((it: any) => { return it.id; });
-					
-					value.push(item.id);
-					this.save(value);
+					this.save([ item.id ]);
 				}
 			}
 		});
 	};
 
 	onRemove (e: any, item: any) {
-		const value = this.getValue().filter((it: string) => { return it != item.id; });
-		this.save(value);
+		this.save(this.getValue().filter(it => it != item.id));
 	};
 
 	onOver (e: any, item: any) {
@@ -159,35 +157,26 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	save (value: string[]) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { objectId, blockId } = data;
 
-		C.BlockDataviewSetSource(rootId, blockId, value);
+		C.ObjectSetSource(objectId, value, () => {
+			$(window).trigger(`updateDataviewData.${blockId}`);
+		});
+
+		this.forceUpdate();
 	};
 
 	getValue () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId } = data;
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
+		const { rootId, objectId } = data;
 
-		return Util.arrayUnique(Relation.getArrayValue(object['setOf']).filter((it: string) => {
-			const object = detailStore.get(rootId, it, []);
-			return !object._empty_;
-		}));
-	};
-
-	getObjects () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const value = this.getValue();
-		return value.map((it: string) => { return detailStore.get(rootId, it, []); });
+		return [].
+			concat(Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type)).
+			concat(Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation));
 	};
 
 	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
 		const value = this.getValue();
 		const items = [];
 
@@ -201,21 +190,16 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				value: 'All',
 			});
 		} else {
-			value.forEach((it: string) => {
-				const object = detailStore.get(rootId, it);
-				if (object.type == Constant.typeId.type) {
+			value.forEach(it => {
+				if (it.type == Constant.typeId.type) {
 					items.push({
-						...object,
+						...it,
 						itemId: 'type',
 						name: 'Object type',
-						value: object.name,
+						value: it.name,
 					});
 				} else {
-					items.push({
-						...object,
-						itemId: object.id,
-						value: 'All',
-					});
+					items.push({ ...it, itemId: it.id, value: 'All' });
 				};
 			});
 		};

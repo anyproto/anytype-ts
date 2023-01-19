@@ -80,6 +80,7 @@ export interface Sort {
 };
 
 export interface Filter {
+	id?: string;
 	relationKey: string;
 	operator: FilterOperator;
 	condition: FilterCondition;
@@ -110,6 +111,7 @@ export interface ViewComponent {
 	getData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecord(index: number): any;
 	getView?(): View;
+	getSources?(): string[];
 	getKeys?(viewId: string): string[];
 	getIdPrefix?(): string;
 	getLimit?(): number;
@@ -117,6 +119,16 @@ export interface ViewComponent {
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
+};
+
+export interface ViewEmpty {
+	rootId?: string;
+	block?: I.Block;
+	title: string;
+	description: string;
+	button: string;
+	withButton: boolean;
+	onClick: (e: any) => void;
 };
 
 export interface View {
@@ -180,6 +192,7 @@ export interface ContentDataview {
 	relationLinks: any[];
 	groupOrder: any[];
 	objectOrder: any[];
+	targetObjectId: string;
 };
 
 export interface BlockDataview extends I.Block {

@@ -20,21 +20,21 @@ const BUTTON_OFFSET = 10;
 
 const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	
-	_isMounted: boolean = false;
+	_isMounted = false;
 	node: any = null;
-	id: string = '';
-	timeoutMove: number = 0;
-	timeoutScreen: number = 0;
-	hoverId: string =  '';
+	id = '';
+	timeoutMove = 0;
+	timeoutScreen = 0;
+	hoverId =  '';
 	hoverPosition: I.BlockPosition = I.BlockPosition.None;
-	scrollTop: number = 0;
-	uiHidden: boolean = false;
-	loading: boolean = false;
-	isDeleted: boolean = false;
-	width: number = 0;
+	scrollTop = 0;
+	uiHidden = false;
+	loading = false;
+	isDeleted = false;
+	width = 0;
 	refHeader: any = null;
-	dir: number = 0;
-	frame: number = 0;
+	dir = 0;
+	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -1421,7 +1421,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				rootId,
 				text,
 				marks,
-				blockCreate: this.blockCreate,
+				blockCreate: this.blockCreate
 			},
 		});
 	};
@@ -1733,9 +1733,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				callBack(message.blockId);
 			};
 
-			const event: any =  { 
-				middleTime: message.middleTime, 
-				type: param.type, 
+			const event: any =  {
+				middleTime: message.middleTime,
+				type: param.type,
 				style: param.content?.style,
 				params: {},
 			};
