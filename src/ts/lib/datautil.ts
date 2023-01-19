@@ -360,9 +360,13 @@ class DataUtil {
 			return;
 		};
 
+		console.log(needle, from, to);
+
 		const diff = needle.length - (to - from);
 		const text = Util.stringInsert(block.content.text, needle, from, to);
 		const marks = Mark.adjust(block.content.marks, 0, diff);
+
+		console.log(block.content.text, text);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
 	};
