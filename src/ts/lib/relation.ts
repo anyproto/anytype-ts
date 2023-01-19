@@ -306,9 +306,7 @@ class Relation {
 	};
 
 	getCoverOptions (rootId: string, blockId: string) {
-		const { config } = commonStore;
 		const formats = [ I.RelationType.File ];
-
 		const options: any[] = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
 			return it.isInstalled && !it.isHidden && formats.includes(it.format);
 		}).map((it: any) => {
@@ -319,16 +317,11 @@ class Relation {
 			};
 		});
 
-		const ret = [
+		return [
 			{ id: '', icon: '', name: 'None' },
 			{ id: 'pageCover', icon: 'image', name: 'Page cover' },
-		];
-
-		if (config.experimental) {
-			ret.push({ id: 'iconImage', icon: 'image', name: 'Image' });
-		};
-
-		return ret.concat(options);
+			{ id: 'iconImage', icon: 'image', name: 'Image' }
+		].concat(options);
 	};
 
 	getGroupOptions (rootId: string, blockId: string) {

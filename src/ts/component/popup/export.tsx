@@ -23,15 +23,13 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 	render() {
 		const { config } = commonStore;
-		
-		let formats = [
+		const formats = [
 			{ id: I.ExportFormat.Markdown, name: 'Markdown' },
+			{ id: I.ExportFormat.Pdf, name: 'PDF' },
 		];
+
 		if (config.experimental) {
-			formats = formats.concat([
-				{ id: I.ExportFormat.Html, name: 'HTML' },
-				{ id: I.ExportFormat.Pdf, name: 'PDF' },
-			]);
+			formats.push({ id: I.ExportFormat.Html, name: 'HTML' });
 		};
 
 		const pageSize = [

@@ -16,14 +16,10 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	render () {
 		const { onPage } = this.props;
-		const { config } = commonStore;
 		const items = [
+			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
 		];
-
-		if (config.experimental) {
-			 items.unshift({ id: 'notion', name: 'Notion' });
-		};
 
 		const Item = (item: any) => {
 			return (
