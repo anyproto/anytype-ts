@@ -729,8 +729,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const objectId = isInline ? block.content.targetObjectId : rootId;
 		const blockId = isInline ? block.id : Constant.blockId.dataview;
 
-		console.log(rootId, objectId, blockId);
-
 		menuStore.closeAll(null, () => {
 			menuStore.open('dataviewSource', {
 				element: $(element),
