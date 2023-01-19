@@ -26,7 +26,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.onClickObject = this.onClickObject.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onSelect = this.onSelect.bind(this);
-		this.togglePanel = this.togglePanel.bind(this);
 	};
 
 	render () {
@@ -205,20 +204,12 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		};
 	};
 
-	togglePanel (v: boolean) {
-		const { isPopup } = this.props;
-		const container = Util.getPageContainer(isPopup);
-		const wrapper = container.find('.wrapper');
-
-		v ? wrapper.addClass('withPanel') : wrapper.removeClass('withPanel');
-	};
-
-	onClickObject (object: any) {
+	onClickObject (id: string) {
 		this.ids = [];
-		this.togglePanel(true);
 
 		if (this.refGraph) {
 			this.refGraph.send('onSetSelected', { ids: this.ids });
+			this.refGraph.send('onSetRootId', { rootId: id });
 		};
 		
 		analytics.event('GraphSelectNode');

@@ -114,6 +114,7 @@ initColor = (theme) => {
 				text: '#929082',
 				highlight: '#ffb522',
 				green: '#57c600',
+				selected: '#2aa7ee',
 			}; 
 			break;
 
@@ -126,6 +127,7 @@ initColor = (theme) => {
 				text: '#929082',
 				highlight: '#ffb522',
 				green: '#57c600',
+				selected: '#2aa7ee',
 			};
 			break;
 	};
@@ -390,6 +392,13 @@ drawNode = (d) => {
 		lineWidth = radius / 5;
 	};
 
+	if (selected.includes(d.id)) {
+		colorNode = Color.selected;
+		colorText = Color.selected;
+		colorLine = Color.selected;
+		lineWidth = radius / 5;
+	};
+
 	if (settings.icon && img) {
 		ctx.save();
 
@@ -503,14 +512,14 @@ onDragEnd = ({ active }) => {
 onClick = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
 	if (d) {
-		this.postMessage({ id: 'onClick', node: d });
+		this.postMessage({ id: 'onClick', node: d.id });
 	};
 };
 
 onSelect = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
 	if (d) {
-		this.postMessage({ id: 'onSelect', node: d });
+		this.postMessage({ id: 'onSelect', node: d.id });
 	};
 };
 
@@ -578,7 +587,7 @@ onSetEdges = (param) => {
 	updateForces();
 };
 
-onSelected = ({ ids }) => {
+onSetSelected = ({ ids }) => {
 	selected = ids;
 };
 
@@ -596,9 +605,11 @@ onSetRootId = ({ rootId }) => {
 	const d = data.nodes.find(d => d.id == rootId);
 	if (d) {
 		d.isRoot = true;
+		d.fx = width / 2;
+		d.fy = height / 2;
 	};
 
-	updateForces();
+	redraw();
 };
 
 restart = (alpha) => {
