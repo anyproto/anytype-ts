@@ -869,9 +869,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Make div
-		if ([ '---', '***' ].includes(value)) {
+		if ([ '---', '—-', '***' ].includes(value)) {
 			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = value == '---' ? I.DivStyle.Line : I.DivStyle.Dot;
+			newBlock.content.style = value == '***' ? I.DivStyle.Dot : I.DivStyle.Line;
 			cmdParsed = true;
 		};
 		
