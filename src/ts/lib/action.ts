@@ -254,7 +254,7 @@ class Action {
 
 		popupStore.open('confirm', {
 			data: {
-				title: `Are you sure you want to delete ${length} ${Util.cntWord(length, 'object', 'objects')}?`,
+				title: `Are you sure you want to delete ${count} ${Util.cntWord(count, 'object', 'objects')}?`,
 				text: `These objects will be deleted irrevocably. You can't undo this action.`,
 				textConfirm: 'Delete',
 				onConfirm: () => { 
