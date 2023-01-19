@@ -50,7 +50,7 @@ const forceProps = {
 	},
 	forceY: {
 		strength: 0.1,
-		y: 0.4,
+		y: 0.45,
 	},
 };
 
