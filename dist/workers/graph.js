@@ -92,7 +92,7 @@ init = (param) => {
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
-	simulation.alphaDecay(0.1);
+	simulation.alphaDecay(0.3);
 	simulation.velocityDecay(0.3);
 
 	initForces();
@@ -253,7 +253,7 @@ updateForces = () => {
 	.strength(d => d.isOrphan ? forceY.strength : 0)
 	.y(height * forceY.y);
 
-	restart(0.3);
+	restart(0.1);
 };
 
 draw = () => {
@@ -479,7 +479,7 @@ onZoom = (data) => {
 
 onDragStart = ({ active }) => {
 	if (!active) {
-		restart(0.3);
+		restart(0.1);
 	};
 };
 
