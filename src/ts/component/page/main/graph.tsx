@@ -150,6 +150,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 			this.data.nodes = message.nodes.map(it => detailStore.check(it));
 
+			DataUtil.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
+				error: {},
+				records: message.nodes,
+				dependencies: [],
+				counters: { total: message.nodes.length },
+			});
+
 			this.resize();
 
 			if (this.refGraph) {
@@ -236,6 +243,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		menuStore.open('dataviewContext', {
 			...param,
 			data: {
+				subId: Constant.subId.graph,
 				objectIds: ids,
 				getObject: (id: string) => this.getNode(id),
 				onLinkTo: (sourceId: string, targetId: string) => {
