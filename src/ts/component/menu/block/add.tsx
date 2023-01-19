@@ -543,9 +543,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				let param: any = {
 					type: item.type,
 					bgColor: block.bgColor,
+					hAlign: block.hAlign,
+					vAlign: block.vAlign,
 					content: {},
 				};
-					
+
 				if (item.type == I.BlockType.Text) {
 					param.content.style = item.itemId;
 
