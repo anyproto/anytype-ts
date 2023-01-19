@@ -111,6 +111,7 @@
 			
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
 
+			.clickable { display: flex; flex-grow: 1; }
 			.select { height: 28px; }
 		}
 
@@ -137,7 +138,7 @@
 			.iconObject, .icon.dnd { flex-shrink: 0; }
 			.name { width: 100%; margin-right: 6px; }
 
-			.clickable { width: calc(100% - 108px); margin-right: 6px; display: flex; flex-grow: 1; }
+			.clickable { width: calc(100% - 108px); margin-right: 6px; }
 			.clickable {
 				.name { margin: 0px; width: 100%; }
 			}
