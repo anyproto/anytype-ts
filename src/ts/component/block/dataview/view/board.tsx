@@ -665,7 +665,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	onView (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView, getData } = this.props;
+		const { rootId, block, getView, getData, isInline } = this.props;
 		const view = getView();
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 
@@ -678,6 +678,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				blockId: block.id,
 				readonly: !allowed,
 				view: observable.box(view),
+				isInline,
 				getView,
 				getData,
 				onSave: () => { this.forceUpdate(); },

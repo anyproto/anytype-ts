@@ -80,7 +80,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.relation);
 
-		let { groupRelationKey } = view;
+		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
 		let className = Util.toCamelCase('view-' + I.ViewType[view.type]);
 		let head = null;
@@ -219,8 +219,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, block, isPopup, isDragging, isInline } = this.props;
-		const { targetObjectId } = block.content;
+		const { rootId, block, isPopup, isDragging } = this.props;
 
 		if (isDragging) {
 			return;
@@ -390,25 +389,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getLimit (type: I.ViewType): number {
 		const { isInline } = this.props;
+		const view = this.getView();
 
 		let limit = 0;
 
 		switch (type) {
 			default:
-				limit = isInline ? 10 : 0;
+				limit = isInline ? view.pageLimit : 0;
 				break;
 
 			case I.ViewType.Board:
-				limit = isInline ? 10 : 50;
+				limit = isInline ? view.pageLimit : 50;
 				break;
 			
 			case I.ViewType.Gallery:
-				limit = isInline ? 12 : 0;
+				limit = isInline ? Math.floor(view.pageLimit / 3) * 4 : 0;
 				break;
 
-			case I.ViewType.List:
-				limit = isInline ? 10 : 0;
-				break;
 		};
 		return limit;
 	};

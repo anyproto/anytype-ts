@@ -2,6 +2,8 @@ import { I, M, Util, DataUtil } from 'Lib';
 import { dbStore } from 'Store';
 import { observable, intercept, makeObservable } from 'mobx';
 
+const DEFAULT_LIMIT = 10;
+
 class View implements I.View {
 	
 	id = '';
@@ -13,6 +15,7 @@ class View implements I.View {
 	hideIcon = false;
 	groupRelationKey = '';
 	groupBackgroundColors = false;
+	pageLimit = 0;
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
@@ -27,6 +30,7 @@ class View implements I.View {
 		this.cardSize = Number(props.cardSize) || I.CardSize.Small;
 		this.groupRelationKey = String(props.groupRelationKey || '');
 		this.groupBackgroundColors = Boolean(props.groupBackgroundColors);
+		this.pageLimit = Number(props.pageLimit) || DEFAULT_LIMIT;
 		
 		this.relations = (props.relations || []).map((it: I.ViewRelation) => { return new M.ViewRelation(it); });
 		this.filters = (props.filters || []).map((it: I.Filter) => { return new M.Filter(it); });
@@ -42,6 +46,7 @@ class View implements I.View {
 			hideIcon: observable,
 			groupRelationKey: observable,
 			groupBackgroundColors: observable,
+			pageLimit: observable,
 			sorts: observable,
 			filters: observable,
 			relations: observable,

@@ -323,6 +323,7 @@ const Mapper = {
 				hideIcon: obj.getHideicon(),
 				groupRelationKey: obj.getGrouprelationkey(),
 				groupBackgroundColors: obj.getGroupbackgroundcolors(),
+				pageLimit: obj.getPagelimit(),
 			};
 		},
 
@@ -706,6 +707,7 @@ const Mapper = {
 			item.setCoverfit(obj.coverFit);
 			item.setCardsize(obj.cardSize);
 			item.setHideicon(obj.hideIcon);
+			item.setPagelimit(obj.pageLimit);
 			item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
 			item.setFiltersList(obj.filters.map(Mapper.To.Filter));
 			item.setSortsList(obj.sorts.map(Mapper.To.Sort));

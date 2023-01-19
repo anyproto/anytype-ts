@@ -141,6 +141,7 @@ export interface View {
 	coverFit: boolean;
 	cardSize: I.CardSize;
 	hideIcon: boolean;
+	pageLimit: number;
 	sorts: Sort[];
 	filters: Filter[];
 	relations: any[];

@@ -75,13 +75,18 @@ export interface MenuItem {
 	withDescription?: boolean;
 	withCaption?: boolean;
 	withSwitch?: boolean;
+	withSelect?: boolean;
 	switchValue?: boolean;
+	selectValue?: any;
 	readonly?: boolean;
 	style?: any;
 	iconSize?: number;
 	forceLetter?: boolean;
+	options?: I.Option[];
+	selectMenuParam?: any;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 	onSwitch?(e: any, v: boolean): void;
+	onSelect?(id: string): void;
 };

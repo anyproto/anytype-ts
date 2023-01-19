@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, IconObject, Switch } from 'Component';
+import { Icon, IconObject, Switch, Select } from 'Component';
 import { I } from 'Lib';
 
 class MenuItemVertical extends React.Component<I.MenuItem> {
@@ -9,10 +9,13 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 
 	render () {
 		const { 
-			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, 
-			className, style, iconSize, switchValue, readonly, forceLetter, onClick, onSwitch, onMouseEnter, onMouseLeave,
+			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, withSelect,
+			className, style, iconSize, switchValue, selectValue, options, readonly, forceLetter, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave,
+			selectMenuParam,
 		} = this.props;
 		const cn = [ 'item' ];
+
+		let hasClick = true;
 
 		if (className) {
 			cn.push(className);
@@ -30,7 +33,12 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			cn.push('withCaption');
 		};
 		if (withSwitch) {
+			hasClick = false;
 			cn.push('withSwitch');
+		};
+		if (withSelect) {
+			hasClick = false;
+			cn.push('withSelect');
 		};
 		if (checkbox) {
 			cn.push('withCheckbox');
@@ -69,41 +77,47 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				</React.Fragment>
 			);
 		} else {
+			let additional = null;
 			if (withSwitch) {
-				content = (
-					<React.Fragment>
-						<div className="clickable" onMouseDown={onClick}>
-							{iconElement}
-							<div className="name">{name}</div>
-						</div>
-						<Switch 
-							value={switchValue} 
-							readonly={readonly}
-							onChange={(e: any, v: boolean) => { 
-								if (onSwitch) {
-									onSwitch(e, v); 
-								};
-							}} 
-						/>
-					</React.Fragment>
+				additional = (
+					<Switch 
+						value={switchValue} 
+						readonly={readonly}
+						onChange={onSwitch} 
+					/>
+				);
+			} else 
+			if (withSelect) {
+				additional = (
+					<Select
+						id={`select-${id}`}
+						value={selectValue} 
+						options={options}
+						onChange={onSelect}
+						{...selectMenuParam}
+					/>
 				);
 			} else {
-				content = (
+				additional = (
 					<React.Fragment>
-						{iconElement}
-						<div className="name">{name}</div>
-						{withCaption ? (
-							<React.Fragment>
-								{'string' == typeof(caption) ? (
-									<div className="caption" dangerouslySetInnerHTML={{ __html: caption }} />
-								) : (
-									<div className="caption">{caption}</div>
-								)}
-							</React.Fragment>
-						) : ''}
+						{'string' == typeof(caption) ? (
+							<div className="caption" dangerouslySetInnerHTML={{ __html: caption }} />
+						) : (
+							<div className="caption">{caption}</div>
+						)}
 					</React.Fragment>
 				);
 			};
+
+			content = (
+				<React.Fragment>
+					<div className="clickable" onMouseDown={onClick}>
+						{iconElement}
+						<div className="name">{name}</div>
+					</div>
+					{additional}
+				</React.Fragment>
+			);
 		};
 
 		return (
@@ -111,7 +125,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 				ref={node => this.node = node}
 				id={'item-' + id} 
 				className={cn.join(' ')} 
-				onMouseDown={!withSwitch ? onClick : undefined} 
+				onMouseDown={hasClick ? onClick : undefined}
 				onMouseEnter={onMouseEnter} 
 				onMouseLeave={onMouseLeave} 
 				style={style}

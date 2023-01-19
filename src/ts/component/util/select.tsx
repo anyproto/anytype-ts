@@ -26,7 +26,6 @@ interface State {
 	options: I.Option[];
 };
 
-
 class Select extends React.Component<Props, State> {
 	
 	public static defaultProps = {
