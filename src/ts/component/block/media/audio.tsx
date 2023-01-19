@@ -57,12 +57,14 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 				break;
 				
 			case I.FileState.Done:
-				element = <MediaAudio
-					ref={node => this.refPlayer = node}
-					playlist={[{name: name, src: commonStore.fileUrl(hash)}]}
-					onPlay={this.onPlay}
-					onPause={this.onPause}
-				/>;
+				element = (
+					<MediaAudio
+						ref={node => this.refPlayer = node}
+						playlist={[{name: name, src: commonStore.fileUrl(hash)}]}
+						onPlay={this.onPlay}
+						onPause={this.onPause}
+					/>
+				);
 				break;
 		};
 		
