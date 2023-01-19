@@ -830,7 +830,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.timeoutFilter = window.setTimeout(() => {
 				let ret = false;
 
-				keyboard.shortcut('space', e, (pressed: string) => {
+				keyboard.shortcut('space', e, () => {
 					commonStore.filterSet(0, '');
 					if (menuOpenAdd) {
 						menuStore.close('blockAdd');
