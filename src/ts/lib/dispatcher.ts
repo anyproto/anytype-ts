@@ -109,6 +109,7 @@ class Dispatcher {
 		if (v == V.BLOCKSETTABLEROW)			 t = 'blockSetTableRow';
 
 		if (v == V.BLOCKDATAVIEWVIEWSET)		 t = 'blockDataviewViewSet';
+		if (v == V.BLOCKDATAVIEWVIEWUPDATE)		 t = 'blockDataviewViewUpdate';
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
@@ -535,6 +536,87 @@ class Dispatcher {
 					};
 
 					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
+					break;
+				};
+
+				case 'blockDataviewViewUpdate': {
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					viewId = data.getViewid();
+
+					let view = dbStore.getView(rootId, id, viewId);
+					
+					if (data.hasFields()) {
+						view = Object.assign(view, Mapper.From.ViewFields(data.getFields()));
+					};
+
+					const keys = [ 
+						{ id: 'filter', field: 'filters', idField: 'id', mapper: 'Filter' },
+						{ id: 'sort', field: 'sorts', idField: 'relationKey', mapper: 'Sort' },
+						{ id: 'relation', field: 'relations', idField: 'relationKey', mapper: 'ViewRelation' },
+					];
+
+					keys.forEach(key => {
+						const items = data[Util.toCamelCase(`get-${key.id}-list`)]() || [];
+						const mapper = Mapper.From[key.mapper];
+
+						items.forEach((item: any) => {
+							let list = view[key.field];
+
+							if (item.hasAdd()) {
+								const op = item.getAdd();
+								const afterId = op.getAfterid();
+								const items = (op.getItemsList() || []).map(mapper);
+								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) : list.length;
+
+								items.forEach((item: any, i: number) => { 
+									list.splice(idx + i, 0, item);
+								});
+							};
+
+							if (item.hasMove()) {
+								const op = item.getMove();
+								const afterId = op.getAfterid();
+								const ids = op.getIdsList() || [];
+								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) : 0;
+
+								ids.forEach((id: string, i: number) => {
+									const oidx = list.findIndex(it => it[key.idField] == id);
+									if (oidx >= 0) {
+										list = arrayMove(list, oidx, idx + i + 1);
+									};
+								});
+							};
+
+							if (item.hasUpdate()) {
+								const op = item.getUpdate();
+
+								if (op.hasItem()) {
+									const idx = list.findIndex(it => it[key.idField] == op.getId());
+									if (idx >= 0) {
+										list[idx] = Mapper.From[key.mapper](op.getItem());
+									};
+								};
+							};
+
+							if (item.hasRemove()) {
+								const op = item.getRemove();
+								const ids = op.getIdsList() || [];
+
+								ids.forEach(id => { 
+									list = list.filter(it => it[key.idField] != id);
+								});
+							};
+
+							view[key.field] = list;
+						});
+					});
+
+					dbStore.viewUpdate(rootId, id, view);
 					break;
 				};
 

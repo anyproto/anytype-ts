@@ -168,6 +168,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length}
+							loadMoreRows={() => {}}
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>

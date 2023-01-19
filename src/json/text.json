@@ -213,7 +213,7 @@
 	"blockNameNewRelation": { "en": "New relation" },
 	"blockTextNewRelation": { "en": "Meaningful connection between objects" },
 
-	"blockNameLatex": { "en": "LaTex" },
+	"blockNameLatex": { "en": "LaTeX" },
 	"blockTextLatex": { "en": "Display a math equations" },
 
 	"blockNameSimpleTable": { "en": "Table 3x3" },

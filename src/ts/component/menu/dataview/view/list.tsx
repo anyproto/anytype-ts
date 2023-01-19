@@ -94,6 +94,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 					) : (
 						<InfiniteLoader
 							rowCount={items.length}
+							loadMoreRows={() => {}}
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>

@@ -99,6 +99,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 			<div className="items">
 				<InfiniteLoader
 					rowCount={items.length}
+					loadMoreRows={() => {}}
 					isRowLoaded={() => true}
 					threshold={LIMIT}
 				>
@@ -301,11 +302,15 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { param, dataset } = this.props;
 		const { selection } = dataset;
 		const { data } = param;
-		const { getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
-		
-		view.relations = arrayMove(view.relations, oldIndex, newIndex);
-		this.save();
+		const relations = view.relations.filter(it => {
+			const relation = dbStore.getRelationByKey(it.relationKey);
+			return !relation.isHidden || (relation.isHidden && (it.relationKey == 'name'));
+		});
+
+		view.relations = arrayMove(relations, oldIndex, newIndex);
+		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, view.relations.map(it => it.relationKey));
 
 		selection.preventSelect(false);
 	};
@@ -313,22 +318,11 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onSwitch (e: any, item: any, v: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView } = data;
-		const relation = getView().getRelation(item.relationKey);
-
-		if (relation) {
-			relation.isVisible = v;
-			this.save();
-		};
-	};
-
-	save () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId, blockId, onSave, getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
+		const relation = view.getRelation(item.relationKey);
 
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, onSave);
+		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...relation, isVisible: v });
 	};
 
 	onScroll ({ scrollTop }) {

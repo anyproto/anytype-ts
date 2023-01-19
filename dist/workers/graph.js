@@ -41,7 +41,7 @@ const forceProps = {
 	},
 	link: {
 		strength: 1,
-		distance: 30,
+		distance: 80,
 		iterations: 1,
 	},
 	forceX: {
@@ -119,6 +119,13 @@ initColor = (theme) => {
 
 		case 'dark':
 			Color = {
+				bg: '#1e1e1b',
+				link: '#cbc9bd',
+				arrow: '#aca996',
+				node: '#aca996',
+				text: '#929082',
+				highlight: '#ffb522',
+				green: '#57c600',
 			};
 			break;
 	};
@@ -140,6 +147,8 @@ updateSettings = (param) => {
 
 	if (needUpdate) {
 		updateForces();
+	} else {
+		redraw();
 	};
 };
 
@@ -565,6 +574,7 @@ onRemoveNode = ({ ids }) => {
 
 onSetEdges = (param) => {
 	data.edges = param.edges;
+
 	updateForces();
 };
 
@@ -574,6 +584,21 @@ onSelected = ({ ids }) => {
 
 onResize = (data) => {
 	resize(data);
+};
+
+onSetRootId = ({ rootId }) => {
+	const active = nodes.find(d => d.isRoot);
+	if (active) {
+		delete(active.fx, active.fy);
+		active.isRoot = false;
+	};
+
+	const d = data.nodes.find(d => d.id == rootId);
+	if (d) {
+		d.isRoot = true;
+	};
+
+	updateForces();
 };
 
 restart = (alpha) => {

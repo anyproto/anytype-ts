@@ -108,6 +108,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 				<div className="items">
 					<InfiniteLoader
 						rowCount={items.length}
+						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => !!items[index]}
 					>
 						{({ onRowsRendered, registerChild }) => (

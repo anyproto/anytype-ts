@@ -34,7 +34,7 @@
 	},
 	
 	"extension": {
-		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp", "heic" ],
+		"image": [ "jpg", "jpeg", "png", "gif", "svg", "webp" ],
 		"video": [ "mp4", "m4v", "mov" ],
 		"cover": [ "jpg", "jpeg", "png" ],
 		"audio": [ "mp3", "m4a", "flac", "ogg", "wav" ],
@@ -191,13 +191,14 @@
 
 	"size": {
 		"editor": 704,
-
 		"blockMenu": 48,
 		"image": 2048,
 		"headerWindows": 30,
+		"iconPage": 256,
 
 		"lastBlock": 80,
 		"cover": 1920,
+
 		"sidebar": {
 			"height": { "min": 400 },
 			"width": { "min": 180, "max": 500, "default": 240 }
@@ -214,10 +215,12 @@
 				"card": 224,
 				"margin": 16
 			},
+
 			"board": {
 				"card": 254,
 				"margin": 8
 			},
+
 			"cell": {
 				"default": 192,
 				"format1": 500,
@@ -229,12 +232,6 @@
 			}
 		},
 
-		"iconPage": 256,
-
-		"menuBlockAdd": 360,
-		"menuBlockLink": 400,
-		"menuDataviewOptionList": 256,
-		
 		"menuBlockContext": {
 			"default": 400,
 			"code": 130,
@@ -252,7 +249,7 @@
 		},
 
 		"store": {
-			"width": 200,
+			"width": 300,
 			"margin": 32,
 			"border": 80
 		}
