@@ -111,7 +111,10 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 
 			content = (
 				<React.Fragment>
-					<div className="clickable" onMouseDown={onClick}>
+					<div 
+						className="clickable" 
+						onMouseDown={hasClick ? undefined : onClick}
+					>
 						{iconElement}
 						<div className="name">{name}</div>
 					</div>

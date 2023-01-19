@@ -309,8 +309,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 				this.onPreviewHide();
 
-				console.log('onContextMenu');
-
 				onContextMenu(data.node, {
 					onOpen: () => {
 						this.isPreviewDisabled = true;
