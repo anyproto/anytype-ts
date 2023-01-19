@@ -58,7 +58,7 @@
 			.item {
 				.flex { 
 					flex-direction: row; align-items: center; padding: 13px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 600;
-					gap: 0px 8px; transition: $transitionFast;
+					gap: 0px 8px; transition: $transitionFast; max-width: calc(100% - 70px);
 				}
 				.flex:hover { background: $colorHover; }
 

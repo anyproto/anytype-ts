@@ -58,12 +58,16 @@ class View implements I.View {
 		return this.relations.find(it => it.relationKey == relationKey);
 	};
 
-	getFilter (index: number) {
-		return this.filters[index] || {};
+	getFilter (id: string) {
+		return this.filters.find(it => it.id == id);
 	};
 
-	setFilter (index: number, filter: any) {
-		this.filters[index] = Object.assign(this.getFilter(index), filter);
+	setFilter (filter: I.Filter) {
+		const obj = this.getFilter(filter.id);
+
+		if (obj) {
+			Object.assign(obj, filter);
+		};
 	};
 
 	getSort (index: number) {

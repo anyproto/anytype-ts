@@ -357,7 +357,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	load () {
 		const { loading } = this.state;
-		const { rootId, position, setObject } = this.props;
+		const { rootId, setObject } = this.props;
 		const contextId = this.getRootId();
 
 		if (!this._isMounted || loading || (this.id == rootId)) {

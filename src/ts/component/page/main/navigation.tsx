@@ -166,6 +166,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 								) : (
 									<InfiniteLoader
 										rowCount={pagesIn.length}
+										loadMoreRows={() => {}}
 										isRowLoaded={({ index }) => !!pagesIn[index]}
 									>
 										{({ onRowsRendered, registerChild }) => (
@@ -207,6 +208,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 						) : (
 							<InfiniteLoader
 								rowCount={pagesOut.length}
+								loadMoreRows={() => {}}
 								isRowLoaded={({ index }) => !!pagesOut[index]}
 							>
 								{({ onRowsRendered, registerChild }) => (

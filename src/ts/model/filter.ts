@@ -3,13 +3,16 @@ import { observable, intercept, makeObservable } from 'mobx';
 
 class Filter implements I.Filter {
 
-	relationKey = '';
+	id: string = '';
+	relationKey: string = '';
 	operator: I.FilterOperator = I.FilterOperator.And;
 	condition: I.FilterCondition = I.FilterCondition.None;
 	quickOption: I.FilterQuickOption = I.FilterQuickOption.ExactDate;
 	value: any = {};
 
 	constructor (props: I.Filter) {
+
+		this.id = String(props.id || '');
 		this.relationKey = String(props.relationKey || '');
 		this.operator = Number(props.operator) || I.FilterOperator.And;
 		this.condition = Number(props.condition) || I.FilterCondition.None;

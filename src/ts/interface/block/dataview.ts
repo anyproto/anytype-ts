@@ -80,6 +80,7 @@ export interface Sort {
 };
 
 export interface Filter {
+	id?: string;
 	relationKey: string;
 	operator: FilterOperator;
 	condition: FilterCondition;

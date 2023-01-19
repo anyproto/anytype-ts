@@ -364,9 +364,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		let newBlock: any = {};
 
-		const process = (target: any) => {
+		const process = (target: any, isNew: boolean) => {
 			if (onSelect) {
-				onSelect(target);
+				onSelect(target, isNew);
 			};
 
 			if (!type) {
@@ -445,18 +445,28 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (item.isAdd) {
 			ObjectUtil.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-				DataUtil.getObjectById(message.targetId, process);
+				DataUtil.getObjectById(message.targetId, (object: any) => { process(object, true); });
 				close();
 			});
 		} else {
-			process(item);
+			process(item, false);
 		};
 	};
 
 	onFilterChange (v: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onFilterChange } = data;
+
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.props.param.data.filter = this.refFilter.getValue();
+			const filter = this.refFilter.getValue();
+
+			this.props.param.data.filter = filter;
+
+			if (onFilterChange) {
+				onFilterChange(filter);
+			};
 		}, 500);
 	};
 

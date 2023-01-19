@@ -157,14 +157,10 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 	save (value: string[]) {
 		const { param } = this.props;
 		const { data } = param;
-		const { objectId, blockId, onSave } = data;
+		const { objectId, blockId } = data;
 
 		C.ObjectSetSource(objectId, value, () => {
 			$(window).trigger(`updateDataviewData.${blockId}`);
-
-			if (onSave) {
-				onSave();
-			};
 		});
 
 		this.forceUpdate();
@@ -174,18 +170,13 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, objectId } = data;
-		const object = detailStore.get(rootId, objectId);
 
-		return (object.setOf || []).filter((it: string) => {
-			const object = detailStore.get(rootId, it, []);
-			return !object._empty_;
-		});
+		return [].
+			concat(Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type)).
+			concat(Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation));
 	};
 
 	getItems () {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
 		const value = this.getValue();
 		const items = [];
 
@@ -199,21 +190,16 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				value: 'All',
 			});
 		} else {
-			value.forEach((it: string) => {
-				const object = detailStore.get(rootId, it);
-				if (object.type == Constant.typeId.type) {
+			value.forEach(it => {
+				if (it.type == Constant.typeId.type) {
 					items.push({
-						...object,
+						...it,
 						itemId: 'type',
 						name: 'Object type',
-						value: object.name,
+						value: it.name,
 					});
 				} else {
-					items.push({
-						...object,
-						itemId: object.id,
-						value: 'All',
-					});
+					items.push({ ...it, itemId: it.id, value: 'All' });
 				};
 			});
 		};

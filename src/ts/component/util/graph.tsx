@@ -27,7 +27,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	subject: any = null;
 	isDragging = false;
 	isPreview = false;
+	isPreviewDisabled = false;
 	ids: string[] = [];
+	timeoutPreview = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -68,12 +70,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	rebind () {
+		const win = $(window);
+
 		this.unbind();
-		$(window).on('updateGraphSettings', () => { this.updateSettings(); });
+		win.on('updateGraphSettings', () => { this.updateSettings(); });
+		win.on('updateGraphRoot', (e: any, data: any) => { this.setRootId(data.id); });
 	};
 
 	unbind () {
-		$(window).off('updateGraphSettings');
+		$(window).off('updateGraphSettings updateGraphRoot');
 	};
 
 	init () {
@@ -227,6 +232,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
   	};
 
 	onPreviewShow (data: any) {
+		if (this.isPreviewDisabled) {
+			return;
+		};
+
 		const { isPopup } = this.props;
 		const body = $('body');
 		const container = Util.getPageContainer(isPopup);
@@ -251,6 +260,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
+		window.clearTimeout(this.timeoutPreview);
 		$('body').removeClass('cp');
 		$('#graphPreview').remove();
 	};
@@ -275,22 +285,34 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			case 'onMouseMove':
 				if (!this.isDragging) {
 					this.subject = this.nodes.find(d => d.id == data.node);
-					this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
+
+					if (this.subject) {
+						window.clearTimeout(this.timeoutPreview);
+						this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
+					} else {
+						this.onPreviewHide();
+					};
 				};
 				break;
 
 			case 'onDragMove':
-				if (this.isDragging) {
-					this.onPreviewHide();
-				};
+				this.onPreviewHide();
 				break;
 
 			case 'onContextMenu':
-				if (data.node == root) {
+				if (!data.node || (data.node == root)) {
 					break;
 				};
 
+				this.onPreviewHide();
+
 				onContextMenu(data.node, {
+					onOpen: () => {
+						this.isPreviewDisabled = true;
+					},
+					onClose: () => {
+						this.isPreviewDisabled = false;
+					},
 					recalcRect: () => { 
 						const rect = { width: 0, height: 0, x: data.x, y: data.y };
 
@@ -364,6 +386,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		};
 
 		return src;
+	};
+
+	setRootId (id: string) {
+		this.send('onSetRootId', { rootId: id });
 	};
 
 	send (id: string, param: any, transfer?: any[]) {

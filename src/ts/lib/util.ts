@@ -823,7 +823,7 @@ class Util {
 	};
 
 	sizeHeader (): number {
-		return this.getPlatform() == I.Platform.Windows ? 68 : 52;
+		return this.getPlatform() == I.Platform.Windows ? 38 + Constant.size.headerWindows : 52;
 	};
 
 	searchParam (url: string): any {
