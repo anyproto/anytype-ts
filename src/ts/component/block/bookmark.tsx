@@ -171,21 +171,28 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			return;
 		};
 
-		Renderer.send('urlOpen', Util.urlFix(this.getUrl()));
-		analytics.event('BlockBookmarkOpenUrl');
+		this.open();
 	};
 
 	onMouseDown (e: any) {
+		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) {
+			return;
+		};
+
 		e.persist();
 
 		// middle mouse click
-		if (e.buttons && 1) {
+		if (e.button == 1) {
 			e.preventDefault();
 			e.stopPropagation();
 
-			Renderer.send('urlOpen', Util.urlFix(this.getUrl()));
-			analytics.event('BlockBookmarkOpenUrl');
+			this.open();
 		};
+	};
+
+	open () {
+		Renderer.send('urlOpen', Util.urlFix(this.getUrl()));
+		analytics.event('BlockBookmarkOpenUrl');
 	};
 	
 	onChangeUrl (e: any, url: string) {
