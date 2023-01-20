@@ -60,6 +60,8 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 					{ name, src: commonStore.fileUrl(hash) },
 				];
 
+				console.log(playlist);
+
 				element = (
 					<MediaAudio
 						ref={node => this.refPlayer = node}

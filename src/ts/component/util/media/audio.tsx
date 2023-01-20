@@ -79,8 +79,7 @@ class MediaAudio extends React.Component<Props> {
 			this.current = playlist[0];
 		};
 
-        this.resize();
-        this.rebind();
+		this.forceUpdate();
     };
 
     componentDidUpdate () {
