@@ -1,6 +1,6 @@
-import {dbStore, commonStore, blockStore, detailStore} from 'Store';
+import arrayMove from 'array-move';
+import { dbStore, commonStore, blockStore, detailStore } from 'Store';
 import { I, M, C, Util, DataUtil, Relation } from 'Lib';
-
 import Constant from 'json/constant.json';
 
 class Dataview {
@@ -65,38 +65,36 @@ class Dataview {
 		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	relationAdd (rootId: string, blockId: string, relationKeys: string[], index: number, view?: I.View, callBack?: (message: any) => void) {
+	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
 		if (!view) {
 			return;
 		};
 
-		C.BlockDataviewRelationAdd(rootId, blockId, relationKeys, (message: any) => {
+		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			relationKeys.forEach((relationKey: string) => {
-				let rel: any = view.getRelation(relationKey);
+			let rel = view.getRelation(relationKey);
 
-				if (rel) {
-					rel.isVisible = true;
-				} else {
-					rel = { 
-						relationKey,
-						width: Constant.size.dataview.cell.default,
-						isVisible: true,
-					};
-
-					if (index >= 0) {
-						view.relations.splice(index, 0, rel);
-					} else {
-						view.relations.push(rel);
-					};
+			if (rel) {
+				C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, { ...rel, isVisible: true }, callBack);
+			} else {
+				rel = { 
+					relationKey,
+					width: Constant.size.dataview.cell.default,
+					isVisible: true,
 				};
 
-			});
+				C.BlockDataviewViewRelationAdd(rootId, blockId, view.id, rel, () => {
+					const newView = dbStore.getView(rootId, blockId, view.id);
+					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
 
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, callBack);
+					newView.relations = arrayMove(newView.relations, oldIndex, index);
+					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, newView.relations.map(it => it.relationKey));
+				});
+			};
+
 		});
 	};
 

@@ -281,16 +281,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		};
 
 		let close = true;
-		let viewUpdate = false;
-		let updateData = false;
-
-		let save = () => {
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, (message: any) => {
-				if (updateData) {
-					getData(view.id, 0);
-				};
-			});
-		};
 
 		switch (item.id) {
 			case 'open': {
@@ -302,52 +292,48 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				this.add({ 
 					name: relation.name, 
 					relationFormat: relation.format,
-					relationFormatObjectTypes: (relation.format == I.RelationType.Object) ? relation.objectTypes || [] : [],
+					relationFormatObjectTypes: relation.objectTypes || [],
 				});
 				break;
 			};
 
 			case 'remove': {
-				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], (message: any) => {
-					if (!message.error.code) {
-						view.relations = view.relations.filter((it => it.relationKey != relation.relationKey));
-						C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
-					};
-				});
+				C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ]);
 				break;
 			};
 
 			case 'filter': {
 				const conditions = Relation.filterConditionsByType(relation.format);
 				const condition = conditions.length ? conditions[0].id : I.FilterCondition.None;
-
-				view.filters.push({
+				const filter = {
 					operator: I.FilterOperator.And, 
 					relationKey: relation.relationKey,
 					condition: condition as I.FilterCondition,
 					value: Relation.formatValue(relation, null, false),
-				});
+				};
 
-				menuStore.open('dataviewRelationList', { 
-					element: `#button-manager`,
-					horizontal: I.MenuDirection.Center,
-					offsetY: 10,
-					getTabs: () => Dataview.getMenuTabs(rootId, blockId, view.id),
-					initialTab: 'filter',
-					data: {
-						...data,
-						view: observable.box(view),
-					},
+				C.BlockDataviewFilterAdd(rootId, blockId, view.id, filter, () => {
+					menuStore.open('dataviewFilterList', { 
+						element: `#button-dataview-filter`,
+						horizontal: I.MenuDirection.Center,
+						offsetY: 10,
+						data: {
+							...data,
+							view: observable.box(view),
+						},
+					});
 				});
 				break;
 			};
 
 			case 'sort0':
 			case 'sort1': {
-				view.sorts = [ { relationKey: relation.relationKey, type: item.type } ];
-
-				viewUpdate = true;
-				updateData = true;
+				C.BlockDataviewSortRemove(rootId, blockId, view.id, view.sorts.map(it => it.relationKey), () => {
+					C.BlockDataviewSortAdd(rootId, blockId, view.id, { 
+						relationKey: relation.relationKey, 
+						type: item.type,
+					});
+				});
 				break;
 			};
 
@@ -365,8 +351,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						filter: '',
 						ref: 'dataview',
 						skipKeys: relations.map(it => it.relationKey),
-						addCommand: (rootId: string, blockId: string, relationKey: string, onChange: (message: any) => void) => {
-							Dataview.relationAdd(rootId, blockId, [ relationKey ], Math.max(0, idx + item.dir), view, (message: any) => {
+						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
+							Dataview.relationAdd(rootId, blockId, relation.relationKey, Math.max(0, idx + item.dir), view, (message: any) => {
 								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
 								getData(view.id, 0);
 
@@ -383,16 +369,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			case 'hide': {
-				view.relations[idx].isVisible = false;
-
-				viewUpdate = true;
-				updateData = false;
+				C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relation.relationKey, {
+					...view.getRelation(relation.relationKey),
+					isVisible: false,
+				});
 				break;
 			};
-		};
-
-		if (viewUpdate) {
-			save();
 		};
 
 		if (close) {
@@ -534,12 +516,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { data } = param;
 		const { rootId, blockId, relationKey, getView } = data;
 		const view = getView();
-		const relation = this.getViewRelation();
-		const idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
 
-		relation.includeTime = v;
-		view.relations[idx] = relation;
-		C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, { ...this.getViewRelation(), includeTime: v });
 	};
 
 	onSubmit (e: any) {

@@ -158,19 +158,16 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 
 		let relation = null;
 		let view = null;
-		let idx = 0;
 
 		if (getView) {
 			view = getView();
-			idx = view.relations.findIndex((it: I.ViewRelation) => { return it.relationKey == relationKey; });
-
 			relation = view.getRelation(relationKey);
 		} else {
 			relation = dbStore.getRelationByKey(relationKey);
 		};
 
 		const options = this.getOptions(item.itemId);
-		const value = options.find((it: any) => { return it.id == relation[item.itemId]; }) || options[0];
+		const value = options.find(it => it.id == relation[item.itemId]) || options[0];
 
 		menuStore.open('select', {
 			element: `#${getId()} #item-${item.id}`,
@@ -178,15 +175,15 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 			offsetY: -38,
 			isSub: true,
 			passThrough: true,
-			classNameWrap: classNameWrap,
+			classNameWrap,
 			data: {
 				rebind: this.rebind,
 				value: value.id,
-				options: options,
+				options,
 				onSelect: (e: any, el: any) => {
 					if (view) {
-						view.relations[idx][item.itemId] = el.id;
-						C.BlockDataviewViewUpdate(rootId, blockId, view.id, view);
+						relation[item.itemId] = el.id;
+						C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, relation);
 					};
 					close();
 				}

@@ -160,10 +160,12 @@ class Util {
 	};
 	
 	objectLength (o: any) {
+		o = o || {};
 		return this.hasProperty(o, 'length') ? o.length : Object.keys(o).length;
 	};
 
 	hasProperty (o: any, p: string) {
+		o = o || {};
 		return Object.prototype.hasOwnProperty.call(o, p);
 	};
 
