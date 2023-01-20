@@ -846,17 +846,6 @@ const BlockDataviewFilterSort = (contextId: string, blockId: string, viewId: str
 	dispatcher.request(BlockDataviewFilterSort.name, request, callBack);
 };
 
-const BlockDataviewSortAdd = (contextId: string, blockId: string, viewId: string, sort: I.Sort, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.Sort.Add.Request();
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setViewid(viewId);
-	request.setSort(Mapper.To.Sort(sort));
-
-	dispatcher.request(BlockDataviewSortAdd.name, request, callBack);
-};
-
 const BlockDataviewSortRemove = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Sort.Remove.Request();
 
@@ -889,17 +878,6 @@ const BlockDataviewSortSort = (contextId: string, blockId: string, viewId: strin
 	request.setRelationkeysList(relationKeys);
 
 	dispatcher.request(BlockDataviewSortSort.name, request, callBack);
-};
-
-const BlockDataviewViewRelationAdd = (contextId: string, blockId: string, viewId: string, relation: I.ViewRelation, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockDataview.ViewRelation.Add.Request();
-
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setViewid(viewId);
-	request.setRelation(Mapper.To.ViewRelation(relation));
-
-	dispatcher.request(BlockDataviewViewRelationAdd.name, request, callBack);
 };
 
 const BlockDataviewViewRelationRemove = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
@@ -1711,12 +1689,10 @@ export {
 	BlockDataviewFilterRemove,
 	BlockDataviewFilterSort,
 
-	BlockDataviewSortAdd,
 	BlockDataviewSortReplace,
 	BlockDataviewSortRemove,
 	BlockDataviewSortSort,
 
-	BlockDataviewViewRelationAdd,
 	BlockDataviewViewRelationReplace,
 	BlockDataviewViewRelationRemove,
 	BlockDataviewViewRelationSort,

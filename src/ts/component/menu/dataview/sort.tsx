@@ -277,9 +277,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			type: I.SortType.Asc,
 		};
 
-		C.BlockDataviewSortAdd(rootId, blockId, view.id, newItem, () => {
-			getData(view.id, 0, true);
-
+		C.BlockDataviewSortReplace(rootId, blockId, view.id, newItem.relationKey, newItem, () => {
 			content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
 			analytics.event('AddSort', { type: newItem.type });
 		});
