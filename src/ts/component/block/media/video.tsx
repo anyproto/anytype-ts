@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { InputWithFile, Icon, Loader, Error } from 'Component';
+import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
 import { I, C, translate, focus, Action } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -26,6 +26,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onResizeInit = this.onResizeInit.bind(this);
 		this.onPlay = this.onPlay.bind(this);
+		this.onEnded = this.onEnded.bind(this);
 	};
 
 	render () {
@@ -68,12 +69,13 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 				
 			case I.FileState.Done:
 				element = (
-					<div className="wrap resizable" style={css}>
-						<video className="media" controls={false} preload="auto" src={commonStore.fileUrl(hash)} />
-						<div className="videoControls">
-							<Icon className="play" onClick={this.onPlay} />
-							<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
-						</div>
+					<div className="wrap resizable blockVideo" style={css}>
+						<MediaVideo
+							src={commonStore.fileUrl(hash)}
+							onPlay={this.onPlay}
+							onEnded={this.onEnded}
+						/>
+						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
 				);
 				break;
@@ -180,26 +182,13 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		
 		Action.upload(I.FileType.Video, rootId, id, '', path);
 	};
-	
-	onPlay () {
-		const node = $(this.node);
-		const video = node.find('video');
-		const el = video.get(0);
 
-		$('audio, video').each((i: number, item: any) => { item.pause(); });
-		
-		video.off('ended pause play');
-		el.play();
-		
-		video.on('play', () => {
-			el.controls = true;
-			node.addClass('isPlaying');
-		});
-		
-		video.on('ended', () => {
-			el.controls = false;
-			node.removeClass('isPlaying');
-		});
+	onPlay () {
+		$(this.node).addClass('isPlaying');
+	};
+
+	onEnded () {
+		$(this.node).removeClass('isPlaying');
 	};
 
 	onResizeInit () {

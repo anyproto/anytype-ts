@@ -6,6 +6,7 @@ interface Props {
     src: string;
     onPlay?(): void;
     onPause?(): void;
+    onEnded?(): void;
 };
 
 class MediaVideo extends React.Component<Props> {
@@ -23,7 +24,10 @@ class MediaVideo extends React.Component<Props> {
     render () {
         const { src } = this.props;
         return (
-            <div ref={(ref: any) => { this.node = ref; }} className="wrap resizable mediaVideo">
+            <div
+                ref={(ref: any) => { this.node = ref; }}
+                className="mediaVideo"
+            >
                 <video className="media" controls={false} preload="auto" src={src} />
 
                 <div className="controls">
@@ -54,7 +58,7 @@ class MediaVideo extends React.Component<Props> {
         const node = $(this.node);
         const video = node.find('video');
 
-        video.off('canplay ended pause play');
+        video.off('ended pause play');
     };
 
 	onPlay () {
@@ -78,12 +82,15 @@ class MediaVideo extends React.Component<Props> {
 	};
 
 	onEnded () {
+        const { onEnded } = this.props;
 		const node = $(this.node);
 
 		this.videoNode.controls = false;
 		node.removeClass('isPlaying');
 
-		this.onPause();
+        if (onEnded) {
+            onEnded();
+        };
 	};
 
     onPlayClick () {
