@@ -86,12 +86,18 @@ class Dataview {
 					isVisible: true,
 				};
 
-				C.BlockDataviewViewRelationAdd(rootId, blockId, view.id, rel, () => {
-					const newView = dbStore.getView(rootId, blockId, view.id);
-					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
+				C.BlockDataviewViewRelationAdd(rootId, blockId, view.id, rel, (message: any) => {
+					if (index >= 0) {
+						const newView = dbStore.getView(rootId, blockId, view.id);
+						const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
 
-					newView.relations = arrayMove(newView.relations, oldIndex, index);
-					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, newView.relations.map(it => it.relationKey));
+						newView.relations = arrayMove(newView.relations, oldIndex, index);
+						C.BlockDataviewViewRelationSort(rootId, blockId, view.id, newView.relations.map(it => it.relationKey), callBack);
+					} else {
+						if (callBack) {
+							callBack(message);
+						};
+					};
 				});
 			};
 
