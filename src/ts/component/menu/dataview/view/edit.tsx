@@ -26,9 +26,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { readonly } = data;
+		const { readonly, isInline } = data;
 		const view = data.view.get();
-		const { cardSize, coverFit, hideIcon, groupRelationKey, groupBackgroundColors } = view;
+		const { cardSize, coverFit, hideIcon, groupRelationKey, groupBackgroundColors, pageLimit } = view;
 		const sections = this.getSections();
 
 		const Section = (item: any) => (
@@ -233,7 +233,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, readonly } = data;
+		const { rootId, blockId, readonly, isInline } = data;
 		const view = data.view.get();
 		const views = dbStore.getViews(rootId, blockId);
 		const types = MenuUtil.getViews().map((it: any) => {
@@ -274,6 +274,17 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			id: 'hideIcon', name: 'Show icon', withSwitch: true, switchValue: !view.hideIcon,
 			onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
 		});
+
+		if (isInline || (view.type == I.ViewType.Board)) {	
+			const options = [ 10, 20, 50, 70, 100 ].map(it => ({ id: it, name: it }));
+			settings.push({
+				id: 'pageLimit', name: 'Page limit', withSelect: true, selectValue: view.pageLimit, options, selectMenuParam: { horizontal: I.MenuDirection.Right },
+				onSelect: (id: string) => { 
+					this.param.pageLimit = Number(id); 
+					this.save();
+				}
+			});
+		};
 
 		let sections: any[] = [
 			{ id: 'settings', name: '', children: settings },

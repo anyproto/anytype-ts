@@ -42,9 +42,9 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		};
 
 		const buttons: any[] = [
-			{ id: 'filter', name: 'Filters', menu: 'dataviewFilterList', withTabs: false },
-			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort', withTabs: false },
-			{ id: 'settings', name: 'Settings', menu: 'dataviewRelationList', withTabs: true },
+			{ id: 'filter', name: 'Filters', menu: 'dataviewFilterList' },
+			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort' },
+			{ id: 'settings', name: 'Settings', menu: 'dataviewRelationList' },
 		];
 
 		const ButtonItem = (item: any) => {
@@ -54,7 +54,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					id={elementId} 
 					className={item.id}
 					tooltip={item.name}
-					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu, item.withTabs); }}
+					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu); }}
 				/>
 			);
 		};
@@ -92,7 +92,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 						<div 
 							id="view-selector"
 							className="viewSelect select"
-							onClick={(e: any) => { this.onButton(e, `#block-${block.id} #view-selector`, 'dataviewViewList', false); }}
+							onClick={(e: any) => { this.onButton(e, `#block-${block.id} #view-selector`, 'dataviewViewList'); }}
 							onContextMenu={(e: any) => { this.onViewEdit(e, `#block-${block.id} #view-selector`, view); }}
 						>
 							<div className="name">{view.name}</div>
@@ -143,12 +143,12 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		this._isMounted = false;
 	};
 	
-	onButton (e: any, element: string, component: string, withTabs: boolean) {
+	onButton (e: any, element: string, component: string) {
 		if (!component) {
 			return;
 		};
 
-		const { rootId, block, readonly, getData, getView, getSources } = this.props;
+		const { rootId, block, readonly, getData, getView, getSources, isInline } = this.props;
 		const view = getView();
 		const obj = $(element);
 		const node = $(this.node);
@@ -173,6 +173,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				getData,
 				getView,
 				getSources,
+				isInline,
 				view: observable.box(view),
 			},
 		};
@@ -262,7 +263,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	onViewEdit (e: any, element: string, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView, getData, getSources } = this.props;
+		const { rootId, block, getView, getData, getSources, isInline } = this.props;
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const view = dbStore.getView(rootId, block.id, item.id);
 
@@ -277,6 +278,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				blockId: block.id,
 				readonly: !allowed,
 				view: observable.box(view),
+				isInline,
 				getView,
 				getData,
 				getSources,

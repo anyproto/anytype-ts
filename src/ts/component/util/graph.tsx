@@ -232,7 +232,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
   	};
 
 	onPreviewShow (data: any) {
-		if (this.isPreviewDisabled) {
+		if (this.isPreviewDisabled || !this.subject) {
 			return;
 		};
 
@@ -250,7 +250,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		};
 
 		el.css({ left: x, top: y });
-		body.append(el).addClass('cp');
+		body.append(el);
 
 		this.isPreview = true;
 	};
@@ -261,7 +261,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		};
 
 		window.clearTimeout(this.timeoutPreview);
-		$('body').removeClass('cp');
 		$('#graphPreview').remove();
 	};
 
@@ -271,14 +270,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		switch (data.id) {
 			case 'onClick':
-				if (data.node.id != root) {
-					onClick(data.node);
-				};
+				onClick(data.node);
+				window.clearTimeout(this.timeoutPreview);
 				break;
 
 			case 'onSelect':
-				if (data.node.id != root) {
-					onSelect(data.node.id);
+				if (data.node != root) {
+					onSelect(data.node);
 				};
 				break;
 
@@ -286,11 +284,16 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				if (!this.isDragging) {
 					this.subject = this.nodes.find(d => d.id == data.node);
 
+					const body = $('body');
+
 					if (this.subject) {
 						window.clearTimeout(this.timeoutPreview);
 						this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
+
+						body.addClass('cp');
 					} else {
-						this.onPreviewHide();
+						this.onPreviewHide();	
+						body.removeClass('cp');
 					};
 				};
 				break;

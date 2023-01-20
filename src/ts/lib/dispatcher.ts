@@ -617,6 +617,7 @@ class Dispatcher {
 					});
 
 					dbStore.viewUpdate(rootId, id, view);
+					$(window).trigger(`updateDataviewData.${id}`);
 					break;
 				};
 

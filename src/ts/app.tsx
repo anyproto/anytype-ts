@@ -10,7 +10,7 @@ import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview } from 'Lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview, Mark } from 'Lib';
 
 configure({ enforceActions: 'never' });
 
@@ -222,6 +222,7 @@ enableLogging({
 	transaction: true,
 	compute: true,
 });
+*/
 
 Sentry.init({
 	release: window.Electron.version.app,
@@ -239,7 +240,6 @@ Sentry.init({
 		})
 	]
 });
-*/
 
 class RoutePage extends React.Component<RouteComponentProps> { 
 
@@ -781,7 +781,9 @@ class App extends React.Component<object, State> {
 		const win = $(window);
 		const rootId = keyboard.getRootId();
 		const { focused, range } = focus.state;
-		const options: any = param.dictionarySuggestions.map(it => { return { id: it, name: it }; });
+		const options: any = param.dictionarySuggestions.map(it => ({ id: it, name: it }));
+		const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
+		const value = String(obj.get(0).innerText || '');
 
 		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
 
@@ -801,6 +803,7 @@ class App extends React.Component<object, State> {
 						if (item.id == 'add-to-dictionary') {
 							Renderer.send('spellcheckAdd', param.misspelledWord);
 						} else {
+							blockStore.updateContent(rootId, focused, { text: value });
 							DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
 						};
 					});

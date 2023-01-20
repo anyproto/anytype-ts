@@ -18,7 +18,6 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 	render () {
 		const { onHome, onForward, onBack } = this.props;
-		const { graph } = commonStore;
 
 		return (
 			<div className="sides">
@@ -53,7 +52,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	onSearch () {
-		const { rootId, onGraph } = this.props;
+		const { rootId } = this.props;
 		const { graph } = commonStore;
 		const menuParam = Object.assign({
 			element: '#button-header-search',

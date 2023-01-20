@@ -1,6 +1,10 @@
 @import "~scss/_vars";
 
 .pageMainBlock {
+	.header {
+		#button-header-more { display: none; }
+	}
+
 	.wrapper { width: calc(100% - 96px); margin: 0px auto; padding: 50px 0px 80px 0px; user-select: none; }
 	.wrapper {
 		.block {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, Title, Label, IconObject } from 'Component';
 import { I, translate } from 'Lib';
-import { authStore, blockStore, detailStore } from 'Store';
+import { authStore, blockStore, detailStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
@@ -15,6 +15,7 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 	render () {
 		const { onPage } = this.props;
 		const { account } = authStore;
+		const { config } = commonStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 		
 		let rows = [
@@ -25,10 +26,13 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 		];
 
 		if (account) {
-			rows = [
-				{ id: 'account', title: 'popupSettingsAccountTitle', icon: '' },
-				//{ id: 'spaceIndex', title: 'popupSettingsSpaceTitle', icon: '' },
-			].concat(rows);
+			const accountRows = [ { id: 'account', title: 'popupSettingsAccountTitle', icon: '' } ];
+			
+			if (config.experimental) {
+				accountRows.push({ id: 'spaceIndex', title: 'popupSettingsSpaceTitle', icon: '' });
+			};
+
+			rows = accountRows.concat(rows);
 		};
 
 		const Row = (row: any) => {

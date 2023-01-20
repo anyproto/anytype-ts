@@ -419,6 +419,7 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
+				name = Mark.fromUnicode(name);
 
 				name = Mark.fromUnicode(name);
 

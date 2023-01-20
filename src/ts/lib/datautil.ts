@@ -626,7 +626,7 @@ class DataUtil {
 			return;
 		};
 		if (message.counters) {
-			dbStore.metaSet(subId, '', { total: message.counters.total, keys: keys });
+			dbStore.metaSet(subId, '', { total: message.counters.total, keys });
 		};
 
 		let details = [];

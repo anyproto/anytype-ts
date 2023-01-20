@@ -141,7 +141,7 @@
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
 	"typeRelationKeys":		 [ "smartblockTypes", "recommendedRelations", "sourceObject" ],
-	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType" ],
+	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 
 	"subId": {
 		"index": "index",
@@ -152,7 +152,8 @@
 		"type": "type",
 		"relation": "relation",
 		"option": "option",
-		"store": "store"
+		"store": "store",
+		"graph": "graph"
 	},
 
 	"typeId": {

@@ -111,7 +111,8 @@
 			
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
 
-			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
+			.clickable { display: flex; flex-grow: 1; }
+			.select { height: 28px; }
 		}
 
 		.item.empty { cursor: default; }
@@ -137,7 +138,7 @@
 			.iconObject, .icon.dnd { flex-shrink: 0; }
 			.name { width: 100%; margin-right: 6px; }
 
-			.clickable { width: calc(100% - 108px); margin-right: 6px; display: flex; }
+			.clickable { width: calc(100% - 108px); margin-right: 6px; }
 			.clickable {
 				.name { margin: 0px; width: 100%; }
 			}
@@ -148,12 +149,9 @@
 			}
 		}
 
-		.item.withSwitch {
+		.item.withSwitch, .item.withSelect { display: flex; align-items: center; justify-content: space-between; }
+		.item.withSwitch, .item.withSelect {
 			.clickable { display: flex; }
-		}
-
-		.item.withCheckbox {
-			.name { width: calc(100% - 46px); }
 		}
 
 		.line { height: 1px; margin: 8px 14px 7px 14px; background: $colorBorderLight; }
