@@ -597,12 +597,12 @@ class Dispatcher {
 								const op = item.getMove();
 								const afterId = op.getAfterid();
 								const ids = op.getIdsList() || [];
-								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) : 0;
+								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : 0;
 
 								ids.forEach((id: string, i: number) => {
 									const oidx = list.findIndex(it => it[key.idField] == id);
 									if (oidx >= 0) {
-										list = arrayMove(list, oidx, idx + i + 1);
+										list = arrayMove(list, oidx, idx + i);
 									};
 								});
 
