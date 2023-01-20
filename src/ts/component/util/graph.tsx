@@ -122,9 +122,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		d3.select(this.canvas)
         .call(d3.drag().
 			subject(() => { return this.subject; }).
-			on('start', (e: any, d: any) => this.onDragStart(e, d)).
-			on('drag', (e: any, d: any) => this.onDragMove(e, d)).
-			on('end', (e: any, d: any) => this.onDragEnd(e, d))
+			on('start', (e: any, d: any) => this.onDragStart(e)).
+			on('drag', (e: any, d: any) => this.onDragMove(e)).
+			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
         .call(zoom)
 		.call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))

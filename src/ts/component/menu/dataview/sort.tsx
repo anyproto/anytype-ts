@@ -294,7 +294,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 		item[k] = v;
 
-		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item }, () => {
+		C.BlockDataviewSortReplace(rootId, blockId, view.id, item.relationKey, { ...item }, () => {
 			getData(view.id, 0, true);
 		});
 
