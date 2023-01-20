@@ -170,41 +170,62 @@ const Card = observer(class Card extends React.Component<Props> {
 		const { rootId, block, index, getView, getRecord } = this.props;
 		const view = getView();
 
+		if (!view.coverRelationKey) {
+			return null;
+		};
+
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
+		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
 
-		const cn = ['cover', 'type1'];
 		let cover = null;
 
 		if (view.coverRelationKey == 'pageCover') {
 			const { coverType, coverId, coverX, coverY, coverScale } = record;
+
 			if (coverId && coverType) {
-				return <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} />;
+				return (
+					<Cover 
+						type={coverType} 
+						id={coverId} 
+						image={coverId} 
+						className={coverId} 
+						x={coverX} 
+						y={coverY} 
+						scale={coverScale} 
+						withScale={false} 
+					/>
+				);
 			};
-		}
+		};
 
 		for (let id of value) {
 			const f = detailStore.get(subId, id, []);
+			if (f._empty_) {
+				continue;
+			};
 
-			if (f) {
-				switch (f.type) {
-					case Constant.typeId.image:
-						cn.push('coverImage');
-						cover = <img src={commonStore.imageUrl(f.id, 600)} />;
-						break;
+			switch (f.type) {
+				case Constant.typeId.image:
+					cn.push('coverImage');
+					cover = <img src={commonStore.imageUrl(f.id, 600)} />;
+					break;
 
-					case Constant.typeId.audio:
-						cn.push('coverAudio');
-						cover = <MediaAudio playlist={[{name: f.name, src: commonStore.fileUrl(f.id)}]} />;
-						break;
+				case Constant.typeId.audio:
+					cn.push('coverAudio');
 
-					case Constant.typeId.video:
-						cn.push('coverVideo');
-						cover = <MediaVideo src={commonStore.fileUrl(f.id)} />;
-						break;
-				};
+					const playlist = [ 
+						{ name: f.name, src: commonStore.fileUrl(f.id) },
+					];
 
+					cover = <MediaAudio playlist={playlist} />;
+					break;
+
+				case Constant.typeId.video:
+					cn.push('coverVideo');
+					cover = <MediaVideo src={commonStore.fileUrl(f.id)} />;
+					break;
 			};
 		};
 

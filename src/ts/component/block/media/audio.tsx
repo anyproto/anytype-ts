@@ -1,11 +1,10 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Loader, Error, MediaAudio } from 'Component';
-import { I, translate, focus, Util, keyboard, Action } from 'Lib';
+import { I, translate, focus, keyboard, Action } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
-
-import $ from "jquery";
 
 const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComponent> {
 
@@ -57,10 +56,14 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 				break;
 				
 			case I.FileState.Done:
+				const playlist = [ 
+					{ name, src: commonStore.fileUrl(hash) },
+				];
+
 				element = (
 					<MediaAudio
 						ref={node => this.refPlayer = node}
-						playlist={[{name: name, src: commonStore.fileUrl(hash)}]}
+						playlist={playlist}
 						onPlay={this.onPlay}
 						onPause={this.onPause}
 					/>
@@ -84,7 +87,6 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 
 	componentDidMount () {
 		this._isMounted = true;
-
 		this.rebind();
 	};
 
@@ -102,7 +104,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 			return;
 		};
 
-		$(this.node).on('resize', (e: any, oe: any) => {
+		$(this.node).on('resize', () => {
 			if (this.refPlayer) {
 				this.refPlayer.resize();
 			};

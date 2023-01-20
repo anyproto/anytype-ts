@@ -3,9 +3,9 @@ import $ from 'jquery';
 import { Icon } from 'Component';
 
 interface Props {
-    src: string,
-    onPlay?(): void,
-    onPause?(): void,
+    src: string;
+    onPlay?(): void;
+    onPause?(): void;
 };
 
 class MediaVideo extends React.Component<Props> {
@@ -14,10 +14,10 @@ class MediaVideo extends React.Component<Props> {
     videoNode: any = null;
     speed = 1;
 
-    constructor (props) {
+    constructor (props: Props) {
         super(props);
 
-        this.play = this.play.bind(this);
+        this.onPlayClick = this.onPlayClick.bind(this);
     };
 
     render () {
@@ -27,7 +27,7 @@ class MediaVideo extends React.Component<Props> {
                 <video className="media" controls={false} preload="auto" src={src} />
 
                 <div className="controls">
-                    <Icon className="play" onClick={this.play} />
+                    <Icon className="play" onClick={this.onPlayClick} />
                 </div>
             </div>
         );
@@ -38,35 +38,16 @@ class MediaVideo extends React.Component<Props> {
     };
 
     rebind () {
-        const { onPlay, onPause } = this.props;
-
         this.unbind();
 
         const node = $(this.node);
         const video = node.find('video');
+
         this.videoNode = video.get(0);
 
-        video.on('play', () => {
-            this.videoNode.controls = true;
-            node.addClass('isPlaying');
-            if (onPlay) {
-                onPlay();
-            };
-        });
-
-        video.on('pause', () => {
-            if (onPause) {
-                onPause();
-            };
-        });
-
-        video.on('ended', () => {
-            this.videoNode.controls = false;
-            node.removeClass('isPlaying');
-            if (onPause) {
-                onPause();
-            };
-        });
+        video.on('play', () => { this.onPlay(); });
+        video.on('pause', () => { this.onPause(); });
+        video.on('ended', () => { this.onEnded(); });
     };
 
     unbind () {
@@ -76,10 +57,41 @@ class MediaVideo extends React.Component<Props> {
         video.off('canplay ended pause play');
     };
 
-    play () {
+	onPlay () {
+		const { onPlay } = this.props;
+		const node = $(this.node);
+
+		this.videoNode.controls = true;
+        node.addClass('isPlaying');
+
+		if (onPlay) {
+			onPlay();
+		};
+	};
+
+	onPause () {
+		const { onPause } = this.props;
+
+        if (onPause) {
+			onPause();
+		};
+	};
+
+	onEnded () {
+		const node = $(this.node);
+
+		this.videoNode.controls = false;
+		node.removeClass('isPlaying');
+
+		this.onPause();
+	};
+
+    onPlayClick () {
         $('audio, video').each((i: number, item: any) => { item.pause(); });
-        this.videoNode.play();
+        
+		this.videoNode.play();
     };
+
 };
 
 export default MediaVideo;

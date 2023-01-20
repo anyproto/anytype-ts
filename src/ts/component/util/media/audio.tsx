@@ -1,12 +1,17 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Drag } from 'Component';
-import { I, Util} from 'Lib';
+import { Util } from 'Lib';
+
+interface PlaylistItem {
+	name: string; 
+	src: string;
+};
 
 interface Props {
-    playlist: any[],
-    onPlay?(): void,
-    onPause?(): void,
+    playlist: PlaylistItem[];
+    onPlay?(): void;
+    onPause?(): void;
 };
 
 class MediaAudio extends React.Component<Props> {
@@ -16,23 +21,27 @@ class MediaAudio extends React.Component<Props> {
     playOnSeek = false;
     refTime: any = null;
     refVolume: any = null;
-    current: any = { name: '', src: ''};
+    current: PlaylistItem = { name: '', src: '' };
     audioNode: HTMLAudioElement;
 
-    constructor (props) {
+    constructor (props: Props) {
         super(props);
 
-        this.onPlay = this.onPlay.bind(this);
+        this.onPlayClick = this.onPlayClick.bind(this);
         this.onMute = this.onMute.bind(this);
     };
 
     render () {
         return (
-            <div ref={(ref: any) => { this.node = ref; }} className="wrap resizable audio mediaAudio">
+            <div 
+				ref={node => this.node = node} 
+				className="wrap resizable audio mediaAudio"
+			>
                 <audio id="audio" preload="auto" src={this.current.src} />
 
                 <div className="controls">
-                    <Icon className="play" onClick={this.onPlay} />
+                    <Icon className="play" onClick={this.onPlayClick} />
+
                     <div className="name">
                         <span>{this.current.name}</span>
                     </div>
@@ -66,7 +75,9 @@ class MediaAudio extends React.Component<Props> {
     componentDidMount () {
         const { playlist } = this.props;
 
-        this.current = playlist[0];
+		if (playlist.length) {
+			this.current = playlist[0];
+		};
 
         this.resize();
         this.rebind();
@@ -82,29 +93,17 @@ class MediaAudio extends React.Component<Props> {
     };
 
     rebind () {
-        const { onPlay, onPause } = this.props;
-
         this.unbind();
 
         const node = $(this.node);
-        const icon = node.find('.icon.play');
         const el = node.find('#audio');
+
         this.audioNode = el.get(0) as HTMLAudioElement;
 
         if (el.length) {
             el.on('canplay timeupdate', () => { this.onTimeUpdate(); });
-            el.on('play', () => {
-                icon.addClass('active');
-                if (onPlay) {
-                    onPlay();
-                };
-            });
-            el.on('ended pause', () => {
-                icon.removeClass('active');
-                if (onPause) {
-                    onPause();
-                };
-            });
+            el.on('play', () => { this.onPlay(); });
+            el.on('ended pause', () => { this.onPause(); });
         };
     };
 
@@ -127,13 +126,37 @@ class MediaAudio extends React.Component<Props> {
         };
     };
 
-    onPlay () {
+    onPlayClick () {
         const el = this.audioNode;
         const paused = el.paused;
 
         $('audio, video').each((i: number, item: any) => { item.pause(); });
         paused ? this.play() : this.pause();
     };
+
+	onPlay () {
+		const { onPlay } = this.props;
+        const node = $(this.node);
+        const icon = node.find('.icon.play');
+		
+		icon.addClass('active');
+
+		if (onPlay) {
+			onPlay();
+		};
+	};
+
+	onPause () {
+		const { onPause } = this.props;
+        const node = $(this.node);
+        const icon = node.find('.icon.play');
+
+		icon.removeClass('active');
+
+		if (onPause) {
+			onPause();
+		};
+	};
 
     play () {
         this.audioNode.play();
