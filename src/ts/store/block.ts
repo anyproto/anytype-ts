@@ -407,7 +407,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = detailStore.get(rootId, mark.param, [ 'layout', 'name', 'snippet', 'description' ], true);
+				const object = detailStore.get(rootId, mark.param);
 
 				if (object._empty_) {
 					continue;
@@ -419,6 +419,8 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
+				name = Mark.fromUnicode(name);
+
 				name = Mark.fromUnicode(name);
 
 				if (old != name) {

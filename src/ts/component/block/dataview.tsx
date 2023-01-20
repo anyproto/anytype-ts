@@ -294,7 +294,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRecordAdd(e, -1, true); });
 		};
 
-		if (!isInline) {
+		if (!isInline && !keyboard.isFocused) {
 			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
 				selection.set(I.SelectType.Record, dbStore.getRecords(subId, ''));
 			});

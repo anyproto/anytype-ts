@@ -37,6 +37,13 @@
 						}
 					}
 				}
+				.cover.coverAudio {
+					.mediaAudio { padding: 8px 16px; }
+				}
+				.cover.coverVideo { overflow: hidden; }
+				.cover.coverVideo {
+					.mediaVideo video { width: 100%; }
+				}
 			}
 			.card:hover { border: 1px solid $colorBorderDark; }
 			.card:hover {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, Cover, Icon } from 'Component';
+import { Cell, Cover, Icon, MediaAudio, MediaVideo } from 'Component';
 import { I, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -48,20 +48,9 @@ const Card = observer(class Card extends React.Component<Props> {
 		if (view.coverRelationKey) {
 			cover = <BlankCover />;
 
-			if (view.coverRelationKey == 'pageCover') {
-				const { coverType, coverId, coverX, coverY, coverScale } = record;
-				if (coverId && coverType) {
-					cover = <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={false} />;
-				};
-			} else {
-				const src = this.getPicture();
-				if (src) {
-					cover = (
-						<div className="cover type1">
-							<img src={src} />
-						</div>
-					);
-				};
+			const coverNode = this.getCover();
+			if (coverNode) {
+				cover = coverNode;
 			};
 		};
 
@@ -168,32 +157,87 @@ const Card = observer(class Card extends React.Component<Props> {
 			return;
 		};
 
+		if ($(e.target).parents('.controls').length) {
+			return;
+		};
+
 		if (cb[e.button]) {
 			cb[e.button]();
 		};
 	};
 
-	getPicture (): string {
+	getCover (): any {
 		const { rootId, block, index, getView, getRecord } = this.props;
 		const view = getView();
 
-		if (!view || !view.coverRelationKey) {
-			return '';
+		if (!view.coverRelationKey) {
+			return null;
 		};
 
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
+		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
 
-		let picture = '';
-		for (let id of value) {
-			const f = detailStore.get(subId, id, []);
-			if (f && (f.type == Constant.typeId.image)) {
-				picture = commonStore.imageUrl(f.id, 600);
-				break;
+		let cover = null;
+
+		if (view.coverRelationKey == 'pageCover') {
+			const { coverType, coverId, coverX, coverY, coverScale } = record;
+
+			if (coverId && coverType) {
+				return (
+					<Cover 
+						type={coverType} 
+						id={coverId} 
+						image={coverId} 
+						className={coverId} 
+						x={coverX} 
+						y={coverY} 
+						scale={coverScale} 
+						withScale={false} 
+					/>
+				);
 			};
 		};
-		return picture;
+
+		for (let id of value) {
+			const f = detailStore.get(subId, id, []);
+			if (f._empty_) {
+				continue;
+			};
+
+			switch (f.type) {
+				case Constant.typeId.image:
+					cn.push('coverImage');
+					cover = <img src={commonStore.imageUrl(f.id, 600)} />;
+					break;
+
+				case Constant.typeId.audio:
+					cn.push('coverAudio');
+
+					const playlist = [ 
+						{ name: f.name, src: commonStore.fileUrl(f.id) },
+					];
+
+					cover = <MediaAudio playlist={playlist} />;
+					break;
+
+				case Constant.typeId.video:
+					cn.push('coverVideo');
+					cover = <MediaVideo src={commonStore.fileUrl(f.id)} />;
+					break;
+			};
+		};
+
+		if (!cover) {
+			return null;
+		};
+
+		return (
+			<div className={cn.join(' ')}>
+				{cover}
+			</div>
+		);
 	};
 
 });

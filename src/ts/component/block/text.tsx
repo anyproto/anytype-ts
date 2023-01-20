@@ -948,7 +948,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		const win = $(window);
 		const range = this.getRange();
-		const el = $('#block-' + block.id);
+		const el = $(`#block-${block.id}`);
 
 		let value = this.getValue();
 		value = Util.stringCut(value, range.from - 1, range.from);

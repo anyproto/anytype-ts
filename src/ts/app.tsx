@@ -60,6 +60,9 @@ import 'scss/component/preview/common.scss';
 import 'scss/component/preview/link.scss';
 import 'scss/component/preview/object.scss';
 
+import 'scss/component/media/audio.scss';
+import 'scss/component/media/video.scss';
+
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
