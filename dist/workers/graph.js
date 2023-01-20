@@ -31,7 +31,7 @@ const forceProps = {
 		y: 0.5,
 	},
 	charge: {
-		strength: -50,
+		strength: -4000,
 		distanceMin: 0,
 		distanceMax: 200,
 	},
@@ -41,7 +41,7 @@ const forceProps = {
 	},
 	link: {
 		strength: 1,
-		distance: 80,
+		distance: 1,
 		iterations: 1,
 	},
 	forceX: {
@@ -98,8 +98,8 @@ init = (param) => {
 	initForces();
 
 	simulation.on('tick', () => { redraw(); });
-	//simulation.on('end', () => { simulation.alphaTarget(0); });
 	simulation.tick();
+
 	restart(0);
 };
 
@@ -157,7 +157,7 @@ updateSettings = (param) => {
 initForces = () => {
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
-	.force('charge', d3.forceManyBody(nodes))
+	.force('charge', d3.forceManyBody())
 	.force('collide', d3.forceCollide(nodes))
 	.force('center', d3.forceCenter())
 	.force('forceX', d3.forceX(nodes))
