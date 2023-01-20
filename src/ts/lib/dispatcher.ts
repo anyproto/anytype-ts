@@ -549,9 +549,20 @@ class Dispatcher {
 					viewId = data.getViewid();
 
 					let view = dbStore.getView(rootId, id, viewId);
-					
+					let updateData = false;
+
 					if (data.hasFields()) {
-						view = Object.assign(view, Mapper.From.ViewFields(data.getFields()));
+						const fields = Mapper.From.ViewFields(data.getFields());
+						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit' ];
+
+						for (let key of updateKeys) {
+							if (fields[key] != view[key]) {
+								updateData = true;
+								break;
+							};
+						};
+
+						view = Object.assign(view, fields);
 					};
 
 					const keys = [ 
@@ -576,6 +587,10 @@ class Dispatcher {
 								items.forEach((item: any, i: number) => { 
 									list.splice(idx + i, 0, item);
 								});
+
+								if ([ 'filter', 'sort' ].includes(key.id)) {
+									updateData = true;
+								};
 							};
 
 							if (item.hasMove()) {
@@ -590,6 +605,10 @@ class Dispatcher {
 										list = arrayMove(list, oidx, idx + i + 1);
 									};
 								});
+
+								if ([ 'sort' ].includes(key.id)) {
+									updateData = true;
+								};
 							};
 
 							if (item.hasUpdate()) {
@@ -597,8 +616,25 @@ class Dispatcher {
 
 								if (op.hasItem()) {
 									const idx = list.findIndex(it => it[key.idField] == op.getId());
+									const item = Mapper.From[key.mapper](op.getItem());
+
+									if ([ 'filter', 'sort' ].includes(key.id)) {
+										updateData = true;
+									};
+
 									if (idx >= 0) {
-										list[idx] = Mapper.From[key.mapper](op.getItem());
+										if (key.id == 'relation') {
+											const updateKeys = [ 'includeTime' ];
+
+											for (let key of updateKeys) {
+												if (list[idx][key] != item[key]) {
+													updateData = true;
+													break;
+												};
+											};
+										};
+
+										list[idx] = item;
 									};
 								};
 							};
@@ -610,6 +646,10 @@ class Dispatcher {
 								ids.forEach(id => { 
 									list = list.filter(it => it[key.idField] != id);
 								});
+
+								if ([ 'filter', 'sort' ].includes(key.id)) {
+									updateData = true;
+								};
 							};
 
 							view[key.field] = list;
@@ -617,7 +657,10 @@ class Dispatcher {
 					});
 
 					dbStore.viewUpdate(rootId, id, view);
-					$(window).trigger(`updateDataviewData.${id}`);
+
+					if (updateData) {
+						$(window).trigger(`updateDataviewData.${id}`);
+					};
 					break;
 				};
 

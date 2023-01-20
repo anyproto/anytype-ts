@@ -78,6 +78,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	};
 
 	componentDidMount () {
+		const { param } = this.props;
+		const { data } = param;
+		const view = data.view.get();
+
+		this.param.name = view.name;
+
 		this.rebind();
 		this.resize();
 		this.focus();
@@ -192,8 +198,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	save () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, onSave, getData, getView, readonly } = data;
-		const view = getView();
+		const { rootId, blockId, onSave, readonly } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
 
 		if (readonly || !block) {
@@ -203,29 +208,20 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		let current = data.view.get();
 		let clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
-		current = Object.assign(current, this.param);
-		current.name = current.name || translate(`viewName${current.type}`);
+		this.param.name = this.param.name || translate(`viewName${current.type}`);
 
 		if ((current.type == I.ViewType.Board) && !current.groupRelationKey) {
-			current.groupRelationKey = Relation.getGroupOption(rootId, blockId, current.groupRelationKey)?.id;
+			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, current.groupRelationKey)?.id;
 		};
 
-		const cb = () => {
-			if (view.id == current.id) {
-				getData(current.id, 0);
-			};
-
-			if (onSave) {
-				onSave();
-			};
-		};
-
-		C.BlockDataviewViewUpdate(rootId, blockId, current.id, current, (message: any) => {
+		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
 			if (clearGroups) {
 				DataUtil.dataviewGroupUpdate(rootId, blockId, current.id, []);
-				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, cb);
+				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, onSave);
 			} else {
-				cb();
+				if (onSave) {
+					onSave();
+				};
 			};
 		});
 	};
@@ -397,15 +393,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	};
 
 	onSwitch (e: any, key: string, v: boolean) {
-		const { param } = this.props;
-		const { data } = param;
-		const view = data.view.get();
-
-		view[key] = v;
-
-		if (view.id) {
-			this.save();
-		};
+		this.param[key] = v;
+		this.save();
 	};
 
 	onClick (e: any, item: any) {
@@ -421,11 +410,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		};
 
 		if (item.sectionId == 'type') {
-			view.type = item.id;
-
-			if (view.id) {
-				this.save();
-			};
+			this.param.type = item.id;
+			this.save();
 		} else 
 		if (view.id) {
 			close();

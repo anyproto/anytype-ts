@@ -320,9 +320,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		const relation = view.getRelation(item.relationKey);
 
-		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...relation, isVisible: v });
+		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item, isVisible: v });
 	};
 
 	onScroll ({ scrollTop }) {

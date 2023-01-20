@@ -274,6 +274,29 @@ const Mapper = {
 			};
 		},
 
+		View: (obj: any): I.View => {
+			return Object.assign({
+				id: obj.getId(),
+				sorts: obj.getSortsList().map(Mapper.From.Sort),
+				filters: obj.getFiltersList().map(Mapper.From.Filter),
+				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
+			}, Mapper.From.ViewFields(obj));
+		},
+
+		ViewFields: (obj: any): any => {
+			return {
+				type: obj.getType(),
+				name: obj.getName(),
+				coverRelationKey: obj.getCoverrelationkey(),
+				coverFit: obj.getCoverfit(),
+				cardSize: obj.getCardsize(),
+				hideIcon: obj.getHideicon(),
+				groupRelationKey: obj.getGrouprelationkey(),
+				groupBackgroundColors: obj.getGroupbackgroundcolors(),
+				pageLimit: obj.getPagelimit(),
+			};
+		},
+
 		ViewRelation: (obj: any) => {
             return {
                 relationKey: obj.getKey(),
@@ -301,29 +324,6 @@ const Mapper = {
 				relationKey: obj.getRelationkey(),
 				type: obj.getType(),
 				customOrder: (obj.getCustomorderList() || []).map(Decode.decodeValue),
-			};
-		},
-
-		View: (obj: any): I.View => {
-			return Object.assign({
-				id: obj.getId(),
-				sorts: obj.getSortsList().map(Mapper.From.Sort),
-				filters: obj.getFiltersList().map(Mapper.From.Filter),
-				relations: obj.getRelationsList().map(Mapper.From.ViewRelation),
-			}, Mapper.From.ViewFields(obj));
-		},
-
-		ViewFields: (obj: any): any => {
-			return {
-				type: obj.getType(),
-				name: obj.getName(),
-				coverRelationKey: obj.getCoverrelationkey(),
-				coverFit: obj.getCoverfit(),
-				cardSize: obj.getCardsize(),
-				hideIcon: obj.getHideicon(),
-				groupRelationKey: obj.getGrouprelationkey(),
-				groupBackgroundColors: obj.getGroupbackgroundcolors(),
-				pageLimit: obj.getPagelimit(),
 			};
 		},
 

@@ -514,10 +514,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	onChangeTime (v: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, relationKey, getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
+		const relation = this.getViewRelation();
 
-		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, { ...this.getViewRelation(), includeTime: v });
+		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relation.relationKey, { ...relation, includeTime: v });
 	};
 
 	onSubmit (e: any) {
