@@ -411,7 +411,7 @@ class App extends React.Component<object, State> {
 		Renderer.on('spellcheck', this.onSpellcheck);
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
 		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
-		Renderer.on('shutdownStart', (e: any) => { 
+		Renderer.on('shutdownStart', () => { 
 			this.setState({ loading: true }); 
 
 			Storage.delete('menuSearchText');
@@ -751,20 +751,20 @@ class App extends React.Component<object, State> {
 		});
 	};
 
-	onMenu (e: any) {
+	onMenu () {
 		Renderer.send('winCommand', 'menu');
 	};
 
-	onMin (e: any) {
+	onMin () {
 		Renderer.send('winCommand', 'minimize');
 	};
 
-	onMax (e: any) {
+	onMax () {
 		this.checkMaximized();
 		Renderer.send('winCommand', 'maximize');
 	};
 
-	onClose (e: any) {
+	onClose () {
 		Renderer.send('winCommand', 'close');
 	};
 

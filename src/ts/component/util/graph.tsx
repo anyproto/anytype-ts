@@ -199,14 +199,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.send('updateSettings', commonStore.graph);
 	};
 
-	onDragStart (e: any, d: any) {
+	onDragStart (e: any) {
 		this.isDragging = true;
 		this.send('onDragStart', { active: e.active });
 
 		$('body').addClass('grab');
 	};
 
-	onDragMove (e: any, d: any) {
+	onDragMove (e: any) {
 		const p = d3.pointer(e, d3.select(this.canvas));
 		const node = $(this.node);
 		const { left, top } = node.offset();
@@ -219,7 +219,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		});
 	};
 			
-	onDragEnd (e: any, d: any) {
+	onDragEnd (e: any) {
 		this.isDragging = false;
 		this.subject = null;
 		this.send('onDragEnd', { active: e.active });

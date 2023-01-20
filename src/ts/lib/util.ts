@@ -142,9 +142,7 @@ class Util {
 	};
 
 	fromCamelCase (str: string, symbol: string) {
-		return str.replace(/([A-Z]{1})/g, (str: string, p1: string, p2: string, offset: number, s: string) => {
-			return symbol + p1.toLowerCase();
-		});
+		return str.replace(/([A-Z]{1})/g, (str: string, p1: string) => symbol + p1.toLowerCase());
 	};
 
 	ucFirst (s: string): string {
@@ -942,7 +940,7 @@ class Util {
 				cb();
 			} else {
 				const reader = new FileReader();
-				reader.onload = function(e) {
+				reader.onload = () => {
 					ret.push({ 
 						name: item.name, 
 						path: window.Electron.fileWrite(item.name, reader.result, 'binary'),

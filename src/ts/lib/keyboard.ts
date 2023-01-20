@@ -107,19 +107,19 @@ class Keyboard {
 
 		this.pressed.push(key);
 
-		this.shortcut(`${cmd}+\\`, e, (pressed: string) => {
+		this.shortcut(`${cmd}+\\`, e, () => {
 			e.preventDefault();
 			sidebar.data.fixed ? sidebar.collapse() : sidebar.expand();
 		});
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, (pressed: string) => { this.onBack(); });
-			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, (pressed: string) => { this.onForward(); });
+			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => { this.onBack(); });
+			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => { this.onForward(); });
 		};
 
 		// Close popups and menus
-		this.shortcut('escape', e, (pressed: string) => {
+		this.shortcut('escape', e, () => {
 			e.preventDefault();
 			if (menuStore.isOpen()) {
 				menuStore.closeLast();
@@ -148,24 +148,24 @@ class Keyboard {
 		});
 
 		// Shortcuts
-		this.shortcut('ctrl+space', e, (pressed: string) => {
+		this.shortcut('ctrl+space', e, () => {
 			popupStore.open('shortcut', {});
 		});
 
 		// Lock/Unlock
-		keyboard.shortcut(`ctrl+shift+l`, e, (pressed: string) => {
+		keyboard.shortcut(`ctrl+shift+l`, e, () => {
 			keyboard.onToggleLock();
 		});
 
 		if (isMain) {
 			// Print
-			keyboard.shortcut(`${cmd}+p`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
 				this.onPrint();
 			});
 
 			// Navigation search
-			this.shortcut(`${cmd}+s`, e, (pressed: string) => {
+			this.shortcut(`${cmd}+s`, e, () => {
 				if (popupStore.isOpen('search') || !this.isPinChecked) {
 					return;
 				};
@@ -173,20 +173,20 @@ class Keyboard {
 			});
 
 			// Text search
-			this.shortcut(`${cmd}+f`, e, (pressed: string) => {
+			this.shortcut(`${cmd}+f`, e, () => {
 				if (!this.isFocused) {
 					this.onSearchMenu('');
 				};
 			});
 
 			// Navigation links
-			this.shortcut(`${cmd}+o`, e, (pressed: string) => {
+			this.shortcut(`${cmd}+o`, e, () => {
 				e.preventDefault();
 				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
-			this.shortcut(`${cmd}+alt+o`, e, (pressed: string) => {
+			this.shortcut(`${cmd}+alt+o`, e, () => {
 				e.preventDefault();
 				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
@@ -200,7 +200,7 @@ class Keyboard {
 			});
 
 			// Create new page
-			this.shortcut(`${cmd}+n`, e, (pressed: string) => {
+			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
 				this.pageCreate();
 			});
