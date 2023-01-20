@@ -75,32 +75,25 @@ class Dataview {
 				return;
 			};
 
-			let rel = view.getRelation(relationKey);
+			const rel: any = view.getRelation(relationKey) || {};
 
-			if (rel) {
-				C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, { ...rel, isVisible: true }, callBack);
-			} else {
-				rel = { 
-					relationKey,
-					width: Constant.size.dataview.cell.default,
-					isVisible: true,
-				};
+			rel.relationKey = relationKey;
+			rel.width = rel.width || Constant.size.dataview.cell.default;
+			rel.isVisible = true;
 
-				C.BlockDataviewViewRelationAdd(rootId, blockId, view.id, rel, (message: any) => {
-					if (index >= 0) {
-						const newView = dbStore.getView(rootId, blockId, view.id);
-						const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
+			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
+				if (index >= 0) {
+					const newView = dbStore.getView(rootId, blockId, view.id);
+					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
 
-						newView.relations = arrayMove(newView.relations, oldIndex, index);
-						C.BlockDataviewViewRelationSort(rootId, blockId, view.id, newView.relations.map(it => it.relationKey), callBack);
-					} else {
-						if (callBack) {
-							callBack(message);
-						};
+					newView.relations = arrayMove(newView.relations, oldIndex, index);
+					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, newView.relations.map(it => it.relationKey), callBack);
+				} else {
+					if (callBack) {
+						callBack(message);
 					};
-				});
-			};
-
+				};
+			});
 		});
 	};
 

@@ -588,7 +588,7 @@ class Dispatcher {
 									list.splice(idx + i, 0, item);
 								});
 
-								if ([ 'filter', 'sort' ].includes(key.id)) {
+								if ([ 'filter', 'sort', 'relation' ].includes(key.id)) {
 									updateData = true;
 								};
 							};
