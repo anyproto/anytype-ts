@@ -582,7 +582,7 @@ class Dispatcher {
 								const op = item.getAdd();
 								const afterId = op.getAfterid();
 								const items = (op.getItemsList() || []).map(mapper);
-								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) : list.length;
+								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : list.length;
 
 								items.forEach((item: any, i: number) => { 
 									list.splice(idx + i, 0, item);
