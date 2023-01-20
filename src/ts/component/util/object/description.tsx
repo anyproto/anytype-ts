@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil } from 'Lib';
+import { I } from 'Lib';
 
 interface Props {
 	object: any;

@@ -42,8 +42,8 @@ class Pin extends React.Component<Props> {
 						key={i} 
 						onFocus={(e) => { this.onFocus(e, item.id); }} 
 						onBlur={(e) => { this.onBlur(e, item.id); }} 
-						onKeyUp={(e: any, value: string) => { this.onKeyUp(e, item.id, value); }} 
-						onKeyDown={(e: any, value: string) => { this.onKeyDown(e, item.id, value); }} 
+						onKeyUp={() => { this.onKeyUp(); }} 
+						onKeyDown={(e: any) => { this.onKeyDown(e, item.id); }} 
 						onChange={(e: any, value: string) => { this.onChange(e, item.id, value); }} 
 					/>
 				))}
@@ -89,11 +89,11 @@ class Pin extends React.Component<Props> {
 		this.refObj[id].removeClass('active');
 	};
 
-	onKeyDown (e: any, id: number, value: string) {
+	onKeyDown (e: any, id: number) {
 		const prev = this.refObj[id - 1];
 
 		if (prev) {
-			keyboard.shortcut('backspace', e, (pressed: string) => {
+			keyboard.shortcut('backspace', e, () => {
 				prev.setValue('');
 				prev.setType('text');
 				prev.focus();
@@ -101,7 +101,7 @@ class Pin extends React.Component<Props> {
 		};
 	};
 
-	onKeyUp (e: any, id: number, value: string) {
+	onKeyUp () {
 		const { size } = this.props;
 		const pin = this.get();
 

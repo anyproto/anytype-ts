@@ -12,11 +12,11 @@ interface Props extends I.Popup {
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<Props> {
 
-    name: string = 'Anytype Space';
-    refName: any = {};
+    name = 'Anytype Space';
+    refName: any = null;
     homePage: any = null;
     team: any[] = [];
-    isAdmin: boolean = false;
+    isAdmin = false;
 
     constructor (props: any) {
         super(props);

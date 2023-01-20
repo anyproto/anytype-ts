@@ -1,5 +1,5 @@
-import { I, C, keyboard, crumbs, translate, Util, history as historyPopup, Storage, analytics, dispatcher, Renderer, Mark, Relation } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, popupStore, authStore } from 'Store';
+import { I, C, keyboard, crumbs, translate, Util, Storage, analytics, dispatcher, Mark } from 'Lib';
+import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 

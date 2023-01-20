@@ -11,7 +11,7 @@ interface Props extends I.Popup {
 
 const PopupSettingsSpaceInvite = observer(class PopupSettingsSpaceInvite extends React.Component<Props> {
 
-    memberType: string = 'reader';
+    memberType = 'reader';
 
     render () {
         const memberTypes = [

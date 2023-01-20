@@ -53,7 +53,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		);
 	};
 
-	onMouseEnter (e: any) {
+	onMouseEnter () {
 		const { rootId } = this.props;
 		const node = $(this.node);
 		const thread = authStore.threadGet(rootId);
@@ -64,7 +64,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		};
 	};
 	
-	onMouseLeave (e: any) {
+	onMouseLeave () {
 		Preview.tooltipHide(false);
 	};
 	

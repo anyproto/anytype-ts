@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
+import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject } from 'Component';
 import { I, Util, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
@@ -99,7 +99,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		};
 	};
 	
-	onCopy (e: any) {
+	onCopy () {
 		const { preview } = commonStore;
 		const { param } = preview;
 		
@@ -131,7 +131,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		});
 	};
 	
-	onUnlink (e: any) {
+	onUnlink () {
 		const { preview } = commonStore;
 		const { type, range, onChange } = preview;
 		
