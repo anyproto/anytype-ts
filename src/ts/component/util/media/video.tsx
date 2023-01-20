@@ -6,7 +6,6 @@ interface Props {
     src: string;
     onPlay?(): void;
     onPause?(): void;
-    onEnded?(): void;
 };
 
 class MediaVideo extends React.Component<Props> {
@@ -58,7 +57,7 @@ class MediaVideo extends React.Component<Props> {
         const node = $(this.node);
         const video = node.find('video');
 
-        video.off('ended pause play');
+        video.off('canplay ended pause play');
     };
 
 	onPlay () {
@@ -82,15 +81,12 @@ class MediaVideo extends React.Component<Props> {
 	};
 
 	onEnded () {
-        const { onEnded } = this.props;
 		const node = $(this.node);
 
 		this.videoNode.controls = false;
 		node.removeClass('isPlaying');
 
-        if (onEnded) {
-            onEnded();
-        };
+		this.onPause();
 	};
 
     onPlayClick () {

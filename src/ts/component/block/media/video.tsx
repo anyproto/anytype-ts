@@ -26,7 +26,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onResizeInit = this.onResizeInit.bind(this);
 		this.onPlay = this.onPlay.bind(this);
-		this.onEnded = this.onEnded.bind(this);
+		this.onPause = this.onPause.bind(this);
 	};
 
 	render () {
@@ -73,7 +73,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 						<MediaVideo
 							src={commonStore.fileUrl(hash)}
 							onPlay={this.onPlay}
-							onEnded={this.onEnded}
+							onPause={this.onPause}
 						/>
 						<Icon className="resize" onMouseDown={(e: any) => { this.onResizeStart(e, false); }} />
 					</div>
@@ -187,7 +187,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		$(this.node).addClass('isPlaying');
 	};
 
-	onEnded () {
+	onPause () {
 		$(this.node).removeClass('isPlaying');
 	};
 
