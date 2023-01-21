@@ -70,6 +70,8 @@
 			.editableWrap.isEmpty { min-width: 70px; }
 
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
+
+			#head-source-select { opacity: 0; }
 		}
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }
@@ -157,6 +159,9 @@
 
 	.block.blockDataview:hover {
 		.dataviewControls .side.right, 
-		.dataviewHead .side.right { opacity: 1; }
+		.dataviewHead {
+			.side.right { opacity: 1; }
+			#head-source-select { opacity: 1; }
+		}
 	}
 }
