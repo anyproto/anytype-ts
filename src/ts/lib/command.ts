@@ -846,6 +846,17 @@ const BlockDataviewFilterSort = (contextId: string, blockId: string, viewId: str
 	dispatcher.request(BlockDataviewFilterSort.name, request, callBack);
 };
 
+const BlockDataviewSortAdd = (contextId: string, blockId: string, viewId: string, sort: I.Sort, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.Sort.Add.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+	request.setSort(Mapper.To.Sort(sort));
+
+	dispatcher.request(BlockDataviewSortAdd.name, request, callBack);
+};
+
 const BlockDataviewSortRemove = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Sort.Remove.Request();
 
@@ -864,7 +875,7 @@ const BlockDataviewSortReplace = (contextId: string, blockId: string, viewId: st
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
 	request.setRelationkey(relationKey);
-	request.setFilter(Mapper.To.Sort(sort));
+	request.setSort(Mapper.To.Sort(sort));
 
 	dispatcher.request(BlockDataviewSortReplace.name, request, callBack);
 };
@@ -1689,6 +1700,7 @@ export {
 	BlockDataviewFilterRemove,
 	BlockDataviewFilterSort,
 
+	BlockDataviewSortAdd,
 	BlockDataviewSortReplace,
 	BlockDataviewSortRemove,
 	BlockDataviewSortSort,

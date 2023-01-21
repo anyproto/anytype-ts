@@ -31,7 +31,7 @@ const forceProps = {
 		y: 0.5,
 	},
 	charge: {
-		strength: -4000,
+		strength: -200,
 		distanceMin: 0,
 		distanceMax: 200,
 	},
