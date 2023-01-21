@@ -66,7 +66,8 @@
 				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
 			}
 
-			.editableWrap { @include text-header3; position: relative; cursor: pointer; max-width: 50%; @include text-overflow-nw; }
+			.editableWrap { @include text-header3; height: 26px; position: relative; cursor: pointer; max-width: 50%; @include text-overflow-nw; }
+			.editableWrap.isEmpty { min-width: 70px; }
 
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
 		}

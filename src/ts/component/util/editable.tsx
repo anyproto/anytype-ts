@@ -64,7 +64,7 @@ class Editable extends React.Component<Props> {
 
 		let editor = null;
 		if (readonly) {
-			editor = <div id="value" className={cne.join(' ')} onMouseDown={onMouseDown} />;
+			editor = <div id="value" className={cne.join(' ')} />;
 		} else {
 			editor = (
 				<div
@@ -78,7 +78,6 @@ class Editable extends React.Component<Props> {
 					onBlur={onBlur}
 					onSelect={onSelect}
 					onPaste={onPaste}
-					onMouseDown={onMouseDown}
 					onMouseUp={onMouseUp}
 					onInput={this.onInput}
 					onDragStart={onDragStart}
@@ -92,6 +91,7 @@ class Editable extends React.Component<Props> {
 			<div 
 				ref={node => this.node = node}
 				className={cnw.join(' ')}
+				onMouseDown={onMouseDown}
 			>
 				{editor}
 				<div id="placeholder" className={cnp.join(' ')}>{placeholder}</div>
