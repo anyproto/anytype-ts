@@ -272,9 +272,14 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		});
 
 		if (isInline || (view.type == I.ViewType.Board)) {	
-			const options = [ 10, 20, 50, 70, 100 ].map(it => ({ id: it, name: it }));
+			let options = [ 10, 20, 50, 70, 100 ];
+
+			if (view.type == I.ViewType.Gallery) {
+				options = [ 12, 24, 60, 84, 120 ];
+			};
+
 			settings.push({
-				id: 'pageLimit', name: 'Page limit', withSelect: true, selectValue: view.pageLimit, options, selectMenuParam: { horizontal: I.MenuDirection.Right },
+				id: 'pageLimit', name: 'Page limit', withSelect: true, selectValue: view.pageLimit, options: options.map(it => ({ id: it, name: it })), selectMenuParam: { horizontal: I.MenuDirection.Right },
 				onSelect: (id: string) => { 
 					this.param.pageLimit = Number(id); 
 					this.save();

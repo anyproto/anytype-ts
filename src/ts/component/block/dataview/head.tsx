@@ -96,7 +96,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 				</div>
 				<div className="side right">
-					<div className="iconWrap" onClick={this.onFullscreen}>
+					<div className="iconWrap dn" onClick={this.onFullscreen}>
 						<Icon className="expand" tooltip="Open fullscreen" />
 					</div>
 				</div>
@@ -139,8 +139,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		const options: any[] = [
 			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
-			{ id: 'changeSource', icon: 'folderBlank', name: 'Change source', arrow: true },
-			{ id: 'openSource', icon: 'expand', name: 'Open data source' }
+			{ id: 'changeSource', icon: 'folderBlank', name: 'Change source set', arrow: true },
+			{ id: 'openSource', icon: 'expand', name: 'Open source set' },
 		];
 
 		menuStore.open('select', {

@@ -317,7 +317,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		];
 
 		if (config.experimental) {
-			sections.push({ id: 'dataview', name: 'Inline set', children: MenuUtil.getBlockDataview() });
+			sections.push({ id: 'dataview', name: 'Set view', children: MenuUtil.getBlockDataview() });
 		};
 
 		sections = sections.map((s: any) => {
