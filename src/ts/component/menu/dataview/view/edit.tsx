@@ -30,6 +30,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		const { type, name } = this.param;
 		const sections = this.getSections();
 
+		console.log(this.param);
+
 		const Section = (item: any) => (
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
@@ -86,6 +88,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	};
 
 	componentDidUpdate () {
+		this.ref.setValue(this.param.name);
 		this.resize();
 		this.focus();
 		this.props.setActive();
