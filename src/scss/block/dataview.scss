@@ -158,7 +158,9 @@
 	}
 
 	.block.blockDataview:hover {
-		.dataviewControls .side.right, 
+		.dataviewControls {
+			.side.right { opacity: 1; }
+		}
 		.dataviewHead {
 			.side.right { opacity: 1; }
 			#head-source-select { opacity: 1; }

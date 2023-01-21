@@ -214,7 +214,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, current.groupRelationKey)?.id;
 		};
 
-		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
+		C.BlockDataviewViewUpdate(rootId, blockId, current.id, Object.assign(current, this.param), () => {
 			if (clearGroups) {
 				DataUtil.dataviewGroupUpdate(rootId, blockId, current.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, onSave);
