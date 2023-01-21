@@ -50,9 +50,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 			return (
 				<Empty 
 					{...this.props}
-					title="No objects of this type" 
-					description="Create the first object of this type to start your set"
-					button="Add a new object"
+					title="No objects" 
+					description="Create fist one for a start"
+					button="Create object"
 					withButton={allowed}
 					onClick={(e: any) => onRecordAdd(e, 1)}
 				/>

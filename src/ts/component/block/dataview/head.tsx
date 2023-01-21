@@ -77,7 +77,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					<Editable
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
-						classNameWrap="dataviewTitle"
 						readonly={readonly || !isEditing}
 						placeholder={DataUtil.defaultName('set')}
 						onFocus={this.onFocus}

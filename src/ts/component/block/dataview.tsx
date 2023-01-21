@@ -194,7 +194,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					<Empty
 						{...this.props}
 						title="No data source"
-						description="Select object source or connect existing set"
+						description="Connect one of your sets or create<br/>new one to continue"
 						button="Select source"
 						withButton={true}
 						onClick={this.onEmpty}
