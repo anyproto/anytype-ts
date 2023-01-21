@@ -555,8 +555,8 @@ class Dispatcher {
 						const fields = Mapper.From.ViewFields(data.getFields());
 						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit' ];
 
-						for (let key of updateKeys) {
-							if (fields[key] != view[key]) {
+						for (let f of updateKeys) {
+							if (fields[f] != view[f]) {
 								updateData = true;
 								break;
 							};
@@ -626,8 +626,8 @@ class Dispatcher {
 										if (key.id == 'relation') {
 											const updateKeys = [ 'includeTime' ];
 
-											for (let key of updateKeys) {
-												if (list[idx][key] != item[key]) {
+											for (let f of updateKeys) {
+												if (list[idx][f] != item[f]) {
 													updateData = true;
 													break;
 												};
