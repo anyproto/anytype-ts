@@ -100,6 +100,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		return (
 			<form 
+				ref={node => this.node = node}
 				className="form" 
 				onSubmit={this.onSubmit} 
 				onMouseDown={this.menuClose}

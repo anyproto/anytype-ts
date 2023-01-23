@@ -286,13 +286,14 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	onChange (id: number, k: string, v: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const item = view.getSort(id);
+		const relationKey = item.relationKey;
 
 		item[k] = v;
 
-		C.BlockDataviewSortReplace(rootId, blockId, view.id, item.relationKey, { ...item });
+		C.BlockDataviewSortReplace(rootId, blockId, view.id, relationKey, { ...item });
 
 		analytics.event('ChangeSortValue', { type: item.type });
 		this.forceUpdate();
@@ -301,7 +302,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 
 		C.BlockDataviewSortRemove(rootId, blockId, view.id, [ item.relationKey ]);
@@ -326,7 +327,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const view = getView();
 
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
-		C.BlockDataviewSortSort(rootId, blockId, view.id, view.sorts.map(it => it.id));
+		C.BlockDataviewSortSort(rootId, blockId, view.id, view.sorts.map(it => it.relationKey));
 
 		selection.preventSelect(false);
 		analytics.event('RepositionSort');

@@ -16,6 +16,8 @@ interface State {
 	loading: boolean;
 };
 
+const PADDING = 46;
+
 const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewComponent, State> {
 
 	node: any = null;
@@ -64,6 +66,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		return (
 			<div 
 				ref={node => this.node = node} 
+				id="scrollWrap"
 				className="wrap"
 			>
 				<div id="scroll" className="scroll">
@@ -687,26 +690,41 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	resize () {
-		const { isPopup, isInline } = this.props;
+		const { rootId, block, isPopup, isInline } = this.props;
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const node = $(this.node);
-		const scroll = node.find('.scroll');
+		const scroll = node.find('#scroll');
 		const viewItem = node.find('.viewItem');
+		const wrap = node.find('#scrollWrap');
 		const container = Util.getPageContainer(isPopup);
-		const ww = container.width();
-		const mw = ww - 192;
+		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
 		const width = 30 + groups.length * (size.card + size.margin);
-		const margin = width >= mw ? (ww - mw) / 2 : 0;
 
 		if (!isInline) {
-			scroll.css({ width: ww, marginLeft: -margin / 2, paddingLeft: margin / 2 + 8 });
+			const mw = cw - 192;
+			const margin = width >= mw ? (cw - mw) / 2 : 0;
+
+			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 + 8 });
 			viewItem.css({ width: width < mw ? mw : width });
 		} else {
-			scroll.css({ paddingLeft: 8 });
+			if (parent.isPage() || parent.isLayoutDiv()) {
+				const wrapper = $('#editorWrapper');
+				const ww = wrapper.width();
+				const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
+				const margin = (cw - ww) / 2;
+				const pr = width > ww ? PADDING : 0;
+
+				scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin + 8 });
+				wrap.css({ width: vw, paddingRight: pr });
+			} else {
+				scroll.css({ paddingLeft: 8 });
+			};
 		};
 	};
-	
+
 });
 
 export default ViewBoard;

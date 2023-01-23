@@ -399,7 +399,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 
 			case I.ViewType.Board:
-				limit = view.pageLimit;
+				limit = view.pageLimit || 50;
 				break;
 			
 		};

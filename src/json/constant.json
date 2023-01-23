@@ -19,8 +19,7 @@
 		"lang": "en",
 		"cover": "sky",
 		"codeLang": "javascript",
-		"pinTime": 600,
-		"viewPageLimit": 50
+		"pinTime": 600
 	},
 	
 	"langs": [
