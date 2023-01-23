@@ -273,8 +273,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
 		});
 
-		if (isInline || (type == I.ViewType.Board)) {	
-			settings.push({ id: 'pageLimit', name: 'Page limit', caption: pageLimit || Constant.default.viewPageLimit, withCaption: true, arrow: true });
+		if (isInline || (type == I.ViewType.Board)) {
+			const options = Relation.getPageLimitOptions(type);
+			settings.push({ id: 'pageLimit', name: 'Page limit', caption: (pageLimit || options[0].id), withCaption: true, arrow: true });
 		};
 
 		let sections: any[] = [
@@ -328,7 +329,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-		const { groupRelationKey } = this.param;
+		const { type, groupRelationKey } = this.param;
 
 		if (!item.arrow || !allowedView) {
 			menuStore.closeAll(Constant.menuIds.viewEdit);
@@ -371,14 +372,11 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			};
 
 			case 'pageLimit':
-				let options = [ 10, 20, 50, 70, 100 ];
-				if (this.param.type == I.ViewType.Gallery) {
-					options = [ 12, 24, 60, 84, 120 ];
-				};
+				console.log(Relation.getPageLimitOptions(type));
 
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					options: options.map(it => ({ id: it, name: it })),
+					options: Relation.getPageLimitOptions(type),
 				});
 				break;
 
