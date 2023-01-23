@@ -717,8 +717,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const margin = (cw - ww) / 2;
 				const pr = width > ww ? PADDING : 0;
 
+				console.log(ww, vw, width);
+				console.log(margin, pr);
+
 				scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin + 8 });
-				wrap.css({ width: vw, paddingRight: pr });
+				wrap.css({ width: vw, paddingRight: PADDING });
 			} else {
 				scroll.css({ paddingLeft: 8 });
 			};

@@ -68,8 +68,11 @@
 				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
 			}
 
-			.editableWrap { @include text-header3; height: 26px; position: relative; cursor: pointer; max-width: 50%; @include text-overflow-nw; }
+			.editableWrap { @include text-header3; height: 26px; position: relative; cursor: pointer; max-width: 50%; }
 			.editableWrap.isEmpty { min-width: 70px; }
+			.editableWrap {
+				#value { @include text-overflow-nw; width: 100% }
+			}
 
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
 
@@ -78,6 +81,9 @@
 		}
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }
+			.editableWrap {
+				#value { text-overflow: unset; }
+			}
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }

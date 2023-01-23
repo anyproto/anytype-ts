@@ -30,6 +30,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
@@ -82,6 +83,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						onFocus={this.onFocus}
 						onMouseDown={this.onTitle}
 						onBlur={this.onBlur}
+						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
 						onSelect={this.onSelect}
 						onCompositionStart={this.onCompositionStart}
@@ -111,12 +113,17 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	componentDidUpdate () {
 		this.setValue();
 
-		if (this.ref && this.range) {
-			this.ref.setRange(this.range);
+		if (!this.state.isEditing) {
+			this.ref.setRange({ from: 0, to: 0 });
+		} else 
+		if (this.ref) {
+			const l = this.getValue().length;
+			this.ref.setRange(this.range || { from: l, to: l });
 		};
 	};
 
 	componentWillUnmount () {
+		this.save();
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 	};
@@ -248,11 +255,22 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 	onBlur () {
 		keyboard.setFocus(false);
-		this.setState({ isEditing: false });
+		window.clearTimeout(this.timeout);
+
+		this.save();
+		this.ref.setRange({ from: 0, to: 0 });
+		window.setTimeout(() => { this.setState({ isEditing: false }); }, 40);
 	};
 
 	onCompositionStart () {
 		window.clearTimeout(this.timeout);
+	};
+
+	onKeyDown (e: any) {
+		keyboard.shortcut('enter', e, () => { 
+			e.preventDefault();
+			this.save(); 
+		});
 	};
 
 	onKeyUp () {
@@ -315,7 +333,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		};
 
 		if (targetObjectId) {
-			DataUtil.blockSetText(targetObjectId, 'title', this.getValue(), [], true);
+			ObjectUtil.setName(targetObjectId, this.getValue());
 		};
 		
 		if (this.ref) {
