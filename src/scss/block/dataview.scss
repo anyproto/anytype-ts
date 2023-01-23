@@ -144,8 +144,9 @@
 	}
 
 	.block.blockDataview.isInline {
-		.dataviewEmpty { height: auto; padding: 48px 0px; }
+		.wrapMenu > .icon.dnd { height: 86px; }
 
+		.dataviewEmpty { height: auto; padding: 48px 0px; }
 		.dataviewHead { padding-left: 0px; padding-right: 0px; }
 
 		.dataviewControls {
