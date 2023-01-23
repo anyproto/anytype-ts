@@ -196,16 +196,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onRecordAdd (groupId: string, dir: number) {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, isInline } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
+		const objectId = isInline ? block.content.targetObjectId : rootId;
+		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const node = $(this.node);
 		const element = node.find(`#card-${groupId}-add`);
-		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {
 			type: types.length ? types[0].id : commonStore.type,
 		};
