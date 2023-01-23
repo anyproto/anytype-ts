@@ -67,8 +67,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			const object = detailStore.get(subId, item.id, [ view.groupRelationKey ]);
 		});
 
-		console.log('ITEMS', items, subId);
-
 		return (
 			<div 
 				ref={node => this.node = node} 
