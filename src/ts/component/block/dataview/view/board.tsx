@@ -696,34 +696,28 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const viewItem = node.find('.viewItem');
-		const wrap = node.find('#scrollWrap');
 		const container = Util.getPageContainer(isPopup);
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = 30 + groups.length * (size.card + size.margin);
+		const width = groups.length * (size.card + size.margin);
 
 		if (!isInline) {
-			const mw = cw - 192;
-			const margin = width >= mw ? (cw - mw) / 2 : 0;
+			const maxWidth = cw - PADDING * 2;
+			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
 
-			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 + 8 });
-			viewItem.css({ width: width < mw ? mw : width });
+			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 + size.margin });
+			viewItem.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 + size.margin });
 		} else {
 			if (parent.isPage() || parent.isLayoutDiv()) {
 				const wrapper = $('#editorWrapper');
 				const ww = wrapper.width();
-				const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
 				const margin = (cw - ww) / 2;
-				const pr = width > ww ? PADDING : 0;
 
-				console.log(ww, vw, width);
-				console.log(margin, pr);
-
-				scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin + 8 });
-				wrap.css({ width: vw, paddingRight: PADDING });
+				scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin + size.margin });
+				viewItem.css({ width: width + margin });
 			} else {
-				scroll.css({ paddingLeft: 8 });
+				scroll.css({ paddingLeft: size.margin });
 			};
 		};
 	};
