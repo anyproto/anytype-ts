@@ -302,7 +302,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { data } = param;
 		const { blockId, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const { config } = commonStore;
 		
 		if (!block) {
 			return [];
@@ -314,16 +313,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			{ id: 'media', name: 'Media', children: MenuUtil.getBlockMedia() },
 			{ id: 'other', name: 'Other', children: MenuUtil.getBlockOther() },
 			{ id: 'object', name: 'Objects', children: MenuUtil.getBlockObject() },
-			{ id: 'dataview', name: 'Set view', children: MenuUtil.getBlockDataview() },
-		];
-
-		sections = sections.map((s: any) => {
-			s.children = s.children.map((c: any) => {
-				c.isBig = true;
-				return c;
-			});
-			return s;
-		});
+			{ id: 'dataview', name: 'Inline Set', children: MenuUtil.getBlockDataview() },
+		].map(s => ({ ...s, children: s.children.map(c => ({ ...c, isBig: true })) }));
 
 		sections = sections.concat([
 			{ id: 'relation', name: 'Relations', children: this.getRelations() },
