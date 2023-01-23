@@ -147,7 +147,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 					</div>
 
 					{isInline && (limit + offset < total) ? (
-						<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreCards} />
+						<LoadMore limit={limit} loaded={records.length} total={total} onClick={this.loadMoreCards} />
 					) : ''}
 				</div>
 			</div>

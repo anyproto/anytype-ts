@@ -74,6 +74,7 @@
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
 
 			#head-source-select { opacity: 0; }
+			#head-source-select.active { opacity: 1; }
 		}
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }

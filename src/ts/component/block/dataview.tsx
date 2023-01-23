@@ -33,6 +33,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	state = {
 		loading: false,
 	};
+	node: any = null;
 	refView: any = null;
 	refHead: any = null;
 	refControls: any = null;
@@ -212,7 +213,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		return (
-			<div>
+			<div
+				ref={node => this.node = node}
+			>
 				{content}
 			</div>
 		);
@@ -390,16 +393,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getLimit (type: I.ViewType): number {
 		const { isInline } = this.props;
 		const view = this.getView();
+		const options = Relation.getPageLimitOptions(view.type);
+		const pageLimit = Number(view.pageLimit) || options[0].id;
 
 		let limit = 0;
 
 		switch (type) {
 			default:
-				limit = isInline ? view.pageLimit : 0;
+				limit = isInline ? pageLimit : 0;
 				break;
 
 			case I.ViewType.Board:
-				limit = view.pageLimit || 50;
+				limit = isInline ? pageLimit : 50;
 				break;
 			
 		};
@@ -689,6 +694,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onSourceSelect (element: any, param: Partial<I.MenuParam>) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
+
+		const onSelect = (item: any, isNew: boolean) => {
+			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
+				const button = $(this.node).find('#head-source-select');
+
+				if (isNew && button.length) {
+					button.trigger('click');
+				};
+
+				if (message.views && message.views.length) {
+					this.getData(message.views[0].id, 0, true);
+				};
+			});
+
+			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
+		};
+
 		const menuParam = Object.assign({
 			element: $(element),
 			className: 'single',
@@ -702,35 +724,38 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 				],
 				canAdd: true,
-				onSelect: (item: any, isNew: boolean) => {
-					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
-						if (message.views && message.views.length) {
-							this.getData(message.views[0].id, 0, true);
-						};
-					});
-
-					analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
-				}
+				addParam: { 
+					name: 'Create new set',
+					onClick: () => {
+						C.ObjectCreateSet([], {}, '', (message: any) => { onSelect(message.details, true); });
+					},
+				},
+				onSelect,
 			}
 		}, param || {});
 
 		menuStore.open('searchObject', menuParam);
 	};
 
-	onSourceTypeSelect (element: any) {
+	onSourceTypeSelect (obj: any) {
 		const { rootId, block, isInline } = this.props;
 		const objectId = isInline ? block.content.targetObjectId : rootId;
-		const blockId = isInline ? block.id : Constant.blockId.dataview;
+		const element = $(obj);
 
 		menuStore.closeAll(null, () => {
 			menuStore.open('dataviewSource', {
-				element: $(element),
-				className: 'big single',
+				element,
 				horizontal: I.MenuDirection.Center,
+				onOpen: () => {
+					element.addClass('active');
+				}, 
+				onClose: () => {
+					element.removeClass('active');
+				}, 
 				data: {
 					rootId,
 					objectId,
-					blockId,
+					blockId: block.id,
 				}
 			});
 		});

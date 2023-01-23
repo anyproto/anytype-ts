@@ -138,7 +138,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		const options: any[] = [
 			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
-			{ id: 'sourceChange', icon: 'folderBlank', name: 'Change source set', arrow: true },
+			{ id: 'sourceChange', icon: 'source', name: 'Change source set', arrow: true },
 			{ id: 'sourceOpen', icon: 'expand', name: 'Open source set' },
 		];
 

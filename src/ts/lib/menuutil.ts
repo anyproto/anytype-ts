@@ -178,7 +178,8 @@ class MenuUtil {
 
 	getDataviewActions () {
 		return [
-			{ id: 'dataviewSource', icon: 'source', name: 'Source set', arrow: true },
+			{ id: 'dataviewSource', icon: 'source', name: 'Change source set', arrow: true },
+			{ id: 'openDataviewObject', icon: 'expand', name: 'Open source set' },
 			//{ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' }
 		];
 	};

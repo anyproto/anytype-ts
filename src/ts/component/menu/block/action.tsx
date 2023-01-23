@@ -627,7 +627,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 		
-		const { param, close, getId } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { blockId, blockIds, rootId } = data;
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -661,6 +661,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			case 'openDataviewFullscreen': {
 				ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
 				analytics.event('InlineSetOpenFullscreen');
+				break;
+			};
+
+			case 'openDataviewObject': {
+				ObjectUtil.openPopup(detailStore.get(rootId, block.content.targetObjectId));
 				break;
 			};
 					
