@@ -314,11 +314,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			{ id: 'media', name: 'Media', children: MenuUtil.getBlockMedia() },
 			{ id: 'other', name: 'Other', children: MenuUtil.getBlockOther() },
 			{ id: 'object', name: 'Objects', children: MenuUtil.getBlockObject() },
+			{ id: 'dataview', name: 'Set view', children: MenuUtil.getBlockDataview() },
 		];
-
-		if (config.experimental) {
-			sections.push({ id: 'dataview', name: 'Set view', children: MenuUtil.getBlockDataview() });
-		};
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.map((c: any) => {

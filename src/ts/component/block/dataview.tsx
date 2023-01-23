@@ -313,6 +313,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
+	getObjectId () {
+		const { rootId, block, isInline } = this.props;
+		return isInline ? block.content.targetObjectId : rootId;
+	};
+
 	getKeys (id: string): string[] {
 		let view = this.getView(id);
 		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
@@ -476,7 +481,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
+		const objectId = this.getObjectId();
+		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const element = $(e.currentTarget);
 		const view = this.getView();
@@ -487,8 +493,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.AllIn,
 		]; 
 
-		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {
 			type: types.length ? types[0].id : commonStore.type,
 		};
@@ -738,8 +744,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onSourceTypeSelect (obj: any) {
-		const { rootId, block, isInline } = this.props;
-		const objectId = isInline ? block.content.targetObjectId : rootId;
+		const { rootId, block } = this.props;
+		const objectId = this.getObjectId();
 		const element = $(obj);
 
 		menuStore.closeAll(null, () => {
