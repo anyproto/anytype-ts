@@ -67,6 +67,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		$('body').removeClass('cp');
 		this.unbind();
+		this.onPreviewHide();
 	};
 
 	rebind () {
@@ -237,11 +238,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		};
 
 		const { isPopup } = this.props;
+		const win = $(window);
 		const body = $('body');
 		const container = Util.getPageContainer(isPopup);
 		const { left, top } = container.offset();
 		const x = data.x + left + 10;
-		const y = data.y + top + 10;
+		const y = data.y + top + 10 - win.scrollTop();
 
 		let el = $('#graphPreview');
 		if (!el.length) {
