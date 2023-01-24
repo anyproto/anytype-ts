@@ -92,8 +92,9 @@ init = (param) => {
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
-	simulation.alphaDecay(0.3);
-	simulation.velocityDecay(0.3);
+	simulation.alpha(1);
+	simulation.alphaDecay(0.05);
+	simulation.velocityDecay(0.05);
 
 	initForces();
 
