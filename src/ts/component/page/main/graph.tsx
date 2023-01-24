@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, Util, analytics, sidebar, DataUtil, keyboard } from 'Lib';
+import { I, C, Util, analytics, sidebar, DataUtil, ObjectUtil, keyboard } from 'Lib';
 import { Header, Graph, Icon, Loader } from 'Component';
-import { blockStore, detailStore, menuStore, commonStore } from 'Store';
+import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
@@ -216,9 +216,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		if (this.refGraph) {
 			this.refGraph.send('onSetSelected', { ids: this.ids });
-			this.refGraph.send('onSetRootId', { rootId: id });
+			//this.refGraph.send('onSetRootId', { rootId: id });
 		};
 		
+		ObjectUtil.openAuto(this.data.nodes.find(d => d.id == id));
 		analytics.event('GraphSelectNode');
 	};
 

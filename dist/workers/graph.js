@@ -331,7 +331,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (d.name && settings.label && (transform.k >= transformThreshold)) {
+	if ((d.source.isOver || d.target.isOver) && d.name && settings.label && (transform.k >= transformThreshold)) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
