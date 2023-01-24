@@ -72,6 +72,9 @@ class Focus {
 
 		$('.focusable.isFocused').removeClass('isFocused');
 
+		console.log('FOCUS APPLY', focused, range.from, range.to);
+		console.trace();
+
 		const node = $('.focusable.c' + focused);
 		if (!node.length) {
 			return;
