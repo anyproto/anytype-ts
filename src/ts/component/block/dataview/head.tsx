@@ -195,6 +195,22 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					],
 					canAdd: true,
 					rebind: this.menuContext.ref.rebind,
+					addParam: { 
+						name: 'Create new set',
+						onClick: () => {
+							C.ObjectCreateSet([], {}, '', (message: any) => {
+								C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
+									$(this.node).find('#head-source-select').trigger('click');
+
+									if (message.views && message.views.length) {
+										getData(message.views[0].id, 0, true);
+									};
+								});
+
+								analytics.event('InlineSetSetSource', { type: 'newObject' });
+							});
+						},
+					},
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 							if (message.views && message.views.length) {
