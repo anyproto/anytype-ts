@@ -28,6 +28,7 @@ import Action from './action';
 import Onboarding from './onboarding';
 import Survey from './survey';
 import Preview from './preview';
+import Highlight from './highlight';
 
 import Constant from 'json/constant.json';
 import Text from 'json/text.json';
@@ -77,4 +78,5 @@ export {
 	Renderer,
 	Survey,
 	Preview,
+	Highlight,
 };

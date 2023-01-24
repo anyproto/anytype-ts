@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, Preview } from 'Lib';
+import { I, Preview, Highlight } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -10,6 +10,9 @@ interface Props {
 	tooltip?: string;
 	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
+	highlight?: string;
+	highlightX?: I.MenuDirection;
+	highlightY?: I.MenuDirection;
 	inner?: any;
 	draggable?: boolean;
 	style?: any;
@@ -26,6 +29,8 @@ class Icon extends React.Component<Props> {
 	public static defaultProps = {
 		tooltipX: I.MenuDirection.Center,
 		tooltipY: I.MenuDirection.Bottom,
+		highlightX: I.MenuDirection.Right,
+		highlightY: I.MenuDirection.Top,
 	};
 
 	node: any = null;
@@ -71,9 +76,19 @@ class Icon extends React.Component<Props> {
 			</div>
 		);
 	};
-	
+
+	componentDidMount() {
+		const { highlight, highlightX, highlightY } = this.props;
+		const node = $(this.node);
+
+		if (highlight) {
+			Highlight.show(highlight, node, { typeX: highlightX, typeY: highlightY});
+		};
+	};
+
 	componentWillUnmount () {
 		Preview.tooltipHide(false);
+		Highlight.hide($(this.node));
 	};
 	
 	onMouseEnter (e: any) {
