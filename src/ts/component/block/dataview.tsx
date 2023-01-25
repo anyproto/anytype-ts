@@ -355,6 +355,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const sources = this.getSources();
 
 		if (!sources.length) {
+			console.log('[getData] No sources');
 			return;
 		}
 

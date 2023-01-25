@@ -599,14 +599,23 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				];
 
 				menuParam.data = Object.assign(menuParam.data, {
-					type: I.NavigationType.Move,
-					position: I.BlockPosition.Bottom,
 					rootId,
 					blockId: block.id,
 					value: [ block.content.targetObjectId ],
 					blockIds: [ block.id ],
 					filters,
 					canAdd: true,
+					addParam: { 
+						name: 'Create new set',
+						onClick: () => {
+							C.ObjectCreateSet([], {}, '', (message: any) => {
+								C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
+									$(`#block-${block.id} #head-source-select`).trigger('click');
+									$(window).trigger(`updateDataviewData.${block.id}`);
+								});
+							});
+						},
+					},
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id);
 					}
