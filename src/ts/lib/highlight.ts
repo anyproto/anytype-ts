@@ -1,77 +1,52 @@
 import $ from 'jquery';
-import {I, Storage} from 'Lib';
-import {MenuDirection} from "Interface";
+import { Storage } from 'Lib';
 
-interface highlightParam {
-    typeX: I.MenuDirection,
-    typeY: I.MenuDirection,
-    offsetX?: number,
-    offsetY?: number
+const HIGHLIGHTS_MAP = {
+    whatsNew: ['#button-help', '#item-whatsNew'],
+    shortcut: ['#button-help', '#item-shortcut'],
+    hints: ['#button-help', '#item-hints']
 };
 
 class Highlight {
-    show (key: string, node: any, param: highlightParam) {
-        const { typeX, typeY, offsetX, offsetY} = param;
+    show (key: string) {
+        const highlights = Storage.get('highlights') || {};
 
-        if (!Storage.get(key)) {
+        if (!HIGHLIGHTS_MAP[key] || !highlights[key]) {
             return;
         };
 
-        if (node.css('position') === 'static') {
-            node.addClass('highlightWrap');
+        HIGHLIGHTS_MAP[key].forEach((e) => {
+            $(document).find(e).each(this.add);
+        });
+    };
+
+    hide (key: string) {
+        const highlights = Storage.get('highlights');
+
+        if (!HIGHLIGHTS_MAP[key] || !highlights[key]) {
+            return;
+        };
+
+        highlights[key] = false;
+        Storage.set('highlights', highlights);
+
+        HIGHLIGHTS_MAP[key].forEach((e) => {
+            $(document).find(e).each(this.remove);
+        });
+    };
+
+    add (idx: number, node: any) {
+        if ($(node).find('.highlightMark').length) {
+            return;
         };
 
         const dot = $('<div />').addClass('highlightMark');
-        node.append(dot);
 
-        const nW = node.outerWidth();
-        const nH = node.outerHeight();
-        const w = dot.outerWidth();
-
-        let x = 0;
-        let y = 0;
-        let oX = offsetX || 0;
-        let oY = offsetY || 0;
-
-        switch (typeX) {
-            default:
-            case I.MenuDirection.Right:
-                x = nW - w;
-                break;
-            case MenuDirection.Center:
-                x = nW / 2 - w/2;
-                break;
-        };
-
-        x += oX;
-
-        switch (typeY) {
-            default:
-                y = 0;
-                break;
-
-            case MenuDirection.Center:
-                console.log('HERE?')
-                y= nH / 2 - w/2;
-                break;
-
-            case I.MenuDirection.Bottom:
-                y = nH - w;
-                break;
-        };
-
-        y += oY;
-
-        dot.css({ left: x, top: y});
+        $(node).append(dot);
     };
 
-    hide (node: any) {
-        const el = node.find('.highlightMark');
-
-        node.removeClass('highlightWrap');
-        if (el) {
-            el.remove();
-        };
+    remove (idx: number, node: any) {
+        $(node).find('.highlightMark').remove();
     };
 };
 

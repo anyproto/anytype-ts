@@ -113,6 +113,8 @@
 
 			.clickable { display: flex; flex-grow: 1; }
 			.select { height: 28px; }
+
+			.highlightMark { top: 50%; margin-top: -5px; right: 14px; }
 		}
 
 		.item.empty { cursor: default; }
