@@ -8,6 +8,16 @@ const HIGHLIGHTS_MAP = {
 };
 
 class Highlight {
+    showAll () {
+        const highlights = Storage.get('highlights') || {};
+
+        Object.keys(highlights).forEach((el) => {
+            if (highlights[el]) {
+                this.show(el);
+            };
+        });
+    };
+
     show (key: string) {
         const highlights = Storage.get('highlights') || {};
 

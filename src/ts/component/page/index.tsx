@@ -215,8 +215,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		Onboarding.start(Util.toCamelCase([ match.params?.page, match.params?.action ].join('-')), isPopup);
-		Highlight.show('hints');
-		Highlight.show('whatsNew');
+		Highlight.showAll();
 		
 		if (isPopup) {
 			return;
