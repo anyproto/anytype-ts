@@ -121,7 +121,13 @@ class DetailStore {
 			};
 			list = list.filter(it => keys.includes(it.relationKey));
 		};
-		return this.check(Object.fromEntries(list.map(it => [ it.relationKey, it.value ])));
+
+		let object: any = {};
+		list.forEach(it => {
+			object[it.relationKey] = it.value;
+		});
+
+		return this.check(object);
 	};
 
 	check (object: any) {
