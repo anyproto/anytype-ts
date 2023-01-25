@@ -321,6 +321,7 @@ const Mapper = {
 
 		Sort: (obj: any): I.Sort => {
 			return {
+				id: obj.getId(),
 				relationKey: obj.getRelationkey(),
 				type: obj.getType(),
 				customOrder: (obj.getCustomorderList() || []).map(Decode.decodeValue),
@@ -684,6 +685,7 @@ const Mapper = {
 		Sort: (obj: any) => {
 			const item = new Model.Block.Content.Dataview.Sort();
 			
+			item.setId(obj.id);
 			item.setRelationkey(obj.relationKey);
 			item.setType(obj.type);
 			item.setCustomorderList((obj.customOrder || []).map(Encode.encodeValue));

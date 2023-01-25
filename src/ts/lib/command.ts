@@ -857,24 +857,24 @@ const BlockDataviewSortAdd = (contextId: string, blockId: string, viewId: string
 	dispatcher.request(BlockDataviewSortAdd.name, request, callBack);
 };
 
-const BlockDataviewSortRemove = (contextId: string, blockId: string, viewId: string, relationKeys: string[], callBack?: (message: any) => void) => {
+const BlockDataviewSortRemove = (contextId: string, blockId: string, viewId: string, ids: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Sort.Remove.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
-	request.setRelationkeysList(relationKeys);
+	request.setIdsList(ids);
 
 	dispatcher.request(BlockDataviewSortRemove.name, request, callBack);
 };
 
-const BlockDataviewSortReplace = (contextId: string, blockId: string, viewId: string, relationKey: string, sort: I.Sort, callBack?: (message: any) => void) => {
+const BlockDataviewSortReplace = (contextId: string, blockId: string, viewId: string, id: string, sort: I.Sort, callBack?: (message: any) => void) => {
 	const request = new Rpc.BlockDataview.Sort.Replace.Request();
 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
-	request.setRelationkey(relationKey);
+	request.setId(id);
 	request.setSort(Mapper.To.Sort(sort));
 
 	dispatcher.request(BlockDataviewSortReplace.name, request, callBack);
