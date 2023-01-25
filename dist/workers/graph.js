@@ -31,9 +31,9 @@ const forceProps = {
 		y: 0.5,
 	},
 	charge: {
-		strength: -50,
-		distanceMin: 0,
-		distanceMax: 200,
+		strength: -1000,
+		distanceMin: 50,
+		distanceMax: 500,
 	},
 	collide: {
 		strength: 1,
@@ -41,7 +41,7 @@ const forceProps = {
 	},
 	link: {
 		strength: 1,
-		distance: 80,
+		distance: 1,
 		iterations: 1,
 	},
 	forceX: {
@@ -92,14 +92,15 @@ init = (param) => {
 
 	transform = d3.zoomIdentity.translate(-width, -height).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
-	simulation.alphaDecay(0.3);
-	simulation.velocityDecay(0.3);
+	simulation.alpha(1);
+	simulation.alphaDecay(0.05);
+	simulation.velocityDecay(0.05);
 
 	initForces();
 
 	simulation.on('tick', () => { redraw(); });
-	//simulation.on('end', () => { simulation.alphaTarget(0); });
 	simulation.tick();
+
 	restart(0);
 };
 
@@ -155,13 +156,43 @@ updateSettings = (param) => {
 };
 
 initForces = () => {
+	const { center, charge, collide, link, forceX, forceY } = forceProps;
+
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
-	.force('charge', d3.forceManyBody(nodes))
+	.force('charge', d3.forceManyBody())
 	.force('collide', d3.forceCollide(nodes))
 	.force('center', d3.forceCenter())
 	.force('forceX', d3.forceX(nodes))
-	.force('forceY', d3.forceY(nodes))
+	.force('forceY', d3.forceY(nodes));
+
+	simulation.force('center')
+	.x(width * center.x)
+	.y(height * center.y);
+
+	simulation.force('charge')
+	.strength(charge.strength)
+	.distanceMin(charge.distanceMin)
+	.distanceMax(charge.distanceMax);
+
+	simulation.force('collide')
+	.radius(d => d.radius)
+	.strength(collide.strength)
+	.iterations(collide.iterations);
+
+	simulation.force('link')
+	.id(d => d.id)
+	.links(edges)
+	.distance(link.distance)
+	.iterations(link.iterations);
+
+	simulation.force('forceX')
+	.strength(d => d.isOrphan ? forceX.strength : 0)
+	.x(width * forceX.x);
+
+	simulation.force('forceY')
+	.strength(d => d.isOrphan ? forceY.strength : 0)
+	.y(height * forceY.y);
 
 	updateForces();
 };
@@ -223,35 +254,9 @@ updateForces = () => {
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
 	simulation.nodes(nodes);
-
-	simulation.force('center')
-	.x(width * center.x)
-	.y(height * center.y);
-
-	simulation.force('charge')
-	.strength(charge.strength)
-	//.distanceMin(charge.distanceMin)
-	//.distanceMax(charge.distanceMax);
-
-	simulation.force('collide')
-	.strength(collide.strength)
-	.radius(d => d.radius)
-	.iterations(collide.iterations);
-
 	simulation.force('link')
 	.id(d => d.id)
-	.distance(link.distance)
-	.strength(d => d.isOrphan ? 0 : link.strength)
-	.iterations(link.iterations)
 	.links(edges);
-
-	simulation.force('forceX')
-	.strength(d => d.isOrphan ? forceX.strength : 0)
-	.x(width * forceX.x);
-
-	simulation.force('forceY')
-	.strength(d => d.isOrphan ? forceY.strength : 0)
-	.y(height * forceY.y);
 
 	restart(0.1);
 };
@@ -331,7 +336,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (d.name && settings.label && (transform.k >= transformThreshold)) {
+	if ((d.source.isOver || d.target.isOver) && d.name && settings.label && (transform.k >= transformThreshold)) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -505,7 +510,7 @@ onDragMove = ({ subjectId, x, y }) => {
 
 onDragEnd = ({ active }) => {
 	if (!active) {
-		simulation.alphaTarget(0);
+		restart(0);
 	};
 };
 

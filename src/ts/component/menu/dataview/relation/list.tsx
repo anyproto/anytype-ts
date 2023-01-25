@@ -229,8 +229,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 
 		const onAdd = () => {
-			getData(getView().id, 0);
-
 			if (data.onAdd) {
 				data.onAdd();
 			};
@@ -249,9 +247,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				filter: '',
 				ref: 'dataview',
 				skipKeys: relations.map(it => it.relationKey),
-				onAdd: onAdd,
+				onAdd,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					Dataview.relationAdd(rootId, blockId, [ relation.relationKey ], -1, getView(), (message: any) => {
+					Dataview.relationAdd(rootId, blockId, relation.relationKey, -1, getView(), (message: any) => {
 						onAdd();
 
 						if (onChange) {
@@ -320,9 +318,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
-		const relation = view.getRelation(item.relationKey);
 
-		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...relation, isVisible: v });
+		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item, isVisible: v });
 	};
 
 	onScroll ({ scrollTop }) {

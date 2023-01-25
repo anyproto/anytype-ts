@@ -33,6 +33,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	state = {
 		loading: false,
 	};
+	node: any = null;
 	refView: any = null;
 	refHead: any = null;
 	refControls: any = null;
@@ -194,7 +195,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					<Empty
 						{...this.props}
 						title="No data source"
-						description="Select object source or connect existing set"
+						description="Connect one of your sets or create<br/>new one to continue"
 						button="Select source"
 						withButton={true}
 						onClick={this.onEmpty}
@@ -212,7 +213,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		return (
-			<div>
+			<div
+				ref={node => this.node = node}
+			>
 				{content}
 			</div>
 		);
@@ -310,6 +313,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
+	getObjectId () {
+		const { rootId, block, isInline } = this.props;
+		return isInline ? block.content.targetObjectId : rootId;
+	};
+
 	getKeys (id: string): string[] {
 		let view = this.getView(id);
 		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
@@ -347,6 +355,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const sources = this.getSources();
 
 		if (!sources.length) {
+			console.log('[getData] No sources');
 			return;
 		}
 
@@ -390,22 +399,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getLimit (type: I.ViewType): number {
 		const { isInline } = this.props;
 		const view = this.getView();
+		const options = Relation.getPageLimitOptions(view.type);
+		const pageLimit = Number(view.pageLimit) || options[0].id;
 
 		let limit = 0;
 
 		switch (type) {
 			default:
-				limit = isInline ? view.pageLimit : 0;
+				limit = isInline ? pageLimit : 0;
 				break;
 
 			case I.ViewType.Board:
-				limit = view.pageLimit;
+				limit = isInline ? pageLimit : 50;
 				break;
 			
-			case I.ViewType.Gallery:
-				limit = isInline ? Math.floor(view.pageLimit / 3) * 4 : 0;
-				break;
-
 		};
 		return limit;
 	};
@@ -475,7 +482,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
+		const objectId = this.getObjectId();
+		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const element = $(e.currentTarget);
 		const view = this.getView();
@@ -486,8 +494,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.AllIn,
 		]; 
 
-		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {
 			type: types.length ? types[0].id : commonStore.type,
 		};
@@ -693,6 +701,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onSourceSelect (element: any, param: Partial<I.MenuParam>) {
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
+
+		const onSelect = (item: any, isNew: boolean) => {
+			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
+				const button = $(this.node).find('#head-source-select');
+
+				if (isNew && button.length) {
+					button.trigger('click');
+				};
+
+				if (message.views && message.views.length) {
+					this.getData(message.views[0].id, 0, true);
+				};
+			});
+
+			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
+		};
+
 		const menuParam = Object.assign({
 			element: $(element),
 			className: 'single',
@@ -706,35 +731,38 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 				],
 				canAdd: true,
-				onSelect: (item: any, isNew: boolean) => {
-					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
-						if (message.views && message.views.length) {
-							this.getData(message.views[0].id, 0, true);
-						};
-					});
-
-					analytics.event('InlineSetSetSource', { type: isNew ? 'newObject': 'externalObject' });
-				}
+				addParam: { 
+					name: 'Create new set',
+					onClick: () => {
+						C.ObjectCreateSet([], {}, '', (message: any) => { onSelect(message.details, true); });
+					},
+				},
+				onSelect,
 			}
 		}, param || {});
 
 		menuStore.open('searchObject', menuParam);
 	};
 
-	onSourceTypeSelect (element: any) {
-		const { rootId, block, isInline } = this.props;
-		const objectId = isInline ? block.content.targetObjectId : rootId;
-		const blockId = isInline ? block.id : Constant.blockId.dataview;
+	onSourceTypeSelect (obj: any) {
+		const { rootId, block } = this.props;
+		const objectId = this.getObjectId();
+		const element = $(obj);
 
 		menuStore.closeAll(null, () => {
 			menuStore.open('dataviewSource', {
-				element: $(element),
-				className: 'big single',
+				element,
 				horizontal: I.MenuDirection.Center,
+				onOpen: () => {
+					element.addClass('active');
+				}, 
+				onClose: () => {
+					element.removeClass('active');
+				}, 
 				data: {
 					rootId,
 					objectId,
-					blockId,
+					blockId: block.id,
 				}
 			});
 		});

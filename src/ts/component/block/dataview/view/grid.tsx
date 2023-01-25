@@ -50,9 +50,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 			return (
 				<Empty 
 					{...this.props}
-					title="No objects of this type" 
-					description="Create the first object of this type to start your set"
-					button="Add a new object"
+					title="No objects found" 
+					description="Create your first one to begin"
+					button="Create object"
 					withButton={allowed}
 					onClick={(e: any) => onRecordAdd(e, 1)}
 				/>
@@ -228,10 +228,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 				const ww = wrapper.width();
 				const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
 				const margin = (cw - ww) / 2;
-				const pr = width > ww ? PADDING : 0;
 
 				scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
-				wrap.css({ width: vw, paddingRight: pr });
+				wrap.css({ width: vw + margin, paddingRight: margin - 8 });
 			} else {
 				const parentObj = $(`#block-${parent.id}`);
 				const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
@@ -345,13 +344,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	onResizeEnd (e: any, relationKey: string) {
 		const { rootId, block, getView } = this.props;
 		const view = getView();
-		const idx = view.relations.findIndex(it => it.relationKey == relationKey);
 
 		$(window).off('mousemove.cell mouseup.cell').trigger('resize');
 		$('body').removeClass('colResize');
 
-		view.relations[idx].width = this.checkWidth(e.pageX - this.ox);
-		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
+		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, relationKey, { 
+			...view.getRelation(relationKey), 
+			width: this.checkWidth(e.pageX - this.ox),
+		});
 
 		window.setTimeout(() => { keyboard.setResize(false); }, 50);
 	};
@@ -391,12 +391,13 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const { selection } = dataset;
 		const { oldIndex, newIndex } = result;
 		const view = getView();
-		const filtered = view.getVisibleRelations();
-		const oldIdx = view.relations.findIndex(it => it.relationKey == filtered[oldIndex].relationKey);
-		const newIdx = view.relations.findIndex(it => it.relationKey == filtered[newIndex].relationKey);
-		
-		view.relations = arrayMove(view.relations, oldIdx, newIdx);
-		C.BlockDataviewViewUpdate(rootId, block.id, view.id, view);
+		const relations = view.relations.filter(it => {
+			const relation = dbStore.getRelationByKey(it.relationKey);
+			return !relation.isHidden || (relation.isHidden && (it.relationKey == 'name'));
+		});
+
+		view.relations = arrayMove(relations, oldIndex, newIndex);
+		C.BlockDataviewViewRelationSort(rootId, block.id, view.id, view.relations.map(it => it.relationKey));
 
 		selection.preventSelect(false);
 	};

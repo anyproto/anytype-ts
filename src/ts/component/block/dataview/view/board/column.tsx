@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { Icon, Loader, LoadMore } from 'Component';
 import { I, translate, Relation, DataUtil, Util } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
-
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
-import Constant from "json/constant.json";
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -219,17 +217,17 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
-		return applyObjectOrder(id, Util.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => { return { id }; });
+		return applyObjectOrder(id, Util.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => ({ id }));
 	};
 
-	onLoadMore (e: any) {
+	onLoadMore () {
 		const { getLimit } = this.props;
 
 		this.offset += getLimit();
 		this.load(false);
 	};
 
-	onMore (e: any) {
+	onMore () {
 		const { rootId, block, id, getView } = this.props;
 		const node = $(this.node);
 

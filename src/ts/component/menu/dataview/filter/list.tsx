@@ -216,9 +216,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			value: Relation.formatValue(first, null, false),
 		};
 
-		C.BlockDataviewFilterAdd(rootId, blockId, view.id, newItem, () => {
-			getData(view.id, 0);
-		});
+		C.BlockDataviewFilterAdd(rootId, blockId, view.id, newItem);
 
 		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
 		analytics.event('AddFilter', { condition: newItem.condition });

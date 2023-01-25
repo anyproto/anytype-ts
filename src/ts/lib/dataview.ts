@@ -1,6 +1,6 @@
-import {dbStore, commonStore, blockStore, detailStore} from 'Store';
+import arrayMove from 'array-move';
+import { dbStore, commonStore, blockStore, detailStore } from 'Store';
 import { I, M, C, Util, DataUtil, Relation } from 'Lib';
-
 import Constant from 'json/constant.json';
 
 class Dataview {
@@ -65,38 +65,35 @@ class Dataview {
 		return Util.arrayUniqueObjects(ret, 'relationKey');
 	};
 
-	relationAdd (rootId: string, blockId: string, relationKeys: string[], index: number, view?: I.View, callBack?: (message: any) => void) {
+	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
 		if (!view) {
 			return;
 		};
 
-		C.BlockDataviewRelationAdd(rootId, blockId, relationKeys, (message: any) => {
+		C.BlockDataviewRelationAdd(rootId, blockId, [ relationKey ], (message: any) => {
 			if (message.error.code) {
 				return;
 			};
 
-			relationKeys.forEach((relationKey: string) => {
-				let rel: any = view.getRelation(relationKey);
+			const rel: any = view.getRelation(relationKey) || {};
 
-				if (rel) {
-					rel.isVisible = true;
+			rel.relationKey = relationKey;
+			rel.width = rel.width || Constant.size.dataview.cell.default;
+			rel.isVisible = true;
+
+			C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, relationKey, rel, (message: any) => {
+				if (index >= 0) {
+					const newView = dbStore.getView(rootId, blockId, view.id);
+					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
+
+					newView.relations = arrayMove(newView.relations, oldIndex, index);
+					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, newView.relations.map(it => it.relationKey), callBack);
 				} else {
-					rel = { 
-						relationKey,
-						width: Constant.size.dataview.cell.default,
-						isVisible: true,
-					};
-
-					if (index >= 0) {
-						view.relations.splice(index, 0, rel);
-					} else {
-						view.relations.push(rel);
+					if (callBack) {
+						callBack(message);
 					};
 				};
-
 			});
-
-			C.BlockDataviewViewUpdate(rootId, blockId, view.id, view, callBack);
 		});
 	};
 

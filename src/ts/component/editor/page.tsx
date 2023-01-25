@@ -1400,8 +1400,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		commonStore.filterSet(range.from, '');
+
 		menuStore.open('blockAdd', { 
-			element: $('#block-' + blockId),
+			element: $(`#block-${blockId}`),
 			recalcRect: () => {
 				const rect = Util.selectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
@@ -1727,7 +1728,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { rootId } = this.props;
 
 		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
-			this.focus(message.blockId, 0, 0, false);
+			window.setTimeout(() => {
+				this.focus(message.blockId, 0, 0, false);
+			}, 15);
 
 			if (callBack) {
 				callBack(message.blockId);

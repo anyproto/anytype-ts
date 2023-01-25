@@ -3,6 +3,8 @@
 .blocks {
 	.block.blockDataview { @include text-common; }
 	.block.blockDataview {
+		.wrapContent { z-index: 1; }
+
 		#set-loader { margin: 24px auto; }
 		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
 		
@@ -39,7 +41,7 @@
 		}
 		.dataviewEmpty {
 			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
-			.descr { @include text-small; margin: 0px 0px 12px 0px; }
+			.descr { @include text-small; margin: 0px 0px 8px 0px; }
 			.button { color: $colorBlack; }
 		}
 
@@ -52,7 +54,7 @@
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
 		.dataviewHead {
-			.side.left { gap: 0px 12px; }
+			.side.left { gap: 0px 6px; }
 			.side.right { opacity: 0; transition: $transitionFast; }
 
 			.iconWrap { 
@@ -66,12 +68,13 @@
 				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
 			}
 
-			.editableWrap { @include text-header3; font-weight: 700; position: relative; cursor: pointer; }
-			.editableWrap {
-				.editable { min-width: 70px; min-height: 26px; }
-			}
+			.editableWrap { @include text-header3; height: 26px; position: relative; cursor: pointer; max-width: 50%; @include text-overflow-nw; }
+			.editableWrap.isEmpty { min-width: 70px; }
 
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
+
+			#head-source-select { opacity: 0; }
+			#head-source-select.active { opacity: 1; }
 		}
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }
@@ -100,8 +103,9 @@
 			}
 			.views {
 				.viewItem { 
-					display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; 
-					white-space: nowrap; @include text-header3; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; line-height: 28px; 
+					display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; white-space: nowrap; 
+					@include text-paragraph; font-weight: 600; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; 
+					line-height: 28px; 
 				}
 				.viewItem { 
 					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
@@ -141,10 +145,14 @@
 	}
 
 	.block.blockDataview.isInline {
-		.dataviewEmpty { height: auto; }
+		.wrapMenu > .icon.dnd { height: 86px; }
+
+		.dataviewEmpty { height: auto; padding: 48px 0px; }
+		.dataviewHead { padding-left: 0px; padding-right: 0px; }
 
 		.dataviewControls {
 			.side { padding-top: 9px; padding-bottom: 0px; }
+			.side.left { padding-left: 0px; }
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }
 		}
@@ -154,7 +162,12 @@
 	}
 
 	.block.blockDataview:hover {
-		.dataviewControls .side.right, 
-		.dataviewHead .side.right { opacity: 1; }
+		.dataviewControls {
+			.side.right { opacity: 1; }
+		}
+		.dataviewHead {
+			.side.right { opacity: 1; }
+			#head-source-select { opacity: 1; }
+		}
 	}
 }

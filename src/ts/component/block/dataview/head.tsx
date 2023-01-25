@@ -30,6 +30,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
@@ -77,26 +78,26 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					<Editable
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
-						classNameWrap="dataviewTitle"
 						readonly={readonly || !isEditing}
 						placeholder={DataUtil.defaultName('set')}
 						onFocus={this.onFocus}
 						onMouseDown={this.onTitle}
 						onBlur={this.onBlur}
+						onKeyDown={this.onKeyDown}
 						onKeyUp={this.onKeyUp}
 						onSelect={this.onSelect}
 						onCompositionStart={this.onCompositionStart}
 					/>
 
-					{targetObjectId ? <React.Fragment>
+					{targetObjectId ? (
 						<div id="head-source-select" className="iconWrap" onClick={this.onSource}>
 							<Icon className="set" />
 						</div>
-					</React.Fragment> : ''}
+ 					) : ''}
 
 				</div>
 				<div className="side right">
-					<div className="iconWrap" onClick={this.onFullscreen}>
+					<div className="iconWrap dn" onClick={this.onFullscreen}>
 						<Icon className="expand" tooltip="Open fullscreen" />
 					</div>
 				</div>
@@ -112,40 +113,44 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	componentDidUpdate () {
 		this.setValue();
 
-		if (this.ref && this.range) {
-			this.ref.setRange(this.range);
+		if (!this.state.isEditing) {
+			this.ref.setRange({ from: 0, to: 0 });
+		} else 
+		if (this.ref) {
+			const l = this.getValue().length;
+			this.ref.setRange(this.range || { from: l, to: l });
 		};
 	};
 
 	componentWillUnmount () {
+		this.save();
 		this._isMounted = false;
 		window.clearTimeout(this.timeout);
 	};
 
-	onTitle (e: any) {
+	onTitle () {
 		const { block, onSourceSelect } = this.props;
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
 		const element = `#block-${block.id} #head-title-wrapper`;
 
-		if (!targetObjectId) {
-			onSourceSelect(element, {horizontal: I.MenuDirection.Left});
+		if (isEditing) {
 			return;
 		};
 
-		if (isEditing) {
+		if (!targetObjectId) {
+			onSourceSelect(element, { horizontal: I.MenuDirection.Left });
 			return;
 		};
 
 		const options: any[] = [
 			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
-			{ id: 'changeSource', icon: 'folderBlank', name: 'Change source', arrow: true },
-			{ id: 'openSource', icon: 'expand', name: 'Open data source' }
+			{ id: 'sourceChange', icon: 'source', name: 'Change source set', arrow: true },
+			{ id: 'sourceOpen', icon: 'expand', name: 'Open source set' },
 		];
 
 		menuStore.open('select', {
-			element: element,
-			horizontal: I.MenuDirection.Left,
+			element,
 			offsetY: 4,
 			onOpen: (context: any) => {
 				this.menuContext = context;
@@ -177,7 +182,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		};
 
 		switch (item.id) {
-			case 'changeSource':
+			case 'sourceChange':
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 				menuParam.data = Object.assign(menuParam.data, {
@@ -190,6 +195,22 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					],
 					canAdd: true,
 					rebind: this.menuContext.ref.rebind,
+					addParam: { 
+						name: 'Create new set',
+						onClick: () => {
+							C.ObjectCreateSet([], {}, '', (message: any) => {
+								C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
+									$(this.node).find('#head-source-select').trigger('click');
+
+									if (message.views && message.views.length) {
+										getData(message.views[0].id, 0, true);
+									};
+								});
+
+								analytics.event('InlineSetSetSource', { type: 'newObject' });
+							});
+						},
+					},
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 							if (message.views && message.views.length) {
@@ -229,7 +250,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 				break;
 			};
 
-			case 'openSource': {
+			case 'sourceOpen': {
 				ObjectUtil.openAuto(object);
 				analytics.event('InlineSetOpenSource');
 				break;
@@ -238,31 +259,44 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		};
 	};
 
-	onSource (e: any) {
+	onSource () {
 		const { block, onSourceTypeSelect } = this.props;
 
 		onSourceTypeSelect(`#block-${block.id} #head-source-select`);
 	};
 
-	onFocus (e: any) {
+	onFocus () {
 		keyboard.setFocus(true);
 	};
 
-	onBlur (e: any) {
+	onBlur () {
 		keyboard.setFocus(false);
-		this.setState({ isEditing: false });
+		window.clearTimeout(this.timeout);
+
+		this.save();
+		this.ref.setRange({ from: 0, to: 0 });
+		window.setTimeout(() => { this.setState({ isEditing: false }); }, 40);
 	};
 
-	onCompositionStart (e: any) {
+	onCompositionStart () {
 		window.clearTimeout(this.timeout);
 	};
 
-	onKeyUp (e: any) {
+	onKeyDown (e: any) {
+		keyboard.shortcut('enter', e, () => { 
+			e.preventDefault();
+			this.save(); 
+		});
+	};
+
+	onKeyUp () {
+		this.checkInput(!this.getValue());
+
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
 
-	onSelect (e: any) {
+	onSelect () {
 		if (this.ref) {
 			this.range = this.ref.getRange();
 		};
@@ -275,34 +309,47 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		const { rootId, block } = this.props;
 		const { targetObjectId } = block.content;
+		const object = targetObjectId ? detailStore.get(rootId, targetObjectId) : {};
 
-		if (!targetObjectId) {
+		if (!this.ref) {
 			return;
 		};
 
-		const object = detailStore.get(rootId, targetObjectId);
-		const { name } = object;
-
-		if (!name || (name == DataUtil.defaultName('page')) || (name == DataUtil.defaultName('set'))) {
-			return;
+		let name = String(object.name || '');
+		if ((name == DataUtil.defaultName('page')) || (name == DataUtil.defaultName('set'))) {
+			name = '';
 		};
 
-		if (this.ref) {
-			this.ref.setValue(object.name);
-			this.ref.placeholderCheck();
-		};
+		this.ref.setValue(name);
+		this.ref.placeholderCheck();
+		this.checkInput(!name);
 	};
 
 	getValue () {
 		return this.ref ? this.ref.getTextValue() : '';
 	};
 
+	checkInput (isEmpty: boolean) {
+		if (!this.ref) {
+			return;
+		};
+
+		const node = $(this.ref.node);
+		isEmpty ? node.addClass('isEmpty') : node.removeClass('isEmpty');
+	};
+
 	save () {
 		const { block } = this.props;
 		const { targetObjectId } = block.content;
+		
+		let value = this.getValue();
+
+		if ((value == DataUtil.defaultName('page')) || (value == DataUtil.defaultName('set'))) {
+			value = '';
+		};
 
 		if (targetObjectId) {
-			DataUtil.blockSetText(targetObjectId, 'title', this.getValue(), [], true);
+			ObjectUtil.setName(targetObjectId, this.getValue());
 		};
 		
 		if (this.ref) {

@@ -34,9 +34,9 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 			return (
 				<Empty 
 					{...this.props}
-					title="No objects of this type" 
-					description="Create the first object of this type to start your set"
-					button="Add a new object"
+					title="No objects found" 
+					description="Create your first one to begin"
+					button="Create object"
 					withButton={allowed}
 					onClick={(e: any) => onRecordAdd(e, 1)}
 				/>

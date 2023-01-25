@@ -237,7 +237,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, label, canAdd } = data;
+		const { filter, label, canAdd, addParam } = data;
 
 		let items = [].concat(this.items);
 		let length = items.length;
@@ -246,11 +246,17 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			items.unshift({ isSection: true, name: label });
 		};
 
-		if (filter && canAdd) {
-			if (length) {
+		if (canAdd) {
+			if (length && (addParam || filter)) {
 				items.push({ isDiv: true });
 			};
-			items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"`, isAdd: true });
+
+			if (addParam) {
+				items.push({ id: 'add', icon: 'plus', name: addParam.name, isAdd: true });
+			} else
+			if (filter) {
+				items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"`, isAdd: true });
+			};
 		};
 
 		return items;
@@ -356,7 +362,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
+		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose, addParam } = data;
 
 		if (!noClose) {
 			close();
@@ -444,10 +450,15 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (item.isAdd) {
-			ObjectUtil.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-				DataUtil.getObjectById(message.targetId, (object: any) => { process(object, true); });
+			if (addParam.onClick) {
+				addParam.onClick();
 				close();
-			});
+			} else {
+				ObjectUtil.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+					DataUtil.getObjectById(message.targetId, (object: any) => { process(object, true); });
+					close();
+				});
+			};
 		} else {
 			process(item, false);
 		};

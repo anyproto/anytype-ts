@@ -16,6 +16,8 @@ interface State {
 	loading: boolean;
 };
 
+const PADDING = 46;
+
 const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewComponent, State> {
 
 	node: any = null;
@@ -64,6 +66,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		return (
 			<div 
 				ref={node => this.node = node} 
+				id="scrollWrap"
 				className="wrap"
 			>
 				<div id="scroll" className="scroll">
@@ -193,16 +196,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onRecordAdd (groupId: string, dir: number) {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, isInline } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ], true);
+		const objectId = isInline ? block.content.targetObjectId : rootId;
+		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const node = $(this.node);
 		const element = node.find(`#card-${groupId}-add`);
-		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {
 			type: types.length ? types[0].id : commonStore.type,
 		};
@@ -687,26 +691,38 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	resize () {
-		const { isPopup, isInline } = this.props;
+		const { rootId, block, isPopup, isInline } = this.props;
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const node = $(this.node);
-		const scroll = node.find('.scroll');
+		const scroll = node.find('#scroll');
 		const viewItem = node.find('.viewItem');
 		const container = Util.getPageContainer(isPopup);
-		const ww = container.width();
-		const mw = ww - 192;
+		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = 30 + groups.length * (size.card + size.margin);
-		const margin = width >= mw ? (ww - mw) / 2 : 0;
+		const width = groups.length * (size.card + size.margin);
 
 		if (!isInline) {
-			scroll.css({ width: ww, marginLeft: -margin / 2, paddingLeft: margin / 2 + 8 });
-			viewItem.css({ width: width < mw ? mw : width });
+			const maxWidth = cw - PADDING * 2;
+			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
+
+			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 + size.margin });
+			viewItem.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 + size.margin });
 		} else {
-			scroll.css({ paddingLeft: 8 });
+			if (parent.isPage() || parent.isLayoutDiv()) {
+				const wrapper = $('#editorWrapper');
+				const ww = wrapper.width();
+				const margin = (cw - ww) / 2;
+
+				scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin + size.margin });
+				viewItem.css({ width: width + margin });
+			} else {
+				scroll.css({ paddingLeft: size.margin });
+			};
 		};
 	};
-	
+
 });
 
 export default ViewBoard;

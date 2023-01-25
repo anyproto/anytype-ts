@@ -47,9 +47,9 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return (
 				<Empty 
 					{...this.props}
-					title="No objects of this type" 
-					description="Create the first object of this type to start your set"
-					button="Add a new object"
+					title="No objects found" 
+					description="Create your first one to begin"
+					button="Create object"
 					withButton={allowed}
 					onClick={(e: any) => onRecordAdd(e, 1)}
 				/>
@@ -147,7 +147,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 					</div>
 
 					{isInline && (limit + offset < total) ? (
-						<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreCards} />
+						<LoadMore limit={limit} loaded={records.length} total={total} onClick={this.loadMoreCards} />
 					) : ''}
 				</div>
 			</div>

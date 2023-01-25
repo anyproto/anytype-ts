@@ -362,6 +362,14 @@ class Relation {
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 
+	getPageLimitOptions (type: I.ViewType) {
+		let options = [ 10, 20, 50, 70, 100 ];
+		if (type == I.ViewType.Gallery) {
+			options = [ 12, 24, 60, 84, 120 ];
+		};
+		return options.map(it => ({ id: it, name: it }));
+	};
+
 	getStringValue (value: any) {
 		if (('object' == typeof(value)) && value && Util.hasProperty(value, 'length')) {
 			return String(value.length ? value[0] : '');
