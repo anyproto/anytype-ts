@@ -47,8 +47,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return (
 				<Empty 
 					{...this.props}
-					title="No objects" 
-					description="Create fist one for a start"
+					title="No objects found" 
+					description="Create your first one to begin"
 					button="Create object"
 					withButton={allowed}
 					onClick={(e: any) => onRecordAdd(e, 1)}
