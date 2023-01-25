@@ -2,9 +2,9 @@ import $ from 'jquery';
 import { Storage } from 'Lib';
 
 const HIGHLIGHTS_MAP = {
-    whatsNew: ['#button-help', '#item-whatsNew'],
-    shortcut: ['#button-help', '#item-shortcut'],
-    hints: ['#button-help', '#item-hints']
+    whatsNew: ['#button-help', '#menuHelp #item-whatsNew'],
+    shortcut: ['#button-help', '#menuHelp #item-shortcut'],
+    hints: ['#button-help', '#menuHelp #item-hints']
 };
 
 class Highlight {
@@ -16,7 +16,7 @@ class Highlight {
         };
 
         HIGHLIGHTS_MAP[key].forEach((e) => {
-            $(document).find(e).each(this.add);
+            $(e).each(this.add);
         });
     };
 
@@ -31,7 +31,7 @@ class Highlight {
         Storage.set('highlights', highlights);
 
         HIGHLIGHTS_MAP[key].forEach((e) => {
-            $(document).find(e).each(this.remove);
+            $(e).each(this.remove);
         });
     };
 

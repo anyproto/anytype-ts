@@ -49,6 +49,7 @@ class MenuHelp extends React.Component<I.Menu> {
 	componentDidMount () {
 		this.rebind();
 		Highlight.show('hints');
+		Highlight.show('whatsNew');
 	};
 
 	componentWillUnmount () {
