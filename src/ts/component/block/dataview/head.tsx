@@ -165,6 +165,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 	onTitleOver (e: any, item: any) {
 		const { rootId, block, getData } = this.props;
+		const { targetObjectId } = block.content;
 
 		if (!item.arrow) {
 			menuStore.closeAll([ 'searchObject' ]);
@@ -195,6 +196,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					],
 					canAdd: true,
 					rebind: this.menuContext.ref.rebind,
+					value: [ targetObjectId ],
 					addParam: { 
 						name: 'Create new set',
 						onClick: () => {
