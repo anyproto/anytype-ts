@@ -19,9 +19,7 @@ class Highlight {
     };
 
     show (key: string) {
-        const highlights = Storage.get('highlights') || {};
-
-        if (!HIGHLIGHTS_MAP[key] || !highlights[key]) {
+        if (!HIGHLIGHTS_MAP[key] || !Storage.getHighlight(key)) {
             return;
         };
 
@@ -31,14 +29,11 @@ class Highlight {
     };
 
     hide (key: string) {
-        const highlights = Storage.get('highlights');
+        Storage.setHighlight(key, false)
 
-        if (!HIGHLIGHTS_MAP[key] || !highlights[key]) {
+        if (!HIGHLIGHTS_MAP[key]) {
             return;
         };
-
-        highlights[key] = false;
-        Storage.set('highlights', highlights);
 
         HIGHLIGHTS_MAP[key].forEach((e) => {
             $(e).each(this.remove);

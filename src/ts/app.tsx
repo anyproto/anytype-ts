@@ -10,7 +10,7 @@ import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview, Mark } from 'Lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview, Mark, Highlight } from 'Lib';
 
 configure({ enforceActions: 'never' });
 
@@ -569,7 +569,7 @@ class App extends React.Component<object, State> {
 				textConfirm: 'Restart and update',
 				textCancel: 'Later',
 				onConfirm: () => {
-					Storage.delete('popupNewBlock');
+					Storage.setHighlight('whatsNew', true);
 					Renderer.send('updateConfirm');
 				},
 				onCancel: () => {

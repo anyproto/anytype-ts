@@ -222,19 +222,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 		
 		window.setTimeout(() => {
-			let popupNewBlock = Storage.get('popupNewBlock');
-			let onboarding = Storage.get('onboarding');
-
 			if (!isMain) {
 				return;
-			};
-
-			if (!onboarding) {
-				popupNewBlock = true;
-			};
-			if (!popupNewBlock && onboarding) {
-				popupStore.open('help', { data: { document: 'whatsNew' } });
-				Storage.set('popupNewBlock', true);
 			};
 
 			if (isMainIndex) {
