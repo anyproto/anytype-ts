@@ -8,6 +8,7 @@ const HIGHLIGHTS_MAP = {
 };
 
 class Highlight {
+
     showAll () {
         const highlights = Storage.get('highlights') || {};
 
@@ -27,10 +28,10 @@ class Highlight {
     };
 
     hide (key: string) {
-        Storage.setHighlight(key, false)
+        Storage.setHighlight(key, false);
 
         if (HIGHLIGHTS_MAP[key]) {
-             HIGHLIGHTS_MAP[key].forEach(item => { this.remove($(item)); });
+            HIGHLIGHTS_MAP[key].forEach(item => { this.remove($(item)); });
         };
     };
 
@@ -44,7 +45,6 @@ class Highlight {
         };
 
         const dot = $('<div />').addClass('highlightMark');
-
         node.append(dot);
     };
 
