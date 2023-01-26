@@ -64,10 +64,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	render () {
 		const { rootId, block, isPopup, isInline, isDragging } = this.props;
 		const { loading } = this.state;
-		const { targetObjectId } = block.content;
 		const views = dbStore.getViews(rootId, block.id);
 		const sources = this.getSources();
-		const targetId = isInline ? targetObjectId : rootId;
+		const targetId = this.getObjectId();
+		const object = detailStore.get(rootId, targetId);
 
 		if (!views.length) {
 			return null;
@@ -83,7 +83,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
-		let className = Util.toCamelCase('view-' + I.ViewType[view.type]);
+		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]), (object.isDeleted ? 'isDeleted' : '') ].join(' ');
 		let head = null;
 		let controls = null;
 		let body = null;
@@ -153,6 +153,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						title="Type or relation has been deleted"
 						description="Visit the Marketplace to re-install these entities or select another source."
 						button="Select source"
+						className={isInline ? 'withHead' : ''}
 						withButton={true}
 						onClick={this.onEmpty}
 					/>
@@ -197,6 +198,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						title="No query selected"
 						description="All objects satisfying your query will be displayed in Set"
 						button="Select source"
+						className={isInline ? 'withHead' : ''}
 						withButton={true}
 						onClick={this.onEmpty}
 					/>
