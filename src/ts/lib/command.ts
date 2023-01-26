@@ -818,7 +818,7 @@ const BlockDataviewFilterRemove = (contextId: string, blockId: string, viewId: s
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
-	request.setFilteridsList(ids);
+	request.setIdsList(ids);
 
 	dispatcher.request(BlockDataviewFilterRemove.name, request, callBack);
 };
@@ -829,7 +829,7 @@ const BlockDataviewFilterReplace = (contextId: string, blockId: string, viewId: 
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
-	request.setFilterid(id);
+	request.setId(id);
 	request.setFilter(Mapper.To.Filter(filter));
 
 	dispatcher.request(BlockDataviewFilterReplace.name, request, callBack);
@@ -841,7 +841,7 @@ const BlockDataviewFilterSort = (contextId: string, blockId: string, viewId: str
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setViewid(viewId);
-	request.setFilteridsList(ids);
+	request.setIdsList(ids);
 
 	dispatcher.request(BlockDataviewFilterSort.name, request, callBack);
 };
