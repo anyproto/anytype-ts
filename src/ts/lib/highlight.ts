@@ -2,9 +2,9 @@ import $ from 'jquery';
 import { Storage } from 'Lib';
 
 const HIGHLIGHTS_MAP = {
-    whatsNew: ['#button-help', '#menuHelp #item-whatsNew'],
-    shortcut: ['#button-help', '#menuHelp #item-shortcut'],
-    hints: ['#button-help', '#menuHelp #item-hints']
+    whatsNew: [ '#button-help', '#menuHelp #item-whatsNew' ],
+    shortcut: [ '#button-help', '#menuHelp #item-shortcut' ],
+    hints: [ '#button-help', '#menuHelp #item-hints' ],
 };
 
 class Highlight {
@@ -23,36 +23,39 @@ class Highlight {
             return;
         };
 
-        HIGHLIGHTS_MAP[key].forEach((e) => {
-            $(e).each(this.add);
-        });
+        HIGHLIGHTS_MAP[key].forEach(item => this.add($(item)));
     };
 
     hide (key: string) {
         Storage.setHighlight(key, false)
 
-        if (!HIGHLIGHTS_MAP[key]) {
-            return;
+        if (HIGHLIGHTS_MAP[key]) {
+             HIGHLIGHTS_MAP[key].forEach(item => { this.remove($(item)); });
         };
-
-        HIGHLIGHTS_MAP[key].forEach((e) => {
-            $(e).each(this.remove);
-        });
     };
 
-    add (idx: number, node: any) {
-        if ($(node).find('.highlightMark').length) {
+    add (node) {
+		if (!node || !node.length) {
+			return;
+		};
+
+        if (node.find('.highlightMark').length) {
             return;
         };
 
         const dot = $('<div />').addClass('highlightMark');
 
-        $(node).append(dot);
+        node.append(dot);
     };
 
-    remove (idx: number, node: any) {
-        $(node).find('.highlightMark').remove();
+    remove (node) {
+		if (!node || !node.length) {
+			return;
+		};
+
+        node.find('.highlightMark').remove();
     };
+
 };
 
 export default new Highlight();
