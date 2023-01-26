@@ -10,7 +10,7 @@ interface Props {
 	name: string;
 	format: I.RelationType;
 	isHidden: boolean;
-	dataset?: any;
+	dataset?: I.Dataset;
 	rootId: string;
 	block?: I.Block;
 	isFeatured?: boolean;

@@ -134,7 +134,7 @@ export enum TabIndex {
 export interface HeaderComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
-	dataset?: any;
+	dataset?: I.Dataset;
 	tabs?: any[];
 	tab?: string;
 	onTab?: (id: string) => void;
@@ -154,7 +154,7 @@ export interface PageComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
 	matchPopup?: any;
-	dataset?: any;
+	dataset?: I.Dataset;
 	storageGet?(): any;
 	storageSet?(data: any): void;
 };
@@ -177,3 +177,19 @@ export enum SliceOperation {
 	Remove	 = 3,
     Replace	 = 4,
 };
+
+export type Dataset = {
+	selection: {
+		preventSelect: (a: boolean) => void;
+		checkSelected: (a: string) => boolean;
+		set: (a: string, b: string[]) => void;
+		get: (a: string) => any[];
+		clear: () => void;
+		hide: () => void;
+	}
+	dragProvider: {
+		onScroll: () => void;
+	}
+	onDragStart: (d: unknown, c: string, b: string[], a: unknown) => void;
+	preventCommonDrop: (a: boolean) => void;
+}

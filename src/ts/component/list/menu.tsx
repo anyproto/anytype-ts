@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { I } from 'Lib';
 
 interface Props {
-	dataset?: any;
+	dataset?: I.Dataset;
 	history: any;
 };
 
