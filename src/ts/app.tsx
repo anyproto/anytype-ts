@@ -63,6 +63,8 @@ import 'scss/component/preview/object.scss';
 import 'scss/component/media/audio.scss';
 import 'scss/component/media/video.scss';
 
+import 'scss/component/hightlight.scss';
+
 import 'scss/page/auth.scss';
 import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
@@ -567,7 +569,7 @@ class App extends React.Component<object, State> {
 				textConfirm: 'Restart and update',
 				textCancel: 'Later',
 				onConfirm: () => {
-					Storage.delete('popupNewBlock');
+					Storage.setHighlight('whatsNew', true);
 					Renderer.send('updateConfirm');
 				},
 				onCancel: () => {
