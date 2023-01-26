@@ -297,7 +297,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			const marketplace = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 			sections = sections.concat([
-				{ id: 'marketplace', name: 'Marketplace', children: marketplace },
+				{ id: 'marketplace', name: 'Anytype library', children: marketplace },
 			]);
 
 			name = `Create type "${filter}"`;
@@ -305,7 +305,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			sections = sections.concat([
 				{ 
 					children: [
-						{ id: 'marketplace', icon: 'folder', name: 'Marketplace', arrow: true }
+						{ id: 'marketplace', icon: 'folder', name: 'Anytype library', arrow: true }
 					] 
 				},
 			])

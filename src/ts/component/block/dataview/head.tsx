@@ -45,10 +45,11 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readonly, getSources, className, onSourceSelect } = this.props;
+		const { rootId, block, readonly, getSources, className, isInline } = this.props;
 		const { isEditing } = this.state;
 		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId);
+		const targetId = isInline ? targetObjectId : rootId;
+		const object = detailStore.get(rootId, targetId);
 		const sources = getSources();
 		const cn = [ 'dataviewHead' ];
 
@@ -129,10 +130,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	onTitle () {
-		const { block, onSourceSelect } = this.props;
+		const { rootId, block, onSourceSelect, isInline } = this.props;
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
 		const element = `#block-${block.id} #head-title-wrapper`;
+		const targetId = isInline ? targetObjectId : rootId;
+		const object = detailStore.get(rootId, targetId);
 
 		if (isEditing) {
 			return;
@@ -143,11 +146,15 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			return;
 		};
 
-		const options: any[] = [
+		let options: any[] = [
 			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
 			{ id: 'sourceChange', icon: 'source', name: 'Change source set', arrow: true },
 			{ id: 'sourceOpen', icon: 'expand', name: 'Open source set' },
 		];
+
+		if (object.isDeleted) {
+			options = options.filter(it => it.id == 'sourceChange');
+		};
 
 		menuStore.open('select', {
 			element,
@@ -165,6 +172,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 	onTitleOver (e: any, item: any) {
 		const { rootId, block, getData } = this.props;
+		const { targetObjectId } = block.content;
 
 		if (!item.arrow) {
 			menuStore.closeAll([ 'searchObject' ]);
@@ -195,6 +203,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					],
 					canAdd: true,
 					rebind: this.menuContext.ref.rebind,
+					value: [ targetObjectId ],
 					addParam: { 
 						name: 'Create new set',
 						onClick: () => {

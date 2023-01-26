@@ -73,6 +73,7 @@ export enum FilterQuickOption {
 };
 
 export interface Sort {
+	id?: string;
 	relationKey: string;
 	type: SortType;
 	includeTime?: boolean;
@@ -128,6 +129,7 @@ export interface ViewEmpty {
 	description: string;
 	button: string;
 	withButton: boolean;
+	className?: string;
 	onClick: (e: any) => void;
 };
 

@@ -329,8 +329,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 			case 'sort0':
 			case 'sort1': {
-				C.BlockDataviewSortRemove(rootId, blockId, view.id, view.sorts.map(it => it.relationKey), () => {
-					C.BlockDataviewSortReplace(rootId, blockId, view.id, relation.relationKey, { 
+				C.BlockDataviewSortRemove(rootId, blockId, view.id, view.sorts.map(it => it.id), () => {
+					C.BlockDataviewSortAdd(rootId, blockId, view.id, { 
 						relationKey: relation.relationKey, 
 						type: item.type,
 					});
