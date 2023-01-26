@@ -58,6 +58,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 					title="Relation has been deleted" 
 					description="Choose another relation to group your Kanban"
 					button="Open view menu"
+					className="withHead"
 					onClick={this.onView}
 				/>
 			);

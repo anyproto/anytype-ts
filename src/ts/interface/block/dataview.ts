@@ -128,6 +128,7 @@ export interface ViewEmpty {
 	description: string;
 	button: string;
 	withButton: boolean;
+	className?: string;
 	onClick: (e: any) => void;
 };
 

@@ -10,10 +10,16 @@ const Empty = observer(class Empty extends React.Component<I.ViewEmpty> {
 	};
 
 	render () {
-		const { block, title, description, button, withButton, onClick } = this.props;
+		const { block, title, description, button, withButton, className, onClick } = this.props;
+		const id = [ 'dataviewEmpty', block.id ];
+		const cn = [ 'dataviewEmpty' ];
+
+		if (className) {
+			cn.push(className);
+		};
 
 		return (
-			<div id={[ 'dataviewEmpty', block.id ].join('-')} className="dataviewEmpty">
+			<div id={id.join('-')} className={cn.join(' ')}>
 				<div className="inner">
 					<Label className="name" text={title} />
 					<Label className="descr" text={description} />

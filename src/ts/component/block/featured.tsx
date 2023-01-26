@@ -100,7 +100,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 							id={Relation.cellId(PREFIX, 'setOf', 0)}
 							className="cellContent setOf"
 							onClick={this.onSource}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'setOf'); }}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, '', 'Query'); }}
 							onMouseLeave={this.onMouseLeave}
 						>
 							{setOfString.length ? (
@@ -110,7 +110,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									))}
 								</div>
 							) : (
-								<div className="empty">Source</div>
+								<div className="empty">Query</div>
 							)}
 						</div>
 					</span>
@@ -276,12 +276,20 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 	};
 
-	onMouseEnter (e: any, relationKey: string) {
-		const cell = $('#' + Relation.cellId(PREFIX, relationKey, 0));
-		const relation = dbStore.getRelationByKey(relationKey);
+	onMouseEnter (e: any, relationKey: string, text?: string) {
+		const cell = $(`#${Relation.cellId(PREFIX, relationKey, 0)}`);
+		const show = (t: string) => {
+			Preview.tooltipShow(t, cell, I.MenuDirection.Center, I.MenuDirection.Top);
+		};
 
-		if (relation) {
-			Preview.tooltipShow(relation.name, cell, I.MenuDirection.Center, I.MenuDirection.Top);
+		if (relationKey) {
+			const relation = dbStore.getRelationByKey(relationKey);
+			if (relation) {
+				show(relation.name);
+			};
+		} else 
+		if (text) {
+			show(text);
 		};
 	};
 
