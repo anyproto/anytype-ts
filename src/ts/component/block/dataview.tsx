@@ -194,8 +194,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 					<Empty
 						{...this.props}
-						title="No data source"
-						description="Connect one of your sets or create<br/>new one to continue"
+						title="No query selected"
+						description="All objects satisfying your query will be displayed in Set"
 						button="Select source"
 						withButton={true}
 						onClick={this.onEmpty}
