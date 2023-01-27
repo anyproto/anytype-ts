@@ -27,7 +27,7 @@ class Storage {
 		};
 		
 		let o = this.get(key);
-		if ('object' == typeof(o)) {
+		if (typeof o === 'object') {
 			for (let i in obj) {
 				o[i] = obj[i];
 			};
