@@ -46,7 +46,7 @@ class PopupSettingsPageImportMarkdown extends React.Component<Props> {
 		const options: any = { 
 			properties: [ 'openFile' ],
 			filters: [
-				{ name: '', extensions: [ 'zip' ] }
+				{ name: '', extensions: [ 'zip', 'md' ] }
 			]
 		};
 
