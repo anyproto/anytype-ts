@@ -1229,7 +1229,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			params = new Rpc.Object.Import.Request.HtmlParams();
 			params.setPathList(options.paths);
 
-			request.setMarkdownparams(params);
+			request.setHtmlparams(params);
 			break;
 
 	};
