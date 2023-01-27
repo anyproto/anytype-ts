@@ -1,5 +1,5 @@
 import { I, Util, FileUtil, translate, Dataview } from 'Lib';
-import { dbStore, commonStore, detailStore } from 'Store';
+import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class Relation {
@@ -20,7 +20,7 @@ class Relation {
 		return Util.toCamelCase('is-' + I.RelationType[v]);
 	};
 
-	cellId (prefix: string, relationKey: string, id: any) {
+	cellId (prefix: string, relationKey: string, id: string) {
 		if (undefined === id) {
 			id = '';
 		};
@@ -32,7 +32,7 @@ class Relation {
 		return Number(width || size['format' + format]) || size.default;
 	};
 
-	filterConditionsByType (type: I.RelationType): any[] {
+	filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
 		let ret = [
 			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
 		];
@@ -107,7 +107,7 @@ class Relation {
 			return [];
 		};
 
-		let ret: any[] = [];
+		let ret: { id: I.FilterQuickOption, name: string }[] = [];
 
 		switch (type) {
 			case I.RelationType.Date: {
@@ -404,7 +404,7 @@ class Relation {
 		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
 	};
 
-	getUrlScheme (type: I.RelationType, value: any): string {
+	getUrlScheme (type: I.RelationType, value: string): string {
 		value = String(value || '');
 
 		let ret = '';
