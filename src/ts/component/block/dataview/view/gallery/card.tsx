@@ -16,6 +16,12 @@ const Card = observer(class Card extends React.Component<Props> {
 	_isMounted = false;
 	node: any = null;
 
+	constructor (props: Props) {
+		super(props);
+
+		this.onClick = this.onClick.bind(this);
+	};
+
 	render () {
 		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, isInline } = this.props;
 		const view = getView();
@@ -57,6 +63,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		let content = (
 			<div className="itemContent">
 				{cover}
+
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, index);
@@ -104,7 +111,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				ref={node => this.node = node} 
 				className={cn.join(' ')} 
 				style={style} 
-				onClick={(e: any) => { this.onClick(e); }}
+				onClick={this.onClick}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
 				{content}
@@ -157,9 +164,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			return;
 		};
 
-		if ($(e.target).parents('.controls').length) {
-			return;
-		};
+		console.log(e.target);
 
 		if (cb[e.button]) {
 			cb[e.button]();

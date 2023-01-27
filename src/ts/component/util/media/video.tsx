@@ -11,7 +11,6 @@ interface Props {
 class MediaVideo extends React.Component<Props> {
 
     node: any = null;
-    videoNode: any = null;
     speed = 1;
 
     constructor (props: Props) {
@@ -46,8 +45,6 @@ class MediaVideo extends React.Component<Props> {
         const node = $(this.node);
         const video = node.find('video');
 
-        this.videoNode = video.get(0);
-
         video.on('play', () => { this.onPlay(); });
         video.on('pause', () => { this.onPause(); });
         video.on('ended', () => { this.onEnded(); });
@@ -63,8 +60,9 @@ class MediaVideo extends React.Component<Props> {
 	onPlay () {
 		const { onPlay } = this.props;
 		const node = $(this.node);
+		const video = node.find('video');
 
-		this.videoNode.controls = true;
+		video.get(0).controls = true;
         node.addClass('isPlaying');
 
 		if (onPlay) {
@@ -82,17 +80,25 @@ class MediaVideo extends React.Component<Props> {
 
 	onEnded () {
 		const node = $(this.node);
+		const video = node.find('video');
 
-		this.videoNode.controls = false;
+		video.get(0).controls = false;
 		node.removeClass('isPlaying');
 
 		this.onPause();
 	};
 
-    onPlayClick () {
+    onPlayClick (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const node = $(this.node);
+		const video = node.find('video');
+
+		console.log('PLAY');
+
         $('audio, video').each((i: number, item: any) => { item.pause(); });
-        
-		this.videoNode.play();
+		video.get(0).play();
     };
 
 };
