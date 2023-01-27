@@ -333,7 +333,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			if (clear) {
 				this.setState({ loading: false });
-				analytics.event('SearchQuery', { route: 'MenuSearch', length: filter.length });
 			} else {
 				this.forceUpdate();
 			};

@@ -272,7 +272,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 			if (clear) {
 				this.setState({ loading: false });
-				analytics.event('SearchQuery', { route: 'MenuRelation', length: filter.length });
 			} else {
 				this.forceUpdate();
 			};
