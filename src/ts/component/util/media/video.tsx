@@ -95,8 +95,6 @@ class MediaVideo extends React.Component<Props> {
 		const node = $(this.node);
 		const video = node.find('video');
 
-		console.log('PLAY');
-
         $('audio, video').each((i: number, item: any) => { item.pause(); });
 		video.get(0).play();
     };
