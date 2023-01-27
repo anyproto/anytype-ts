@@ -177,67 +177,62 @@ const Card = observer(class Card extends React.Component<Props> {
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
 
 		let cover = null;
-
 		if (view.coverRelationKey == 'pageCover') {
-			const { coverType, coverId, coverX, coverY, coverScale } = record;
-
-			if (coverId && coverType) {
-				return (
-					<Cover 
-						type={coverType} 
-						id={coverId} 
-						image={coverId} 
-						className={coverId} 
-						x={coverX} 
-						y={coverY} 
-						scale={coverScale} 
-						withScale={false} 
-					/>
-				);
+			cover = this.mediaCover(record);
+		} else {
+			for (const id of value) {
+				const f = detailStore.get(subId, id, []);
+				if (!f._empty_) {
+					cover = this.mediaCover(f);
+				};
 			};
 		};
+		return cover;
+	};
 
-		for (let id of value) {
-			const f = detailStore.get(subId, id, []);
-			if (f._empty_) {
-				continue;
-			};
-
-			switch (f.type) {
-				case Constant.typeId.image:
+	mediaCover (item: any) {
+		const { coverType, coverId, coverX, coverY, coverScale } = item;
+		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
+		
+		let mc = null;
+		if (coverId && coverType) {
+			mc = (
+				<Cover
+					type={coverType}
+					id={coverId}
+					image={coverId}
+					className={coverId}
+					x={coverX}
+					y={coverY}
+					scale={coverScale}
+					withScale={false}
+				/>
+			);
+		} else {
+			switch (item.type) {
+				case Constant.typeId.image: {
 					cn.push('coverImage');
-					cover = <img src={commonStore.imageUrl(f.id, 600)} />;
+					mc = <img src={commonStore.imageUrl(item.id, 600)}/>;
 					break;
+				};
 
-				case Constant.typeId.audio:
+				case Constant.typeId.audio: {
 					cn.push('coverAudio');
-
-					const playlist = [ 
-						{ name: f.name, src: commonStore.fileUrl(f.id) },
-					];
-
-					cover = <MediaAudio playlist={playlist} />;
+					mc = <MediaAudio playlist={[ { name: item.name, src: commonStore.fileUrl(item.id) } ]}/>;
 					break;
+				};
 
-				case Constant.typeId.video:
+				case Constant.typeId.video: {
 					cn.push('coverVideo');
-					cover = <MediaVideo src={commonStore.fileUrl(f.id)} />;
+					mc = <MediaVideo src={commonStore.fileUrl(item.id)}/>;
 					break;
+				};
 			};
 		};
 
-		if (!cover) {
-			return null;
-		};
-
-		return (
-			<div className={cn.join(' ')}>
-				{cover}
-			</div>
-		);
+		return mc ? <div className={cn.join(' ')}>{mc}</div> : null;
 	};
 
 });
