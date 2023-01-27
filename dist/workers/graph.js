@@ -315,7 +315,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let colorArrow = Color.arrow;
 	let colorText = Color.text;
 
-	if (d.source.isOver) {
+	if (d.source.isOver || d.target.isOver) {
 		colorLink = Color.highlight;
 		colorArrow = Color.highlight;
 		colorText = Color.highlight;
