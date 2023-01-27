@@ -114,7 +114,6 @@ initColor = (theme) => {
 				node: '#aca996',
 				text: '#929082',
 				highlight: '#ffb522',
-				green: '#57c600',
 				selected: '#2aa7ee',
 			}; 
 			break;
@@ -127,7 +126,6 @@ initColor = (theme) => {
 				node: '#aca996',
 				text: '#929082',
 				highlight: '#ffb522',
-				green: '#57c600',
 				selected: '#2aa7ee',
 			};
 			break;
@@ -321,12 +319,6 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 		colorLink = Color.highlight;
 		colorArrow = Color.highlight;
 		colorText = Color.highlight;
-	};
-
-	if (d.target.isOver) {
-		colorLink = Color.green;
-		colorArrow = Color.green;
-		colorText = Color.green;
 	};
 
 	util.line(sx1, sy1, sx2, sy2, r1 / 10, colorLink);
