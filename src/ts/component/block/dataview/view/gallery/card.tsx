@@ -178,74 +178,61 @@ const Card = observer(class Card extends React.Component<Props> {
 		const record = getRecord(index);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
 
-		const mediaCover = (item: any) => {
-			const { coverType, coverId, coverX, coverY, coverScale } = item;
-			const cn = [ 'cover', `type${I.CoverType.Upload}` ];
-			let mc = null;
-
-			if (coverId && coverType) {
-				return (
-					<Cover
-						type={coverType}
-						id={coverId}
-						image={coverId}
-						className={coverId}
-						x={coverX}
-						y={coverY}
-						scale={coverScale}
-						withScale={false}
-					/>
-				);
+		let cover = null;
+		if (view.coverRelationKey == 'pageCover') {
+			cover = this.mediaCover(record);
+		} else {
+			for (const id of value) {
+				const f = detailStore.get(subId, id, []);
+				if (!f._empty_) {
+					cover = this.mediaCover(f);
+				};
 			};
+		};
+		return cover;
+	};
 
+	mediaCover (item: any) {
+		const { coverType, coverId, coverX, coverY, coverScale } = item;
+		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
+		
+		let mc = null;
+		if (coverId && coverType) {
+			mc = (
+				<Cover
+					type={coverType}
+					id={coverId}
+					image={coverId}
+					className={coverId}
+					x={coverX}
+					y={coverY}
+					scale={coverScale}
+					withScale={false}
+				/>
+			);
+		} else {
 			switch (item.type) {
-				case Constant.typeId.image:
+				case Constant.typeId.image: {
 					cn.push('coverImage');
 					mc = <img src={commonStore.imageUrl(item.id, 600)}/>;
 					break;
+				};
 
-				case Constant.typeId.audio:
+				case Constant.typeId.audio: {
 					cn.push('coverAudio');
-
-					const playlist = [
-						{name: item.name, src: commonStore.fileUrl(item.id)},
-					];
-
-					mc = <MediaAudio playlist={playlist}/>;
+					mc = <MediaAudio playlist={[ { name: item.name, src: commonStore.fileUrl(item.id) } ]}/>;
 					break;
+				};
 
-				case Constant.typeId.video:
+				case Constant.typeId.video: {
 					cn.push('coverVideo');
 					mc = <MediaVideo src={commonStore.fileUrl(item.id)}/>;
 					break;
+				};
 			};
-
-			if (!mc) {
-				return null;
-			};
-
-			return (
-				<div className={cn.join(' ')}>
-					{mc}
-				</div>
-			);
 		};
 
-		if (view.coverRelationKey == 'pageCover') {
-			return mediaCover(record);
-		};
-
-		let cover = null;
-		for (let id of value) {
-			const f = detailStore.get(subId, id, []);
-			if (f._empty_) {
-				continue;
-			};
-
-			cover = mediaCover(f);
-		};
-
-		return cover;
+		return mc ? <div className={cn.join(' ')}>{mc}</div> : null;
 	};
 
 });
