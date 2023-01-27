@@ -198,6 +198,23 @@ const Card = observer(class Card extends React.Component<Props> {
 					/>
 				);
 			};
+
+			switch (record.type) {
+				case Constant.typeId.audio:
+					cn.push('coverAudio');
+
+					const playlist = [
+						{ name: record.name, src: commonStore.fileUrl(record.id) },
+					];
+
+					cover = <MediaAudio playlist={playlist} />;
+					break;
+
+				case Constant.typeId.video:
+					cn.push('coverVideo');
+					cover = <MediaVideo src={commonStore.fileUrl(record.id)} />;
+					break;
+			};
 		};
 
 		for (let id of value) {
