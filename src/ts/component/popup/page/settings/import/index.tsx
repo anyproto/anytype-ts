@@ -19,6 +19,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const items = [
 			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
+			{ id: 'html', name: 'HTML' },
 		];
 
 		const Item = (item: any) => {
