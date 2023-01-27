@@ -177,84 +177,75 @@ const Card = observer(class Card extends React.Component<Props> {
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-		const cn = [ 'cover', `type${I.CoverType.Upload}` ];
 
-		let cover = null;
-
-		if (view.coverRelationKey == 'pageCover') {
-			const { coverType, coverId, coverX, coverY, coverScale } = record;
+		const mediaCover = (item: any) => {
+			const { coverType, coverId, coverX, coverY, coverScale } = item;
+			const cn = [ 'cover', `type${I.CoverType.Upload}` ];
+			let mc = null;
 
 			if (coverId && coverType) {
 				return (
-					<Cover 
-						type={coverType} 
-						id={coverId} 
-						image={coverId} 
-						className={coverId} 
-						x={coverX} 
-						y={coverY} 
-						scale={coverScale} 
-						withScale={false} 
+					<Cover
+						type={coverType}
+						id={coverId}
+						image={coverId}
+						className={coverId}
+						x={coverX}
+						y={coverY}
+						scale={coverScale}
+						withScale={false}
 					/>
 				);
 			};
 
-			switch (record.type) {
+			switch (item.type) {
+				case Constant.typeId.image:
+					cn.push('coverImage');
+					mc = <img src={commonStore.imageUrl(item.id, 600)}/>;
+					break;
+
 				case Constant.typeId.audio:
 					cn.push('coverAudio');
 
 					const playlist = [
-						{ name: record.name, src: commonStore.fileUrl(record.id) },
+						{name: item.name, src: commonStore.fileUrl(item.id)},
 					];
 
-					cover = <MediaAudio playlist={playlist} />;
+					mc = <MediaAudio playlist={playlist}/>;
 					break;
 
 				case Constant.typeId.video:
 					cn.push('coverVideo');
-					cover = <MediaVideo src={commonStore.fileUrl(record.id)} />;
+					mc = <MediaVideo src={commonStore.fileUrl(item.id)}/>;
 					break;
 			};
+
+			if (!mc) {
+				return null;
+			};
+
+			return (
+				<div className={cn.join(' ')}>
+					{mc}
+				</div>
+			);
 		};
 
+		if (view.coverRelationKey == 'pageCover') {
+			return mediaCover(record);
+		};
+
+		let cover = null;
 		for (let id of value) {
 			const f = detailStore.get(subId, id, []);
 			if (f._empty_) {
 				continue;
 			};
 
-			switch (f.type) {
-				case Constant.typeId.image:
-					cn.push('coverImage');
-					cover = <img src={commonStore.imageUrl(f.id, 600)} />;
-					break;
-
-				case Constant.typeId.audio:
-					cn.push('coverAudio');
-
-					const playlist = [ 
-						{ name: f.name, src: commonStore.fileUrl(f.id) },
-					];
-
-					cover = <MediaAudio playlist={playlist} />;
-					break;
-
-				case Constant.typeId.video:
-					cn.push('coverVideo');
-					cover = <MediaVideo src={commonStore.fileUrl(f.id)} />;
-					break;
-			};
+			cover = mediaCover(f);
 		};
 
-		if (!cover) {
-			return null;
-		};
-
-		return (
-			<div className={cn.join(' ')}>
-				{cover}
-			</div>
-		);
+		return cover;
 	};
 
 });
