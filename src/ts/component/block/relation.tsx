@@ -133,21 +133,23 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 			element: `#block-${block.id}`,
 			offsetX: Constant.size.blockMenu,
 			data: {
-				rootId: rootId,
+				rootId,
 				blockId: block.id,
 				filter: '',
 				menuIdEdit: 'blockRelationEdit',
 				ref: 'block',
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], (message: any) => {
-						if (!message.error.code) {
-							C.BlockRelationSetKey(rootId, block.id, relation.relationKey, () => { 
-								menuStore.close('relationSuggest'); 
-							});
+						if (message.error.code) {
+							return;
+						};
 
-							if (onChange) {
-								onChange(message);
-							};
+						C.BlockRelationSetKey(rootId, block.id, relation.relationKey, () => { 
+							menuStore.close('relationSuggest'); 
+						});
+
+						if (onChange) {
+							onChange(message);
 						};
 					});
 				},

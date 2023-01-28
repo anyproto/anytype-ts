@@ -2,9 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { I, C, Relation } from 'Lib';
-import { keyboard } from 'Lib';
-import { detailStore, menuStore } from 'Store';
+import { I, C, Relation, analytics, keyboard } from 'Lib';
+import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
@@ -116,6 +115,10 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				],
 				onSelect: (item: any) => {
 					this.save([ item.id ]);
+
+					if (!value.length) {
+						analytics.event('SetSelectQuery', { type: 'relation' });
+					};
 				}
 			}
 		});
@@ -148,6 +151,8 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 				filter: '',
 				onClick: (item: any) => {
 					this.save([ item.id ]);
+
+					analytics.event('SetSelectQuery', { type: 'type' });
 					close();
 				}
 			}
