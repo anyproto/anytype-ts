@@ -571,10 +571,12 @@ onSetRootId = ({ rootId }) => {
 		return;
 	};
 
-	const coords = { x: transform.x, y: transform.y };
-	
+	const { x, y, k } = transform;
+	const coords = { x, y };
+	const to = { x: width / 2 - d.x, y: height / 2 - d.y };
+
 	new TWEEN.Tween(coords)
-	.to({ x: width / 2 - d.x, y: height / 2 - d.y }, 1000)
+	.to(to, 1000)
 	.easing(TWEEN.Easing.Quadratic.InOut)
 	.onUpdate(() => {
 		transform = Object.assign(transform, coords);
