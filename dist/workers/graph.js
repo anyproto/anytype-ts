@@ -32,10 +32,10 @@ const forceProps = {
 		y: 0.5,
 	},
 	charge: {
-		strength: -1000,
+		strength: -300,
 	},
 	link: {
-		distance: 80,
+		distance: 100,
 	},
 	forceX: {
 		strength: 0.1,
@@ -100,7 +100,7 @@ init = (param) => {
 			send('onTransform', { ...transform });
 			redraw();
 		};
-	}, 300);
+	}, 50);
 };
 
 initColor = (theme) => {
@@ -245,9 +245,7 @@ draw = (t) => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		if (checkNodeInViewport(d.source) || checkNodeInViewport(d.target)) {
-			drawLine(d, radius, diameter, settings.marker && d.isDouble, settings.marker);
-		};
+		drawLine(d, radius, diameter, settings.marker && d.isDouble, settings.marker);
 	});
 
 	nodes.forEach(d => {
