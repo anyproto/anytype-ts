@@ -180,6 +180,7 @@ declare global {
 		Store: any; 
 		$: any;
 		Lib: any;
+		Graph: any;
 
 		isWebVersion: boolean;
 		Config: any;

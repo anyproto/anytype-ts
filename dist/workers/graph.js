@@ -1,11 +1,12 @@
-importScripts('./d3/d3-quadtree.min.js');
-importScripts('./d3/d3-zoom.min.js');
-importScripts('./d3/d3-drag.min.js');
-importScripts('./d3/d3-dispatch.min.js');
-importScripts('./d3/d3-timer.min.js');
-importScripts('./d3/d3-selection.min.js');
-importScripts('./d3/d3-force.min.js');
-importScripts('./util.js');
+importScripts('./lib/d3/d3-quadtree.min.js');
+importScripts('./lib/d3/d3-zoom.min.js');
+importScripts('./lib/d3/d3-drag.min.js');
+importScripts('./lib/d3/d3-dispatch.min.js');
+importScripts('./lib/d3/d3-timer.min.js');
+importScripts('./lib/d3/d3-selection.min.js');
+importScripts('./lib/d3/d3-force.min.js');
+importScripts('./lib/tween.js');
+importScripts('./lib/util.js');
 
 const util = new Util();
 
@@ -63,6 +64,7 @@ let Color = {};
 let frame = 0;
 let selected = [];
 let settings = {};
+let time = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -82,14 +84,23 @@ init = (param) => {
 	resize(data);
 	initColor(data.theme);
 
-	transform = d3.zoomIdentity.translate(-width, -height).scale(1);
+	transform = d3.zoomIdentity.translate(0, 0).scale(1);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
 
 	initForces();
 
 	simulation.on('tick', () => { redraw(); });
-	simulation.tick();
+	simulation.tick(100);
+
+	setTimeout(() => {
+		const root = getNodeById(data.rootId);
+		if (root) {
+			transform = Object.assign(transform, { x: width / 2 - root.x, y: height / 2 - root.y });
+			send('onTransform', { ...transform });
+			redraw();
+		};
+	}, 300);
 };
 
 initColor = (theme) => {
@@ -123,21 +134,6 @@ initColor = (theme) => {
 image = ({ src, bitmap }) => {
 	if (!images[src]) {
 		images[src] = bitmap;
-	};
-};
-
-updateSettings = (param) => {
-	const needUpdate = (param.link != settings.link) || 
-						(param.relation != settings.relation) || 
-						(param.orphan != settings.orphan) || 
-						(param.filter != settings.filter);
-
-	settings = Object.assign(settings, param);
-
-	if (needUpdate) {
-		updateForces();
-	} else {
-		redraw();
 	};
 };
 
@@ -189,32 +185,20 @@ updateForces = () => {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
 	};
 
-	// Filter by user input
-	if (settings.filter) {
-		const reg = new RegExp(util.filterFix(settings.filter), 'ig');
-		nodes = nodes.filter(d => d.name.match(reg) || d.description.match(reg) || d.snippet.match(reg));
-	};
-
 	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
-	// Recalculate orphans and root
+	// Recalculate orphans
 	nodes = nodes.map(d => {
 		d.sourceCnt = edges.filter(it => it.source == d.id).length;
 		d.targetCnt = edges.filter(it => it.target == d.id).length;
 		d.isOrphan = !d.sourceCnt && !d.targetCnt;
-
-		if (d.isRoot) {
-			d.fx = width / 2;
-			d.fy = height / 2;
-		};
-
 		return d;
 	});
 
 	// Filter orphans
 	if (!settings.orphan) {
-		nodes = nodes.filter(d => !d.isOrphan || d.isRoot);
+		nodes = nodes.filter(d => !d.isOrphan);
 	};
 
 	map = getNodeMap();
@@ -233,9 +217,26 @@ updateForces = () => {
 	redraw();
 };
 
-draw = () => {
+updateSettings = (param) => {
+	const needUpdate = (param.link != settings.link) || 
+						(param.relation != settings.relation) || 
+						(param.orphan != settings.orphan);
+
+	settings = Object.assign(settings, param);
+
+	if (needUpdate) {
+		updateForces();
+	} else {
+		redraw();
+	};
+};
+
+draw = (t) => {
 	const radius = 6 / transform.k;
 	const diameter = radius * 2;
+
+	time = t;
+	TWEEN.update();
 
 	ctx.save();
 	ctx.clearRect(0, 0, width, height);
@@ -444,7 +445,6 @@ drawNode = (d) => {
 
 onZoom = (data) => {
 	transform = Object.assign(transform, data.transform);
-
 	redraw();
 };
 
@@ -455,7 +455,7 @@ onDragStart = ({ active }) => {
 };
 
 onDragMove = ({ subjectId, x, y }) => {
-	this.postMessage({ id: 'onDragMove' });
+	send('onDragMove');
 
 	if (!subjectId) {
 		return;
@@ -483,14 +483,14 @@ onDragEnd = ({ active }) => {
 onClick = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
 	if (d) {
-		this.postMessage({ id: 'onClick', node: d.id });
+		send('onClick', { node: d.id });
 	};
 };
 
 onSelect = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
 	if (d) {
-		this.postMessage({ id: 'onSelect', node: d.id });
+		send('onSelect', { node: d.id });
 	};
 };
 
@@ -505,7 +505,7 @@ onMouseMove = ({ x, y }) => {
 		d.isOver = true;
 	};
 
-	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x, y, k: transform.k });
+	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 	redraw();
 };
 
@@ -520,7 +520,8 @@ onContextMenu = ({ x, y }) => {
 		d.isOver = true;
 	};
 
-	this.postMessage({ id: 'onContextMenu', node: (d ? d.id : ''), x, y });
+	send('onContextMenu', { node: (d ? d.id : ''), x, y });
+	redraw();
 };
 
 onAddNode = ({ sourceId, target }) => {
@@ -567,23 +568,25 @@ onResize = (data) => {
 };
 
 onSetRootId = ({ rootId }) => {
-	const active = data.nodes.find(d => d.isRoot);
-	const node = nodes.find(d => d.isRoot);
-	
-	if (active) {
-		active.isRoot = false;
-	};
-	if (node) {
-		delete(node.fx);
-		delete(node.fy);
-	};
-
-	const d = data.nodes.find(d => d.id == rootId);
+	const d = nodes.find(d => d.id == rootId);
 	if (!d) {
 		return;
 	};
 
-	d.isRoot = true;
+	const coords = { x: transform.x, y: transform.y };
+	
+	new TWEEN.Tween(coords)
+	.to({ x: width / 2 - d.x, y: height / 2 - d.y }, 1000)
+	.easing(TWEEN.Easing.Quadratic.InOut)
+	.onUpdate(() => {
+		transform = Object.assign(transform, coords);
+		redraw();
+	})
+	.onComplete(() => {
+		send('onTransform', { ...transform });
+	})
+	.start();
+
 	redraw();
 };
 
@@ -599,6 +602,12 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
+};
+
+//------------------- Util -------------------
+
+const send = (id, data) => {
+	this.postMessage({ id, data });
 };
 
 const checkNodeInViewport = (d) => {
@@ -619,6 +628,10 @@ const isLayoutBookmark = (d) => {
 
 const isIconCircle = (d) => {
 	return isLayoutHuman(d) || isLayoutBookmark(d);
+};
+
+const getNodeById = (id) => {
+	return nodes.find(d => d.id == id);
 };
 
 const getNodeByCoords = (x, y) => {

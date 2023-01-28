@@ -69,6 +69,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.rebind();
 		this.resize();
 		this.load();
+
+		window.Graph = this;
 	};
 
 	componentDidUpdate () {
@@ -216,11 +218,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		if (this.refGraph) {
 			this.refGraph.send('onSetSelected', { ids: this.ids });
-			//this.refGraph.send('onSetRootId', { rootId: id });
 		};
 		
 		ObjectUtil.openAuto(this.data.nodes.find(d => d.id == id));
-		analytics.event('GraphSelectNode');
 	};
 
 	getRootId () {
