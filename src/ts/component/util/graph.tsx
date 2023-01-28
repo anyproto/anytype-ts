@@ -227,7 +227,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onZoom ({ transform }) {
-		this.send('onZoom', { transform: transform });
+		this.send('onZoom', { transform });
   	};
 
 	onPreviewShow (data: any) {

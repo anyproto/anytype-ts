@@ -159,7 +159,6 @@ initForces = () => {
 	.strength(charge.strength);
 
 	simulation.force('link')
-	.id(d => d.id)
 	.links(edges)
 	.distance(link.distance);
 
@@ -568,19 +567,23 @@ onResize = (data) => {
 };
 
 onSetRootId = ({ rootId }) => {
-	const active = nodes.find(d => d.isRoot);
+	const active = data.nodes.find(d => d.isRoot);
+	const node = nodes.find(d => d.isRoot);
+	
 	if (active) {
-		delete(active.fx, active.fy);
 		active.isRoot = false;
+	};
+	if (node) {
+		delete(node.fx);
+		delete(node.fy);
 	};
 
 	const d = data.nodes.find(d => d.id == rootId);
-	if (d) {
-		d.isRoot = true;
-		d.fx = width / 2;
-		d.fy = height / 2;
+	if (!d) {
+		return;
 	};
 
+	d.isRoot = true;
 	redraw();
 };
 
