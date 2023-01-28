@@ -100,7 +100,7 @@ init = (param) => {
 			send('onTransform', { ...transform });
 			redraw();
 		};
-	}, 50);
+	}, 100);
 };
 
 initColor = (theme) => {
