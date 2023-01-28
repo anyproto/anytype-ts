@@ -32,10 +32,10 @@ const forceProps = {
 		y: 0.5,
 	},
 	charge: {
-		strength: -300,
+		strength: -1000,
 	},
 	link: {
-		distance: 100,
+		distance: 1,
 	},
 	forceX: {
 		strength: 0.1,
