@@ -85,15 +85,11 @@ init = (param) => {
 	transform = d3.zoomIdentity.translate(-width, -height).scale(1);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
-	simulation.alphaDecay(0.05);
-	simulation.velocityDecay(0.05);
 
 	initForces();
 
 	simulation.on('tick', () => { redraw(); });
 	simulation.tick();
-
-	restart(0);
 };
 
 initColor = (theme) => {
