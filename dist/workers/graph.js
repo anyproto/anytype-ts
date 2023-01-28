@@ -32,17 +32,9 @@ const forceProps = {
 	},
 	charge: {
 		strength: -1000,
-		distanceMin: 50,
-		distanceMax: 500,
-	},
-	collide: {
-		strength: 1,
-		iterations: 1,
 	},
 	link: {
-		strength: 1,
-		distance: 1,
-		iterations: 1,
+		distance: 80,
 	},
 	forceX: {
 		strength: 0.1,
@@ -90,7 +82,7 @@ init = (param) => {
 	resize(data);
 	initColor(data.theme);
 
-	transform = d3.zoomIdentity.translate(-width, -height).scale(1.5);
+	transform = d3.zoomIdentity.translate(-width, -height).scale(1);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
 	simulation.alphaDecay(0.05);
@@ -154,12 +146,11 @@ updateSettings = (param) => {
 };
 
 initForces = () => {
-	const { center, charge, collide, link, forceX, forceY } = forceProps;
+	const { center, charge, link, forceX, forceY } = forceProps;
 
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
 	.force('charge', d3.forceManyBody())
-	.force('collide', d3.forceCollide(nodes))
 	.force('center', d3.forceCenter())
 	.force('forceX', d3.forceX(nodes))
 	.force('forceY', d3.forceY(nodes));
@@ -169,20 +160,12 @@ initForces = () => {
 	.y(height * center.y);
 
 	simulation.force('charge')
-	.strength(charge.strength)
-	.distanceMin(charge.distanceMin)
-	.distanceMax(charge.distanceMax);
-
-	simulation.force('collide')
-	.radius(d => d.radius)
-	.strength(collide.strength)
-	.iterations(collide.iterations);
+	.strength(charge.strength);
 
 	simulation.force('link')
 	.id(d => d.id)
 	.links(edges)
-	.distance(link.distance)
-	.iterations(link.iterations);
+	.distance(link.distance);
 
 	simulation.force('forceX')
 	.strength(d => d.isOrphan ? forceX.strength : 0)
@@ -196,12 +179,10 @@ initForces = () => {
 };
 
 updateForces = () => {
-	const { center, charge, collide, link, forceX, forceY } = forceProps;
+	let old = getNodeMap();
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
-
-	let map = getNodeMap();
 
 	// Filter links
 	if (!settings.link) {
@@ -216,19 +197,13 @@ updateForces = () => {
 	// Filter by user input
 	if (settings.filter) {
 		const reg = new RegExp(util.filterFix(settings.filter), 'ig');
-		nodes = nodes.filter(d => {
-			d.name = String(d.name || '');
-			d.description = String(d.description || '');
-			d.snippet = String(d.snippet || '');
-
-			return d.name.match(reg) || d.description.match(reg) || d.snippet.match(reg);
-		});
+		nodes = nodes.filter(d => d.name.match(reg) || d.description.match(reg) || d.snippet.match(reg));
 	};
 
-	map = getNodeMap();
+	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
-	// Recalculate orphans
+	// Recalculate orphans and root
 	nodes = nodes.map(d => {
 		d.sourceCnt = edges.filter(it => it.source == d.id).length;
 		d.targetCnt = edges.filter(it => it.target == d.id).length;
@@ -248,15 +223,19 @@ updateForces = () => {
 	};
 
 	map = getNodeMap();
-	nodes = nodes.map(d => Object.assign(map.get(d.id) || {}, d));
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
+
+	// Shallow copy to disable mutations
+	nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
+	edges = edges.map(d => Object.assign({}, d));
 
 	simulation.nodes(nodes);
 	simulation.force('link')
 	.id(d => d.id)
 	.links(edges);
 
-	restart(0.1);
+	simulation.alpha(1).restart();
+	redraw();
 };
 
 draw = () => {
@@ -476,7 +455,7 @@ onZoom = (data) => {
 
 onDragStart = ({ active }) => {
 	if (!active) {
-		restart(0.1);
+		restart(0.3);
 	};
 };
 
@@ -502,7 +481,7 @@ onDragMove = ({ subjectId, x, y }) => {
 
 onDragEnd = ({ active }) => {
 	if (!active) {
-		restart(0);
+		simulation.alphaTarget(0);
 	};
 };
 

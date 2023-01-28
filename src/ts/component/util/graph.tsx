@@ -87,13 +87,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const node = $(this.node);
 		const density = window.devicePixelRatio;
 		const elementId = '#graph' + (isPopup ? '-popup' : '');
-		const transform: any = {};
 		const width = node.width();
 		const height = node.height();
 		const zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
-		const scale = transform.k || 5;
-		const x = transform.x || -width * 2;
-		const y = transform.y || -height * 2;
 
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
@@ -128,7 +124,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
         .call(zoom)
-		.call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
+		.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
@@ -159,6 +155,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		d.name = SmileUtil.strip(d.name);
 		d.shortName = Util.shorten(d.name, 24);
+		d.description = String(d.description || '');
+		d.snippet = String(d.snippet || '');
 
 		// Clear icon props to fix image size
 		if (d.layout == I.ObjectLayout.Task) {
