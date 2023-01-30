@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button } from 'Component';
-import { I, translate } from 'Lib';
+import { Title, Button } from 'Component';
+import { I, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 
 import Head from '../../head';
@@ -50,6 +50,8 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 
 	onImport (): void {
 		const { close, onImport } = this.props;
+
+		analytics.event('ImportNotionProceed');
 
 		close();
 		onImport(I.ImportType.Notion, { apiKey: commonStore.notionToken });

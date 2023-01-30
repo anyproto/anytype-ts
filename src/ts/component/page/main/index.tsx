@@ -445,8 +445,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		this.state.filter = v;
 		this.setState({ filter: v });
 		this.load();
-
-		analytics.event('SearchQuery', { route: 'ScreenHome', length: v.length });
 	};
 
 	onAccount () {

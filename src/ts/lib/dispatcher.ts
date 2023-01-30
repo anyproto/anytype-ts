@@ -567,7 +567,7 @@ class Dispatcher {
 
 					const keys = [ 
 						{ id: 'filter', field: 'filters', idField: 'id', mapper: 'Filter' },
-						{ id: 'sort', field: 'sorts', idField: 'relationKey', mapper: 'Sort' },
+						{ id: 'sort', field: 'sorts', idField: 'id', mapper: 'Sort' },
 						{ id: 'relation', field: 'relations', idField: 'relationKey', mapper: 'ViewRelation' },
 					];
 

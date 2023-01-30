@@ -69,6 +69,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.rebind();
 		this.resize();
 		this.load();
+
+		window.Graph = this;
 	};
 
 	componentDidUpdate () {
@@ -216,11 +218,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		if (this.refGraph) {
 			this.refGraph.send('onSetSelected', { ids: this.ids });
-			//this.refGraph.send('onSetRootId', { rootId: id });
 		};
 		
 		ObjectUtil.openAuto(this.data.nodes.find(d => d.id == id));
-		analytics.event('GraphSelectNode');
 	};
 
 	getRootId () {
@@ -246,7 +246,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			data: {
 				subId: Constant.subId.graph,
 				objectIds: ids,
-				getObject: (id: string) => this.getNode(id),
+				getObject: id => this.getNode(id),
 				onLinkTo: (sourceId: string, targetId: string) => {
 					let target = this.getNode(targetId);
 					if (target) {
@@ -261,12 +261,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				},
 				onSelect: (itemId: string) => {
 					switch (itemId) {
-						case 'archive':
+						case 'archive': {
 							this.data.nodes = this.data.nodes.filter(d => !ids.includes(d.id));
 							this.refGraph.send('onRemoveNode', { ids });
 							break;
+						};
 
-						case 'fav':
+						case 'fav': {
 							ids.forEach((id: string) => {
 								const node = this.getNode(id);
 								
@@ -277,8 +278,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 							});
 							this.refGraph.send('onSetEdges', { edges: this.data.edges });
 							break;
+						};
 
-						case 'unfav':
+						case 'unfav': {
 							ids.forEach((id: string) => {
 								const node = this.getNode(id);
 								
@@ -296,6 +298,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 							this.refGraph.send('onSetEdges', { edges: this.data.edges });
 							break;
+						};
 					};
 
 					this.ids = [];

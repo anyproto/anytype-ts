@@ -50,6 +50,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 					title="No objects found" 
 					description="Create your first one to begin"
 					button="Create object"
+					className={isInline ? 'withHead' : ''}
 					withButton={allowed}
 					onClick={(e: any) => onRecordAdd(e, 1)}
 				/>

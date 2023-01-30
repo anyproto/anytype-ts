@@ -193,6 +193,11 @@ class Analytics {
 				data.type = I.FileType[data.type];
 				break;
 
+			case 'Import':
+				data.type = Number(data.type) || 0;
+				data.type = I.ImportType[data.type];
+				break;
+
 			case 'CreateRelation':
 			case 'AddExistingRelation':
 				data.format = Number(data.format) || 0;

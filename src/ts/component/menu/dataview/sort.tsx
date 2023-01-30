@@ -214,15 +214,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { getView } = data;
 		const view = getView();
 
-		if (!view) {
-			return [];
-		};
-		
-		let n = 0;
-		return Util.objectCopy(view.sorts || []).map((it: any) => {
-			it.id = n++;
-			return it;
-		});
+		return view ? Util.objectCopy(view.sorts || []) : [];
 	};
 
 	getRelationOptions () {
@@ -262,7 +254,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, getView, blockId, getData } = data;
+		const { rootId, getView, blockId } = data;
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
 
@@ -289,11 +281,10 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const item = view.getSort(id);
-		const relationKey = item.relationKey;
 
 		item[k] = v;
 
-		C.BlockDataviewSortReplace(rootId, blockId, view.id, relationKey, { ...item });
+		C.BlockDataviewSortReplace(rootId, blockId, view.id, item.id, { ...item });
 
 		analytics.event('ChangeSortValue', { type: item.type });
 		this.forceUpdate();
@@ -305,7 +296,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 
-		C.BlockDataviewSortRemove(rootId, blockId, view.id, [ item.relationKey ]);
+		C.BlockDataviewSortRemove(rootId, blockId, view.id, [ item.id ]);
 
 		menuStore.close('select');
 		analytics.event('RemoveSort');
@@ -327,7 +318,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const view = getView();
 
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
-		C.BlockDataviewSortSort(rootId, blockId, view.id, view.sorts.map(it => it.relationKey));
+		C.BlockDataviewSortSort(rootId, blockId, view.id, view.sorts.map(it => it.id));
 
 		selection.preventSelect(false);
 		analytics.event('RepositionSort');

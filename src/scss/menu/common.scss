@@ -112,10 +112,13 @@
 			.iconObject { margin-right: 6px; vertical-align: top; flex-shrink: 0; }
 
 			.clickable { display: flex; flex-grow: 1; }
+
 			.select { height: 20px; padding-top: 0px; padding-bottom: 0px; }
 			.select {
 				.item { @include text-small; }
 			}
+
+			.highlightMark { top: 50%; margin-top: -5px; right: 14px; }
 		}
 
 		.item.empty { cursor: default; }
@@ -150,6 +153,8 @@
 				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
 				flex-shrink: 0; line-height: 20px; width: 80px;
 			}
+
+			.highlightMark { position: relative; top: auto; right: auto; margin: 0px 0px 0px 10px; }
 		}
 
 		.item.withSwitch, .item.withSelect { display: flex; align-items: center; justify-content: space-between; }

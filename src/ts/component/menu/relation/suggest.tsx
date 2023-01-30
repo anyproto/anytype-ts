@@ -262,7 +262,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 			if (clear) {
 				this.setState({ loading: false });
-				analytics.event('SearchQuery', { route: 'MenuRelation', length: filter.length });
 			} else {
 				this.forceUpdate();
 			};
@@ -286,7 +285,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		if (filter) {
 			const marketplace = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 			sections = sections.concat([
-				{ id: 'marketplace', name: 'Marketplace', children: marketplace },
+				{ id: 'marketplace', name: 'Anytype library', children: marketplace },
 			]);
 
 			name = `Create relation "${filter}"`;
@@ -294,7 +293,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			sections = sections.concat([
 				{ 
 					children: [
-						{ id: 'marketplace', icon: 'folder', name: 'Marketplace', arrow: true }
+						{ id: 'marketplace', icon: 'folder', name: 'Anytype library', arrow: true }
 					] 
 				},
 			])

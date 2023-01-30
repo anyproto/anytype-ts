@@ -30,6 +30,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	isPreviewDisabled = false;
 	ids: string[] = [];
 	timeoutPreview = 0;
+	zoom: any = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -83,18 +84,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	init () {
-		const { data, isPopup } = this.props;
+		const { data, isPopup, rootId } = this.props;
 		const node = $(this.node);
 		const density = window.devicePixelRatio;
-		const elementId = '#graph' + (isPopup ? '-popup' : '');
-		const transform: any = {};
+		const elementId = `#graph${isPopup ? '-popup' : ''}`;
 		const width = node.width();
 		const height = node.height();
-		const zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
-		const scale = transform.k || 5;
-		const x = transform.x || -width * 2;
-		const y = transform.y || -height * 2;
-
+	
+		this.zoom = d3.zoom().scaleExtent([ 1, 6 ]).on('zoom', e => this.onZoom(e));
 		this.edges = (data.edges || []).map(this.edgeMapper);
 		this.nodes = (data.nodes || []).map(this.nodeMapper);
 
@@ -107,7 +104,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		this.worker = new Worker('workers/graph.js');
 		this.worker.onerror = (e: any) => { console.log(e); };
-		this.worker.addEventListener('message', (data: any) => { this.onMessage(data); });
+		this.worker.addEventListener('message', this.onMessage);
 
 		this.send('init', { 
 			canvas: transfer, 
@@ -118,6 +115,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			edges: this.edges,
 			theme: commonStore.getThemeClass(),
 			settings: commonStore.graph,
+			rootId,
 		}, [ transfer ]);
 
 		d3.select(this.canvas)
@@ -127,8 +125,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			on('drag', (e: any, d: any) => this.onDragMove(e)).
 			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
-        .call(zoom)
-		.call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale))
+        .call(this.zoom)
+		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
@@ -144,11 +142,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	nodeMapper (d: any) {
-		const { rootId } = this.props;
-
 		d.layout = Number(d.layout) || 0;
 		d.radius = 5;
-		d.isRoot = d.id == rootId;
 		d.src = this.imageSrc(d);
 
 		if (d.layout == I.ObjectLayout.Note) {
@@ -159,6 +154,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		d.name = SmileUtil.strip(d.name);
 		d.shortName = Util.shorten(d.name, 24);
+		d.description = String(d.description || '');
+		d.snippet = String(d.snippet || '');
 
 		// Clear icon props to fix image size
 		if (d.layout == I.ObjectLayout.Task) {
@@ -229,7 +226,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onZoom ({ transform }) {
-		this.send('onZoom', { transform: transform });
+		this.send('onZoom', { transform });
   	};
 
 	onPreviewShow (data: any) {
@@ -266,45 +263,51 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		$('#graphPreview').remove();
 	};
 
-	onMessage ({ data }) {
+	onMessage (e) {
+		const { id, data } = e.data;
 		const { root } = blockStore;
 		const { isPopup, onClick, onContextMenu, onSelect } = this.props;
+		const body = $('body');
 
-		switch (data.id) {
-			case 'onClick':
+		switch (id) {
+			case 'onClick': {
 				onClick(data.node);
 				window.clearTimeout(this.timeoutPreview);
 				break;
+			};
 
-			case 'onSelect':
+			case 'onSelect': {
 				if (data.node != root) {
 					onSelect(data.node);
 				};
 				break;
+			};
 
-			case 'onMouseMove':
-				if (!this.isDragging) {
-					this.subject = this.nodes.find(d => d.id == data.node);
+			case 'onMouseMove': {
+				if (this.isDragging) {
+					break;
+				};
 
-					const body = $('body');
+				this.subject = this.nodes.find(d => d.id == data.node);
 
-					if (this.subject) {
-						window.clearTimeout(this.timeoutPreview);
-						this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
+				if (this.subject) {
+					window.clearTimeout(this.timeoutPreview);
+					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
 
-						body.addClass('cp');
-					} else {
-						this.onPreviewHide();	
-						body.removeClass('cp');
-					};
+					body.addClass('cp');
+				} else {
+					this.onPreviewHide();	
+					body.removeClass('cp');
 				};
 				break;
+			};
 
-			case 'onDragMove':
+			case 'onDragMove': {
 				this.onPreviewHide();
 				break;
+			};
 
-			case 'onContextMenu':
+			case 'onContextMenu': {
 				if (!data.node || (data.node == root)) {
 					break;
 				};
@@ -333,6 +336,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					},
 				});
 				break;
+			};
+
+			case 'onTransform': {
+				d3.select(this.canvas)
+        		.call(this.zoom)
+				.call(this.zoom.transform, d3.zoomIdentity.translate(data.x, data.y).scale(data.k))
+				break;
+			};
 
 		};
 	};

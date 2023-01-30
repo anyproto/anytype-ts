@@ -71,7 +71,7 @@ class Icon extends React.Component<Props> {
 			</div>
 		);
 	};
-	
+
 	componentWillUnmount () {
 		Preview.tooltipHide(false);
 	};
