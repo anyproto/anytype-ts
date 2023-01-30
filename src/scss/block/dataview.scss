@@ -80,6 +80,10 @@
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }
 		}
+		.dataviewHead.isDeleted {
+			.editableWrap { color: $colorSecondary; }
+			#head-source-select { display: none; }
+		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
 		.dataviewControls {

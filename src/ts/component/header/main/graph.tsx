@@ -32,7 +32,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 				<div className="side right">
 					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onSearch} />
-					<Icon id="button-header-filter" className="filter big" tooltip="Filters" onClick={this.onFilter} />
+					<Icon id="button-header-filter" className="filter big dn" tooltip="Filters" onClick={this.onFilter} />
 					<Icon id="button-header-settings" className="settings big" tooltip="Settings" onClick={this.onSettings} />
 				</div>
 			</div>

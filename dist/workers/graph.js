@@ -1,11 +1,12 @@
-importScripts('./d3/d3-quadtree.min.js');
-importScripts('./d3/d3-zoom.min.js');
-importScripts('./d3/d3-drag.min.js');
-importScripts('./d3/d3-dispatch.min.js');
-importScripts('./d3/d3-timer.min.js');
-importScripts('./d3/d3-selection.min.js');
-importScripts('./d3/d3-force.min.js');
-importScripts('./util.js');
+importScripts('./lib/d3/d3-quadtree.min.js');
+importScripts('./lib/d3/d3-zoom.min.js');
+importScripts('./lib/d3/d3-drag.min.js');
+importScripts('./lib/d3/d3-dispatch.min.js');
+importScripts('./lib/d3/d3-timer.min.js');
+importScripts('./lib/d3/d3-selection.min.js');
+importScripts('./lib/d3/d3-force.min.js');
+importScripts('./lib/tween.js');
+importScripts('./lib/util.js');
 
 const util = new Util();
 
@@ -32,17 +33,9 @@ const forceProps = {
 	},
 	charge: {
 		strength: -1000,
-		distanceMin: 50,
-		distanceMax: 500,
-	},
-	collide: {
-		strength: 1,
-		iterations: 1,
 	},
 	link: {
-		strength: 1,
 		distance: 1,
-		iterations: 1,
 	},
 	forceX: {
 		strength: 0.1,
@@ -71,6 +64,7 @@ let Color = {};
 let frame = 0;
 let selected = [];
 let settings = {};
+let time = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -90,18 +84,23 @@ init = (param) => {
 	resize(data);
 	initColor(data.theme);
 
-	transform = d3.zoomIdentity.translate(-width, -height).scale(1.5);
+	transform = d3.zoomIdentity.translate(0, 0).scale(1);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
-	simulation.alphaDecay(0.05);
-	simulation.velocityDecay(0.05);
 
 	initForces();
 
 	simulation.on('tick', () => { redraw(); });
-	simulation.tick();
+	simulation.tick(100);
 
-	restart(0);
+	setTimeout(() => {
+		const root = getNodeById(data.rootId);
+		if (root) {
+			transform = Object.assign(transform, { x: width / 2 - root.x, y: height / 2 - root.y });
+			send('onTransform', { ...transform });
+			redraw();
+		};
+	}, 100);
 };
 
 initColor = (theme) => {
@@ -114,7 +113,6 @@ initColor = (theme) => {
 				node: '#aca996',
 				text: '#929082',
 				highlight: '#ffb522',
-				green: '#57c600',
 				selected: '#2aa7ee',
 			}; 
 			break;
@@ -127,7 +125,6 @@ initColor = (theme) => {
 				node: '#aca996',
 				text: '#929082',
 				highlight: '#ffb522',
-				green: '#57c600',
 				selected: '#2aa7ee',
 			};
 			break;
@@ -140,28 +137,12 @@ image = ({ src, bitmap }) => {
 	};
 };
 
-updateSettings = (param) => {
-	const needUpdate = (param.link != settings.link) || 
-						(param.relation != settings.relation) || 
-						(param.orphan != settings.orphan) || 
-						(param.filter != settings.filter);
-
-	settings = Object.assign(settings, param);
-
-	if (needUpdate) {
-		updateForces();
-	} else {
-		redraw();
-	};
-};
-
 initForces = () => {
-	const { center, charge, collide, link, forceX, forceY } = forceProps;
+	const { center, charge, link, forceX, forceY } = forceProps;
 
 	simulation
 	.force('link', d3.forceLink().id(d => d.id))
 	.force('charge', d3.forceManyBody())
-	.force('collide', d3.forceCollide(nodes))
 	.force('center', d3.forceCenter())
 	.force('forceX', d3.forceX(nodes))
 	.force('forceY', d3.forceY(nodes));
@@ -171,20 +152,11 @@ initForces = () => {
 	.y(height * center.y);
 
 	simulation.force('charge')
-	.strength(charge.strength)
-	.distanceMin(charge.distanceMin)
-	.distanceMax(charge.distanceMax);
-
-	simulation.force('collide')
-	.radius(d => d.radius)
-	.strength(collide.strength)
-	.iterations(collide.iterations);
+	.strength(charge.strength);
 
 	simulation.force('link')
-	.id(d => d.id)
 	.links(edges)
-	.distance(link.distance)
-	.iterations(link.iterations);
+	.distance(link.distance);
 
 	simulation.force('forceX')
 	.strength(d => d.isOrphan ? forceX.strength : 0)
@@ -198,12 +170,10 @@ initForces = () => {
 };
 
 updateForces = () => {
-	const { center, charge, collide, link, forceX, forceY } = forceProps;
+	let old = getNodeMap();
 
 	edges = util.objectCopy(data.edges);
 	nodes = util.objectCopy(data.nodes);
-
-	let map = getNodeMap();
 
 	// Filter links
 	if (!settings.link) {
@@ -215,19 +185,7 @@ updateForces = () => {
 		edges = edges.filter(d => d.type != EdgeType.Relation);
 	};
 
-	// Filter by user input
-	if (settings.filter) {
-		const reg = new RegExp(util.filterFix(settings.filter), 'ig');
-		nodes = nodes.filter(d => {
-			d.name = String(d.name || '');
-			d.description = String(d.description || '');
-			d.snippet = String(d.snippet || '');
-
-			return d.name.match(reg) || d.description.match(reg) || d.snippet.match(reg);
-		});
-	};
-
-	map = getNodeMap();
+	let map = getNodeMap();
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
 
 	// Recalculate orphans
@@ -235,35 +193,50 @@ updateForces = () => {
 		d.sourceCnt = edges.filter(it => it.source == d.id).length;
 		d.targetCnt = edges.filter(it => it.target == d.id).length;
 		d.isOrphan = !d.sourceCnt && !d.targetCnt;
-
-		if (d.isRoot) {
-			d.fx = width / 2;
-			d.fy = height / 2;
-		};
-
 		return d;
 	});
 
 	// Filter orphans
 	if (!settings.orphan) {
-		nodes = nodes.filter(d => !d.isOrphan || d.isRoot);
+		nodes = nodes.filter(d => !d.isOrphan);
 	};
 
 	map = getNodeMap();
-	nodes = nodes.map(d => Object.assign(map.get(d.id) || {}, d));
 	edges = edges.filter(d => map.get(d.source) && map.get(d.target));
+
+	// Shallow copy to disable mutations
+	nodes = nodes.map(d => Object.assign(old.get(d.id) || {}, d));
+	edges = edges.map(d => Object.assign({}, d));
 
 	simulation.nodes(nodes);
 	simulation.force('link')
 	.id(d => d.id)
 	.links(edges);
 
-	restart(0.1);
+	simulation.alpha(1).restart();
+	redraw();
 };
 
-draw = () => {
+updateSettings = (param) => {
+	const needUpdate = (param.link != settings.link) || 
+						(param.relation != settings.relation) || 
+						(param.orphan != settings.orphan);
+
+	settings = Object.assign(settings, param);
+
+	if (needUpdate) {
+		updateForces();
+	} else {
+		redraw();
+	};
+};
+
+draw = (t) => {
 	const radius = 6 / transform.k;
 	const diameter = radius * 2;
+
+	time = t;
+	TWEEN.update();
 
 	ctx.save();
 	ctx.clearRect(0, 0, width, height);
@@ -272,9 +245,7 @@ draw = () => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		if (checkNodeInViewport(d.source) || checkNodeInViewport(d.target)) {
-			drawLine(d, radius, diameter, settings.marker && d.isDouble, settings.marker);
-		};
+		drawLine(d, radius, diameter, settings.marker && d.isDouble, settings.marker);
 	});
 
 	nodes.forEach(d => {
@@ -317,16 +288,10 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let colorArrow = Color.arrow;
 	let colorText = Color.text;
 
-	if (d.source.isOver) {
+	if (d.source.isOver || d.target.isOver) {
 		colorLink = Color.highlight;
 		colorArrow = Color.highlight;
 		colorText = Color.highlight;
-	};
-
-	if (d.target.isOver) {
-		colorLink = Color.green;
-		colorArrow = Color.green;
-		colorText = Color.green;
 	};
 
 	util.line(sx1, sy1, sx2, sy2, r1 / 10, colorLink);
@@ -478,18 +443,17 @@ drawNode = (d) => {
 
 onZoom = (data) => {
 	transform = Object.assign(transform, data.transform);
-
 	redraw();
 };
 
 onDragStart = ({ active }) => {
 	if (!active) {
-		restart(0.1);
+		restart(0.3);
 	};
 };
 
 onDragMove = ({ subjectId, x, y }) => {
-	this.postMessage({ id: 'onDragMove' });
+	send('onDragMove');
 
 	if (!subjectId) {
 		return;
@@ -510,21 +474,21 @@ onDragMove = ({ subjectId, x, y }) => {
 
 onDragEnd = ({ active }) => {
 	if (!active) {
-		restart(0);
+		simulation.alphaTarget(0);
 	};
 };
 
 onClick = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
 	if (d) {
-		this.postMessage({ id: 'onClick', node: d.id });
+		send('onClick', { node: d.id });
 	};
 };
 
 onSelect = ({ x, y }) => {
   	const d = getNodeByCoords(x, y);
 	if (d) {
-		this.postMessage({ id: 'onSelect', node: d.id });
+		send('onSelect', { node: d.id });
 	};
 };
 
@@ -537,9 +501,10 @@ onMouseMove = ({ x, y }) => {
 	const d = getNodeByCoords(x, y);
 	if (d) {
 		d.isOver = true;
+		console.log('onMouseMove', x, y, transform.x, transform.y);
 	};
 
-	this.postMessage({ id: 'onMouseMove', node: (d ? d.id : ''), x, y, k: transform.k });
+	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 	redraw();
 };
 
@@ -554,7 +519,8 @@ onContextMenu = ({ x, y }) => {
 		d.isOver = true;
 	};
 
-	this.postMessage({ id: 'onContextMenu', node: (d ? d.id : ''), x, y });
+	send('onContextMenu', { node: (d ? d.id : ''), x, y });
+	redraw();
 };
 
 onAddNode = ({ sourceId, target }) => {
@@ -601,18 +567,26 @@ onResize = (data) => {
 };
 
 onSetRootId = ({ rootId }) => {
-	const active = nodes.find(d => d.isRoot);
-	if (active) {
-		delete(active.fx, active.fy);
-		active.isRoot = false;
+	const d = nodes.find(d => d.id == rootId);
+	if (!d) {
+		return;
 	};
 
-	const d = data.nodes.find(d => d.id == rootId);
-	if (d) {
-		d.isRoot = true;
-		d.fx = width / 2;
-		d.fy = height / 2;
-	};
+	const { x, y, k } = transform;
+	const coords = { x, y };
+	const to = { x: width / 2 - k * d.x, y: height / 2 - k * d.y };
+
+	new TWEEN.Tween(coords)
+	.to(to, 1000)
+	.easing(TWEEN.Easing.Quadratic.InOut)
+	.onUpdate(() => {
+		transform = Object.assign(transform, coords);
+		redraw();
+	})
+	.onComplete(() => {
+		send('onTransform', { ...transform });
+	})
+	.start();
 
 	redraw();
 };
@@ -629,6 +603,12 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
+};
+
+//------------------- Util -------------------
+
+const send = (id, data) => {
+	this.postMessage({ id, data });
 };
 
 const checkNodeInViewport = (d) => {
@@ -649,6 +629,10 @@ const isLayoutBookmark = (d) => {
 
 const isIconCircle = (d) => {
 	return isLayoutHuman(d) || isLayoutBookmark(d);
+};
+
+const getNodeById = (id) => {
+	return nodes.find(d => d.id == id);
 };
 
 const getNodeByCoords = (x, y) => {

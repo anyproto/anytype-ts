@@ -360,7 +360,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 			if (clear) {
 				this.setState({ loading: false });
-				analytics.event('SearchQuery', { route: 'ScreenSearch', length: filter.length });
 			} else {
 				this.forceUpdate();
 			};

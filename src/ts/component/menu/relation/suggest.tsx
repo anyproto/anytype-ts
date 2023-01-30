@@ -262,7 +262,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 			if (clear) {
 				this.setState({ loading: false });
-				analytics.event('SearchQuery', { route: 'MenuRelation', length: filter.length });
 			} else {
 				this.forceUpdate();
 			};

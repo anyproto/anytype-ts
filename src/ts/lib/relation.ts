@@ -320,7 +320,6 @@ class Relation {
 		return [
 			{ id: '', icon: '', name: 'None' },
 			{ id: 'pageCover', icon: 'image', name: 'Page cover' },
-			{ id: 'iconImage', icon: 'image', name: 'Image' }
 		].concat(options);
 	};
 

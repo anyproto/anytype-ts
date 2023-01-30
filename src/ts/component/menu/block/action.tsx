@@ -187,7 +187,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 		
 		const { align, content, bgColor, type } = block;
-		const { color, style } = content;
+		const { color, style, targetObjectId } = content;
 
 		let sections: any[] = [];
 		
@@ -225,18 +225,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					continue;
 				};
 
-				if (block.isBookmark()) {
-					if (!block.content.targetObjectId) {
-						hasBookmark = false;
-					} else {
-						const object = detailStore.get(rootId, block.content.targetObjectId, [ 'isArchived', 'isDeleted' ], true);
-						if (object.isArchived || object.isDeleted) {
-							hasBookmark = false;
-						};
-					};
-				} else {
-					hasBookmark = false;
-				};
+				hasBookmark = block.isBookmark() ? this.checkFlagByObject(targetObjectId) : false;
+				hasDataview = block.isDataview() ? this.checkFlagByObject(targetObjectId) : false;
 
 				if (!block.canTurnText())		 hasTurnText = false;
 				if (!block.canTurnPage())		 hasTurnObject = false;
@@ -305,18 +295,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					continue;
 				};
 
-				if (block.isBookmark()) {
-					if (!block.content.targetObjectId) {
-						hasBookmark = false;
-					} else {
-						const object = detailStore.get(rootId, block.content.targetObjectId, [ 'isArchived', 'isDeleted' ], true);
-						if (object.isArchived || object.isDeleted) {
-							hasBookmark = false;
-						};
-					};
-				} else {
-					hasBookmark = false;
-				};
+				hasBookmark = block.isBookmark() ? this.checkFlagByObject(targetObjectId) : false;
+				hasDataview = block.isDataview() ? this.checkFlagByObject(targetObjectId) : false;
 
 				if (!block.canTurnText() || block.isDiv()) {
 					hasTurnText = false;
@@ -382,6 +362,21 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		return MenuUtil.sectionsMap(sections);
+	};
+
+	checkFlagByObject (id: string): boolean {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+
+		let flag = false;
+		if (id) {
+			const object = detailStore.get(rootId, id, [ 'isArchived', 'isDeleted' ], true);
+			if (!object.isArchived && !object.isDeleted) {
+				flag = true;
+			};
+		};
+		return flag;
 	};
 	
 	getItems () {

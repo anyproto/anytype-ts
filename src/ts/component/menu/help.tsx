@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, Util, Onboarding, keyboard, analytics, Renderer } from 'Lib';
+import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight } from 'Lib';
 import { popupStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -35,7 +35,7 @@ class MenuHelp extends React.Component<I.Menu> {
 								key={i} 
 								{...item} 
 								onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-								onClick={(e: any) => { this.onClick(e, item); }} 
+								onClick={(e: any) => { this.onClick(e, item); }}
 							/>
 						);
 					};
@@ -48,6 +48,7 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	componentDidMount () {
 		this.rebind();
+		Highlight.showAll();
 	};
 
 	componentWillUnmount () {
@@ -88,6 +89,8 @@ class MenuHelp extends React.Component<I.Menu> {
 
 		close();
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
+
+		Highlight.hide(item.id);
 
 		switch (item.id) {
 			case 'whatsNew': {
