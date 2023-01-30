@@ -6,8 +6,10 @@ import Constant from 'json/constant.json';
 
 interface Detail {
 	relationKey: string;
-	value: any;
+	value: unknown;
 };
+
+interface Item { id: string, details: { type: string, relationKey: string, id: string } };
 
 class DetailStore {
 
@@ -21,7 +23,7 @@ class DetailStore {
         });
     };
 
-    set (rootId: string, details: any[]) {
+    set (rootId: string, details: Item[]) {
 		const map = observable.map(new Map());
 
 		for (const item of details) {
@@ -29,23 +31,15 @@ class DetailStore {
 			for (const k in item.details) {
 				const el = { relationKey: k, value: item.details[k] };
 				makeObservable(el, { value: observable });
-
-				intercept(el as any, (change: any) => { 
-					return (change.newValue === el[change.name] ? null : change); 
-				});
-
+				intercept(el, (change: any) => change.newValue === el[change.name] ? null : change);
 				list.push(el);
 			};
 			map.set(item.id, list);
 		};
-
 		this.map.set(rootId, map);
 	};
 
-    update (rootId: string, item: any, clear: boolean) {
-		if (!item || !item.id || !item.details) {
-			return;
-		};
+    update (rootId: string, item: Item, clear: boolean) {
 
 		let map = this.map.get(rootId);
 		let createMap = false;
@@ -75,9 +69,7 @@ class DetailStore {
 				list.push(el);
 			};
 
-			intercept(el as any, (change: any) => { 
-				return (change.newValue === el[change.name] ? null : change); 
-			});
+			intercept(el, (change: any) => change.newValue === el[change.name] ? null : change);
 
 			if (createList) {
 				map.set(item.id, list);
@@ -103,11 +95,11 @@ class DetailStore {
 		map.set(id, list);
 	};
 
-	getArray (rootId: string, id: string): any[] {
-		return (this.map.get(rootId) || new Map()).get(id) || [];
+	getArray (rootId: string, id: string): Detail[] {
+		return this.map.get(rootId)?.get(id) || [];
 	};
 
-    get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
+    get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): Detail | { id: string, _empty_: true } {
 		let list = this.getArray(rootId, id);
 		if (!list.length) {
 			return { id, _empty_: true };
@@ -122,7 +114,7 @@ class DetailStore {
 			list = list.filter(it => keys.includes(it.relationKey));
 		};
 
-		let object: any = {};
+		const object = {};
 		list.forEach(it => {
 			object[it.relationKey] = it.value;
 		});
@@ -229,14 +221,15 @@ class DetailStore {
 
 	checkSet (object: any) {
 		object.setOf = Relation.getArrayValue(object.setOf);
-
 		return object;
 	};
 
+	/** Clears any data stored with rootId, if there happens to be any */
     clear (rootId: string) {
 		this.map.delete(rootId);
 	};
 
+	/** Clears all of the data stored in DetailStore, if there happens to be any */
     clearAll () {
 		this.map.clear();
 	};
