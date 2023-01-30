@@ -86,7 +86,7 @@ init = (param) => {
 	resize(data);
 	initColor(data.theme);
 
-	transform = d3.zoomIdentity.translate(0, 0).scale(1);
+	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
 
@@ -98,7 +98,7 @@ init = (param) => {
 	setTimeout(() => {
 		const root = getNodeById(data.rootId);
 		if (root) {
-			transform = Object.assign(transform, { x: width / 2 - root.x, y: height / 2 - root.y });
+			transform = Object.assign(transform, this.getCenter(root.x, root.y));
 			send('onTransform', { ...transform });
 			redraw();
 		};
@@ -612,9 +612,8 @@ onSetRootId = ({ rootId }) => {
 		return;
 	};
 
-	const { x, y, k } = transform;
-	const coords = { x, y };
-	const to = { x: width / 2 - k * d.x, y: height / 2 - k * d.y };
+	const coords = { x: transform.x, y: transform.y };
+	const to = this.getCenter(d.x, d.y);
 
 	new TWEEN.Tween(coords)
 	.to(to, 500)
@@ -689,4 +688,8 @@ const getFont = () => {
 
 const getNodeMap = () => {
 	return new Map(nodes.map(d => [ d.id, d ]));
+};
+
+getCenter = (x, y) => {
+	return { x: width / 2 - x * transform.k, y: height / 2 - y * transform.k };
 };
