@@ -148,6 +148,7 @@ html.themeDark {
         .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
         .heading {
             .iconObject { background-color: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
+			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
             .featured { color: $colorSecondary; }
             .bullet { background: $colorSecondary; }
         }
