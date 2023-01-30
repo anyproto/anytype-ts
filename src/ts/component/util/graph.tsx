@@ -143,7 +143,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	nodeMapper (d: any) {
 		d.layout = Number(d.layout) || 0;
-		d.radius = 5;
+		d.radius = 4;
 		d.src = this.imageSrc(d);
 
 		if (d.layout == I.ObjectLayout.Note) {

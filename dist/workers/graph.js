@@ -412,7 +412,7 @@ drawNode = (d) => {
 		ctx.save();
 
 		if (lineWidth) {
-			util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, diameter + lineWidth * 2, diameter + lineWidth * 2, radius / 3);
+			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, radius / 3);
 			ctx.fillStyle = Color.bg;
 			ctx.fill();
 
@@ -433,7 +433,7 @@ drawNode = (d) => {
 			if (isIconCircle(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
-				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, radius / 4);
+				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, radius / 3);
 			};
 	
 			ctx.fillStyle = Color.bg;
