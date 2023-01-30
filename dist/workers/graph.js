@@ -110,10 +110,10 @@ initColor = (theme) => {
 		default:
 			Color = {
 				bg: '#fff',
-				link: '#cbc9bd',
+				link: '#dfddd0',
 				arrow: '#aca996',
 				node: '#aca996',
-				text: '#929082',
+				text: '#aca996',
 				highlight: '#ffb522',
 				selected: '#2aa7ee',
 			}; 
@@ -122,8 +122,8 @@ initColor = (theme) => {
 		case 'dark':
 			Color = {
 				bg: '#1e1e1b',
-				link: '#cbc9bd',
-				arrow: '#aca996',
+				link: '#484843',
+				arrow: '#929082',
 				node: '#aca996',
 				text: '#929082',
 				highlight: '#ffb522',
