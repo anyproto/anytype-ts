@@ -66,6 +66,7 @@ let selected = [];
 let settings = {};
 let time = 0;
 let isHovering = false;
+let edgeMap = new Map();
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -213,6 +214,14 @@ updateForces = () => {
 	simulation.force('link')
 	.id(d => d.id)
 	.links(edges);
+
+	edgeMap.clear();
+	nodes.forEach(d => {
+		const sources = edges.filter(it => it.target.id == d.id).map(it => it.source.id);
+		const targets = edges.filter(it => it.source.id == d.id).map(it => it.target.id);
+
+		edgeMap.set(d.id, [].concat(sources).concat(targets));
+	});
 
 	simulation.alpha(1).restart();
 	redraw();
@@ -364,6 +373,18 @@ drawNode = (d) => {
 
 	if (isHovering) {
 		ctx.globalAlpha = 0.5;
+
+		const connections = edgeMap.get(d.id);
+		if (connections && connections.length) {
+			for (let i = 0; i < connections.length; i++) {
+				const c = getNodeById(connections[i]);
+
+				if (c.isOver) {
+					ctx.globalAlpha = 1;
+					break;
+				};
+			};
+		};
 	};
 
 	if (d.isOver) {

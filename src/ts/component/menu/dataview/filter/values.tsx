@@ -381,7 +381,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				noScroll: true,
 				rebind: this.rebind,
 				value: item[key],
-				options: options,
+				options,
 				onSelect: (e: any, el: any) => {
 					this.onChange(key, el.id);
 				}
