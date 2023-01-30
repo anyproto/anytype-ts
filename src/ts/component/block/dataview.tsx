@@ -701,7 +701,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onSourceSelect (element: any, param: Partial<I.MenuParam>) {
-		const { rootId, block } = this.props;
+		const { rootId, block, isPopup, isInline } = this.props;
 		const { targetObjectId } = block.content;
 
 		const onSelect = (item: any, isNew: boolean) => {
@@ -714,6 +714,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				if (message.views && message.views.length) {
 					this.getData(message.views[0].id, 0, true);
+				};
+
+				if (isInline) {
+					Onboarding.start('inlineSet', isPopup, false, {
+						parseParam: (param: any) => {
+							param.element = [ `#block-${block.id}`, param.element ].join(' ');
+							return param;
+						},
+					});
 				};
 			});
 
