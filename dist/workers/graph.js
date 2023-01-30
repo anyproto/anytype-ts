@@ -65,6 +65,7 @@ let frame = 0;
 let selected = [];
 let settings = {};
 let time = 0;
+let isHovering = false;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -283,15 +284,21 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const sy2 = y2 + r2 * sin2;
 	const k = 5 / transform.k;
 	const lineWidth = r1 / 10;
+	const isOver = d.source.isOver || d.target.isOver;
 
 	let colorLink = Color.link;
 	let colorArrow = Color.arrow;
 	let colorText = Color.text;
 
-	if (d.source.isOver || d.target.isOver) {
+	if (isHovering) {
+		ctx.globalAlpha = 0.5;
+	};
+
+	if (isOver) {
 		colorLink = Color.highlight;
 		colorArrow = Color.highlight;
 		colorText = Color.highlight;
+		ctx.globalAlpha = 1;
 	};
 
 	util.line(sx1, sy1, sx2, sy2, r1 / 10, colorLink);
@@ -301,7 +308,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if ((d.source.isOver || d.target.isOver) && d.name && settings.label && (transform.k >= transformThreshold)) {
+	if (isOver && d.name && settings.label && (transform.k >= transformThreshold)) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -355,11 +362,16 @@ drawNode = (d) => {
 	let colorLine = '';
 	let lineWidth = 0;
 
+	if (isHovering) {
+		ctx.globalAlpha = 0.5;
+	};
+
 	if (d.isOver) {
 		colorNode = Color.highlight;
 		colorText = Color.highlight;
 		colorLine = Color.highlight;
 		lineWidth = radius / 5;
+		ctx.globalAlpha = 1;
 	};
 
 	if (selected.includes(d.id)) {
@@ -397,6 +409,7 @@ drawNode = (d) => {
 				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, radius / 4);
 			};
 	
+			ctx.fillStyle = Color.bg;
 			ctx.fill();
 			ctx.clip();
 	
@@ -493,6 +506,8 @@ onSelect = ({ x, y }) => {
 };
 
 onMouseMove = ({ x, y }) => {
+	isHovering = false;
+
 	const active = nodes.find(d => d.isOver);
 	if (active) {
 		active.isOver = false;
@@ -501,7 +516,7 @@ onMouseMove = ({ x, y }) => {
 	const d = getNodeByCoords(x, y);
 	if (d) {
 		d.isOver = true;
-		console.log('onMouseMove', x, y, transform.x, transform.y);
+		isHovering = true;
 	};
 
 	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
@@ -577,7 +592,7 @@ onSetRootId = ({ rootId }) => {
 	const to = { x: width / 2 - k * d.x, y: height / 2 - k * d.y };
 
 	new TWEEN.Tween(coords)
-	.to(to, 1000)
+	.to(to, 500)
 	.easing(TWEEN.Easing.Quadratic.InOut)
 	.onUpdate(() => {
 		transform = Object.assign(transform, coords);
