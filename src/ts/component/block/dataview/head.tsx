@@ -152,7 +152,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			{ id: 'sourceOpen', icon: 'expand', name: 'Open source set' },
 		];
 
-		if (object.isDeleted) {
+		if (object.isArchived || object.isDeleted) {
 			options = options.filter(it => it.id == 'sourceChange');
 		};
 
