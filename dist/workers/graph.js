@@ -242,8 +242,7 @@ updateSettings = (param) => {
 };
 
 draw = (t) => {
-	const radius = 6 / transform.k;
-	const diameter = radius * 2;
+	const radius = 5.7 / transform.k;
 
 	time = t;
 	TWEEN.update();
@@ -255,7 +254,7 @@ draw = (t) => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		drawLine(d, radius, diameter, settings.marker && d.isDouble, settings.marker);
+		drawLine(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
 	});
 
 	nodes.forEach(d => {
