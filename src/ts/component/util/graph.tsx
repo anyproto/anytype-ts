@@ -255,12 +255,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onPreviewHide () {
-		if (!this.isPreview) {
-			return;
+		if (this.isPreview) {
+			window.clearTimeout(this.timeoutPreview);
+			$('#graphPreview').remove();
 		};
-
-		window.clearTimeout(this.timeoutPreview);
-		$('#graphPreview').remove();
 	};
 
 	onMessage (e) {
