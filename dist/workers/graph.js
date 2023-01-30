@@ -501,6 +501,7 @@ onMouseMove = ({ x, y }) => {
 	const d = getNodeByCoords(x, y);
 	if (d) {
 		d.isOver = true;
+		console.log('onMouseMove', x, y, transform.x, transform.y);
 	};
 
 	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
@@ -573,7 +574,7 @@ onSetRootId = ({ rootId }) => {
 
 	const { x, y, k } = transform;
 	const coords = { x, y };
-	const to = { x: width / 2 - d.x, y: height / 2 - d.y };
+	const to = { x: width / 2 - k * d.x, y: height / 2 - k * d.y };
 
 	new TWEEN.Tween(coords)
 	.to(to, 1000)
