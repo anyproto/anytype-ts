@@ -368,6 +368,7 @@ drawNode = (d) => {
 	const radius = getRadius(d);
 	const img = images[d.src];
 	const diameter = radius * 2;
+	const isSelected = selected.includes(d.id);
 	
 	let colorNode = Color.node;
 	let colorText = Color.text;
@@ -394,22 +395,24 @@ drawNode = (d) => {
 		colorNode = Color.highlight;
 		colorText = Color.highlight;
 		colorLine = Color.highlight;
-		lineWidth = radius / 5;
 		ctx.globalAlpha = 1;
 	};
 
-	if (selected.includes(d.id)) {
+	if (isSelected) {
 		colorNode = Color.selected;
 		colorText = Color.selected;
 		colorLine = Color.selected;
-		lineWidth = radius / 5;
+	};
+
+	if (d.isOver || isSelected) {
+		lineWidth = radius / 7;
 	};
 
 	if (settings.icon && img) {
 		ctx.save();
 
 		if (lineWidth) {
-			util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, diameter + lineWidth * 2, diameter + lineWidth * 2, radius / 4);
+			util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, diameter + lineWidth * 2, diameter + lineWidth * 2, radius / 3);
 			ctx.fillStyle = Color.bg;
 			ctx.fill();
 
