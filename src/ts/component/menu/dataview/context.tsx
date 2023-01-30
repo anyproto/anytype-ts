@@ -86,11 +86,11 @@ class MenuContext extends React.Component<I.Menu> {
 
 		objectIds.forEach((it: string) => {
 			let object = null; 
-			if (subId) {
-				object = detailStore.get(subId, it);
-			} else 
 			if (getObject) {
 				object = getObject(it);
+			} else
+			if (subId) {
+				object = detailStore.get(subId, it);
 			};
 
 			if (!object || object._empty_) {

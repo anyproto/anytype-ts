@@ -73,8 +73,8 @@ class View implements I.View {
 		};
 	};
 
-	getSort (index: number) {
-		return this.sorts[index] || {};
+	getSort (id: string) {
+		return this.sorts.find(it => it.id == id);
 	};
 
 };

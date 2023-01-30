@@ -78,6 +78,7 @@ class DragLayer extends React.Component<object, State> {
 										rootId={rootId}
 										{...item}
 										block={block}
+										onRef={() => {}}
 									/>
 								);
 							})}

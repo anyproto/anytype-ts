@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview } from 'Lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight } from 'Lib';
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 
@@ -215,25 +215,15 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		Onboarding.start(Util.toCamelCase([ match.params?.page, match.params?.action ].join('-')), isPopup);
+		Highlight.showAll();
 		
 		if (isPopup) {
 			return;
 		};
 		
 		window.setTimeout(() => {
-			let popupNewBlock = Storage.get('popupNewBlock');
-			let onboarding = Storage.get('onboarding');
-
 			if (!isMain) {
 				return;
-			};
-
-			if (!onboarding) {
-				popupNewBlock = true;
-			};
-			if (!popupNewBlock && onboarding) {
-				popupStore.open('help', { data: { document: 'whatsNew' } });
-				Storage.set('popupNewBlock', true);
 			};
 
 			if (isMainIndex) {

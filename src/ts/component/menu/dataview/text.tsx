@@ -9,7 +9,6 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	
 	_isMounted = false;
 	node: any = null;
-	ref: any = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -46,9 +45,9 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 		const { value } = data;
 		const length = value.length;
 
-		if (this.ref) {
-			this.ref.setValue(value);
-			this.ref.setRange({ from: length, to: length });
+		if (this.node) {
+			this.node.setValue(value);
+			this.node.setRange({ from: length, to: length });
 		};
 
 		this.resize();
@@ -82,24 +81,24 @@ const MenuText = observer(class MenuText extends React.Component<I.Menu> {
 	};
 
 	getValue (): string {
-		return this.ref ? this.ref.getTextValue() : '';
+		return this.node ? this.node.getTextValue() : '';
 	};
 
 	placeholderCheck () {
-		if (this.ref) {
-			this.ref.placeholderCheck();
+		if (this.node) {
+			this.node.placeholderCheck();
 		};
 	};
 
 	placeholderHide () {
-		if (this.ref) {
-			this.ref.placeholderHide();
+		if (this.node) {
+			this.node.placeholderHide();
 		};
 	};
 	
 	placeholderShow () {
-		if (this.ref) {
-			this.ref.placeholderShow();
+		if (this.node) {
+			this.node.placeholderShow();
 		};
 	};
 

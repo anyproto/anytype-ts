@@ -18,8 +18,8 @@
 .footer.snapRight { left: 0px; }
 .footer.snapLeft { right: 0px; }
 
-.footer.mainEdit {
-	#button-help { background-image: url('~img/icon/footer/help.svg'); }
+.footer.mainIndex {
+	#button-help { background-color: rgba(0,0,0,.3); background-image: url('~img/icon/footer/help-white.svg'); }
 }
 
 .footer.mainGraph { display: block !important; position: absolute; }

@@ -93,6 +93,19 @@ class Storage {
 		return (this.get('onboarding') || []).includes(key);
 	};
 
+	getHighlight (key: string) {
+		const highlights = this.get('highlights') || {};
+		return highlights[key] || false;
+	};
+
+	setHighlight (key: string, value: boolean) {
+		const highlights = this.get('highlights') || {};
+
+		highlights[key] = value;
+
+		this.set('highlights', highlights);
+	};
+
 	logout () {
 		const keys = [ 
 			'accountId', 

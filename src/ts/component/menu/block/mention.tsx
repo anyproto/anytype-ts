@@ -239,7 +239,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 			if (clear) {
 				this.setState({ loading: false });
-				analytics.event('SearchQuery', { route: 'MenuMention', length: filter.length });
 			} else {
 				this.forceUpdate();
 			};
