@@ -90,7 +90,7 @@ class Header extends React.Component<Props> {
 	};
 	
 	onGraph () {
-		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
+		ObjectUtil.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onStore () {
