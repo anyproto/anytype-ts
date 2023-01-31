@@ -38,7 +38,9 @@ class DetailStore {
 			for (const k in item.details) {
 				const el = { relationKey: k, value: item.details[k] };
 				makeObservable(el, { value: observable });
-				intercept(el, (change: any) => change.newValue === el[change.name] ? null : change);
+				intercept(el as any, (change: any) => { 
+					return (change.newValue === el[change.name] ? null : change); 
+				});
 				list.push(el);
 			};
 			map.set(item.id, list);
@@ -78,7 +80,9 @@ class DetailStore {
 				list.push(el);
 			};
 
-			intercept(el, (change: any) => change.newValue === el[change.name] ? null : change);
+			intercept(el as any, (change: any) => { 
+				return (change.newValue === el[change.name] ? null : change); 
+			});
 
 			if (createList) {
 				map.set(item.id, list);
