@@ -33,6 +33,7 @@ const forceProps = {
 	},
 	charge: {
 		strength: -250,
+		distanceMax: 300,
 	},
 	link: {
 		distance: 50,
@@ -157,7 +158,8 @@ initForces = () => {
 	.y(height * center.y);
 
 	simulation.force('charge')
-	.strength(charge.strength);
+	.strength(charge.strength)
+	.distanceMax(charge.distanceMax);
 
 	simulation.force('link')
 	.links(edges)
