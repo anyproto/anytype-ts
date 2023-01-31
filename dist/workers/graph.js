@@ -95,14 +95,17 @@ init = (param) => {
 	simulation.on('tick', () => { redraw(); });
 	simulation.tick(100);
 
+	// Center initially on root node
 	setTimeout(() => {
 		const root = getNodeById(data.rootId);
-		if (root) {
-			transform = Object.assign(transform, getCenter(root.x, root.y));
-			send('onTransform', { ...transform });
-			redraw();
+		if (!root) {
+			return;
 		};
-	}, 200);
+
+		transform = Object.assign(transform, getCenter(root.x, root.y));
+		send('onTransform', { ...transform });
+		redraw();
+	}, 100);
 };
 
 initColor = (theme) => {
@@ -619,7 +622,7 @@ onSetRootId = ({ rootId }) => {
 	};
 
 	const coords = { x: transform.x, y: transform.y };
-	const to = this.getCenter(d.x, d.y);
+	const to = getCenter(d.x, d.y);
 
 	new TWEEN.Tween(coords)
 	.to(to, 500)
