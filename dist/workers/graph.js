@@ -32,10 +32,10 @@ const forceProps = {
 		y: 0.5,
 	},
 	charge: {
-		strength: -1000,
+		strength: -250,
 	},
 	link: {
-		distance: 1,
+		distance: 50,
 	},
 	forceX: {
 		strength: 0.1,
@@ -98,11 +98,11 @@ init = (param) => {
 	setTimeout(() => {
 		const root = getNodeById(data.rootId);
 		if (root) {
-			transform = Object.assign(transform, this.getCenter(root.x, root.y));
+			transform = Object.assign(transform, getCenter(root.x, root.y));
 			send('onTransform', { ...transform });
 			redraw();
 		};
-	}, 100);
+	}, 200);
 };
 
 initColor = (theme) => {
