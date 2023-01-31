@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
+import raf from 'raf';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewObject } from 'Component';
@@ -66,7 +67,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			this.worker.terminate();
 		};
 
-		$('body').removeClass('cp');
 		this.unbind();
 		this.onPreviewHide();
 	};
@@ -216,7 +216,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			y: p[1] - top,
 		});
 	};
-			
+
 	onDragEnd (e: any) {
 		this.isDragging = false;
 		this.subject = null;
@@ -234,24 +234,34 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
+		this.isPreview = true;
+
 		const { isPopup } = this.props;
 		const win = $(window);
 		const body = $('body');
 		const container = Util.getPageContainer(isPopup);
 		const { left, top } = container.offset();
-		const x = data.x + left + 10;
-		const y = data.y + top + 10 - win.scrollTop();
 
 		let el = $('#graphPreview');
-		if (!el.length) {
-			el = $('<div id="graphPreview" />');
-			ReactDOM.render(<PreviewObject rootId={this.subject.id} />, el.get(0));
+
+		const position = () => {
+			const obj = el.find('.previewObject');
+			const x = data.x + left - obj.outerWidth() / 2;
+			const y = data.y + top + 20 - win.scrollTop();
+
+			el.css({ left: x, top: y });
 		};
 
-		el.css({ left: x, top: y });
-		body.append(el);
+		if (!el.length) {
+			el = $('<div id="graphPreview" />');
+			body.append(el);
 
-		this.isPreview = true;
+			ReactDOM.render(<PreviewObject rootId={this.subject.id} />, el.get(0), () => {
+				position();
+			});
+		} else {
+			position();
+		};
 	};
 
 	onPreviewHide () {

@@ -11,7 +11,8 @@
 
     #graphWrapper { width: 100%; height: 100%; }
     #graph { width: 100%; height: 100%; }
-    canvas { width: 100%; height: 100%; background: $colorWhite; display: block; cursor: move; }
+    canvas { width: 100%; height: 100%; background: $colorWhite; display: block; }
+	canvas.move { cursor: move; }
 
     .tabs { 
         padding: 0px 16px; border-bottom: 1px solid $colorBorderLight; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; 
