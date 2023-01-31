@@ -250,7 +250,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
-		if (viewId != this.viewId) {
+		if (viewId && (viewId != this.viewId)) {
 			this.getData(viewId, 0, true);
 		};
 
@@ -341,11 +341,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
 		if (!viewId) {
+			console.log('[BlockDataview.getData] No view id');
 			return;
 		};
 
 		const view = this.getView(viewId);
 		if (!view) {
+			console.log('[BlockDataview.getData] No view');
 			return;
 		};
 
@@ -357,7 +359,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const sources = this.getSources();
 
 		if (!sources.length) {
-			console.log('[getData] No sources');
+			console.log('[BlockDataview.getData] No sources');
 			return;
 		}
 
@@ -713,7 +715,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (message.views && message.views.length) {
-					this.getData(message.views[0].id, 0, true);
+					window.setTimeout(() => { this.getData(message.views[0].id, 0, true); }, 50);
 				};
 
 				if (isInline) {
@@ -764,7 +766,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			menuStore.open('dataviewSource', {
 				element,
 				horizontal: I.MenuDirection.Center,
-				onOpen: () => {
+				onOpen: () => { 
 					element.addClass('active');
 				}, 
 				onClose: () => {
