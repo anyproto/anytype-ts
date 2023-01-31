@@ -129,11 +129,8 @@ function createWindow () {
 			return;
 		};
 
-		args = args || [];
-		args.unshift(win);
-
 		if (Api[cmd]) {
-			Api[cmd].apply(Api, args);
+			Api[cmd].apply(Api, [ win ].concat(args || []));
 		} else {
 			console.error('[Api] method not defined:', cmd);
 		};
