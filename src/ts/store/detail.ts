@@ -194,6 +194,9 @@ class DetailStore {
 			coverY: object.coverY || 0,
 			coverScale: object.coverScale || 0,
 			coverType: object.coverType || I.CoverType.None,
+			isArchived: Boolean(object.isArchived),
+			isFavorite: Boolean(object.isFavorite),
+			isHidden: Boolean(object.isHidden),
 		};
 	};
 
@@ -232,7 +235,7 @@ class DetailStore {
 		return object;
 	};
 
-	private checkOption (object: { text: string, color: string, relationOptionColor: string, name: string }) {
+	private checkOption (object: any) {
 		object.text = Relation.getStringValue(object.name);
 		object.color = Relation.getStringValue(object.relationOptionColor);
 
