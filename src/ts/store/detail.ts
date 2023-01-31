@@ -1,7 +1,6 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, Relation, DataUtil, translate } from 'Lib';
 import { dbStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 interface Detail {
@@ -9,11 +8,18 @@ interface Detail {
 	value: unknown;
 };
 
-interface Item { id: string, details: { type: string, relationKey: string, id: string } };
+interface Item {
+	id: string,
+	details: {
+		type: string,
+		relationKey: string,
+		id: string
+	}
+};
 
 class DetailStore {
 
-    public map: Map<string, Map<string, Detail[]>> = new Map();
+    private map: Map<string, Map<string, Detail[]>> = new Map();
 
     constructor() {
         makeObservable(this, {
@@ -23,10 +29,11 @@ class DetailStore {
         });
     };
 
-    set (rootId: string, details: Item[]) {
+	/** Idempotent. adds details to the detail store. */
+    public set (rootId: string, items: Item[]) {
 		const map = observable.map(new Map());
 
-		for (const item of details) {
+		for (const item of items) {
 			const list: Detail[] = [];
 			for (const k in item.details) {
 				const el = { relationKey: k, value: item.details[k] };
@@ -39,7 +46,8 @@ class DetailStore {
 		this.map.set(rootId, map);
 	};
 
-    update (rootId: string, item: Item, clear: boolean) {
+	/** Idempotent. updates details in the detail store. if clear is set, map wil delete details by item id. */
+    public update (rootId: string, item: Item, clear: boolean): void {
 
 		let map = this.map.get(rootId);
 		let createMap = false;
@@ -48,7 +56,8 @@ class DetailStore {
 		if (!map) {
 			map = observable.map(new Map());
 			createMap = true;
-		} else 
+		}
+
 		if (clear) {
 			map.delete(item.id);
 		};
@@ -86,45 +95,61 @@ class DetailStore {
 		};
 	};
 
-    delete (rootId: string, id: string, keys?: string[]) {
-		const map = this.map.get(rootId) || new Map();
-
-		let list = this.getArray(rootId, id);
-		list = keys && keys.length ? list.filter(it => !keys.includes(it.relationKey)) : [];
-
-		map.set(id, list);
+	/** Idempotent. Clears any data stored with rootId, if there happens to be any.  */
+	public clear (rootId: string):  void {
+		this.map.delete(rootId);
 	};
 
-	getArray (rootId: string, id: string): Detail[] {
-		return this.map.get(rootId)?.get(id) || [];
+	/** Idempotent. Clears all of the data stored in DetailStore, if there happens to be any */
+	public clearAll ():  void {
+		this.map.clear();
 	};
 
-    get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): Detail | { id: string, _empty_: true } {
-		let list = this.getArray(rootId, id);
+	/** Idempotent. Clears details by keys provided, if they exist. if no keys are provided, all details are cleared. */
+    public delete (rootId: string, id: string, keys?: string[]): void {
+		const map = this.map.get(rootId);
+
+		if (!map) {
+			return
+		}
+
+		if (keys && keys.length) {
+			const list = this.getDetailList(rootId, id).filter(it => !keys.includes(it.relationKey));
+			map.set(id, list);
+		} else {
+			map.set(id, []);
+		}		
+	};
+
+	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, Constant.defaultRelationKeys are included */
+    public get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
+		let list = this.getDetailList(rootId, id);
+		
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
 		
 		if (keys) {
-			keys = [ ...new Set(keys) ];
-			keys.push('id');
+			const set: Set<string> = new Set(keys);
+			set.add('id');
+
 			if (!forceKeys) {
-				keys = keys.concat(Constant.defaultRelationKeys);
+				Constant.defaultRelationKeys.forEach(key => set.add(key));
 			};
-			list = list.filter(it => keys.includes(it.relationKey));
+
+			list = list.filter(it => set.has(it.relationKey));
 		};
 
 		const object = {};
-		list.forEach(it => {
-			object[it.relationKey] = it.value;
-		});
-
+		list.forEach(it => object[it.relationKey] = it.value ); 
 		return this.check(object);
 	};
 
-	check (object: any) {
-		object.name = String(object.name || DataUtil.defaultName('page'));
-		object.layout = Number(object.layout) || I.ObjectLayout.Page;
+	/** Mutates object provided and also returns a new object. Sets defaults.
+	 * This Function contains domain logic which should be encapsulated in a model */
+	public check (object: any): any {
+		object.name = object.name || DataUtil.defaultName('page');
+		object.layout = object.layout || I.ObjectLayout.Page;
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 
 		if (object.layout == I.ObjectLayout.Note) {
@@ -164,18 +189,15 @@ class DetailStore {
 			type: Relation.getStringValue(object.type),
 			iconImage: Relation.getStringValue(object.iconImage),
 			iconEmoji: Relation.getStringValue(object.iconEmoji),
-			layoutAlign: Number(object.layoutAlign) || I.BlockHAlign.Left,
-			coverX: Number(object.coverX) || 0,
-			coverY: Number(object.coverY) || 0,
-			coverScale: Number(object.coverScale) || 0,
-			coverType: Number(object.coverType) || I.CoverType.None,
-			isArchived: Boolean(object.isArchived),
-			isFavorite: Boolean(object.isFavorite),
-			isHidden: Boolean(object.isHidden),
+			layoutAlign: object.layoutAlign || I.BlockHAlign.Left,
+			coverX: object.coverX || 0,
+			coverY: object.coverY || 0,
+			coverScale: object.coverScale || 0,
+			coverType: object.coverType || I.CoverType.None,
 		};
 	};
 
-	checkType (object: any) {
+	private checkType (object: any) {
 		object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes).map(it => Number(it));
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
@@ -189,7 +211,7 @@ class DetailStore {
 		return object;
 	};
 
-	checkRelation (object: any) {
+	private checkRelation (object: any) {
 		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 		object.format = object.relationFormat;
 		object.maxCount = Number(object.relationMaxCount) || 0;
@@ -210,7 +232,7 @@ class DetailStore {
 		return object;
 	};
 
-	checkOption (object: any) {
+	private checkOption (object: { text: string, color: string, relationOptionColor: string, name: string }) {
 		object.text = Relation.getStringValue(object.name);
 		object.color = Relation.getStringValue(object.relationOptionColor);
 
@@ -219,19 +241,14 @@ class DetailStore {
 		return object;
 	};
 
-	checkSet (object: any) {
+	private checkSet (object: { setOf: string[] }) {
 		object.setOf = Relation.getArrayValue(object.setOf);
 		return object;
 	};
 
-	/** Clears any data stored with rootId, if there happens to be any */
-    clear (rootId: string) {
-		this.map.delete(rootId);
-	};
-
-	/** Clears all of the data stored in DetailStore, if there happens to be any */
-    clearAll () {
-		this.map.clear();
+	/** return detail list by rootId and id. returns empty if none found */
+	private getDetailList (rootId: string, id: string): Detail[] {
+		return this.map.get(rootId)?.get(id) || [];
 	};
 };
 
