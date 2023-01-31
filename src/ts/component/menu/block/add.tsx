@@ -313,7 +313,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			{ id: 'media', name: 'Media', children: MenuUtil.getBlockMedia() },
 			{ id: 'other', name: 'Other', children: MenuUtil.getBlockOther() },
 			{ id: 'object', name: 'Objects', children: MenuUtil.getBlockObject() },
-			{ id: 'dataview', name: 'Inline Set', children: MenuUtil.getBlockDataview() },
 		].map(s => ({ ...s, children: s.children.map(c => ({ ...c, isBig: true })) }));
 
 		sections = sections.concat([
@@ -559,26 +558,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					param.content.key = item.relationKey;
 				};
 
-				if (item.type == I.BlockType.Dataview) {
-					param.content.views = [ 
-						{ id: I.ViewType[item.itemId].toLowerCase(), name: item.name, type: item.itemId } 
-					];
-				};
-
-				if (item.type == I.BlockType.Dataview) {
-					C.BlockCreate(rootId, blockId, position, param, (message: any) => {
-						focus.set(message.blockId, { from: length, to: length });
-						focus.apply();
-
-						window.setTimeout(() => { $(window).trigger(`setDataviewSource.${message.blockId}`); }, Constant.delay.menu);
-
-						analytics.event('CreateBlock', {
-							middleTime: message.middleTime,
-							type: param.type,
-							style: item.itemId,
-						});
-					});
-				} else
 				if (item.type == I.BlockType.Table) {
 					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false, (message: any) => {
 						analytics.event('CreateBlock', { 
@@ -644,6 +623,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						// Auto-open BlockRelation suggest menu
 						if ((param.type == I.BlockType.Relation) && !param.content.key) {
 							window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
+						};
+
+						if (param.type == I.BlockType.Dataview) {
+							window.setTimeout(() => { $(window).trigger(`setDataviewSource.${newBlockId}`); }, Constant.delay.menu);
 						};
 					});
 				};

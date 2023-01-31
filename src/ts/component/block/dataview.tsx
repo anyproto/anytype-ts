@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import arrayMove from 'array-move';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Loader } from 'Component';
@@ -19,7 +18,7 @@ import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 import Empty from './dataview/empty';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {
+interface Props extends I.BlockComponent {
 	isInline?: boolean;
 	isDragging?: boolean
 };

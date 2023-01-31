@@ -222,17 +222,8 @@
 	"blockNameTableOfContents": { "en": "Table of contents" },
 	"blockTextTableOfContents": { "en": "" },
 
-	"blockNameTable": { "en": "Grid" },
-	"blockTextTable": { "en": "Add existing or create new grid view to this object" },
-
-	"blockNameList": { "en": "List" },
-	"blockTextList": { "en": "Add existing or create new list view to this object" },
-
-	"blockNameGallery": { "en": "Gallery" },
-	"blockTextGallery": { "en": "Add existing or create new gallery view to this object" },
-
-	"blockNameBoard": { "en": "Kanban" },
-	"blockTextBoard": { "en": "Add existing or create new kanban view to this object" },
+	"blockNameDataview": { "en": "Inline set" },
+	"blockTextDataview": { "en": "Add existing or create new inline set to this object" },
 
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 
