@@ -56,7 +56,21 @@ input, textarea, select { font-family: 'Inter'; }
 
 #graphPreview { position: fixed; z-index: 1000; }
 #graphPreview {
-	.previewObject { background: $colorWhite; }
+	.previewObject { background: $colorWhite; height: auto; }
+	.previewObject {
+		.loaderWrapper { height: 54px !important; }
+		.cover { display: none; }
+		.scroller { padding: 16px; }
+		.heading { margin: 0px; }
+		.heading {
+			.name { text-overflow: unset; @include clamp2; white-space: normal; }
+			.description { text-overflow: unset; @include clamp2; white-space: normal; }
+		}
+		.blocks { display: none; }
+	}
+	.previewObject.isTask, .previewObject.isBookmark {
+		.scroller { padding-left: 40px; }
+	}
 }
 
 html.platformWindows {

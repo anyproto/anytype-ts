@@ -719,7 +719,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 					blockId,
 					type,
 					filters,
-					rebind: menuContext.ref.rebind,
+					rebind: menuContext.ref?.rebind,
 					blockIds: [ item.id ],
 					skipIds: [ object.id ],
 					position: I.BlockPosition.Bottom,

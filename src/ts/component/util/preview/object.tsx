@@ -44,10 +44,18 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const type = detailStore.get(contextId, object.type);
 		const childBlocks = blockStore.getChildren(contextId, rootId, it => !it.isLayoutHeader()).slice(0, 10);
 		const isTask = object.layout == I.ObjectLayout.Task;
+		const isBookmark = object.layout == I.ObjectLayout.Bookmark;
 		const cn = [ 'previewObject' , check.className, className ];
 
 		let n = 0;
 		let c = 0;
+		let size = 48;
+		let iconSize = 32;
+
+		if (isTask || isBookmark) {
+			size = 20;
+			iconSize = 18;
+		};
 
 		const Block = (item: any) => {
 			const { content, fields } = item;
@@ -287,11 +295,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 							{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 							<div className="heading">
-								{isTask ? (
-									<Icon className={[ 'checkbox', (object.done ? 'active' : '') ].join(' ')} />
-								) : (
-									<IconObject size={48} iconSize={32} object={object} />
-								)}
+								<IconObject size={size} iconSize={iconSize} object={object} />
 								<div className="name">{name}</div>
 								<div className="description">{description}</div>
 								<div className="featured">

@@ -6,7 +6,9 @@ import Constant from 'json/constant.json';
 
 class Onboarding {
 	
-	start (key: string, isPopup: boolean, force?: boolean) {
+	start (key: string, isPopup: boolean, force?: boolean, options?: any) {
+		options = options || {};
+
 		const section = Docs.Help.Onboarding[key];
 		if (!section || !section.items || !section.items.length || (!force && Storage.getOnboarding(key))) {
 			return;
@@ -17,7 +19,10 @@ class Onboarding {
 
 		menuStore.close('onboarding', () => {
 			window.setTimeout(() => {
-				const param = this.getParam(items[0], isPopup);
+				let param = this.getParam(items[0], isPopup);
+				if (options.parseParam) {
+					param = options.parseParam(param);
+				};
 
 				menuStore.open('onboarding', {
 					...param,
@@ -31,6 +36,7 @@ class Onboarding {
 					},
 					data: {
 						...param.data,
+						options,
 						key,
 						current: 0,
 						isPopup: isPopup,

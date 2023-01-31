@@ -126,7 +126,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
         .call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1.5))
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
@@ -143,7 +143,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	nodeMapper (d: any) {
 		d.layout = Number(d.layout) || 0;
-		d.radius = 5;
+		d.radius = 4;
 		d.src = this.imageSrc(d);
 
 		if (d.layout == I.ObjectLayout.Note) {
@@ -255,12 +255,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onPreviewHide () {
-		if (!this.isPreview) {
-			return;
+		if (this.isPreview) {
+			window.clearTimeout(this.timeoutPreview);
+			$('#graphPreview').remove();
 		};
-
-		window.clearTimeout(this.timeoutPreview);
-		$('#graphPreview').remove();
 	};
 
 	onMessage (e) {
