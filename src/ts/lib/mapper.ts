@@ -593,7 +593,7 @@ const Mapper = {
 			const content = new Model.Block.Content.Dataview();
 
 			content.setTargetobjectid(obj.targetObjectId);
-			content.setViewsList(obj.views.map(Mapper.To.View));
+			content.setViewsList((obj.views || []).map(Mapper.To.View));
 	
 			return content;
 		},

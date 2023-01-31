@@ -82,7 +82,7 @@ class MenuUtil {
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
 			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' },
-			{ type: I.BlockType.Dataview, id: I.ViewType.Grid, icon: 'dataview-grid', lang: 'Dataview', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
+			{ type: I.BlockType.Dataview, id: I.ViewType.Grid, icon: 'dataview', lang: 'Dataview', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
 		].map(this.mapperBlock);
 	};
 
