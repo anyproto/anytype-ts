@@ -324,7 +324,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 		tw = Math.abs(right - left);
 		th = Math.abs(bottom - top);
-		offset = arrowHeight;
+		offset = arrowHeight / 2;
 
 		// Rectangle
 		ctx.save();
