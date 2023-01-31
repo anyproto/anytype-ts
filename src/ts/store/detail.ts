@@ -146,12 +146,12 @@ class DetailStore {
 
 		const object = {};
 		list.forEach(it => object[it.relationKey] = it.value ); 
-		return this.check(object);
+		return this.mapper(object);
 	};
 
 	/** Mutates object provided and also returns a new object. Sets defaults.
 	 * This Function contains domain logic which should be encapsulated in a model */
-	public check (object: any): any {
+	public mapper (object: any): any {
 		object.name = object.name || DataUtil.defaultName('page');
 		object.layout = object.layout || I.ObjectLayout.Page;
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
@@ -171,20 +171,20 @@ class DetailStore {
 		switch (object.type) {
 			case Constant.typeId.type:
 			case Constant.storeTypeId.type:
-				object = this.checkType(object);
+				object = this.mapType(object);
 				break;
 
 			case Constant.typeId.relation:
 			case Constant.storeTypeId.relation:
-				object = this.checkRelation(object);
+				object = this.mapRelation(object);
 				break;
 
 			case Constant.typeId.option:
-				object = this.checkOption(object);
+				object = this.mapOption(object);
 				break;
 
 			case Constant.typeId.set:
-				object = this.checkSet(object);
+				object = this.mapSet(object);
 				break;
 		};
 
@@ -204,7 +204,7 @@ class DetailStore {
 		};
 	};
 
-	private checkType (object: any) {
+	private mapType (object: any) {
 		object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes).map(it => Number(it));
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
@@ -218,7 +218,7 @@ class DetailStore {
 		return object;
 	};
 
-	private checkRelation (object: any) {
+	private mapRelation (object: any) {
 		object.relationFormat = Number(object.relationFormat) || I.RelationType.LongText;
 		object.format = object.relationFormat;
 		object.maxCount = Number(object.relationMaxCount) || 0;
@@ -239,7 +239,7 @@ class DetailStore {
 		return object;
 	};
 
-	private checkOption (object: any) {
+	private mapOption (object: any) {
 		object.text = Relation.getStringValue(object.name);
 		object.color = Relation.getStringValue(object.relationOptionColor);
 
@@ -248,7 +248,7 @@ class DetailStore {
 		return object;
 	};
 
-	private checkSet (object: { setOf: string[] }) {
+	private mapSet (object: { setOf: string[] }) {
 		object.setOf = Relation.getArrayValue(object.setOf);
 		return object;
 	};
