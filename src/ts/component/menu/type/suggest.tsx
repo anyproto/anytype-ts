@@ -268,7 +268,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map(it => detailStore.check(it)));
+			this.items = this.items.concat(message.records.map(it => detailStore.mapper(it)));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -407,7 +407,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
 					onSelect: (item: any) => {
-						this.onClick(e, detailStore.check(item));
+						this.onClick(e, detailStore.mapper(item));
 					},
 				});
 				break;
