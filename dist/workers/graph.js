@@ -293,6 +293,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const k = 5 / transform.k;
 	const isOver = d.source.isOver || d.target.isOver;
 	const showName = isOver && d.name && settings.label;
+	const lineWidth = getLineWidth();
 
 	let colorLink = Color.link;
 	let colorArrow = Color.arrow;
@@ -309,7 +310,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 		ctx.globalAlpha = 1;
 	};
 
-	util.line(sx1, sy1, sx2, sy2, r1 / 10, colorLink);
+	util.line(sx1, sy1, sx2, sy2, lineWidth, colorLink);
 
 	let tw = 0;
 	let th = 0;
@@ -330,10 +331,10 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
-		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, r1 / 3);
+		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, getBorderRadius());
 
 		ctx.strokeStyle = colorLink;
-		ctx.lineWidth = r1 / 7;
+		ctx.lineWidth = lineWidth * 3;
 		ctx.fillStyle = Color.bg;
 		ctx.fill();
 		ctx.stroke();
@@ -408,14 +409,14 @@ drawNode = (d) => {
 	};
 
 	if (d.isOver || isSelected) {
-		lineWidth = radius / 7;
+		lineWidth = getLineWidth() * 3;
 	};
 
 	if (settings.icon && img) {
 		ctx.save();
 
 		if (lineWidth) {
-			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, radius / 3);
+			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, getBorderRadius());
 			ctx.fillStyle = Color.bg;
 			ctx.fill();
 
@@ -436,7 +437,7 @@ drawNode = (d) => {
 			if (isIconCircle(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
-				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, radius / 3);
+				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, getBorderRadius());
 			};
 	
 			ctx.fillStyle = Color.bg;
@@ -695,6 +696,14 @@ const getNodeMap = () => {
 	return new Map(nodes.map(d => [ d.id, d ]));
 };
 
-getCenter = (x, y) => {
+const getCenter = (x, y) => {
 	return { x: width / 2 - x * transform.k, y: height / 2 - y * transform.k };
+};
+
+const getLineWidth = () => {
+	return 0.4 / transform.k;
+};
+
+const getBorderRadius = () => {
+	return 3.33 / transform.k;
 };
