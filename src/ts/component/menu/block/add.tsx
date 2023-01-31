@@ -558,6 +558,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					param.content.key = item.relationKey;
 				};
 
+				if (item.type == I.BlockType.Dataview) {
+					param.content.views = [ 
+						{ id: 'all', type: I.ViewType.Grid, name: 'All' } 
+					];
+				};
+
 				if (item.type == I.BlockType.Table) {
 					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false, (message: any) => {
 						analytics.event('CreateBlock', { 

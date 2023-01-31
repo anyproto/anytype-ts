@@ -74,6 +74,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const view = this.getView();
+
 		if (!view) {
 			return null;
 		};
@@ -160,8 +161,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onClick={this.onEmpty}
 					/>
 				);
-			}
-			else {
+			} else {
 				body = (
 					<div className="content">
 						<ViewComponent 
