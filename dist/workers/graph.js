@@ -346,6 +346,8 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 	// Arrow heads
 	const move = arrowHeight * 2 + tw / 2 + offset;
+	const sax1 = mx - move * cos1;
+	const say1 = my - move * sin1;
 	const sax2 = mx - move * cos2;
 	const say2 = my - move * sin2;
 

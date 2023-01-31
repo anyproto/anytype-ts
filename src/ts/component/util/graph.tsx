@@ -265,7 +265,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const { id, data } = e.data;
 		const { root } = blockStore;
 		const { isPopup, onClick, onContextMenu, onSelect } = this.props;
-		const body = $('body');
+		const node = $(this.node);
+		const canvas = node.find('canvas');
 
 		switch (id) {
 			case 'onClick': {
@@ -292,10 +293,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					window.clearTimeout(this.timeoutPreview);
 					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
 
-					body.addClass('cp');
+					canvas.addClass('cp');
 				} else {
 					this.onPreviewHide();	
-					body.removeClass('cp');
+					canvas.removeClass('cp');
 				};
 				break;
 			};
