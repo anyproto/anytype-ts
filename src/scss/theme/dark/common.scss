@@ -86,6 +86,8 @@ html.themeDark {
 
     /* Button */
 
+	.button.black { background: $colorWhite; color: $colorBlack; }
+
     .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; background: $colorHover; }
     .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
 
