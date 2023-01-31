@@ -200,7 +200,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						{...this.props}
 						title="No query selected"
 						description="All objects satisfying your query will be displayed in Set"
-						button="Select source"
+						button="Select query"
 						className={isInline ? 'withHead' : ''}
 						withButton={true}
 						onClick={this.onEmpty}
