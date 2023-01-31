@@ -164,8 +164,6 @@ const Card = observer(class Card extends React.Component<Props> {
 			return;
 		};
 
-		console.log(e.target);
-
 		if (cb[e.button]) {
 			cb[e.button]();
 		};

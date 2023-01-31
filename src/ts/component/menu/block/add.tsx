@@ -343,8 +343,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			sections = MenuUtil.sectionsFilter(sections, filter.text);
 		};
 		
-		sections = MenuUtil.sectionsMap(sections);
-		return sections;
+		return MenuUtil.sectionsMap(sections);
 	};
 	
 	getItems (withSections: boolean) {

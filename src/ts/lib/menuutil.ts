@@ -346,7 +346,7 @@ class MenuUtil {
 				return c;
 			});
 
-			s.children = Util.arrayUniqueObjects(s.children, 'itemId');
+			s.children = Util.arrayUniqueObjects(s.children, 'id');
 			return s;
 		});
 		sections = Util.arrayUniqueObjects(sections, 'id');
