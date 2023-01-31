@@ -85,7 +85,7 @@ class DetailStore {
 		};
 
 		// Update relationKeyMap in dbStore to keep consistency
-		if ((item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
+		if (item.details && (item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
 			dbStore.relationKeyMap[item.details.relationKey] = item.details.id;
 		};
 
