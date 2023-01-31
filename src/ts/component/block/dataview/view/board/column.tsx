@@ -54,6 +54,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 		const group = dbStore.getGroup(rootId, block.id, id);
 		const order = (block.content.groupOrder || []).find(it => it.viewId == view.id);
 		const orderGroup = (order?.groups || []).find(it => it.groupId == id) || {};
+		const isAllowedObject = this.props.isAllowedObject();
 
 		if (view.groupBackgroundColors) {
 			cn.push('withColor');
@@ -88,7 +89,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 								block={block}
 								relationKey={view.groupRelationKey} 
 								viewType={I.ViewType.Board}
-								getRecord={() => { return head; }}
+								getRecord={() => head}
 								readonly={true} 
 								arrayLimit={4}
 								withLabel={true}
@@ -121,9 +122,11 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 								{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
-								<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
-									<Icon className="plus" />
-								</div>
+								{isAllowedObject ? (
+									<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
+										<Icon className="plus" />
+									</div>
+								) : ''}
 
 							</React.Fragment>
 						)}

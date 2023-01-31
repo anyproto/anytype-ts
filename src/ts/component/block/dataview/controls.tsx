@@ -23,15 +23,15 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { className, rootId, block, getView, readonly, onRecordAdd, isInline } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, isInline } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
-		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
+		const isAllowedObject = this.props.isAllowedObject();
 
 		if (className) {
 			cn.push(className);
@@ -116,7 +116,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowedObject ? (
+						{isAllowedObject ? (
 							<Button 
 								id={`button-${block.id}-add-record`}
 								color="addRecord orange" 

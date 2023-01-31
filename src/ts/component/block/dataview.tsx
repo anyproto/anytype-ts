@@ -58,6 +58,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSourceSelect = this.onSourceSelect.bind(this);
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
+		this.isAllowedObject = this.isAllowedObject.bind(this);
 	};
 
 	render () {
@@ -122,6 +123,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					onSourceTypeSelect={this.onSourceTypeSelect}
 					className={className}
 					isInline={isInline}
+					isAllowedObject={this.isAllowedObject}
 				/>
 			);
 		};
@@ -139,6 +141,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
 					isInline={isInline}
+					isAllowedObject={this.isAllowedObject}
 				/>
 			);
 
@@ -181,6 +184,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							onCellChange={this.onCellChange}
 							onContext={this.onContext}
 							isInline={isInline}
+							isAllowedObject={this.isAllowedObject}
 						/>
 					</div>
 				);
@@ -782,6 +786,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getIdPrefix () {
 		return [ 'dataviewCell', this.props.block.id ].join('-');
+	};
+
+	isAllowedObject () {
+		const { rootId, block, readonly } = this.props;
+		const targetId = this.getObjectId();
+		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
+		const skipTypes = DataUtil.getFileTypes().concat(DataUtil.getSystemTypes());
+
+		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		for (const type of types) {
+			if (skipTypes.includes(type)) {
+				allowed = false;
+				break;
+			};
+		};
+		return allowed;
 	};
 
 	resize () {

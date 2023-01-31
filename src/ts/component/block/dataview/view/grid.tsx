@@ -36,15 +36,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, getView, readonly, onRecordAdd, isPopup, isInline, getLimit } = this.props;
+		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getLimit } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
-		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const limit = getLimit();
 		const length = records.length;
+		const isAllowedObject = this.props.isAllowedObject();
 
 		if (!length) {
 			return (
@@ -54,7 +54,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 					description="Create your first one to begin"
 					button="Create object"
 					className={isInline ? 'withHead' : ''}
-					withButton={allowed}
+					withButton={isAllowedObject}
 					onClick={(e: any) => onRecordAdd(e, 1)}
 				/>
 			);
@@ -69,7 +69,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 						<BodyRow 
 							key={'grid-row-' + view.id + index} 
 							{...this.props} 
-							readonly={readonly || !allowed}
+							readonly={!isAllowedObject}
 							index={index} 
 							cellPosition={this.cellPosition}
 							getColumnWidths={this.getColumnWidths}
@@ -105,7 +105,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 															<BodyRow 
 																key={'grid-row-' + view.id + index} 
 																{...this.props} 
-																readonly={readonly || !allowed}
+																readonly={!isAllowedObject}
 																index={index} 
 																style={{ ...style, top: style.top + 2 }}
 																cellPosition={this.cellPosition}
@@ -149,7 +149,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
 							) : ''}
 
-							{!readonly && allowed && !isInline ? (
+							{isAllowedObject && !isInline ? (
 								<div className="row add">
 									<div className="cell add">
 										<div className="btn" onClick={(e: any) => { onRecordAdd(e, 1); }}>

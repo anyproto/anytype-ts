@@ -21,14 +21,14 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, getView, isPopup, readonly, onRecordAdd, isInline, getLimit } = this.props;
+		const { rootId, block, getView, isPopup, onRecordAdd, isInline, getLimit } = this.props;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
-		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const limit = getLimit();
 		const length = records.length;
+		const isAllowedObject = this.props.isAllowedObject();
 
 		if (!length) {
 			return (
@@ -38,7 +38,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 					description="Create your first one to begin"
 					button="Create object"
 					className={isInline ? 'withHead' : ''}
-					withButton={allowed}
+					withButton={isAllowedObject}
 					onClick={(e: any) => onRecordAdd(e, 1)}
 				/>
 			);
@@ -54,7 +54,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 							key={'grid-row-' + view.id + index}
 							{...this.props}
 							style={{height: HEIGHT}}
-							readonly={readonly || !allowed}
+							readonly={!isAllowedObject}
 							index={index}
 						/>
 					))}
@@ -113,7 +113,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 						<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
 					) : ''}
 
-					{!readonly && allowed && !isInline ? (
+					{isAllowedObject && !isInline ? (
 						<div className="row add">
 							<div className="cell add">
 								<div className="btn" onClick={(e: any) => { onRecordAdd(e, 1); }}>
