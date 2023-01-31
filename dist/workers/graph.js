@@ -316,7 +316,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (isOver && d.name && settings.label && (transform.k >= transformThreshold)) {
+	if (isOver && d.name && settings.label) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -324,16 +324,16 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 		tw = Math.abs(right - left);
 		th = Math.abs(bottom - top);
-		offset = 0;
+		offset = arrowHeight;
 
 		// Rectangle
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
-		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, r1 / 4);
+		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, r1 / 3);
 
 		ctx.strokeStyle = colorLink;
-		ctx.lineWidth = lineWidth;
+		ctx.lineWidth = r1 / 7;
 		ctx.fillStyle = Color.bg;
 		ctx.fill();
 		ctx.stroke();
@@ -345,13 +345,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	};
 
 	// Arrow heads
-	let move = arrowHeight;
-	if (arrowStart && arrowEnd) {
-		move = arrowHeight * 2 + tw / 2 + offset;
-	};
-
-	const sax1 = mx - move * cos1;
-	const say1 = my - move * sin1;
+	const move = arrowHeight * 2 + tw / 2 + offset;
 	const sax2 = mx - move * cos2;
 	const say2 = my - move * sin2;
 
