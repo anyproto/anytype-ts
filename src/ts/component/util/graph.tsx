@@ -120,7 +120,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		d3.select(this.canvas)
         .call(d3.drag().
-			subject(() => { return this.subject; }).
+			subject(() => this.subject).
 			on('start', (e: any, d: any) => this.onDragStart(e)).
 			on('drag', (e: any, d: any) => this.onDragMove(e)).
 			on('end', (e: any, d: any) => this.onDragEnd(e))
@@ -200,8 +200,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onDragStart (e: any) {
 		this.isDragging = true;
 		this.send('onDragStart', { active: e.active });
-
-		$('body').addClass('grab');
 	};
 
 	onDragMove (e: any) {
@@ -221,8 +219,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.isDragging = false;
 		this.subject = null;
 		this.send('onDragEnd', { active: e.active });
-
-		$('body').removeClass('grab');
 	};
 
 	onZoom ({ transform }) {

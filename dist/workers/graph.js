@@ -291,8 +291,8 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const sx2 = x2 + r2 * cos2;
 	const sy2 = y2 + r2 * sin2;
 	const k = 5 / transform.k;
-	const lineWidth = r1 / 10;
 	const isOver = d.source.isOver || d.target.isOver;
+	const showName = isOver && d.name && settings.label;
 
 	let colorLink = Color.link;
 	let colorArrow = Color.arrow;
@@ -316,7 +316,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (isOver && d.name && settings.label) {
+	if (showName) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -345,7 +345,14 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	};
 
 	// Arrow heads
-	const move = arrowHeight * 2 + tw / 2 + offset;
+	let move = arrowHeight;
+	if (showName) {
+		move = arrowHeight * 2 + tw / 2 + offset;
+	} else 
+	if (arrowStart && arrowEnd) {
+		move = arrowHeight * 2;
+	};
+
 	const sax1 = mx - move * cos1;
 	const say1 = my - move * sin1;
 	const sax2 = mx - move * cos2;
