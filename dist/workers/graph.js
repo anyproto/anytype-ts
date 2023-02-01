@@ -574,11 +574,12 @@ onContextMenu = ({ x, y }) => {
 	};
 
 	const d = getNodeByCoords(x, y);
-	if (d) {
-		d.isOver = true;
+	if (!d) {
+		return;
 	};
 
-	send('onContextMenu', { node: (d ? d.id : ''), x, y });
+	d.isOver = true;
+	send('onContextMenu', { node: d, x, y });
 	redraw();
 };
 

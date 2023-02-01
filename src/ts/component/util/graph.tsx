@@ -332,7 +332,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						this.isPreviewDisabled = false;
 					},
 					recalcRect: () => { 
-						const rect = { width: 0, height: 0, x: data.x, y: data.y };
+						const rect = { width: 0, height: 0, x: data.x + 10, y: data.y + 10 };
 
 						if (isPopup) {
 							const container = Util.getPageContainer(isPopup);
