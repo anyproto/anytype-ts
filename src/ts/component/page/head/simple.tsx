@@ -172,8 +172,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	};
 
 	onKeyUp () {
-		console.log('onKeyUp');
-
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};
