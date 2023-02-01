@@ -341,9 +341,9 @@ export default {
 		items: [
 			{
 				name: 'This is inline set',
-				description: 'Object filter and Name are synced with source set.',
+				description: 'Set query and name are synced with the source set you selected. You can change source by clicking on the set name.',
 				param: {
-					element: '#head-title-wrapper',
+					element: '#head-title-wrapper #value',
 					offsetY: 10,
 				}
 			},
