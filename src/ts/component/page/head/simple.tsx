@@ -59,7 +59,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					onFocus={(e: any) => { this.onFocus(e, item); }}
 					onBlur={(e: any) => { this.onBlur(e, item); }}
 					onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-					onKeyUp={(e: any) => { this.onKeyUp(e, item); }}
+					onKeyUp={() => { this.onKeyUp(); }}
 					onSelect={(e: any) => { this.onSelectText(e, item); }}
 					onCompositionStart={this.onCompositionStart}
 				/>
@@ -171,7 +171,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 	};
 
-	onKeyUp (e: any, item: any) {
+	onKeyUp () {
+		console.log('onKeyUp');
+
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => { this.save(); }, 500);
 	};

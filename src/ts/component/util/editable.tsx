@@ -64,6 +64,8 @@ class Editable extends React.Component<Props> {
 
 		let editor = null;
 		if (readonly) {
+			cne.push('isReadonly');
+
 			editor = <div id="value" className={cne.join(' ')} />;
 		} else {
 			editor = (
