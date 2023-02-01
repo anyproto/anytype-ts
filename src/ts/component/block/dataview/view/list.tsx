@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { dbStore, blockStore } from 'Store';
+import { dbStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
 import { I, translate } from 'Lib';
 import Empty from '../empty';
@@ -12,6 +12,7 @@ const HEIGHT = 32;
 
 const ViewList = observer(class ViewList extends React.Component<I.ViewComponent> {
 
+	node: any = null;
 	ref: any = null;
 
 	constructor (props: I.ViewComponent) {
@@ -75,7 +76,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 									<AutoSizer disableHeight={true}>
 										{({ width }) => (
 											<List
-												ref={(ref: any) => { this.ref = ref; }}
+												ref={ref => this.ref = ref}
 												autoHeight={true}
 												height={Number(height) || 0}
 												width={Number(width) || 0}
@@ -104,25 +105,31 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		};
 
 		return (
-			<div className="wrap">
-				<div className="viewItem viewList">
+			<div 
+				ref={node => this.node = node} 
+				className="wrap"
+			>
+				<div id="scroll" className="scroll">
+					<div id="scrollWrap" className="scrollWrap">
+						<div className="viewItem viewList">
+							{content}
 
-					{content}
+							{isInline && (limit + offset < total) ? (
+								<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
+							) : ''}
 
-					{isInline && (limit + offset < total) ? (
-						<LoadMore limit={getLimit()} loaded={records.length} total={total} onClick={this.loadMoreRows} />
-					) : ''}
-
-					{isAllowedObject && !isInline ? (
-						<div className="row add">
-							<div className="cell add">
-								<div className="btn" onClick={(e: any) => { onRecordAdd(e, 1); }}>
-									<Icon className="plus" />
-									<div className="name">{translate('blockDataviewNew')}</div>
+							{isAllowedObject && !isInline ? (
+								<div className="row add">
+									<div className="cell add">
+										<div className="btn" onClick={(e: any) => { onRecordAdd(e, 1); }}>
+											<Icon className="plus" />
+											<div className="name">{translate('blockDataviewNew')}</div>
+										</div>
+									</div>
 								</div>
-							</div>
+							) : null}
 						</div>
-					) : null}
+					</div>
 				</div>
 			</div>
 		);
