@@ -16,7 +16,6 @@ const util = new Util();
 
 const fontFamily = 'Helvetica';
 const transformThreshold = 1.5;
-const hoverAlpha = 0.2;
 
 const ObjectLayout = {
 	Human:	 1,
@@ -57,7 +56,7 @@ let ctx = null;
 let width = 0;
 let height = 0;
 let density = 0;
-let transform = null;
+let transform = {};
 let nodes = [];
 let edges = [];
 let filteredNodes = [];
@@ -71,6 +70,7 @@ let settings = {};
 let time = 0;
 let isHovering = false;
 let edgeMap = new Map();
+let hoverAlpha = 0.2;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -88,7 +88,7 @@ init = (param) => {
 
 	util.ctx = ctx;
 	resize(data);
-	initColor(data.theme);
+	initTheme(data.theme);
 
 	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
@@ -112,9 +112,10 @@ init = (param) => {
 	}, 100);
 };
 
-initColor = (theme) => {
+initTheme = (theme) => {
 	switch (theme) {
 		default:
+			hoverAlpha = 0.3;
 			Color = {
 				bg: '#fff',
 				link: '#dfddd0',
@@ -127,6 +128,7 @@ initColor = (theme) => {
 			break;
 
 		case 'dark':
+			hoverAlpha = 0.2;
 			Color = {
 				bg: '#1e1e1b',
 				link: '#484843',
@@ -250,7 +252,7 @@ updateSettings = (param) => {
 };
 
 updateTheme = ({ theme }) => {
-	initColor(theme);
+	initTheme(theme);
 	redraw();
 };
 

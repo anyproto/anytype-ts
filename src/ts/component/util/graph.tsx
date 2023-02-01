@@ -255,10 +255,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (!el.length) {
 			el = $('<div id="graphPreview" />');
 			body.append(el);
-
-			ReactDOM.render(<PreviewObject rootId={this.subject.id} />, el.get(0), () => {
-				position();
-			});
+			ReactDOM.render(<PreviewObject rootId={this.subject.id} />, el.get(0), position);
 		} else {
 			position();
 		};
