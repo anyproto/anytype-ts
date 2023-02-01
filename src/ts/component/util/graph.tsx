@@ -42,6 +42,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	render () {
 		const { isPopup } = this.props;
+		const { theme } = commonStore;
 		const id = [ 'graph' ];
 
 		if (isPopup) {
@@ -60,6 +61,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	componentDidMount () {
 		this.rebind();
+	};
+
+	componentDidUpdate (): void {
+		this.send('updateTheme', { theme: commonStore.theme });
 	};
 
 	componentWillUnmount () {
@@ -422,7 +427,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	resize () {
 		const node = $(this.node);
 
-		this.send('onResize', { 
+		this.send('resize', { 
 			width: node.width(), 
 			height: node.height(), 
 			density: window.devicePixelRatio,

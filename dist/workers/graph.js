@@ -16,6 +16,7 @@ const util = new Util();
 
 const fontFamily = 'Helvetica';
 const transformThreshold = 1.5;
+const hoverAlpha = 0.5;
 
 const ObjectLayout = {
 	Human:	 1,
@@ -248,6 +249,11 @@ updateSettings = (param) => {
 	};
 };
 
+updateTheme = ({ theme }) => {
+	initColor(theme);
+	redraw();
+};
+
 draw = (t) => {
 	const radius = 5.7 / transform.k;
 
@@ -307,7 +313,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	let colorText = Color.text;
 
 	if (isHovering) {
-		ctx.globalAlpha = 0.5;
+		ctx.globalAlpha = hoverAlpha;
 	};
 
 	if (isOver) {
@@ -387,7 +393,7 @@ drawNode = (d) => {
 	let lineWidth = 0;
 
 	if (isHovering) {
-		ctx.globalAlpha = 0.5;
+		ctx.globalAlpha = hoverAlpha;
 
 		const connections = edgeMap.get(d.id);
 		if (connections && connections.length) {
@@ -615,10 +621,6 @@ onSetSelected = ({ ids }) => {
 	selected = ids;
 };
 
-onResize = (data) => {
-	resize(data);
-};
-
 onSetRootId = ({ rootId }) => {
 	const d = nodes.find(d => d.id == rootId);
 	if (!d) {
@@ -655,6 +657,8 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
+
+	redraw();
 };
 
 //------------------- Util -------------------
