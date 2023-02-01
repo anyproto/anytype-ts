@@ -60,16 +60,14 @@ input, textarea, select { font-family: 'Inter'; }
 	.previewObject {
 		.loaderWrapper { height: 54px !important; }
 		.cover { display: none; }
-		.scroller { padding: 16px; }
+		.scroller { padding: 16px !important; }
 		.heading { margin: 0px; }
 		.heading {
+			.iconObject { display: none; }
 			.name { text-overflow: unset; @include clamp2; white-space: normal; }
 			.description { text-overflow: unset; @include clamp2; white-space: normal; }
 		}
 		.blocks { display: none; }
-	}
-	.previewObject.isTask, .previewObject.isBookmark {
-		.scroller { padding-left: 40px; }
 	}
 }
 
