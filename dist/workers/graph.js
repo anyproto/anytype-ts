@@ -1,12 +1,14 @@
-importScripts('./lib/d3/d3-quadtree.min.js');
-importScripts('./lib/d3/d3-zoom.min.js');
-importScripts('./lib/d3/d3-drag.min.js');
-importScripts('./lib/d3/d3-dispatch.min.js');
-importScripts('./lib/d3/d3-timer.min.js');
-importScripts('./lib/d3/d3-selection.min.js');
-importScripts('./lib/d3/d3-force.min.js');
-importScripts('./lib/tween.js');
-importScripts('./lib/util.js');
+importScripts(
+	'./lib/d3/d3-quadtree.min.js',
+	'./lib/d3/d3-zoom.min.js',
+	'./lib/d3/d3-drag.min.js',
+	'./lib/d3/d3-dispatch.min.js',
+	'./lib/d3/d3-timer.min.js',
+	'./lib/d3/d3-selection.min.js',
+	'./lib/d3/d3-force.min.js',
+	'./lib/tween.js',
+	'./lib/util.js'
+);
 
 const util = new Util();
 
