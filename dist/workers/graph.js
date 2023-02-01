@@ -16,7 +16,7 @@ const util = new Util();
 
 const fontFamily = 'Helvetica';
 const transformThreshold = 1.5;
-const hoverAlpha = 0.5;
+const hoverAlpha = 0.2;
 
 const ObjectLayout = {
 	Human:	 1,

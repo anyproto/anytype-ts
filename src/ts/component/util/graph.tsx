@@ -237,11 +237,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		this.isPreview = true;
 
-		const { isPopup } = this.props;
 		const win = $(window);
 		const body = $('body');
-		const container = Util.getPageContainer(isPopup);
-		const { left, top } = container.offset();
+		const node = $(this.node);
+		const { left, top } = node.offset();
 
 		let el = $('#graphPreview');
 
@@ -275,9 +274,10 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onMessage (e) {
 		const { id, data } = e.data;
 		const { root } = blockStore;
-		const { isPopup, onClick, onContextMenu, onSelect } = this.props;
+		const { onClick, onContextMenu, onSelect } = this.props;
 		const node = $(this.node);
 		const canvas = node.find('canvas');
+		const { left, top } = node.offset();
 
 		switch (id) {
 			case 'onClick': {
@@ -331,19 +331,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					onClose: () => {
 						this.isPreviewDisabled = false;
 					},
-					recalcRect: () => { 
-						const rect = { width: 0, height: 0, x: data.x + 10, y: data.y + 10 };
-
-						if (isPopup) {
-							const container = Util.getPageContainer(isPopup);
-							const { left, top } = container.offset();
-
-							rect.x += left;
-							rect.y += top;
-						};
-
-						return rect;
-					},
+					recalcRect: () => ({
+							width: 0, 
+							height: 0, 
+							x: data.x + 10 + left, 
+							y: data.y + 10 + top,
+					}),
 				});
 				break;
 			};
