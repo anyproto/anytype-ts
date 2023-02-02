@@ -50,7 +50,6 @@ class Api {
 	};
 
 	setTheme (win, theme) {
-		nativeTheme.themeSource = theme || 'light';
 		this.setConfig(win, { theme });
 	};
 
