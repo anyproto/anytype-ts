@@ -1513,6 +1513,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	};
 
 	onPaste (e: any, props: any, force?: boolean, data?: any) {
+		if (keyboard.isPasteDisabled) {
+			return;
+		};
+
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;

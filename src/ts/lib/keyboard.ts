@@ -30,6 +30,7 @@ class Keyboard {
 	isCloseDisabled = false;
 	isContextCloseDisabled = false;
 	isContextOpenDisabled = false;
+	isPasteDisabled = false;
 	
 	init () {
 		this.unbind();
@@ -689,6 +690,11 @@ class Keyboard {
 	// Flag to prevent document from sending close, to prevent deletion of drafts
 	disableClose (v: boolean) {
 		this.isCloseDisabled = v;
+	};
+
+	// Flag to prevent common paste handling in editor
+	disablePaste (v: boolean) {
+		this.isPasteDisabled = v;
 	};
 	
 	isSpecial (e: any): boolean {
