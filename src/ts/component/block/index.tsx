@@ -84,7 +84,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
-		let setRef = (ref: any) => { this.ref = ref; };
+		let setRef = ref => this.ref = ref;
 		let additional = null;
 		let renderChildren = !isInsideTable;
 
