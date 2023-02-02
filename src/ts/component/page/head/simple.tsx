@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { getRange } from 'selection-ranges';
 import { IconObject, Block, Button, Editable } from 'Component';
 import { I, M, Action, DataUtil, ObjectUtil, focus, keyboard } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
