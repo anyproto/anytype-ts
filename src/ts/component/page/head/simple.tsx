@@ -97,11 +97,15 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if ([ Constant.typeId.type, Constant.typeId.relation ].includes(object.type)) {
 			let text = 'Create';
+			let arrow = false;
+
 			if (object.type == Constant.typeId.relation) {
 				text = 'Create set';
+			} else {
+				arrow = true;
 			};
 
-			button = <Button id="button-create" color="black" text={text} onClick={onCreate} />;
+			button = <Button id="button-create" color="black" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
 		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
