@@ -38,7 +38,13 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			title: DataUtil.defaultName(type),
 			description: 'Add a description',
 		};
-		const featured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
+		const isTypeOrRelation = [ 
+			Constant.typeId.type, 
+			Constant.storeTypeId.type, 
+			Constant.typeId.relation, 
+			Constant.storeTypeId.relation,
+		].includes(object.type);
 
 		let canEditIcon = allowDetails;
 		if (object.type == Constant.typeId.relation) {
@@ -66,27 +72,61 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		let button = null;
-		if (object.type == Constant.typeId.type) {
-			button = <Button id="button-create" text="Create" onClick={onCreate} />;
-		};
-		if (object.type == Constant.typeId.relation) {
-			button = <Button id="button-create" text="Create set" onClick={onCreate} />;
-		};
-		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
-			if (this.isInstalled()) {
-				button = <Button id="button-install" text="Install" className="grey filled disabled" />;
-			} else {
-				button = <Button id="button-install" text="Install" onClick={this.onInstall} />;
+		let size = null;
+		let iconSize = null;
+		let descr = null;
+		let featured = null;
+		let cn = [ 'headSimple', check.className ];
+		let buttonId = '';
+
+		if (isTypeOrRelation) {
+			size = 32;
+			iconSize = 28;
+		} else {
+			size = 96;
+
+			if (object.iconImage) {
+				size = 112;
+				cn.push('isBig');
 			};
+
+			descr = <Editor className="descr" id="description" />;
+			featured = <Block {...this.props} key={blockFeatured.id} rootId={rootId} iconSize={20} block={blockFeatured} className="small" />;
+		};
+
+		if ([ Constant.typeId.type, Constant.typeId.relation ].includes(object.type)) {
+			let text = 'Create';
+			let arrow = false;
+
+			if (object.type == Constant.typeId.relation) {
+				text = 'Create set';
+			} else {
+				arrow = true;
+			};
+
+			button = <Button id="button-create" color="black" text={text} arrow={arrow} onClick={onCreate} />;
+		};
+
+		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
+			let onClick = null;
+			let className = '';
+
+			if (this.isInstalled()) {
+				onClick = this.onInstall;
+				className = 'grey filled disabled';
+			};
+
+			button = <Button id="button-install" color="black" text="Install" className={className} onClick={onClick} />;
 		};
 
 		return (
-			<div ref={node => this.node = node} className="headSimple">
+			<div ref={node => this.node = node} className={cn.join(' ')}>
 				{check.withIcon ? (
 					<div className="side left">
 						<IconObject 
 							id={'block-icon-' + rootId} 
-							size={object.iconImage ? 112 : 96} 
+							size={size} 
+							iconSize={iconSize}
 							object={object} 
 							forceLetter={true}
 							canEdit={canEditIcon} 
@@ -96,12 +136,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 					</div>
 				) : ''}
 
-				<div className={[ 'side', 'center', (object.iconImage ? 'big' : '') ].join(' ')}>
+				<div className="side center">
 					<div className="txt">
 						<Editor className="title" id="title" />
-						<Editor className="descr" id="description" />
-
-						<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} className="small" />
+						{descr}
+						{featured}
 					</div>
 				</div>
 
