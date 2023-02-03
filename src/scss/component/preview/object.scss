@@ -13,8 +13,7 @@
 	.heading {
 		.iconObject { display: inline-block; background-color: $colorVeryLightGrey; border-radius: 8px; margin-bottom: 10px; box-shadow: 0px 0px 0px 1px $colorWhite inset; }
 		.iconObject.isTask, .iconObject.isBookmark { background: none; position: absolute; top: 2px; left: -24px; }
-		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: bold; position: relative; }
-
+		.name { display: block; @include text-paragraph; @include text-overflow-nw; font-weight: 600; position: relative; }
 		.description { @include text-small; @include text-overflow-nw; }
 		.featured { @include text-very-small; color: $colorMediumGrey; }
 		.featured {

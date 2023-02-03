@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import raf from 'raf';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
-import { PreviewObject } from 'Component';
+import { PreviewGraph } from 'Component';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
@@ -245,7 +244,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		let el = $('#graphPreview');
 
 		const position = () => {
-			const obj = el.find('.previewObject');
+			const obj = el.find('.previewGraph');
 			const x = data.x + left - obj.outerWidth() / 2;
 			const y = data.y + top + 20 - win.scrollTop();
 
@@ -255,7 +254,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (!el.length) {
 			el = $('<div id="graphPreview" />');
 			body.append(el);
-			ReactDOM.render(<PreviewObject rootId={this.subject.id} />, el.get(0), position);
+			ReactDOM.render(<PreviewGraph object={this.subject} />, el.get(0), position);
 		} else {
 			position();
 		};
@@ -299,7 +298,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 				if (this.subject) {
 					window.clearTimeout(this.timeoutPreview);
-					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
+					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 50);
 
 					canvas.addClass('cp');
 				} else {

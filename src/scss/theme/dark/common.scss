@@ -13,9 +13,6 @@ html.themeDark {
     a:hover { color: $colorOrange; }
 
     #root-loader { background: $colorBlack; }
-	#graphPreview {
-		.previewObject { background: $colorBlack; }
-	}
 
     .cover::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.2);
@@ -171,6 +168,10 @@ html.themeDark {
             }
         }
     }
+
+	/* PreviewGraph */
+
+	.previewGraph { background: $colorBgLight; border-color: $colorLinePrimary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     /* Preview */
 

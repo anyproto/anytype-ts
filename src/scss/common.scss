@@ -55,21 +55,6 @@ input, textarea, select { font-family: 'Inter'; }
 }
 
 #graphPreview { position: fixed; z-index: 1000; }
-#graphPreview {
-	.previewObject { background: $colorWhite; height: auto; }
-	.previewObject {
-		.loaderWrapper { height: 54px !important; }
-		.cover { display: none; }
-		.scroller { padding: 16px !important; }
-		.heading { margin: 0px; }
-		.heading {
-			.iconObject { display: none; }
-			.name { text-overflow: unset; @include clamp2; white-space: normal; }
-			.description { text-overflow: unset; @include clamp2; white-space: normal; }
-		}
-		.blocks { display: none; }
-	}
-}
 
 html.platformWindows {
 	#drag { height: 30px; z-index: 1000; display: block; }

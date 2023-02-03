@@ -3,7 +3,6 @@ import { Loader, IconObject, Cover, Icon } from 'Component';
 import { commonStore, detailStore, blockStore } from 'Store';
 import { I, C, DataUtil, Action, translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
-
 import Constant from 'json/constant.json';
 
 interface Props {
