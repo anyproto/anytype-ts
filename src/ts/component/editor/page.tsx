@@ -571,8 +571,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 				if (type == I.MarkType.Link) {
 					menuStore.open('blockLink', {
-						element: `#block-${ids[0]}`,
 						horizontal: I.MenuDirection.Center,
+						offsetY: 4,
+						recalcRect: () => {
+							const rect = Util.selectionRect();
+							return rect ? { ...rect, y: rect.y + $(window).scrollTop() } : null;
+						},
 						data: {
 							filter: '',
 							onChange: (newType: I.MarkType, param: string) => {
@@ -1053,13 +1057,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		const mark = Mark.getInRange(marks, type, range);
-		const el = $(`#block-${block.id}`);
 		const win = $(window);
 
 		if (type == I.MarkType.Link) {
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockLink', {
-					element: el,
 					recalcRect: () => {
 						const rect = Util.selectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
