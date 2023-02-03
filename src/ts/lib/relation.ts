@@ -384,7 +384,7 @@ class Relation {
 
 		value = Util.objectCopy(value);
 		
-		if (typeof value === 'object') {
+		if (typeof value !== 'object') {
 			value = [ value ];
 		} else 
 		if (!Util.objectLength(value)) {
