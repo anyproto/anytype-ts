@@ -41,21 +41,24 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			cn.push('isInline');
 		};
 
-		const buttons: any[] = [
-			{ id: 'filter', name: 'Filters', menu: 'dataviewFilterList' },
-			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort' },
-			{ id: 'settings', name: 'Settings', menu: 'dataviewRelationList' },
+		const buttons: I.ButtonComponent[] = [
+			{ id: 'filter', text: 'Filters', menu: 'dataviewFilterList', showDot: filterCnt > 0 },
+			{ id: 'sort', text: 'Sorts', menu: 'dataviewSort', showDot: sortCnt > 0 },
+			{ id: 'settings', text: 'Settings', menu: 'dataviewRelationList' },
 		];
 
 		const ButtonItem = (item: any) => {
 			const elementId = `button-${block.id}-${item.id}`;
 			return (
-				<Icon 
-					id={elementId} 
-					className={item.id}
-					tooltip={item.name}
-					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu); }}
-				/>
+				<div className="iconWrap">
+					<Icon 
+						id={elementId} 
+						className={item.id}
+						tooltip={item.text}
+						onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu); }}
+					/>
+					{item.showDot ? <div className="dot" /> : ''}
+				</div>
 			);
 		};
 

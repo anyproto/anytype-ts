@@ -161,6 +161,24 @@ export interface PageComponent extends RouteComponentProps<any> {
 
 export interface FooterComponent extends RouteComponentProps<any> {
 	onHelp?: (e: any) => void;
+	onTogglePanel?: (toggle: boolean) => void;
+};
+
+export interface ButtonComponent {
+	id?: string;
+	icon?: string;
+	type?: string;
+	subType?: string;
+	text?: string;
+	className?: string;
+	color?: string;
+	menu?: string;
+	withTabs?: boolean;
+	tooltip?: string;
+	tooltipX?: I.MenuDirection;
+	tooltipY?: I.MenuDirection;
+	showDot?: boolean;
+	onClick?(e: any): void;
 };
 
 export enum SurveyType {
