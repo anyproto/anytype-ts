@@ -211,6 +211,7 @@ window.Lib = {
 	Renderer,
 	DataUtil,
 	Preview,
+	Storage,
 };
 
 /* 
@@ -559,6 +560,7 @@ class App extends React.Component<object, State> {
 
 	onUpdateConfirm (e: any, auto: boolean) {
 		commonStore.progressClear(); 
+		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
 			return;
@@ -571,7 +573,6 @@ class App extends React.Component<object, State> {
 				textConfirm: 'Restart and update',
 				textCancel: 'Later',
 				onConfirm: () => {
-					Storage.setHighlight('whatsNew', true);
 					Renderer.send('updateConfirm');
 				},
 				onCancel: () => {
