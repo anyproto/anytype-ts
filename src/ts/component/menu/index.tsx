@@ -429,8 +429,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			const height = menu.outerHeight();
 			const scrollTop = win.scrollTop();
 			const isFixed = (menu.css('position') == 'fixed') || (node.css('position') == 'fixed');
-			const offsetX = Number(typeof param.offsetX === 'function'? param.offsetX() : param.offsetX) || 0;
-			const offsetY = Number(typeof param.offsetY === 'function'? param.offsetY() : param.offsetY) || 0;
+			const offsetX = Number(typeof param.offsetX === 'function' ? param.offsetX() : param.offsetX) || 0;
+			const offsetY = Number(typeof param.offsetY === 'function' ? param.offsetY() : param.offsetY) || 0;
 			
 			let ew = 0;
 			let eh = 0;

@@ -370,7 +370,7 @@ class Relation {
 	};
 
 	getStringValue (value: any) {
-		if (typeof value === 'object' && value && Util.hasProperty(value, 'length')) {
+		if ((typeof value === 'object') && value && Util.hasProperty(value, 'length')) {
 			return String(value.length ? value[0] : '');
 		} else {
 			return String(value || '');
