@@ -100,7 +100,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 			} else {
 				additional = (
 					<React.Fragment>
-						{'string' == typeof(caption) ? (
+						{typeof caption === "string" ? (
 							<div className="caption" dangerouslySetInnerHTML={{ __html: caption }} />
 						) : (
 							<div className="caption">{caption}</div>

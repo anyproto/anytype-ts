@@ -370,7 +370,7 @@ class Relation {
 	};
 
 	getStringValue (value: any) {
-		if (('object' == typeof(value)) && value && Util.hasProperty(value, 'length')) {
+		if (typeof value === 'object' && value && Util.hasProperty(value, 'length')) {
 			return String(value.length ? value[0] : '');
 		} else {
 			return String(value || '');
@@ -384,7 +384,7 @@ class Relation {
 
 		value = Util.objectCopy(value);
 		
-		if ('object' != typeof(value)) {
+		if (typeof value === 'object') {
 			value = [ value ];
 		} else 
 		if (!Util.objectLength(value)) {
