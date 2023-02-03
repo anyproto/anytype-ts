@@ -153,7 +153,7 @@ class Util {
 	};
 
 	objectCopy (o: any): any {
-		if (typeof o === 'object') {
+		if (typeof o === 'undefined') {
 			o = {};
 		};
 		return JSON.parse(JSON.stringify(o));
