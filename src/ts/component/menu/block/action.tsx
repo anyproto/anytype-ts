@@ -593,6 +593,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 				];
 
+				const onCreate = () => {
+					window.setTimeout(() => {
+						$(window).trigger(`updateDataviewData.${block.id}`);
+					}, 50);
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
 					rootId,
 					blockId: block.id,
@@ -606,13 +612,13 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 							C.ObjectCreateSet([], {}, '', (message: any) => {
 								C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 									$(`#block-${block.id} #head-source-select`).trigger('click');
-									$(window).trigger(`updateDataviewData.${block.id}`);
+									onCreate();
 								});
 							});
 						},
 					},
 					onSelect: (item: any) => {
-						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id);
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
 					}
 				});
 				break;

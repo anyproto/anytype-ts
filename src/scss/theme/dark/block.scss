@@ -95,6 +95,7 @@
             .viewItem:hover, .viewItem.active { color: $colorPrimary; }
             .viewItem.isDragging { background: $colorHover; }
 
+			.icon:hover, .icon.active { background-color: $colorHover; }
             .icon.search { background-image: url('#{$themePath}/icon/dataview/button/search0.svg'); }
 			.icon.manager { background-image: url('#{$themePath}/icon/dataview/button/manager0.svg'); }
 			.icon.plus { background-image: url('#{$themePath}/icon/dataview/button/plus0.svg'); }

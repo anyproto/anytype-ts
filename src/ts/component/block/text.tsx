@@ -1098,6 +1098,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		focus.clear(true);
 		keyboard.setFocus(false);
 
+		console.log('BLUR', this.preventSaveOnBlur);
+
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
 		};
@@ -1226,38 +1228,40 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				menuStore.close('blockContext'); 
 			});
 
-			menuStore.open('blockContext', {
-				element: el,
-				recalcRect: () => { 
-					const rect = Util.selectionRect();
-					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
-				},
-				type: I.MenuType.Horizontal,
-				offsetY: 4,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Center,
-				passThrough: true,
-				onClose: () => {
-					keyboard.disableContextClose(false);
-				},
-				data: {
-					blockId: block.id,
-					blockIds: [ block.id ],
-					rootId: rootId,
-					dataset: dataset,
-					range: { from: currentFrom, to: currentTo },
-					marks: this.marks,
-					isInsideTable,
-					onChange: (marks: I.Mark[]) => {
-						this.marks = marks;
-						this.setMarks(marks);
-
-						raf(() => {
-							focus.set(block.id, { from: currentFrom, to: currentTo });
-							focus.apply();
-						});
+			this.setText (this.marks, true, () => {
+				menuStore.open('blockContext', {
+					element: el,
+					recalcRect: () => { 
+						const rect = Util.selectionRect();
+						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
-				},
+					type: I.MenuType.Horizontal,
+					offsetY: 4,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Center,
+					passThrough: true,
+					onClose: () => {
+						keyboard.disableContextClose(false);
+					},
+					data: {
+						blockId: block.id,
+						blockIds: [ block.id ],
+						rootId: rootId,
+						dataset: dataset,
+						range: { from: currentFrom, to: currentTo },
+						marks: this.marks,
+						isInsideTable,
+						onChange: (marks: I.Mark[]) => {
+							this.marks = marks;
+							this.setMarks(marks);
+
+							raf(() => {
+								focus.set(block.id, { from: currentFrom, to: currentTo });
+								focus.apply();
+							});
+						},
+					},
+				});
 			});
 		}, 150);
 	};

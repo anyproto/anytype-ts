@@ -5,6 +5,7 @@ import { Icon } from 'Component';
 interface Props {
 	id?: string;
 	icon?: string;
+	arrow?: boolean;
 	type?: string;
 	subType?: string;
 	text?: string;
@@ -36,7 +37,7 @@ class Button extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, type, subType, icon, text, className, color, onClick } = this.props;
+		const { id, type, subType, icon, arrow, text, className, color, onClick } = this.props;
 		const cn = [ 'button', color, className ];
 
 		let content = null;
@@ -55,6 +56,7 @@ class Button extends React.Component<Props> {
 					>
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
+						{arrow ? <div className="arrow" /> : ''}
 					</div>
 				);
 				break;

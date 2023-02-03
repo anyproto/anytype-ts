@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import arrayMove from 'array-move';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Loader } from 'Component';
@@ -19,7 +18,7 @@ import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 import Empty from './dataview/empty';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {
+interface Props extends I.BlockComponent {
 	isInline?: boolean;
 	isDragging?: boolean
 };
@@ -59,6 +58,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSourceSelect = this.onSourceSelect.bind(this);
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
+		this.isAllowedObject = this.isAllowedObject.bind(this);
 	};
 
 	render () {
@@ -74,6 +74,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const view = this.getView();
+
 		if (!view) {
 			return null;
 		};
@@ -123,6 +124,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					onSourceTypeSelect={this.onSourceTypeSelect}
 					className={className}
 					isInline={isInline}
+					isAllowedObject={this.isAllowedObject}
 				/>
 			);
 		};
@@ -140,6 +142,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					getRecord={this.getRecord}
 					onRecordAdd={this.onRecordAdd}
 					isInline={isInline}
+					isAllowedObject={this.isAllowedObject}
 				/>
 			);
 
@@ -158,8 +161,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onClick={this.onEmpty}
 					/>
 				);
-			}
-			else {
+			} else {
 				body = (
 					<div className="content">
 						<ViewComponent 
@@ -182,6 +184,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							onCellChange={this.onCellChange}
 							onContext={this.onContext}
 							isInline={isInline}
+							isAllowedObject={this.isAllowedObject}
 						/>
 					</div>
 				);
@@ -197,7 +200,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						{...this.props}
 						title="No query selected"
 						description="All objects satisfying your query will be displayed in Set"
-						button="Select source"
+						button="Select query"
 						className={isInline ? 'withHead' : ''}
 						withButton={true}
 						onClick={this.onEmpty}
@@ -250,7 +253,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
-		if (viewId != this.viewId) {
+		if (viewId && (viewId != this.viewId)) {
 			this.getData(viewId, 0, true);
 		};
 
@@ -341,11 +344,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
 		if (!viewId) {
+			console.log('[BlockDataview.getData] No view id');
 			return;
 		};
 
 		const view = this.getView(viewId);
 		if (!view) {
+			console.log('[BlockDataview.getData] No view');
 			return;
 		};
 
@@ -357,7 +362,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const sources = this.getSources();
 
 		if (!sources.length) {
-			console.log('[getData] No sources');
+			console.log('[BlockDataview.getData] No sources');
 			return;
 		}
 
@@ -667,7 +672,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let obj: any = { id: id };
 		obj[relationKey] = value;
 
-		detailStore.update(subId, id, obj);
+		detailStore.update(subId, obj, false);
 		C.ObjectSetDetails(id, [ { key: relationKey, value: value } ], callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
@@ -713,7 +718,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (message.views && message.views.length) {
-					this.getData(message.views[0].id, 0, true);
+					window.setTimeout(() => { this.getData(message.views[0].id, 0, true); }, 50);
 				};
 
 				if (isInline) {
@@ -764,7 +769,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			menuStore.open('dataviewSource', {
 				element,
 				horizontal: I.MenuDirection.Center,
-				onOpen: () => {
+				onOpen: () => { 
 					element.addClass('active');
 				}, 
 				onClose: () => {
@@ -781,6 +786,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getIdPrefix () {
 		return [ 'dataviewCell', this.props.block.id ].join('-');
+	};
+
+	isAllowedObject () {
+		const { rootId, block, readonly } = this.props;
+		const targetId = this.getObjectId();
+		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
+		const skipTypes = DataUtil.getFileTypes().concat(DataUtil.getSystemTypes());
+
+		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
+		for (const type of types) {
+			if (skipTypes.includes(type)) {
+				allowed = false;
+				break;
+			};
+		};
+		return allowed;
 	};
 
 	resize () {

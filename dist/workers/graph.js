@@ -1,12 +1,14 @@
-importScripts('./lib/d3/d3-quadtree.min.js');
-importScripts('./lib/d3/d3-zoom.min.js');
-importScripts('./lib/d3/d3-drag.min.js');
-importScripts('./lib/d3/d3-dispatch.min.js');
-importScripts('./lib/d3/d3-timer.min.js');
-importScripts('./lib/d3/d3-selection.min.js');
-importScripts('./lib/d3/d3-force.min.js');
-importScripts('./lib/tween.js');
-importScripts('./lib/util.js');
+importScripts(
+	'./lib/d3/d3-quadtree.min.js',
+	'./lib/d3/d3-zoom.min.js',
+	'./lib/d3/d3-drag.min.js',
+	'./lib/d3/d3-dispatch.min.js',
+	'./lib/d3/d3-timer.min.js',
+	'./lib/d3/d3-selection.min.js',
+	'./lib/d3/d3-force.min.js',
+	'./lib/tween.js',
+	'./lib/util.js'
+);
 
 const util = new Util();
 
@@ -32,10 +34,11 @@ const forceProps = {
 		y: 0.5,
 	},
 	charge: {
-		strength: -1000,
+		strength: -250,
+		distanceMax: 300,
 	},
 	link: {
-		distance: 1,
+		distance: 50,
 	},
 	forceX: {
 		strength: 0.1,
@@ -53,7 +56,7 @@ let ctx = null;
 let width = 0;
 let height = 0;
 let density = 0;
-let transform = null;
+let transform = {};
 let nodes = [];
 let edges = [];
 let filteredNodes = [];
@@ -67,6 +70,7 @@ let settings = {};
 let time = 0;
 let isHovering = false;
 let edgeMap = new Map();
+let hoverAlpha = 0.2;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -84,7 +88,7 @@ init = (param) => {
 
 	util.ctx = ctx;
 	resize(data);
-	initColor(data.theme);
+	initTheme(data.theme);
 
 	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
@@ -95,19 +99,23 @@ init = (param) => {
 	simulation.on('tick', () => { redraw(); });
 	simulation.tick(100);
 
+	// Center initially on root node
 	setTimeout(() => {
 		const root = getNodeById(data.rootId);
-		if (root) {
-			transform = Object.assign(transform, this.getCenter(root.x, root.y));
-			send('onTransform', { ...transform });
-			redraw();
+		if (!root) {
+			return;
 		};
+
+		transform = Object.assign(transform, getCenter(root.x, root.y));
+		send('onTransform', { ...transform });
+		redraw();
 	}, 100);
 };
 
-initColor = (theme) => {
+initTheme = (theme) => {
 	switch (theme) {
 		default:
+			hoverAlpha = 0.3;
 			Color = {
 				bg: '#fff',
 				link: '#dfddd0',
@@ -120,6 +128,7 @@ initColor = (theme) => {
 			break;
 
 		case 'dark':
+			hoverAlpha = 0.2;
 			Color = {
 				bg: '#1e1e1b',
 				link: '#484843',
@@ -154,7 +163,8 @@ initForces = () => {
 	.y(height * center.y);
 
 	simulation.force('charge')
-	.strength(charge.strength);
+	.strength(charge.strength)
+	.distanceMax(charge.distanceMax);
 
 	simulation.force('link')
 	.links(edges)
@@ -241,6 +251,11 @@ updateSettings = (param) => {
 	};
 };
 
+updateTheme = ({ theme }) => {
+	initTheme(theme);
+	redraw();
+};
+
 draw = (t) => {
 	const radius = 5.7 / transform.k;
 
@@ -291,15 +306,16 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const sx2 = x2 + r2 * cos2;
 	const sy2 = y2 + r2 * sin2;
 	const k = 5 / transform.k;
-	const lineWidth = r1 / 10;
 	const isOver = d.source.isOver || d.target.isOver;
+	const showName = isOver && d.name && settings.label;
+	const lineWidth = getLineWidth();
 
 	let colorLink = Color.link;
 	let colorArrow = Color.arrow;
 	let colorText = Color.text;
 
 	if (isHovering) {
-		ctx.globalAlpha = 0.5;
+		ctx.globalAlpha = hoverAlpha;
 	};
 
 	if (isOver) {
@@ -309,14 +325,14 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 		ctx.globalAlpha = 1;
 	};
 
-	util.line(sx1, sy1, sx2, sy2, r1 / 10, colorLink);
+	util.line(sx1, sy1, sx2, sy2, lineWidth, colorLink);
 
 	let tw = 0;
 	let th = 0;
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if (isOver && d.name && settings.label && (transform.k >= transformThreshold)) {
+	if (showName) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -324,16 +340,16 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 		tw = Math.abs(right - left);
 		th = Math.abs(bottom - top);
-		offset = 0;
+		offset = arrowHeight / 2;
 
 		// Rectangle
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
-		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, r1 / 4);
+		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, getBorderRadius());
 
 		ctx.strokeStyle = colorLink;
-		ctx.lineWidth = lineWidth;
+		ctx.lineWidth = lineWidth * 3;
 		ctx.fillStyle = Color.bg;
 		ctx.fill();
 		ctx.stroke();
@@ -346,8 +362,11 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 	// Arrow heads
 	let move = arrowHeight;
-	if (arrowStart && arrowEnd) {
+	if (showName) {
 		move = arrowHeight * 2 + tw / 2 + offset;
+	} else 
+	if (arrowStart && arrowEnd) {
+		move = arrowHeight * 2;
 	};
 
 	const sax1 = mx - move * cos1;
@@ -376,7 +395,7 @@ drawNode = (d) => {
 	let lineWidth = 0;
 
 	if (isHovering) {
-		ctx.globalAlpha = 0.5;
+		ctx.globalAlpha = hoverAlpha;
 
 		const connections = edgeMap.get(d.id);
 		if (connections && connections.length) {
@@ -405,14 +424,14 @@ drawNode = (d) => {
 	};
 
 	if (d.isOver || isSelected) {
-		lineWidth = radius / 7;
+		lineWidth = getLineWidth() * 3;
 	};
 
 	if (settings.icon && img) {
 		ctx.save();
 
 		if (lineWidth) {
-			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, radius / 3);
+			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, getBorderRadius());
 			ctx.fillStyle = Color.bg;
 			ctx.fill();
 
@@ -433,7 +452,7 @@ drawNode = (d) => {
 			if (isIconCircle(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
-				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, radius / 3);
+				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, getBorderRadius());
 			};
 	
 			ctx.fillStyle = Color.bg;
@@ -557,11 +576,12 @@ onContextMenu = ({ x, y }) => {
 	};
 
 	const d = getNodeByCoords(x, y);
-	if (d) {
-		d.isOver = true;
+	if (!d) {
+		return;
 	};
 
-	send('onContextMenu', { node: (d ? d.id : ''), x, y });
+	d.isOver = true;
+	send('onContextMenu', { node: d, x, y });
 	redraw();
 };
 
@@ -604,10 +624,6 @@ onSetSelected = ({ ids }) => {
 	selected = ids;
 };
 
-onResize = (data) => {
-	resize(data);
-};
-
 onSetRootId = ({ rootId }) => {
 	const d = nodes.find(d => d.id == rootId);
 	if (!d) {
@@ -615,7 +631,7 @@ onSetRootId = ({ rootId }) => {
 	};
 
 	const coords = { x: transform.x, y: transform.y };
-	const to = this.getCenter(d.x, d.y);
+	const to = getCenter(d.x, d.y);
 
 	new TWEEN.Tween(coords)
 	.to(to, 500)
@@ -644,6 +660,8 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
+
+	redraw();
 };
 
 //------------------- Util -------------------
@@ -692,6 +710,14 @@ const getNodeMap = () => {
 	return new Map(nodes.map(d => [ d.id, d ]));
 };
 
-getCenter = (x, y) => {
+const getCenter = (x, y) => {
 	return { x: width / 2 - x * transform.k, y: height / 2 - y * transform.k };
+};
+
+const getLineWidth = () => {
+	return 0.4 / transform.k;
+};
+
+const getBorderRadius = () => {
+	return 3.33 / transform.k;
 };

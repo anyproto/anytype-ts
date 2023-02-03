@@ -81,20 +81,9 @@ class MenuUtil {
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
-			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' }
+			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' },
+			{ type: I.BlockType.Dataview, id: I.BlockType.Dataview, icon: 'dataview', lang: 'Dataview', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
 		].map(this.mapperBlock);
-	};
-
-	getBlockDataview () {
-		return [
-			{ id: I.ViewType.Grid, icon: 'dataview-grid', lang: 'Table' },
-			{ id: I.ViewType.Gallery, icon: 'dataview-gallery', lang: 'Gallery' },
-			{ id: I.ViewType.List, icon: 'dataview-list', lang: 'List' },
-			{ id: I.ViewType.Board, icon: 'dataview-board', lang: 'Board' },
-		].map((it: any) => {
-			it.type = I.BlockType.Dataview;
-			return this.mapperBlock(it);
-		});
 	};
 
 	getTurnPage () {
@@ -356,12 +345,12 @@ class MenuUtil {
 				c.color = c.color || s.color || '';
 				return c;
 			});
-
-			s.children = Util.arrayUniqueObjects(s.children, 'itemId');
+			s.children = Util.arrayUniqueObjects(s.children, 'id');
 			return s;
 		});
-		sections = Util.arrayUniqueObjects(sections, 'id');
-		return sections;
+
+
+		return Util.arrayUniqueObjects(sections, 'id')
 	};
 
 };

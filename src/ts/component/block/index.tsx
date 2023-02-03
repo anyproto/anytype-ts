@@ -84,7 +84,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
-		let setRef = (ref: any) => { this.ref = ref; };
+		let setRef = ref => this.ref = ref;
 		let additional = null;
 		let renderChildren = !isInsideTable;
 
@@ -422,6 +422,11 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		selection.set(I.SelectType.Block, this.ids);
 
+		// Hide block menus and plus button
+		$('#button-block-add').removeClass('show');
+		$('.block.showMenu').removeClass('showMenu');
+		$('.block.isAdding').removeClass('isAdding top bottom');
+
 		menuStore.open('blockAction', { 
 			offsetX: element.outerWidth(),
 			horizontal: I.MenuDirection.Right,
@@ -432,9 +437,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			data: {
 				blockId: block.id,
 				blockIds: this.ids,
-				rootId: rootId,
-				dataset: dataset,
-				blockRemove: blockRemove
+				rootId,
+				dataset,
+				blockRemove,
 			},
 			onClose: () => {
 				selection.clear();

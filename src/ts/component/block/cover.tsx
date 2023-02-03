@@ -193,6 +193,8 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
+		const object = detailStore.get(rootId, rootId, []);
+		const { iconEmoji, iconImage } = object;
 		
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
@@ -203,6 +205,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 				elements.removeClass('hover');
 			},
 			data: {
+				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					ObjectUtil.setIcon(rootId, icon, '', () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });

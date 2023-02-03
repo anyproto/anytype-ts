@@ -795,10 +795,10 @@ class Dispatcher {
 					if (subIds.length) {
 						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
 						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-							detailStore.update(subId, { id: id, details: details }, true);
+							detailStore.update(subId, { id, details }, true);
 						});
 					} else {
-						detailStore.update(rootId, { id: id, details: details }, true);
+						detailStore.update(rootId, { id, details }, true);
 
 						if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
 							blockStore.update(rootId, rootId, { layout: details.layout });
@@ -822,10 +822,10 @@ class Dispatcher {
 					if (subIds.length) {
 						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
 						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-							detailStore.update(subId, { id: id, details: details }, false);
+							detailStore.update(subId, { id, details }, false);
 						});
 					} else {
-						detailStore.update(rootId, { id: id, details: details }, false);
+						detailStore.update(rootId, { id, details }, false);
 
 						if ((id == rootId) && block) {
 							if ((undefined !== details.layout) && (block.layout != details.layout)) {

@@ -189,6 +189,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			data: {},
 		};
 
+		const onCreate = (message: any) => {
+			if (message.views && message.views.length) {
+				window.setTimeout(() => { getData(message.views[0].id, 0, true); }, 50);
+			};
+		};
+
 		switch (item.id) {
 			case 'sourceChange':
 				menuId = 'searchObject';
@@ -210,10 +216,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 							C.ObjectCreateSet([], {}, '', (message: any) => {
 								C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 									$(this.node).find('#head-source-select').trigger('click');
-
-									if (message.views && message.views.length) {
-										getData(message.views[0].id, 0, true);
-									};
+									onCreate(message);
 								});
 
 								analytics.event('InlineSetSetSource', { type: 'newObject' });
@@ -221,12 +224,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						},
 					},
 					onSelect: (item: any) => {
-						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
-							if (message.views && message.views.length) {
-								getData(message.views[0].id, 0, true);
-							};
-						});
-
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
 						analytics.event('InlineSetSetSource');
 						this.menuContext.close();
 					}

@@ -371,6 +371,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const root = blockStore.getLeaf(rootId, rootId);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const readonly = this.isReadonly();
+		const node = $(this.node);
+		const button = node.find('#button-block-add');
+
+		const out = () => {
+			button.removeClass('show');
+			node.find('.block.showMenu').removeClass('showMenu');
+			node.find('.block.isAdding').removeClass('isAdding top bottom');
+		};
 
 		if (
 			!root || 
@@ -384,11 +392,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			(!isPopup && popupStore.isOpen()) ||
 			this.loading
 		) {
+			out();
 			return;
 		};
 
 		const win = $(window);
-		const node = $(this.node);
 		const container = node.find('.editor');
 		
 		if (!container.length) {
@@ -398,7 +406,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const rectContainer = (container.get(0) as Element).getBoundingClientRect() as DOMRect;
 		const featured = node.find(`#block-${Constant.blockId.featured}`);
 		const st = win.scrollTop();
-		const button = node.find('#button-block-add');
 		const { pageX, pageY } = e;
 		const blocks = blockStore.getBlocks(rootId);
 
@@ -437,11 +444,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 		
 		const { x, y, height } = hoveredRect;
-		const out = () => {
-			button.removeClass('show');
-			node.find('.block.showMenu').removeClass('showMenu');
-			node.find('.block.isAdding').removeClass('isAdding top bottom');
-		};
 		
 		if (this.frame) {
 			raf.cancel(this.frame);
@@ -1511,6 +1513,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	};
 
 	onPaste (e: any, props: any, force?: boolean, data?: any) {
+		if (keyboard.isPasteDisabled) {
+			return;
+		};
+
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const { focused, range } = focus.state;
