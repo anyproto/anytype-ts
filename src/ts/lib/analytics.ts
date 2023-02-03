@@ -158,7 +158,7 @@ class Analytics {
 					delete(data.style);
 				};
 				break;
-			}:
+			};
 
 			case 'SetCover':
 			case 'SettingsWallpaperSet': {
