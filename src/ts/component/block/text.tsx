@@ -1098,8 +1098,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		focus.clear(true);
 		keyboard.setFocus(false);
 
-		console.log('BLUR', this.preventSaveOnBlur);
-
 		if (!this.preventSaveOnBlur) {
 			this.setText(this.marks, true);
 		};
