@@ -85,7 +85,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		if (this.loading) {
 			window.clearTimeout(this.timeoutLoading);
-			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 2000);
+			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 200);
 		};
 	};
 
@@ -105,7 +105,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		win.on(`keydown.graphPage`, (e: any) => { this.onKeyDown(e); });
 		win.on('updateGraphRoot.graphPage', (e: any, data: any) => { 
 			this.rootId = data.id; 
-			this.refHeader.ref.setRootId(data.id);
+			this.refHeader.refChild.setRootId(data.id);
 		});
 	};
 

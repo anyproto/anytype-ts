@@ -64,8 +64,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const rootId = this.getRootId();
 		const isRoot = rootId == root;
 
-		let confirm = translate('popupNavigationOpen');
-		let iconHome = (
+		const iconHome = (
 			<div className="iconObject isRelation c48">
 				<div className="iconEmoji c48">
 					<Icon className="home-big" />
@@ -146,7 +145,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				
 					{withButtons ? (
 						<div className="buttons">
-							<Button text={confirm} onClick={(e: any) => { this.onConfirm(e, item); }} />
+							<Button text={translate('popupNavigationOpen')} onClick={(e: any) => { this.onConfirm(e, item); }} />
 							{isPopup ? <Button text={translate('popupNavigationCancel')} color="blank" onClick={(e: any) => { popupStore.close('page'); }} /> : ''}
 						</div>
 					) : ''}
@@ -447,7 +446,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 	unsetActive () {
 		const node = $(this.node);
-		node.find('.active').removeClass('active');
+
+		node.find('.items .item.active').removeClass('active');
 	};
 
 	onOver (e: any, item: any) {
