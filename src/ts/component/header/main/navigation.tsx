@@ -12,7 +12,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	render () {
-		const { onHome, onForward, onBack, onGraph, tabs, tab, onTab } = this.props;
+		const { onHome, onForward, onBack, tabs, tab, onTab } = this.props;
 
 		return (
 			<React.Fragment>
@@ -21,22 +21,15 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 					<Icon className="home big" tooltip="Home" onClick={onHome} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
-					<Icon className="graph big" tooltip="Open as graph" onClick={onGraph} />
 				</div>
 
 				<div className="side center">
 					<div id="tabs" className="tabs">
-						{tabs.map((item: any) => {
-							const cn = [ 'tab', (item.id == tab ? 'active' : '') ];
-
-							console.log(item.id, tab, cn.join(' '));
-
-							return (
-								<div key={item.id} className={cn.join(' ')} onClick={() => { onTab(item.id); }}>
-									{item.name}
-								</div>
-							);
-						})}
+						{tabs.map((item: any) => (
+							<div key={`tab-navigation-${item.id}`} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={() => { onTab(item.id); }}>
+								{item.name}
+							</div>
+						))}
 					</div>
 				</div>
 

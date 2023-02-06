@@ -26,7 +26,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 				<div className="side center">
 					<div id="tabs" className="tabs">
 						{tabs.map((item: any) => (
-							<div key={item.id} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={() => { onTab(item.id); }}>
+							<div key={`tab-store-${item.id}`} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={() => { onTab(item.id); }}>
 								{item.name}
 							</div>
 						))}
@@ -45,7 +45,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ layout: I.ObjectLayout.Navigation });
+		ObjectUtil.openRoute({ layout: I.ObjectLayout.Store });
 	};
 
 });

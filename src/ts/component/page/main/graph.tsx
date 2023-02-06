@@ -36,12 +36,14 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	render () {
+		const rootId = this.getRootId();
+
 		return (
 			<div 
 				ref={node => this.node = node} 
 				className="body"
 			>
-				<Header component="mainGraph" ref={ref => this.refHeader = ref} {...this.props} rootId={this.rootId} tabs={Tabs} tab="graph" onTab={this.onTab} />
+				<Header component="mainGraph" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} tabs={Tabs} tab="graph" onTab={this.onTab} />
 				<Loader id="loader" />
 
 				<div className="wrapper">
@@ -49,7 +51,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						key="graph"
 						{...this.props} 
 						ref={(ref: any) => { this.refGraph = ref; }} 
-						rootId={this.rootId} 
+						rootId={rootId} 
 						data={this.data}
 						onClick={this.onClickObject}
 						onSelect={this.onSelect}
@@ -71,8 +73,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	componentDidMount () {
-		this.rootId = this.getRootId();
-
 		this.rebind();
 		this.resize();
 		this.load();
@@ -103,7 +103,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		this.unbind();
 		win.on(`keydown.graphPage`, (e: any) => { this.onKeyDown(e); });
-		win.on('updateGraphRoot.graphPage', (e: any, data: any) => { this.rootId = data.id; });
+		win.on('updateGraphRoot.graphPage', (e: any, data: any) => { 
+			this.rootId = data.id; 
+			this.refHeader.ref.setRootId(data.id);
+		});
 	};
 
 	onKeyDown (e: any) {
@@ -188,7 +191,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			loader.show().css({ opacity: 1 });
 		} else {
 			loader.css({ opacity: 0 });
-			window.setTimeout(() => { loader.hide(); }, 500);
+			window.setTimeout(() => { loader.hide(); }, 200);
 		};
 	};
 
@@ -203,7 +206,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		const header = node.find('#header');
 		const hh = header.height();
 		
-		let wh = isPopup ? oh : win.height();
+		let wh = isPopup ? oh - hh : win.height();
 
 		if (platform == I.Platform.Windows) {
 			wh -= Constant.size.headerWindows;
@@ -235,7 +238,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return this.rootId || (rootId ? rootId : match.params.id);
 	};
 
 	onSelect (id: string) {
@@ -321,7 +324,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	onTab (id: string) {
 		const tab = Tabs.find(it => it.id == id);
 
-		ObjectUtil.openAuto({ id: this.rootId, layout: tab.layout });
+		if (tab) {
+			ObjectUtil.openAuto({ id: this.getRootId(), layout: tab.layout });
+		};
 	};
 
 });

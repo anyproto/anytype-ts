@@ -89,8 +89,6 @@ init = (param) => {
 	resize(data);
 	initTheme(data.theme);
 
-	console.log(data.theme);
-
 	ctx.lineCap = 'round';
 	ctx.fillStyle = Color.bg;
 	

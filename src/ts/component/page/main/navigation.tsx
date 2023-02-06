@@ -537,7 +537,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	onTab (id: string) {
 		const tab = Tabs.find(it => it.id == id);
 
-		ObjectUtil.openAuto({ id: this.getRootId, layout: tab.layout });
+		if (tab) {
+			ObjectUtil.openAuto({ id: this.getRootId(), layout: tab.layout });
+		};
 	};
 	
 });
