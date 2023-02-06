@@ -85,7 +85,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		if (this.loading) {
 			window.clearTimeout(this.timeoutLoading);
-			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 200);
+			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 100);
 		};
 	};
 
@@ -177,6 +177,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			if (this.refGraph) {
 				this.refGraph.init();
 			};
+
 			this.forceUpdate();
 		});
 	};
