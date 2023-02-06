@@ -610,10 +610,13 @@ onAddNode = ({ sourceId, target }) => {
 };
 
 onRemoveNode = ({ ids }) => {
+	isHovering = false;
+
 	data.nodes = data.nodes.filter(d => !ids.includes(d.id));
 	data.edges = data.edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 
 	updateForces();
+	redraw();
 };
 
 onSetEdges = (param) => {
