@@ -82,7 +82,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	componentDidUpdate () {
 		this.resize();
-		this.refGraph.setRootId(this.rootId);
 
 		if (this.loading) {
 			window.clearTimeout(this.timeoutLoading);

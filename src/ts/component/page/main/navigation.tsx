@@ -484,8 +484,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				pagesIn: pagesIn,
 				pagesOut: pagesOut,
 			});
-
-			this.refHeader.forceUpdate();
 		});
 	};
 

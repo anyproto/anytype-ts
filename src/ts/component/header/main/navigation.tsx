@@ -14,8 +14,6 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	render () {
 		const { onHome, onForward, onBack, onGraph, tabs, tab, onTab } = this.props;
 
-		console.log(tabs, tab, tabs.find(it => it.id == tab));
-
 		return (
 			<React.Fragment>
 				<div className="side left">
@@ -29,9 +27,12 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 				<div className="side center">
 					<div id="tabs" className="tabs">
 						{tabs.map((item: any) => {
-							console.log(item.id, tab, [ 'tab', (item.id == tab ? 'active' : '') ].join(' '));
+							const cn = [ 'tab', (item.id == tab ? 'active' : '') ];
+
+							console.log(item.id, tab, cn.join(' '));
+
 							return (
-								<div key={item.id} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={() => { onTab(item.id); }}>
+								<div key={item.id} className={cn.join(' ')} onClick={() => { onTab(item.id); }}>
 									{item.name}
 								</div>
 							);
