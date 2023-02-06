@@ -4,7 +4,7 @@ import raf from 'raf';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
+import { I, C, ObjectUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -23,6 +23,11 @@ enum Panel {
 	Center = 2, 
 	Right = 3,
 };
+
+const Tabs = [
+	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph },
+	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation },
+];
 
 const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
 	
@@ -49,6 +54,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		this.onConfirm = this.onConfirm.bind(this);
 		this.onOver = this.onOver.bind(this);
+		this.onTab = this.onTab.bind(this);
 	};
 	
 	render () {
@@ -153,7 +159,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				ref={node => this.node = node} 
 				className="wrapper"
 			>
-				<Header component="mainNavigation" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainNavigation" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} tabs={Tabs} tab="navigation" onTab={this.onTab} />
 
 				{loading ? <Loader id="loader" /> : ''}
 				<div key="sides" className="sides">
@@ -528,6 +534,12 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	onTab (id: string) {
+		const tab = Tabs.find(it => it.id == id);
+
+		ObjectUtil.openAuto({ id: this.getRootId, layout: tab.layout });
 	};
 	
 });

@@ -37,6 +37,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		this.onMessage = this.onMessage.bind(this);
 		this.nodeMapper = this.nodeMapper.bind(this);
+		this.setRootId = this.setRootId.bind(this);
 	};
 
 	render () {
@@ -63,7 +64,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	componentDidUpdate (): void {
-		this.send('updateTheme', { theme: commonStore.theme });
+		this.send('updateTheme', { theme: commonStore.getThemeClass() });
 	};
 
 	componentWillUnmount () {
@@ -79,12 +80,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const win = $(window);
 
 		this.unbind();
-		win.on('updateGraphSettings', () => { this.updateSettings(); });
-		win.on('updateGraphRoot', (e: any, data: any) => { this.setRootId(data.id); });
+		win.on('updateGraphSettings.graph', () => { this.updateSettings(); });
+		win.on('updateGraphRoot.graph', (e: any, data: any) => { this.setRootId(data.id); });
 	};
 
 	unbind () {
-		$(window).off('updateGraphSettings updateGraphRoot');
+		$(window).off('updateGraphSettings.graph updateGraphRoot.graph');
 	};
 
 	init () {

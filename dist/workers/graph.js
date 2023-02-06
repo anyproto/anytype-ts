@@ -84,12 +84,16 @@ init = (param) => {
 	settings = data.settings;
 
 	ctx = canvas.getContext('2d');
-	ctx.lineCap = 'round';
 
 	util.ctx = ctx;
 	resize(data);
 	initTheme(data.theme);
 
+	console.log(data.theme);
+
+	ctx.lineCap = 'round';
+	ctx.fillStyle = Color.bg;
+	
 	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);

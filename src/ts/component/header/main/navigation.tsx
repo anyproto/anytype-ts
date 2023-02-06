@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Icon, IconObject } from 'Component';
+import { Icon } from 'Component';
 import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
-import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent> {
@@ -13,8 +12,9 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onGraph, onSearch, onPathOver, onPathOut } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const { onHome, onForward, onBack, onGraph, tabs, tab, onTab } = this.props;
+
+		console.log(tabs, tab, tabs.find(it => it.id == tab));
 
 		return (
 			<React.Fragment>
@@ -27,11 +27,15 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 				</div>
 
 				<div className="side center">
-					<div id="path" className="path" onClick={onSearch} onMouseOver={onPathOver} onMouseOut={onPathOut}>
-						<div className="inner">
-							<IconObject object={object} size={18} />
-							<div className="name">{object.name}</div>
-						</div>
+					<div id="tabs" className="tabs">
+						{tabs.map((item: any) => {
+							console.log(item.id, tab, [ 'tab', (item.id == tab ? 'active' : '') ].join(' '));
+							return (
+								<div key={item.id} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={() => { onTab(item.id); }}>
+									{item.name}
+								</div>
+							);
+						})}
 					</div>
 				</div>
 

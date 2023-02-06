@@ -17,7 +17,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	render () {
-		const { onHome, onForward, onBack } = this.props;
+		const { onHome, onForward, onBack, tab, tabs, onTab } = this.props;
 
 		return (
 			<div className="sides">
@@ -28,7 +28,15 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 				</div>
 
-				<div className="side center" />
+				<div className="side center">
+					<div id="tabs" className="tabs">
+						{tabs.map((item: any) => (
+							<div key={item.id} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={() => { onTab(item.id); }}>
+								{item.name}
+							</div>
+						))}
+					</div>
+				</div>
 
 				<div className="side right">
 					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onSearch} />
