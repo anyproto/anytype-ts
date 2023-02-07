@@ -828,7 +828,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				if (isInsideTable) {
 					this.onArrowHorizontal(e, isShift ? Key.left : Key.right, { from: length, to: length }, length, props);
 				} else {
-					this.onTabBlock(e, isShift);
+					this.onTabBlock(e, range, isShift);
 				};
 			});
 
@@ -1115,7 +1115,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	};
 
 	// Indentation
-	onTabBlock (e: any, isShift: boolean) {
+	onTabBlock (e: any, range: I.TextRange, isShift: boolean) {
 		e.preventDefault();
 			
 		const { rootId } = this.props;
@@ -1149,7 +1149,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		Action.move(rootId, rootId, obj.id, [ block.id ], (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
-			window.setTimeout(() => { focus.apply(); });
+			this.focus(block.id, range.from, range.to, false);
 
 			if (next && next.isTextToggle()) {
 				blockStore.toggle(rootId, next.id, true);
