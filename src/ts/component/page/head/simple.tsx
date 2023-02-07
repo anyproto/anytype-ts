@@ -112,8 +112,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			let className = '';
 
 			if (this.isInstalled()) {
-				onClick = this.onInstall;
 				className = 'grey filled disabled';
+			} else {
+				onClick = this.onInstall;
 			};
 
 			button = <Button id="button-install" color="black" text="Install" className={className} onClick={onClick} />;
@@ -276,6 +277,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	onInstall () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId);
+
+		console.log('onInstall');
 
 		Action.install(object, (message: any) => {
 			ObjectUtil.openAuto(message.details);

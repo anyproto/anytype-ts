@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { Icon } from 'Component';
 import { I, C, DataUtil, Util, Relation, analytics } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
-import { Icon } from 'Component';
+import Constant from 'json/constant.json';
 import Item from 'Component/menu/item/relationView';
 
 const PREFIX = 'menuBlockRelationView';
@@ -160,8 +161,11 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
-		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
-		const type = dbStore.getType(object.type);
+		const object = detailStore.get(rootId, rootId);
+		const isTemplate = object.type == Constant.typeId.template;
+		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
+
+		console.log(type);
 
 		let featured = object.featuredRelations || [];
 		let relations = dbStore.getObjectRelations(rootId, rootId);
