@@ -23,7 +23,7 @@ class PopupSettingsPageImportMarkdown extends React.Component<Props> {
 			<div>
 				<Head {...this.props} returnTo="importIndex" name={translate('popupSettingsImportTitle')} />
 
-				<Title text={translate('popupSettingsImportHow')} />
+				<Title text={translate('popupSettingsImportMarkdownTitle')} />
 				<Label text={translate('popupSettingsImportFirst')} />
 
 				<div className="path">
