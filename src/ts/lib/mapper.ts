@@ -163,12 +163,17 @@ const Mapper = {
 		},
 
 		BlockText: (obj: any) => {
+			let marks = [];
+			if (obj.hasMarks()) {
+				marks = (obj.getMarks().getMarksList() || []).map(Mapper.From.Mark);
+			};
+
 			return {
 				text: obj.getText(),
 				style: obj.getStyle(),
 				checked: obj.getChecked(),
 				color: obj.getColor(),
-				marks: (obj.getMarks().getMarksList() || []).map(Mapper.From.Mark),
+				marks,
 				iconEmoji: obj.getIconemoji(),
 				iconImage: obj.getIconimage(),
 			};
