@@ -17,6 +17,7 @@ configure({ enforceActions: 'never' });
 import 'react-virtualized/styles.css';
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
+import 'emoji-mart/css/emoji-mart.css';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -54,6 +55,8 @@ import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
 import 'scss/component/sidebar.scss';
+
+import 'scss/component/list/object.scss';
 import 'scss/component/list/previewObject.scss';
 
 import 'scss/component/preview/common.scss';
@@ -117,7 +120,6 @@ import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
 import 'scss/popup/export.scss';
 
-import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';

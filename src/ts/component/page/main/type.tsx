@@ -76,6 +76,18 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return config.debug.ho ? true : !it.isHidden;
 		});
 
+		const isFileType = DataUtil.isFileType(rootId);
+		const columns: any[] = [
+			{ 
+				relationKey: 'lastModifiedDate', name: 'Updated',  
+				mapper: (v: any) => Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
+			},
+		];
+
+		if (!isFileType) {
+			columns.push({ relationKey: 'creator', name: 'Owner', isObject: true });
+		};
+
 		const ItemRelation = (item: any) => (
 			<div id={'item-' + item.id} className={[ 'item', (item.isHidden ? 'isHidden' : ''), 'canEdit' ].join(' ')}>
 				<div className="clickable" onClick={(e: any) => { this.onRelationEdit(e, item.id); }}>
@@ -172,7 +184,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<div className="section set">
 							<div className="title">{totalObject} {Util.cntWord(totalObject, 'object', 'objects')}</div>
 							<div className="content">
-								<ListObject rootId={rootId} />
+								<ListObject rootId={rootId} columns={columns} />
 							</div>
 						</div>
 					) : ''}

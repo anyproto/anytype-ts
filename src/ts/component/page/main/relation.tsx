@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, crumbs, Action, Util, ObjectUtil } from 'Lib';
+import { I, C, crumbs, Action, Util, ObjectUtil, DataUtil } from 'Lib';
 import { detailStore, dbStore } from 'Store';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
@@ -40,6 +40,13 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const object = detailStore.get(rootId, rootId);
 		const subId = dbStore.getSubId(rootId, 'data');
 		const { total } = dbStore.getMeta(subId, '');
+		const columns: any[] = [
+			{ 
+				relationKey: 'lastModifiedDate', name: 'Updated',  
+				mapper: (v: any) => Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
+			},
+			{ relationKey: object.relationKey, name: object.name, isCell: true }
+		];
 
 		return (
 			<div>
@@ -52,7 +59,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 						<div className="section set">
 							<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
 							<div className="content">
-								<ListObject rootId={rootId} />
+								<ListObject rootId={rootId} columns={columns} />
 							</div>
 						</div>
 					) : ''}
