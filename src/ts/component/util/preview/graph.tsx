@@ -14,19 +14,20 @@ const PreviewGraph = observer(class PreviewGraph extends React.Component<Props> 
 		const { object } = this.props;
 		const type = dbStore.getType(object.type);
 
+		let typeObj = null;
+		if (type) {
+			if (type.isDeleted) {
+				typeObj = <span className="textColor-red">{translate('commonDeletedType')}</span>;
+			} else {
+				typeObj = Util.shorten(type.name, 32);
+			};
+		};
+
 		return (
 			<div className="previewGraph">
 				<ObjectName object={object} />
 				<ObjectDescription object={object} />
-
-				<div className="featured">
-					{type && !type.isDeleted ? Util.shorten(type.name, 32) : (
-						<span className="textColor-red">
-							{translate('commonDeletedType')}
-						</span>
-					)}
-					<div className="bullet" />
-				</div>
+				<div className="featured">{typeObj}</div>
 			</div>
 		);
 	};
