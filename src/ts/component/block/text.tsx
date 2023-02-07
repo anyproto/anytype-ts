@@ -646,6 +646,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+a`, preventDefault: true },
 			{ key: `${cmd}+[`, preventDefault: false },
 			{ key: `${cmd}+]`, preventDefault: false },
+			{ key: `tab`, preventDefault: true },
 			{ key: `shift+tab`, preventDefault: true },
 			{ key: `shift+space`, preventDefault: false },
 		];

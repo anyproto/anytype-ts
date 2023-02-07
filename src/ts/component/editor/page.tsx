@@ -1149,7 +1149,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		Action.move(rootId, rootId, obj.id, [ block.id ], (isShift ? I.BlockPosition.Bottom : I.BlockPosition.Inner), () => {
-			this.focus(block.id, range.from, range.to, false);
+			window.setTimeout(() => { this.focus(block.id, range.from, range.to, false); }, 50);
 
 			if (next && next.isTextToggle()) {
 				blockStore.toggle(rootId, next.id, true);
