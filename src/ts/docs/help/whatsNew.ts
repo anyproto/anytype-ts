@@ -44,7 +44,7 @@ export default [
 	bullet(`<b>Upgrades to recovery phrase panel</b><br/>Buttons in the "Recovery Phrase" panel of your Settings menu now show "Hide" or "Show", depending on whether the phrase is blurred or not. Thanks, ${link('https://community.anytype.io/t/8029', 'sambouwer')}!`),
 
 	h2(`💻 Tech &amp; Performance`),
-	bullet(`Electron upgraded to 23.0.0`),
+	bullet(`Electron upgraded to 22.0.0`),
 	bullet(`Node update to 16.17.1`),
 	bullet(`Lots &amp; lots of code refactoring in preparation for opening our repositories`),
 	bullet(`We've changed the way we store view changes in sets (atomically instead of whole view model), to optimize for performance in sets &amp; objects containing inline sets.`),
