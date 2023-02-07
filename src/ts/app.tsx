@@ -268,6 +268,7 @@ class App extends React.Component<object, State> {
 		loading: true
 	};
 	node: any = null;
+	timeoutMaximize = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -393,12 +394,21 @@ class App extends React.Component<object, State> {
 	};
 
 	checkMaximized () {
-		const node = $(this.node);
-		const icon = node.find('#minmax');
-		const isMaximized = window.Electron.isMaximized();
+		const platform = Util.getPlatform();
 
-		icon.removeClass('max window');
-		isMaximized ? icon.addClass('window') : icon.addClass('max');
+		if (platform != I.Platform.Windows) {
+			return;
+		};
+
+		window.clearTimeout(this.timeoutMaximize);
+		this.timeoutMaximize = window.setTimeout(() => {
+			const node = $(this.node);
+			const icon = node.find('#minmax');
+			const isMaximized = window.Electron.isMaximized();
+
+			icon.removeClass('max window');
+			isMaximized ? icon.addClass('window') : icon.addClass('max');
+		}, 50);
 	};
 
 	registerIpcEvents () {
