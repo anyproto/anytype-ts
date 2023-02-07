@@ -62,7 +62,7 @@
 		"@typescript-eslint/parser": "^5.46.1",
 		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
-		"electron": "^22.0.0",
+		"electron": "^23.0.0",
 		"electron-builder": "^23.6.0",
 		"electron-notarize": "^0.2.1",
 		"eslint": "^8.29.0",
