@@ -592,6 +592,10 @@ class Keyboard {
 	};
 
 	setPinChecked (v: boolean) {
+		if (this.isPinChecked === v) {
+			return;
+		};
+
 		this.isPinChecked = v;
 		Renderer.send('setPinChecked', v);
 	};
