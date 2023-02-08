@@ -6,9 +6,6 @@ class AccountInfo implements I.AccountInfo {
 	homeObjectId = '';
 	profileObjectId = '';
 	gatewayUrl = '';
-	marketplaceTypeObjectId = '';
-	marketplaceTemplateObjectId = '';
-	marketplaceRelationObjectId = '';
 	deviceId = '';
 	localStoragePath = '';
 	accountSpaceId = '';
@@ -17,9 +14,6 @@ class AccountInfo implements I.AccountInfo {
 		this.homeObjectId = String(props.homeObjectId || '');
 		this.profileObjectId = String(props.profileObjectId || '');
 		this.gatewayUrl = String(props.gatewayUrl || '');
-		this.marketplaceTypeObjectId = String(props.marketplaceTypeObjectId || '');
-		this.marketplaceTemplateObjectId = String(props.marketplaceTemplateObjectId || '');
-		this.marketplaceRelationObjectId = String(props.marketplaceRelationObjectId || '');
 		this.deviceId = String(props.deviceId || '');
 		this.localStoragePath = String(props.localStoragePath || '');
 		this.accountSpaceId = String(props.accountSpaceId || '');
@@ -28,9 +22,6 @@ class AccountInfo implements I.AccountInfo {
 			homeObjectId: observable,
 			profileObjectId: observable,
 			gatewayUrl: observable,
-			marketplaceTypeObjectId: observable,
-			marketplaceRelationObjectId: observable,
-			marketplaceTemplateObjectId: observable,
 			deviceId: observable,
 			localStoragePath: observable,
 			accountSpaceId: observable,
