@@ -73,7 +73,6 @@ class Survey {
     };
 
     onSkip (type: I.SurveyType) {
-        const prefix = Util.toCamelCase('survey-' + type);
 		const param: any = {};
 
         switch (type) {
