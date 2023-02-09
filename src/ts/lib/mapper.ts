@@ -55,7 +55,7 @@ const Mapper = {
 				homeObjectId: obj.getHomeobjectid(),
 				profileObjectId: obj.getProfileobjectid(),
 				gatewayUrl: obj.getGatewayurl(),
-				deviceId: obj.getMarketplacerelationobjectid(),
+				deviceId: obj.getDeviceid(),
 				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
 			};
