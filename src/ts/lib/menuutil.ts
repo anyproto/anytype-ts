@@ -221,9 +221,8 @@ class MenuUtil {
 	};
 
 	turnLayouts () {
-		return this.getLayouts().filter((it: any) => {
-			return [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ].indexOf(it.id) >= 0;
-		});
+		const allowed = [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ];
+		return this.getLayouts().filter(it => allowed.includes(it.id));
 	};
 
 	getViews () {
@@ -344,8 +343,7 @@ class MenuUtil {
 			return s;
 		});
 
-
-		return Util.arrayUniqueObjects(sections, 'id')
+		return Util.arrayUniqueObjects(sections, 'id');
 	};
 
 };
