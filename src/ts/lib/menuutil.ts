@@ -110,7 +110,7 @@ class MenuUtil {
 			});
 		};
 
-		return ret.map(this.mapperBlock);
+		return ret;
 	};
 	
 	getTurnDiv () {
@@ -129,9 +129,9 @@ class MenuUtil {
 
 	// Action menu
 	getActions (param: any) {
-		let { hasText, hasFile, hasDataview, hasBookmark, hasTurnObject } = param;
-		let cmd = keyboard.ctrlSymbol();
-		let items: any[] = [
+		const { hasText, hasFile, hasBookmark, hasTurnObject } = param;
+		const cmd = keyboard.ctrlSymbol();
+		const items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
 			{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
@@ -157,12 +157,7 @@ class MenuUtil {
 			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
 		};
 
-		items = items.map((it: any) => {
-			it.isAction = true;
-			return it;
-		});
-		
-		return items;
+		return items.map(it => ({ ...it, isAction: true }));
 	};
 
 	getDataviewActions () {
@@ -170,14 +165,14 @@ class MenuUtil {
 			{ id: 'dataviewSource', icon: 'source', name: 'Change source set', arrow: true },
 			{ id: 'openDataviewObject', icon: 'expand', name: 'Open source set' },
 			//{ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' }
-		];
+		].map(it => ({ ...it, isAction: true }));
 	};
 	
 	getTextColors () {
-		let items: any[] = [
+		const items: any[] = [
 			{ id: 'color-default', name: 'Default', value: '', className: 'default', isTextColor: true }
 		];
-		for (let color of Constant.textColor) {
+		for (const color of Constant.textColor) {
 			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
 		};
 		return items;
