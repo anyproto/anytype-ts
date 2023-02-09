@@ -101,6 +101,7 @@
 	.path {
 		.inner { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 4px; }
 		.name { @include text-overflow-nw; }
+		.iconObject { flex-shrink: 0; }
 	}
 	.path:hover { border-color: $colorBorderLight; }
 }
