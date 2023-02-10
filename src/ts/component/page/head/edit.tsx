@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, DataUtil, ObjectUtil, analytics } from 'Lib';
-import { Block, Drag, Button } from 'Component';
+import { I, M, C, DataUtil, ObjectUtil, analytics, keyboard } from 'Lib';
+import { Block, Drag } from 'Component';
 import { blockStore, detailStore } from 'Store';
 
 interface Props extends I.BlockComponent {
@@ -119,10 +119,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 	};
 
 	onScaleStart (e: any, v: number) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 		this.setPercent(v);
 	};
 	
@@ -132,10 +129,9 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 	};
 	
 	onScaleEnd (e: any, v: number) {
-		const { rootId, dataset } = this.props;
-		const { selection } = dataset || {};
+		const { rootId } = this.props;
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 		this.setPercent(v);
 
 		C.BlockListSetFields(rootId, [

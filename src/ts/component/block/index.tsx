@@ -393,7 +393,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 
 		this.ids = DataUtil.selectionGet(block.id, false, this.props);
 		onDragStart(e, I.DropType.Block, this.ids, this);
@@ -467,15 +467,16 @@ const Block = observer(class Block extends React.Component<Props> {
 		const add = $('#button-block-add');
 		
 		if (selection) {
-			selection.preventSelect(true);
 			selection.clear();
 		};
 
 		this.unbind();
 		node.addClass('isResizing');
 		$('body').addClass('colResize');
-		keyboard.setResize(true);
 		add.css({ opacity: 0 });
+		
+		keyboard.setResize(true);
+		keyboard.disableSelection(true);
 		
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
@@ -524,10 +525,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const { dataset, rootId, block } = this.props;
+		const { rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		const { selection } = dataset || {};
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
@@ -537,13 +537,12 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		if (selection) {
-			selection.preventSelect(false);	
-		};
 		this.unbind();
 		node.removeClass('isResizing');
 		$('body').removeClass('colResize');
+
 		keyboard.setResize(false);
+		keyboard.disableSelection(false);	
 		
 		node.find('.colResize.active').removeClass('active');
 		

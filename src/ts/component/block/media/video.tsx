@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Loader, Error, MediaVideo } from 'Component';
-import { I, C, translate, focus, Action } from 'Lib';
+import { I, C, translate, focus, Action, keyboard } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -229,9 +229,9 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		
 		if (selection) {
 			selection.hide();
-			selection.preventSelect(true);
 		};
-		
+
+		keyboard.disableSelection(true);
 		node.addClass('isResizing');
 		win.on('mousemove.media', (e: any) => { this.onResize(e, checkMax); });
 		win.on('mouseup.media', (e: any) => { this.onResizeEnd(e, checkMax); });
@@ -264,9 +264,8 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, rootId, block } = this.props;
+		const { rootId, block } = this.props;
 		const { id } = block;
-		const { selection } = dataset || {};
 		const node = $(this.node);
 		const wrap = node.find('.wrap');
 		
@@ -280,10 +279,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		
 		win.off('mousemove.media mouseup.media');
 		node.removeClass('isResizing');
-		
-		if (selection) {
-			selection.preventSelect(false);
-		};
+		keyboard.disableSelection(false);
 		
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },

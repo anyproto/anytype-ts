@@ -682,7 +682,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const cell = blockStore.getLeaf(rootId, cellId);
 		const cb = () => {
 			this.setEditing(cellId);
-			this.preventSelect(true);
+			keyboard.disableSelection(true);
 		};
 
 		if (!cell) {
@@ -701,7 +701,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	onCellBlur (e: any, rowId: string, columnId: string, cellId: string) {
 		this.setEditing('');
-		this.preventSelect(false);
+		keyboard.disableSelection(false);
 	};
 
 	onCellClick (e: any, rowId: string, columnId: string, cellId: string) {
@@ -909,8 +909,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		this.initCache(I.BlockType.TableColumn);
 		this.setEditing('');
 		this.onOptionsOpen(I.BlockType.TableColumn, '', id, '');
-		this.preventSelect(true);
 		this.preventDrop(true);
+
+		keyboard.disableSelection(true);
 	};
 
 	onDragMoveColumn (e: any, id: string) {
@@ -965,10 +966,11 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		this.cache = {};
 		this.onSortEndColumn(id, this.hoverId, this.position);
-		this.preventSelect(false);
 		this.preventDrop(false);
 		this.onOptionsClose();
 		this.frameRemove([ I.BlockPosition.Left, I.BlockPosition.Right ]);
+
+		keyboard.disableSelection(false);
 
 		win.off('drag.tableColumn dragend.tableColumn');
 		node.find('.table.isClone').remove();
@@ -999,8 +1001,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		this.initCache(I.BlockType.TableRow);
 		this.setEditing('');
 		this.onOptionsOpen(I.BlockType.TableRow, id, '', '');
-		this.preventSelect(true);
 		this.preventDrop(true);
+
+		keyboard.disableSelection(true);
 	};
 
 	onDragMoveRow (e: any, id: string) {
@@ -1059,10 +1062,11 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		this.cache = {};
 		this.onSortEndRow(id, this.hoverId, this.position);
-		this.preventSelect(false);
 		this.preventDrop(false);
 		this.onOptionsClose();
 		this.frameRemove([ I.BlockPosition.Top, I.BlockPosition.Bottom ]);
+
+		keyboard.disableSelection(false);
 
 		win.off('drag.tableRow dragend.tableRow');
 		node.find('.table.isClone').remove();
@@ -1139,7 +1143,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	onSortStart () {
 		$('body').addClass('grab');
-		this.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 
 	onSortEndColumn (id: string, targetId: string, position: I.BlockPosition): void {
@@ -1152,7 +1156,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		C.BlockTableColumnMove(rootId, id, targetId, position);
 
 		$('body').removeClass('grab');
-		this.preventSelect(false);
+		keyboard.disableSelection(false);
 	};
 
 	onSortEndRow (id: string, targetId: string, position: I.BlockPosition) {
@@ -1165,16 +1169,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		Action.move(rootId, rootId, targetId, [ id ], position);
 
 		$('body').removeClass('grab');
-		this.preventSelect(false);
-	};
-
-	preventSelect (v: boolean) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-
-		if (selection) {
-			selection.preventSelect(v);
-		};
+		keyboard.disableSelection(false);
 	};
 
 	preventDrop (v: boolean) {

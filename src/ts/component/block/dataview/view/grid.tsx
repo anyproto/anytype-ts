@@ -381,15 +381,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset;
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 
 	onSortEnd (result: any) {
-		const { rootId, block, getView, dataset } = this.props;
-		const { selection } = dataset;
+		const { rootId, block, getView } = this.props;
 		const { oldIndex, newIndex } = result;
 		const view = getView();
 		const relations = view.relations.filter(it => {
@@ -400,7 +396,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		view.relations = arrayMove(relations, oldIndex, newIndex);
 		C.BlockDataviewViewRelationSort(rootId, block.id, view.id, view.relations.map(it => it.relationKey));
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
