@@ -40,22 +40,28 @@ class DragLayer extends React.Component<object, State> {
 		
 		switch (type) {
 			case I.DropType.Block: {
-				items = ids.map(id => new M.Block(Util.objectCopy(blockStore.getLeaf(rootId, id))));
+				items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(Util.objectCopy(it)));
 
 				content = (
 					<div className="blocks">
-						{items.map((block: any, i: number) => (
-							<Block 
-								key={'drag-layer-' + block.id} 
-								{...this.props} 
-								block={block} 
-								rootId={rootId} 
-								index={i} 
-								readonly={true} 
-								isDragging={true}
-								getWrapperWidth={() => { return Constant.size.editor; }} 
-							/>
-						))}
+						{items.map((block: any, i: number) => {
+							if (block.isDataview()) {
+								return null;
+							};
+
+							return (
+								<Block 
+									key={'drag-layer-' + block.id} 
+									{...this.props} 
+									block={block} 
+									rootId={rootId} 
+									index={i} 
+									readonly={true} 
+									isDragging={true}
+									getWrapperWidth={() => Constant.size.editor} 
+								/>
+							);
+						})}
 					</div>
 				);
 				break;
@@ -64,24 +70,20 @@ class DragLayer extends React.Component<object, State> {
 			case I.DropType.Relation: {
 				const block = blockStore.getLeaf(rootId, rootId);
 
-				items = ids.map((relationKey: string) => {
-					return dbStore.getRelationByKey(relationKey);
-				}).filter(it => it);
+				items = ids.map(relationKey => dbStore.getRelationByKey(relationKey)).filter(it => it);
 
 				content = (
 					<div className="menus">
 						<div className="menu vertical menuBlockRelationView">
-							{items.map((item: any, i: number) => {
-								return (
-									<RelationItem 
-										key={'drag-layer-' + item.relationKey} 
-										rootId={rootId}
-										{...item}
-										block={block}
-										onRef={() => {}}
-									/>
-								);
-							})}
+							{items.map((item: any) => (
+								<RelationItem 
+									key={'drag-layer-' + item.relationKey} 
+									rootId={rootId}
+									{...item}
+									block={block}
+									onRef={() => {}}
+								/>
+							))}
 						</div>
 					</div>
 				);
