@@ -6,6 +6,7 @@ import { I, M, Util } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import RelationItem from 'Component/menu/item/relationView';
 import Constant from 'json/constant.json';
+import DataviewHead from 'Component/block/dataview/head';
 
 interface State {
 	rootId: string;
@@ -46,7 +47,27 @@ class DragLayer extends React.Component<object, State> {
 					<div className="blocks">
 						{items.map((block: any, i: number) => {
 							if (block.isDataview()) {
-								return null;
+								return (
+									<div
+										key={'drag-layer-' + block.id} 
+										className="block blockDataview"
+									>
+										<DataviewHead 
+											rootId={rootId}
+											block={block}
+											readonly={true} 
+											getData={() => {}} 
+											getView={() => null} 
+											getSources={() => []}
+											getRecord={() => {}}
+											onRecordAdd={() => {}}
+											onSourceSelect={() => {}}
+											onSourceTypeSelect={() => {}}
+											isInline={true}
+											isAllowedObject={() => false}
+										/>
+									</div>
+								);
 							};
 
 							return (
