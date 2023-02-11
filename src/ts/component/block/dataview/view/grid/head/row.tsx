@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { SortableContainer } from 'react-sortable-hoc';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { SortableContainer } from 'react-sortable-hoc';
 import { I } from 'Lib';
 import { Icon } from 'Component';
-import { blockStore } from 'Store';
+import { blockStore, dbStore } from 'Store';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
@@ -22,7 +22,8 @@ const HeadRow = observer(class HeadRow extends React.Component<Props> {
 		const { rootId, block, readonly, getView, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths } = this.props;
 		const view = getView();
 		const widths = getColumnWidths('', 0);
-		const relations = view.getVisibleRelations();
+		const relations = dbStore.getObjectRelations(rootId, block.id).map(it => it.relationKey);
+		const viewRelations = view.getVisibleRelations().filter(it => relations.includes(it.relationKey));
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 
@@ -31,7 +32,7 @@ const HeadRow = observer(class HeadRow extends React.Component<Props> {
 				className="rowHead"
 				style={{ gridTemplateColumns: str }}
 			>
-				{relations.map((relation: any, i: number) => (
+				{viewRelations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-head-' + relation.relationKey} 
 						{...this.props}

@@ -224,7 +224,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	onAdd (e: any) {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 
@@ -249,7 +249,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				skipKeys: relations.map(it => it.relationKey),
 				onAdd,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
-					Dataview.relationAdd(rootId, blockId, relation.relationKey, -1, getView(), (message: any) => {
+					Dataview.relationAdd(rootId, blockId, relation.relationKey, relations.length, getView(), (message: any) => {
 						onAdd();
 
 						if (onChange) {

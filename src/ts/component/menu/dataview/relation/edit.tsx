@@ -294,6 +294,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					name: relation.name, 
 					relationFormat: relation.format,
 					relationFormatObjectTypes: relation.objectTypes || [],
+					_index_: idx,
 				});
 				break;
 			};
@@ -597,7 +598,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {
-				addCommand(rootId, blockId, details, onChange);
+				addCommand(rootId, blockId, { ...details, _index_: item._index_ }, onChange);
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
