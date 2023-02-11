@@ -42,7 +42,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			ccn.push('disabled');
 		};
 
-		if (isObject && !isReadonly) {
+		if (isObject && !isReadonly && !relation.isReadonlyValue) {
 			const length = this.objectTypes.length;
 			const typeId = length ? this.objectTypes[0] : '';
 			const type = dbStore.getType(typeId);

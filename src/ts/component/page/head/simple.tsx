@@ -278,8 +278,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId);
 
-		console.log('onInstall');
-
 		Action.install(object, (message: any) => {
 			ObjectUtil.openAuto(message.details);
 		});

@@ -165,8 +165,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const isTemplate = object.type == Constant.typeId.template;
 		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
 
-		console.log(type);
-
 		let featured = object.featuredRelations || [];
 		let relations = dbStore.getObjectRelations(rootId, rootId);
 		let relationKeys = relations.map(it => it.relationKey);
