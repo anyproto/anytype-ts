@@ -1,24 +1,34 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, DataUtil, Util, ObjectUtil } from 'Lib';
-import { IconObject, Pager, ObjectName } from 'Component';
+import { I, DataUtil, Relation, ObjectUtil } from 'Lib';
+import { IconObject, Pager, ObjectName, Cell } from 'Component';
 import { detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props {
-	rootId: string;
+interface Column {
+	relationKey: string;
+	name: string;
+	className?: string;
+	isObject?: boolean;
+	isCell?: boolean;
+	mapper?: (value : any) => any;
 };
 
+interface Props {
+	rootId: string;
+	columns: Column[];
+};
+
+const PREFIX = 'listObject';
 const LIMIT = 50;
 
 const ListObject = observer(class ListObject extends React.Component<Props> {
 
 	render () {
-		const { rootId } = this.props;
+		const { rootId, columns } = this.props;
 		const subId = this.getSubId();
 		const items = this.getItems();
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const isFileType = DataUtil.isFileType(rootId);
 
 		let pager = null;
 		if (total && items.length) {
@@ -33,7 +43,6 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		};
 
 		const Row = (item: any) => {
-			const author = detailStore.get(subId, item.creator, []);
 			const cn = [ 'row' ];
 
 			if ((item.layout == I.ObjectLayout.Task) && item.isDone) {
@@ -59,43 +68,84 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 							</div>
 						</div>
 					</td>
-					<td className="cell">
-						{item.lastModifiedDate ? (
-							<div className="cellContent">
-								{Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), item.lastModifiedDate)}
-							</div>
-						) : ''}
-					</td>
-					{!isFileType ? (
-						<td className="cell">
-							{!author._empty_ ? (
-								<div className="cellContent cp" onClick={(e: any) => { ObjectUtil.openEvent(e, author); }}>
-									<IconObject object={author} />
-									<div className="name">{author.name}</div>
-								</div>
-							) : ''}
-						</td>
-					) : null}
+
+					{columns.map(column => {
+						const cnc = [ 'cellContent' ];
+						const value = item[column.relationKey];
+
+						if (column.className) {
+							cnc.push(column.className);
+						};
+
+						let content = null;
+						let onClick = null;
+
+						console.log(column.relationKey, value);
+
+						if (value) {
+							if (column.isObject) {
+								const object = detailStore.get(subId, value, []);
+								if (!object._empty_) {
+									onClick = (e: any) => ObjectUtil.openEvent(e, object);
+									content = (
+										<div className="flex">
+											<IconObject object={object} />
+											<ObjectName object={object} />
+										</div>
+									);
+								};
+							} else 
+							if (column.isCell) {
+								const id = Relation.cellId(PREFIX, column.relationKey, 0);
+								content = (
+									<Cell
+										elementId={id}
+										rootId={rootId}
+										subId={subId}
+										block={null}
+										relationKey={column.relationKey}
+										getRecord={() => item}
+										viewType={I.ViewType.Grid}
+										index={0}
+										idPrefix={PREFIX}
+										iconSize={20}
+										readonly={true}
+										arrayLimit={2}
+										textLimit={150}
+									/>
+								);
+							} else {
+								content = column.mapper ? column.mapper(value) : value;
+							};
+						};
+
+						return (
+							<td key={`cell-${column.relationKey}`} className="cell">
+								{content ? (
+									<div className={cnc.join(' ')} onClick={onClick}>
+										{content}
+									</div>
+								) : ''}
+							</td>
+						);
+					})}
 				</tr>
 			);
 		};
 
 		return (
-			<React.Fragment>
+			<div className="listObject">
 				<table>
 					<thead>
 						<tr className="row">
 							<th className="cellHead">
 								<div className="name">Name</div>
 							</th>
-							<th className="cellHead">
-								<div className="name">Updated</div>
-							</th>
-							{!isFileType ? (
-								<th className="cellHead">
-									<div className="name">Owner</div>
+							{columns.map(column => (
+								<th key={`head-${column.relationKey}`} className="cellHead">
+									<div className="name">{column.name}</div>
 								</th>
-							) : null}
+							))}
 						</tr>
 					</thead>
 					<tbody>
@@ -114,7 +164,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 				</table>
 				
 				{pager}
-			</React.Fragment>
+			</div>
 		);
 	};
 
@@ -132,7 +182,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 	};
 
 	getKeys () {
-		return Constant.defaultRelationKeys.concat([ 'creator', 'lastModifiedDate', 'createdDate' ]);
+		return Constant.defaultRelationKeys.concat(this.props.columns.map(it => it.relationKey));
 	};
 
 	getData (page: number, callBack?: (message: any) => void) {
