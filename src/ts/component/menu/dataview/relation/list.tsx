@@ -289,16 +289,12 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset;
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param, dataset } = this.props;
-		const { selection } = dataset;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
@@ -310,7 +306,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		view.relations = arrayMove(relations, oldIndex, newIndex);
 		C.BlockDataviewViewRelationSort(rootId, blockId, view.id, view.relations.map(it => it.relationKey));
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 	};
 
 	onSwitch (e: any, item: any, v: boolean) {

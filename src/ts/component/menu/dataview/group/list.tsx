@@ -222,23 +222,19 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 	};
 	
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset;
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param, dataset } = this.props;
-		const { selection } = dataset;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 			
 		dbStore.groupsSet(rootId, blockId, arrayMove(this.getItems(), oldIndex, newIndex));
 		this.save();
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 	};
 
 	onSwitch (e: any, item: any, v: boolean) {

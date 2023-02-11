@@ -30,7 +30,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	idsOnStart: Map<string, string[]> = new Map();
 
 	isSelecting = false;
-	isSelectionPrevented = false;
 	
 	constructor (props: Props) {
 		super(props);
@@ -84,10 +83,6 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		(Util.getScrollContainer(isPopup)).off('scroll.selection');
 	};
 
-	preventSelect (v: boolean) {
-		this.isSelectionPrevented = v;
-	};
-	
 	scrollToElement (id: string, dir: number) {
 		const isPopup = keyboard.isPopup();
 
@@ -119,7 +114,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
-		if (this.isSelectionPrevented) {
+		if (keyboard.isSelectionDisabled) {
 			this.hide();
 			return;
 		};
@@ -182,7 +177,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 		
-		if (this.isSelectionPrevented) {
+		if (keyboard.isSelectionDisabled) {
 			this.hide();
 			return;
 		};

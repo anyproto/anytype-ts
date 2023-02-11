@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, DataUtil, Util, Relation, analytics } from 'Lib';
+import { I, C, DataUtil, Util, Relation, analytics, keyboard } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Item from 'Component/menu/item/relationView';
@@ -139,12 +139,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	};
 
 	selectionPrevent (v: boolean) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-
-		if (selection) {
-			selection.preventSelect(v);
-		};
+		keyboard.disableSelection(v);
 	};
 
 	onScroll () {

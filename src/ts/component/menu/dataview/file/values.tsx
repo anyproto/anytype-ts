@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, Relation, Renderer } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, Relation, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -131,16 +131,12 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
     };
 
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset;
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
     
     onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param, dataset, id } = this.props;
-		const { selection } = dataset;
+		const { param, id } = this.props;
 		const { data } = param;
 		
 		let value = Relation.getArrayValue(data.value);
@@ -149,7 +145,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		menuStore.updateData(id, { value });
 		this.save(value);
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
     };
 
 	onAdd (e: any) {
