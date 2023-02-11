@@ -145,8 +145,8 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	onNavigation?: () => void;
 	onGraph?: () => void;
 	onStore?: () => void;
-	onPathOver?: (e: any) => void;
-	onPathOut?: () => void;
+	onTooltipShow?: (e: any, text: string) => void;
+	onTooltipHide?: () => void;
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
 };
 

@@ -16,7 +16,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 	};
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onNavigation, onGraph, onSearch, onPathOver, onPathOut } = this.props;
+		const { rootId, onHome, onForward, onBack, onGraph, onSearch, onTooltipShow, onTooltipHide } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -26,7 +26,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled' ]);
 		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
 		const isLocked = root.isLocked();
-		const showNav = !(root.isObjectType() || root.isObjectRelation());
+		const showGraph = !(root.isObjectType() || root.isObjectRelation());
 
 		return (
 			<React.Fragment>
@@ -36,16 +36,17 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 					
-					{showNav ? (
-						<React.Fragment>
-							<Icon className="nav big" tooltip="Navigation" onClick={onNavigation} />
-							<Icon className="graph big nm" tooltip="Open as graph" onClick={onGraph} />
-						</React.Fragment>
-					) : ''}
+					{showGraph ? <Icon className="graph big nm" tooltip="Open as graph" onClick={onGraph} /> : ''}
 				</div>
 
 				<div className="side center">
-					<div id="path" className="path" onClick={onSearch} onMouseOver={onPathOver} onMouseOut={onPathOut}>	
+					<div 
+						id="path" 
+						className="path" 
+						onClick={onSearch} 
+						onMouseOver={e => onTooltipShow(e, 'Click to search')} 
+						onMouseOut={onTooltipHide}
+					>	
 						<div className="inner">
 							<IconObject object={object} size={18} />
 							<ObjectName object={object} />

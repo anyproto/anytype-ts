@@ -255,16 +255,12 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset;
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { param, dataset, id } = this.props;
-		const { selection } = dataset;
+		const { param, id } = this.props;
 		const { data } = param;
 		const { onChange } = data;
 		const relation = data.relation.get();
@@ -273,11 +269,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		value = arrayMove(value, oldIndex - 1, newIndex - 1);
 		value = Relation.formatValue(relation, value, true);
 
-		onChange(value, () => {
-			menuStore.updateData(id, { value });
-		});
-
-		selection.preventSelect(false);
+		onChange(value, () => menuStore.updateData(id, { value }));
+		keyboard.disableSelection(false);
 	};
 
 	onScroll ({ scrollTop }) {

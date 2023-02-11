@@ -366,7 +366,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
 
 		keyboard.setDragging(true);
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 		selection.clear();
 		preventCommonDrop(true);
 	};
@@ -375,7 +375,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		e.preventDefault();
 
 		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset || {};
+		const { preventCommonDrop } = dataset || {};
 		const node = $(this.node);
 
 		$('body').removeClass('grab');
@@ -385,7 +385,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		node.find('.isDragging').removeClass('isDragging');
 		node.find('.isOver').removeClass('isOver left right top bottom');
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 		preventCommonDrop(false);
 		keyboard.setDragging(false);
 

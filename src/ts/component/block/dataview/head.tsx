@@ -69,7 +69,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 				<div id="head-title-wrapper" className="side left">
 					<IconObject
 						id={`icon-set-${block.id}`}
-						object={object} size={20}
+						object={object} 
+						size={20}
 						iconSize={20}
 						canEdit={!readonly}
 						onSelect={this.onIconSelect}

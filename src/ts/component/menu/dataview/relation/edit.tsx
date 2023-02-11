@@ -42,7 +42,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			ccn.push('disabled');
 		};
 
-		if (isObject && !isReadonly) {
+		if (isObject && !isReadonly && !relation.isReadonlyValue) {
 			const length = this.objectTypes.length;
 			const typeId = length ? this.objectTypes[0] : '';
 			const type = dbStore.getType(typeId);
@@ -294,6 +294,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					name: relation.name, 
 					relationFormat: relation.format,
 					relationFormatObjectTypes: relation.objectTypes || [],
+					_index_: idx,
 				});
 				break;
 			};
@@ -597,7 +598,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {
-				addCommand(rootId, blockId, details, onChange);
+				addCommand(rootId, blockId, { ...details, _index_: item._index_ }, onChange);
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });

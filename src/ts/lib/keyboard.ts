@@ -31,6 +31,7 @@ class Keyboard {
 	isContextCloseDisabled = false;
 	isContextOpenDisabled = false;
 	isPasteDisabled = false;
+	isSelectionDisabled = false;
 	
 	init () {
 		this.unbind();
@@ -592,6 +593,10 @@ class Keyboard {
 	};
 
 	setPinChecked (v: boolean) {
+		if (this.isPinChecked === v) {
+			return;
+		};
+
 		this.isPinChecked = v;
 		Renderer.send('setPinChecked', v);
 	};
@@ -695,6 +700,10 @@ class Keyboard {
 	// Flag to prevent common paste handling in editor
 	disablePaste (v: boolean) {
 		this.isPasteDisabled = v;
+	};
+
+	disableSelection (v: boolean) {
+		this.isSelectionDisabled = v;
 	};
 	
 	isSpecial (e: any): boolean {

@@ -649,6 +649,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `tab`, preventDefault: true },
 			{ key: `shift+tab`, preventDefault: true },
 			{ key: `shift+space`, preventDefault: false },
+			{ key: `ctrl+shift+l`, preventDefault: false },
 		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
@@ -1159,7 +1160,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, lang: v } },
-		], (message: any) => {
+		], () => {
 			Storage.set('codeLang', v);
 
 			focus.set(id, { from: l, to: l });

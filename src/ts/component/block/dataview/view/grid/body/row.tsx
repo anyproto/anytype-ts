@@ -18,7 +18,8 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 	render () {
 		const { rootId, block, index, getView, getRecord, style, onContext, getColumnWidths, isInline } = this.props;
 		const view = getView();
-		const relations = view.getVisibleRelations();
+		const relations = dbStore.getObjectRelations(rootId, block.id).map(it => it.relationKey);
+		const viewRelations = view.getVisibleRelations().filter(it => relations.includes(it.relationKey));
 		const record = getRecord(index);
 		const widths = getColumnWidths('', 0);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
@@ -36,7 +37,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		let content = (
 			<React.Fragment>
-				{relations.map((relation: any, i: number) => (
+				{viewRelations.map((relation: any, i: number) => (
 					<Cell
 						key={'grid-cell-' + relation.relationKey + record.id}
 						{...this.props}

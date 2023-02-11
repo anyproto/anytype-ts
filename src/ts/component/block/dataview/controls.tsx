@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
 import { Icon, Button } from 'Component';
-import { C, I, Util, analytics, Relation, Dataview } from 'Lib';
+import { C, I, Util, analytics, Relation, Dataview, keyboard } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -291,16 +291,12 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	};
 
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset;
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { rootId, block, dataset } = this.props;
-		const { selection } = dataset;
+		const { rootId, block } = this.props;
 
 		let views = dbStore.getViews(rootId, block.id);
 		let view = views[oldIndex];
@@ -311,7 +307,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			analytics.event('RepositionView');
 		});
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 	};
 
 	resize () {

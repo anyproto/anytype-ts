@@ -18,7 +18,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	render () {
-		const { onHome, onForward, onBack, tab, tabs, onTab } = this.props;
+		const { onHome, onForward, onBack, tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
 
 		return (
 			<React.Fragment>
@@ -31,8 +31,14 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 				<div className="side center">
 					<div id="tabs" className="tabs">
-						{tabs.map((item: any) => (
-							<div key={`tab-graph-${item.id}`} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={() => { onTab(item.id); }}>
+						{tabs.map((item: any, i: number) => (
+							<div 
+								key={i}
+								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
+								onClick={() => { onTab(item.id); }}
+								onMouseOver={e => onTooltipShow(e, item.tooltip)} 
+								onMouseOut={onTooltipHide}
+							>
 								{item.name}
 							</div>
 						))}

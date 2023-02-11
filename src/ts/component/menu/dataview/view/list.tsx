@@ -303,15 +303,11 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	};
 
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset;
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 
 	onSortEnd (result: any) {
-		const { param, dataset } = this.props;
-		const { selection } = dataset;
+		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const views = dbStore.getViews(rootId, blockId);
@@ -322,7 +318,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 		dbStore.viewsSort(rootId, blockId, ids);
 		C.BlockDataviewViewSetPosition(rootId, blockId, view.id, newIndex);
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 	};
 
 	onScroll ({ scrollTop }) {

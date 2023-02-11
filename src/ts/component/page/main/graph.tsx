@@ -6,9 +6,10 @@ import { Header, Graph, Icon, Loader } from 'Component';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
+const ctrl = keyboard.ctrlSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph },
-	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation },
+	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltip: `${ctrl} + Alt + O` },
+	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltip: `${ctrl} + O` },
 ];
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {

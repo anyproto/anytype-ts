@@ -32,6 +32,9 @@ export default [
 
 	h2(`⚡ Quality-of-Life Improvements`),
 
+	bullet(`<b>Notion Import via API</b><br/>Here by popular demand: importing your files directly from Notion to Anytype! The new integration preserves relationships between parent-child pages as links between imported Objects. Follow the instructions from the ${hl(`Settings &gt; Import &gt; Notion &gt; Learn more`)} section to set up your integration token and start importing your files to your space.`),
+	img(`./img/help/31/6-import.png`, 'full screen'),
+
 	bullet(`<b>Graph redesign</b><br/>We've re-worked the graph to include Object previews-on-hover, Icons as nodes, and directional arrows. We will continue to expand our graph functionality in the coming few releases, so stay tuned for further updates.`),
 	img(`./img/help/31/3-graph.png`, 'full screen'),
 
