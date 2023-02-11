@@ -16,7 +16,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 	};
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onGraph, onSearch, onPathOver, onPathOut } = this.props;
+		const { rootId, onHome, onForward, onBack, onGraph, onSearch, onTooltipShow, onTooltipHide } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -40,7 +40,13 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 				</div>
 
 				<div className="side center">
-					<div id="path" className="path" onClick={onSearch} onMouseOver={onPathOver} onMouseOut={onPathOut}>	
+					<div 
+						id="path" 
+						className="path" 
+						onClick={onSearch} 
+						onMouseOver={e => onTooltipShow(e, 'Click to search')} 
+						onMouseOut={onTooltipHide}
+					>	
 						<div className="inner">
 							<IconObject object={object} size={18} />
 							<ObjectName object={object} />

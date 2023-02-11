@@ -36,8 +36,8 @@ class Header extends React.Component<Props> {
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onGraph = this.onGraph.bind(this);
 		this.onStore = this.onStore.bind(this);
-		this.onPathOver = this.onPathOver.bind(this);
-		this.onPathOut = this.onPathOut.bind(this);
+		this.onTooltipShow = this.onTooltipShow.bind(this);
+		this.onTooltipHide = this.onTooltipHide.bind(this);
 		this.menuOpen = this.menuOpen.bind(this);
 	};
 	
@@ -62,6 +62,8 @@ class Header extends React.Component<Props> {
 					onNavigation={this.onNavigation}
 					onGraph={this.onGraph}
 					onStore={this.onStore}
+					onTooltipShow={this.onTooltipShow}
+					onTooltipHide={this.onTooltipHide}
 					menuOpen={this.menuOpen}
 				/>
 			</div>
@@ -97,11 +99,11 @@ class Header extends React.Component<Props> {
 		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Store });
 	};
 
-	onPathOver (e: any) {
-		Preview.tooltipShow('Click to search', $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+	onTooltipShow (e: any, text: string) {
+		Preview.tooltipShow(text, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
 	};
 
-	onPathOut () {
+	onTooltipHide () {
 		Preview.tooltipHide(false);
 	};
 

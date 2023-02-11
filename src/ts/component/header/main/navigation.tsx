@@ -12,7 +12,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	render () {
-		const { onHome, onForward, onBack, tabs, tab, onTab } = this.props;
+		const { onHome, onForward, onBack, tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
 
 		return (
 			<React.Fragment>
@@ -25,8 +25,14 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 
 				<div className="side center">
 					<div id="tabs" className="tabs">
-						{tabs.map((item: any) => (
-							<div key={`tab-navigation-${item.id}`} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={() => { onTab(item.id); }}>
+						{tabs.map((item: any, i: number) => (
+							<div 
+								key={i}
+								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
+								onClick={() => { onTab(item.id); }}
+								onMouseOver={e => onTooltipShow(e, item.tooltip)} 
+								onMouseOut={onTooltipHide}
+							>
 								{item.name}
 							</div>
 						))}

@@ -24,9 +24,10 @@ enum Panel {
 	Right = 3,
 };
 
+const ctrl = keyboard.ctrlSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph },
-	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation },
+	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltip: `${ctrl} + Alt + O` },
+	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltip: `${ctrl} + O` },
 ];
 
 const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
