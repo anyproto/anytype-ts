@@ -80,8 +80,6 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 						let content = null;
 						let onClick = null;
 
-						console.log(column.relationKey, value);
-
 						if (value) {
 							if (column.isObject) {
 								const object = detailStore.get(subId, value, []);
@@ -190,7 +188,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 		const offset = (page - 1) * LIMIT;
 		const subId = this.getSubId();
 
-		dbStore.metaSet(subId, '', { offset: offset });
+		dbStore.metaSet(subId, '', { offset });
 
 		DataUtil.searchSubscribe({
 			subId,

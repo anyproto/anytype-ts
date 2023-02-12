@@ -55,7 +55,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				break;
 		};
 
-		if (isObject && !isReadonly && !relation.isReadonlyValue) {
+		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
 			const length = this.objectTypes.length;
 			const typeId = length ? this.objectTypes[0] : '';
 			const type = dbStore.getType(typeId);
