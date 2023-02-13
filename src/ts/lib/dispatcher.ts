@@ -957,8 +957,9 @@ class Dispatcher {
 		};
 
 		const records = dbStore.getRecords(sid, '');
-		const oldIndex = records.indexOf(id);
 		const newIndex = afterId ? records.indexOf(afterId) : 0;
+
+		let oldIndex = records.indexOf(id);
 
 		if (isAdding && (oldIndex >= 0)) {
 			return;
@@ -966,6 +967,7 @@ class Dispatcher {
 
 		if (oldIndex < 0) {
 			records.push(id);
+			oldIndex = records.indexOf(id);
 		};
 
 		if (oldIndex !== newIndex) {

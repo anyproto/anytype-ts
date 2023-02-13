@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, DataUtil, Relation, ObjectUtil } from 'Lib';
+import { I, C, DataUtil, Relation, ObjectUtil } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell } from 'Component';
 import { detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -168,6 +168,10 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 
 	componentDidMount () {
 		this.getData(1);
+	};
+
+	componentWillUnmount(): void {
+		C.ObjectSearchUnsubscribe([ this.getSubId() ]);
 	};
 
 	getItems () {
