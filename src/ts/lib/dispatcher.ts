@@ -750,12 +750,12 @@ class Dispatcher {
 						const op = it.getOp();
 						const ids = it.getIdsList() || [];
 						const afterId = it.getAfterid();
-						const idx = afterId ? el.objectIds.indexOf(afterId) : 0;
+						const idx = afterId ? el.objectIds.indexOf(afterId) + 1 : 0;
 
 						switch (op) {
 							case I.SliceOperation.Add:
 								ids.forEach((id: string, i: number) => {
-									idx >= 0 ? el.objectIds.splice(idx + i + 1, 0, id) : el.objectIds.unshift(id);
+									idx >= 0 ? el.objectIds.splice(idx + i, 0, id) : el.objectIds.unshift(id);
 								});
 								break;
 
@@ -957,7 +957,7 @@ class Dispatcher {
 		};
 
 		const records = dbStore.getRecords(sid, '');
-		const newIndex = afterId ? records.indexOf(afterId) : 0;
+		const newIndex = afterId ? records.indexOf(afterId) + 1 : 0;
 
 		let oldIndex = records.indexOf(id);
 
