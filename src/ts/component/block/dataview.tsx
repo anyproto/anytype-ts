@@ -51,6 +51,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getSources = this.getSources.bind(this);
 		this.getKeys = this.getKeys.bind(this);
 		this.getIdPrefix = this.getIdPrefix.bind(this);
+		this.getVisibleRelations = this.getVisibleRelations.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -179,6 +180,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							getKeys={this.getKeys}
 							getIdPrefix={this.getIdPrefix}
 							getLimit={() => this.getLimit(view.type)}
+							getVisibleRelations={this.getVisibleRelations}
 							onRecordAdd={this.onRecordAdd}
 							onCellClick={this.onCellClick}
 							onCellChange={this.onCellChange}
@@ -786,6 +788,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getIdPrefix () {
 		return [ 'dataviewCell', this.props.block.id ].join('-');
+	};
+
+	getVisibleRelations () {
+		const { rootId, block } = this.props;
+		const view = this.getView();
+		const relations = dbStore.getObjectRelations(rootId, block.id).map(it => it.relationKey);
+
+		return view.getVisibleRelations().filter(it => relations.includes(it.relationKey));
 	};
 
 	isAllowedObject () {

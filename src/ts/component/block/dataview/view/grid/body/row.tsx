@@ -16,10 +16,8 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, block, index, getView, getRecord, style, onContext, getColumnWidths, isInline } = this.props;
-		const view = getView();
-		const relations = dbStore.getObjectRelations(rootId, block.id).map(it => it.relationKey);
-		const viewRelations = view.getVisibleRelations().filter(it => relations.includes(it.relationKey));
+		const { index, getRecord, style, onContext, getColumnWidths, isInline, getVisibleRelations } = this.props;
+		const relations = getVisibleRelations();
 		const record = getRecord(index);
 		const widths = getColumnWidths('', 0);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
@@ -37,7 +35,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		let content = (
 			<React.Fragment>
-				{viewRelations.map((relation: any, i: number) => (
+				{relations.map((relation: any, i: number) => (
 					<Cell
 						key={'grid-cell-' + relation.relationKey + record.id}
 						{...this.props}

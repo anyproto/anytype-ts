@@ -19,11 +19,9 @@ interface Props extends I.ViewComponent {
 const HeadRow = observer(class HeadRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, block, readonly, getView, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths } = this.props;
-		const view = getView();
+		const { rootId, block, readonly, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths, getVisibleRelations } = this.props;
 		const widths = getColumnWidths('', 0);
-		const relations = dbStore.getObjectRelations(rootId, block.id).map(it => it.relationKey);
-		const viewRelations = view.getVisibleRelations().filter(it => relations.includes(it.relationKey));
+		const relations = getVisibleRelations();
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 

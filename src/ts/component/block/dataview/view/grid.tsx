@@ -36,9 +36,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getLimit } = this.props;
+		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
-		const relations = view.getVisibleRelations();
+		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
@@ -209,7 +209,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	resize () {
-		const { rootId, block, getView, isPopup, isInline } = this.props;
+		const { rootId, block, getView, isPopup, isInline, getVisibleRelations } = this.props;
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const view = getView();
@@ -218,7 +218,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const wrap = node.find('#scrollWrap');
 		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
 		const container = Util.getPageContainer(isPopup);
-		const width = view.getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
+		const width = getVisibleRelations().reduce((res: number, current: any) => { return res + current.width; }, Constant.size.blockMenu);
 		const length = dbStore.getRecords(dbStore.getSubId(rootId, block.id), '').length;
 		const cw = container.width();
 		const rh = this.getRowHeight();
@@ -253,10 +253,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	resizeColumns (relationKey: string, width: number) {
-		const { getView } = this.props;
-		const view = getView();
+		const { getVisibleRelations } = this.props;
 		const node = $(this.node);
-		const relations = view.getVisibleRelations();
+		const relations = getVisibleRelations();
 		const size = Constant.size.dataview.cell;
 		const widths = this.getColumnWidths(relationKey, width);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
@@ -273,9 +272,8 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	getColumnWidths (relationKey: string, width: number): any {
-		const { getView } = this.props;
-		const view = getView();
-		const relations = view.getVisibleRelations();
+		const { getVisibleRelations } = this.props;
+		const relations = getVisibleRelations();
 		const columns: any = {};
 		
 		relations.forEach(it => {

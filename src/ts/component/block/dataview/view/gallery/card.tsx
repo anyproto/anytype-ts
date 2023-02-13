@@ -23,10 +23,10 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, isInline } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
-		const relations = view.getVisibleRelations();
+		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const record = getRecord(index);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];

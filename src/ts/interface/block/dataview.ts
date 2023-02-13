@@ -116,6 +116,7 @@ export interface ViewComponent {
 	getKeys?(viewId: string): string[];
 	getIdPrefix?(): string;
 	getLimit?(): number;
+	getVisibleRelations?(): I.ViewRelation[];
 	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;
