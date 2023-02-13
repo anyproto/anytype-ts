@@ -30,7 +30,7 @@ const HeadRow = observer(class HeadRow extends React.Component<Props> {
 				className="rowHead"
 				style={{ gridTemplateColumns: str }}
 			>
-				{viewRelations.map((relation: any, i: number) => (
+				{relations.map((relation: any, i: number) => (
 					<Cell 
 						key={'grid-head-' + relation.relationKey} 
 						{...this.props}
