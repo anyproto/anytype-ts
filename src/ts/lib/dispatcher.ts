@@ -969,7 +969,7 @@ class Dispatcher {
 		};
 
 		if (oldIndex !== newIndex) {
-			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex + 1));
+			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
 		};
 	};
 
