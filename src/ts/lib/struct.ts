@@ -15,7 +15,9 @@ export class Encode {
 export class Decode {
 
 	static decodeValue (value: any) {
-		return value.toJavaScript();
+		let data = null;
+		try { data = value ? value.toJavaScript() : null; } catch (e) { /**/ };
+		return data;
 	};
 
 	static decodeStruct (struct: any) {
