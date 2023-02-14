@@ -193,7 +193,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				) : ''}
 
 				<Editable 
-					ref={(ref: any) => { this.refEditable = ref; }}
+					ref={ref => this.refEditable = ref}
 					id="value"
 					classNameEditor={cv.join(' ')}
 					classNamePlaceholder={'c' + id}

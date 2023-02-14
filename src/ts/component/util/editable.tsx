@@ -102,15 +102,23 @@ class Editable extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		const node = $(this.node);
-
 		this._isMounted = true;
-		this.placeholder = node.find('#placeholder');
-		this.editable = node.find('.editable');
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	init () {
+		const node = $(this.node);
+
+		this.placeholder = node.find('#placeholder');
+		this.editable = node.find('.editable');
 	};
 
 	placeholderCheck () {
@@ -177,8 +185,6 @@ class Editable extends React.Component<Props> {
 		if (onKeyDown) {
 			onKeyDown(e);
 		};
-
-		this.placeholderCheck();
 	};
 
 	onKeyUp (e: any): void {
@@ -192,14 +198,13 @@ class Editable extends React.Component<Props> {
 		if (onKeyUp) {
 			onKeyUp(e);
 		};
-
-		this.placeholderCheck();
 	};
 
 	onCompositionStart (e: any) {
 		const { onCompositionStart } = this.props;
 
 		this.composition = true;
+
 		if (onCompositionStart) {
 			onCompositionStart(e);
 		};
@@ -209,6 +214,7 @@ class Editable extends React.Component<Props> {
 		const { onCompositionEnd } = this.props;
 
 		this.composition = false;
+
 		if (onCompositionEnd) {
 			onCompositionEnd(e);
 		};
