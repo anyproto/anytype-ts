@@ -383,13 +383,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	onSortEnd (result: any) {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, getVisibleRelations } = this.props;
 		const { oldIndex, newIndex } = result;
 		const view = getView();
-		const relations = view.relations.filter(it => {
-			const relation = dbStore.getRelationByKey(it.relationKey);
-			return !relation.isHidden || (relation.isHidden && (it.relationKey == 'name'));
-		});
+		const relations = getVisibleRelations();
 
 		view.relations = arrayMove(relations, oldIndex, newIndex);
 		C.BlockDataviewViewRelationSort(rootId, block.id, view.id, view.relations.map(it => it.relationKey));
