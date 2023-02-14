@@ -442,7 +442,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		};
 
 		if (item.id == 'add') {
-			C.ObjectCreateObjectType({ name: filter }, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
+			C.ObjectCreateObjectType({ name: filter }, [], (message: any) => {
 				if (!message.error.code) {
 					cb(message.details);
 					analytics.event('CreateType');
