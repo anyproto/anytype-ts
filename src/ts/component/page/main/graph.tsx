@@ -164,7 +164,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				};
 			};
 
-			this.data.nodes = message.nodes.map(it => detailStore.check(it));
+			this.data.nodes = message.nodes.map(it => detailStore.mapper(it));
 
 			DataUtil.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
 				error: {},

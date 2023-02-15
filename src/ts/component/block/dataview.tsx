@@ -671,7 +671,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		value = Relation.formatValue(relation, value, true);
 
-		let obj: any = { id: id };
+		let obj: any = { id };
 		obj[relationKey] = value;
 
 		detailStore.update(subId, obj, false);

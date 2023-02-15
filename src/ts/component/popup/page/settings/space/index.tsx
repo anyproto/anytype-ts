@@ -219,7 +219,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
                 return;
             };
 
-            this.team = message.records.map(it => detailStore.check(it)).filter(it => !it._empty_);
+            this.team = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
             this.forceUpdate();
         });
     };
