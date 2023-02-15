@@ -718,8 +718,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (keyboard.pressed.indexOf(Key.enter) >= 0) {
+			if (keyboard.pressed.includes(Key.enter)) {
 				ret = true;
+				return;
+			};
+
+			if (!range) {
 				return;
 			};
 
@@ -784,7 +788,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { filter } = commonStore;
 		const { id, content } = block;
 		const range = this.getRange();
-		const k = keyboard.eventKey(e);
 		const Markdown = {
 			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
 			'\\[\\]':		 I.TextStyle.Checkbox,
