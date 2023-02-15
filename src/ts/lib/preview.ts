@@ -29,12 +29,13 @@ class Preview {
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
+			const node = $('<div class="tooltip anim"><div class="txt"></div></div>');
 
-			obj.find('.txt').html(Util.lbBr(text));
-			obj.show().css({ opacity: 0 });
+			node.find('.txt').html(Util.lbBr(text));
+			obj.html('').append(node);
 			
-			let ow = obj.outerWidth();
-			let oh = obj.outerHeight();
+			let ow = node.outerWidth();
+			let oh = node.outerHeight();
 			let x = left;
 			let y = top;
 
@@ -64,19 +65,21 @@ class Preview {
 			};
 			
 			x = Math.max(BORDER, x);
-			x = Math.min(win.width() - obj.outerWidth() - BORDER, x);
+			x = Math.min(win.width() - ow - BORDER, x);
 
-			obj.css({ left: x, top: y, opacity: 1 });
+			node.css({ left: x, top: y }).addClass('show');
 		}, 250);
 	};
 
 	tooltipHide (force: boolean) {
-		const obj = $('#tooltip');
+		const obj = $('.tooltip');
 
-		obj.css({ opacity: 0 });
+		if (force) {
+			obj.removeClass('anim');
+		};
 
+		obj.removeClass('show');
 		window.clearTimeout(this.timeout.tooltip);
-		this.timeout.tooltip = window.setTimeout(() => { obj.hide(); }, force ? 0 : Constant.delay.tooltip);
 	};
 
 	previewShow (element: any, param: any) {

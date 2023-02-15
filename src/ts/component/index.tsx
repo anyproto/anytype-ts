@@ -50,7 +50,6 @@ import Button from './util/button';
 import Error from './util/error';
 import Select from './util/select';
 import Toast from './util/toast';
-import Tooltip from './util/tooltip';
 import Drag from './util/drag';
 import Marker from './util/marker';
 import Pin from './util/pin';
@@ -107,7 +106,6 @@ export {
 	Button,
 	Select,
 	Toast,
-	Tooltip,
 	Drag,
 	Marker,
 	Tag,
