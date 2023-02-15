@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Icon, Title, Label } from 'Component';
 import { I, Util, translate } from 'Lib';
 import { observer } from 'mobx-react';
+import { commonStore } from 'Store';
 import Head from '../head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
+interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 	onImport: (type: I.ImportType, param: any) => void;
@@ -24,7 +24,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		];
 
 		if (!config.experimental) {
-			items = items.filter(it => [ 'notion', 'html' ].includes(it.id));
+			items = items.filter(it => [ 'html' ].includes(it.id));
 		};
 
 		const Item = (item: any) => {
