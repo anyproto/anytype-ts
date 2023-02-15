@@ -10,7 +10,7 @@ class FooterAuthIndex extends React.Component<I.FooterComponent> {
 		return (
 			<React.Fragment>
 				<div className="copy">{Util.date('Y', Util.time())}, Anytype</div>
-				<Icon id="button-help" className="help light" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={onHelp} />
+				<Icon id="button-help" className="help big" tooltip="Help" tooltipY={I.MenuDirection.Top} onClick={onHelp} />
 			</React.Fragment>
 		);
 	};

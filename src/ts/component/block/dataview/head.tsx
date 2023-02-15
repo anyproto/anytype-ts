@@ -69,7 +69,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 				<div id="head-title-wrapper" className="side left">
 					<IconObject
 						id={`icon-set-${block.id}`}
-						object={object} size={20}
+						object={object} 
+						size={20}
 						iconSize={20}
 						canEdit={!readonly}
 						onSelect={this.onIconSelect}
@@ -152,7 +153,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			{ id: 'sourceOpen', icon: 'expand', name: 'Open source set' },
 		];
 
-		if (object.isDeleted) {
+		if (object.isArchived || object.isDeleted) {
 			options = options.filter(it => it.id == 'sourceChange');
 		};
 
@@ -189,6 +190,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			data: {},
 		};
 
+		const onCreate = (message: any) => {
+			if (message.views && message.views.length) {
+				window.setTimeout(() => { getData(message.views[0].id, 0, true); }, 50);
+			};
+		};
+
 		switch (item.id) {
 			case 'sourceChange':
 				menuId = 'searchObject';
@@ -210,10 +217,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 							C.ObjectCreateSet([], {}, '', (message: any) => {
 								C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 									$(this.node).find('#head-source-select').trigger('click');
-
-									if (message.views && message.views.length) {
-										getData(message.views[0].id, 0, true);
-									};
+									onCreate(message);
 								});
 
 								analytics.event('InlineSetSetSource', { type: 'newObject' });
@@ -221,12 +225,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						},
 					},
 					onSelect: (item: any) => {
-						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
-							if (message.views && message.views.length) {
-								getData(message.views[0].id, 0, true);
-							};
-						});
-
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
 						analytics.event('InlineSetSetSource');
 						this.menuContext.close();
 					}

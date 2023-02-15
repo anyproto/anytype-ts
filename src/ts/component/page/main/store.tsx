@@ -67,7 +67,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const sources = this.getSources();
 		const limit = this.getLimit();
 
-		let Item = null;
 		let title = '';
 		let placeholder = '';
 		let textService = '';
@@ -126,53 +125,47 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			</div>
 		);
 
-		switch (this.tab) {
+		const Item = (item: any) => {
+			const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
+			const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
+			const icons: any[] = [];
+			const buttons: any[] = [];
 
-			default:
-				Item = (item: any) => {
-					const allowedDelete = blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
-					const cn = [ 'item', (item.isHidden ? 'isHidden' : '') ];
-					const icons: any[] = [];
-					const buttons: any[] = [];
-
-					switch (this.view) {
-						case View.Library:
-							if (allowedDelete) {
-								buttons.push({ text: 'Remove', onClick: (e: any) => { this.onRemove(e, item); } });
-							} else {
-								icons.push({ className: 'lock', tooltip: textService });
-							};
-							break;
-
-						case View.Marketplace:
-							if (sources.includes(item.id)) {
-								icons.push({ className: 'check', tooltip: textInstalled });
-							} else {
-								icons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
-							};
-							break;
+			switch (this.view) {
+				case View.Library:
+					if (allowedDelete) {
+						buttons.push({ text: 'Remove', onClick: (e: any) => { this.onRemove(e, item); } });
+					} else {
+						icons.push({ className: 'lock', tooltip: textService });
 					};
-					
-					return (
-						<div className={cn.join(' ')}>
-							<div className="flex" onClick={(e: any) => { this.onClick(e, item); }}>
-								<IconObject iconSize={20} object={item} />
-								<div className="name">{item.name}</div>
-							</div>
+					break;
 
-							<div className="buttons">
-								{buttons.map((button: any, i: number) => (
-									<Button key={i} {...button} />
-								))}
-								{icons.map((button: any, i: number) => (
-									<Icon key={i} {...button} />
-								))}
-							</div>
-						</div>
-					);
-				};
-				break;
+				case View.Marketplace:
+					if (sources.includes(item.id)) {
+						icons.push({ className: 'check', tooltip: textInstalled });
+					} else {
+						icons.push({ className: 'plus', tooltip: textInstall, onClick: (e: any) => { this.onInstall(e, item); } });
+					};
+					break;
+			};
+			
+			return (
+				<div className={cn.join(' ')}>
+					<div className="flex" onClick={(e: any) => { this.onClick(e, item); }}>
+						<IconObject object={item} />
+						<div className="name">{item.name}</div>
+					</div>
 
+					<div className="buttons">
+						{buttons.map((button: any, i: number) => (
+							<Button key={i} {...button} />
+						))}
+						{icons.map((button: any, i: number) => (
+							<Icon key={i} {...button} />
+						))}
+					</div>
+				</div>
+			);
 		};
 
 		const rowRenderer = (param: any) => {
@@ -285,7 +278,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getRowHeight (item: any) {
 		let h = 0;
 		switch (item.id) {
-			case 'mid':		 h = 308; break;
+			case 'mid':		 h = 305; break;
 			case 'tabs':	 h = 52; break;
 			case 'empty':	 h = 190; break;
 			default:		 h = 64; break;

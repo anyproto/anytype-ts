@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
-import { PreviewObject } from 'Component';
+import { PreviewGraph } from 'Component';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
@@ -37,10 +37,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		this.onMessage = this.onMessage.bind(this);
 		this.nodeMapper = this.nodeMapper.bind(this);
+		this.setRootId = this.setRootId.bind(this);
 	};
 
 	render () {
 		const { isPopup } = this.props;
+		const { theme } = commonStore;
 		const id = [ 'graph' ];
 
 		if (isPopup) {
@@ -61,12 +63,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.rebind();
 	};
 
+	componentDidUpdate (): void {
+		this.send('updateTheme', { theme: commonStore.getThemeClass() });
+	};
+
 	componentWillUnmount () {
 		if (this.worker) {
 			this.worker.terminate();
 		};
 
-		$('body').removeClass('cp');
 		this.unbind();
 		this.onPreviewHide();
 	};
@@ -75,12 +80,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const win = $(window);
 
 		this.unbind();
-		win.on('updateGraphSettings', () => { this.updateSettings(); });
-		win.on('updateGraphRoot', (e: any, data: any) => { this.setRootId(data.id); });
+		win.on('updateGraphSettings.graph', () => { this.updateSettings(); });
+		win.on('updateGraphRoot.graph', (e: any, data: any) => { this.setRootId(data.id); });
 	};
 
 	unbind () {
-		$(window).off('updateGraphSettings updateGraphRoot');
+		$(window).off('updateGraphSettings.graph updateGraphRoot.graph');
 	};
 
 	init () {
@@ -120,13 +125,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 		d3.select(this.canvas)
         .call(d3.drag().
-			subject(() => { return this.subject; }).
+			subject(() => this.subject).
 			on('start', (e: any, d: any) => this.onDragStart(e)).
 			on('drag', (e: any, d: any) => this.onDragMove(e)).
 			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
         .call(this.zoom)
-		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1))
+		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1.5))
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
@@ -143,7 +148,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	nodeMapper (d: any) {
 		d.layout = Number(d.layout) || 0;
-		d.radius = 5;
+		d.radius = 4;
 		d.src = this.imageSrc(d);
 
 		if (d.layout == I.ObjectLayout.Note) {
@@ -200,8 +205,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onDragStart (e: any) {
 		this.isDragging = true;
 		this.send('onDragStart', { active: e.active });
-
-		$('body').addClass('grab');
 	};
 
 	onDragMove (e: any) {
@@ -216,13 +219,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			y: p[1] - top,
 		});
 	};
-			
+
 	onDragEnd (e: any) {
 		this.isDragging = false;
 		this.subject = null;
 		this.send('onDragEnd', { active: e.active });
-
-		$('body').removeClass('grab');
 	};
 
 	onZoom ({ transform }) {
@@ -234,40 +235,46 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
-		const { isPopup } = this.props;
+		this.isPreview = true;
+
 		const win = $(window);
 		const body = $('body');
-		const container = Util.getPageContainer(isPopup);
-		const { left, top } = container.offset();
-		const x = data.x + left + 10;
-		const y = data.y + top + 10 - win.scrollTop();
+		const node = $(this.node);
+		const { left, top } = node.offset();
 
 		let el = $('#graphPreview');
-		if (!el.length) {
-			el = $('<div id="graphPreview" />');
-			ReactDOM.render(<PreviewObject rootId={this.subject.id} />, el.get(0));
+
+		const position = () => {
+			const obj = el.find('.previewGraph');
+			const x = data.x + left - obj.outerWidth() / 2;
+			const y = data.y + top + 20 - win.scrollTop();
+
+			el.css({ left: x, top: y });
 		};
 
-		el.css({ left: x, top: y });
-		body.append(el);
-
-		this.isPreview = true;
+		if (!el.length) {
+			el = $('<div id="graphPreview" />');
+			body.append(el);
+			ReactDOM.render(<PreviewGraph object={this.subject} />, el.get(0), position);
+		} else {
+			position();
+		};
 	};
 
 	onPreviewHide () {
-		if (!this.isPreview) {
-			return;
+		if (this.isPreview) {
+			window.clearTimeout(this.timeoutPreview);
+			$('#graphPreview').remove();
 		};
-
-		window.clearTimeout(this.timeoutPreview);
-		$('#graphPreview').remove();
 	};
 
 	onMessage (e) {
 		const { id, data } = e.data;
 		const { root } = blockStore;
-		const { isPopup, onClick, onContextMenu, onSelect } = this.props;
-		const body = $('body');
+		const { onClick, onContextMenu, onSelect } = this.props;
+		const node = $(this.node);
+		const canvas = node.find('canvas');
+		const { left, top } = node.offset();
 
 		switch (id) {
 			case 'onClick': {
@@ -292,12 +299,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 				if (this.subject) {
 					window.clearTimeout(this.timeoutPreview);
-					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
+					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 50);
 
-					body.addClass('cp');
+					canvas.addClass('cp');
 				} else {
 					this.onPreviewHide();	
-					body.removeClass('cp');
+					canvas.removeClass('cp');
 				};
 				break;
 			};
@@ -314,26 +321,19 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 				this.onPreviewHide();
 
-				onContextMenu(data.node, {
+				onContextMenu(data.node.id, {
 					onOpen: () => {
 						this.isPreviewDisabled = true;
 					},
 					onClose: () => {
 						this.isPreviewDisabled = false;
 					},
-					recalcRect: () => { 
-						const rect = { width: 0, height: 0, x: data.x, y: data.y };
-
-						if (isPopup) {
-							const container = Util.getPageContainer(isPopup);
-							const { left, top } = container.offset();
-
-							rect.x += left;
-							rect.y += top;
-						};
-
-						return rect;
-					},
+					recalcRect: () => ({
+							width: 0, 
+							height: 0, 
+							x: data.x + 10 + left, 
+							y: data.y + 10 + top,
+					}),
 				});
 				break;
 			};
@@ -417,7 +417,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	resize () {
 		const node = $(this.node);
 
-		this.send('onResize', { 
+		this.send('resize', { 
 			width: node.width(), 
 			height: node.height(), 
 			density: window.devicePixelRatio,

@@ -95,21 +95,25 @@ class Analytics {
 
 		// Code mappers for common events
 		switch (code) {
-			case 'page':
+			case 'page': {
 				code = this.pageMapper(data.params);
 				break;
+			};
 
-			case 'popup':
+			case 'popup': {
 				code = this.popupMapper(data.params);
 				break;
+			};
 
-			case 'menu':
+			case 'menu': {
 				code = this.menuMapper(data.params);
 				break;
+			};
 
-			case 'settings':
+			case 'settings': {
 				code = this.settingsMapper(data.params);
 				break;
+			};
 		};
 
 		if (!code) {
@@ -117,16 +121,18 @@ class Analytics {
 		};
 
 		switch (code) {
-			case 'ScreenType':
+			case 'ScreenType': {
 				data.objectType = data.params.id;
 				break;
+			};
 
-			case 'ScreenRelation':
+			case 'ScreenRelation': {
 				data.relationKey = data.params.id;
 				break;
+			};
 
 			case 'CreateBlock':
-			case 'ChangeBlockStyle':
+			case 'ChangeBlockStyle': {
 				data.style = Number(data.style) || 0;
 
 				if (data.type == I.BlockType.Text) {
@@ -152,9 +158,10 @@ class Analytics {
 					delete(data.style);
 				};
 				break;
+			};
 
 			case 'SetCover':
-			case 'SettingsWallpaperSet':
+			case 'SettingsWallpaperSet': {
 				data.type = Number(data.type) || 0;
 				data.type = I.CoverType[data.type];
 				data.id = String(data.id || '').replace(/^c([\d]+)/, '$1');
@@ -163,48 +170,56 @@ class Analytics {
 					delete(param.id);
 				};
 				break;
+			};
 
 			case 'AddView':
-			case 'SwitchView':
+			case 'SwitchView': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ViewType[data.type];
 				break;
+			};
 
 			case 'AddFilter':
-			case 'ChangeFilterValue':
+			case 'ChangeFilterValue': {
 				data.condition = Number(data.condition) || 0;
 				data.condition = I.FilterCondition[data.condition];
 				break;
+			};
 
 			case 'AddSort':
-			case 'ChangeSortValue':
+			case 'ChangeSortValue': {
 				data.type = Number(data.type) || 0;
 				data.type = I.SortType[data.type];
 				break;
+			};
 
-			case 'ChangeTextStyle':
+			case 'ChangeTextStyle': {
 				data.type = Number(data.type) || 0;
 				data.type = I.MarkType[data.type];
 				break;
+			};
 
 			case 'UploadMedia':
-			case 'DownloadMedia':
+			case 'DownloadMedia': {
 				data.type = Number(data.type) || 0;
 				data.type = I.FileType[data.type];
 				break;
+			};
 
-			case 'Import':
+			case 'Import': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ImportType[data.type];
 				break;
+			};
 
 			case 'CreateRelation':
-			case 'AddExistingRelation':
+			case 'AddExistingRelation': {
 				data.format = Number(data.format) || 0;
 				data.format = I.RelationType[data.format];
 				break;
+			};
 
-			case 'OpenAsObject':
+			case 'OpenAsObject': {
 				if (data.type == I.BlockType.File) {
 					if (undefined !== data.params?.fileType) {
 						data.fileType = Number(data.params.fileType) || 0;
@@ -212,10 +227,19 @@ class Analytics {
 					};
 				};
 				break;
+			};
 
-			case 'ObjectImport':
+			case 'ObjectImport': {
 				data.type = I.ImportType[data.type];
 				break;
+			};
+
+			case 'SurveyShow':
+			case 'SurveyOpen':
+			case 'SurveySkip': {
+				data.type = I.SurveyType[data.type];
+				break;
+			};
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;

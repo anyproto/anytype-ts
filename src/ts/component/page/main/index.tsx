@@ -719,7 +719,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 					blockId,
 					type,
 					filters,
-					rebind: menuContext.ref.rebind,
+					rebind: menuContext.ref?.rebind,
 					blockIds: [ item.id ],
 					skipIds: [ object.id ],
 					position: I.BlockPosition.Bottom,
@@ -794,21 +794,16 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 	};
 
 	onSortStart (param: any) {
-		const { dataset } = this.props;
 		const { node } = param;
-		const { selection } = dataset;
 
 		this.id = $(node).data('id');
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { dataset } = this.props;
-		const { selection } = dataset;
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 		
 		if (oldIndex == newIndex) {
 			return;

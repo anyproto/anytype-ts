@@ -84,7 +84,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
-		let setRef = (ref: any) => { this.ref = ref; };
+		let setRef = ref => this.ref = ref;
 		let additional = null;
 		let renderChildren = !isInsideTable;
 
@@ -177,7 +177,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 			
 			case I.BlockType.Dataview: {
-				canSelect = !(root.isObjectSet() || root.isObjectSpace());
+				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace());
 				if (canSelect) {
 					cn.push('isInline');
 				};
@@ -393,7 +393,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 
 		this.ids = DataUtil.selectionGet(block.id, false, this.props);
 		onDragStart(e, I.DropType.Block, this.ids, this);
@@ -422,6 +422,11 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		selection.set(I.SelectType.Block, this.ids);
 
+		// Hide block menus and plus button
+		$('#button-block-add').removeClass('show');
+		$('.block.showMenu').removeClass('showMenu');
+		$('.block.isAdding').removeClass('isAdding top bottom');
+
 		menuStore.open('blockAction', { 
 			offsetX: element.outerWidth(),
 			horizontal: I.MenuDirection.Right,
@@ -432,9 +437,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			data: {
 				blockId: block.id,
 				blockIds: this.ids,
-				rootId: rootId,
-				dataset: dataset,
-				blockRemove: blockRemove
+				rootId,
+				dataset,
+				blockRemove,
 			},
 			onClose: () => {
 				selection.clear();
@@ -462,15 +467,16 @@ const Block = observer(class Block extends React.Component<Props> {
 		const add = $('#button-block-add');
 		
 		if (selection) {
-			selection.preventSelect(true);
 			selection.clear();
 		};
 
 		this.unbind();
 		node.addClass('isResizing');
 		$('body').addClass('colResize');
-		keyboard.setResize(true);
 		add.css({ opacity: 0 });
+		
+		keyboard.setResize(true);
+		keyboard.disableSelection(true);
 		
 		node.find('.colResize.active').removeClass('active');
 		node.find('.colResize.c' + index).addClass('active');
@@ -519,10 +525,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const { dataset, rootId, block } = this.props;
+		const { rootId, block } = this.props;
 		const { id } = block;
 		const childrenIds = blockStore.getChildrenIds(rootId, id);
-		const { selection } = dataset || {};
 		const node = $(this.node);
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
@@ -532,13 +537,12 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		if (selection) {
-			selection.preventSelect(false);	
-		};
 		this.unbind();
 		node.removeClass('isResizing');
 		$('body').removeClass('colResize');
+
 		keyboard.setResize(false);
+		keyboard.disableSelection(false);	
 		
 		node.find('.colResize.active').removeClass('active');
 		

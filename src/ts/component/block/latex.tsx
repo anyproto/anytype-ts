@@ -430,15 +430,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 			return;
 		};
 
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-
 		this.setRange(getRange(this.input));
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 
 		this.win.off('mouseup.latex').on('mouseup.latex', (e: any) => {	
-			selection.preventSelect(false);
+			keyboard.disableSelection(false);
 			this.win.off('mouseup.latex');
 		});
 	};

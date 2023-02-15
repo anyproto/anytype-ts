@@ -69,7 +69,7 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		
 		switch (type) {
 			case I.TextStyle.Bulleted:
-				inner = <img src={this.getBullet()} />
+				inner = <img src={this.getBullet()} onDragStart={e => e.preventDefault()} />
 				break;
 				
 			case I.TextStyle.Numbered:
@@ -77,15 +77,15 @@ const Marker = observer(class Marker extends React.Component<Props> {
 				break;
 				
 			case I.TextStyle.Checkbox:
-				inner = <img src={Icons.checkbox[Number(active)]} />;
+				inner = <img src={Icons.checkbox[Number(active)]} onDragStart={e => e.preventDefault()} />;
 				break;
 
 			case 'checkboxTask':
-				inner = <img src={Icons.task[Number(active)]} />;
+				inner = <img src={Icons.task[Number(active)]} onDragStart={e => e.preventDefault()} />;
 				break;
 			
 			case I.TextStyle.Toggle:
-				inner = <img src={this.getToggle()} />;
+				inner = <img src={this.getToggle()} onDragStart={e => e.preventDefault()} />;
 				break;
 		};
 		

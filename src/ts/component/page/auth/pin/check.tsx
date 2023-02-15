@@ -63,9 +63,9 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 		$(window).on('focus.pin', () => { this.ref.focus(); });
 	};
 
-	onSuccess (pin: string) {
+	onSuccess () {
 		const { account } = authStore;
-		const { redirect } = commonStore;
+		const redirect = Storage.get('redirect');
 
 		keyboard.setPinChecked(true);
 

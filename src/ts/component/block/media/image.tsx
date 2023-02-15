@@ -156,9 +156,9 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		
 		if (selection) {
 			selection.hide();
-			selection.preventSelect(true);
 		};
-		
+
+		keyboard.disableSelection(true);		
 		node.addClass('isResizing');
 		win.on('mousemove.media', (e: any) => { this.onResize(e, checkMax); });
 		win.on('mouseup.media', (e: any) => { this.onResizeEnd(e, checkMax); });
@@ -190,9 +190,8 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 			return;
 		};
 		
-		const { dataset, rootId, block } = this.props;
+		const { rootId, block } = this.props;
 		const { id } = block;
-		const { selection } = dataset || {};
 		const node = $(this.node);
 		const wrap = node.find('#wrap');
 		
@@ -206,10 +205,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		
 		win.off('mousemove.media mouseup.media');
 		node.removeClass('isResizing');
-		
-		if (selection) {
-			selection.preventSelect(false);
-		};
+		keyboard.disableSelection(false);
 		
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { width: w } },

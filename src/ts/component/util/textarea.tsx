@@ -19,6 +19,7 @@ interface Props {
 	onFocus?(e: any, value: string): void;
 	onBlur?(e: any, value: string): void;
 	onCopy?(e: any, value: string): void;
+	onPaste?(e: any): void;
 };
 
 interface State {
@@ -49,6 +50,7 @@ class Textarea extends React.Component<Props, State> {
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onCopy = this.onCopy.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 	};
 	
 	render () {
@@ -78,6 +80,7 @@ class Textarea extends React.Component<Props, State> {
 				onFocus={this.onFocus}
 				onBlur={this.onBlur}
 				onCopy={this.onCopy}
+				onPaste={this.onPaste}
 				maxLength={maxLength ? maxLength : undefined}
 				spellCheck={false}
 			/>
@@ -143,6 +146,12 @@ class Textarea extends React.Component<Props, State> {
 		};
 	};
 	
+	onPaste (e: any) {
+		if (this.props.onPaste) {
+			this.props.onPaste(e);
+		};
+	};
+
 	focus () {
 		window.setTimeout(() => { 
 			if (!this._isMounted) {

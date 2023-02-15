@@ -104,6 +104,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onIconPage () {
 		const { rootId } = this.props;
 		const node = $(this.node);
+		const object = detailStore.get(rootId, rootId, []);
+		const { iconEmoji, iconImage } = object;
 
 		menuStore.open('smile', { 
 			element: '.editorControls #button-icon',
@@ -114,6 +116,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				node.removeClass('hover');
 			},
 			data: {
+				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					ObjectUtil.setIcon(rootId, icon, '', () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });

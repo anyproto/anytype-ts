@@ -89,8 +89,8 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		let sections: any[] = [
 			{ 
 				name: 'Appearance', children: [
-					{ id: 'label', name: 'Labels' },
-					{ id: 'marker', name: 'Markers' },
+					{ id: 'label', name: 'Titles' },
+					{ id: 'marker', name: 'Arrows' },
 					{ id: 'icon', name: 'Icons' },
 				] 
 			},

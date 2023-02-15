@@ -337,4 +337,25 @@ export default {
 		],
 	},
 
+	inlineSet: {
+		items: [
+			{
+				name: 'This is inline set',
+				description: 'Set query and name are synced with the source set you selected. You can change source by clicking on the set name.',
+				param: {
+					element: '#head-title-wrapper #value',
+					offsetY: 10,
+				}
+			},
+			{
+				name: 'Views',
+				description: 'Views are not synced, but copied. You can tweak them to the needs of your current context. No worries, source set will not be affected.',
+				param: {
+					element: '.dataviewControls #sideLeft',
+					offsetY: 10,
+				}
+			},
+		],
+	},
+
 }

@@ -13,9 +13,6 @@ html.themeDark {
     a:hover { color: $colorOrange; }
 
     #root-loader { background: $colorBlack; }
-	#graphPreview {
-		.previewObject { background: $colorBlack; }
-	}
 
     .cover::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.2);
@@ -86,6 +83,12 @@ html.themeDark {
 
     /* Button */
 
+	.button.black { background: $colorWhite; color: $colorBlack; }
+	.button.black:hover { color: $colorSecondary; }
+	.button.black {
+		.arrow { background-image: url('~img/arrow/button/black.svg'); }
+	}
+
     .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; background: $colorHover; }
     .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
 
@@ -148,6 +151,7 @@ html.themeDark {
         .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
         .heading {
             .iconObject { background-color: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
+			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
             .featured { color: $colorSecondary; }
             .bullet { background: $colorSecondary; }
         }
@@ -164,6 +168,10 @@ html.themeDark {
             }
         }
     }
+
+	/* PreviewGraph */
+
+	.previewGraph { background: $colorBgLight; border-color: $colorLinePrimary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
 
     /* Preview */
 

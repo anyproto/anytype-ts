@@ -10,13 +10,14 @@ import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
 import { Page, SelectionProvider, DragProvider, Progress, Tooltip, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview, Mark } from 'Lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview, Mark, Encode } from 'Lib';
 
 configure({ enforceActions: 'never' });
 
 import 'react-virtualized/styles.css';
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
+import 'emoji-mart/css/emoji-mart.css';
 
 import 'scss/font.scss';
 import 'scss/common.scss';
@@ -54,11 +55,14 @@ import 'scss/component/pin.scss';
 import 'scss/component/sync.scss';
 import 'scss/component/filter.scss';
 import 'scss/component/sidebar.scss';
+
+import 'scss/component/list/object.scss';
 import 'scss/component/list/previewObject.scss';
 
 import 'scss/component/preview/common.scss';
 import 'scss/component/preview/link.scss';
 import 'scss/component/preview/object.scss';
+import 'scss/component/preview/graph.scss';
 
 import 'scss/component/media/audio.scss';
 import 'scss/component/media/video.scss';
@@ -116,7 +120,6 @@ import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
 import 'scss/popup/export.scss';
 
-import 'emoji-mart/css/emoji-mart.css';
 import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
 import 'scss/menu/smile.scss';
@@ -210,6 +213,8 @@ window.Lib = {
 	Renderer,
 	DataUtil,
 	Preview,
+	Storage,
+	Encode,
 };
 
 /* 
@@ -266,6 +271,7 @@ class App extends React.Component<object, State> {
 		loading: true
 	};
 	node: any = null;
+	timeoutMaximize = 0;
 
 	constructor (props: any) {
 		super(props);
@@ -391,12 +397,21 @@ class App extends React.Component<object, State> {
 	};
 
 	checkMaximized () {
-		const node = $(this.node);
-		const icon = node.find('#minmax');
-		const isMaximized = window.Electron.isMaximized();
+		const platform = Util.getPlatform();
 
-		icon.removeClass('max window');
-		isMaximized ? icon.addClass('window') : icon.addClass('max');
+		if (platform != I.Platform.Windows) {
+			return;
+		};
+
+		window.clearTimeout(this.timeoutMaximize);
+		this.timeoutMaximize = window.setTimeout(() => {
+			const node = $(this.node);
+			const icon = node.find('#minmax');
+			const isMaximized = window.Electron.isMaximized();
+
+			icon.removeClass('max window');
+			isMaximized ? icon.addClass('window') : icon.addClass('max');
+		}, 50);
 	};
 
 	registerIpcEvents () {
@@ -558,6 +573,7 @@ class App extends React.Component<object, State> {
 
 	onUpdateConfirm (e: any, auto: boolean) {
 		commonStore.progressClear(); 
+		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
 			return;
@@ -570,7 +586,6 @@ class App extends React.Component<object, State> {
 				textConfirm: 'Restart and update',
 				textCancel: 'Later',
 				onConfirm: () => {
-					Storage.setHighlight('whatsNew', true);
 					Renderer.send('updateConfirm');
 				},
 				onCancel: () => {

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { SortableContainer } from 'react-sortable-hoc';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { SortableContainer } from 'react-sortable-hoc';
 import { I } from 'Lib';
 import { Icon } from 'Component';
-import { blockStore } from 'Store';
+import { blockStore, dbStore } from 'Store';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
@@ -19,10 +19,9 @@ interface Props extends I.ViewComponent {
 const HeadRow = observer(class HeadRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, block, readonly, getView, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths } = this.props;
-		const view = getView();
+		const { rootId, block, readonly, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths, getVisibleRelations } = this.props;
 		const widths = getColumnWidths('', 0);
-		const relations = view.getVisibleRelations();
+		const relations = getVisibleRelations();
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Relation ]);
 

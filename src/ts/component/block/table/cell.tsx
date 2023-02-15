@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { I } from 'Lib';
-import { Icon, Block } from 'Component';
 import { observer } from 'mobx-react';
+import { I, keyboard } from 'Lib';
+import { Icon, Block } from 'Component';
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponentTable {
@@ -154,18 +154,8 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 	};
 
 	onMouseDown (e: any) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-
-		if (!selection) {
-			return;
-		};
-
-		selection.preventSelect(true);
-
-		$(window).off('mousedown.table-cell').on('mousedown.table-cell', (e: any) => {
-			selection.preventSelect(false);
-		});
+		keyboard.disableSelection(true);
+		$(window).off('mousedown.table-cell').on('mousedown.table-cell', (e: any) => { keyboard.disableSelection(false); });
 	};
 
 });

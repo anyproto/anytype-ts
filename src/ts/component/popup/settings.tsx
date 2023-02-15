@@ -23,6 +23,7 @@ import PageImportNotion from './page/settings/import/notion';
 import PageImportNotionHelp from './page/settings/import/notion/help';
 import PageImportNotionWarning from './page/settings/import/notion/warning';
 import PageImportMarkdown from './page/settings/import/markdown';
+import PageImportHtml from './page/settings/import/html';
 
 import PageExportMarkdown from './page/settings/export/markdown';
 
@@ -55,6 +56,7 @@ const Components: any = {
 	importNotionHelp:	 PageImportNotionHelp,
 	importNotionWarning: PageImportNotionWarning,
 	importMarkdown:		 PageImportMarkdown,
+	importHtml:			 PageImportHtml,
 
 	exportMarkdown:		 PageExportMarkdown,
 

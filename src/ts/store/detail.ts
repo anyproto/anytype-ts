@@ -9,12 +9,12 @@ interface Detail {
 };
 
 interface Item {
-	id: string,
+	id: string;
 	details: {
-		type: string,
-		relationKey: string,
-		id: string
-	}
+		type: string;
+		relationKey: string;
+		id: string;
+	};
 };
 
 class DetailStore {
@@ -35,22 +35,27 @@ class DetailStore {
 
 		for (const item of items) {
 			const list: Detail[] = [];
+
 			for (const k in item.details) {
 				const el = { relationKey: k, value: item.details[k] };
+
 				makeObservable(el, { value: observable });
+
 				intercept(el as any, (change: any) => { 
 					return (change.newValue === el[change.name] ? null : change); 
 				});
+
 				list.push(el);
 			};
+
 			map.set(item.id, list);
 		};
+
 		this.map.set(rootId, map);
 	};
 
 	/** Idempotent. updates details in the detail store. if clear is set, map wil delete details by item id. */
     public update (rootId: string, item: Item, clear: boolean): void {
-
 		let map = this.map.get(rootId);
 		let createMap = false;
 		let createList = false;
@@ -76,7 +81,9 @@ class DetailStore {
 				set(el, { value: item.details[k] });
 			} else {
 				el = { relationKey: k, value: item.details[k] };
+
 				makeObservable(el, { value: observable });
+
 				list.push(el);
 			};
 
@@ -90,7 +97,7 @@ class DetailStore {
 		};
 
 		// Update relationKeyMap in dbStore to keep consistency
-		if ((item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
+		if (item.details && (item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
 			dbStore.relationKeyMap[item.details.relationKey] = item.details.id;
 		};
 
@@ -114,15 +121,15 @@ class DetailStore {
 		const map = this.map.get(rootId);
 
 		if (!map) {
-			return
-		}
+			return;
+		};
 
 		if (keys && keys.length) {
 			const list = this.getDetailList(rootId, id).filter(it => !keys.includes(it.relationKey));
 			map.set(id, list);
 		} else {
 			map.set(id, []);
-		}		
+		};
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, Constant.defaultRelationKeys are included */
@@ -134,18 +141,19 @@ class DetailStore {
 		};
 		
 		if (keys) {
-			const set: Set<string> = new Set(keys);
-			set.add('id');
+			keys = [ ...new Set(keys) ];
+			keys.push('id');
 
 			if (!forceKeys) {
-				Constant.defaultRelationKeys.forEach(key => set.add(key));
+				keys = keys.concat(Constant.defaultRelationKeys);
 			};
 
-			list = list.filter(it => set.has(it.relationKey));
+			list = list.filter(it => keys.includes(it.relationKey));
 		};
 
 		const object = {};
-		list.forEach(it => object[it.relationKey] = it.value ); 
+		list.forEach(it => object[it.relationKey] = it.value);
+
 		return this.mapper(object);
 	};
 
@@ -171,7 +179,7 @@ class DetailStore {
 		switch (object.type) {
 			case Constant.typeId.type:
 			case Constant.storeTypeId.type:
-				object = this.mapType(object);
+				object = this.mapObjectType(object);
 				break;
 
 			case Constant.typeId.relation:
@@ -204,7 +212,7 @@ class DetailStore {
 		};
 	};
 
-	private mapType (object: any) {
+	private mapObjectType (object: any) {
 		object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes).map(it => Number(it));
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
@@ -248,7 +256,7 @@ class DetailStore {
 		return object;
 	};
 
-	private mapSet (object: { setOf: string[] }) {
+	private mapSet (object: any) {
 		object.setOf = Relation.getArrayValue(object.setOf);
 		return object;
 	};
@@ -259,4 +267,4 @@ class DetailStore {
 	};
 };
 
- export const detailStore: DetailStore = new DetailStore();
+export const detailStore: DetailStore = new DetailStore();
