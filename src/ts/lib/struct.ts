@@ -3,11 +3,17 @@ import Struct from 'google-protobuf/google/protobuf/struct_pb.js';
 export class Encode {
 
 	static encodeStruct (obj: any) {
-		return Struct.Struct.fromJavaScript(obj || {});
+		if (typeof obj === 'undefined') {
+			obj = null;
+		};
+		return Struct.Struct.fromJavaScript(obj);
 	};
 
 	static encodeValue (value: any) {
-		return Struct.Value.fromJavaScript(value || null);
+		if (typeof value === 'undefined') {
+			value = null;
+		};
+		return Struct.Value.fromJavaScript(value);
 	};
 	
 };
