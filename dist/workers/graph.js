@@ -1,18 +1,19 @@
-importScripts('./lib/d3/d3-quadtree.min.js');
-importScripts('./lib/d3/d3-zoom.min.js');
-importScripts('./lib/d3/d3-drag.min.js');
-importScripts('./lib/d3/d3-dispatch.min.js');
-importScripts('./lib/d3/d3-timer.min.js');
-importScripts('./lib/d3/d3-selection.min.js');
-importScripts('./lib/d3/d3-force.min.js');
-importScripts('./lib/tween.js');
-importScripts('./lib/util.js');
+importScripts(
+	'./lib/d3/d3-quadtree.min.js',
+	'./lib/d3/d3-zoom.min.js',
+	'./lib/d3/d3-drag.min.js',
+	'./lib/d3/d3-dispatch.min.js',
+	'./lib/d3/d3-timer.min.js',
+	'./lib/d3/d3-selection.min.js',
+	'./lib/d3/d3-force.min.js',
+	'./lib/tween.js',
+	'./lib/util.js'
+);
 
 const util = new Util();
 
 // CONSTANTS
 
-const fontFamily = 'Helvetica';
 const transformThreshold = 1.5;
 
 const ObjectLayout = {
@@ -32,10 +33,11 @@ const forceProps = {
 		y: 0.5,
 	},
 	charge: {
-		strength: -1000,
+		strength: -250,
+		distanceMax: 300,
 	},
 	link: {
-		distance: 1,
+		distance: 50,
 	},
 	forceX: {
 		strength: 0.1,
@@ -53,7 +55,7 @@ let ctx = null;
 let width = 0;
 let height = 0;
 let density = 0;
-let transform = null;
+let transform = {};
 let nodes = [];
 let edges = [];
 let filteredNodes = [];
@@ -65,6 +67,10 @@ let frame = 0;
 let selected = [];
 let settings = {};
 let time = 0;
+let isHovering = false;
+let edgeMap = new Map();
+let hoverAlpha = 0.2;
+let fontFamily = 'Helvetica';
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -78,13 +84,16 @@ init = (param) => {
 	settings = data.settings;
 
 	ctx = canvas.getContext('2d');
-	ctx.lineCap = 'round';
 
 	util.ctx = ctx;
 	resize(data);
-	initColor(data.theme);
+	initTheme(data.theme);
+	initFonts();
 
-	transform = d3.zoomIdentity.translate(0, 0).scale(1);
+	ctx.lineCap = 'round';
+	ctx.fillStyle = Color.bg;
+	
+	transform = d3.zoomIdentity.translate(0, 0).scale(1.5);
 	simulation = d3.forceSimulation(nodes);
 	simulation.alpha(1);
 
@@ -93,35 +102,40 @@ init = (param) => {
 	simulation.on('tick', () => { redraw(); });
 	simulation.tick(100);
 
+	// Center initially on root node
 	setTimeout(() => {
 		const root = getNodeById(data.rootId);
-		if (root) {
-			transform = Object.assign(transform, { x: width / 2 - root.x, y: height / 2 - root.y });
-			send('onTransform', { ...transform });
-			redraw();
+		if (!root) {
+			return;
 		};
+
+		transform = Object.assign(transform, getCenter(root.x, root.y));
+		send('onTransform', { ...transform });
+		redraw();
 	}, 100);
 };
 
-initColor = (theme) => {
+initTheme = (theme) => {
 	switch (theme) {
 		default:
+			hoverAlpha = 0.3;
 			Color = {
 				bg: '#fff',
-				link: '#cbc9bd',
+				link: '#dfddd0',
 				arrow: '#aca996',
 				node: '#aca996',
-				text: '#929082',
+				text: '#aca996',
 				highlight: '#ffb522',
 				selected: '#2aa7ee',
 			}; 
 			break;
 
 		case 'dark':
+			hoverAlpha = 0.2;
 			Color = {
 				bg: '#1e1e1b',
-				link: '#cbc9bd',
-				arrow: '#aca996',
+				link: '#484843',
+				arrow: '#929082',
 				node: '#aca996',
 				text: '#929082',
 				highlight: '#ffb522',
@@ -129,6 +143,18 @@ initColor = (theme) => {
 			};
 			break;
 	};
+};
+
+initFonts = () => {
+	if (!self.FontFace) {
+		return;
+	};
+
+	const name = 'Inter';
+	const fontFace = new FontFace(name, `url("../font/inter/regular.ttf") format("truetype")`);
+
+	self.fonts.add(fontFace);
+	fontFace.load().then(() => { fontFamily = name; });
 };
 
 image = ({ src, bitmap }) => {
@@ -152,7 +178,8 @@ initForces = () => {
 	.y(height * center.y);
 
 	simulation.force('charge')
-	.strength(charge.strength);
+	.strength(charge.strength)
+	.distanceMax(charge.distanceMax);
 
 	simulation.force('link')
 	.links(edges)
@@ -213,6 +240,14 @@ updateForces = () => {
 	.id(d => d.id)
 	.links(edges);
 
+	edgeMap.clear();
+	nodes.forEach(d => {
+		const sources = edges.filter(it => it.target.id == d.id).map(it => it.source.id);
+		const targets = edges.filter(it => it.source.id == d.id).map(it => it.target.id);
+
+		edgeMap.set(d.id, [].concat(sources).concat(targets));
+	});
+
 	simulation.alpha(1).restart();
 	redraw();
 };
@@ -231,9 +266,13 @@ updateSettings = (param) => {
 	};
 };
 
+updateTheme = ({ theme }) => {
+	initTheme(theme);
+	redraw();
+};
+
 draw = (t) => {
-	const radius = 6 / transform.k;
-	const diameter = radius * 2;
+	const radius = 5.7 / transform.k;
 
 	time = t;
 	TWEEN.update();
@@ -245,7 +284,7 @@ draw = (t) => {
 	ctx.font = getFont();
 
 	edges.forEach(d => {
-		drawLine(d, radius, diameter, settings.marker && d.isDouble, settings.marker);
+		drawLine(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
 	});
 
 	nodes.forEach(d => {
@@ -282,26 +321,33 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const sx2 = x2 + r2 * cos2;
 	const sy2 = y2 + r2 * sin2;
 	const k = 5 / transform.k;
-	const lineWidth = r1 / 10;
+	const isOver = d.source.isOver || d.target.isOver;
+	const showName = isOver && d.name && settings.label;
+	const lineWidth = getLineWidth();
 
 	let colorLink = Color.link;
 	let colorArrow = Color.arrow;
 	let colorText = Color.text;
 
-	if (d.source.isOver || d.target.isOver) {
+	if (isHovering) {
+		ctx.globalAlpha = hoverAlpha;
+	};
+
+	if (isOver) {
 		colorLink = Color.highlight;
 		colorArrow = Color.highlight;
 		colorText = Color.highlight;
+		ctx.globalAlpha = 1;
 	};
 
-	util.line(sx1, sy1, sx2, sy2, r1 / 10, colorLink);
+	util.line(sx1, sy1, sx2, sy2, lineWidth, colorLink);
 
 	let tw = 0;
 	let th = 0;
 	let offset = arrowStart && arrowEnd ? -k : 0;
 
 	// Relation name
-	if ((d.source.isOver || d.target.isOver) && d.name && settings.label && (transform.k >= transformThreshold)) {
+	if (showName) {
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 
@@ -309,16 +355,16 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 
 		tw = Math.abs(right - left);
 		th = Math.abs(bottom - top);
-		offset = 0;
+		offset = arrowHeight / 2;
 
 		// Rectangle
 		ctx.save();
 		ctx.translate(mx, my);
 		ctx.rotate(Math.abs(a1) <= 1.5 ? a1 : a2);
-		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, r1 / 4);
+		util.roundedRect(left - k, top - k, tw + k * 2, th + k * 2, getBorderRadius());
 
 		ctx.strokeStyle = colorLink;
-		ctx.lineWidth = lineWidth;
+		ctx.lineWidth = lineWidth * 3;
 		ctx.fillStyle = Color.bg;
 		ctx.fill();
 		ctx.stroke();
@@ -330,7 +376,14 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	};
 
 	// Arrow heads
-	const move = arrowHeight * 2 + tw / 2 + offset;
+	let move = arrowHeight;
+	if (showName) {
+		move = arrowHeight * 2 + tw / 2 + offset;
+	} else 
+	if (arrowStart && arrowEnd) {
+		move = arrowHeight * 2;
+	};
+
 	const sax1 = mx - move * cos1;
 	const say1 = my - move * sin1;
 	const sax2 = mx - move * cos2;
@@ -349,31 +402,51 @@ drawNode = (d) => {
 	const radius = getRadius(d);
 	const img = images[d.src];
 	const diameter = radius * 2;
+	const isSelected = selected.includes(d.id);
 	
 	let colorNode = Color.node;
 	let colorText = Color.text;
 	let colorLine = '';
 	let lineWidth = 0;
 
+	if (isHovering) {
+		ctx.globalAlpha = hoverAlpha;
+
+		const connections = edgeMap.get(d.id);
+		if (connections && connections.length) {
+			for (let i = 0; i < connections.length; i++) {
+				const c = getNodeById(connections[i]);
+
+				if (c.isOver) {
+					ctx.globalAlpha = 1;
+					break;
+				};
+			};
+		};
+	};
+
 	if (d.isOver) {
 		colorNode = Color.highlight;
 		colorText = Color.highlight;
 		colorLine = Color.highlight;
-		lineWidth = radius / 5;
+		ctx.globalAlpha = 1;
 	};
 
-	if (selected.includes(d.id)) {
+	if (isSelected) {
 		colorNode = Color.selected;
 		colorText = Color.selected;
 		colorLine = Color.selected;
-		lineWidth = radius / 5;
+	};
+
+	if (d.isOver || isSelected) {
+		lineWidth = getLineWidth() * 3;
 	};
 
 	if (settings.icon && img) {
 		ctx.save();
 
 		if (lineWidth) {
-			util.roundedRect(d.x - radius - lineWidth, d.y - radius - lineWidth, diameter + lineWidth * 2, diameter + lineWidth * 2, radius / 4);
+			util.roundedRect(d.x - radius - lineWidth * 2, d.y - radius - lineWidth * 2, diameter + lineWidth * 4, diameter + lineWidth * 4, getBorderRadius());
 			ctx.fillStyle = Color.bg;
 			ctx.fill();
 
@@ -394,9 +467,10 @@ drawNode = (d) => {
 			if (isIconCircle(d)) {
 				util.circle(d.x, d.y, radius);
 			} else {
-				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, radius / 4);
+				util.roundedRect(d.x - radius, d.y - radius, diameter, diameter, getBorderRadius());
 			};
 	
+			ctx.fillStyle = Color.bg;
 			ctx.fill();
 			ctx.clip();
 	
@@ -493,6 +567,8 @@ onSelect = ({ x, y }) => {
 };
 
 onMouseMove = ({ x, y }) => {
+	isHovering = false;
+
 	const active = nodes.find(d => d.isOver);
 	if (active) {
 		active.isOver = false;
@@ -501,7 +577,7 @@ onMouseMove = ({ x, y }) => {
 	const d = getNodeByCoords(x, y);
 	if (d) {
 		d.isOver = true;
-		console.log('onMouseMove', x, y, transform.x, transform.y);
+		isHovering = true;
 	};
 
 	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
@@ -515,11 +591,12 @@ onContextMenu = ({ x, y }) => {
 	};
 
 	const d = getNodeByCoords(x, y);
-	if (d) {
-		d.isOver = true;
+	if (!d) {
+		return;
 	};
 
-	send('onContextMenu', { node: (d ? d.id : ''), x, y });
+	d.isOver = true;
+	send('onContextMenu', { node: d, x, y });
 	redraw();
 };
 
@@ -546,10 +623,13 @@ onAddNode = ({ sourceId, target }) => {
 };
 
 onRemoveNode = ({ ids }) => {
+	isHovering = false;
+
 	data.nodes = data.nodes.filter(d => !ids.includes(d.id));
 	data.edges = data.edges.filter(d => !ids.includes(d.source.id) && !ids.includes(d.target.id));
 
 	updateForces();
+	redraw();
 };
 
 onSetEdges = (param) => {
@@ -562,22 +642,17 @@ onSetSelected = ({ ids }) => {
 	selected = ids;
 };
 
-onResize = (data) => {
-	resize(data);
-};
-
 onSetRootId = ({ rootId }) => {
 	const d = nodes.find(d => d.id == rootId);
 	if (!d) {
 		return;
 	};
 
-	const { x, y, k } = transform;
-	const coords = { x, y };
-	const to = { x: width / 2 - k * d.x, y: height / 2 - k * d.y };
+	const coords = { x: transform.x, y: transform.y };
+	const to = getCenter(d.x, d.y);
 
 	new TWEEN.Tween(coords)
-	.to(to, 1000)
+	.to(to, 500)
 	.easing(TWEEN.Easing.Quadratic.InOut)
 	.onUpdate(() => {
 		transform = Object.assign(transform, coords);
@@ -603,6 +678,8 @@ resize = (data) => {
 	ctx.canvas.width = width * density;
 	ctx.canvas.height = height * density;
 	ctx.scale(density, density);
+
+	redraw();
 };
 
 //------------------- Util -------------------
@@ -649,4 +726,16 @@ const getFont = () => {
 
 const getNodeMap = () => {
 	return new Map(nodes.map(d => [ d.id, d ]));
+};
+
+const getCenter = (x, y) => {
+	return { x: width / 2 - x * transform.k, y: height / 2 - y * transform.k };
+};
+
+const getLineWidth = () => {
+	return 0.4 / transform.k;
+};
+
+const getBorderRadius = () => {
+	return 3.33 / transform.k;
 };

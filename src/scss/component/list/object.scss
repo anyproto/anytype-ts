@@ -1,0 +1,40 @@
+@import "~scss/_vars";
+
+.listObject {
+	table { width: 100%; border-collapse: collapse; border-bottom: 1px solid $colorBorderLight; table-layout: fixed; border-top: 1px solid $colorBorderLight; }
+	table {
+		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }
+
+		.cellHead { 
+			text-align: left; color: $colorVeryDarkGrey; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
+			@include text-overflow-nw;
+		}
+		.cellHead {
+			.name { 
+				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
+				@include text-overflow-nw; border-right: 1px solid $colorBorderLight;
+			}
+		}
+		.cellHead:last-child {
+			.name { border: 0px; }
+		}
+
+		tbody { border-top: 1px solid $colorBorderLight; }
+
+		.cell { padding: 14px; border-bottom: 1px solid $colorBorderLight; vertical-align: top; position: relative; word-break: break-word; }
+
+		.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
+		.cellContent {
+			.more { vertical-align: top; }
+		}
+
+		.cellContent.c-object {
+			.wrap { white-space: nowrap; }
+		}
+		.cellContent.c-select {
+			.tagItem { margin-bottom: 0px; }
+		}
+	}
+
+	.pager { margin-top: 10px; }
+}

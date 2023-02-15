@@ -179,7 +179,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		switch (type) {
 			
 			default:
-				marks = Mark.toggle(marks, { type: type, param: '', range: { from: from, to: to } });
+				marks = Mark.toggle(marks, { type: type, param: '', range: { from, to } });
 				menuStore.updateData(this.props.id, { marks });
 				onChange(marks);
 				break;

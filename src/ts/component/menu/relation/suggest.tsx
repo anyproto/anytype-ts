@@ -258,7 +258,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map(it => detailStore.check(it)));
+			this.items = this.items.concat(message.records.map(it => detailStore.mapper(it)));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -395,7 +395,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
 					onSelect: (item: any) => {
-						this.onClick(e, detailStore.check(item));
+						this.onClick(e, detailStore.mapper(item));
 						close();
 					},
 				});

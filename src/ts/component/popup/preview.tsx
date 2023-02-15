@@ -10,7 +10,7 @@ const BORDER = 16;
 class PopupPreview extends React.Component<I.Popup> {
 	
 	render () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { block } = data;
 		const { hash, type } = block.content;
@@ -25,12 +25,12 @@ class PopupPreview extends React.Component<I.Popup> {
 		};
 
 		return (
-			<React.Fragment>
+			<div onClick={close}>
 				<Loader id="loader" />
 				<div id="wrap" className="wrap">
 					{content}
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	};
 	

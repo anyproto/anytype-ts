@@ -6,6 +6,7 @@ import { commonStore, menuStore } from 'Store';
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 	refFilter: any = null;
+	rootId = '';
 
 	constructor (props: I.HeaderComponent) {
 		super(props);
@@ -17,10 +18,10 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	render () {
-		const { onHome, onForward, onBack } = this.props;
+		const { onHome, onForward, onBack, tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
 
 		return (
-			<div className="sides">
+			<React.Fragment>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="home big" tooltip="Home" onClick={onHome} />
@@ -28,40 +29,55 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 				</div>
 
-				<div className="side center" />
+				<div className="side center">
+					<div id="tabs" className="tabs">
+						{tabs.map((item: any, i: number) => (
+							<div 
+								key={i}
+								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
+								onClick={() => { onTab(item.id); }}
+								onMouseOver={e => onTooltipShow(e, item.tooltip)} 
+								onMouseOut={onTooltipHide}
+							>
+								{item.name}
+							</div>
+						))}
+					</div>
+				</div>
 
 				<div className="side right">
 					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onSearch} />
 					<Icon id="button-header-filter" className="filter big dn" tooltip="Filters" onClick={this.onFilter} />
 					<Icon id="button-header-settings" className="settings big" tooltip="Settings" onClick={this.onSettings} />
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 
 	componentDidMount(): void {
-		const { isPopup } = this.props;
+		const { isPopup, rootId } = this.props;
 
 		if (!isPopup) {
 			DataUtil.setWindowTitleText('Graph');
 		};
+
+		this.rootId = rootId;
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Graph });
+		ObjectUtil.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
-		const { rootId } = this.props;
 		const { graph } = commonStore;
 		const menuParam = Object.assign({
 			element: '#button-header-search',
 			className: 'fromHeader',
 			horizontal: I.MenuDirection.Right,
 			data: {
-				rootId,
-				blockId: rootId,
-				blockIds: [ rootId ],
+				rootId: this.rootId,
+				blockId: this.rootId,
+				blockIds: [ this.rootId ],
 				filters: DataUtil.graphFilters(),
 				filter: graph.filter,
 				canAdd: true,
@@ -83,9 +99,11 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	onSettings () {
 		const { menuOpen } = this.props;
 
-		menuOpen('graphSettings', '#button-header-settings', {
-			horizontal: I.MenuDirection.Right,
-		});
+		menuOpen('graphSettings', '#button-header-settings', { horizontal: I.MenuDirection.Right });
+	};
+
+	setRootId (id: string) {
+		this.rootId = id;
 	};
 
 };

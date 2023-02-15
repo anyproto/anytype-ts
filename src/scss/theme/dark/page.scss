@@ -59,13 +59,6 @@
     canvas { background: $colorBlack; }
 	#loader { background: $colorBlack !important; }
 
-    .tabs { border-color: $colorLineSecondary; }
-    .tabs {
-        .tab:hover, .tab.active { color: $colorPrimary; }
-
-        .icon.close:hover { background-color: $colorHover; }
-    }
-
     .wrapper {
         .side.right { background: $colorBlack; border-color: $colorLineSecondary; }
         .side.right {
@@ -76,12 +69,6 @@
         .section {
             .item { background: $colorBlack; }
             .item:hover::before { background: $colorHover; }
-        }
-    }
-
-    .panelPreview {
-        .heading {
-            .iconObject { background: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
         }
     }
 

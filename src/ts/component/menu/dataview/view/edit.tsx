@@ -245,8 +245,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			const sizeOption = Relation.getSizeOptions().find(it => it.id == cardSize);
 
 			settings = settings.concat([
-				{ id: 'coverRelationKey', name: 'Cover', caption: (coverOption ? coverOption.name : 'Select'), withCaption: true, arrow: true },
-				{ id: 'cardSize', name: 'Card size', caption: (sizeOption ? sizeOption.name : 'Select'), withCaption: true, arrow: true },
+				{ id: 'coverRelationKey', name: 'Cover', caption: (coverOption ? coverOption.name : 'Select'), arrow: true },
+				{ id: 'cardSize', name: 'Card size', caption: (sizeOption ? sizeOption.name : 'Select'), arrow: true },
 				{ 
 					id: 'coverFit', name: 'Fit image', withSwitch: true, switchValue: coverFit, 
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'coverFit', v); }
@@ -258,7 +258,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			const groupOption = Relation.getGroupOption(rootId, blockId, groupRelationKey);
 
 			settings = settings.concat([
-				{ id: 'groupRelationKey', name: 'Group by', caption: groupOption ? groupOption.name : 'Select', withCaption: true, arrow: true },
+				{ id: 'groupRelationKey', name: 'Group by', caption: (groupOption ? groupOption.name : 'Select'), arrow: true },
 				{ 
 					id: 'groupBackgroundColors', name: 'Color columns', withSwitch: true, switchValue: groupBackgroundColors, 
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'groupBackgroundColors', v); }
@@ -273,7 +273,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 
 		if (isInline || (type == I.ViewType.Board)) {
 			const options = Relation.getPageLimitOptions(type);
-			settings.push({ id: 'pageLimit', name: 'Page limit', caption: (pageLimit || options[0].id), withCaption: true, arrow: true });
+			settings.push({ id: 'pageLimit', name: 'Page limit', caption: (pageLimit || options[0].id), arrow: true });
 		};
 
 		let sections: any[] = [

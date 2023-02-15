@@ -4,11 +4,11 @@ import Constant from 'json/constant.json';
 
 class Relation {
 
-	typeName (v: I.RelationType): string {
+	public typeName (v: I.RelationType): string {
 		return Util.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
-	className (v: I.RelationType): string {
+	public className (v: I.RelationType): string {
 		let c = this.typeName(v);
 		if ([ I.RelationType.Status, I.RelationType.Tag ].indexOf(v) >= 0) {
 			c = 'select ' + this.selectClassName(v);
@@ -16,23 +16,24 @@ class Relation {
 		return 'c-' + c;
 	};
 
-	selectClassName (v: I.RelationType): string {
+	public selectClassName (v: I.RelationType): string {
 		return Util.toCamelCase('is-' + I.RelationType[v]);
 	};
 
-	cellId (prefix: string, relationKey: string, id: string) {
-		if (undefined === id) {
-			id = '';
-		};
-		return [ prefix, relationKey, id.toString() ].join('-');
+	public cellId (prefix: string, relationKey: string, id: string|number) {
+		return [ 
+			String(prefix || ''), 
+			String(relationKey || ''), 
+			String(id || ''),
+		].join('-');
 	};
 
-	width (width: number, format: I.RelationType): number {
+	public width (width: number, format: I.RelationType): number {
 		const size = Constant.size.dataview.cell;
 		return Number(width || size['format' + format]) || size.default;
 	};
 
-	filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
+	public filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
 		let ret = [
 			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
 		];
@@ -102,7 +103,7 @@ class Relation {
 		return ret;
 	};
 
-	filterQuickOptions (type: I.RelationType, condition: I.FilterCondition) {
+	public filterQuickOptions (type: I.RelationType, condition: I.FilterCondition) {
 		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
 			return [];
 		};
@@ -169,7 +170,7 @@ class Relation {
 		return ret;
 	};
 
-	formatValue (relation: any, value: any, maxCount: boolean) {
+	public formatValue (relation: any, value: any, maxCount: boolean) {
 		switch (relation.format) {
 			default: {
 				value = String(value || '');
@@ -221,7 +222,7 @@ class Relation {
 		return value;
 	};
 
-	checkRelationValue (relation: any, value: any): boolean {
+	public checkRelationValue (relation: any, value: any): boolean {
 		value = this.formatValue(relation, value, false);
 
 		let ret = false;
@@ -243,7 +244,7 @@ class Relation {
 		return ret;
 	};
 
-	mapValue (relation: any, value: any) {
+	public mapValue (relation: any, value: any) {
 		switch (relation.relationKey) {
 			case 'sizeInBytes': {
 				return FileUtil.size(value);
@@ -262,11 +263,11 @@ class Relation {
 		return null;
 	};
 
-	getOptions (value: any[]) {
+	public getOptions (value: any[]) {
 		return this.getArrayValue(value).map(id => dbStore.getOption(id)).filter(it => it && !it._empty_);
 	};
 
-	getFilterOptions (rootId: string, blockId: string, view: I.View) {
+	public getFilterOptions (rootId: string, blockId: string, view: I.View) {
 		const formats = [ I.RelationType.File ];
 		const ret: any[] = [];
 		const relations: any[] = Dataview.viewGetRelations(rootId, blockId, view).filter((it: I.ViewRelation) => { 
@@ -297,7 +298,7 @@ class Relation {
 		return ret;
 	};
 
-	getSizeOptions () {
+	public getSizeOptions () {
 		return [
 			{ id: I.CardSize.Small, name: 'Small' },
 			{ id: I.CardSize.Medium, name: 'Medium' },
@@ -305,7 +306,7 @@ class Relation {
 		];
 	};
 
-	getCoverOptions (rootId: string, blockId: string) {
+	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
 		const options: any[] = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
 			return it.isInstalled && !it.isHidden && formats.includes(it.format);
@@ -323,7 +324,7 @@ class Relation {
 		].concat(options);
 	};
 
-	getGroupOptions (rootId: string, blockId: string) {
+	public getGroupOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.Status, I.RelationType.Tag, I.RelationType.Checkbox ];
 		
 		let options: any[] = dbStore.getObjectRelations(rootId, blockId).filter((it: any) => {
@@ -356,12 +357,12 @@ class Relation {
 		return options;
 	};
 
-	getGroupOption (rootId: string, blockId: string, relationKey: string) {
+	public getGroupOption (rootId: string, blockId: string, relationKey: string) {
 		const groupOptions = this.getGroupOptions(rootId, blockId);
 		return groupOptions.length ? (groupOptions.find(it => it.id == relationKey) || groupOptions[0]) : null;
 	};
 
-	getPageLimitOptions (type: I.ViewType) {
+	public getPageLimitOptions (type: I.ViewType) {
 		let options = [ 10, 20, 50, 70, 100 ];
 		if (type == I.ViewType.Gallery) {
 			options = [ 12, 24, 60, 84, 120 ];
@@ -369,22 +370,22 @@ class Relation {
 		return options.map(it => ({ id: it, name: it }));
 	};
 
-	getStringValue (value: any) {
-		if (('object' == typeof(value)) && value && Util.hasProperty(value, 'length')) {
+	public getStringValue (value: any) {
+		if ((typeof value === 'object') && value && Util.hasProperty(value, 'length')) {
 			return String(value.length ? value[0] : '');
 		} else {
 			return String(value || '');
 		};
 	};
 
-	getArrayValue (value: any): string[] {
+	public getArrayValue (value: any): string[] {
 		if (this.isEmpty(value)) {
 			value = [];
 		};
 
 		value = Util.objectCopy(value);
 		
-		if ('object' != typeof(value)) {
+		if (typeof value !== 'object') {
 			value = [ value ];
 		} else 
 		if (!Util.objectLength(value)) {
@@ -395,15 +396,15 @@ class Relation {
 		return Util.arrayUnique(value);
 	};
 
-	isEmpty (v: any) {
+	private isEmpty (v: any) {
 		return (v === null) || (v === undefined) || (v === '');
 	};
 
-	isUrl (type: I.RelationType) {
+	public isUrl (type: I.RelationType) {
 		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
 	};
 
-	getUrlScheme (type: I.RelationType, value: string): string {
+	public getUrlScheme (type: I.RelationType, value: string): string {
 		value = String(value || '');
 
 		let ret = '';
@@ -419,7 +420,7 @@ class Relation {
 		return ret;
 	};
 
-	getSetOfObjects (rootId: string, objectId: string, type: string) {
+	public getSetOfObjects (rootId: string, objectId: string, type: string) {
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
 		const setOf = this.getArrayValue(object.setOf);
 		const ret = [];

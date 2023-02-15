@@ -153,7 +153,7 @@ class Util {
 	};
 
 	objectCopy (o: any): any {
-		if ('undefined' == typeof(o)) {
+		if (typeof o === 'undefined') {
 			o = {};
 		};
 		return JSON.parse(JSON.stringify(o));
@@ -172,7 +172,7 @@ class Util {
 	// Clear object for smaller console output
 	objectClear (o: any) {
 		for (let k in o) {
-			if ('object' == typeof(o[k])) {
+			if (typeof o[k] === 'object') {
 				o[k] = this.objectClear(o[k]);
 				if (!this.objectLength(o[k])) {
 					delete(o[k]);
@@ -181,7 +181,7 @@ class Util {
 					o[k] = this.fieldsMap(o[k]['fieldsMap']);
 				};
 			} else 
-			if (('undefined' == typeof(o[k])) || (o[k] === null)) {
+			if ((typeof o[k] === 'undefined') || (o[k] === null)) {
 				delete(o[k]);
 			};
 		};

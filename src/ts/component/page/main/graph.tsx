@@ -6,6 +6,12 @@ import { Header, Graph, Icon, Loader } from 'Component';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
+const ctrl = keyboard.ctrlSymbol();
+const Tabs = [
+	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltip: `${ctrl} + Alt + O` },
+	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltip: `${ctrl} + O` },
+];
+
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
 
 	node: any = null;
@@ -19,6 +25,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	refPanel: any = null;
 	loading = false;
 	timeoutLoading = 0;
+	rootId = '';
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -26,6 +33,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.onClickObject = this.onClickObject.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.onSelect = this.onSelect.bind(this);
+		this.onTab = this.onTab.bind(this);
 	};
 
 	render () {
@@ -36,7 +44,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				ref={node => this.node = node} 
 				className="body"
 			>
-				<Header component="mainGraph" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainGraph" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} tabs={Tabs} tab="graph" onTab={this.onTab} />
 				<Loader id="loader" />
 
 				<div className="wrapper">
@@ -78,7 +86,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		if (this.loading) {
 			window.clearTimeout(this.timeoutLoading);
-			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 2000);
+			this.timeoutLoading = window.setTimeout(() => { this.setLoading(false); }, 100);
 		};
 	};
 
@@ -88,12 +96,18 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	unbind () {
-		$(window).off(`keydown.graph`);
+		$(window).off(`keydown.graphPage updateGraphRoot.graphPage`);
 	};
 
 	rebind () {
+		const win = $(window);
+
 		this.unbind();
-		$(window).on(`keydown.graph`, (e: any) => { this.onKeyDown(e); });
+		win.on(`keydown.graphPage`, (e: any) => { this.onKeyDown(e); });
+		win.on('updateGraphRoot.graphPage', (e: any, data: any) => { 
+			this.rootId = data.id; 
+			this.refHeader.refChild.setRootId(data.id);
+		});
 	};
 
 	onKeyDown (e: any) {
@@ -150,7 +164,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				};
 			};
 
-			this.data.nodes = message.nodes.map(it => detailStore.check(it));
+			this.data.nodes = message.nodes.map(it => detailStore.mapper(it));
 
 			DataUtil.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
 				error: {},
@@ -164,6 +178,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			if (this.refGraph) {
 				this.refGraph.init();
 			};
+
 			this.forceUpdate();
 		});
 	};
@@ -178,7 +193,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			loader.show().css({ opacity: 1 });
 		} else {
 			loader.css({ opacity: 0 });
-			window.setTimeout(() => { loader.hide(); }, 500);
+			window.setTimeout(() => { loader.hide(); }, 200);
 		};
 	};
 
@@ -193,7 +208,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		const header = node.find('#header');
 		const hh = header.height();
 		
-		let wh = isPopup ? oh : win.height();
+		let wh = isPopup ? oh - hh : win.height();
 
 		if (platform == I.Platform.Windows) {
 			wh -= Constant.size.headerWindows;
@@ -225,7 +240,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+		return this.rootId || (rootId ? rootId : match.params.id);
 	};
 
 	onSelect (id: string) {
@@ -306,6 +321,14 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				},
 			}
 		});
+	};
+
+	onTab (id: string) {
+		const tab = Tabs.find(it => it.id == id);
+
+		if (tab) {
+			ObjectUtil.openAuto({ id: this.getRootId(), layout: tab.layout });
+		};
 	};
 
 });

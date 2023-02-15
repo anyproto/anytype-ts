@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, focus, translate } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, focus, translate, keyboard } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import ControlButtons  from 'Component/page/head/controlButtons';
 import Constant from 'json/constant.json';
@@ -193,6 +193,8 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId, block } = this.props;
 		const node = $(this.node);
 		const elements = node.find('#elements');
+		const object = detailStore.get(rootId, rootId, []);
+		const { iconEmoji, iconImage } = object;
 		
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
@@ -203,6 +205,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 				elements.removeClass('hover');
 			},
 			data: {
+				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					ObjectUtil.setIcon(rootId, icon, '', () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
@@ -462,8 +465,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			return false;
 		};
 		
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(this.node);
 		
@@ -471,10 +472,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.y = e.pageY - this.rect.y - this.y;
 		this.onDragMove(e);
 
-		if (selection) {
-			selection.preventSelect(true);
-		};
-
+		keyboard.disableSelection(true);
 		node.addClass('isDragging');
 		
 		win.off('mousemove.cover mouseup.cover');
@@ -497,15 +495,10 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			return false;
 		};
 		
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(this.node);
 		
-		if (selection) {
-			selection.preventSelect(true);
-		};
-
+		keyboard.disableSelection(true);
 		win.off('mousemove.cover mouseup.cover');
 		node.removeClass('isDragging');
 		
@@ -516,16 +509,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	onScaleStart (e: any, v: number) {
-		if (!this._isMounted) {
-			return false;
-		};
-		
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		
-		if (selection) {
-			selection.preventSelect(true);
-		};
+		keyboard.disableSelection(true);
 	};
 	
 	onScaleMove (e: any, v: number) {
@@ -555,16 +539,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	onScaleEnd (e: any, v: number) {
-		if (!this._isMounted) {
-			return false;
-		};
-		
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-
-		if (selection) {
-			selection.preventSelect(false);
-		};
+		keyboard.disableSelection(false);
 		this.scale = v;
 	};
 	

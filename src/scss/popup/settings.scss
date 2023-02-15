@@ -235,7 +235,8 @@
 			.label { margin-bottom: 26px; }
 
 			.items { 
-				display: grid; grid-template-columns: repeat(4, 132px); grid-column-gap: 16px; grid-row-gap: 16px;
+				/*display: grid; grid-template-columns: repeat(4, 132px); grid-column-gap: 16px; grid-row-gap: 16px;*/
+				display: flex; justify-content: center; gap: 16px;
 			}
 			.item { 
 				width: 132px; height: 84px; border: 1px solid $colorBorderLight; border-radius: 8px; 
@@ -255,6 +256,7 @@
 
 			.item.notion .icon {  background-image: url('~img/icon/popup/settings/import/notion.svg'); }
 			.item.markdown .icon { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
+			.item.html .icon { background-image: url('~img/icon/popup/settings/import/html.svg'); }
 		}
 
 		.tabImportNotion, .tabImportMarkdown {

@@ -193,7 +193,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				) : ''}
 
 				<Editable 
-					ref={(ref: any) => { this.refEditable = ref; }}
+					ref={ref => this.refEditable = ref}
 					id="value"
 					classNameEditor={cv.join(' ')}
 					classNamePlaceholder={'c' + id}
@@ -646,8 +646,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+a`, preventDefault: true },
 			{ key: `${cmd}+[`, preventDefault: false },
 			{ key: `${cmd}+]`, preventDefault: false },
+			{ key: `tab`, preventDefault: true },
 			{ key: `shift+tab`, preventDefault: true },
 			{ key: `shift+space`, preventDefault: false },
+			{ key: `ctrl+shift+l`, preventDefault: false },
 		];
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
@@ -716,8 +718,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		keyboard.shortcut('backspace', e, (pressed: string) => {
-			if (keyboard.pressed.indexOf(Key.enter) >= 0) {
+			if (keyboard.pressed.includes(Key.enter)) {
 				ret = true;
+				return;
+			};
+
+			if (!range) {
 				return;
 			};
 
@@ -782,7 +788,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { filter } = commonStore;
 		const { id, content } = block;
 		const range = this.getRange();
-		const k = keyboard.eventKey(e);
 		const Markdown = {
 			'[\\*\\-\\+]':	 I.TextStyle.Bulleted,
 			'\\[\\]':		 I.TextStyle.Checkbox,
@@ -1158,7 +1163,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		
 		C.BlockListSetFields(rootId, [
 			{ blockId: id, fields: { ...fields, lang: v } },
-		], (message: any) => {
+		], () => {
 			Storage.set('codeLang', v);
 
 			focus.set(id, { from: l, to: l });
@@ -1226,38 +1231,40 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				menuStore.close('blockContext'); 
 			});
 
-			menuStore.open('blockContext', {
-				element: el,
-				recalcRect: () => { 
-					const rect = Util.selectionRect();
-					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
-				},
-				type: I.MenuType.Horizontal,
-				offsetY: 4,
-				vertical: I.MenuDirection.Bottom,
-				horizontal: I.MenuDirection.Center,
-				passThrough: true,
-				onClose: () => {
-					keyboard.disableContextClose(false);
-				},
-				data: {
-					blockId: block.id,
-					blockIds: [ block.id ],
-					rootId: rootId,
-					dataset: dataset,
-					range: { from: currentFrom, to: currentTo },
-					marks: this.marks,
-					isInsideTable,
-					onChange: (marks: I.Mark[]) => {
-						this.marks = marks;
-						this.setMarks(marks);
-
-						raf(() => {
-							focus.set(block.id, { from: currentFrom, to: currentTo });
-							focus.apply();
-						});
+			this.setText (this.marks, true, () => {
+				menuStore.open('blockContext', {
+					element: el,
+					recalcRect: () => { 
+						const rect = Util.selectionRect();
+						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
-				},
+					type: I.MenuType.Horizontal,
+					offsetY: 4,
+					vertical: I.MenuDirection.Bottom,
+					horizontal: I.MenuDirection.Center,
+					passThrough: true,
+					onClose: () => {
+						keyboard.disableContextClose(false);
+					},
+					data: {
+						blockId: block.id,
+						blockIds: [ block.id ],
+						rootId: rootId,
+						dataset: dataset,
+						range: { from: currentFrom, to: currentTo },
+						marks: this.marks,
+						isInsideTable,
+						onChange: (marks: I.Mark[]) => {
+							this.marks = marks;
+							this.setMarks(marks);
+
+							raf(() => {
+								focus.set(block.id, { from: currentFrom, to: currentTo });
+								focus.apply();
+							});
+						},
+					},
+				});
 			});
 		}, 150);
 	};

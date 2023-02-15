@@ -25,7 +25,12 @@ const HeadHandle = observer(class HeadHandle extends React.Component<Props> {
 		const { format, name, readonly, onClick } = this.props;
 
 		const Handle = SortableHandle(() => (
-			<div className="flex" onMouseDown={this.onMouseDown} onClick={onClick}>
+			<div 
+				className="flex" 
+				onMouseDown={this.onMouseDown} 
+				onClick={onClick}
+				onContextMenu={onClick}
+			>
 				{readonly ? <Icon className="lock" /> : ''}
 				<IconObject object={{ relationFormat: format, layout: I.ObjectLayout.Relation }} tooltip={name} />
 				<div className="name">{name}</div>

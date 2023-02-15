@@ -55,9 +55,6 @@ input, textarea, select { font-family: 'Inter'; }
 }
 
 #graphPreview { position: fixed; z-index: 1000; }
-#graphPreview {
-	.previewObject { background: $colorWhite; }
-}
 
 html.platformWindows {
 	#drag { height: 30px; z-index: 1000; display: block; }

@@ -42,21 +42,18 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			ccn.push('disabled');
 		};
 
-		if (isObject && !isReadonly) {
+		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
 			const length = this.objectTypes.length;
 			const typeId = length ? this.objectTypes[0] : '';
 			const type = dbStore.getType(typeId);
-			const typeProps: any = { name: 'Select object type' };
+			const typeProps: any = { 
+				name: 'Select object type',
+				caption: (length > 1 ? '+' + (length - 1) : ''),
+			};
 
 			if (type) {
 				typeProps.name = type.name;
 				typeProps.object = type;
-			};
-
-			typeProps.caption = length > 1 ? '+' + (length - 1) : '';
-
-			if (typeProps.caption) {
-				typeProps.withCaption = true;
 			};
 
 			opts = (
@@ -294,6 +291,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					name: relation.name, 
 					relationFormat: relation.format,
 					relationFormatObjectTypes: relation.objectTypes || [],
+					_index_: idx,
 				});
 				break;
 			};
@@ -597,7 +595,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
 
 			if (addCommand) {
-				addCommand(rootId, blockId, details, onChange);
+				addCommand(rootId, blockId, { ...details, _index_: item._index_ }, onChange);
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });

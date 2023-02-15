@@ -12,7 +12,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 	};
 
 	render () {
-		const { tabs, tab, onTab, onHome, onForward, onBack, onStore } = this.props;
+		const { tabs, tab, onTab, onHome, onForward, onBack } = this.props;
 		
 		return (
 			<React.Fragment>
@@ -25,8 +25,8 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 
 				<div className="side center">
 					<div id="tabs" className="tabs">
-						{tabs.map((item: any, i: number) => (
-							<div key={item.id} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={(e: any) => { onTab(item.id); }}>
+						{tabs.map((item: any) => (
+							<div key={`tab-store-${item.id}`} className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} onClick={() => { onTab(item.id); }}>
 								{item.name}
 							</div>
 						))}
@@ -45,7 +45,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ layout: I.ObjectLayout.Navigation });
+		ObjectUtil.openRoute({ layout: I.ObjectLayout.Store });
 	};
 
 });

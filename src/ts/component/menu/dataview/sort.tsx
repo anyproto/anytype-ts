@@ -303,24 +303,20 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset;
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 	
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex,  } = result;
-		const { param, dataset } = this.props;
-		const { selection } = dataset;
+		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
 		C.BlockDataviewSortSort(rootId, blockId, view.id, view.sorts.map(it => it.id));
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 		analytics.event('RepositionSort');
 	};
 

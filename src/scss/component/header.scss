@@ -9,7 +9,7 @@
 .header.snapLeft { right: 0px; }
 
 .header {
-	.sides { width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: stretch; }
+	.sides { height: 100%; width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: stretch; }
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; }
 	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; }
 	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
@@ -24,10 +24,10 @@
 	.tabs {
 		.tab { 
 			font-weight: 600; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
-			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%;
+			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(0,0,0,0);
 		}
 		.tab:hover { color: $colorBlack; }
-		.tab.active { color: $colorBlack; border-bottom: 1px solid $colorBlack; }
+		.tab.active { color: $colorBlack; border-color: $colorBlack; }
 	}
 
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
@@ -37,9 +37,6 @@
 	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
 	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
 
-	.icon.expand { display: none; }
-	.icon.nm { margin: 0px !important; }
-
 	.icon.home { background-image: url('~img/icon/header/home.svg'); }
 	.icon.back { background-image: url('~img/icon/header/back.svg'); }
 	.icon.forward { background-image: url('~img/icon/header/back.svg'); }
@@ -48,7 +45,7 @@
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.add { background-image: url('~img/icon/header/add.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
-	.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
+	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
 	.icon.graph { background-image: url('~img/icon/header/graph.svg'); }
 
 	.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
@@ -101,6 +98,7 @@
 	.path {
 		.inner { display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 4px; }
 		.name { @include text-overflow-nw; }
+		.iconObject { flex-shrink: 0; }
 	}
 	.path:hover { border-color: $colorBorderLight; }
 }
@@ -108,9 +106,8 @@
 	.path { border-color: $colorBorderLight; }
 }
 
-.header.mainGraph { position: absolute !important; }
 .header.mainGraph {
-	.side.right { gap: 0px 12px; width: auto; }
+	.side.right { gap: 0px 12px; }
 
 	.filterWrap { width: 0px; overflow: hidden; transition: $transitionFast; display: none; }
 	.filterWrap {

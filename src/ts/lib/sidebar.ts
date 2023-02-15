@@ -382,7 +382,7 @@ class Sidebar {
 		dummyRight.css({ width: 0 });
 
 		css.width = header.outerWidth() - width;
-		
+
 		if (fixed) {
 			header.addClass('withSidebar');
 			footer.addClass('withSidebar');

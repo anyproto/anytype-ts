@@ -436,7 +436,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				break;
 
 			case 'setCreate':
-				C.ObjectCreateSet([ object.type ], { name: type.name + ' set', iconEmoji: type.iconEmoji }, '', (message: any) => {
+				const details: any = {};
+
+				if (type) {
+					details.name = type.name + ' set';
+					details.iconEmoji = type.iconEmoji;
+				};
+
+				C.ObjectCreateSet([ object.type ], details, '', (message: any) => {
 					if (!message.error.code) {
 						ObjectUtil.openPopup(message.details);
 					};

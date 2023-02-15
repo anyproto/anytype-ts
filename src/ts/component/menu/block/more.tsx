@@ -36,7 +36,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 								key={i} 
 								{...action} 
 								icon={action.icon || action.id}
-								withCaption={action.caption} 
 								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
 								onClick={(e: any) => { this.onClick(e, action); }} 
 							/>
@@ -115,14 +114,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let pageInstall = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
-		let undo = { id: 'undo', name: 'Undo', withCaption: true, caption: `${cmd}+Z` };
-		let redo = { id: 'redo', name: 'Redo', withCaption: true, caption: `${cmd}+Shift+Z` };
-		let print = { id: 'print', name: 'Print', withCaption: true, caption: `${cmd}+P` };
-		let search = { id: 'search', name: 'Search on page', withCaption: true, caption: `${cmd}+F` };
+		let undo = { id: 'undo', name: 'Undo', caption: `${cmd}+Z` };
+		let redo = { id: 'redo', name: 'Redo', caption: `${cmd}+Shift+Z` };
+		let print = { id: 'print', name: 'Print', caption: `${cmd}+P` };
+		let search = { id: 'search', name: 'Search on page', caption: `${cmd}+F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let history = { id: 'history', name: 'Version history', withCaption: true, caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
+		let history = { id: 'history', name: 'Version history', caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
 		let share = { id: 'pageShare', icon: 'share', name: 'Share' };
 		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };

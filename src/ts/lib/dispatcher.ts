@@ -750,12 +750,12 @@ class Dispatcher {
 						const op = it.getOp();
 						const ids = it.getIdsList() || [];
 						const afterId = it.getAfterid();
-						const idx = afterId ? el.objectIds.indexOf(afterId) : 0;
+						const idx = afterId ? el.objectIds.indexOf(afterId) + 1 : 0;
 
 						switch (op) {
 							case I.SliceOperation.Add:
 								ids.forEach((id: string, i: number) => {
-									idx >= 0 ? el.objectIds.splice(idx + i + 1, 0, id) : el.objectIds.unshift(id);
+									idx >= 0 ? el.objectIds.splice(idx + i, 0, id) : el.objectIds.unshift(id);
 								});
 								break;
 
@@ -795,10 +795,10 @@ class Dispatcher {
 					if (subIds.length) {
 						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
 						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-							detailStore.update(subId, { id: id, details: details }, true);
+							detailStore.update(subId, { id, details }, true);
 						});
 					} else {
-						detailStore.update(rootId, { id: id, details: details }, true);
+						detailStore.update(rootId, { id, details }, true);
 
 						if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
 							blockStore.update(rootId, rootId, { layout: details.layout });
@@ -822,10 +822,10 @@ class Dispatcher {
 					if (subIds.length) {
 						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
 						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-							detailStore.update(subId, { id: id, details: details }, false);
+							detailStore.update(subId, { id, details }, false);
 						});
 					} else {
-						detailStore.update(rootId, { id: id, details: details }, false);
+						detailStore.update(rootId, { id, details }, false);
 
 						if ((id == rootId) && block) {
 							if ((undefined !== details.layout) && (block.layout != details.layout)) {
@@ -957,8 +957,9 @@ class Dispatcher {
 		};
 
 		const records = dbStore.getRecords(sid, '');
-		const oldIndex = records.indexOf(id);
-		const newIndex = afterId ? records.indexOf(afterId) : 0;
+		const newIndex = afterId ? records.indexOf(afterId) + 1 : 0;
+
+		let oldIndex = records.indexOf(id);
 
 		if (isAdding && (oldIndex >= 0)) {
 			return;
@@ -966,10 +967,11 @@ class Dispatcher {
 
 		if (oldIndex < 0) {
 			records.push(id);
+			oldIndex = records.indexOf(id);
 		};
 
 		if (oldIndex !== newIndex) {
-			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex + 1));
+			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
 		};
 	};
 

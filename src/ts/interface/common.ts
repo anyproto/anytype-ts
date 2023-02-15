@@ -92,6 +92,7 @@ export enum ImportType {
 	Notion	 = 0,
 	Markdown = 1,
 	External = 2,
+	Html	 = 3,
 };
 
 export enum ExportFormat {
@@ -134,7 +135,7 @@ export enum TabIndex {
 export interface HeaderComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
-	dataset?: any;
+	dataset?: I.Dataset;
 	tabs?: any[];
 	tab?: string;
 	onTab?: (id: string) => void;
@@ -145,8 +146,8 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	onNavigation?: () => void;
 	onGraph?: () => void;
 	onStore?: () => void;
-	onPathOver?: (e: any) => void;
-	onPathOut?: () => void;
+	onTooltipShow?: (e: any, text: string) => void;
+	onTooltipHide?: () => void;
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;
 };
 
@@ -154,13 +155,31 @@ export interface PageComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
 	matchPopup?: any;
-	dataset?: any;
+	dataset?: I.Dataset;
 	storageGet?(): any;
 	storageSet?(data: any): void;
 };
 
 export interface FooterComponent extends RouteComponentProps<any> {
 	onHelp?: (e: any) => void;
+	onTogglePanel?: (toggle: boolean) => void;
+};
+
+export interface ButtonComponent {
+	id?: string;
+	icon?: string;
+	type?: string;
+	subType?: string;
+	text?: string;
+	className?: string;
+	color?: string;
+	menu?: string;
+	withTabs?: boolean;
+	tooltip?: string;
+	tooltipX?: I.MenuDirection;
+	tooltipY?: I.MenuDirection;
+	showDot?: boolean;
+	onClick?(e: any): void;
 };
 
 export enum SurveyType {
@@ -176,4 +195,22 @@ export enum SliceOperation {
     Move	 = 2,
 	Remove	 = 3,
     Replace	 = 4,
+};
+
+export interface Dataset {
+	selection: {
+		checkSelected: (type: I.SelectType) => boolean;
+		renderSelection: () => void;
+		scrollToElement: (id: string, dir: number) => void;
+		set: (type: I.SelectType, ids: string[]) => void;
+		get: (type: I.SelectType, withChildren?: boolean) => string[];
+		clear: () => void;
+		hide: () => void;
+		isSelecting: boolean;
+	};
+	dragProvider: {
+		onScroll: () => void;
+	};
+	onDragStart: (e: React.DragEvent, dropType: I.DropType, ids: string[], component: unknown) => void;
+	preventCommonDrop: (value: boolean) => void;
 };

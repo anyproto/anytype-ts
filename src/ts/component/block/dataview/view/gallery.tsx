@@ -32,9 +32,9 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd } = this.props;
+		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd, getVisibleRelations } = this.props;
 		const view = getView();
-		const relations = view.getVisibleRelations();
+		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 		const { coverRelationKey, cardSize, hideIcon } = view;

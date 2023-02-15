@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
 import { Icon, Button } from 'Component';
-import { C, I, Util, analytics, Relation, Dataview } from 'Lib';
+import { C, I, Util, analytics, Relation, Dataview, keyboard } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -23,15 +23,15 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { className, rootId, block, getView, readonly, onRecordAdd, isInline } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, isInline } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
-		const allowedObject = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
+		const isAllowedObject = this.props.isAllowedObject();
 
 		if (className) {
 			cn.push(className);
@@ -41,21 +41,24 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			cn.push('isInline');
 		};
 
-		const buttons: any[] = [
-			{ id: 'filter', name: 'Filters', menu: 'dataviewFilterList' },
-			{ id: 'sort', name: 'Sorts', menu: 'dataviewSort' },
-			{ id: 'settings', name: 'Settings', menu: 'dataviewRelationList' },
+		const buttons: I.ButtonComponent[] = [
+			{ id: 'filter', text: 'Filters', menu: 'dataviewFilterList', showDot: filterCnt > 0 },
+			{ id: 'sort', text: 'Sorts', menu: 'dataviewSort', showDot: sortCnt > 0 },
+			{ id: 'settings', text: 'Settings', menu: 'dataviewRelationList' },
 		];
 
 		const ButtonItem = (item: any) => {
 			const elementId = `button-${block.id}-${item.id}`;
 			return (
-				<Icon 
-					id={elementId} 
-					className={item.id}
-					tooltip={item.name}
-					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu); }}
-				/>
+				<div className="iconWrap">
+					<Icon 
+						id={elementId} 
+						className={item.id}
+						tooltip={item.text}
+						onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu); }}
+					/>
+					{item.showDot ? <div className="dot" /> : ''}
+				</div>
 			);
 		};
 
@@ -116,7 +119,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 						{buttons.map((item: any, i: number) => (
 							<ButtonItem key={item.id} {...item} />
 						))}	
-						{!readonly && allowedObject ? (
+						{isAllowedObject ? (
 							<Button 
 								id={`button-${block.id}-add-record`}
 								color="addRecord orange" 
@@ -288,16 +291,12 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	};
 
 	onSortStart () {
-		const { dataset } = this.props;
-		const { selection } = dataset;
-
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 	};
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { rootId, block, dataset } = this.props;
-		const { selection } = dataset;
+		const { rootId, block } = this.props;
 
 		let views = dbStore.getViews(rootId, block.id);
 		let view = views[oldIndex];
@@ -308,7 +307,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			analytics.event('RepositionView');
 		});
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 	};
 
 	resize () {

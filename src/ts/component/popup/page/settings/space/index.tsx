@@ -4,6 +4,7 @@ import { C, DataUtil, I, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import Head from '../head';
 
 interface Props extends I.Popup {
     prevPage: string;
@@ -70,6 +71,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
         return (
             <div>
+				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
+
                 <div className="spaceSettingsHeader">
                     <IconObject
                         id="spacePic"
@@ -216,7 +219,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
                 return;
             };
 
-            this.team = message.records.map(it => detailStore.check(it)).filter(it => !it._empty_);
+            this.team = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
             this.forceUpdate();
         });
     };
