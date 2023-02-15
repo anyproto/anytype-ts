@@ -14,11 +14,18 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex extends React.Component<Props> {
 
 	render () {
+		const { config } = commonStore;
 		const { onPage } = this.props;
-		const items = [
+		
+		let items = [
 			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
+			{ id: 'html', name: 'HTML' },
 		];
+
+		if (!config.experimental) {
+			items = items.filter(it => [ 'notion', 'html' ].includes(it.id));
+		};
 
 		const Item = (item: any) => {
 			return (

@@ -92,6 +92,7 @@ export enum ImportType {
 	Notion	 = 0,
 	Markdown = 1,
 	External = 2,
+	Html	 = 3,
 };
 
 export enum ExportFormat {
