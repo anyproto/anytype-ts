@@ -47,16 +47,26 @@
 		.section::after { margin: 16px 32px; }
 
 		#section-featured::after { display: block; }
+		#section-featured {
+			.item {
+				.icon.fav { opacity: 1; }
+			}
+		}
 
 		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: overlay; }
 		.item { padding: 0px 26px; cursor: default; }
+		.item:hover {
+			.icon.fav { opacity: 1; }
+		}
+
 		.item {
 			.icon.plus { margin: 0px; }
 			.icon.lock { margin: 0px; }
+			.icon.dnd { display: none; }
 
 			.icon.fav {
 				width: 32px; height: 32px; background-size: 20px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; border-radius: 4px; 
-				margin: 0px; position: absolute; right: -38px; top: 0px;
+				margin: 0px; position: absolute; right: -38px; top: 0px; opacity: 0;
 			}
 			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
 			.icon.fav:hover { background-color: $colorHover; }
@@ -64,6 +74,9 @@
 			.info { 
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
 				flex-shrink: 0; padding: 6px; color: $colorDarkGrey; display: flex; gap: 0px 6px; align-items: center;
+			}
+			.info:hover {
+				.icon.dnd { display: block; }
 			}
 			.info.canEdit { cursor: pointer; }
 			.info.canEdit:hover { background: $colorHover; }

@@ -61,7 +61,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 							<MenuItemVertical 
 								key={i} 
 								{...action} 
-								withCaption={action.caption} 
 								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
 								onClick={(e: any) => { this.onClick(e, action); }} 
 							/>
@@ -251,31 +250,27 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasTurnList)	 sections.push(turnList);
 			if (hasTurnDiv)		 sections.push(turnDiv);
 			if (hasTurnFile)	 sections.push(turnFile);
+			if (hasTurnObject)	 sections.push(turnPage);
 			if (hasColor)		 sections.push(color);
 			if (hasBg)			 sections.push(bgColor);
-
-			if (hasDataview) {
-				sections.push(dataview);
-			};
+			if (hasDataview)	 sections.push(dataview);
 
 			if (hasAlign) {
-				align.children = MenuUtil.getAlign(hasQuote);
-				sections.push(align);
+				sections.push({ 
+					...align, 
+					children: MenuUtil.getAlign(hasQuote),
+				});
 			};
-			
+
 			if (hasAction) {
-				action.children = MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark, hasDataview });
-				sections.push(action);
+				sections.push({ 
+					...action, 
+					children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark }),
+				});
 			};
 
 			sections = MenuUtil.sectionsFilter(sections, filter);
 		} else {
-			const section2: any = { 
-				children: [
-					//{ id: 'comment', icon: 'comment', name: 'Comment' },
-				]
-			};
-
 			let hasTurnText = true;
 			let hasTurnObject = true;
 			let hasTurnDiv = true;
@@ -320,6 +315,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 			const section1: any = { 
 				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
+			};
+
+			const section2: any = { 
+				children: [
+					//{ id: 'comment', icon: 'comment', name: 'Comment' },
+				]
 			};
 
 			if (hasDataview) {
@@ -421,7 +422,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		};
 
 		const node = $(this.node);
-		const el = node.find('#item-' + item.id);
+		const el = node.find(`#item-${item.id}`);
 		const offsetX = node.outerWidth();
 		
 		let types: string[] = [];
@@ -593,6 +594,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 				];
 
+				const onCreate = () => {
+					window.setTimeout(() => {
+						$(window).trigger(`updateDataviewData.${block.id}`);
+					}, 50);
+				};
+
 				menuParam.data = Object.assign(menuParam.data, {
 					rootId,
 					blockId: block.id,
@@ -606,13 +613,13 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 							C.ObjectCreateSet([], {}, '', (message: any) => {
 								C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 									$(`#block-${block.id} #head-source-select`).trigger('click');
-									$(window).trigger(`updateDataviewData.${block.id}`);
+									onCreate();
 								});
 							});
 						},
 					},
 					onSelect: (item: any) => {
-						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id);
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
 					}
 				});
 				break;
@@ -722,8 +729,9 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 							this.setFocus(blockIds[0]);
 						});
 					};
-				};
+				} else
 
+				// Objects
 				if (item.isObject) {
 					this.moveToPage(item.objectTypeId);
 				};

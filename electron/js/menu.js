@@ -343,7 +343,7 @@ class MenuManager {
 			icon = 'icon-tray-white.png';
 		} else {
 			icon = `icon-tray-${(Util.isDarkTheme() ? 'white' : 'black')}.png`;
-		}
+		};
 		return path.join(Util.imagePath(), icon);
 	};
 

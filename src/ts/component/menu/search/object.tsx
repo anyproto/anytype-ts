@@ -93,7 +93,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					props.forceLetter = true;
 					props.iconSize = 40;
 				} else {
-					props.withCaption = true;
 					props.caption = (type ? type.name : undefined);
 				};
 
@@ -307,7 +306,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			fullText: filter,
 			offset: this.offset,
 			limit: Constant.limitMenuRecords,
-			ignoreWorkspace: ('undefined' == typeof(ignoreWorkspace) ? false : ignoreWorkspace),
+			ignoreWorkspace: (typeof ignoreWorkspace === 'undefined' ? false : ignoreWorkspace),
 		}, (message: any) => {
 			if (!this._isMounted) {
 				return;

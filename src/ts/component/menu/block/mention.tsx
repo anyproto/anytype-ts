@@ -70,7 +70,6 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						name={<ObjectName object={item} />}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
-						withCaption={true}
 						caption={type ? type.name : undefined}
 						style={param.style}
 						className={cn.join(' ')}

@@ -29,7 +29,6 @@ class MenuContext extends React.Component<I.Menu> {
 								key={i} 
 								{...action} 
 								icon={action.icon || action.id}
-								withCaption={action.caption} 
 								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
 								onClick={(e: any) => { this.onClick(e, action); }} 
 							/>

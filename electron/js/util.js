@@ -76,7 +76,7 @@ class Util {
 	};
 
 	dataPath () {
-		const version = app.getVersion();
+		const { channel } = ConfigManager.config;
 		const dataPath = [];
 
 		if (process.env.DATA_PATH) {
@@ -84,12 +84,11 @@ class Util {
 			dataPath.push(process.env.DATA_PATH);
 		} else {
 			dataPath.push(userPath);
-			if (is.development) {
-				dataPath.push('dev');
-			} else 
-			if (version.match('beta')) {
-				dataPath.push('beta');
+
+			if ([ 'alpha', 'beta' ].includes(channel)) {
+				dataPath.push(channel);
 			};
+
 			dataPath.push('data');
 		};
 

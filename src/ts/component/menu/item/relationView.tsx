@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, Util, DataUtil, Relation } from 'Lib';
+import { I, Util, Relation, keyboard } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -128,7 +128,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 			return;
 		};
 		
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 		selection.clear();
 
 		onDragStart(e, I.DropType.Relation, [ relationKey ], this);

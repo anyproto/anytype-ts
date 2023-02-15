@@ -67,7 +67,6 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 						name={item.name}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
-						withCaption={true}
 						caption={type ? type.name : undefined}
 						style={param.style}
 					/>

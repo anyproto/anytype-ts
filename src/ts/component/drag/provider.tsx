@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
-import { throttle } from 'lodash';
 import $ from 'jquery';
 import raf from 'raf';
+import { observer } from 'mobx-react';
+import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
 import { I, C, focus, keyboard, Util, scrollOnMove, Action, Preview } from 'Lib';
 import { blockStore } from 'Store';
@@ -213,7 +213,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		node.addClass('isDragging');
 		body.addClass('isDragging');
+		
 		keyboard.setDragging(true);
+		keyboard.disableSelection(true);
 		Preview.hideAll();
 
 		win.on('drag.drag', (e: any) => { this.onDrag(e); });
@@ -230,7 +232,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				selection.set(I.SelectType.Block, ids);
 			};
 			selection.hide();
-			selection.preventSelect(true);
 		};
 	};
 
@@ -255,8 +256,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	};
 
 	onDragEnd (e: any) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
 		const isPopup = keyboard.isPopup();
 		const node = $(this.node);
 		const container = Util.getScrollContainer(isPopup);
@@ -268,15 +267,13 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		this.unbind();
 
 		keyboard.setDragging(false);
+		keyboard.disableSelection(false);
+
 		node.removeClass('isDragging');
 		body.removeClass('isDragging');
 
 		container.off('scroll.drag');
 		sidebar.off('scroll.drag');
-
-		if (selection) {
-			selection.preventSelect(false);
-		};
 
 		$('.isDragging').removeClass('isDragging');
 		scrollOnMove.onMouseUp(e);

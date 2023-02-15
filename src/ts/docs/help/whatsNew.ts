@@ -18,7 +18,54 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`2023: Ready, Set... Declutter 😎`),
+	title(`Inline Sets are Here 😍`),
+	text(`Throughout the past months, our team has been researching &amp; designing solutions to our community's needs to manage several objects at once.`),
+	text(`As the first in a series of projects addressing this topic, we're happy to bring you inline sets, which will allow more flexible interaction between sets & objects, allowing you to freely embed the former within the latter. If February is about surprising your loved ones, consider this feature our early Valentine’s gift to you 💖`),
+
+	h2(`💎 Highlights of this Release`),
+
+	bullet(`<b>Inline Sets</b><br/>We've added a new block type - inline set. You can create an inline set using commands ${hl(`/inline`)} or ${hl(`/&lt;viewtype&gt;`)} to select gallery, grid, etc.<br/><br/>Once created, select an existing set as a source, or create a new one. Any changes you make to the inline set query, icon, or name will be synced with the source set. Meanwhile, views will not synced, but copied, which means you can tweak views to your current needs without worrying that your source set will be impacted.`),
+	video(`./img/help/31/1-inline-set.mp4`),
+
+	bullet(`<b>Library Redesign</b><br/>Your control panel for managing types &amp; relations got a facelift in 0.31.0. Descriptions have been removed and buttons have been updated for a lighter, cleaner look &amp; feel.`),
+	img(`./img/help/31/2-library.png`, 'full screen'),
+
+	h2(`⚡ Quality-of-Life Improvements`),
+
+	bullet(`<b>Notion Import via API</b><br/>Here by popular demand: importing your files directly from Notion to Anytype! The new integration preserves relationships between parent-child pages as links between imported Objects. Follow the instructions from the ${hl(`Settings &gt; Import &gt; Notion &gt; Learn more`)} section to set up your integration token and start importing your files to your space.`),
+	img(`./img/help/31/6-import.png`, 'full screen'),
+
+	bullet(`<b>Graph redesign</b><br/>We've re-worked the graph to include Object previews-on-hover, Icons as nodes, and directional arrows. We will continue to expand our graph functionality in the coming few releases, so stay tuned for further updates.`),
+	img(`./img/help/31/3-graph.png`, 'full screen'),
+
+	bullet(`<b>Gallery view Playback</b><br/>Sets of audio & video files now permit playback from gallery view. Using Page cover in set by Video for example, will make cards playable as well.`),
+	video(`./img/help/31/5-set-playback.mp4`),
+
+	bullet(`<b>Profile added to Settings</b><br/>You can now edit your profile name & picture from your account settings. Any changes made there will be immediately synced with your Profile object.`),
+	img(`./img/help/31/4-profile.png`, 'half screen'),
+
+	bullet(`<b>Upgrades to recovery phrase panel</b><br/>Buttons in the "Recovery Phrase" panel of your Settings menu now show "Hide" or "Show", depending on whether the phrase is blurred or not. Thanks, ${link('https://community.anytype.io/t/8029', 'sambouwer')}!`),
+
+	h2(`💻 Tech &amp; Performance`),
+	bullet(`Electron upgraded to 22.0.0`),
+	bullet(`Node update to 16.17.1`),
+	bullet(`Lots &amp; lots of code refactoring in preparation for opening our repositories`),
+	bullet(`We've changed the way we store view changes in sets (atomically instead of whole view model), to optimize for performance in sets &amp; objects containing inline sets.`),
+
+	h2(`🐛 Bug Fixes`),
+	bullet(`Fixed: The "Views" dropdown menu in sets is now working properly. Thanks, ${link('https://community.anytype.io/t/7945', 'isle9')}!`),
+	bullet(`Fixed: Editing text relations is now working properly. Thanks, ${link('https://community.anytype.io/t/7793', 'dzlg')}!`),
+	bullet(`Fixed: The views list in sets is no longer collapsing when sidebar is open`),
+	bullet(`Fixed: Object icons in the @mention menu are now displaying correctly`),
+	bullet(`Fixed: Divider blocks can now (again) be created by using three dashes. Thanks, ${link('https://community.anytype.io/t/8109', 'philoup')}!`),
+	bullet(`Fixed: Object counter is now working properly when deleting from Bin. Thanks, ${link('https://community.anytype.io/t/8073', 'sambouwer')}!`),
+	bullet(`Fixed: Objects containing ellipses and ranges are now working properly in the @mention menu`),
+	bullet(`Fixed: Lines are no longer deleted when using spellcheck. Thanks, ${link('https://community.anytype.io/t/8104', 'f0ca')}!`),
+	bullet(`Fixed: Center & Right align for LaTeX blocks is now working properly. Thanks, ${link('https://community.anytype.io/t/7725', 'uz4a8')}!`),
+
+	div(),
+
+	h1(`2023: Ready, Set... Declutter 😎`),
 	text(`Welcome to the first release of the new year! After some major refactoring work in the last quarter of 2022, we're pleased to deliver an update that we hope will allow you to clear the clutter from your account and start the new year with a clean, productive slate.`),
 
 	h2(`💎 Highlights of this Release`),

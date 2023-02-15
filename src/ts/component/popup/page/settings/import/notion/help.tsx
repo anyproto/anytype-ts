@@ -35,7 +35,7 @@ class PopupSettingsPageImportNotionHelp extends React.Component<Props> {
 						<img src="./img/help/notion/1-3.png" />
 					</li>
 					<li>
-						Create a name (e.g. Anytype). Check the Capabilities (for instance, Read comments). Then click Submit.
+						Create a name (e.g. Anytype). Check the Capabilities (Read content and Read user information are required for the integration process). 
 						<img src="./img/help/notion/1-4.png" />
 					</li>
 					<li>

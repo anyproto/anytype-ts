@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil, keyboard, Relation, Dataview } from 'Lib';
+import { I, keyboard, Relation, Dataview } from 'Lib';
 import { SortableElement } from 'react-sortable-hoc';
 import { menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -67,15 +67,15 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 			onOpen: () => { obj.addClass('active'); },
 			onClose: () => { obj.removeClass('active'); },
 			data: {
-				getData: getData,
-				getView: getView,
-				rootId: rootId,
+				getData,
+				getView,
+				rootId,
 				blockId: block.id,
 				relationId: relation.id,
-				readonly: readonly,
+				readonly,
 				extendedOptions: true,
 				addCommand: (rootId: string, blockId: string, relation: any) => {
-					Dataview.relationAdd(rootId, blockId, relation.relationKey, -1, getView());
+					Dataview.relationAdd(rootId, blockId, relation.relationKey, relation._index_, getView());
 				},
 			}
 		});

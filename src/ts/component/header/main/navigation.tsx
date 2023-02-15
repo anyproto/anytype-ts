@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Icon, IconObject } from 'Component';
+import { Icon } from 'Component';
 import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
-import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
 const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent> {
@@ -13,8 +12,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onGraph, onSearch, onPathOver, onPathOut } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const { onHome, onForward, onBack, tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
 
 		return (
 			<React.Fragment>
@@ -23,15 +21,21 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 					<Icon className="home big" tooltip="Home" onClick={onHome} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
-					<Icon className="graph big" tooltip="Open as graph" onClick={onGraph} />
 				</div>
 
 				<div className="side center">
-					<div id="path" className="path" onClick={onSearch} onMouseOver={onPathOver} onMouseOut={onPathOut}>
-						<div className="inner">
-							<IconObject object={object} size={18} />
-							<div className="name">{object.name}</div>
-						</div>
+					<div id="tabs" className="tabs">
+						{tabs.map((item: any, i: number) => (
+							<div 
+								key={i}
+								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
+								onClick={() => { onTab(item.id); }}
+								onMouseOver={e => onTooltipShow(e, item.tooltip)} 
+								onMouseOut={onTooltipHide}
+							>
+								{item.name}
+							</div>
+						))}
 					</div>
 				</div>
 

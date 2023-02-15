@@ -28,7 +28,7 @@ class Survey {
     show (type: I.SurveyType) {
         const prefix = Util.toCamelCase('survey-' + type);
 
-        analytics.event(prefix + 'Show');
+        analytics.event('SurveyShow', { type });
 
         popupStore.open('confirm', {
             onClose: () => {
@@ -69,11 +69,10 @@ class Survey {
 
 		Storage.set('survey', param);
 		Renderer.send('urlOpen', Util.sprintf(survey.url, account.id));
-        analytics.event(prefix + 'Open');
+        analytics.event('SurveyOpen', { type });
     };
 
     onSkip (type: I.SurveyType) {
-        const prefix = Util.toCamelCase('survey-' + type);
 		const param: any = {};
 
         switch (type) {
@@ -88,7 +87,7 @@ class Survey {
         };
 
 		Storage.set('survey', param);
-		analytics.event(prefix + 'Skip');
+		analytics.event('SurveySkip', { type });
     };
 
     checkPmf () {

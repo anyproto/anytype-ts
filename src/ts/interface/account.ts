@@ -16,9 +16,6 @@ export interface AccountInfo {
 	homeObjectId: string;
 	profileObjectId: string;
 	gatewayUrl: string;
-	marketplaceTypeObjectId: string;
-	marketplaceTemplateObjectId: string;
-	marketplaceRelationObjectId: string;
 	deviceId: string;
 	localStoragePath: string;
 	accountSpaceId: string;

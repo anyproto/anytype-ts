@@ -89,9 +89,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-
 		const win = $(window);
 		const node = $(this.node);
 		const offset = node.offset();
@@ -103,9 +100,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		sidebar.resizePage();
 
 		keyboard.setDragging(true);
-		if (selection) {
-			selection.preventSelect(true);
-		};
+		keyboard.disableSelection(true);
 
 		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', (e: any) => { this.onDragMove(e); });
@@ -122,15 +117,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	};
 
 	onDragEnd (e: React.MouseEvent) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 		keyboard.setDragging(false);
-
-		if (selection) {
-			selection.preventSelect(false);
-		};
+		keyboard.disableSelection(false);
 	};
 
     onResizeStart (e: React.MouseEvent, dir: I.MenuType) {
@@ -141,8 +130,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 			return;
 		};
 
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
 		const { fixed } = sidebar.data;
 		const node = $(this.node);
 		const win = $(window);
@@ -156,11 +143,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		this.ox = offset.left;
 		this.oy = offset.top;
 
-		if (selection) {
-			selection.preventSelect(true);
-		};
-
+		keyboard.disableSelection(true);
 		keyboard.setResize(true);
+
 		body.addClass(dir == I.MenuType.Vertical ? 'rowResize' : 'colResize');
 		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', (e: any) => { this.onResizeMove(e, dir); });
@@ -183,14 +168,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	};
 
 	onResizeEnd (e: React.MouseEvent, dir: I.MenuType) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-
-		if (selection) {
-			selection.preventSelect(false);
-		};
-
+		keyboard.disableSelection(false);
 		keyboard.setResize(false);
+
 		$('body').removeClass('rowResize colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 	};

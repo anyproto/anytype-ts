@@ -8,6 +8,12 @@
 .button.orange { background: $colorOrange; color: $colorWhite; }
 .button.orange:hover { background: #f09c0e; }
 
+.button.black { background: $colorBlack; color: $colorWhite; }
+.button.black:hover { color: $colorSecondary; }
+.button.black {
+	.arrow { background-image: url('~img/arrow/button/white.svg'); }
+}
+
 .button.red { background: $colorRed; color: $colorWhite; }
 .button.red:hover { background: #cc481d; }
 
@@ -35,6 +41,7 @@ input.button { line-height: 1; }
 
 .button {
 	.icon { margin-right: 10px; }
+	.arrow { display: inline-block; width: 8px; height: 8px; margin: 0px 0px 0px 4px; }
 }
 
 .button.simple { 

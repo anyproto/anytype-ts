@@ -823,7 +823,7 @@ class DataUtil {
 			};
 
 			if (callBack) {
-				const records = message.records.map(it => detailStore.check(it)).filter(it => !it._empty_);
+				const records = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
 				callBack(records);
 			};
 		});

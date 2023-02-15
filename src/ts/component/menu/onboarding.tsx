@@ -150,7 +150,7 @@ class MenuOnboarding extends React.Component<I.Menu> {
 
 	onClick (e: any, next: number) {
 		const { data, onOpen, onClose } = this.props.param;
-		const { key, isPopup } = data;
+		const { key, isPopup, options } = data;
 		const items = Docs.Help.Onboarding[key].items;
 		const item = items[next];
 
@@ -158,7 +158,10 @@ class MenuOnboarding extends React.Component<I.Menu> {
 			return;
 		};
 
-		const param = Onboarding.getParam(item, isPopup);
+		let param = Onboarding.getParam(item, isPopup);
+		if (options.parseParam) {
+			param = options.parseParam(param);
+		};
 
 		menuStore.open('onboarding', {
 			...param,

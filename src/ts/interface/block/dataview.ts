@@ -116,10 +116,12 @@ export interface ViewComponent {
 	getKeys?(viewId: string): string[];
 	getIdPrefix?(): string;
 	getLimit?(): number;
+	getVisibleRelations?(): I.ViewRelation[];
 	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
+	isAllowedObject?: () => boolean;
 };
 
 export interface ViewEmpty {

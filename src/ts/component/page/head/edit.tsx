@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, DataUtil, ObjectUtil, analytics } from 'Lib';
-import { Block, Drag, Button } from 'Component';
+import { I, M, C, DataUtil, ObjectUtil, analytics, keyboard } from 'Lib';
+import { Block, Drag } from 'Component';
 import { blockStore, detailStore } from 'Store';
 
 interface Props extends I.BlockComponent {
@@ -37,12 +37,12 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		const templateIsBundled = object.templateIsBundled;
 
 		if (root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
 		};
 
+		/*
 		let note = null;
 		if (templateIsBundled) {
 			note = (
@@ -60,7 +60,8 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 					</div>
 				</div>
 			);
-		}
+		};
+		*/
 
 		return (
 			<div ref={node => this.node = node}>
@@ -75,8 +76,6 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 					/>
 					<div id="dragValue" className="number">100%</div>
 				</div>
-
-				{note}
 
 				{check.withCover ? <Block {...this.props} key={cover.id} block={cover} className="noPlus" /> : ''}
 				{check.withIcon ? <Block {...this.props} key={icon.id} block={icon} className="noPlus" /> : ''}
@@ -120,10 +119,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 	};
 
 	onScaleStart (e: any, v: number) {
-		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		
-		selection.preventSelect(true);
+		keyboard.disableSelection(true);
 		this.setPercent(v);
 	};
 	
@@ -133,10 +129,9 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 	};
 	
 	onScaleEnd (e: any, v: number) {
-		const { rootId, dataset } = this.props;
-		const { selection } = dataset || {};
+		const { rootId } = this.props;
 
-		selection.preventSelect(false);
+		keyboard.disableSelection(false);
 		this.setPercent(v);
 
 		C.BlockListSetFields(rootId, [

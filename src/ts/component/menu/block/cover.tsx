@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, DataUtil, analytics, Util, translate, ObjectUtil } from 'Lib';
+import { I, C, DataUtil, analytics, Util, translate, ObjectUtil, keyboard } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -153,6 +153,9 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	componentDidMount () {
 		this._isMounted = true;
 		this.load();
+		this.rebind();
+
+		keyboard.disablePaste(true);
 	};
 
 	componentDidUpdate () {
@@ -166,6 +169,18 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+
+		keyboard.disablePaste(false);
+	};
+
+	unbind () {
+		$(window).off('paste.menuBlockCover');
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('paste.menuBlockCover', e => this.onPaste(e));
 	};
 
 	load () {
@@ -389,6 +404,35 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 			};
 		
 			close();
+		});
+	};
+
+	onPaste (e: any) {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const files = Util.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
+
+		if (!files.length) {
+			return;
+		};
+
+		this.setState({ loading: true });
+
+		Util.saveClipboardFiles(files, {}, (data: any) => {
+			if (!data.files.length) {
+				this.setState({ loading: false });
+				return;
+			};
+
+			C.FileUpload('', data.files[0].path, I.FileType.Image, (message: any) => {
+				if (!message.error.code) {
+					ObjectUtil.setCover(rootId, I.CoverType.Upload, message.hash);
+				};
+
+				this.setState({ loading: false });
+				close();
+			});
 		});
 	};
 

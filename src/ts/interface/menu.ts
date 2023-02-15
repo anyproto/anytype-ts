@@ -73,7 +73,6 @@ export interface MenuItem {
 	className?: string;
 	isActive?: boolean;
 	withDescription?: boolean;
-	withCaption?: boolean;
 	withSwitch?: boolean;
 	withSelect?: boolean;
 	switchValue?: boolean;
