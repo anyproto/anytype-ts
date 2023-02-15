@@ -20,11 +20,12 @@ class Relation {
 		return Util.toCamelCase('is-' + I.RelationType[v]);
 	};
 
-	public cellId (prefix: string, relationKey: string, id: any) {
-		if (undefined === id) {
-			id = '';
-		};
-		return [ prefix, relationKey, id.toString() ].join('-');
+	public cellId (prefix: string, relationKey: string, id: string|number) {
+		return [ 
+			String(prefix || ''), 
+			String(relationKey || ''), 
+			String(id || ''),
+		].join('-');
 	};
 
 	public width (width: number, format: I.RelationType): number {
@@ -32,7 +33,7 @@ class Relation {
 		return Number(width || size['format' + format]) || size.default;
 	};
 
-	public filterConditionsByType (type: I.RelationType): any[] {
+	public filterConditionsByType (type: I.RelationType): { id: I.FilterCondition, name: string}[] {
 		let ret = [
 			{ id: I.FilterCondition.None,		 name: translate('filterConditionNone') }, 
 		];
@@ -107,7 +108,7 @@ class Relation {
 			return [];
 		};
 
-		let ret: any[] = [];
+		let ret: { id: I.FilterQuickOption, name: string }[] = [];
 
 		switch (type) {
 			case I.RelationType.Date: {
@@ -403,7 +404,7 @@ class Relation {
 		return [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone ].includes(type);
 	};
 
-	public getUrlScheme (type: I.RelationType, value: any): string {
+	public getUrlScheme (type: I.RelationType, value: string): string {
 		value = String(value || '');
 
 		let ret = '';
