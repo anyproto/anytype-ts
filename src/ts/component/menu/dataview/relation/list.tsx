@@ -330,20 +330,20 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 
-		return Dataview.viewGetRelations(rootId, blockId, view).map((it: any) => {
-			it.id = it.relationKey;
-			it.relation = dbStore.getRelationByKey(it.relationKey) || {};
-			return it;
-		});
+		return Dataview.viewGetRelations(rootId, blockId, view).map((it: any) => ({ 
+			...it,
+			id: it.relationKey,
+			relation: dbStore.getRelationByKey(it.relationKey) || {},
+		}));
 	};
 
 	resize () {
 		const { getId, position } = this.props;
 		const items = this.getItems();
-		const obj = $('#' + getId() + ' .content');
+		const obj = $(`#${getId()} .content`);
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 58));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 	

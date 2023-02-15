@@ -151,7 +151,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			return;
 		};
 
-		const { rootId, block, readonly, getData, getView, getSources, isInline } = this.props;
+		const { rootId, block, readonly, getData, getView, getSources, getVisibleRelations, isInline } = this.props;
 		const view = getView();
 		const obj = $(element);
 		const node = $(this.node);
@@ -176,6 +176,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				getData,
 				getView,
 				getSources,
+				getVisibleRelations,
 				isInline,
 				view: observable.box(view),
 			},

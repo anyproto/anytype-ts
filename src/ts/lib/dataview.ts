@@ -48,9 +48,13 @@ class Dataview {
 			return 0;
 		});
 
-		let ret = relations.map((relation: any) => {
+		const ret = relations.map((relation: any) => {
 			const vr = (view.relations || []).find(it => it.relationKey == relation.relationKey) || {};
-			
+
+			if (!vr.relationKey) {
+				console.log(relation.relationKey, 'not found');
+			};
+
 			if (relation.relationKey == 'name') {
 				vr.isVisible = true;
 			};
