@@ -24,10 +24,10 @@
 	.tabs {
 		.tab { 
 			font-weight: 600; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
-			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%;
+			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(0,0,0,0);
 		}
 		.tab:hover { color: $colorBlack; }
-		.tab.active { color: $colorBlack; border-bottom: 1px solid $colorBlack; }
+		.tab.active { color: $colorBlack; border-color: $colorBlack; }
 	}
 
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
