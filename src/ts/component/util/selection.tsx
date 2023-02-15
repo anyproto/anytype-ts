@@ -457,7 +457,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.renderSelection();
 	};
 	
-	get (type: I.SelectType, withChildren?: boolean): any {
+	get (type: I.SelectType, withChildren?: boolean): string[] {
 		let ids = Util.objectCopy(this.ids.get(type) || []);
 
 		if (type == I.SelectType.Block) {

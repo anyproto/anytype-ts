@@ -23,6 +23,7 @@ import {
 	FooterComponent,
 	SurveyType,
 	SliceOperation,
+	Dataset,
 	ButtonComponent,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
@@ -91,6 +92,7 @@ export {
 	FooterComponent,
 	SurveyType,
 	SliceOperation,
+	Dataset,
 	ButtonComponent,
 
 	ImportType,

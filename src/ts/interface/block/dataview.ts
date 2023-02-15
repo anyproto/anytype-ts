@@ -104,7 +104,7 @@ export interface ViewComponent {
 	readonly: boolean;
 	bodyContainer?: string;
 	pageContainer?: string;
-	dataset?: any;
+	dataset?: I.Dataset;
 	isPopup?: boolean;
 	isInline?: boolean;
 	className?: string;

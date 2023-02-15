@@ -135,7 +135,7 @@ export enum TabIndex {
 export interface HeaderComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
-	dataset?: any;
+	dataset?: I.Dataset;
 	tabs?: any[];
 	tab?: string;
 	onTab?: (id: string) => void;
@@ -155,7 +155,7 @@ export interface PageComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;
 	matchPopup?: any;
-	dataset?: any;
+	dataset?: I.Dataset;
 	storageGet?(): any;
 	storageSet?(data: any): void;
 };
@@ -195,4 +195,22 @@ export enum SliceOperation {
     Move	 = 2,
 	Remove	 = 3,
     Replace	 = 4,
+};
+
+export interface Dataset {
+	selection: {
+		checkSelected: (type: I.SelectType) => boolean;
+		renderSelection: () => void;
+		scrollToElement: (id: string, dir: number) => void;
+		set: (type: I.SelectType, ids: string[]) => void;
+		get: (type: I.SelectType, withChildren?: boolean) => string[];
+		clear: () => void;
+		hide: () => void;
+		isSelecting: boolean;
+	};
+	dragProvider: {
+		onScroll: () => void;
+	};
+	onDragStart: (e: React.DragEvent, dropType: I.DropType, ids: string[], component: unknown) => void;
+	preventCommonDrop: (value: boolean) => void;
 };

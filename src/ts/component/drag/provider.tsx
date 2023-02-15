@@ -9,7 +9,7 @@ import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
-	dataset?: any;
+	dataset?: I.Dataset;
 	children?: React.ReactNode;
 };
 
