@@ -9,7 +9,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 
 	render () {
 		const { 
-			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withCaption, withSwitch, withSelect,
+			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect,
 			className, style, iconSize, switchValue, selectValue, options, readonly, forceLetter, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave,
 			selectMenuParam,
 		} = this.props;
@@ -29,7 +29,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		if (withDescription) {
 			cn.push('withDescription');
 		};
-		if (withCaption) {
+		if (caption) {
 			cn.push('withCaption');
 		};
 		if (withSwitch) {

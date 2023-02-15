@@ -215,13 +215,13 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			description = descriptions.find(it => it.id == content.description) || descriptions[0];
 		};
 
-		const itemStyle = { id: 'cardStyle', name: 'Preview layout', caption: style.name, withCaption: true, arrow: true };
-		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, withCaption: true, arrow: true } : null;
+		const itemStyle = { id: 'cardStyle', name: 'Preview layout', caption: style.name, arrow: true };
+		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, arrow: true } : null;
 		const itemCover = canCover ? { id: 'cover', name: 'Cover', withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
 		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + Relation.className(I.RelationType.ShortText) };
 		const itemDescription = canDescription ? { 
 			id: 'description', name: 'Description', icon: 'relation ' + Relation.className(I.RelationType.LongText), 
-			caption: description.name, withCaption: true, arrow: true
+			caption: description.name, arrow: true
 		} : null;
 		const itemTags = { id: 'tag', name: 'Tags', icon: 'relation ' + Relation.className(I.RelationType.Tag), withSwitch: true, switchValue: this.hasRelationKey('tag') };
 		const itemType = { id: 'type', name: 'Object type', icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };

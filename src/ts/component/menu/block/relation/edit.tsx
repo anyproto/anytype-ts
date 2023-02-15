@@ -59,17 +59,14 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			const length = this.objectTypes.length;
 			const typeId = length ? this.objectTypes[0] : '';
 			const type = dbStore.getType(typeId);
-			const typeProps: any = { name: 'Select object type' };
+			const typeProps: any = { 
+				name: 'Select object type',
+				caption: (length > 1 ? '+' + (length - 1) : ''),
+			};
 
 			if (type) {
 				typeProps.name = type.name;
 				typeProps.object = type;
-			};
-
-			typeProps.caption = length > 1 ? '+' + (length - 1) : '';
-
-			if (typeProps.caption) {
-				typeProps.withCaption = true;
 			};
 
 			opts = (
