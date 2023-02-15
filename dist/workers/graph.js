@@ -14,7 +14,6 @@ const util = new Util();
 
 // CONSTANTS
 
-const fontFamily = 'Helvetica';
 const transformThreshold = 1.5;
 
 const ObjectLayout = {
@@ -71,6 +70,7 @@ let time = 0;
 let isHovering = false;
 let edgeMap = new Map();
 let hoverAlpha = 0.2;
+let fontFamily = 'Helvetica';
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -88,6 +88,7 @@ init = (param) => {
 	util.ctx = ctx;
 	resize(data);
 	initTheme(data.theme);
+	initFonts();
 
 	ctx.lineCap = 'round';
 	ctx.fillStyle = Color.bg;
@@ -142,6 +143,18 @@ initTheme = (theme) => {
 			};
 			break;
 	};
+};
+
+initFonts = () => {
+	if (!self.FontFace) {
+		return;
+	};
+
+	const name = 'Inter';
+	const fontFace = new FontFace(name, `url("../font/inter/regular.ttf") format("truetype")`);
+
+	self.fonts.add(fontFace);
+	fontFace.load().then(() => { fontFamily = name; });
 };
 
 image = ({ src, bitmap }) => {
