@@ -36,7 +36,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 					
-					{showGraph ? <Icon className="graph big nm" tooltip="Open as graph" onClick={onGraph} /> : ''}
+					{showGraph ? <Icon className="graph big" tooltip="Open as graph" onClick={onGraph} /> : ''}
 				</div>
 
 				<div className="side center">

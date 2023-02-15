@@ -37,9 +37,6 @@
 	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
 	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
 
-	.icon.expand { display: none; }
-	.icon.nm { margin: 0px !important; }
-
 	.icon.home { background-image: url('~img/icon/header/home.svg'); }
 	.icon.back { background-image: url('~img/icon/header/back.svg'); }
 	.icon.forward { background-image: url('~img/icon/header/back.svg'); }
@@ -48,7 +45,7 @@
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
 	.icon.add { background-image: url('~img/icon/header/add.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
-	.icon.expand { background-image: url('~img/icon/header/expand.svg'); }
+	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
 	.icon.graph { background-image: url('~img/icon/header/graph.svg'); }
 
 	.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
