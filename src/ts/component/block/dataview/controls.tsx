@@ -212,33 +212,13 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	onViewAdd (e: any) {
 		e.persist();
 
-		const { rootId, block, getView, getSources } = this.props;
-		const view = getView();
-		const relations = Util.objectCopy(view.relations);
-		const filters: I.Filter[] = [];
+		const { rootId, block, getSources } = this.props;
 		const sources = getSources();
-
-		for (let relation of relations) {
-			if (relation.isHidden || !relation.isVisible) {
-				continue;
-			};
-
-			filters.push({
-				relationKey: relation.relationKey,
-				operator: I.FilterOperator.And,
-				condition: I.FilterCondition.None,
-				value: null,
-			});
-		};
 
 		const newView = {
 			name: `New view`,
 			type: I.ViewType.Grid,
 			groupRelationKey: Relation.getGroupOption(rootId, block.id, '')?.id,
-			filters,
-			relations: [
-				{ relationKey: 'name', isVisible: true }
-			]
 		};
 
 		C.BlockDataviewViewCreate(rootId, block.id, newView, sources, (message: any) => {
