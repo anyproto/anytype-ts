@@ -11,6 +11,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	n = -1;
 	ref: any = null;
 	isFocused = false;
+	preventSaveOnClose = false;
 	param: any = {};
 
 	constructor (props: I.Menu) {
@@ -94,7 +95,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 
 	componentWillUnmount () {
 		this.unbind();
-		this.save();
+		if (!this.preventSaveOnClose) {
+			this.save();
+		};
 
 		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
@@ -414,6 +417,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			this.save();
 		} else 
 		if (view.id) {
+			this.preventSaveOnClose = true;
 			close();
 
 			switch (item.id) {
