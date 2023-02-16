@@ -14,22 +14,11 @@ interface Props extends I.Popup {
 const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex extends React.Component<Props> {
 
 	render () {
-		const { config } = commonStore;
-		const { onPage } = this.props;
-		
-		let items = [
-			{ id: 'notion', name: 'Notion' },
-			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'html', name: 'HTML' },
-		];
-
-		if (!config.experimental) {
-			items = items.filter(it => [ 'html' ].includes(it.id));
-		};
+		const items = this.getItems();
 
 		const Item = (item: any) => {
 			return (
-				<div className={[ 'item', item.id ].join(' ')} onClick={() => { onPage(Util.toCamelCase('import-' + item.id)); }} >
+				<div className={[ 'item', item.id ].join(' ')} onClick={() => { this.onClick(item.id); }} >
 					<div className="txt">
 						<Icon />
 						<div className="name">{item.name}</div>
@@ -52,6 +41,59 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 				</div>
 			</div>
 		);
+	};
+
+	onClick (id: string) {
+		const { onPage } = this.props;
+		const items = this.getItems();
+		const item = items.find(it => it.id == id);
+		const fn = Util.toCamelCase('onImport-' + item.id);
+
+		if (item.skipPage && this[fn]) {
+			 this[fn]();
+		} else {
+			onPage(Util.toCamelCase('import-' + item.id));
+		};
+	};
+
+	getItems () {
+		const { config } = commonStore;
+		
+		let items = [
+			{ id: 'notion', name: 'Notion' },
+			{ id: 'markdown', name: 'Markdown' },
+			{ id: 'html', name: 'HTML', skipPage: true },
+		];
+		if (!config.experimental) {
+			items = items.filter(it => [ 'html' ].includes(it.id));
+		};
+
+		return items;
+	};
+
+	onImportHtml () {
+		const { close, onImport } = this.props;
+		const platform = Util.getPlatform();
+		const options: any = { 
+			properties: [ 'openFile' ],
+			filters: [
+				{ name: '', extensions: [ 'zip', 'html', 'htm', 'mhtml' ] }
+			]
+		};
+
+		if (platform == I.Platform.Mac) {
+			options.properties.push('openDirectory');
+		};
+
+		window.Electron.showOpenDialog(options).then((result: any) => {
+			const files = result.filePaths;
+			if ((files == undefined) || !files.length) {
+				return;
+			};
+
+			close();
+			onImport(I.ImportType.Html, { paths: files });
+		});
 	};
 
 });
