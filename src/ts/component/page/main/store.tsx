@@ -73,6 +73,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let textInstalled = '';
 		let textInstall = '';
 		let textEmpty = '';
+		let iconSize = 0;
 
 		switch (this.tab) {
 			case Tab.Type:
@@ -82,6 +83,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				textInstalled = 'Type is installed';
 				textInstall = 'Install type';
 				textEmpty = '<b>Your type list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
+				iconSize = 18;
 				break;
 
 			case Tab.Relation:
@@ -91,6 +93,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				textInstalled = 'Relation is installed';
 				textInstall = 'Install relation';
 				textEmpty = '<b>Your relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
+				iconSize = 20;
 				break;
 		};
 
@@ -152,7 +155,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return (
 				<div className={cn.join(' ')}>
 					<div className="flex" onClick={(e: any) => { this.onClick(e, item); }}>
-						<IconObject object={item} />
+						<IconObject iconSize={iconSize} object={item} />
 						<div className="name">{item.name}</div>
 					</div>
 
