@@ -184,13 +184,13 @@ class Keyboard {
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, () => {
 				e.preventDefault();
-				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
+				ObjectUtil.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
 			this.shortcut(`${cmd}+alt+o`, e, () => {
 				e.preventDefault();
-				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				ObjectUtil.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
 			// Go to dashboard
