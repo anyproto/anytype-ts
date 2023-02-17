@@ -30,14 +30,14 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
-				<Frame className="animation" dataset={{ 'animation-index-from': 4 }}>
+				<Frame className="animation" dataset={{ 'animation-index-from': 3 }}>
 					<Title className="animation" dataset={{ 'animation-index-from': 0 }} text={translate('authSelectTitle')} />
 					<Label className="animation" dataset={{ 'animation-index-from': 1 }} text={translate('authSelectLabel')} />
 					<Error text={error} />
 								
-					<div className="buttons">
-						<Button className="animation" dataset={{ 'animation-index-from': 2 }} text={translate('authSelectLogin')} type="input" onClick={this.onLogin} />
-						<Button className="animation" dataset={{ 'animation-index-from': 3 }} text={translate('authSelectSignup')} type="input" color="grey" onClick={this.onRegister} />
+					<div className="buttons animation" {...Util.dataProps({ 'animation-index-from': 2 })}>
+						<Button text={translate('authSelectLogin')} type="input" onClick={this.onLogin} />
+						<Button text={translate('authSelectSignup')} type="input" color="grey" onClick={this.onRegister} />
 					</div>
 				</Frame>
 			</div>

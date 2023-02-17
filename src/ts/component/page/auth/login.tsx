@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Title, Input, Error, Button, Header, Footer, Icon } from 'Component';
-import { I, Util, translate, C, keyboard } from 'Lib';
+import { I, Util, translate, C, keyboard, Animation } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -34,18 +34,29 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
-				<Frame>
-					<div className="authBackWrap" onClick={this.onCancel}>
+				<Frame className="animation" dataset={{ 'animation-index-from': 4 }}>
+					<div 
+						className="backWrap animation" 
+						onClick={this.onCancel}
+						{...Util.dataProps({ 'animation-index-from': 0 })}
+					>
 						<Icon className="back" />
 						<div className="name">{translate('commonBack')}</div>
 					</div>
-					<Title text={translate('authLoginTitle')} />
+					<Title text={translate('authLoginTitle')} className="animation" {...Util.dataProps({ 'animation-index-from': 1 })} />
 					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
-						<Input ref={(ref: any) => this.phraseRef = ref} placeholder={translate('authLoginLabel')} onKeyDown={this.onKeyDown} />
+						<div className="animation" {...Util.dataProps({ 'animation-index-from': 2 })}>
+							<Input 
+								ref={(ref: any) => this.phraseRef = ref} 
+								className="animation" 
+								placeholder={translate('authLoginLabel')} 
+								onKeyDown={this.onKeyDown} 
+							/>
+						</div>
 
-						<div className="buttons">
+						<div className="buttons animation" {...Util.dataProps({ 'animation-index-from': 3 })}>
 							<Button type="input" text={translate('authLoginLogin')} />
 						</div>
 					</form>
@@ -55,6 +66,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	componentDidMount () {
+		Animation.to();
 		this.phraseRef.focus();
 	};
 	
@@ -89,7 +101,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	onCancel (e: any) {
-		Util.route('/auth/select');
+		Animation.from(() => { Util.route('/auth/select'); });
 	};
 	
 });

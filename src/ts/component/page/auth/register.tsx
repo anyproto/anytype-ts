@@ -39,7 +39,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
-					<div className="authBackWrap" onClick={this.onCancel}>
+					<div className="backWrap" onClick={this.onCancel}>
 						<Icon className="back" />
 						<div className="name">{translate('commonBack')}</div>
 					</div>

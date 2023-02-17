@@ -1,6 +1,7 @@
 import raf from 'raf';
+import $ from 'jquery';
 
-const DELAY = 0.1;
+const DURATION = 0.15;
 
 enum Direction {
 	From =  0,
@@ -10,29 +11,27 @@ enum Direction {
 class Animation {
 
 	to (callBack?: () => void) {
-		const nodes = this.initNodes({ opacity: 0, transform: 'scale3d(0.95,0.95, 1)' }, Direction.To);
+		const nodes = this.initNodes({ opacity: 0, transform: 'scale3d(0.9,0.9, 1)' }, Direction.To);
 
 		raf(() => {
 			nodes.css({ opacity: 1, transform: 'scale3d(1,1,1)' });
 		});
 
 		if (callBack) {
-			window.setTimeout(callBack, (nodes.length + 1) * DELAY * 1000);
+			window.setTimeout(callBack, (nodes.length + 1) * DURATION * 1000);
 		};
 	};
 
 	from (callBack?: () => void) {
-		const nodes = this.initNodes({ opacity: 1 }, Direction.From);
+		const nodes = this.initNodes({ opacity: 1, transform: 'scale3d(1,1,1)' }, Direction.From);
 
 		raf(() => {
-			nodes.css({ opacity: 0 });
+			nodes.css({ opacity: 0, transform: 'scale3d(0.9,0.9, 1)' });
 		});
 
-		window.setTimeout(() => {
-			if (callBack) {
-				callBack();
-			};
-		}, (nodes.length + 1) * DELAY * 1000);
+		if (callBack) {
+			window.setTimeout(callBack, (nodes.length + 1) * DURATION * 1000);
+		};
 	};
 
 	initNodes (css: any, dir: Direction) {
@@ -55,24 +54,20 @@ class Animation {
 				};
 			};
 
-			console.log(dir, index, {
-				transitionProperty: Object.keys(css).join(','),
-				transitionDuration: `${DELAY}s`,
-				transitionTimingFunction: 'ease-in-out',
-				transitionDelay: `${DELAY * index}s`,
-				...css,
-			});
-
 			item.css({ ...css, transition: '' });
 
 			raf(() => {
 				item.css({
 					transitionProperty: Object.keys(css).join(','),
-					transitionDuration: `${DELAY}s`,
-					transitionTimingFunction: 'ease-in-out',
-					transitionDelay: `${DELAY * index}s`,
+					transitionDuration: `${DURATION}s`,
+					transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+					transitionDelay: `${DURATION * index}s`,
 				});
 			});
+
+			window.setTimeout(() => {
+				item.css({ transition: '' });
+			}, DURATION * (index + 1) * 1000);
 		});
 
 		return nodes;

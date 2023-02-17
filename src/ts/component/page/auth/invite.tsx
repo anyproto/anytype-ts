@@ -33,7 +33,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
-					<div className="authBackWrap" onClick={this.onCancel}>
+					<div className="backWrap" onClick={this.onCancel}>
 						<Icon className="back" />
 						<div className="name">{translate('commonBack')}</div>
 					</div>
