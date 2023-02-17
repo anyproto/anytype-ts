@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Label, Error, Input, Button, Header, Footer, Icon } from 'Component';
-import { FileUtil, Util, translate, I, Action } from 'Lib';
+import { FileUtil, Util, translate, I, Action, Animation } from 'Lib';
 import { commonStore, authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -38,8 +38,12 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
-				<Frame>
-					<div className="backWrap" onClick={this.onCancel}>
+				<Frame className="animation" dataset={{ 'animation-index-from': 3 }}>
+					<div 
+						className="backWrap animation" 
+						onClick={this.onCancel}
+						{...Util.dataProps({ 'animation-index-from': 0 })}
+					>
 						<Icon className="back" />
 						<div className="name">{translate('commonBack')}</div>
 					</div>
@@ -53,12 +57,20 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
-						<div className="iconObject isHuman c96 fileWrap" onClick={this.onFileClick}>
+						<div 
+							className="iconObject isHuman c96 fileWrap animation" 
+							onClick={this.onFileClick}
+							{...Util.dataProps({ 'animation-index-from': 1 })}
+						>
 							{preview ? <img src={preview} className="iconImage c64" /> : ''}
 						</div>
-						<Label text={translate('authRegisterLabel')} />
-						<Input ref={(ref: any) => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
-						<Button type="input" text={translate('authRegisterSubmit')} />
+
+						<Label className="animation" dataset={{ 'animation-index-from': 2 }} text={translate('authRegisterLabel')} />
+						<Input className="animation" ref={ref => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
+
+						<div className="buttons animation" {...Util.dataProps({ 'animation-index-from': 4 })}>
+							<Button type="input" text={translate('authRegisterSubmit')} />
+						</div>
 					</form>
 				</Frame>
 			</div>
@@ -66,6 +78,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	};
 	
 	componentDidMount () {
+		Animation.to();
 		this.refName.focus();
 	};
 	
@@ -111,7 +124,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		};
 		
 		if (!error) {
-			Util.route('/auth/invite/' + match.params.id);
+			Animation.from(() => { Util.route('/auth/invite/' + match.params.id); });
 		} else {
 			this.setState({ error: error });
 		};
@@ -127,7 +140,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	}
 
 	onCancel (e: any) {
-		Util.route('/auth/select');
+		Animation.from(() => { Util.route('/auth/select'); });
 	};
 	
 });
