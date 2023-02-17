@@ -40,9 +40,15 @@ class MenuContext extends React.Component<I.Menu> {
 
 		return (
 			<div>
-				{sections.map((item: any, i: number) => (
-					<Section key={i} index={i} {...item} />
-				))}
+				{sections.length ? (
+					<React.Fragment>
+						{sections.map((item: any, i: number) => (
+							<Section key={i} index={i} {...item} />
+						))}
+					</React.Fragment>
+				) : (
+					<div className="item empty">No available actions</div>
+				)}
 			</div>
 		);
 	};
