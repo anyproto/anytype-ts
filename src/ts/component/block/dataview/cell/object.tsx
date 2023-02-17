@@ -70,10 +70,9 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 								<span 
 									key={i}
 									id={`item-${item.id}`}
-									data-id={item.id}
-									data-index={i}
 									className="itemWrap isDraggable"
 									draggable={true}
+									{...Util.dataProps({ id: item.id, index: i })}
 								>
 									<ItemObject 
 										key={item.id} 

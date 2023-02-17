@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, Relation } from 'Lib';
+import { I, Relation, Util } from 'Lib';
 import { Cell } from 'Component';
 import { dbStore } from 'Store';
 
@@ -55,8 +55,7 @@ const Row = observer(class Row extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					data-id={record.id}
-					data-type={I.SelectType.Record}
+					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
 					{content}
 				</div>

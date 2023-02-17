@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Title, Label, Error, Button, Header, Footer } from 'Component';
-import { I, Util, translate, C } from 'Lib';
+import { I, Util, translate, Animation } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -30,19 +30,22 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
-				
-				<Frame>
-					<Title text={translate('authSelectTitle')} />
-					<Label text={translate('authSelectLabel')} />
+				<Frame className="animation" dataset={{ 'animation-index-from': 4 }}>
+					<Title className="animation" dataset={{ 'animation-index-from': 0 }} text={translate('authSelectTitle')} />
+					<Label className="animation" dataset={{ 'animation-index-from': 1 }} text={translate('authSelectLabel')} />
 					<Error text={error} />
 								
 					<div className="buttons">
-						<Button text={translate('authSelectLogin')} type="input" onClick={this.onLogin} />
-						<Button text={translate('authSelectSignup')} type="input" color="grey" onClick={this.onRegister} />
+						<Button className="animation" dataset={{ 'animation-index-from': 2 }} text={translate('authSelectLogin')} type="input" onClick={this.onLogin} />
+						<Button className="animation" dataset={{ 'animation-index-from': 3 }} text={translate('authSelectSignup')} type="input" color="grey" onClick={this.onRegister} />
 					</div>
 				</Frame>
 			</div>
 		);
+	};
+
+	componentDidMount(): void {
+		Animation.to();	
 	};
 	
 	onLogin (e: any) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard } from 'Lib';
+import { I, keyboard, Util } from 'Lib';
 import { Icon, Block } from 'Component';
 import Constant from 'json/constant.json';
 
@@ -123,7 +123,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onMouseEnter={(e: any) => { onCellEnter(e, row.id, column.id, cellId); }}
 				onMouseLeave={(e: any) => { onCellLeave(e, row.id, column.id, cellId); }}
 				onMouseDown={this.onMouseDown}
-				data-column-id={column.id}
+				{...Util.dataProps({ 'column-id': column.id })}
 			>
 				{!rowIdx ? <Handle key={'handle-column-' + cellId} type={I.BlockType.TableColumn} {...column} /> : ''}
 				{!columnIdx ? <Handle key={'handle-row-' + cellId} type={I.BlockType.TableRow} {...row} /> : ''}

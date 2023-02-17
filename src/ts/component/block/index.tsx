@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage } from 'Lib';
+import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
@@ -281,8 +281,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				<div 
 					id={'selectable-' + id} 
 					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
-					data-id={id} 
-					data-type={I.SelectType.Block}
+					{...Util.dataProps({ id, type: I.SelectType.Block })}
 				>
 					{object}
 				</div>
@@ -295,9 +294,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			<div 
 				ref={node => this.node = node}
 				id={'block-' + id} 
-				data-id={id} 
 				className={cn.join(' ')} 
 				style={css}
+				{...Util.dataProps({ id })}
 			>
 				<div className="wrapMenu">
 					<Icon 

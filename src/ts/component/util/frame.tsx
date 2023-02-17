@@ -1,9 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
+import { Util } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
+	className?: string;
+	dataset?: any;
 };
 
 class Frame extends React.Component<Props> {
@@ -12,12 +15,18 @@ class Frame extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { children } = this.props;
+		const { children, className, dataset } = this.props;
+		const cn = [ 'frame' ];
+
+		if (className) {
+			cn.push(className);
+		};
 
 		return (
 			<div
 				ref={node => this.node = node}
-				className="frame"
+				className={cn.join(' ')}
+				{...Util.dataProps(dataset)}
 			>
 				{children}
 			</div>

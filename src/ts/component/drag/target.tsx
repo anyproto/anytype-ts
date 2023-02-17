@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I } from 'Lib';
+import { I, Util } from 'Lib';
 
 interface Props {
 	id: string;
@@ -52,14 +52,16 @@ class DropTarget extends React.Component<Props> {
 				key={'drop-target-' + id}
 				className={cn.join(' ')} 
 				onClick={this.onClick} 
-				data-id={id} 
-				data-root-id={rootId} 
-				data-cache-key={key.join('-')}
-				data-drop-type={dropType} 
-				data-type={type} 
-				data-style={style} 
-				data-target-context-id={targetContextId}
-				data-drop-middle={Number(canDropMiddle) || 0}
+				{...Util.dataProps({
+					id,
+					type,
+					style,
+					'root-id': rootId,
+					'cache-key': key.join('-'),
+					'drop-type': dropType,
+					'context-id': targetContextId,
+					'drop-middle': Number(canDropMiddle) || 0,
+				})}
 			>
 				{children}
 			</div>

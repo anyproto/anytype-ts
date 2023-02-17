@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { I } from 'Lib';
+import { I, Util } from 'Lib';
 import { observer } from 'mobx-react';
-import { dbStore } from 'Store';
-
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
@@ -60,8 +58,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					data-id={record.id}
-					data-type={I.SelectType.Record}
+					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 					style={{ gridTemplateColumns: str }}
 				>
 					{content}
