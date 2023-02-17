@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
-import { I, C, Util, SmileUtil, keyboard, translate, analytics, Preview } from 'Lib';
+import { I, C, Util, SmileUtil, keyboard, translate, analytics, Preview, Action } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
@@ -336,25 +336,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onUpload } = data;
-		const options: any = { 
-			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.cover } ]
-		};
 
 		close();
-		
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
 
-			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-				
-				if (onUpload) {
+		Action.openFile(Constant.extension.cover, paths => {
+			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+				if (!message.error.code && onUpload) {
 					onUpload(message.hash);
 				};
 			});

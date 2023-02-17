@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I } from 'Lib';
+import { I, Action } from 'Lib';
 import { Button, Label } from 'Component';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -25,18 +25,7 @@ const MenuAccountPath = observer(class MenuAccountPath extends React.Component<I
     };
 
     onClick (e: any) {
-        const options = {
-            properties: [ 'openDirectory' ],
-        };
-
-        window.Electron.showOpenDialog(options).then((result: any) => {
-            const files = result.filePaths;
-            if ((files == undefined) || !files.length) {
-                return;
-            };
-
-            authStore.accountPathSet(files[0]);
-        });
+		Action.openDir(paths => authStore.accountPathSet(paths[0]));
     };
 
 });

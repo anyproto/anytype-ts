@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, C, DataUtil, analytics, Util, translate, ObjectUtil, keyboard } from 'Lib';
+import { I, C, DataUtil, analytics, Util, translate, ObjectUtil, keyboard, Action } from 'Lib';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import { detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -264,27 +264,18 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	};
 
 	onUpload (e: any) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { onUpload, onUploadStart } = data;
-		const options: any = {
-			properties: [ 'openFile' ],
-			filters: [ { name: '', extensions: Constant.extension.cover } ]
-		};
 
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-
-			this.props.close();
+		Action.openFile(Constant.extension.cover, paths => {
+			close();
 
 			if (onUploadStart) {
 				onUploadStart();
 			};
 
-			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
+			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};

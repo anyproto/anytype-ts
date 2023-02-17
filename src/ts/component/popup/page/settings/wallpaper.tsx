@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cover, Title, Label } from 'Component';
-import { I, C, DataUtil, ObjectUtil, translate, analytics } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, translate, analytics, Action } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -79,20 +79,11 @@ const PopupSettingsPageWallpaper = observer(class PopupSettingsPageWallpaper ext
 	onFileClick (e: any) {
 		const { root } = blockStore;
 		const { setLoading } = this.props;
-		const options: any = {
-			properties: [ 'openFile' ],
-			filters: [ { name: '', extensions: Constant.extension.cover } ]
-		};
 
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-
+		Action.openFile(Constant.extension.cover, paths => {
 			setLoading(true);
 
-			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
+			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
