@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Input, Label, Loader } from 'Component';
 import { blockStore, detailStore, menuStore } from 'Store';
-import { C, I, ObjectUtil, DataUtil } from 'Lib';
+import { C, I, ObjectUtil, DataUtil, Action } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -58,7 +58,7 @@ const PopupSettingsUserInfo = observer(class PopupSettingsUserInfo extends React
         const object = this.getObject();
 
         if (!object.iconImage) {
-            this.onUpload(object.id);
+            this.onUpload();
             return;
         };
 
@@ -76,12 +76,12 @@ const PopupSettingsUserInfo = observer(class PopupSettingsUserInfo extends React
                 onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'upload': {
-							this.onUpload(object.id);
+							this.onUpload();
 							break;
 						};
 
 						case 'remove': {
-							ObjectUtil.setIcon(object.id, '', '');
+							ObjectUtil.setIcon(blockStore.profile, '', '');
 							break;
 						};
 					};
@@ -90,35 +90,24 @@ const PopupSettingsUserInfo = observer(class PopupSettingsUserInfo extends React
         });
     };
 
-    onUpload (rootId) {
-        const options = {
-            properties: [ 'openFile' ],
-            filters: [ { name: '', extensions: Constant.extension.image } ]
-        };
+    onUpload () {
+		Action.openFile(Constant.extension.cover, paths => {
+			this.setState({ loading: true });
 
-        window.Electron.showOpenDialog(options).then((result) => {
-            const files = result.filePaths;
-            if ((files == undefined) || !files.length) {
-                return;
-            };
-
-            this.setState({ loading: true });
-
-            C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
+            C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
                 if (message.error.code) {
                     return;
                 };
 
-                ObjectUtil.setIcon(rootId, '', message.hash, () => {
+                ObjectUtil.setIcon(blockStore.profile, '', message.hash, () => {
                     this.setState({ loading: false });
                 });
             });
-        });
+		});
     };
 
     onName (e: any) {
-        const object = this.getObject();
-        ObjectUtil.setName(object.id, this.ref.getValue());
+        ObjectUtil.setName(blockStore.profile, this.ref.getValue());
     };
 
 	getObject () {

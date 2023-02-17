@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, focus, translate, keyboard } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, focus, translate, keyboard, Action } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import ControlButtons  from 'Component/page/head/controlButtons';
 import Constant from 'json/constant.json';
@@ -222,23 +222,12 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	
 	onIconUser () {
 		const { rootId } = this.props;
-		const options: any = { 
-			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.cover } ]
-		};
-		
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-			
-			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
-				if (message.error.code) {
-					return;
+
+		Action.openFile(Constant.extension.cover, paths => {
+			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+				if (!message.error.code) {
+					ObjectUtil.setIcon(rootId, '', message.hash);
 				};
-				
-				ObjectUtil.setIcon(rootId, '', message.hash);
 			});
 		});
 	};

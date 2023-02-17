@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
-import { I, keyboard, focus, translate } from 'Lib';
+import { I, keyboard, focus, translate, Action } from 'Lib';
 
 interface Props {
 	icon?: string;
@@ -263,25 +263,9 @@ class InputWithFile extends React.Component<Props, State> {
 			return;
 		};
 		
-		const options: any = { 
-			properties: [ 'openFile' ], 
-		};
-		if (accept) {
-			options.filters = [
-				{ name: '', extensions: accept }
-			];
-		};
-		
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			const file = files && files.length ? files[0] : '';
-
-			if (!file) {
-				return;
-			};
-
+		Action.openFile(accept, paths => {
 			if (onChangeFile) {
-				onChangeFile(e, file);	
+				onChangeFile(e, paths[0]);	
 			};
 		});
 	};

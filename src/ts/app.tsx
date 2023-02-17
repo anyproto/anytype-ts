@@ -696,36 +696,22 @@ class App extends React.Component<object, State> {
 				break;
 
 			case 'exportTemplates':
-				options.properties = [ 'openDirectory' ];
-
-				window.Electron.showOpenDialog(options).then((result: any) => {
-					const files = result.filePaths;
-					if ((files == undefined) || !files.length) {
-						return;
-					};
-
-					C.TemplateExportAll(files[0], (message: any) => {
+				Action.openDir(paths => {
+					C.TemplateExportAll(paths[0], (message: any) => {
 						if (message.error.code) {
 							return;
 						};
 
-						Renderer.send('pathOpen', files[0]);
+						Renderer.send('pathOpen', paths[0]);
 					});
 				});
 				break;
 
 			case 'exportLocalstore':
-				options.properties = [ 'openDirectory' ];
-
-				window.Electron.showOpenDialog.showOpenDialog(options).then((result: any) => {
-					const files = result.filePaths;
-					if ((files == undefined) || !files.length) {
-						return;
-					};
-
-					C.DebugExportLocalstore(files[0], [], (message: any) => {
+				Action.openDir(paths => {
+					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
-							Renderer.send('pathOpen', files[0]);
+							Renderer.send('pathOpen', paths[0]);
 						};
 					});
 				});

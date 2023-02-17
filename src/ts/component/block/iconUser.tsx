@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject, Loader } from 'Component';
-import { I, C, ObjectUtil } from 'Lib';
+import { I, C, ObjectUtil, Action } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -74,27 +74,16 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 	
 	onUpload () {
 		const { rootId } = this.props;
-		const options: any = { 
-			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.cover } ]
-		};
 
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-			
+		Action.openFile(Constant.extension.cover, paths => {
 			this.setState({ loading: true });
 
-			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
-				if (message.error.code) {
-					return;
+			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+				if (!message.error.code) {
+					ObjectUtil.setIcon(rootId, '', message.hash, () => {
+						this.setState({ loading: false });
+					});
 				};
-				
-				ObjectUtil.setIcon(rootId, '', message.hash, () => {
-					this.setState({ loading: false });
-				});
 			});
 		});
 	};

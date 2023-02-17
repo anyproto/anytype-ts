@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, focus, ObjectUtil, Util } from 'Lib';
+import { I, C, focus, ObjectUtil, Util, Action } from 'Lib';
 import { menuStore, blockStore, detailStore } from 'Store';
 import ControlButtons  from './controlButtons';
 import Constant from 'json/constant.json';
@@ -133,18 +133,9 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	
 	onIconUser () {
 		const { rootId } = this.props;
-		const options: any = { 
-			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.image } ]
-		};
-		
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-			
-			C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
+
+		Action.openFile(Constant.extension.cover, paths => {
+			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
 				if (message.hash) {
 					ObjectUtil.setIcon(rootId, '', message.hash);
 				};

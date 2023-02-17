@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, Relation, Renderer, keyboard } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, Relation, Renderer, keyboard, Action } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -181,16 +181,8 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	};
 	
 	onUpload (e: any) {
-		const options: any = { 
-			properties: [ 'openFile' ], 
-			filters: [  ] 
-		};
-		
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			const file = files && files.length ? files[0] : '';
-
-			C.FileUpload('', file, I.FileType.None, (message: any) => {
+		Action.openFile([], paths => {
+			C.FileUpload('', paths[0], I.FileType.None, (message: any) => {
 				if (!message.error.code) {
 					this.add(message.hash);
 				};

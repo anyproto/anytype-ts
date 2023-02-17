@@ -144,17 +144,44 @@ class Action {
 		focus.apply();
 	};
 
-	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+	openFile (extensions: string[], callBack?: (paths: string[]) => void) {
+		const options: any = { 
+			properties: [ 'openFile' ], 
+		};
+
+		if (extensions.length) {
+			options.filters = [ { name: '', extensions } ];
+		};
+		
+		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
+			if ((filePaths == undefined) || !filePaths.length) {
+				return;
+			};
+			
+			if (callBack) {
+				callBack(filePaths);
+			};
+		});
+	};
+
+	openDir (callBack?: (paths: string[]) => void) {
 		const options = { 
 			properties: [ 'openDirectory' ],
 		};
 
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const paths = result.filePaths;
-			if ((paths == undefined) || !paths.length) {
+		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
+			if ((filePaths == undefined) || !filePaths.length) {
 				return;
 			};
 
+			if (callBack) {
+				callBack(filePaths);
+			};
+		});
+	};
+
+	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+		this.openDir(paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};

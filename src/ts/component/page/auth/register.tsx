@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Label, Error, Input, Button, Header, Footer, Icon } from 'Component';
-import { FileUtil, Util, translate, I } from 'Lib';
+import { FileUtil, Util, translate, I, Action } from 'Lib';
 import { commonStore, authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -75,41 +75,21 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	};
 
 	onFileClick (e: any) {
-		const options: any = { 
-			properties: [ 'openFile' ], 
-			filters: [ { name: '', extensions: Constant.extension.image } ]
-		};
-		
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
+		Action.openFile(Constant.extension.cover, paths => {
+			let file = FileUtil.fromPath(paths[0]);
+			if (!file) {
 				return;
 			};
 
-			let path = files[0];
-			let file = FileUtil.fromPath(path);
-			if (file) {
-				authStore.iconSet(path);
-				FileUtil.loadPreviewBase64(file, {}, (image: string, param: any) => { 
-					authStore.previewSet(image);
-				});
-			};
+			authStore.iconSet(paths[0]);
+			FileUtil.loadPreviewBase64(file, {}, (image: string, param: any) => { 
+				authStore.previewSet(image);
+			});
 		});
 	};
 
 	onPathClick (e: any) {
-		const options = { 
-			properties: [ 'openDirectory' ],
-		};
-
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
-				return;
-			};
-
-			authStore.accountPathSet(files[0]);
-		});
+		Action.openDir(paths => authStore.accountPathSet(paths[0]));
 	};
 	
 	onNameChange (e: any) {
