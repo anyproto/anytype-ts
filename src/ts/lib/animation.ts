@@ -1,6 +1,6 @@
 import raf from 'raf';
 
-const DELAY = 0.5;
+const DELAY = 0.1;
 
 enum Direction {
 	From =  0,
@@ -12,10 +12,9 @@ class Animation {
 	to (callBack?: () => void) {
 		const nodes = this.initNodes({ opacity: 0, transform: 'scale3d(0.95,0.95, 1)' }, Direction.To);
 
-		window.setTimeout(() => {
+		raf(() => {
 			nodes.css({ opacity: 1, transform: 'scale3d(1,1,1)' });
-			console.log('SET OPACITY', 1);
-		}, DELAY * 1000);
+		});
 
 		if (callBack) {
 			window.setTimeout(callBack, (nodes.length + 1) * DELAY * 1000);
@@ -27,7 +26,6 @@ class Animation {
 
 		raf(() => {
 			nodes.css({ opacity: 0 });
-			console.log('SET OPACITY', 0);
 		});
 
 		window.setTimeout(() => {
