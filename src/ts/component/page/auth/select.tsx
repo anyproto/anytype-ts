@@ -24,10 +24,10 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 								
 					<div className="buttons">
 						<div className="animation">
-							<Button text={translate('authSelectLogin')} onClick={this.onLogin} />
+							<Button text={translate('authSelectSignup')} onClick={this.onRegister} />
 						</div>
 						<div className="animation">
-							<Button text={translate('authSelectSignup')} color="grey" onClick={this.onRegister} />
+							<Button text={translate('authSelectLogin')} color="grey" onClick={this.onLogin} />
 						</div>
 					</div>
 				</Frame>

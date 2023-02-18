@@ -4,7 +4,7 @@ import { I } from 'Lib';
 
 const Duration = {
 	Normal: 0.3,
-	Word: 0.1,
+	Word: 0.075,
 };
 
 class Animation {
