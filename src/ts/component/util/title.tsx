@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Util } from 'Lib';
+import { I, Util } from 'Lib';
 
 interface Props {
 	text: string;
@@ -16,6 +16,9 @@ class Title extends React.Component<Props> {
 		if (className) {
 			cn.push(className);
 		};
+
+		dataset.content = text;
+		dataset['animation-type'] = I.AnimType.Text;
 		
 		return (
 			<div className={cn.join(' ')} dangerouslySetInnerHTML={{ __html: text }} {...Util.dataProps(dataset)} />

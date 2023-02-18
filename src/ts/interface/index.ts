@@ -1,4 +1,5 @@
 import { Account, AccountInfo, AccountConfig, AccountStatus, AccountStatusType } from './account';
+import { AnimType, AnimDirection } from './animation';
 import { 
 	Platform, 
 	DropType, 
@@ -71,6 +72,9 @@ export {
 	AccountConfig,
 	AccountStatus,
 	AccountStatusType,
+
+	AnimType, 
+	AnimDirection,
 
 	Platform,
 	DropType,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Util } from 'Lib';
+import { I, Util } from 'Lib';
 
 interface Props {
 	id?: string;
@@ -21,6 +21,9 @@ class Label extends React.Component<Props> {
 		if (className) {
 			cn.push(className);
 		};
+
+		dataset.content = text;
+		dataset['animation-type'] = I.AnimType.Text;
 		
 		return (
 			<div 

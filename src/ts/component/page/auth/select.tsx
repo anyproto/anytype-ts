@@ -45,7 +45,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	};
 
 	componentDidMount(): void {
-		Animation.to();	
+		Animation.to();
 	};
 	
 	onLogin () {

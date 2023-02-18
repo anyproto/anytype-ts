@@ -43,7 +43,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						<Icon className="back" />
 						<div className="name">{translate('commonBack')}</div>
 					</div>
-					<Title text={translate('authLoginTitle')} className="animation" {...Util.dataProps({ 'animation-index-from': 1 })} />
+					<Title text={translate('authLoginTitle')} className="animation" dataset={{ 'animation-index-from': 1 }} />
 					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
