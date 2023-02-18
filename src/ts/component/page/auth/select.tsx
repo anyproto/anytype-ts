@@ -17,24 +17,18 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 			<div>
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
-				<Frame className="animation" dataset={{ 'animation-index-from': 3 }}>
-					<Title className="animation" dataset={{ 'animation-index-from': 0 }} text={translate('authSelectTitle')} />
-					<Label className="animation" dataset={{ 'animation-index-from': 1 }} text={translate('authSelectLabel')} />
+
+				<Frame>
+					<Title className="animation" text={translate('authSelectTitle')} />
+					<Label className="animation" text={translate('authSelectLabel')} />
 								
 					<div className="buttons">
-						<Button 
-							className="animation" 
-							dataset={{ 'animation-index-from': 2 }} 
-							text={translate('authSelectLogin')} 
-							onClick={this.onLogin} 
-						/>
-						<Button 
-							className="animation" 
-							dataset={{ 'animation-index-from': 3 }} 
-							text={translate('authSelectSignup')} 
-							color="grey" 
-							onClick={this.onRegister} 
-						/>
+						<div className="animation">
+							<Button text={translate('authSelectLogin')} onClick={this.onLogin} />
+						</div>
+						<div className="animation">
+							<Button text={translate('authSelectSignup')} color="grey" onClick={this.onRegister} />
+						</div>
 					</div>
 				</Frame>
 			</div>

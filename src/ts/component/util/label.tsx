@@ -22,9 +22,6 @@ class Label extends React.Component<Props> {
 			cn.push(className);
 		};
 
-		dataset.content = text;
-		dataset['animation-type'] = I.AnimType.Text;
-		
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -32,7 +29,7 @@ class Label extends React.Component<Props> {
 				className={cn.join(' ')} 
 				dangerouslySetInnerHTML={{ __html: text }} 
 				onClick={onClick} 
-				{...Util.dataProps(dataset)}
+				{...Util.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 			/>
 		);
 	};

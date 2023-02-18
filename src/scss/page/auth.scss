@@ -29,6 +29,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 
 .pageIndexIndex,
 .pageAuthSelect {
+	.frame { width: 730px; }
 	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 36px; }
 	.label { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; }
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }

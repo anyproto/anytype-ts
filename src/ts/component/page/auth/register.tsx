@@ -38,11 +38,10 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
-				<Frame className="animation" dataset={{ 'animation-index-from': 3 }}>
+				<Frame>
 					<div 
 						className="backWrap animation" 
 						onClick={this.onCancel}
-						{...Util.dataProps({ 'animation-index-from': 0 })}
 					>
 						<Icon className="back" />
 						<div className="name">{translate('commonBack')}</div>
@@ -60,15 +59,14 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 						<div 
 							className="iconObject isHuman c96 fileWrap animation" 
 							onClick={this.onFileClick}
-							{...Util.dataProps({ 'animation-index-from': 1 })}
 						>
 							{preview ? <img src={preview} className="iconImage c64" /> : ''}
 						</div>
 
-						<Label className="animation" dataset={{ 'animation-index-from': 2 }} text={translate('authRegisterLabel')} />
+						<Label className="animation" text={translate('authRegisterLabel')} />
 						<Input className="animation" ref={ref => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
 
-						<div className="buttons animation" {...Util.dataProps({ 'animation-index-from': 4 })}>
+						<div className="buttons animation">
 							<Button type="input" text={translate('authRegisterSubmit')} />
 						</div>
 					</form>

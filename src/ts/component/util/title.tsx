@@ -17,11 +17,12 @@ class Title extends React.Component<Props> {
 			cn.push(className);
 		};
 
-		dataset.content = text;
-		dataset['animation-type'] = I.AnimType.Text;
-		
 		return (
-			<div className={cn.join(' ')} dangerouslySetInnerHTML={{ __html: text }} {...Util.dataProps(dataset)} />
+			<div 
+				className={cn.join(' ')} 
+				dangerouslySetInnerHTML={{ __html: text }} 
+				{...Util.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
+			/>
 		);
 	};
 	
