@@ -141,7 +141,7 @@ class Animation {
 	};
 
 	getDuration () {
-		return $('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word;
+		return $('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word / 2;
 	};
 
 };
