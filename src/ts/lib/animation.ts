@@ -3,8 +3,8 @@ import $ from 'jquery';
 import { I } from 'Lib';
 
 const Duration = {
-	Normal: 0.2,
-	Word: 0.75,
+	Normal: 0.3,
+	Word: 0.1,
 };
 
 class Animation {
@@ -137,7 +137,7 @@ class Animation {
 			});
 		});
 
-		window.setTimeout(() => { obj.css({ transition: '' }); }, delay * 1000);
+		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * 1000);
 	};
 
 	getDuration () {
