@@ -11,10 +11,11 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.header { width: 100% !important; }
 	.footer { width: 100% !important; }
 
-	.backWrap { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; }
-	.backWrap {
-		.icon.back { width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/back0.svg'); transition: none; }
+	.icon.arrow.back { 
+		position: fixed; top: 50%; left: 46px; width: 16px; height: 44px; cursor: pointer; margin-top: -22px;
+		background: url('~img/arrow/auth0.svg');
 	}
+	.icon.arrow.back:hover { background: url('~img/arrow/auth1.svg'); }
 
 	.backWrap:hover { color: $colorBlack; }
 	.backWrap:hover {

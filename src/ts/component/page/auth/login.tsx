@@ -31,21 +31,15 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			<div>
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
+
+				<Icon className="arrow back animation" onClick={this.onCancel} />
 				
-				<Frame className="animation" dataset={{ 'animation-index-from': 4 }}>
-					<div 
-						className="backWrap animation" 
-						onClick={this.onCancel}
-						{...Util.dataProps({ 'animation-index-from': 0 })}
-					>
-						<Icon className="back" />
-						<div className="name">{translate('commonBack')}</div>
-					</div>
-					<Title text={translate('authLoginTitle')} className="animation" dataset={{ 'animation-index-from': 1 }} />
-					<Error text={error} />
+				<Frame>
+					<Title text={translate('authLoginTitle')} className="animation" />
+					<Error text={error} className="animation" />
 							
 					<form onSubmit={this.onSubmit}>
-						<div className="animation" {...Util.dataProps({ 'animation-index-from': 2 })}>
+						<div className="animation">
 							<Input 
 								ref={(ref: any) => this.phraseRef = ref} 
 								className="animation" 
@@ -54,7 +48,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 							/>
 						</div>
 
-						<div className="buttons animation" {...Util.dataProps({ 'animation-index-from': 3 })}>
+						<div className="buttons animation">
 							<Button type="input" text={translate('authLoginLogin')} />
 						</div>
 					</form>

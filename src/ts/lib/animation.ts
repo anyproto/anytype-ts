@@ -7,10 +7,12 @@ const Duration = {
 	Word: 0.1,
 };
 
+const WORD_DELAY_COEF = 0.75;
+
 class Animation {
 
 	to (callBack?: () => void) {
-		const css = { opacity: 0, transform: 'translate3d(0px,20%,0px)' };
+		const css = { opacity: 0, transform: 'translate3d(0px,10%,0px)' };
 		
 		this.initNodes(css, I.AnimDirection.To);
 
@@ -22,7 +24,7 @@ class Animation {
 		});
 
 		if (callBack) {
-			window.setTimeout(callBack, this.getDuration() * 1000);
+			window.setTimeout(callBack, this.getDuration());
 		};
 	};
 
@@ -31,14 +33,14 @@ class Animation {
 		this.initNodes(css, I.AnimDirection.From);
 
 		raf(() => {
-			const css = { opacity: 0, transform: 'translate3d(0px,-20%,0px)' };
+			const css = { opacity: 0, transform: 'translate3d(0px,-10%,0px)' };
 
 			$('.animation').css(css);
 			$('.animationWord').css(css);
 		});
 
 		if (callBack) {
-			window.setTimeout(callBack, this.getDuration() * 1000);
+			window.setTimeout(callBack, this.getDuration());
 		};
 	};
 
@@ -112,7 +114,7 @@ class Animation {
 						el.append(' ');
 
 						this.applyCss(w, css, Duration.Word, delay);
-						delay += Duration.Word / 2;
+						delay += Duration.Word * WORD_DELAY_COEF;
 						n++;
 					});
 					break;
@@ -141,7 +143,7 @@ class Animation {
 	};
 
 	getDuration () {
-		return $('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word / 2;
+		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * 1000;
 	};
 
 };
