@@ -4,7 +4,7 @@ import { I } from 'Lib';
 
 const Duration = {
 	Normal: 0.3,
-	Word: 0.075,
+	Word: 0.1,
 };
 
 class Animation {
@@ -112,7 +112,7 @@ class Animation {
 						el.append(' ');
 
 						this.applyCss(w, css, Duration.Word, delay);
-						delay += Duration.Word;
+						delay += Duration.Word / 2;
 						n++;
 					});
 					break;
