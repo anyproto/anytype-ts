@@ -39,14 +39,12 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 					<Error text={error} className="animation" />
 							
 					<form onSubmit={this.onSubmit}>
-						<div className="animation">
-							<Input 
-								ref={(ref: any) => this.phraseRef = ref} 
-								className="animation" 
-								placeholder={translate('authLoginLabel')} 
-								onKeyDown={this.onKeyDown} 
-							/>
-						</div>
+						<Input 
+							ref={(ref: any) => this.phraseRef = ref} 
+							className="animation" 
+							placeholder={translate('authLoginLabel')} 
+							onKeyDown={this.onKeyDown} 
+						/>
 
 						<div className="buttons animation">
 							<Button type="input" text={translate('authLoginLogin')} />
@@ -87,9 +85,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			this.onSubmit(e);
-		})
+		keyboard.shortcut('enter', e, () => { this.onSubmit(e); });
 	};
 	
 	onCancel (e: any) {
