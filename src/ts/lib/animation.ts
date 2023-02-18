@@ -10,7 +10,7 @@ const Duration = {
 class Animation {
 
 	to (callBack?: () => void) {
-		const css = { opacity: 0, transform: 'translate3d(0px,10px,0px)' };
+		const css = { opacity: 0, transform: 'translate3d(0px,20%,0px)' };
 		
 		this.initNodes(css, I.AnimDirection.To);
 
@@ -31,7 +31,7 @@ class Animation {
 		this.initNodes(css, I.AnimDirection.From);
 
 		raf(() => {
-			const css = { opacity: 0, transform: 'translate3d(0px,-10px,0px)' };
+			const css = { opacity: 0, transform: 'translate3d(0px,-20%,0px)' };
 
 			$('.animation').css(css);
 			$('.animationWord').css(css);
