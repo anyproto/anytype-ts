@@ -86,12 +86,12 @@
 	"authInviteEmpty": { "en": "Invite code is empty" },
 
 	"authSelectTitle": {
-		"en": "Organize everything",
+		"en": "the everything app",
 		"ru": "Организуй все"
 	},
-	"authSelectLabel": { "en": "With Anytype you can write notes and documents, manage tasks, share files and save important content from the web." },
+	"authSelectLabel": { "en": "Welcome to Anytype: a place to securely write notes and documents, manage tasks, and save important content from the web." },
 	"authSelectLogin": { "en": "Login" },
-	"authSelectSignup": { "en": "Sign up" },
+	"authSelectSignup": { "en": "Join" },
 
 	"authNoticeTitle": { "en": "Important notice" },
 	"authNoticeLabel": { "en": "Understanding how people use Anytype helps us improve the product. This version of Anytype includes the analytics code that protects your privacy. It doesn't record the actual document's content but still allows us to understand how you use Anytype. Stay subscribed to our mailing list, as we will soon announce a new release that enables you to opt-out." },

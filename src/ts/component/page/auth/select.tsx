@@ -1,18 +1,9 @@
 import * as React from 'react';
-import { Frame, Cover, Title, Label, Error, Button, Header, Footer } from 'Component';
+import { Frame, Title, Label, Button, Header, Footer } from 'Component';
 import { I, Util, translate, Animation } from 'Lib';
-import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface State {
-	error: string;
-};
-
-const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent, State> {
-
-	state = {
-		error: ''
-	};
+const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent> {
 
 	constructor (props: I.PageComponent) {
         super(props);
@@ -22,22 +13,28 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	};
 	
 	render () {
-		const { cover } = commonStore;
-		const { error } = this.state;
-		
         return (
 			<div>
-				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				<Frame className="animation" dataset={{ 'animation-index-from': 3 }}>
 					<Title className="animation" dataset={{ 'animation-index-from': 0 }} text={translate('authSelectTitle')} />
 					<Label className="animation" dataset={{ 'animation-index-from': 1 }} text={translate('authSelectLabel')} />
-					<Error text={error} />
 								
-					<div className="buttons animation" {...Util.dataProps({ 'animation-index-from': 2 })}>
-						<Button text={translate('authSelectLogin')} type="input" onClick={this.onLogin} />
-						<Button text={translate('authSelectSignup')} type="input" color="grey" onClick={this.onRegister} />
+					<div className="buttons">
+						<Button 
+							className="animation" 
+							dataset={{ 'animation-index-from': 2 }} 
+							text={translate('authSelectLogin')} 
+							onClick={this.onLogin} 
+						/>
+						<Button 
+							className="animation" 
+							dataset={{ 'animation-index-from': 3 }} 
+							text={translate('authSelectSignup')} 
+							color="grey" 
+							onClick={this.onRegister} 
+						/>
 					</div>
 				</Frame>
 			</div>

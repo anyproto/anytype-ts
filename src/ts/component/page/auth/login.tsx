@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Frame, Cover, Title, Input, Error, Button, Header, Footer, Icon } from 'Component';
+import { Frame, Title, Input, Error, Button, Header, Footer, Icon } from 'Component';
 import { I, Util, translate, C, keyboard, Animation } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -25,12 +25,10 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	render () {
-		const { cover } = commonStore;
 		const { error } = this.state;
 		
         return (
 			<div>
-				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
@@ -90,7 +88,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			};
 
 			authStore.phraseSet(phrase);
-			Util.route('/auth/account-select');
+			Animation.from(() => { Util.route('/auth/account-select'); });
 		});
 	};
 

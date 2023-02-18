@@ -1,9 +1,11 @@
 @import "~scss/_vars";
 
+html.bodyIndex, html.bodyAuth, html.bodyObject { 
+	body { background: #060606; color: $colorSecondary; }
+}
+
 .pageAuth, .pageIndex, .pageObject {
-	.frame { width: 672px; padding: 60px 48px 48px 48px; text-align: center; }
-	.title { margin-bottom: 22px; }
-	.label { margin-bottom: 26px; }
+	.frame { text-align: center; background: none; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
 
 	.header { width: 100% !important; }
@@ -22,27 +24,19 @@
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
 	
-	.button { margin-right: 16px; width: 176px; }
-	.button:last-child { margin: 0px; }
+	.button { width: 226px; }
 }
 
-.pageIndex.pageIndexIndex,
-.pageAuth.pageAuthSelect,
-.pageAuthLogin,
-.pageAuthInvite
-.pageAuthRegister {
-	.button { font-size: 16px; letter-spacing: -0.2px; }
-}
-
-.pageIndex.pageIndexIndex,
-.pageAuth.pageAuthSelect {
-	.frame { padding: 59px 112px 48px 112px; }
-	.title { font-size: 44px; line-height: 40px; letter-spacing: -1px; font-weight: 700; }
-	.label { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
+.pageIndexIndex,
+.pageAuthSelect {
+	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 36px; }
+	.label { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; }
+	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 }
 
 .pageAuthLogin,
 .pageAuthInvite {
+	.frame { padding: 64px; }
 	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
 }
 
