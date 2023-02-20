@@ -362,7 +362,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			offsetX: offsetX,
 			offsetY: offsetY,
 			data: {
-				noUpload: noUpload,
+				noUpload,
 				noRemove: noRemove || !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					if (onSelect) {

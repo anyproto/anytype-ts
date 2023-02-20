@@ -1,8 +1,15 @@
 @import "~scss/_vars";
 
 .pageMainType {
-	.wrapper { width: 704px; margin: 0px auto; padding: 126px 0px 80px 0px; user-select: none; }
+	.wrapper { width: 704px; margin: 0px auto; padding: 0px 0px 80px 0px; user-select: none; }
 	.wrapper {
+
+		.editorControls { margin: 0px 0px 16px 0px; }
+		.editorControls {
+			#button-cover { display: none; }
+			#button-layout { display: none; }
+			#button-relation { display: none; }
+		}
 
 		.block {
 			.wrapMenu { display: none; }

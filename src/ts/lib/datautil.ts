@@ -434,38 +434,24 @@ class DataUtil {
 		};
 
 		switch (object.layout) {
-			default:
-			case I.ObjectLayout.Page:
+			default: {
 				ret.withIcon = iconEmoji || iconImage;
 				break;
-
-			case I.ObjectLayout.Human:
-				ret.withIcon = true;
-				break;
+			};
 
 			case I.ObjectLayout.Bookmark:
-			case I.ObjectLayout.Task:
+			case I.ObjectLayout.Task: {
 				break;
+			};
 
-			case I.ObjectLayout.Set:
-				ret.withIcon = iconEmoji || iconImage;
-				break;
-
-			case I.ObjectLayout.Image:
-				ret.withIcon = true;
-				break;
-
-			case I.ObjectLayout.File:
-				ret.withIcon = true;
-				break;
-
-			case I.ObjectLayout.Type:
-				ret.withIcon = true;
-				break;
-
+			case I.ObjectLayout.Human:
 			case I.ObjectLayout.Relation:
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image: {
 				ret.withIcon = true;
 				break;
+			};
+
 		};
 
 		if (checkType) {
