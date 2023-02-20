@@ -27,7 +27,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	
 	.button { width: 226px; }
 	.button.orange { background: $colorBlack; color: $colorSecondary; }
-	.button.grey { box-shadow: 0px 0px 0px 1px $colorSecondary inset; color: $colorSecondary; }
+	.button.grey { box-shadow: 0px 0px 0px 1px $colorSecondary inset !important; color: $colorSecondary !important; background: none !important; }
 }
 
 .pageIndexIndex,
