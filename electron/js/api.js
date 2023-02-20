@@ -54,6 +54,10 @@ class Api {
 	};
 
 	setLanguage (win, languages) {
+		if (typeof languages === 'undefined') {
+			languages = [ app.getLocale() ];
+		};
+
 		languages = languages || [];
 
 		win.webContents.session.setSpellCheckerLanguages(languages);

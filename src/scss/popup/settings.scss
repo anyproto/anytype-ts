@@ -80,7 +80,7 @@
 				.side.c25 { width: 25%; }
 				.side.c75 { width: 75%; }
 
-				.select { transition: none; border: 0px; color: $colorMediumGrey; max-width: 100%; }
+				.select { transition: none; border: 0px; color: $colorMediumGrey; max-width: 100%; max-height: 164px; overflow: auto; }
 				.select { 
 					.icon.arrow { top: 3px; margin: 0px !important; }
 				}

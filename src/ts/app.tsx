@@ -786,11 +786,14 @@ class App extends React.Component<object, State> {
 		const win = $(window);
 		const rootId = keyboard.getRootId();
 		const { focused, range } = focus.state;
-		const options: any = param.dictionarySuggestions.map(it => ({ id: it, name: it }));
+		const { config } = commonStore;
 		const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
 		const value = String(obj.get(0).innerText || '');
-
-		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
+		const options: any = param.dictionarySuggestions.map(it => ({ id: it, name: it })).concat([
+			{ isDiv: true },
+			{ id: 'disable-spellcheck', name: 'Disable spellcheck' },
+			{ id: 'add-to-dictionary', name: 'Add to dictionary' },
+		]);
 
 		menuStore.open('select', {
 			recalcRect: () => { 
@@ -805,11 +808,22 @@ class App extends React.Component<object, State> {
 					raf(() => { 
 						focus.apply(); 
 
-						if (item.id == 'add-to-dictionary') {
-							Renderer.send('spellcheckAdd', param.misspelledWord);
-						} else {
-							blockStore.updateContent(rootId, focused, { text: value });
-							DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
+						switch (item.id) {
+							default: {
+								blockStore.updateContent(rootId, focused, { text: value });
+								DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
+								break;
+							};
+
+							case 'add-to-dictionary': {
+								Renderer.send('spellcheckAdd', param.misspelledWord);
+								break;
+							};
+
+							case 'disable-spellcheck': {
+								Renderer.send('setLanguage', (config.languages || []).filter(it => it != window.Electron.language));
+								break;
+							};
 						};
 					});
 				},

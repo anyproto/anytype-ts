@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	arch: process.arch,
 
 	isPackaged: app.isPackaged,
+	language: app.getLocale(),
 	userPath,
 	tmpPath,
 	logPath,
