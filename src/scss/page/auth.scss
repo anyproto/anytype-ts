@@ -12,8 +12,8 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.footer { width: 100% !important; }
 
 	.icon.arrow.back { 
-		position: fixed; top: 50%; left: 46px; width: 16px; height: 44px; cursor: pointer; margin-top: -22px;
-		background: url('~img/arrow/auth0.svg');
+		position: fixed; top: 50%; left: 46px; width: 16px; height: 44px; cursor: pointer; margin-top: -22px; background: url('~img/arrow/auth0.svg');
+		z-index: 1;
 	}
 	.icon.arrow.back:hover { background: url('~img/arrow/auth1.svg'); }
 

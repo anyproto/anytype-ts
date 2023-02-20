@@ -14,6 +14,7 @@ import {
 	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
 	focus, Preview, Mark, Encode, Animation 
 } from 'Lib';
+import AnimationCanvas from 'Component/util/animation';
 
 configure({ enforceActions: 'never' });
 
@@ -342,6 +343,8 @@ class App extends React.Component<object, State> {
 							))}
 							<Redirect to='/main/index' />
 						</Switch>
+
+						<AnimationCanvas />
 					</div>
 				</Provider>
 			</Router>
