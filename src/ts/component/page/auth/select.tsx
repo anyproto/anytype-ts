@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Frame, Title, Label, Button, Header, Footer } from 'Component';
 import { I, Util, translate, Animation } from 'Lib';
+import AnimationCanvas from 'Component/util/animation';
 import { observer } from 'mobx-react';
 
 const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent> {
@@ -31,6 +32,8 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 						</div>
 					</div>
 				</Frame>
+
+				<AnimationCanvas />
 			</div>
 		);
 	};

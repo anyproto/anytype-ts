@@ -1,11 +1,11 @@
 @import "~scss/_vars";
 
 html.bodyIndex, html.bodyAuth, html.bodyObject { 
-	body { background: #060606; color: $colorSecondary; }
+	body { background: #060606 !important; color: $colorSecondary; }
 }
 
 .pageAuth, .pageIndex, .pageObject {
-	.frame { text-align: center; background: none; }
+	.frame { text-align: center; background: none !important; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
 
 	.header { width: 100% !important; }
