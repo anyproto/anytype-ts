@@ -62,6 +62,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
+		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
+		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 	};
 
 	render () {
@@ -172,6 +174,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							onCellClick={this.onCellClick}
 							onCellChange={this.onCellChange}
 							onContext={this.onContext}
+							objectOrderUpdate={this.objectOrderUpdate}
+							applyObjectOrder={this.applyObjectOrder}
 						/>
 					</div>
 				);
@@ -828,6 +832,34 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		return allowed;
+	};
+
+	objectOrderUpdate (orders: any[], callBack?: (message: any) => void) {
+		const { rootId, block } = this.props;
+
+		console.log('WORKS')
+
+		C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, callBack);
+	};
+
+	applyObjectOrder (records: any[], groupId?: string) {
+		const { block } = this.props;
+		const view = this.getView();
+		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (groupId ? it.groupId == groupId : true));
+		const objectIds = el ? el.objectIds || [] : [];
+
+		console.log('GROUP: ', groupId, records)
+
+		records.sort((c1: any, c2: any) => {
+			const idx1 = objectIds.indexOf(c1);
+			const idx2 = objectIds.indexOf(c2);
+
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
+
+		return records;
 	};
 
 	resize () {

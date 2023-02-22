@@ -14,7 +14,6 @@ interface Props extends I.ViewComponent {
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
-	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 };
 
 interface State {
@@ -205,7 +204,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, () => {
-			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecords(subId, '')));
+			dbStore.recordsSet(subId, '', applyObjectOrder(dbStore.getRecords(subId, ''), id));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -220,7 +219,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
-		return applyObjectOrder(id, Util.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => ({ id }));
+		return applyObjectOrder(Util.objectCopy(dbStore.getRecords(getSubId(), '')), id).map(id => ({ id }));
 	};
 
 	onLoadMore () {

@@ -41,7 +41,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
-		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 	};
 
 	render () {
@@ -83,7 +82,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 										onRecordAdd={this.onRecordAdd}
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
-										applyObjectOrder={this.applyObjectOrder}
 										getSubId={() => { return dbStore.getGroupSubId(rootId, block.id, group.id); }}
 									/>
 								))}
@@ -197,7 +195,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onRecordAdd (groupId: string, dir: number) {
-		const { rootId, block, getView, isInline, isCollection } = this.props;
+		const { rootId, block, getView, isInline, isCollection, objectOrderUpdate } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
 		const objectId = isInline ? block.content.targetObjectId : rootId;
@@ -245,7 +243,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
 
-				C.BlockDataviewObjectOrderUpdate(rootId, block.id, [ { viewId: view.id, groupId, objectIds: update } ], () => {
+				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], () => {
 					dbStore.recordsSet(subId, '', update);
 				});
 
@@ -540,7 +538,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return;
 		};
 
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, objectOrderUpdate, applyObjectOrder } = this.props;
 		const view = getView();
 		const oldSubId = dbStore.getGroupSubId(rootId, block.id, current.groupId);
 		const newSubId = dbStore.getGroupSubId(rootId, block.id, this.newGroupId);
@@ -550,7 +548,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		let records: any[] = [];
 
 		const setOrder = (orders: any[]) => {
-			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
+			objectOrderUpdate(orders, () => {
 				orders.forEach((it: any) => {
 					let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
 					if (old) {
@@ -559,7 +557,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 						block.content.objectOrder.push(it);
 					};
 
-					window.setTimeout(() => { this.applyObjectOrder(it.groupId, records); }, 30);
+					window.setTimeout(() => { applyObjectOrder(records, it.groupId); }, 30);
 				});
 			});
 		};
@@ -613,26 +611,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		});
 
 		return groups;
-	};
-
-	applyObjectOrder (groupId: string, records: any[]) {
-		const { block, getView } = this.props;
-		const view = getView();
-		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
-		const objectIds = el ? el.objectIds || [] : [];
-
-		console.log('GROUP: ', groupId, records)
-
-		records.sort((c1: any, c2: any) => {
-			const idx1 = objectIds.indexOf(c1);
-			const idx2 = objectIds.indexOf(c2);
-
-			if (idx1 > idx2) return 1;
-			if (idx1 < idx2) return -1;
-			return 0;
-		});
-
-		return records;
 	};
 
 	onScrollView () {
