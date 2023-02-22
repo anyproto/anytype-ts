@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage } from 'Lib';
+import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
@@ -177,11 +177,12 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 			
 			case I.BlockType.Dataview: {
-				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace());
+				const isCollection = root.isObjectCollection();
+				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace() || isCollection);
 				if (canSelect) {
 					cn.push('isInline');
 				};
-				blockComponent = <BlockDataview key={`block-${block.id}-component`} ref={setRef} isInline={canSelect} {...this.props} />;
+				blockComponent = <BlockDataview key={`block-${block.id}-component`} ref={setRef} isInline={canSelect} isCollection={isCollection} {...this.props} />;
 				break;
 			};
 				
@@ -281,8 +282,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				<div 
 					id={'selectable-' + id} 
 					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
-					data-id={id} 
-					data-type={I.SelectType.Block}
+					{...Util.dataProps({ id, type: I.SelectType.Block })}
 				>
 					{object}
 				</div>
@@ -295,9 +295,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			<div 
 				ref={node => this.node = node}
 				id={'block-' + id} 
-				data-id={id} 
 				className={cn.join(' ')} 
 				style={css}
+				{...Util.dataProps({ id })}
 			>
 				<div className="wrapMenu">
 					<Icon 

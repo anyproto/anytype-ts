@@ -107,6 +107,7 @@ export interface ViewComponent {
 	dataset?: I.Dataset;
 	isPopup?: boolean;
 	isInline?: boolean;
+	isCollection?: boolean;
 	className?: string;
 	onRef?(ref: any, id: string): void;
 	getData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
@@ -117,6 +118,7 @@ export interface ViewComponent {
 	getIdPrefix?(): string;
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
+	getEmpty?(type: string): any;
 	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;

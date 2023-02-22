@@ -86,7 +86,12 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 					};
 
 					element = (
-						<div className={cn.join(' ')} data-href={url} onClick={this.onClick} onMouseDown={this.onMouseDown}>
+						<div 
+							className={cn.join(' ')} 
+							onClick={this.onClick} 
+							onMouseDown={this.onMouseDown}
+							{...Util.dataProps({ href: url })}
+						>
 							<div className={cnl.join(' ')}>
 								<ObjectName object={object} />
 								<ObjectDescription object={object} />

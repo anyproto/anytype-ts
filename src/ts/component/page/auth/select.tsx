@@ -1,18 +1,9 @@
 import * as React from 'react';
-import { Frame, Cover, Title, Label, Error, Button, Header, Footer } from 'Component';
-import { I, Util, translate, C } from 'Lib';
-import { commonStore } from 'Store';
+import { Frame, Title, Label, Button, Header, Footer } from 'Component';
+import { I, Util, translate, Animation } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface State {
-	error: string;
-};
-
-const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent, State> {
-
-	state = {
-		error: ''
-	};
+const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent> {
 
 	constructor (props: I.PageComponent) {
         super(props);
@@ -22,35 +13,38 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	};
 	
 	render () {
-		const { cover } = commonStore;
-		const { error } = this.state;
-		
         return (
 			<div>
-				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
-					<Title text={translate('authSelectTitle')} />
-					<Label text={translate('authSelectLabel')} />
-					<Error text={error} />
+					<Title className="animation" text={translate('authSelectTitle')} />
+					<Label className="animation" text={translate('authSelectLabel')} />
 								
 					<div className="buttons">
-						<Button text={translate('authSelectLogin')} type="input" onClick={this.onLogin} />
-						<Button text={translate('authSelectSignup')} type="input" color="grey" onClick={this.onRegister} />
+						<div className="animation">
+							<Button text={translate('authSelectSignup')} onClick={this.onRegister} />
+						</div>
+						<div className="animation">
+							<Button text={translate('authSelectLogin')} color="grey" onClick={this.onLogin} />
+						</div>
 					</div>
 				</Frame>
 			</div>
 		);
 	};
+
+	componentDidMount(): void {
+		Animation.to();
+	};
 	
-	onLogin (e: any) {
-		Util.route('/auth/login');
+	onLogin () {
+		Animation.from(() => { Util.route('/auth/login'); });
 	};
 	
 	onRegister (e: any) {
-		Util.route('/auth/register/register');
+		Animation.from(() => { Util.route('/auth/register/register'); });
 	};
 	
 });

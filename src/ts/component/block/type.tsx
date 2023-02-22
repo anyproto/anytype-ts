@@ -70,7 +70,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	getItems () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
-		const items = DataUtil.getObjectTypesForNewObject({ withSet: true, withDefault: true }).filter(it => it.id != object.type);
+		const items = DataUtil.getObjectTypesForNewObject({ withSet: true, withCollection: true, withDefault: true }).filter(it => it.id != object.type);
 
 		items.push({ id: 'menu', icon: 'search', name: 'My types' });
 
@@ -205,22 +205,10 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const { rootId, isPopup } = this.props;
+		const objectToItems = [ Constant.typeId.set, Constant.typeId.collection ];
 
-		if (item.id == Constant.typeId.set) {
-			C.ObjectToSet(rootId, [], (message: any) => {
-				if (isPopup) {
-					historyPopup.clear();
-				};
-
-				ObjectUtil.openEvent(e, { id: message.objectId, layout: I.ObjectLayout.Set });
-
-				analytics.event('CreateObject', {
-					route: 'SelectType',
-					objectType: Constant.typeId.set,
-					layout: I.ObjectLayout.Set,
-				});
-			});
+		if (objectToItems.indexOf(item.id) >= 0) {
+			this.onObjectTo(e, item.id);
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
 				if (message.records.length > 1) {
@@ -236,6 +224,37 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 					this.onCreate(item.id, message.records.length ? message.records[0] : null);
 				};
 			});
+		};
+	};
+
+	onObjectTo (e: any, type: string) {
+		const { rootId, isPopup } = this.props;
+
+		let layout: I.ObjectLayout = I.ObjectLayout.Set;
+
+		const cb = (message) => {
+			if (isPopup) {
+				historyPopup.clear();
+			};
+
+			ObjectUtil.openEvent(e, { id: message.objectId, layout: layout });
+
+			analytics.event('CreateObject', {
+				route: 'SelectType',
+				objectType: type,
+				layout: layout,
+			});
+		};
+
+		switch (type) {
+			case Constant.typeId.set:
+				C.ObjectToSet(rootId, [], cb);
+				break;
+
+			case Constant.typeId.collection:
+				layout = I.ObjectLayout.Collection;
+				C.ObjectToCollection(rootId, cb);
+				break;
 		};
 	};
 

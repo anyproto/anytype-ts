@@ -955,6 +955,16 @@ class Util {
 		};
 	};
 
+	dataProps (data: any) {
+		data = data || {};
+
+		const ret: any = {};
+		for (const k in data) {
+			ret['data-' + k] = data[k];
+		};
+		return ret;
+	};
+
 };
 
 export default new Util();

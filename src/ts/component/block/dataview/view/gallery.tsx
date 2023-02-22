@@ -5,7 +5,6 @@ import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, cr
 import { I, Relation, DataUtil } from 'Lib';
 import { dbStore, detailStore, blockStore } from 'Store';
 import { LoadMore } from 'Component';
-import Empty from '../empty';
 import Card from './gallery/card';
 import Constant from 'json/constant.json';
 
@@ -32,7 +31,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd, getVisibleRelations } = this.props;
+		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd, getVisibleRelations, getEmpty } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -44,17 +43,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const length = records.length;
 
 		if (!length) {
-			return (
-				<Empty 
-					{...this.props}
-					title="No objects found" 
-					description="Create your first one to begin"
-					button="Create object"
-					className={isInline ? 'withHead' : ''}
-					withButton={allowed}
-					onClick={(e: any) => onRecordAdd(e, 1)}
-				/>
-			);
+			return getEmpty('view');
 		};
 
 		// Subscriptions on dependent objects

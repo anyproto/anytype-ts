@@ -4,7 +4,6 @@ import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
 import { I, C, DataUtil, ObjectUtil, MenuUtil, Util, focus, crumbs, Action, analytics, Relation } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
-import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -56,8 +55,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		const { config } = commonStore;
 		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
-		const object = check.object;
+		const object = Util.objectCopy(detailStore.get(rootId, rootId));
 		const subIdTemplate = this.getSubIdTemplate();
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
@@ -113,8 +111,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			<div>
 				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
-				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
-					<Controls key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
+				<div className="blocks wrapper">
 					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="type" rootId={rootId} onCreate={this.onCreate} />
 
 					{showTemplates ? (

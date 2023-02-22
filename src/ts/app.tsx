@@ -1,16 +1,19 @@
 import * as React from 'react';
+import * as hs from 'history';
+import * as Sentry from '@sentry/browser';
+import $ from 'jquery';
+import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import $ from 'jquery';
-import raf from 'raf';
-import * as hs from 'history';
-import * as Sentry from '@sentry/browser';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview, Mark, Encode } from 'Lib';
+import { 
+	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
+	focus, Preview, Mark, Encode, Animation 
+} from 'Lib';
 
 configure({ enforceActions: 'never' });
 
@@ -215,6 +218,7 @@ window.Lib = {
 	Preview,
 	Storage,
 	Encode,
+	Animation,
 };
 
 /* 
@@ -249,7 +253,7 @@ Sentry.init({
 	]
 });
 
-class RoutePage extends React.Component<RouteComponentProps> { 
+class RoutePage extends React.Component<RouteComponentProps> {
 
 	render () {
 		return (
@@ -786,14 +790,11 @@ class App extends React.Component<object, State> {
 		const win = $(window);
 		const rootId = keyboard.getRootId();
 		const { focused, range } = focus.state;
-		const { config } = commonStore;
+		const options: any = param.dictionarySuggestions.map(it => ({ id: it, name: it }));
 		const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
 		const value = String(obj.get(0).innerText || '');
-		const options: any = param.dictionarySuggestions.map(it => ({ id: it, name: it })).concat([
-			{ isDiv: true },
-			{ id: 'disable-spellcheck', name: 'Disable spellcheck' },
-			{ id: 'add-to-dictionary', name: 'Add to dictionary' },
-		]);
+
+		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
 
 		menuStore.open('select', {
 			recalcRect: () => { 
@@ -808,22 +809,11 @@ class App extends React.Component<object, State> {
 					raf(() => { 
 						focus.apply(); 
 
-						switch (item.id) {
-							default: {
-								blockStore.updateContent(rootId, focused, { text: value });
-								DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
-								break;
-							};
-
-							case 'add-to-dictionary': {
-								Renderer.send('spellcheckAdd', param.misspelledWord);
-								break;
-							};
-
-							case 'disable-spellcheck': {
-								Renderer.send('setLanguage', (config.languages || []).filter(it => it != window.Electron.language));
-								break;
-							};
+						if (item.id == 'add-to-dictionary') {
+							Renderer.send('spellcheckAdd', param.misspelledWord);
+						} else {
+							blockStore.updateContent(rootId, focused, { text: value });
+							DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
 						};
 					});
 				},

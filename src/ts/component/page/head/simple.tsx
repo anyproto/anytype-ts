@@ -34,7 +34,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const canEditIcon = allowDetails && (object.type != Constant.typeId.relation);
 		const placeholder = {
 			title: DataUtil.defaultName(type),
 			description: 'Add a description',
@@ -47,6 +46,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			Constant.storeTypeId.relation,
 		].includes(object.type);
 
+		let canEditIcon = allowDetails;
+		if (object.type == Constant.typeId.relation) {
+			canEditIcon = false;
+		};
 
 		const Editor = (item: any) => {
 			return (
@@ -74,6 +77,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let descr = null;
 		let featured = null;
 		let cn = [ 'headSimple', check.className ];
+		let buttonId = '';
 
 		if (isTypeOrRelation) {
 			size = 32;
@@ -125,6 +129,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 							size={size} 
 							iconSize={iconSize}
 							object={object} 
+							forceLetter={true}
 							canEdit={canEditIcon} 
 							onSelect={this.onSelect} 
 							onUpload={this.onUpload} 

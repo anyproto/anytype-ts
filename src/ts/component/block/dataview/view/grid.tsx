@@ -6,7 +6,6 @@ import $ from 'jquery';
 import { Icon, LoadMore } from 'Component';
 import { I, C, Util, translate, keyboard, Relation } from 'Lib';
 import { dbStore, menuStore, blockStore } from 'Store';
-import Empty from '../empty';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import Constant from 'json/constant.json';
@@ -36,7 +35,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getLimit, getVisibleRelations } = this.props;
+		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getLimit, getVisibleRelations, getEmpty } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -47,17 +46,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const isAllowedObject = this.props.isAllowedObject();
 
 		if (!length) {
-			return (
-				<Empty 
-					{...this.props}
-					title="No objects found" 
-					description="Create your first one to begin"
-					button="Create object"
-					className={isInline ? 'withHead' : ''}
-					withButton={isAllowedObject}
-					onClick={(e: any) => onRecordAdd(e, 1)}
-				/>
-			);
+			return getEmpty('view');
 		};
 
 		let content = null;

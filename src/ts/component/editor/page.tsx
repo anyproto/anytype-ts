@@ -1590,8 +1590,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const currentTo = range.to;
 		const block = blockStore.getLeaf(rootId, focused);
 
-	
-
 		if (!block) {
 			return;
 		};
@@ -1602,80 +1600,82 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 		const options: any[] = [
 			{ id: 'link', name: 'Paste as link' },
-			(isEmpty && !isInsideTable) ? { id: 'object', name: 'Create bookmark object' } : null,
+			isEmpty && !isInsideTable ? { id: 'object', name: 'Create bookmark object' } : null,
 			!isInsideTable ? { id: 'block', name: 'Create bookmark' } : null,
 			{ id: 'cancel', name: 'Paste as text' },
 			//{ id: 'embed', name: 'Paste as embed' },
 		].filter(it => it);
 
-		menuStore.closeAll();
-
-		window.setTimeout(() => {
-			menuStore.open('select', { 
-				element: `#block-${focused}`,
-				offsetX: Constant.size.blockMenu,
-				onOpen: () => {
+		menuStore.open('select', { 
+			element: `#block-${focused}`,
+			offsetX: Constant.size.blockMenu,
+			onOpen: () => {
+				if (block) {
 					window.setTimeout(() => {
 						focus.set(block.id, { from: currentFrom, to: currentTo });
 						focus.apply();
 					});
+				};
+			},
+			data: {
+				value: '',
+				options,
+				onSelect: (event: any, item: any) => {
+					let value = block.content.text;
+					let to = range.from + url.length;
+					let marks = Util.objectCopy(block.content.marks || []);
+
+					switch (item.id) {
+						case 'link':
+							value = Util.stringInsert(value, url + ' ', range.from, range.from);
+							marks.push({
+								type: I.MarkType.Link,
+								range: { from: range.from, to: to },
+								param: url,
+							});
+
+							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+								focus.set(block.id, { from: to + 1, to: to + 1 });
+								focus.apply();
+							});
+							break;
+
+						case 'object':
+							C.ObjectToBookmark(rootId, url, (message: any) => {
+								if (message.error.code) {
+									return;
+								};
+
+								ObjectUtil.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+
+								analytics.event('CreateObject', {
+									objectType: Constant.typeId.bookmark,
+									layout: I.ObjectLayout.Bookmark,
+									template: '',
+								});
+							});
+							break;
+
+						case 'block':
+							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+								if (!message.error.code) {
+									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								};
+							});
+							break;
+
+						case 'cancel':
+							value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
+
+							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+								focus.set(block.id, { from: to + 1, to: to + 1 });
+								focus.apply();
+							});
+							break;
+					};
 				},
-				data: {
-					value: '',
-					options,
-					onSelect: (event: any, item: any) => {
-						let value = block.content.text;
-						let to = range.from + url.length;
-						let marks = Util.objectCopy(block.content.marks || []);
-
-						switch (item.id) {
-							case 'link':
-								value = Util.stringInsert(value, url + ' ', range.from, range.from);
-								marks.push({ type: I.MarkType.Link, range: { from: range.from, to }, param: url });
-
-								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
-									focus.set(block.id, { from: to + 1, to: to + 1 });
-									focus.apply();
-								});
-								break;
-
-							case 'object':
-								C.ObjectToBookmark(rootId, url, (message: any) => {
-									if (message.error.code) {
-										return;
-									};
-
-									ObjectUtil.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
-
-									analytics.event('CreateObject', {
-										objectType: Constant.typeId.bookmark,
-										layout: I.ObjectLayout.Bookmark,
-										template: '',
-									});
-								});
-								break;
-
-							case 'block':
-								C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
-									if (!message.error.code) {
-										analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
-									};
-								});
-								break;
-
-							case 'cancel':
-								value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
-
-								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
-									focus.set(block.id, { from: to + 1, to: to + 1 });
-									focus.apply();
-								});
-								break;
-						};
-					},
-				}
-			});
-		}, Constant.delay.menu);
+			}
+		});
 	};
 
 	getClipboardData (e: any) {

@@ -126,6 +126,7 @@ html.platformWindows, html.platformLinux {
 }
 ::-webkit-input-placeholder { color: $colorSecondary !important; }
 .isBlurred { filter: blur(7px); }
+.animationWord { display: inline-block; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 
@@ -152,7 +153,7 @@ search.active { background: orange !important; }
 .block.isSelectionSelected > .wrapContent > .selectable::after 
 { 
 	display: block; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; background-color: rgba(42, 167, 238, 0.15);
-	pointer-events: none; z-index: 10; content: ""; border-radius: 2px;
+	pointer-events: none; z-index: 10; content: "";
 }
 
 .textColor-default { color: $colorBlack !important; }

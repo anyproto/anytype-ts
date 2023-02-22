@@ -314,6 +314,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			options.push({ id: 'change', name: 'Change type', arrow: true });
 		};
 
+		if (object.type === Constant.typeId.set) {
+			options.push({ id: 'turnToCollection', name: 'Turn into collection' });
+		};
+
 		const showMenu = () => {
 			menuStore.open('select', {
 				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', 0)}`,
@@ -421,7 +425,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
+		const object = detailStore.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
+		const blocks = blockStore.getChildren(rootId, rootId, it => it.isDataview());
 		const type = dbStore.getType(object.type);
 
 		this.menuContext.close();
@@ -446,6 +451,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				C.ObjectCreateSet([ object.type ], details, '', (message: any) => {
 					if (!message.error.code) {
 						ObjectUtil.openPopup(message.details);
+					};
+				});
+				break;
+
+			case 'turnToCollection':
+				C.ObjectToCollection(rootId, (message: any) => {
+					if (!message.error.code) {
+						ObjectUtil.openRoute({id: message.objectId, layout: I.ObjectLayout.Collection});
+						window.setTimeout(() => {
+							Preview.toastShow({ text: `${object.name} is collection now!`});
+						}, 200);
 					};
 				});
 				break;

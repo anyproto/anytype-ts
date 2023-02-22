@@ -75,12 +75,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 						{loading ? <Loader /> : (
 							<div id="columns" className="columns">
 								{groups.map((group: any, i: number) => (
-									<Column 
-										key={`board-column-${group.id}`} 
+									<Column
+										key={`board-column-${group.id}`}
 										ref={(ref: any) => { this.columnRefs[group.id] = ref; }}
-										{...this.props} 
+										{...this.props}
 										{...group}
-										onRecordAdd={this.onRecordAdd} 
+										onRecordAdd={this.onRecordAdd}
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
 										applyObjectOrder={this.applyObjectOrder}
@@ -197,7 +197,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onRecordAdd (groupId: string, dir: number) {
-		const { rootId, block, getView, isInline } = this.props;
+		const { rootId, block, getView, isInline, isCollection } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
 		const objectId = isInline ? block.content.targetObjectId : rootId;
@@ -210,6 +210,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {
 			type: types.length ? types[0].id : commonStore.type,
+		};
+		const flags: I.ObjectFlag[] = [];
+
+		if (!types.length || isCollection) {
+			flags.push(I.ObjectFlag.SelectType);
 		};
 
 		details[view.groupRelationKey] = group.value;
@@ -225,7 +230,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		const create = (template: any) => {
-			C.ObjectCreate(details, [], template?.id, (message: any) => {
+			C.ObjectCreate(details, flags, template?.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -235,6 +240,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const oldIndex = records.indexOf(message.objectId);
 				const newIndex = dir > 0 ? records.length : 0;
 				const update = arrayMove(records, oldIndex, newIndex);
+
+				if (isCollection) {
+					C.ObjectCollectionAdd(objectId, [ object.id ]);
+				};
 
 				C.BlockDataviewObjectOrderUpdate(rootId, block.id, [ { viewId: view.id, groupId, objectIds: update } ], () => {
 					dbStore.recordsSet(subId, '', update);
@@ -611,6 +620,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const view = getView();
 		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
 		const objectIds = el ? el.objectIds || [] : [];
+
+		console.log('GROUP: ', groupId, records)
 
 		records.sort((c1: any, c2: any) => {
 			const idx1 = objectIds.indexOf(c1);

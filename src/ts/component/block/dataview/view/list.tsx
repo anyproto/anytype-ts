@@ -5,7 +5,6 @@ import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualiz
 import { dbStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
 import { I, translate } from 'Lib';
-import Empty from '../empty';
 import Row from './list/row';
 
 const HEIGHT = 32;
@@ -22,7 +21,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, getView, isPopup, onRecordAdd, isInline, getLimit } = this.props;
+		const { rootId, block, getView, isPopup, onRecordAdd, isInline, getLimit, getEmpty } = this.props;
 		const view = getView();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
@@ -32,17 +31,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		const isAllowedObject = this.props.isAllowedObject();
 
 		if (!length) {
-			return (
-				<Empty 
-					{...this.props}
-					title="No objects found" 
-					description="Create your first one to begin"
-					button="Create object"
-					className={isInline ? 'withHead' : ''}
-					withButton={isAllowedObject}
-					onClick={(e: any) => onRecordAdd(e, 1)}
-				/>
-			);
+			return getEmpty('view');
 		};
 
 		let content = null;

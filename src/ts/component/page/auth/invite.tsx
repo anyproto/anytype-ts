@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Frame, Cover, Title, Label, Error, Input, Button, Header, Footer, Icon } from 'Component';
+import { Frame, Title, Label, Error, Input, Button, Header, Footer, Icon } from 'Component';
 import { I, Util, translate } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -23,17 +23,15 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 	};
 	
 	render () {
-		const { cover } = commonStore;
 		const { error } = this.state;
 		
         return (
 			<div>
-				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
-					<div className="authBackWrap" onClick={this.onCancel}>
+					<div className="backWrap" onClick={this.onCancel}>
 						<Icon className="back" />
 						<div className="name">{translate('commonBack')}</div>
 					</div>

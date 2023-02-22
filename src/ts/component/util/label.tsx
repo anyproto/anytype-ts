@@ -1,11 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Util } from 'Lib';
+import { I, Util } from 'Lib';
 
 interface Props {
 	id?: string;
 	text: string;
 	className?: string;
+	dataset?: any;
 	onClick?: (e: any) => void;
 };
 
@@ -14,13 +15,13 @@ class Label extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { id, text, className, onClick } = this.props;
+		const { id, text, className, dataset, onClick } = this.props;
 		const cn = [ 'label' ];
 
 		if (className) {
 			cn.push(className);
 		};
-		
+
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -28,6 +29,7 @@ class Label extends React.Component<Props> {
 				className={cn.join(' ')} 
 				dangerouslySetInnerHTML={{ __html: text }} 
 				onClick={onClick} 
+				{...Util.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 			/>
 		);
 	};

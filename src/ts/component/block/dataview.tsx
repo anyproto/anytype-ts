@@ -20,6 +20,7 @@ import Empty from './dataview/empty';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
+	isCollection?: boolean;
 	isDragging?: boolean
 };
 
@@ -52,6 +53,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getKeys = this.getKeys.bind(this);
 		this.getIdPrefix = this.getIdPrefix.bind(this);
 		this.getVisibleRelations = this.getVisibleRelations.bind(this);
+		this.getEmpty = this.getEmpty.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -63,12 +65,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, isDragging } = this.props;
+		const { rootId, block, isPopup, isInline, isCollection, isDragging } = this.props;
 		const { loading } = this.state;
 		const views = dbStore.getViews(rootId, block.id);
 		const sources = this.getSources();
 		const targetId = this.getObjectId();
 		const object = detailStore.get(rootId, targetId);
+
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
+		const emptyObj = (!sources.length && !isCollection) || (!records.length && isCollection);
 
 		if (!views.length) {
 			return null;
@@ -80,16 +86,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return null;
 		};
 
-		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.relation);
-
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
 		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]), (object.isDeleted ? 'isDeleted' : '') ].join(' ');
 		let head = null;
 		let controls = null;
 		let body = null;
-		let content = null;
 
 		switch (view.type) {
 			default:
@@ -110,22 +112,27 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 		};
 
+		const dataviewProps = {
+			readonly: false,
+			getData: this.getData,
+			getView: this.getView,
+			getSources: this.getSources,
+			getRecord: this.getRecord,
+			onRecordAdd: this.onRecordAdd,
+			isAllowedObject: this.isAllowedObject,
+			isCollection,
+			isInline
+		};
+
 		if (isInline) {
 			head = (
 				<Head 
 					ref={(ref: any) => { this.refHead = ref; }} 
-					{...this.props} 
-					readonly={false} 
-					getData={this.getData} 
-					getView={this.getView} 
-					getSources={this.getSources}
-					getRecord={this.getRecord}
-					onRecordAdd={this.onRecordAdd}
+					{...this.props}
+					{...dataviewProps}
 					onSourceSelect={this.onSourceSelect}
 					onSourceTypeSelect={this.onSourceTypeSelect}
 					className={className}
-					isInline={isInline}
-					isAllowedObject={this.isAllowedObject}
 				/>
 			);
 		};
@@ -134,34 +141,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			controls = (
 				<Controls 
 					ref={(ref: any) => { this.refControls = ref; }} 
-					{...this.props} 
+					{...this.props}
+					{...dataviewProps}
 					className={className}
-					readonly={false} 
-					getData={this.getData} 
-					getView={this.getView} 
-					getSources={this.getSources}
-					getRecord={this.getRecord}
-					onRecordAdd={this.onRecordAdd}
-					isInline={isInline}
-					isAllowedObject={this.isAllowedObject}
 				/>
 			);
 
 			if (loading) {
 				body = <Loader id="set-loader" />
 			} else
-			if (!types.length && !relations.length) {
-				body = (
-					<Empty
-						{...this.props}
-						title="Type or relation has been deleted"
-						description="Visit the Marketplace to re-install these entities or select another source."
-						button="Select source"
-						className={isInline ? 'withHead' : ''}
-						withButton={true}
-						onClick={this.onEmpty}
-					/>
-				);
+			if (emptyObj) {
+				controls = null;
+				body = this.getEmpty(object.type);
 			} else {
 				body = (
 					<div className="content">
@@ -169,61 +160,31 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							key={'view' + view.id}
 							ref={(ref: any) => { this.refView = ref; }} 
 							onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
-							{...this.props} 
+							{...this.props}
+							{...dataviewProps}
 							bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 							pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-							readonly={false} 
-							getData={this.getData} 
-							getRecord={this.getRecord}
-							getView={this.getView} 
-							getSources={this.getSources}
 							getKeys={this.getKeys}
 							getIdPrefix={this.getIdPrefix}
 							getLimit={() => this.getLimit(view.type)}
 							getVisibleRelations={this.getVisibleRelations}
-							onRecordAdd={this.onRecordAdd}
+							getEmpty={this.getEmpty}
 							onCellClick={this.onCellClick}
 							onCellChange={this.onCellChange}
 							onContext={this.onContext}
-							isInline={isInline}
-							isAllowedObject={this.isAllowedObject}
 						/>
 					</div>
 				);
 			};
 		};
 
-		if (!sources.length) {
-			content = (
-				<React.Fragment>
-					{head}
-
-					<Empty
-						{...this.props}
-						title="No query selected"
-						description="All objects satisfying your query will be displayed in Set"
-						button="Select query"
-						className={isInline ? 'withHead' : ''}
-						withButton={true}
-						onClick={this.onEmpty}
-					/>
-				</React.Fragment>
-			);
-		} else {
-			content = (
-				<React.Fragment>
-					{head}
-					{controls}
-					{body}
-				</React.Fragment>
-			);
-		};
-
 		return (
 			<div
 				ref={node => this.node = node}
 			>
-				{content}
+				{head}
+				{controls}
+				{body}
 			</div>
 		);
 	};
@@ -271,7 +232,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id}`);
+		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection`);
 	};
 
 	rebind () {
@@ -358,12 +319,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.viewId = viewId;
 
-		const { rootId, block } = this.props;
+		const { rootId, block, isCollection } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
 
-		if (!sources.length) {
+		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.getData] No sources');
 			return;
 		}
@@ -393,6 +354,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				offset: 0, 
 				limit: offset + this.getLimit(view.type), 
 				clear,
+				collectionId: isCollection ? this.getObjectId() : '',
 			}, (message: any) => {
 				if (clear) {
 					this.setState({ loading: false });
@@ -490,7 +452,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			e.persist();
 		};
 
-		const { rootId, block } = this.props;
+		const { rootId, block, isCollection } = this.props;
 		const objectId = this.getObjectId();
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
@@ -507,6 +469,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {
 			type: types.length ? types[0].id : commonStore.type,
+		};
+		const flags: I.ObjectFlag[] = [];
+
+		if (!types.length || isCollection) {
+			flags.push(I.ObjectFlag.SelectType);
 		};
 
 		if (relations.length) {
@@ -529,7 +496,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.creating = true;
 
 		const create = (template: any) => {
-			C.ObjectCreate(details, [], template?.id, (message: any) => {
+			C.ObjectCreate(details, flags, template?.id, (message: any) => {
 				this.creating = false;
 
 				if (message.error.code) {
@@ -541,6 +508,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const oldIndex = records.indexOf(message.objectId);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
+				if (isCollection) {
+					C.ObjectCollectionAdd(objectId, [ object.id ]);
+				};
+
 				if (oldIndex < 0) {
 					dbStore.recordAdd(subId, '', object.id, newIndex);
 				} else {
@@ -550,7 +521,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', newIndex);
 				const ref = this.refCells.get(id);
 
-				if (ref && (view.type == I.ViewType.Grid)) {
+				if (ref && (view.type == I.ViewType.Grid) && !isCollection) {
 					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 
@@ -685,7 +656,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, dataset } = this.props;
+		const { rootId, block, dataset, isCollection } = this.props;
 		const { selection } = dataset || {};
 		const subId = dbStore.getSubId(rootId, block.id);
 		
@@ -703,6 +674,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			data: {
 				objectIds: ids,
 				subId,
+				isCollection
 			}
 		});
 	};
@@ -796,6 +768,49 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const relations = dbStore.getObjectRelations(rootId, block.id).map(it => it.relationKey);
 
 		return view.getVisibleRelations().filter(it => relations.includes(it.relationKey));
+	};
+
+	getEmpty (type: string) {
+		const { isInline } = this.props;
+		let emptyProps = { title: '', description: '', button: '', onClick: (e) => {}};
+
+		switch (type) {
+			case Constant.typeId.set:
+				emptyProps = {
+					title: 'Type or relation has been deleted',
+					description: 'Visit the Marketplace to re-install these entities or select another source.',
+					button: 'Select query',
+					onClick: this.onEmpty,
+				};
+				break;
+
+			case Constant.typeId.collection:
+				emptyProps = {
+					title: 'No objects',
+					description: 'Add first object to continue',
+					button: 'Create object',
+					onClick: (e) => this.onRecordAdd(e, 1),
+				};
+				break;
+
+			case 'view':
+				emptyProps = {
+					title: 'No objects',
+					description: 'Create your first one to begin',
+					button: 'Create object',
+					onClick: (e) => this.onRecordAdd(e, 1),
+				};
+
+		};
+
+		return (
+			<Empty
+				{...this.props}
+				{...emptyProps}
+				className={isInline ? 'withHead' : ''}
+				withButton={true}
+			/>
+		)
 	};
 
 	isAllowedObject () {

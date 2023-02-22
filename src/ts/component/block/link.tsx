@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, DataUtil, ObjectUtil, translate, keyboard, focus } from 'Lib';
+import { I, Util, DataUtil, ObjectUtil, translate, keyboard, focus } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
@@ -50,7 +49,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		let element = null;
 		if (_empty_) {
 			element = (
-				<div className="loading" data-target-block-id={object.id}>
+				<div 
+					className="loading" 
+					{...Util.dataProps({ 'target-block-id': object.id })}
+				>
 					<Loader />
 					<div className="name">{translate('blockLinkSyncing')}</div>
 				</div>

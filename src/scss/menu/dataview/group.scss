@@ -1,6 +1,7 @@
 @import "~scss/_vars";
 
 .menus {
+	.menu.menuDataviewCollection { width: 360px; }
 	.menu.menuDataviewGroupList { width: 360px; }
 	.menu.menuDataviewGroupList {
 		.content { padding: 0px; }

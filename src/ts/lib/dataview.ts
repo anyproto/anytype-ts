@@ -107,9 +107,10 @@ class Dataview {
 			limit: 0,
 			ignoreWorkspace: false,
 			clear: false,
+			collectionId: ''
 		}, param);
 
-		const { rootId, blockId, newViewId, keys, offset, limit, clear } = param;
+		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
 		const view = dbStore.getView(rootId, blockId, newViewId);
 		const block = blockStore.getLeaf(rootId, blockId);
 		const { targetObjectId } = block.content;
@@ -155,6 +156,7 @@ class Dataview {
 			sources: object.setOf,
 			limit,
 			offset,
+			collectionId,
 			ignoreDeleted: true,
 			ignoreHidden: true,
 		}, callBack);
@@ -162,12 +164,18 @@ class Dataview {
 
 	getMenuTabs (rootId: string, blockId: string, viewId: string): I.MenuTab[] {
 		const view = dbStore.getView(rootId, blockId, viewId);
+		const block = blockStore.getLeaf(rootId, blockId);
+		const { targetObjectId } = block.content;
+		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId);
+		const isCollection = object.type === Constant.typeId.collection;
+
 		if (!view) {
 			return [];
 		};
 
 		const tabs: I.MenuTab[] = [
 			{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
+			(isCollection ? { id: 'collection', name: 'Collection', component: 'dataviewCollection' } : null),
 			(view.type == I.ViewType.Board) ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
 			{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
 		];

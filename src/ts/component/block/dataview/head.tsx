@@ -45,12 +45,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readonly, getSources, className, isInline } = this.props;
+		const { rootId, block, readonly, className } = this.props;
 		const { isEditing } = this.state;
 		const { targetObjectId } = block.content;
-		const targetId = isInline ? targetObjectId : rootId;
-		const object = detailStore.get(rootId, targetId);
-		const sources = getSources();
+		const object = detailStore.get(rootId, targetObjectId);
 		const cn = [ 'dataviewHead' ];
 
 		if (className) {
@@ -131,12 +129,11 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	onTitle () {
-		const { rootId, block, onSourceSelect, isInline } = this.props;
+		const { rootId, block, onSourceSelect } = this.props;
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
 		const element = `#block-${block.id} #head-title-wrapper`;
-		const targetId = isInline ? targetObjectId : rootId;
-		const object = detailStore.get(rootId, targetId);
+		const object = detailStore.get(rootId, targetObjectId);
 
 		if (isEditing) {
 			return;

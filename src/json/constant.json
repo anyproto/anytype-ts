@@ -169,7 +169,8 @@
 		"note": "ot-note",
 		"task": "ot-task",
 		"bookmark": "ot-bookmark",
-		"option": "ot-relationOption"
+		"option": "ot-relationOption",
+		"collection": "ot-collection"
 	},
 
 	"storeTypeId": {

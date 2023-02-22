@@ -69,6 +69,7 @@ import MenuDataviewText from './dataview/text';
 import MenuDataviewSource from './dataview/source';
 import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
+import MenuDataviewCollection from './dataview/collection';
 
 import Constant from 'json/constant.json';
 
@@ -125,6 +126,7 @@ const Components: any = {
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
+	dataviewCollection:		 MenuDataviewCollection,
 	dataviewGroupList:		 MenuDataviewGroupList,
 	dataviewGroupEdit:		 MenuDataviewGroupEdit,
 	dataviewObjectList:		 MenuDataviewObjectList,

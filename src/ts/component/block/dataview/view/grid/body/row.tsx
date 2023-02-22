@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { I } from 'Lib';
+import { I, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'Store';
-
+import { DropTarget } from 'Component';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
@@ -16,7 +16,7 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { index, getRecord, style, onContext, getColumnWidths, isInline, getVisibleRelations } = this.props;
+		const { rootId, index, getRecord, style, onContext, getColumnWidths, isInline, getVisibleRelations, isCollection } = this.props;
 		const relations = getVisibleRelations();
 		const record = getRecord(index);
 		const widths = getColumnWidths('', 0);
@@ -60,12 +60,19 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					data-id={record.id}
-					data-type={I.SelectType.Record}
+					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 					style={{ gridTemplateColumns: str }}
 				>
 					{content}
 				</div>
+			);
+		};
+
+		if (isCollection) {
+			content = (
+				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+					{content}
+				</DropTarget>
 			);
 		};
 

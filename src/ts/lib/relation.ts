@@ -21,7 +21,11 @@ class Relation {
 	};
 
 	public cellId (prefix: string, relationKey: string, id: string|number) {
-		return [ prefix, relationKey, id ].join('-');
+		return [ 
+			String(prefix || ''), 
+			String(relationKey || ''), 
+			String(id || ''),
+		].join('-');
 	};
 
 	public width (width: number, format: I.RelationType): number {

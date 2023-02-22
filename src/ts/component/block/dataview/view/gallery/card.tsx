@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, Cover, Icon, MediaAudio, MediaVideo } from 'Component';
-import { I, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
+import { Cell, Cover, Icon, MediaAudio, MediaVideo, DropTarget } from 'Component';
+import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -23,7 +23,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -98,11 +98,18 @@ const Card = observer(class Card extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					data-id={record.id}
-					data-type={I.SelectType.Record}
+					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
 					{content}
 				</div>
+			);
+		};
+
+		if (isCollection) {
+			content = (
+				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+					{content}
+				</DropTarget>
 			);
 		};
 

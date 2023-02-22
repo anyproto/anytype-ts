@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, ObjectUtil, focus } from 'Lib';
+import { I, C, keyboard, analytics, Util, ObjectUtil, focus } from 'Lib';
 import { detailStore, menuStore, blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -74,12 +74,13 @@ class MenuContext extends React.Component<I.Menu> {
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
-		const { subId, objectIds, getObject } = data;
+		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
 		let open = { id: 'open', icon: 'expand', name: 'Open as object' };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
+		let unlink = null;
 		let archive = null;
 		let archiveCnt = 0;
 		let fav = null;
@@ -88,6 +89,10 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedArchive = true;
 		let allowedFav = true;
 		let allowedCopy = true;
+
+		if (isCollection) {
+			unlink = { id: 'unlink', icon: 'unlink', name: 'Unlink from collection' }
+		};
 
 		objectIds.forEach((it: string) => {
 			let object = null; 
@@ -130,6 +135,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (archiveCnt == length) {
 			open = null;
 			linkTo = null;
+			unlink = null;
 			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
@@ -140,7 +146,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, linkTo, pageCopy, archive ] },
+			{ children: [ open, fav, linkTo, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -287,6 +293,15 @@ class MenuContext extends React.Component<I.Menu> {
 					analytics.event('RemoveFromFavorites', { count: length });
 				});
 				break;
+
+			case 'unlink':
+				const rootId = subId.split('-')[0];
+				C.ObjectCollectionRemove(rootId, objectIds, () => {
+					cb();
+					analytics.event('UnlinkFromCollection', { count: length });
+				});
+				break;
+
 		};
 		
 		close();
