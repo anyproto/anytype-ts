@@ -672,9 +672,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			},
 			onClose: () => { selection.clear(); },
 			data: {
+				targetId: this.getObjectId(),
 				objectIds: ids,
 				subId,
-				isCollection
+				isCollection,
 			}
 		});
 	};
