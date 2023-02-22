@@ -9,6 +9,7 @@ import { dispatcher } from './dispatcher';
 import { keyboard, Key } from './keyboard';
 import { sidebar } from './sidebar';
 import Storage from './storage';
+import Animation from './animation';
 import Util from './util';
 import DataUtil from './datautil';
 import SmileUtil from './smileutil';
@@ -52,6 +53,7 @@ export {
 	focus,
 	Key,
 	Storage,
+	Animation,
 	Util,
 	DataUtil,
 	SmileUtil,
