@@ -175,7 +175,6 @@ class Dataview {
 
 		const tabs: I.MenuTab[] = [
 			{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-			(isCollection ? { id: 'collection', name: 'Collection', component: 'dataviewCollection' } : null),
 			(view.type == I.ViewType.Board) ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
 			{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
 		];
