@@ -2,7 +2,7 @@ import * as React from 'react';
 import {DataUtil, I, keyboard, Util} from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'Store';
-import {DropTarget, Icon} from 'Component';
+import { DropTarget, Icon } from 'Component';
 import Cell from './cell';
 import $ from 'jquery';
 
@@ -15,6 +15,8 @@ interface Props extends I.ViewComponent {
 };
 
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
+
+	node: any = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -77,20 +79,22 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		if (isCollection) {
 			content = (
-				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record} canDropMiddle={true}>
-					{content}
-				</DropTarget>
+				<React.Fragment>
+					<Icon className="dnd" draggable={true} onDragStart={this.onDragStart} />
+					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record} canDropMiddle={true}>
+						{content}
+					</DropTarget>
+				</React.Fragment>
 			);
 		};
 
 		return (
-			<div 
-				id={'row-' + index} 
-				className={cn.join(' ')} 
-				style={style} 
+			<div
+				ref={node => this.node = node}
+				id={'row-' + index}
+				className={cn.join(' ')}
+				style={style}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
-				draggable={isCollection}
-				onDragStart={this.onDragStart}
 			>
 				{content}
 			</div>
@@ -103,7 +107,13 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		const { dataset, block, index, getRecord } = this.props;
 		const { selection, onDragStart } = dataset || {};
 		const record = getRecord(index);
-		const target = $('#row-' + index);
+		const target = $(this.node);
+		const clone = target.clone();
+
+		let ids = selection.get(I.SelectType.Record);
+		if (!ids.length) {
+			ids = [ record.id ];
+		};
 
 		if (!selection || !onDragStart) {
 			return;
@@ -116,7 +126,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		keyboard.disableSelection(true);
 
-		onDragStart(e, I.DropType.Record, [record.id], this);
+		onDragStart(e, I.DropType.Record, ids, this);
 	};
 
 });

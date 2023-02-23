@@ -171,6 +171,10 @@
 		}
 	}
 
+	.block.blockDataview.isCollection {
+		.dataviewControls { padding-left: 8px; }
+	}
+
 	.block.blockDataview:hover {
 		.dataviewControls {
 			.side.right { opacity: 1; }

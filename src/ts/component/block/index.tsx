@@ -183,6 +183,9 @@ const Block = observer(class Block extends React.Component<Props> {
 				if (canSelect) {
 					cn.push('isInline');
 				};
+				if (root.isObjectCollection()) {
+					cn.push('isCollection');
+				};
 				blockComponent = <BlockDataview key={`block-${block.id}-component`} ref={setRef} isInline={canSelect} {...this.props} />;
 				break;
 			};
