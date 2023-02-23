@@ -34,7 +34,7 @@ class Analytics {
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
-			//apiEndpoint: URL,
+			apiEndpoint: URL,
 			batchEvents: true,
 			saveEvents: true,
 			includeUtm: true,
