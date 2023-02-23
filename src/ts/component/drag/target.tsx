@@ -55,7 +55,7 @@ class DropTarget extends React.Component<Props> {
 				{...Util.dataProps({
 					id,
 					type,
-					style,
+					style: Number(style) || 0,
 					'root-id': rootId,
 					'cache-key': key.join('-'),
 					'drop-type': dropType,

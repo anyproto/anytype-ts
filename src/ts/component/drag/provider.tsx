@@ -540,14 +540,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				recalcPosition();
 			};
 
-			// You can only drop into text blocks and links
-			if (
-				(this.position == I.BlockPosition.InnerFirst) &&
-				![ I.BlockType.Text, I.BlockType.Link ].includes(type)
-			) {
-				recalcPosition();
-			};
-
 			// You can't drop on Featured or Type
 			if (isFeatured || isType) {
 				this.setPosition(I.BlockPosition.None);

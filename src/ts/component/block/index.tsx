@@ -79,7 +79,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		let canSelect = !isInsideTable;
 		let canDrop = !readonly && !isInsideTable;
-		let canDropMiddle = canDrop;
+		let canDropMiddle = false;
 		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'align' + hAlign ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
@@ -104,6 +104,8 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		switch (type) {
 			case I.BlockType.Text: {
+				canDropMiddle = canDrop;
+
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
@@ -192,8 +194,9 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.Link: {
 				const object = detailStore.get(rootId, content.targetBlockId, [ 'restrictions' ]);
-				if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
-					canDropMiddle = false;
+				
+				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+					canDropMiddle = canDrop;
 				};
 
 				blockComponent = <BlockLink key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
@@ -229,7 +232,6 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			case I.BlockType.Table: {
 				renderChildren = false;
-				canDropMiddle = false;
 				blockComponent = <BlockTable key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
