@@ -292,6 +292,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		let targetContextId = keyboard.getRootId();
 		let isToggle = false;
 
+		console.log('DROP: ', type, dropType)
+
 		// DropTarget type
 		switch (type) {
 			case I.DropType.Block: {
@@ -330,6 +332,14 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			case I.DropType.Menu: {
 				targetContextId = targetId;
 				targetId = '';
+				break;
+			};
+
+			case I.DropType.Record: {
+				const block = blockStore.getLeaf(targetContextId, targetContextId);
+				console.log('BLOCK: ', block);
+				console.log('TARGET ID: ', targetId)
+				console.log('IDS: ', ids)
 				break;
 			};
 		};

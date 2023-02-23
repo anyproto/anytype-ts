@@ -65,6 +65,8 @@ class DragBox extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
+		console.log('!!!')
+
 		if (!this._isMounted) {
 			return;
 		};

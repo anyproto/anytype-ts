@@ -560,6 +560,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') },
 					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '') }
 				];
+
 				objectOrderUpdate(orders, records);
 			});
 		} else {

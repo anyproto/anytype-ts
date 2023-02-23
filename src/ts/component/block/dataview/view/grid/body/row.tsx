@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { I, Util } from 'Lib';
+import {DataUtil, I, keyboard, Util} from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'Store';
-import { DropTarget } from 'Component';
+import {DropTarget, Icon} from 'Component';
 import Cell from './cell';
+import $ from 'jquery';
 
 interface Props extends I.ViewComponent {
 	index: number;
@@ -14,6 +15,12 @@ interface Props extends I.ViewComponent {
 };
 
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
+
+	constructor (props: Props) {
+		super(props);
+
+		this.onDragStart = this.onDragStart.bind(this);
+	};
 
 	render () {
 		const { rootId, index, getRecord, style, onContext, getColumnWidths, isInline, getVisibleRelations, isCollection } = this.props;
@@ -70,7 +77,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		if (isCollection) {
 			content = (
-				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record} canDropMiddle={true}>
 					{content}
 				</DropTarget>
 			);
@@ -82,10 +89,34 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 				className={cn.join(' ')} 
 				style={style} 
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				draggable={isCollection}
+				onDragStart={this.onDragStart}
 			>
 				{content}
 			</div>
 		);
+	};
+
+	onDragStart (e: any) {
+		e.stopPropagation();
+
+		const { dataset, block, index, getRecord } = this.props;
+		const { selection, onDragStart } = dataset || {};
+		const record = getRecord(index);
+		const target = $('#row-' + index);
+
+		if (!selection || !onDragStart) {
+			return;
+		};
+
+		if (!block.isDraggable()) {
+			e.preventDefault();
+			return;
+		};
+
+		keyboard.disableSelection(true);
+
+		onDragStart(e, I.DropType.Record, [record.id], this);
 	};
 
 });
