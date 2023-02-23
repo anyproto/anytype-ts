@@ -243,12 +243,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
 
-				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], () => {
+				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
 					dbStore.recordsSet(subId, '', update);
 				});
 
 				analytics.event('CreateObject', {
-					route: 'Set',
+					route: isCollection ? 'Collection' : 'Set',
 					objectType: object.type,
 					layout: object.layout,
 					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
@@ -548,17 +548,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		let records: any[] = [];
 
 		const setOrder = (orders: any[]) => {
-			objectOrderUpdate(orders, () => {
-				orders.forEach((it: any) => {
-					let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
-					if (old) {
-						set(old, it);
-					} else {
-						block.content.objectOrder.push(it);
-					};
+			objectOrderUpdate(orders, records, () => {
 
-					window.setTimeout(() => { applyObjectOrder(records, it.groupId); }, 30);
-				});
 			});
 		};
 

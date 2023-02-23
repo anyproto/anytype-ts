@@ -17,6 +17,7 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 import Empty from './dataview/empty';
+import {set} from "mobx";
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -846,12 +847,33 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return object.type === Constant.typeId.collection;
 	};
 
-	objectOrderUpdate (orders: any[], callBack?: (message: any) => void) {
+	objectOrderUpdate (orders: any[], records: any[], callBack?: (message: any) => void) {
 		const { rootId, block } = this.props;
+		const view = this.getView();
 
-		console.log('WORKS')
+		console.log('ORDERS: ', orders);
+		console.log('RECORDS: ', records);
 
-		C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, callBack);
+		C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, (message) => {
+			if (message.error) {
+				return;
+			};
+
+			orders.forEach((it: any) => {
+				let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
+				if (old) {
+					set(old, it);
+				} else {
+					block.content.objectOrder.push(it);
+				};
+
+				if (callBack) {
+					callBack(message);
+				};
+
+				window.setTimeout(() => { this.applyObjectOrder(records, it.groupId); }, 30);
+			});
+		});
 	};
 
 	applyObjectOrder (records: any[], groupId?: string) {
@@ -859,8 +881,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView();
 		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (groupId ? it.groupId == groupId : true));
 		const objectIds = el ? el.objectIds || [] : [];
-
-		console.log('GROUP: ', groupId, records)
 
 		records.sort((c1: any, c2: any) => {
 			const idx1 = objectIds.indexOf(c1);

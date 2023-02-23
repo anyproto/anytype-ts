@@ -124,7 +124,7 @@ export interface ViewComponent {
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	isAllowedObject?: () => boolean;
-	objectOrderUpdate?: (orders: any[], callBack?: (message: any) => void) => void;
+	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
 	applyObjectOrder?: (records: any[], groupId?: string) => any[];
 };
 
