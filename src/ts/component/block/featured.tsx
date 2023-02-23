@@ -382,9 +382,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					filter: '',
 					smartblockTypes: [ I.SmartBlockType.Page ],
 					onClick: (item: any) => {
+						detailStore.update(rootId, { id: item.id, details: item }, false);
 						C.ObjectSetObjectType(rootId, item.id);
-						this.menuContext.close();
 
+						this.menuContext.close();
 						analytics.event('ChangeObjectType', { objectType: item.id });
 					},
 				});
@@ -497,17 +498,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const elementId = '#header';
-
 		const param: any = {
-			element: elementId,
+			element: '#header',
 			horizontal: I.MenuDirection.Right,
 			noFlipY: true,
 			noAnimation: true,
 			subIds: Constant.menuIds.cell,
 			onOpen: (component: any) => {
-				component?.ref?.onCellClick(e, relationKey, 0);
-				component?.ref?.scrollTo(relationKey, 0);
+				if (component && component.ref) {
+					component.ref.onCellClick(e, relationKey, 0);
+					component.ref.scrollTo(relationKey, 0);
+				};
 			},
 			onClose: () => {
 				menuStore.closeAll();
