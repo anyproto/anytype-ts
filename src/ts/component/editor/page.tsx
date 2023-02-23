@@ -427,22 +427,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				continue;
 			};
 
-			let el = obj.get(0);
-			let rect = el.getBoundingClientRect() as DOMRect;
+			let rect = obj.get(0).getBoundingClientRect() as DOMRect;
 
 			rect.y += st;
 
+			if (block.isDataview()) {
+				rect.height = 88;
+			};
+
 			if ((pageX >= rect.x) && (pageX <= rect.x + rect.width) && (pageY >= rect.y) && (pageY <= rect.y + rect.height)) {
 				this.hoverId = block.id;
-				hovered = el as Element;
+				hovered = obj;
 				hoveredRect = rect;
 			};
 		};
 
-		if (hovered) {
-			hovered = $(hovered);
-		};
-		
 		const { x, y, height } = hoveredRect;
 		
 		if (this.frame) {
