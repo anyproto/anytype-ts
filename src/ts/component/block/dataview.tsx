@@ -20,7 +20,6 @@ import Empty from './dataview/empty';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
-	isCollection?: boolean;
 	isDragging?: boolean
 };
 
@@ -62,17 +61,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
+		this.isCollection = this.isCollection.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, isCollection, isDragging } = this.props;
+		const { rootId, block, isPopup, isInline, isDragging } = this.props;
 		const { loading } = this.state;
 		const views = dbStore.getViews(rootId, block.id);
 		const sources = this.getSources();
 		const targetId = this.getObjectId();
 		const object = detailStore.get(rootId, targetId);
+		const isCollection = this.isCollection();
 
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
@@ -323,10 +324,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.viewId = viewId;
 
-		const { rootId, block, isCollection } = this.props;
+		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
+		const isCollection = this.isCollection();
 
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.getData] No sources');
@@ -456,13 +458,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			e.persist();
 		};
 
-		const { rootId, block, isCollection } = this.props;
+		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
 		const element = $(e.currentTarget);
 		const view = this.getView();
 		const subId = dbStore.getSubId(rootId, block.id);
+		const isCollection = this.isCollection();
 		const conditions = [
 			I.FilterCondition.Equal,
 			I.FilterCondition.In,
@@ -660,9 +663,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, dataset, isCollection } = this.props;
+		const { rootId, block, dataset } = this.props;
 		const { selection } = dataset || {};
 		const subId = dbStore.getSubId(rootId, block.id);
+		const isCollection = this.isCollection();
 		
 		let ids = selection.get(I.SelectType.Record);
 		if (!ids.length) {
@@ -832,6 +836,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		return allowed;
+	};
+
+	isCollection () {
+		const { rootId } = this.props;
+		const targetId = this.getObjectId();
+		const object = detailStore.get(rootId, targetId);
+
+		return object.type === Constant.typeId.collection;
 	};
 
 	objectOrderUpdate (orders: any[], callBack?: (message: any) => void) {

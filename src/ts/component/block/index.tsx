@@ -177,12 +177,11 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 			
 			case I.BlockType.Dataview: {
-				const isCollection = root.isObjectCollection();
-				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace() || isCollection);
+				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace() || root.isObjectCollection());
 				if (canSelect) {
 					cn.push('isInline');
 				};
-				blockComponent = <BlockDataview key={`block-${block.id}-component`} ref={setRef} isInline={canSelect} isCollection={isCollection} {...this.props} />;
+				blockComponent = <BlockDataview key={`block-${block.id}-component`} ref={setRef} isInline={canSelect} {...this.props} />;
 				break;
 			};
 				
