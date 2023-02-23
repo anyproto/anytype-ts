@@ -847,15 +847,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return object.type === Constant.typeId.collection;
 	};
 
-	objectOrderUpdate (orders: any[], records: any[], callBack?: (message: any) => void) {
+	objectOrderUpdate (orders: any[], records: any[], callBack?: (message0: any) => void) {
 		const { rootId, block } = this.props;
 		const view = this.getView();
 
-		console.log('ORDERS: ', orders);
-		console.log('RECORDS: ', records);
-
 		C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, (message) => {
-			if (message.error) {
+			if (message.error.code) {
 				return;
 			};
 
@@ -867,12 +864,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					block.content.objectOrder.push(it);
 				};
 
-				if (callBack) {
-					callBack(message);
-				};
-
 				window.setTimeout(() => { this.applyObjectOrder(records, it.groupId); }, 30);
 			});
+
+			if (callBack) {
+				callBack(message);
+			};
 		});
 	};
 

@@ -527,6 +527,19 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		});
 	};
 
+	makeNamesArray (groupId, ids) {
+		const { rootId, block } = this.props;
+		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
+		let names = [];
+
+		ids.forEach((id) => {
+			const object = detailStore.get(subId, id, []);
+			names.push(object.name);
+		});
+
+		return names;
+	};
+
 	onDragEndCard (e: any, record: any) {
 		const current = this.cache[record.id];
 
@@ -538,7 +551,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return;
 		};
 
-		const { rootId, block, getView, objectOrderUpdate, applyObjectOrder } = this.props;
+		const { rootId, block, getView, objectOrderUpdate } = this.props;
 		const view = getView();
 		const oldSubId = dbStore.getGroupSubId(rootId, block.id, current.groupId);
 		const newSubId = dbStore.getGroupSubId(rootId, block.id, this.newGroupId);
@@ -546,12 +559,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const change = current.groupId != this.newGroupId;
 
 		let records: any[] = [];
-
-		const setOrder = (orders: any[]) => {
-			objectOrderUpdate(orders, records, () => {
-
-			});
-		};
+		let orders: any[] = [];
 
 		if (change) {
 			detailStore.update(newSubId, { id: record.id, details: record }, true);
@@ -561,20 +569,27 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			dbStore.recordAdd(newSubId, '', record.id, this.newIndex);
 
 			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
-				setOrder([
+				orders = [
 					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') },
 					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '') }
-				]);
+				];
+				objectOrderUpdate(orders, records);
 			});
 		} else {
 			if (current.index + 1 == this.newIndex) {
 				return;
 			};
 
-			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
-			dbStore.recordsSet(oldSubId, '', records);
+			if (this.newIndex > current.index) {
+				this.newIndex -= 1;
+			};
 
-			setOrder([ { viewId: view.id, groupId: current.groupId, objectIds: records } ]);
+			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
+			orders = [ { viewId: view.id, groupId: current.groupId, objectIds: records } ];
+
+			objectOrderUpdate(orders, records, (message) => {
+				dbStore.recordsSet(oldSubId, '', records);
+			});
 		};
 	};
 
