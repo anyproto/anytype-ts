@@ -142,21 +142,29 @@
 		.dataviewControls.viewGrid {
 			.line { width: 100%; margin: 0px; }
 		}
-		.dataviewControls:hover {
-			.views {
-				.icon.plus { opacity: 1; }
-			}
-		}
 
 		.content {
 			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
 			.scroll::-webkit-scrollbar { display: none; }
 			.scrollWrap { background: #fff; padding-bottom: 14px; }
 		}
+
+		.hoverArea:hover {
+			.dataviewControls {
+				.side.right { opacity: 1; }
+				.views {
+					.icon.plus { opacity: 1; }
+				}
+			}
+			.dataviewHead {
+				.side.right { opacity: 1; }
+				#head-source-select { opacity: 1; }
+			}
+		}
 	}
 
 	.block.blockDataview.isInline {
-		.wrapMenu > .icon.dnd { height: 86px; }
+		.wrapMenu > .icon.dnd { height: 88px; }
 
 		.dataviewEmpty { height: auto; padding: 48px 0px; }
 		.dataviewHead { padding-left: 0px; padding-right: 0px; }
@@ -172,13 +180,17 @@
 		}
 	}
 
-	.block.blockDataview:hover {
-		.dataviewControls {
-			.side.right { opacity: 1; }
-		}
+	.block.blockDataview.showMenu {
 		.dataviewHead {
 			.side.right { opacity: 1; }
 			#head-source-select { opacity: 1; }
 		}
+		.dataviewControls {
+			.side.right { opacity: 1; }
+			.views {
+				.icon.plus { opacity: 1; }
+			}
+		}
 	}
+	
 }

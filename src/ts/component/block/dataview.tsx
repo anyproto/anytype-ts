@@ -196,7 +196,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!sources.length) {
 			content = (
 				<React.Fragment>
-					{head}
+					<div className="hoverArea">
+						{head}
+					</div>
 
 					<Empty
 						{...this.props}
@@ -212,8 +214,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			content = (
 				<React.Fragment>
-					{head}
-					{controls}
+					<div className="hoverArea">
+						{head}
+						{controls}
+					</div>
 					{body}
 				</React.Fragment>
 			);
