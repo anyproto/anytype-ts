@@ -1,5 +1,5 @@
 {
-	"name": "anytype2",
+	"name": "anytype",
 	"version": "0.31.1-beta",
 	"description": "Anytype",
 	"main": "electron.js",
@@ -526,7 +526,7 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "at9412003",
+					"name": "anytype-release",
 					"region": "fra1"
 				}
 			],
@@ -545,7 +545,7 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "at9412003",
+					"name": "anytype-release",
 					"region": "fra1"
 				}
 			]
@@ -566,7 +566,7 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "at9412003",
+					"name": "anytype-release",
 					"region": "fra1"
 				}
 			]
