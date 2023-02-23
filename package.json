@@ -559,8 +559,7 @@
 			"target": [
 				"snap",
 				"AppImage",
-				"deb",
-				"rpm"
+				"deb"
 			],
 			"description": "Anytype",
 			"publish": [
