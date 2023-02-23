@@ -825,7 +825,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				const isShift = pressed.match('shift') ? true : false;
 
 				if (isInsideTable) {
-					this.onArrowHorizontal(e, isShift ? Key.left : Key.right, { from: length, to: length }, length, props);
+					this.onArrowHorizontal(e, pressed, { from: length, to: length }, length, props);
 				} else {
 					this.onTabBlock(e, range, isShift);
 				};
@@ -1293,18 +1293,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = blockStore.getLeaf(rootId, focused);
-		const dir = pressed.match(Key.left) ? -1 : 1;
+		const withTab = pressed.match(Key.tab);
+		const dir = pressed.match([ Key.left, Key.shift ].join('|')) ? -1 : 1;
 
 		if (!block) {
 			return;
 		};
 
-		if ((dir < 0) && range.to) {
-			return;
-		};
+		if (!withTab) {
+			if ((dir < 0) && range.to) {
+				return;
+			};
 
-		if ((dir > 0) && (range.to != length)) {
-			return;
+			if ((dir > 0) && (range.to != length)) {
+				return;
+			};
 		};
 
 		if (isInsideTable) {
