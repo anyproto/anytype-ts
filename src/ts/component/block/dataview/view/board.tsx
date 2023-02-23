@@ -527,19 +527,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		});
 	};
 
-	makeNamesArray (groupId, ids) {
-		const { rootId, block } = this.props;
-		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
-		let names = [];
-
-		ids.forEach((id) => {
-			const object = detailStore.get(subId, id, []);
-			names.push(object.name);
-		});
-
-		return names;
-	};
-
 	onDragEndCard (e: any, record: any) {
 		const current = this.cache[record.id];
 
