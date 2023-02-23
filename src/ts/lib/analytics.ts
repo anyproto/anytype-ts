@@ -11,6 +11,7 @@ const KEYS = [
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
+const URL = 'amplitude.anytype.io';
 
 class Analytics {
 	
@@ -33,11 +34,12 @@ class Analytics {
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
+			//apiEndpoint: URL,
 			batchEvents: true,
 			saveEvents: true,
 			includeUtm: true,
 			includeReferrer: true,
-			platform: platform,
+			platform,
 		});
 
 		this.instance.setVersionName(window.Electron.version.app);
@@ -46,6 +48,8 @@ class Analytics {
 			platform: Util.getPlatform(),
 			osVersion: window.Electron.version.os,
 		});
+
+		console.log(amplitude);
 
 		console.log('[Analytics].init', this.instance);
 
