@@ -604,6 +604,7 @@ class DataUtil {
 			Constant.typeId.template,
 			Constant.typeId.relation,
 			Constant.typeId.option,
+			Constant.typeId.dashboard,
 		];
 	};
 
