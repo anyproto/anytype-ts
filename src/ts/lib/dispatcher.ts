@@ -23,6 +23,7 @@ const SORT_IDS = [
 	'blockDataviewViewDelete',
 ];
 const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
+const SKIP_SENTRY_ERRORS = [ 'LinkPreview' ];
 
 class Dispatcher {
 
@@ -1080,8 +1081,11 @@ class Dispatcher {
 
 				if (message.error.code) {
 					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
-					Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
-					analytics.event('Exception', { method: type, code: message.error.code });
+
+					if (!SKIP_SENTRY_ERRORS.includes(type)) {
+						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
+						analytics.event('Exception', { method: type, code: message.error.code });
+					};
 				};
 
 				if (debug && !SKIP_IDS.includes(type)) {
