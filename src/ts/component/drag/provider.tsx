@@ -279,7 +279,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		scrollOnMove.onMouseUp(e);
 	};
 
-	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
+	onDrop (e: any, targetType: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
@@ -292,10 +292,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		let targetContextId = keyboard.getRootId();
 		let isToggle = false;
 
-		console.log('DROP: ', type, dropType)
+		console.log('DROP: ', targetType, dropType)
 
 		// DropTarget type
-		switch (type) {
+		switch (targetType) {
 			case I.DropType.Block: {
 				const target = blockStore.getLeaf(targetContextId, targetId);
 				
@@ -340,6 +340,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				console.log('BLOCK: ', block);
 				console.log('TARGET ID: ', targetId)
 				console.log('IDS: ', ids)
+
 				break;
 			};
 		};
@@ -373,6 +374,128 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				});
 				break;
 			};
+		};
+
+		// Case 1: Block on Block
+
+		if ((dropType == I.DropType.Block) && (targetType == I.DropType.Block)) {
+
+			if (targetType == I.DropType.Block) {
+			};
+
+			const target = blockStore.getLeaf(targetContextId, targetId);
+				
+			if (!target) {
+				console.log('[DragProvider].onDrop No target', target);
+				return;
+			};
+
+			isToggle = target.isTextToggle();
+	
+			if (target.isLink() && (position == I.BlockPosition.InnerFirst)) {
+				targetContextId = target.content.targetBlockId;
+				targetId = '';
+
+				if (contextId == targetContextId) {
+					console.log('[DragProvider].onDrop Contexts are equal');
+					return;
+				};
+			} else {
+				const element = blockStore.getMapElement(targetContextId, targetId);
+				const parent = blockStore.getLeaf(targetContextId, element.parentId);
+
+				if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
+					targetId = parent.id;
+				};
+			};
+
+			const cb = () => {
+				if (isToggle && (position == I.BlockPosition.InnerFirst)) {
+					blockStore.toggle(contextId, targetId, true);
+				};
+
+				if (selection) {
+					selection.renderSelection();
+				};
+			};
+
+			if (withAlt) {
+				Action.duplicate(contextId, targetContextId, targetId, ids, position, cb);
+			} else {
+				Action.move(contextId, targetContextId, targetId, ids, position, cb);
+			};
+		}
+
+		// Case 2: Block on Menu
+		else
+		if ((dropType == I.DropType.Block) && (targetType == I.DropType.Menu)) {
+			targetContextId = targetId;
+			targetId = '';
+
+			const cb = () => {
+				if (isToggle && (position == I.BlockPosition.InnerFirst)) {
+					blockStore.toggle(contextId, targetId, true);
+				};
+
+				if (selection) {
+					selection.renderSelection();
+				};
+			};
+
+			if (withAlt) {
+				Action.duplicate(contextId, targetContextId, targetId, ids, position, cb);
+			} else {
+				Action.move(contextId, targetContextId, targetId, ids, position, cb);
+			};
+		}
+
+		// Case 3: Relation on Block
+		else 
+		if ((dropType == I.DropType.Relation) && (targetType == I.DropType.Block)) {
+			ids.forEach((key: string) => {
+				C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
+			});
+		}
+
+		// Case 4: Record on Record
+		else 
+		if ((dropType == I.DropType.Record) && (targetType == I.DropType.Record)) {
+
+			switch (position) {
+				case I.BlockPosition.Top:
+				case I.BlockPosition.Bottom: {
+					// Sort
+					break;
+				};
+
+				case I.BlockPosition.InnerFirst: {
+					/*
+					if type == collection {
+						add to collection
+					} else {
+						create links
+						ids.forEach((key: string) => {
+							C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
+						});
+					};
+					*/
+				};
+			};
+		}
+
+		// Case 5: Record on Menu
+		else 
+		if ((dropType == I.DropType.Record) && (targetType == I.DropType.Menu)) {
+				/*
+				if type == collection {
+					add to collection
+				} else {
+					create links
+					ids.forEach((key: string) => {
+						C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
+					});
+				};
+				*/
 		};
 	};
 
