@@ -1,13 +1,10 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Component';
+import { Button, Textarea } from 'Component';
 import { I, translate, DataUtil, analytics, Util, Preview } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { authStore } from 'Store';
 
-const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I.PageComponent, object> {
-
-	node: any = null;
+const KeyPhrase = observer(class KeyPhrase extends React.Component {
 	refPhrase: any = null;
 
 	constructor (props: I.PageComponent) {
@@ -20,21 +17,11 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	};
 
 	render () {
-		const { cover } = commonStore;
-
 		return (
-			<div ref={node => this.node = node}>
-				<Cover {...cover} />
-				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
-				
-				<Frame>
-					<Title text="Here's your Recovery Phrase" />
-					<Label text="Please save it somewhere safe - you will need it login to your account on other devices and to recover your data. You can also locate this phrase in your Account Settings.<br/><br/>Tap below to reveal:" />
-						
+			<>
 					<div className="textareaWrap">
 						<Textarea 
-							ref={(ref: any) => this.refPhrase = ref} 
+							ref={ref => this.refPhrase = ref} 
 							id="phrase" 
 							value={translate('popupSettingsPhraseStub')} 
 							className="isBlurred"
@@ -45,13 +32,11 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 							readonly={true}
 						/>
 					</div>
-
 					<div className="buttons">
 						<Button color="blank" text={translate('authSuccessCopy')} onClick={this.onCopy} />
 						<Button text={translate('authSuccessSubmit')} onClick={this.onSubmit} />
 					</div>
-				</Frame>
-			</div>
+			</>
 		);
 	};
 
@@ -59,27 +44,19 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 		analytics.event('ScreenKeychain', { type: 'FirstSession' });
 	};
 
-	onSubmit (e: any) {
+	onSubmit () {
 		DataUtil.onAuth(authStore.account);
 	};
 
-	onFocus (e: any) {
-		const node = $(this.node);
-		const phrase = node.find('#phrase');
-
+	onFocus () {
 		this.refPhrase.setValue(authStore.phrase);
 		this.refPhrase.select();
-
-		phrase.removeClass('isBlurred');
+		this.refPhrase.removeClass('isBlurred');
 	};
 
-	onBlur (e: any) {
-		const node = $(this.node);
-		const phrase = node.find('#phrase');
-
+	onBlur () {
 		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));
-
-		phrase.addClass('isBlurred');
+		this.refPhrase.addClass('isBlurred');
 		window.getSelection().removeAllRanges();
 	};
 
@@ -87,10 +64,9 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 		this.refPhrase.focus();
 		Util.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
-
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};
 
 });
 
-export default PageAuthSuccess;
+export default KeyPhrase;

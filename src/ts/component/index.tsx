@@ -76,6 +76,8 @@ import ObjectDescription from './util/object/description';
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
 
+import KeyPhrase from './util/keyPhrase';
+
 export {
 	Page,
 	EditorPage,
@@ -144,5 +146,7 @@ export {
 	MenuItemVertical,
 
 	MediaAudio,
-	MediaVideo
+	MediaVideo,
+
+	KeyPhrase
 };

@@ -62,7 +62,6 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 	onSubmit (e: any) {
 		e.preventDefault();
 		
-		const { match } = this.props;
 		const value = this.ref.getValue().trim();
 
 		if (!value) {
@@ -71,11 +70,11 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 		};
 		
 		authStore.codeSet(value);
-		Util.route('/auth/setup/' + match.params.id);	
+		Util.route('/auth/onboard');	
 	};
 
 	onCancel (e: any) {
-		Util.route('/auth/register');
+		Util.route('/auth/select');
 	};
 	
 });

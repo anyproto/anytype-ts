@@ -1,7 +1,10 @@
 import * as React from 'react';
-import { Frame, Title, Label, Button, Header, Footer, DotIndicator } from 'Component';
-import { I, translate, Animation, } from 'Lib';
 import { observer } from 'mobx-react';
+import { Frame, Title, Label, Button, Header, Footer, DotIndicator, KeyPhrase, Error } from 'Component';
+import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, } from 'Lib';
+import { authStore, commonStore } from 'Store';
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
 
 enum OnboardStage {
 	VOID = 0,
@@ -16,6 +19,7 @@ enum OnboardStage {
 type State = {
 	stage: OnboardStage;
 	keyPhraseCopied: boolean;
+	error?: string
 }
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
@@ -27,10 +31,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	constructor (props: I.PageComponent) {
         super(props);
 		this.onNext = this.onNext.bind(this);
+		this.createAccount = this.createAccount.bind(this);
 	};
 	
 	render () {
-		const { stage } = this.state;
+		const { stage, error } = this.state;
 
 		// Mapping the Stages to text.json keys
 		const stageNameMap = {
@@ -64,6 +69,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{dotIndicator}
 					{title}
 					{label}	
+					<Error text={error} />
+					{ this.state.stage === OnboardStage.KEY_PHRASE ? <KeyPhrase/> : null }
 					<div className="buttons">
 						<div className="animation">
 							{submit}
@@ -82,9 +89,60 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		Animation.to();
 	}
 
-	onNext () {
+	async onNext () {
+		if (this.state.stage === OnboardStage.VOID) {
+			await this.createAccount();
+		}
 		Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
 	}
+
+	async createAccount (): Promise<void> {
+		const { walletPath, accountPath, name, icon, code } = authStore;
+
+		commonStore.defaultTypeSet(Constant.typeId.note);
+
+		return new Promise((resolve, reject) => {
+			C.WalletCreate(walletPath, message => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+					reject();
+				}
+	
+				authStore.phraseSet(message.mnemonic);
+	
+				DataUtil.createSession(message => {
+					if (message.error.code) {
+						this.setState({ error: message.error.description });
+						reject();
+					}
+	
+					C.AccountCreate(name, icon, accountPath, code, message => {
+						if (message.error.code) {
+							const error = Errors.AccountCreate[message.error.code] || message.error.description;
+							reject();
+							this.setState({ error });
+						}
+
+						if (message.config) {
+							commonStore.configSet(message.config, false);
+						};
+
+						const accountId = message.account.id;
+
+						authStore.accountSet(message.account);
+						authStore.previewSet('');
+
+						Storage.set('timeRegister', Util.time());
+
+						Renderer.send('keytarSet', accountId, authStore.phrase);
+						analytics.event('CreateAccount');
+
+						resolve();
+					});
+				});
+			});
+		})
+	};
 });
 
 export default PageAuthOnboard;

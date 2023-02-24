@@ -6,20 +6,20 @@ import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Pre
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 
-import PageAuthInvite from './auth/invite';
-import PageAuthNotice from './auth/notice';
 import PageAuthSelect from './auth/select';
+import PageAuthInvite from './auth/invite';
+import PageAuthOnboard from './auth/onboard';
+
+import PageAuthNotice from './auth/notice';
 import PageAuthLogin from './auth/login';
 import PageAuthPinSelect from './auth/pin/select';
 import PageAuthPinConfirm from './auth/pin/confirm';
 import PageAuthPinCheck from './auth/pin/check';
-import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/account/select';
-import PageAuthRegister from './auth/register';
-import PageAuthSuccess from './auth/success';
+// import PageAuthSetup from './auth/setup';
+// import PageAuthRegister from './auth/register';
 import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
-import PageAuthOnboard from './auth/onboard';
 
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
@@ -39,19 +39,20 @@ import Constant from 'json/constant.json';
 
 const Components: any = {
 	'/':					 PageAuthSelect,
-	'auth/invite':			 PageAuthInvite,
 	'auth/select':			 PageAuthSelect,
-	'auth/register':		 PageAuthRegister,
+	
+	'auth/invite':			 PageAuthInvite,
+	'auth/onboard':			 PageAuthOnboard,
+
 	'auth/login':			 PageAuthLogin,
+	'auth/account-select':	 PageAuthAccountSelect,
+
 	'auth/pin-select':		 PageAuthPinSelect,
 	'auth/pin-confirm':		 PageAuthPinConfirm,
 	'auth/pin-check':		 PageAuthPinCheck,
-	'auth/setup':			 PageAuthSetup,
-	'auth/account-select':	 PageAuthAccountSelect,
-	'auth/success':			 PageAuthSuccess,
-	'auth/share':			 PageAuthShare,
+	
 	'auth/deleted':			 PageAuthDeleted,
-	'auth/onboard':			 PageAuthOnboard,
+	'auth/share':			 PageAuthShare,
 
 	'object/share':			 PageAuthShare,
 			
