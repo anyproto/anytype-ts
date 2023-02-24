@@ -263,7 +263,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 
 		menuStore.open('blockRelationEdit', { 
-			element: `#${getId()} #item-${id}`,
+			element: `#${getId()} #item-${id} .info`,
 			horizontal: I.MenuDirection.Center,
 			classNameWrap,
 			data: {

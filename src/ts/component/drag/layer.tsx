@@ -1,12 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { Block } from 'Component';
 import { I, M, Util } from 'Lib';
 import { blockStore, dbStore } from 'Store';
-import RelationItem from 'Component/menu/item/relationView';
 import Constant from 'json/constant.json';
-import DataviewHead from 'Component/block/dataview/head';
 
 interface State {
 	rootId: string;
@@ -34,83 +31,7 @@ class DragLayer extends React.Component<object, State> {
 	};
 	
 	render () {
-		let { rootId, type, width } = this.state;
-		let content = null;
-		let ids = this.state.ids.slice(0, 10);
-		let items: any[] = [];
-		
-		switch (type) {
-			case I.DropType.Block: {
-				items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(Util.objectCopy(it)));
-
-				content = (
-					<div className="blocks">
-						{items.map((block: any, i: number) => {
-							if (block.isDataview()) {
-								return (
-									<div
-										key={'drag-layer-' + block.id} 
-										className="block blockDataview"
-									>
-										<DataviewHead 
-											rootId={rootId}
-											block={block}
-											readonly={true} 
-											getData={() => {}} 
-											getView={() => null} 
-											getSources={() => []}
-											getRecord={() => {}}
-											onRecordAdd={() => {}}
-											onSourceSelect={() => {}}
-											onSourceTypeSelect={() => {}}
-											isInline={true}
-											isAllowedObject={() => false}
-										/>
-									</div>
-								);
-							};
-
-							return (
-								<Block 
-									key={'drag-layer-' + block.id} 
-									{...this.props} 
-									block={block} 
-									rootId={rootId} 
-									index={i} 
-									readonly={true} 
-									isDragging={true}
-									getWrapperWidth={() => Constant.size.editor} 
-								/>
-							);
-						})}
-					</div>
-				);
-				break;
-			};
-
-			case I.DropType.Relation: {
-				const block = blockStore.getLeaf(rootId, rootId);
-
-				items = ids.map(relationKey => dbStore.getRelationByKey(relationKey)).filter(it => it);
-
-				content = (
-					<div className="menus">
-						<div className="menu vertical menuBlockRelationView">
-							{items.map((item: any) => (
-								<RelationItem 
-									key={'drag-layer-' + item.relationKey} 
-									rootId={rootId}
-									{...item}
-									block={block}
-									onRef={() => {}}
-								/>
-							))}
-						</div>
-					</div>
-				);
-				break;
-			};
-		};
+		const { width } = this.state;
 		
 		return (
 			<div 
@@ -119,9 +40,7 @@ class DragLayer extends React.Component<object, State> {
 				className="dragLayer" 
 				style={{ width }}
 			>
-				<div className="inner">
-					{content}
-				</div>
+				<div id="inner" className="inner" />
 			</div>
 		);
 	};
@@ -139,6 +58,8 @@ class DragLayer extends React.Component<object, State> {
 		
 		node.find('.block').attr({ id: '' });
 		node.find('.selectable').attr({ id: '' });
+
+		this.renderContent();
 	};
 	
 	componentWillUnmount () {
@@ -153,7 +74,7 @@ class DragLayer extends React.Component<object, State> {
 		const comp = $(ReactDOM.findDOMNode(component));
 		const rect = (comp.get(0) as Element).getBoundingClientRect();
 		
-		this.setState({ rootId: rootId, type: type, width: rect.width - Constant.size.blockMenu, ids: ids });
+		this.setState({ rootId, type, width: rect.width - Constant.size.blockMenu, ids });
 	};
 
 	hide () {
@@ -161,7 +82,49 @@ class DragLayer extends React.Component<object, State> {
 			return;
 		};
 
-		this.setState({ rootId: '', type: I.DropType.None, ids: [] });
+		this.setState({ rootId: '', type: I.DropType.None, ids: [], width: 0 });
+	};
+
+	renderContent () {
+		const { rootId, type, ids } = this.state;
+		const node = $(this.node);
+		const inner = node.find('#inner').html('');
+
+		let wrap = $('<div></div>');
+		let items: any[] = [];
+
+		switch (type) {
+			case I.DropType.Block: {
+				wrap.addClass('blocks');
+
+				items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(Util.objectCopy(it)));
+				items.forEach(block => {
+					const el = $(`#block-${block.id}`);
+
+					wrap.append(el.clone());
+				});
+				break;
+			};
+
+			case I.DropType.Relation: {
+				const add = $('<div class="menu vertical menuBlockRelationView"></div>');
+
+				wrap.addClass('menus').append(add);
+				
+				items = ids.map(relationKey => dbStore.getRelationByKey(relationKey)).filter(it => it);
+				items.forEach(item => {
+					const el = $(`#menuBlockRelationView #item-${item.id}`);
+					add.append(el.clone());
+				});
+				break;
+			};
+
+			case I.DropType.Record: {
+				break;
+			};
+		};
+
+		inner.append(wrap);
 	};
 	
 };
