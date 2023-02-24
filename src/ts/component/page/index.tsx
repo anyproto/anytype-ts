@@ -19,6 +19,7 @@ import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
 import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
+import PageAuthOnboard from './auth/onboard';
 
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
@@ -50,6 +51,7 @@ const Components: any = {
 	'auth/success':			 PageAuthSuccess,
 	'auth/share':			 PageAuthShare,
 	'auth/deleted':			 PageAuthDeleted,
+	'auth/onboard':			 PageAuthOnboard,
 
 	'object/share':			 PageAuthShare,
 			

@@ -49,6 +49,7 @@ import 'scss/component/dragbox.scss';
 import 'scss/component/selection.scss';
 import 'scss/component/loader.scss';
 import 'scss/component/deleted.scss';
+import 'scss/component/dotIndicator.scss';
 import 'scss/component/progress.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/toast.scss';
