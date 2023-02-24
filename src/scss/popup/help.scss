@@ -1,6 +1,7 @@
 @import "~scss/_vars";
 
 .popups {
+	.popup.popupHelp * { user-select: text !important; }
 	.popup.popupHelp {
 		.innerWrap { width: 864px; height: calc(100% - 72px); padding: 40px 0px 0px 0px; }
 

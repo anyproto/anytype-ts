@@ -170,7 +170,8 @@
 		"task": "ot-task",
 		"bookmark": "ot-bookmark",
 		"option": "ot-relationOption",
-		"collection": "ot-collection"
+		"collection": "ot-collection",
+		"dashboard": "ot-dashboard"
 	},
 
 	"storeTypeId": {

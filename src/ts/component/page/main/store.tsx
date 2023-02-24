@@ -579,8 +579,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const ww = $(window).width();
 		const size = Constant.size.store;
 		const maxWidth = ww - size.border * 2;
+		const limit = Math.floor(maxWidth / (size.width + size.margin));
 
-		return Math.floor(maxWidth / (size.width + size.margin));
+		return Math.max(1, Math.min(5, limit));
 	};
 
 	resize () {

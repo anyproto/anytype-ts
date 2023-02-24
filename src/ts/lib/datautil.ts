@@ -427,7 +427,7 @@ class DataUtil {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys));
+		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled', 'recommendedRelations' ].concat(Constant.coverRelationKeys));
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
@@ -623,6 +623,7 @@ class DataUtil {
 			Constant.typeId.template,
 			Constant.typeId.relation,
 			Constant.typeId.option,
+			Constant.typeId.dashboard,
 		];
 	};
 

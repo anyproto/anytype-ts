@@ -427,22 +427,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				continue;
 			};
 
-			let el = obj.get(0);
-			let rect = el.getBoundingClientRect() as DOMRect;
+			let rect = obj.get(0).getBoundingClientRect() as DOMRect;
 
 			rect.y += st;
 
+			if (block.isDataview()) {
+				rect.height = 88;
+			};
+
 			if ((pageX >= rect.x) && (pageX <= rect.x + rect.width) && (pageY >= rect.y) && (pageY <= rect.y + rect.height)) {
 				this.hoverId = block.id;
-				hovered = el as Element;
+				hovered = obj;
 				hoveredRect = rect;
 			};
 		};
 
-		if (hovered) {
-			hovered = $(hovered);
-		};
-		
 		const { x, y, height } = hoveredRect;
 		
 		if (this.frame) {
@@ -617,6 +616,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 						}
 					});
 				});
+			});
+
+			// Move blocks with arrows
+			keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
+				this.onCtrlShiftArrowEditor(e, pressed);
 			});
 		};
 
@@ -826,7 +830,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				const isShift = pressed.match('shift') ? true : false;
 
 				if (isInsideTable) {
-					this.onArrowHorizontal(e, isShift ? Key.left : Key.right, { from: length, to: length }, length, props);
+					this.onArrowHorizontal(e, pressed, { from: length, to: length }, length, props);
 				} else {
 					this.onTabBlock(e, range, isShift);
 				};
@@ -902,20 +906,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	};
 
 	// Move blocks with arrows
-	onCtrlShiftArrowBlock (e: any, pressed: string) {
+	onCtrlShiftArrowEditor (e: any, pressed: string) {
 		e.preventDefault();
 
-		const { rootId } = this.props;
-		const { focused } = focus.state;
-		const block = blockStore.getLeaf(rootId, focused);
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset || {};
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const ids = selection.get(I.SelectType.Block, false);
 
+		if (!ids.length) {
+			return;
+		};
+
+		const block = blockStore.getLeaf(rootId, dir > 0 ? ids[ids.length - 1] : ids[0]);
 		if (!block) {
 			return;
 		};
 
-		const dir = pressed.match(Key.up) ? -1 : 1;
 		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
-			return !it.isIcon() && !it.isTextTitle() && !it.isSystem();
+			return !it.isIcon() && !it.isTextTitle() && !it.isTextDescription() && !it.isFeatured() && !it.isSystem();
 		});
 
 		if (!next) {
@@ -944,7 +953,65 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
-		Action.move(rootId, rootId, next.id, [ block.id ], position, () => { focus.apply(); });
+		Action.move(rootId, rootId, next.id, ids, position, () => { 
+			if (nextParent && nextParent.isTextToggle()) {
+				blockStore.toggle(rootId, nextParent.id, true);
+			};
+
+			selection.renderSelection(); 
+		});
+	};
+
+	// Move blocks with arrows
+	onCtrlShiftArrowBlock (e: any, pressed: string) {
+		e.preventDefault();
+
+		const { rootId } = this.props;
+		const { focused } = focus.state;
+		const block = blockStore.getLeaf(rootId, focused);
+
+		if (!block) {
+			return;
+		};
+
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
+			return !it.isIcon() && !it.isTextTitle() && !it.isTextDescription() && !it.isFeatured() && !it.isSystem();
+		});
+
+		if (!next) {
+			return;
+		};
+
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parentElement = blockStore.getMapElement(rootId, block.parentId);
+		const nextElement = blockStore.getMapElement(rootId, next.id)
+		const nextParent = blockStore.getLeaf(rootId, next.parentId);
+		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+
+		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
+			return;
+		};
+
+		let isFirst = block.id == parentElement.childrenIds[0];
+		let isLast = block.id == parentElement.childrenIds[parentElement.childrenIds.length - 1];
+		let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+
+		if ((dir > 0) && next.canHaveChildren() && nextElement.childrenIds.length) {
+			position = isLast ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
+		};
+
+		if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
+			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+		};
+
+		Action.move(rootId, rootId, next.id, [ block.id ], position, () => {
+			if (nextParent && nextParent.isTextToggle()) {
+				blockStore.toggle(rootId, nextParent.id, true);
+			};
+
+			focus.apply(); 
+		});
 	};
 
 	// Move focus to first/last block
@@ -1294,18 +1361,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { rootId } = this.props;
 		const { isInsideTable } = props;
 		const block = blockStore.getLeaf(rootId, focused);
-		const dir = pressed.match(Key.left) ? -1 : 1;
+		const withTab = pressed.match(Key.tab);
+		const dir = pressed.match([ Key.left, Key.shift ].join('|')) ? -1 : 1;
 
 		if (!block) {
 			return;
 		};
 
-		if ((dir < 0) && range.to) {
-			return;
-		};
+		if (!withTab) {
+			if ((dir < 0) && range.to) {
+				return;
+			};
 
-		if ((dir > 0) && (range.to != length)) {
-			return;
+			if ((dir > 0) && (range.to != length)) {
+				return;
+			};
 		};
 
 		if (isInsideTable) {

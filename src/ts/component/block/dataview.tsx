@@ -142,22 +142,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (!isDragging) {
-			controls = (
-				<Controls 
-					ref={(ref: any) => { this.refControls = ref; }} 
-					{...this.props}
-					{...dataviewProps}
-					className={className}
-				/>
-			);
-
 			if (loading) {
 				body = <Loader id="set-loader" />
 			} else
 			if (emptyObj) {
-				controls = null;
 				body = this.getEmpty(object.type);
 			} else {
+				controls = (
+					<Controls 
+						ref={(ref: any) => { this.refControls = ref; }} 
+						{...this.props}
+						{...dataviewProps}
+						className={className}
+					/>
+				);
 				body = (
 					<div className="content">
 						<ViewComponent 
@@ -185,11 +183,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		return (
-			<div
-				ref={node => this.node = node}
-			>
-				{head}
-				{controls}
+			<div ref={node => this.node = node}>
+				<div className="hoverArea">
+					{head}
+					{controls}
+				</div>
 				{body}
 			</div>
 		);

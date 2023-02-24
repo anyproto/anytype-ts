@@ -228,7 +228,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 		let sections: any[] = [
 			{ children: [ itemStyle, itemSize, itemCover ] },
-			{ name: 'Featured relations', children: [ itemName, itemDescription, itemType ] },
+			{ name: 'Attributes', children: [ itemName, itemDescription, itemType ] },
 		];
 
 		sections = sections.map((s: any) => {
