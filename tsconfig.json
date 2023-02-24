@@ -53,5 +53,6 @@
                 "ts/store",
             ],
           }
-    }
+    },
+    "exclude": ["node_modules", "dist", "extensions"]
 }
