@@ -360,7 +360,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose, addParam } = data;
+		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
+		const addParam: any = data.addParam || {};
 
 		if (!noClose) {
 			close();
