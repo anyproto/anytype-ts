@@ -203,6 +203,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: `${cmd} + →`,	 com: 'Ctrl + →',	 name: 'Go to the end of the line' },
 						{ mac: `${cmd} + ↑`,	 com: 'Ctrl + ↑',	 name: 'Go to the start of the page' },
 						{ mac: `${cmd} + ↓`,	 com: 'Ctrl + ↓',	 name: 'Go to the end of the page' },
+						{ mac: `${cmd} + Shift + ↑↓`,	 com: 'Ctrl + Shift + ↑↓',	 name: 'Move selected block(s) around' },
 					]
 				},
 			],
