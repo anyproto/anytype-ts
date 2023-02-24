@@ -131,27 +131,29 @@
 	"authPinConfirmLabel": { "en": "This is one password you need to remember. You will need this password to login on this device." },
 	"authPinConfirmError": { "en": "Pin codes do not match" },
 
-	"authOnboardNext": { "en": "Next" },
+	"authOnboardSubmit": { "en": "Next" },
 	"authOnboardMoreInfo": { "en": "More info" },
 	"authOnboardAccountDataLocation": { "en": "Account data location" },
 	"authOnboardAccountDataLocationLabel": { "en": "Your key files will be stored here" },
 
 	"authOnboardVoidTitle": { "en": "This is your Void" },
 	"authOnboardVoidLabel": { "en": "Everything you create will be stored here. It is a special encrypted place, which exist on your machine and is backed up to the network." },
-
-	"authOnboardEncrypedTitle": { "en": "Your Void is encrypted by the Key" },
-	"authOnboardEncrypedLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. if you lose it there is no way to recover it. Keep it in safe place" },
-	"authOnboardEncryptedShowAndCopy": { "en": "Show and copy" },
 	
-	"authOnboardOfflineFirstTitle": { "en": "Anytype is an offline-first application" },
-	"authOnboardOfflineFirstLabel": { "en": "Here, everything you create is truly yours. Connecting to the distributed network helps to backup and sync data between your devices." },
-	"authOnboardOfflineFirstConnectToTheNetwork": { "en": "Connect to the network" },
+	"authOnboardKeyPhraseTitle": { "en": "Your Void is encrypted by the Key" },
+	"authOnboardKeyPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. if you lose it there is no way to recover it. Keep it in safe place" },
+	"authOnboardKeyPhraseSubmit": { "en": "Show and copy" },
+	
+	"authOnboardOfflineTitle": { "en": "Anytype is an offline-first application" },
+	"authOnboardOfflineLabel": { "en": "Here, everything you create is truly yours. Connecting to the distributed network helps to backup and sync data between your devices." },
+	"authOnboardOfflineSubmit": { "en": "Connect to the network" },
 
 	"authOnboardSoulTitle": { "en": "Let’s create your soul" },
-	"authOnboardSoulFinish": { "en": "Finish" },
-	"authOnboardSoulCreating": { "en": "Creating soul..." },
-	"authOnboardSoulSettingUp": { "en": "Setting up your personal Space..." },
 	"authOnboardSoulLabel": { "en": "Think of it like an identity, or a profile within Anytype." },
+	"authOnboardSoulSubmit": { "en": "Finish" },
+	
+	"authOnboardSoulCreatingTitle": { "en": "Creating soul..." },
+	
+	"authOnboardSpaceCreatingTitle": { "en": "Setting up your personal Space..." },
 
 	"authOnboardUseCaseTitle": { "en": "How would you like to start?" },
 	"authOnboardUseCaseLabel": { "en": "No need to decide now, it's just starting point" },
