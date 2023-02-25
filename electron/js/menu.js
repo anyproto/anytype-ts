@@ -88,15 +88,19 @@ class MenuManager {
 					{
 						label: 'Undo', accelerator: 'CmdOrCtrl+Z',
 						click: () => { 
-							this.win.webContents.undo();
-							Util.send(this.win, 'command', 'undo');
+							if (this.win) {
+								this.win.webContents.undo();
+								Util.send(this.win, 'command', 'undo');
+							};
 						}
 					},
 					{
 						label: 'Redo', accelerator: 'CmdOrCtrl+Shift+Z',
 						click: () => {
-							this.win.webContents.redo();
-							Util.send(this.win, 'command', 'redo');
+							if (this.win) {
+								this.win.webContents.redo();
+								Util.send(this.win, 'command', 'redo');
+							};
 						}
 					},
 
@@ -111,8 +115,10 @@ class MenuManager {
 					{
 						label: 'Select all', accelerator: 'CmdOrCtrl+A',
 						click: () => {
-							this.win.webContents.selectAll();
-							Util.send(this.win, 'commandEditor', 'selectAll');
+							if (this.win) {
+								this.win.webContents.selectAll();
+								Util.send(this.win, 'commandEditor', 'selectAll');
+							};
 						}
 					},
 					{
