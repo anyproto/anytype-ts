@@ -501,6 +501,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const ids = selection.get(I.SelectType.Block);
 		const cmd = keyboard.cmdKey();
 		const readonly = this.isReadonly();
+		const styleParam = this.getStyleParam();
 
 		// Select all
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
@@ -598,6 +599,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom, () => { focus.clear(true); });
 			});
 
+			for (const item of styleParam) {
+				let style = null;
+
+				keyboard.shortcut(item.key, e, (pressed: string) => {
+					style = item.style;
+				});
+
+				if (style !== null) {
+					C.BlockListTurnInto(rootId, ids, style);
+				};
+			};
+
 			// Open action menu
 			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
 				menuStore.closeAll([ 'blockContext', 'blockAdd' ], () => {
@@ -678,6 +691,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			return;
 		};
 
+		const styleParam = this.getStyleParam();
 		const platform = Util.getPlatform();
 		const cmd = keyboard.cmdKey();
 
@@ -790,6 +804,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			};
 		};
 
+		for (const item of styleParam) {
+			let style = null;
+
+			keyboard.shortcut(item.key, e, (pressed: string) => {
+				style = item.style;
+			});
+
+			if (style !== null) {
+				C.BlockListTurnInto(rootId, [ block.id ], style);
+			};
+		};
+
 		if (!this.menuCheck()) {
 			// Expand selection
 			keyboard.shortcut('shift+arrowup, shift+arrowdown', e, (pressed: string) => {
@@ -846,6 +872,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				this.onCtrlShiftArrowBlock(e, pressed);
 			});
 		};
+	};
+
+	getStyleParam () {
+		const cmd = keyboard.cmdKey();
+		return [
+			{ key: `${cmd}+0`, style: I.TextStyle.Paragraph },
+			{ key: `${cmd}+1`, style: I.TextStyle.Header1 },
+			{ key: `${cmd}+2`, style: I.TextStyle.Header2 },
+			{ key: `${cmd}+3`, style: I.TextStyle.Header3 },
+			{ key: `${cmd}+4`, style: I.TextStyle.Quote },
+			{ key: `${cmd}+5`, style: I.TextStyle.Callout },
+			{ key: `${cmd}+6`, style: I.TextStyle.Checkbox },
+			{ key: `${cmd}+7`, style: I.TextStyle.Bulleted },
+			{ key: `${cmd}+8`, style: I.TextStyle.Numbered },
+			{ key: `${cmd}+9`, style: I.TextStyle.Toggle },
+		];
 	};
 
 	getMarkParam () {
