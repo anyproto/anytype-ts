@@ -104,7 +104,7 @@ class PopupShortcut extends React.Component<Props, State> {
 			main: [
 				{
 					name: 'Basics', children: [
-						{ mac: `${cmd} + N`,			 com: 'Ctrl + N',			 name: 'Create a new object on the dashboard' },
+						{ mac: `${cmd} + N`,			 com: 'Ctrl + N',			 name: 'Create new object' },
 						{ mac: `${cmd} + Shift + N`,	 com: 'Ctrl + Shift + N',	 name: 'New Anytype window' },
 						{ mac: `${cmd} + Option + N`,	 com: 'Ctrl + Alt + N',		 name: 'Create a new object in new window' },
 						{ mac: `${cmd} + Enter`,		 com: 'Ctrl + Enter',		 name: 'Opens object in new window from search interface' },
@@ -155,7 +155,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: `${cmd} + X`,			 com: 'Ctrl + X',			 name: 'Cut selected block/blocks or text part' },
 						{ mac: `${cmd} + V`,			 com: 'Ctrl + V',			 name: 'Paste data outside Anytype, block/blocks or text part' },
 						{ mac: `${cmd} + D`,			 com: 'Ctrl + D',			 name: 'Duplicate selected block/blocks' },
-						{ mac: `${cmd} + E`,			 com: 'Ctrl + E',		 name: 'Launch emoji menu' },
+						{ mac: `${cmd} + E, ${cmd} + .`, com: 'Ctrl + E, Ctrl + .',		 name: 'Show emoji picker 🏄‍♂️' },
 					]
 				},
 
@@ -179,7 +179,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: `${cmd} + O`,			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
 						{ mac: `${cmd} + Option + O`,	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
 						{ mac: `${cmd} + S`,			 com: 'Ctrl + S',			 name: 'Open the search pane' },
-						{ mac: `${cmd} + Enter`,		 com: 'Alt + H',			 name: 'Return to the home screen' },
+						{ com: 'Alt + H',				 name: 'Return to the home screen' },
 						{ mac: `${cmd} + [`,			 com: 'Alt + ←',			 name: 'Show the previous page from history' },
 						{ mac: `${cmd} + ]`,			 com: 'Alt + →',			 name: 'Show the next page from history' },
 					]

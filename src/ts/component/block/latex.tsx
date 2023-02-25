@@ -175,7 +175,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 			});
 
 			// Redo
-			keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, (pressed: string) => {
 				e.preventDefault();
 				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
 			});

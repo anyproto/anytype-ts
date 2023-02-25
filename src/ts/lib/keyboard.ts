@@ -167,10 +167,16 @@ class Keyboard {
 			});
 
 			// Navigation search
-			this.shortcut(`${cmd}+s`, e, () => {
+			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
 				if (popupStore.isOpen('search') || !this.isPinChecked) {
 					return;
 				};
+
+				// Check if smth is selected to prevent search from opening
+				if ((pressed == `${cmd}+k`) && (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length))) {
+					return;
+				};
+
 				this.onSearchPopup();
 			});
 
@@ -194,9 +200,8 @@ class Keyboard {
 			});
 
 			// Go to dashboard
-			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
-				const check = isMac ? pressed == 'cmd+enter' : true;
-				if (check && authStore.account && !popupStore.isOpen('search')) {
+			this.shortcut('alt+h', e, () => {
+				if (authStore.account && !popupStore.isOpen('search')) {
 					Util.route('/main/index');
 				};
 			});
@@ -205,6 +210,11 @@ class Keyboard {
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
 				this.pageCreate();
+			});
+
+			// Settings
+			this.shortcut(`${cmd}+comma`, e, () => {
+				popupStore.open('settings', {});
 			});
 		};
 

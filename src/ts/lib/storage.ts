@@ -62,7 +62,7 @@ class Storage {
 	};
 
 	checkToggle (rootId: string, id: string): boolean {
-		return this.getToggle(rootId).indexOf(id) >= 0;
+		return this.getToggle(rootId).includes(id);
 	};
 
 	setScroll (key: string, rootId: string, scroll: number) {

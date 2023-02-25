@@ -527,7 +527,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		});
 
 		// Redo
-		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, (pressed: string) => {
 			if (readonly) {
 				e.preventDefault();
 				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
@@ -735,38 +735,43 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			});
 
 			// Undo
-			keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+z`, e, () => {
 				e.preventDefault();
-				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onUndo(rootId, () => { focus.clear(true); });
 			});
 
 			// Redo
-			keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
-				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onRedo(rootId, () => { focus.clear(true); });
 			});
 
 			// Search
-			keyboard.shortcut(`${cmd}+f`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+f`, e, () => {
 				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from));
 			});
 
+			if (block.isTextToggle()) {
+				keyboard.shortcut(`${cmd}+shift+t`, e, () => {
+					blockStore.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
+				});
+			};
 		};
 
 		// History
-		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
 			e.preventDefault();
 			this.onHistory(e);
 		});
 
 		// Duplicate
-		keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+d`, e, () => {
 			e.preventDefault();
 			Action.duplicate(rootId, rootId, block.id, [ block.id ], I.BlockPosition.Bottom);
 		});
 
 		// Open action menu
-		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, () => {
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockAction', { 
 					element: `#block-${block.id}`,

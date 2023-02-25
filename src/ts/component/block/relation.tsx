@@ -100,7 +100,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 
 		let ret = false;
 
-		keyboard.shortcut(`${cmd}+z, ${cmd}+shift+z, ${cmd}+v, ${cmd}+x`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+z, ${cmd}+shift+z, ${cmd}+y, ${cmd}+v, ${cmd}+x`, e, (pressed: string) => {
 			ret = true;
 		});
 
