@@ -149,12 +149,12 @@ class Action {
 			properties: [ 'openFile' ], 
 		};
 
-		if (extensions.length) {
+		if (extensions && extensions.length) {
 			options.filters = [ { name: '', extensions } ];
 		};
 		
 		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
-			if ((filePaths == undefined) || !filePaths.length) {
+			if ((typeof filePaths === 'undefined') || !filePaths.length) {
 				return;
 			};
 			
