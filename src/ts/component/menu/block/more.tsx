@@ -103,7 +103,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		};
 		
 		const object = detailStore.get(rootId, blockId);
-		const cmd = keyboard.ctrlSymbol();
+		const cmd = keyboard.cmdSymbol();
 		const isTemplate = object.type == Constant.typeId.template;
 		
 		let template = null;
@@ -476,7 +476,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'pageRemove':
 				C.ObjectListDelete([ object.id ], (message: any) => {
 					if (block.isPage()) {
-						Util.route('/main/index');
+						ObjectUtil.openHome('route');
 					};
 
 					analytics.event('RemoveCompletely', { count: 1 });
@@ -523,7 +523,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'pageUninstall':
 				Action.uninstall(object, (message: any) => {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				});
 				break;
 
@@ -543,7 +543,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				C.BlockListDelete(rootId, [ blockId ], (message: any) => {
 					if (!isPopup) {
 						if (block.isPage()) {
-							Util.route('/main/index');
+							ObjectUtil.openHome('route');
 						};
 					} else {
 						popupStore.close('page');

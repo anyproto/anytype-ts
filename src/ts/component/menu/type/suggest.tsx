@@ -107,7 +107,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={(ref: any) => { this.refFilter = ref; }} 
+						ref={ref => { this.refFilter = ref; }} 
 						placeholderFocus="Filter types..." 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -127,7 +127,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={(ref: any) => { this.refList = ref; }}
+										ref={ref => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -212,7 +212,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limitMenuRecords;
+			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -253,7 +253,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limitMenuRecords,
+			limit: Constant.limit.menuRecords,
 			ignoreWorkspace: true,
 		}, (message: any) => {
 			if (!this._isMounted) {
@@ -293,10 +293,10 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		let name = 'Create new type';
 
 		if (filter) {
-			const marketplace = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 			sections = sections.concat([
-				{ id: 'marketplace', name: 'Anytype library', children: marketplace },
+				{ id: 'store', name: 'Anytype library', children: store },
 			]);
 
 			name = `Create type "${filter}"`;
@@ -304,7 +304,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			sections = sections.concat([
 				{ 
 					children: [
-						{ id: 'marketplace', icon: 'folder', name: 'Anytype library', arrow: true }
+						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
 					] 
 				},
 			])
@@ -386,7 +386,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		};
 
 		switch (item.id) {
-			case 'marketplace': {
+			case 'store': {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, crumbs, Action, Util, ObjectUtil, DataUtil } from 'Lib';
+import { I, C, Action, Util, ObjectUtil, DataUtil } from 'Lib';
 import { detailStore, dbStore } from 'Store';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
@@ -50,10 +50,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		return (
 			<div>
-				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainEdit" ref={ref => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
-					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="relation" rootId={rootId} onCreate={this.onCreate} />
+					<HeadSimple ref={ref => { this.refHead = ref;}} type="relation" rootId={rootId} onCreate={this.onCreate} />
 
 					{object.isInstalled ? (
 						<div className="section set">
@@ -98,12 +98,10 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				};
 				return;
 			};
-
-			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();

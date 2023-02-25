@@ -52,7 +52,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				onDragOver={this.onDragOver} 
 				onDrop={this.onDropCommon}
 			>
-				<DragLayer {...this.props} ref={(ref: any) => { this.refLayer = ref; }} />
+				<DragLayer {...this.props} ref={ref => { this.refLayer = ref; }} />
 				{children}
 			</div>
 		);
@@ -71,7 +71,16 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);
-			const data = item.data();
+			const data = {
+				id: item.attr('data-id'),
+				rootId: item.attr('data-root-id'),
+				cacheKey: item.attr('data-cache-key'),
+				dropType: item.attr('data-drop-type'),
+				type: item.attr('data-type'),
+				style: item.attr('data-style'),
+				targetContextId: item.attr('data-target-context-id'),
+				dropMiddle: item.attr('data-drop-middle'),
+			};
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
 

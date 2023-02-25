@@ -111,7 +111,7 @@ class Keyboard {
 
 		this.shortcut(`${cmd}+\\`, e, () => {
 			e.preventDefault();
-			sidebar.data.fixed ? sidebar.collapse() : sidebar.expand();
+			commonStore.isSidebarFixed ? sidebar.collapse() : sidebar.expand();
 		});
 
 		// Navigation
@@ -202,7 +202,7 @@ class Keyboard {
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
 				if (authStore.account && !popupStore.isOpen('search')) {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				};
 			});
 
@@ -215,6 +215,11 @@ class Keyboard {
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
 				popupStore.open('settings', {});
+			});
+
+			// Store
+			this.shortcut(`${cmd}+alt+l`, e, () => {
+				ObjectUtil.openRoute({ layout: I.ObjectLayout.Store });
 			});
 		};
 
@@ -305,7 +310,7 @@ class Keyboard {
 			let prev = Util.history.entries[Util.history.index - 1];
 
 			if (account && !prev) {
-				Util.route('/main/index');
+				ObjectUtil.openHome('route');
 				return;
 			};
 
@@ -781,9 +786,8 @@ class Keyboard {
 		};
 	};
 
-	ctrlSymbol () {
-		const platform = Util.getPlatform();
-		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+	cmdSymbol () {
+		return Util.getPlatform() == I.Platform.Mac ? '&#8984;' : 'Ctrl';
 	};
 
 	cmdKey () {

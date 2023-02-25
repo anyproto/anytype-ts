@@ -8,6 +8,7 @@ html.printMedia {
 	#sidebar { display: none; }
 	.sidebarDummy { display: none; }
 	.progress { display: none; }
+	.toast { display: none; }
 
 	#drag, #previewLink, .menu, 
 	.editorControls, .controlButtons, 
@@ -54,19 +55,14 @@ html.printMedia {
 		.wrapMenu .icon.dnd { display: none; }
 		#button-block-add { display: none; }
 
-		.block.blockMedia { break-inside: avoid-page; }
+		.block.blockMedia, .block.blockBookmark { break-inside: avoid-page; }
+
 		.block.blockMedia {
 			.icon.play { display: none; }
 		}
-		
 		.block.blockText {
 			.placeholder { display: none !important; }
-			.value { -webkit-user-modify: unset !important; }
 		}
-		
-		.block.blockBookmark { break-inside: avoid-page; }
-
-		.block.blockText.code > .wrapContent > .selectable > .dropTarget > .flex .value { white-space: pre; }
 	}
 }
 

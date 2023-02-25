@@ -1,23 +1,21 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, sidebar } from 'Lib';
-import { observer } from 'mobx-react';
+import { I } from 'Lib';
 
-const FooterMainEdit = observer(class FooterMainEdit extends React.Component<I.FooterComponent> {
+const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComponent> {
 	
 	render () {
-		const { onHelp } = this.props;
+		const { onHelp, onAdd } = this.props;
 
 		return (
 			<React.Fragment>
-				<Icon 
-					id="button-expand" 
-					className="big expand" 
-					tooltip="Show sidebar" 
+				<Icon
+					id="button-add"
+					className="big"
+					tooltip="Add new object"
 					tooltipY={I.MenuDirection.Top} 
-					onClick={() => { sidebar.expand(); }} 
+					onClick={onAdd}
 				/>
-
 				<Icon 
 					id="button-help" 
 					className="big help" 
@@ -29,6 +27,6 @@ const FooterMainEdit = observer(class FooterMainEdit extends React.Component<I.F
 		);
 	};
 
-});
+};
 
 export default FooterMainEdit;

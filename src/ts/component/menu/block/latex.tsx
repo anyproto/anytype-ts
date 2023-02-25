@@ -99,7 +99,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={(ref: any) => { this.refList = ref; }}
+										ref={ref => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}

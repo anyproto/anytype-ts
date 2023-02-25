@@ -37,7 +37,7 @@ class Pin extends React.Component<Props> {
 			<div className="pin">
 				{inputs.map((item: any, i: number) => (
 					<Input 
-						ref={(ref: any) => this.refObj[item.id] = ref} 
+						ref={ref => this.refObj[item.id] = ref} 
 						maxLength={1} 
 						key={i} 
 						onFocus={(e) => { this.onFocus(e, item.id); }} 

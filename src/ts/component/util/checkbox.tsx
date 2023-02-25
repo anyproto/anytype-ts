@@ -64,11 +64,16 @@ class Checkbox extends React.Component<Props, State> {
 	};
 	
 	onChange (e: any) {
-		const value = !this.state.value;
+		const { readonly } = this.props;
+		const { value } = this.state;
 
-		this.setValue(value);
+		if (readonly) {
+			return;
+		};
+
+		this.setValue(!value);
 		if (this.props.onChange) {
-			this.props.onChange(e, value);
+			this.props.onChange(e, !value);
 		};
 	};
 	

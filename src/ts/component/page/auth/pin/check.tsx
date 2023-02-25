@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Title, Error, Pin, Header, Footer } from 'Component';
-import { I, Util, Storage, translate, keyboard } from 'Lib';
+import { I, Util, Storage, translate, keyboard, ObjectUtil } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -36,7 +36,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 					<Error text={error} />
 
 					<Pin 
-						ref={(ref: any) => { this.ref = ref; }}
+						ref={ref => { this.ref = ref; }}
 						value={Storage.get('pin')} 
 						onSuccess={this.onSuccess} 
 						onError={() => { this.setState({ error: translate('authPinCheckError') }) }} 
@@ -70,7 +70,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			Util.route(redirect || '/main/index');
+			Util.route(redirect || ObjectUtil.openHome('route'));
 		} else {
 			Util.route('/');
 		};

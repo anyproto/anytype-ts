@@ -118,7 +118,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				<form id="head" className="head" onSubmit={this.onSubmit}>
 					<Icon key="icon-search" className="search" />
 					<Input 
-						ref={(ref: any) => { this.refFilter = ref; }} 
+						ref={ref => { this.refFilter = ref; }} 
 						placeholder={translate('popupSearchPlaceholder')} 
 						onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
 					/>
@@ -140,7 +140,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={(ref: any) => { this.refList = ref; }}
+											ref={ref => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -315,7 +315,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limitMenuRecords;
+			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -341,7 +341,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limitMenuRecords,
+			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });

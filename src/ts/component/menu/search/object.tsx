@@ -130,7 +130,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			<div className={cn.join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={(ref: any) => { this.refFilter = ref; }} 
+						ref={ref => { this.refFilter = ref; }} 
 						placeholder={placeholder} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
@@ -156,7 +156,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={(ref: any) => { this.refList = ref; }}
+											ref={ref => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -263,7 +263,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limitMenuRecords;
+			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -275,7 +275,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const { param } = this.props;
 		const { data } = param;
-		const { type, dataMapper, dataSort, skipIds, keys, ignoreWorkspace } = data;
+		const { type, dataMapper, dataSort, dataChange, skipIds, keys, ignoreWorkspace } = data;
 		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
@@ -305,7 +305,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			keys: keys || Constant.defaultRelationKeys,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limitMenuRecords,
+			limit: Constant.limit.menuRecords,
 			ignoreWorkspace: (typeof ignoreWorkspace === 'undefined' ? false : ignoreWorkspace),
 		}, (message: any) => {
 			if (!this._isMounted) {
@@ -321,6 +321,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 
 			this.items = this.items.concat(message.records);
+
+			if (clear && dataChange) {
+				this.items = dataChange(this.items);
+			};
 
 			if (dataMapper) {
 				this.items = this.items.map(dataMapper);

@@ -95,7 +95,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			<React.Fragment>
 				{withFilter ? (
 					<Filter 
-						ref={(ref: any) => { this.refFilter = ref; }} 
+						ref={ref => { this.refFilter = ref; }} 
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
@@ -115,7 +115,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={(ref: any) => { this.refList = ref; }}
+										ref={ref => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}

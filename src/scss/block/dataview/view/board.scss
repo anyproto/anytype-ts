@@ -75,8 +75,6 @@
 				.card { display: none; }
 			}
 
-			.column > .ghost { margin-top: 42px; width: 240px; flex-shrink: 0; }
-			
             .card { width: 224px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
 				.cellContent.isName {

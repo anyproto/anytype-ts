@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
-import { Icon, Button, Cover, Loader, IconObject, Header, ObjectName, ObjectDescription } from 'Component';
-import { I, C, ObjectUtil, Util, keyboard, Key, focus, translate, sidebar } from 'Lib';
+import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
+import { I, C, ObjectUtil, Util, keyboard, Key, focus, translate } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -24,10 +24,10 @@ enum Panel {
 	Right = 3,
 };
 
-const ctrl = keyboard.ctrlSymbol();
+const cmd = keyboard.cmdSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltip: `${ctrl} + Alt + O` },
-	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltip: `${ctrl} + O` },
+	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltip: `${cmd} + Alt + O` },
+	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltip: `${cmd} + O` },
 ];
 
 const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
@@ -241,16 +241,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 						)}
 					</div>
 				</div>
-
-				<div id="footer" className="footer footerMainNavigation">
-					<Icon 
-						id="button-expand" 
-						className="big" 
-						tooltip="Show sidebar" 
-						tooltipY={I.MenuDirection.Top} 
-						onClick={() => { sidebar.expand(); }} 
-					/>
-				</div>
+				<Footer component="mainNavigation" />
 			</div>
 		);
 	};
@@ -302,19 +293,12 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.on('keydown.navigation', (e: any) => { this.onKeyDown(e); });
-		win.on('resize.navigation', () => { this.resize(); });
+		$(window).on('keydown.navigation', (e: any) => { this.onKeyDown(e); });
 	};
 
 	unbind () {
-		$(window).off('keydown.navigation resize.navigation');
+		$(window).off('keydown.navigation');
 	};
 	
 	resize () {

@@ -4,7 +4,6 @@ import {
 	DropType, 
 	SelectType,
 	CoverType, 
-	CrumbsType, 
 	NavigationType,
 	Toast,
 	ToastAction,
@@ -64,6 +63,7 @@ import { DivStyle, ContentDiv } from './block/div';
 import { ContentRelation } from './block/relation';
 import { ContentLatex } from './block/latex';
 import { BlockComponentTable, ContentTableRow } from './block/table';
+import { WidgetLayout, WidgetTreeItem, WidgetTreeDetails, ContentWidget, WidgetComponent } from './block/widget';
 
 export {
 	Account,
@@ -76,7 +76,6 @@ export {
 	DropType,
 	SelectType,
 	CoverType,
-	CrumbsType,
 	NavigationType,
 	Toast,
 	ToastAction,
@@ -192,4 +191,10 @@ export {
 
 	BlockComponentTable,
 	ContentTableRow, 
+
+	WidgetLayout,
+	WidgetTreeItem,
+	WidgetTreeDetails,
+	WidgetComponent,
+	ContentWidget,
 };

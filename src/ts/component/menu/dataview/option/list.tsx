@@ -86,7 +86,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={(ref: any) => { this.refFilter = ref; }} 
+						ref={ref => { this.refFilter = ref; }} 
 						placeholderFocus={placeholder} 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -105,7 +105,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={(ref: any) => { this.refList = ref; }}
+											ref={ref => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, Util, analytics, sidebar, DataUtil, ObjectUtil, keyboard } from 'Lib';
-import { Header, Graph, Icon, Loader } from 'Component';
+import { I, C, Util, analytics, DataUtil, ObjectUtil, keyboard } from 'Lib';
+import { Header, Footer, Graph, Loader } from 'Component';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const ctrl = keyboard.ctrlSymbol();
+const ctrl = keyboard.cmdSymbol();
 const Tabs = [
 	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltip: `${ctrl} + Alt + O` },
 	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltip: `${ctrl} + O` },
@@ -22,7 +22,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	ids: string[] = [];
 	refHeader: any = null;
 	refGraph: any = null;
-	refPanel: any = null;
 	loading = false;
 	timeoutLoading = 0;
 	rootId = '';
@@ -60,15 +59,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					/>
 				</div>
 
-				<div id="footer" className="footer footerMainGraph">
-					<Icon 
-						id="button-expand" 
-						className="big" 
-						tooltip="Show sidebar" 
-						tooltipY={I.MenuDirection.Top} 
-						onClick={() => { sidebar.expand(); }} 
-					/>
-				</div>
+				<Footer component="mainGraph" />
 			</div>
 		);
 	};

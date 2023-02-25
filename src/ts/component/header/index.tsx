@@ -9,6 +9,7 @@ import HeaderMainHistory from './main/history';
 import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
 import HeaderMainStore from './main/store';
+import HeaderMainEmpty from './main/empty';
 
 interface Props extends I.HeaderComponent {
 	component: string;
@@ -22,6 +23,7 @@ const Components = {
 	mainGraph:			 HeaderMainGraph,
 	mainNavigation:		 HeaderMainNavigation,
 	mainStore:			 HeaderMainStore,
+	mainEmpty:			 HeaderMainEmpty,
 };
 
 class Header extends React.Component<Props> {
@@ -31,7 +33,6 @@ class Header extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
-		this.onHome = this.onHome.bind(this);
 		this.onSearch = this.onSearch.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onGraph = this.onGraph.bind(this);
@@ -46,16 +47,15 @@ class Header extends React.Component<Props> {
 		const Component = Components[component] || null;
 		const cn = [ 'header', component ];
 
-		if ([ 'mainEdit', 'mainNavigation', 'mainGraph', 'mainStore', 'mainHistory' ].includes(component)) {
+		if (![ 'authIndex', 'mainIndex' ].includes(component)) {
 			cn.push('isCommon');
 		};
 
 		return (
 			<div id="header" className={cn.join(' ')}>
 				<Component 
-					ref={(ref: any) => this.refChild = ref} 
+					ref={ref => this.refChild = ref} 
 					{...this.props} 
-					onHome={this.onHome}
 					onBack={() => { keyboard.onBack(); }}
 					onForward={() => { keyboard.onForward(); }}
 					onSearch={this.onSearch}
@@ -79,10 +79,6 @@ class Header extends React.Component<Props> {
 		this.refChild.forceUpdate();
 	};
 
-	onHome () {
-		Util.route('/main/index');
-	};
-	
 	onSearch () {
 		keyboard.onSearchPopup();
 	};

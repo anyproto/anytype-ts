@@ -48,7 +48,7 @@ class Storage {
 		if (value) {
 			obj[rootId].push(id);
 		} else {
-			obj[rootId] = obj[rootId].filter((it: string) => { return it != id; });
+			obj[rootId] = obj[rootId].filter(it => it != id);
 		};
 		obj[rootId] = [ ...new Set(obj[rootId]) ];
 
@@ -57,12 +57,23 @@ class Storage {
 	};
 
 	getToggle (rootId: string) {
-		const map = this.get('toggle') || {};
-		return map[rootId] || [];
+		const obj = this.get('toggle') || {};
+		return obj[rootId] || [];
 	};
 
 	checkToggle (rootId: string, id: string): boolean {
 		return this.getToggle(rootId).includes(id);
+	};
+
+	deleteToggle (rootId: string) {
+		const obj = this.get('toggle') || {};
+
+		delete(obj[rootId]);
+		this.set('toggle', obj, true);
+	};
+
+	deleteToggleId (rootId: string, id: string) {
+		this.set('toggle', this.getToggle(rootId).filter(it => it != id), true);
 	};
 
 	setScroll (key: string, rootId: string, scroll: number) {

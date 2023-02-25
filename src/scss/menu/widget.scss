@@ -1,0 +1,14 @@
+@import "~scss/_vars";
+
+.menus {
+	.menu.menuWidget {
+		.section:last-child::after { display: none; }
+
+		.item {
+			.name { @include text-overflow-nw; width: calc(100% - 36px); }
+		}
+
+		.buttons { padding: 8px 16px 0px 16px; }
+		.button { width: 100%; }
+	}
+}

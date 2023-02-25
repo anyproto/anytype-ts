@@ -34,10 +34,6 @@ const HeaderMainIndex = observer(class HeaderMainIndex extends React.Component<I
 		popupStore.open('settings', {});
 	};
 
-	componentDidMount () {
-		DataUtil.setWindowTitleText('Dashboard');
-	};
-
 });
 
 export default HeaderMainIndex;

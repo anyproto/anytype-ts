@@ -13,7 +13,7 @@ class Dataview {
 		};
 
 		let relations = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId));
-		let order: any = {};
+		const order: any = {};
 		let o = 0;
 
 		if (!config.debug.ho) {
@@ -33,10 +33,10 @@ class Dataview {
 		});
 
 		relations.sort((c1: any, c2: any) => {
-			let o1 = order[c1.relationKey];
-			let o2 = order[c2.relationKey];
-			let isName1 = c1.relationKey == 'name';
-			let isName2 = c2.relationKey == 'name';
+			const o1 = order[c1.relationKey];
+			const o2 = order[c2.relationKey];
+			const isName1 = c1.relationKey == 'name';
+			const isName2 = c2.relationKey == 'name';
 
 			if (!isName1 && !isName2) {
 				if (c1.isHidden && !c2.isHidden) return 1;
@@ -106,12 +106,17 @@ class Dataview {
 			offset: 0,
 			limit: 0,
 			ignoreWorkspace: false,
+			sources: [],
 			clear: false,
 		}, param);
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear } = param;
 		const view = dbStore.getView(rootId, blockId, newViewId);
 		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId);
 
@@ -147,12 +152,11 @@ class Dataview {
 		dbStore.metaSet(subId, '', meta);
 
 		DataUtil.searchSubscribe({
-			param,
+			...param,
 			subId,
 			filters: view.filters.map(mapper),
 			sorts: view.sorts.map(mapper),
 			keys,
-			sources: object.setOf,
 			limit,
 			offset,
 			ignoreDeleted: true,

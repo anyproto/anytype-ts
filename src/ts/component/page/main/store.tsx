@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Filter, Button, EmptySearch } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -21,9 +21,10 @@ enum View {
 	Library = 'library',
 };
 
+const cmd = keyboard.cmdSymbol();
 const Tabs = [
-	{ id: Tab.Type, name: 'Types' },
-	{ id: Tab.Relation, name: 'Relations' },
+	{ id: Tab.Type, name: 'Types', tooltip: `${cmd} + T` },
+	{ id: Tab.Relation, name: 'Relations', tooltip: `${cmd} + Alt + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
@@ -101,7 +102,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			<div className="mid">
 				<Title text={title} />
 				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }}
+					ref={ref => { this.refFilter = ref; }}
 					id="store-filter"
 					icon="search"
 					placeholder={placeholder}
@@ -224,7 +225,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={(ref: any) => { this.refList = ref; }}
+											ref={ref => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -258,6 +259,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		});
 
 		this.resize();
+		this.rebind();
 		this.onTab(Storage.get('tabStore') || Tab.Type);
 	};
 
@@ -274,8 +276,25 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.store);
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.store', (e: any) => { this.onKeyDown(e); });
+	};
+
+	unbind () {
+		$(window).off('keydown.store');
+	};
+
+	onKeyDown (e: any) {
+		const cmd = keyboard.cmdKey();
+
+		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(Tab.Type); });
+		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(Tab.Relation); });
 	};
 
 	getRowHeight (item: any) {
@@ -564,13 +583,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	onScroll ({ scrollTop }) {
 		const win = $(window);
-		const { list } = menuStore;
+		const menus = menuStore.list.filter(it => Constant.menuIds.store.includes(it.id));
 
 		if (scrollTop) {
 			this.top = scrollTop;
 		};
 
-		for (let menu of list) {
+		for (let menu of menus) {
 			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
 		};
 	};

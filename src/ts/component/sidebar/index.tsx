@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { keyboard, sidebar, I, Preview } from 'Lib';
-import Footer from './footer';
-import { Tree } from '../widgets';
+import { observer } from 'mobx-react';
+import { I, keyboard, Preview, sidebar } from 'Lib';
+import { commonStore } from 'Store';
+import Header from './header';
+import ListWidget from 'Component/list/widget';
 
 interface Props {
 	dataset?: any;
 };
-
+	
 const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	
 	private _isMounted = false;
@@ -17,14 +18,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	oy = 0;
     refFooter: React.Ref<HTMLUnknownElement> = null;
 
-    constructor (props: Props) {
+	constructor (props: Props) {
 		super(props);
-		this.onDragStart = this.onDragStart.bind(this)
-		this.onDragMove = this.onDragMove.bind(this)
-		this.onDragEnd = this.onDragEnd.bind(this)
-		this.onResizeStart = this.onResizeStart.bind(this)
-		this.onResizeMove = this.onResizeMove.bind(this)
-		this.onResizeEnd = this.onResizeEnd.bind(this)
+
+		this.onDragStart = this.onDragStart.bind(this);
+		this.onDragMove = this.onDragMove.bind(this);
+		this.onDragEnd = this.onDragEnd.bind(this);
+		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onResizeMove = this.onResizeMove.bind(this);
+		this.onResizeEnd = this.onResizeEnd.bind(this);
 	};
 
     render() {
@@ -36,9 +38,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
                 id="sidebar" 
                 className={cn.join(' ')} 
             >
-                <div id="head" className="head" onMouseDown={this.onDragStart} />
-				<Tree dataset={this.props.dataset}></Tree>
-                <Footer ref={(ref: any) => { this.refFooter = ref; }} />
+                <div className="top">
+					<div id="head" className="head" onMouseDown={this.onDragStart} />
+					{commonStore.isSidebarFixed ? <Header /> : null}
+				</div>
+				<div id="body" className="body">
+					<ListWidget dataset={this.props.dataset}></ListWidget>
+				</div>
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
 				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
             </div>
@@ -57,10 +63,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	componentWillUnmount (): void {
 		this._isMounted = false;
 		this.unbind();
+
 		Preview.tooltipHide(true);
 	};
 
-	setActive (id: string):  void {
+	setActive (id: string): void {
 		if (!this._isMounted) {
 			return;
 		};
@@ -74,18 +81,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		};
 	};
 
-	rebind ():  void {
+	rebind (): void {
 		this.unbind();
 		$(window).on('resize.sidebar', (e: any) => { sidebar.resize(); });
 	};
 
-	unbind ():  void {
+	unbind (): void {
 		$(window).off('resize.sidebar');
 	};
 
 	// Event Handlers
 
-    onDragStart (e: React.MouseEvent) {
+	onDragStart (e: React.MouseEvent) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -96,7 +103,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		this.ox = e.pageX - offset.left;
 		this.oy = e.pageY - offset.top;
 
-		sidebar.set({ fixed: false });
 		sidebar.resizePage();
 
 		keyboard.setDragging(true);
@@ -105,13 +111,13 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', (e: any) => { this.onDragMove(e); });
 		win.on('mouseup.sidebar', (e: any) => { this.onDragEnd(e); });
-	};
+	}
 
 	onDragMove (e: React.MouseEvent) {
 		const win = $(window);
-		
-		sidebar.set({ 
-			x: e.pageX - this.ox - win.scrollLeft(), 
+
+		sidebar.set({
+			x: e.pageX - this.ox - win.scrollLeft(),
 			y: e.pageY - this.oy - win.scrollTop(),
 		});
 	};
@@ -122,7 +128,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		keyboard.disableSelection(false);
 	};
 
-    onResizeStart (e: React.MouseEvent, dir: I.MenuType) {
+	onResizeStart (e: React.MouseEvent, dir: I.MenuType) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -130,16 +136,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 			return;
 		};
 
-		const { fixed } = sidebar.data;
 		const node = $(this.node);
 		const win = $(window);
 		const body = $('body');
 		const offset = node.offset();
 
-		if (fixed && (dir == I.MenuType.Vertical)) {
+		if (commonStore.isSidebarFixed && (dir == I.MenuType.Vertical)) {
 			return;
 		};
-		
+
 		this.ox = offset.left;
 		this.oy = offset.top;
 
@@ -147,16 +152,21 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		keyboard.setResize(true);
 
 		body.addClass(dir == I.MenuType.Vertical ? 'rowResize' : 'colResize');
+
 		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', (e: any) => { this.onResizeMove(e, dir); });
-		win.on('mouseup.sidebar', (e: any) => { this.onResizeEnd(e, dir); });
+		win.on('mouseup.sidebar', (e: any) => { this.onResizeEnd(e); });
 	};
 
 	onResizeMove (e: React.MouseEvent, dir: I.MenuType) {
 		const { width, snap } = sidebar.data;
 
 		if (dir == I.MenuType.Horizontal) {
-			sidebar.setWidth((snap == I.MenuDirection.Right) ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
+			sidebar.setWidth(
+				snap == I.MenuDirection.Right
+					? this.ox - e.pageX + width
+					: e.pageX - this.ox
+			);
 		};
 
 		if (dir == I.MenuType.Vertical) {
@@ -167,13 +177,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		$(window).trigger('resize');
 	};
 
-	onResizeEnd (e: React.MouseEvent, dir: I.MenuType) {
+	onResizeEnd (e: React.MouseEvent) {
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
 
 		$('body').removeClass('rowResize colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
 	};
+
 });
 
 export default Sidebar;

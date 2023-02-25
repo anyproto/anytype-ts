@@ -8,6 +8,7 @@ interface Props {
 	className?: string;
 	arrow?: boolean;
 	tooltip?: string;
+	tooltipCaption?: string;
 	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
 	inner?: any;
@@ -77,11 +78,17 @@ class Icon extends React.Component<Props> {
 	};
 	
 	onMouseEnter (e: any) {
-		const { tooltip, tooltipX, tooltipY, onMouseEnter } = this.props;
+		const { tooltip, tooltipCaption, tooltipX, tooltipY, onMouseEnter } = this.props;
 		const node = $(this.node);
 		
 		if (tooltip) {
-			Preview.tooltipShow(tooltip, node, tooltipX, tooltipY);
+			const t = [ tooltip ];
+
+			if (tooltipCaption) {
+				t.push(`<span class="caption">${tooltipCaption}</span>`);
+			};
+
+			Preview.tooltipShow(t.join(' '), node, tooltipX, tooltipY);
 		};
 		
 		if (onMouseEnter) {

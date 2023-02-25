@@ -107,7 +107,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={(ref: any) => { this.refFilter = ref; }} 
+						ref={ref => { this.refFilter = ref; }} 
 						placeholderFocus="Filter or create a relation..." 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -127,7 +127,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={(ref: any) => { this.refList = ref; }}
+										ref={ref => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -210,7 +210,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limitMenuRecords;
+			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
@@ -243,7 +243,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			keys: Constant.relationRelationKeys,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limitMenuRecords,
+			limit: Constant.limit.menuRecords,
 			ignoreWorkspace: true,
 		}, (message: any) => {
 			if (!this._isMounted) {
@@ -283,9 +283,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		let name = 'Create new relation';
 
 		if (filter) {
-			const marketplace = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 			sections = sections.concat([
-				{ id: 'marketplace', name: 'Anytype library', children: marketplace },
+				{ id: 'store', name: 'Anytype library', children: store },
 			]);
 
 			name = `Create relation "${filter}"`;
@@ -293,7 +293,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			sections = sections.concat([
 				{ 
 					children: [
-						{ id: 'marketplace', icon: 'folder', name: 'Anytype library', arrow: true }
+						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
 					] 
 				},
 			])
@@ -376,7 +376,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		};
 
 		switch (item.id) {
-			case 'marketplace': {
+			case 'store': {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 

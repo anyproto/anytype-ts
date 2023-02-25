@@ -36,7 +36,7 @@ const Card = observer(class Card extends React.Component<Props> {
 							{...this.props}
 							getRecord={() => { return record; }}
 							subId={subId}
-							ref={(ref: any) => { onRef(ref, id); }}
+							ref={ref => { onRef(ref, id); }}
 							relationKey={relation.relationKey}
 							index={0}
 							viewType={view.type}

@@ -1,7 +1,25 @@
-import { I, C, keyboard, crumbs, translate, Util, Storage, analytics, dispatcher, Mark } from 'Lib';
+import { I, C, keyboard, translate, Util, Storage, analytics, dispatcher, Mark, ObjectUtil } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
+
+type SearchSubscribeParams = Partial<{
+	subId: string,
+	idField: string,
+	filters: I.Filter[],
+	sorts: I.Sort[],
+	keys: string[],
+	sources: string[],
+	offset: number,
+	limit: number,
+	ignoreWorkspace: boolean,
+	ignoreHidden: boolean,
+	ignoreDeleted: boolean,
+	withArchived: boolean,
+	noDeps: boolean,
+	afterId: string,
+	beforeId: string,
+}>;
 
 class DataUtil {
 
@@ -43,7 +61,7 @@ class DataUtil {
 		const { style, type, state } = content;
 		const dc = Util.toCamelCase('block-' + block.type);
 
-		let c = [];
+		const c = [];
 		if (block.type == I.BlockType.File) {
 			if (state == I.FileState.Done) {
 				c.push('withFile');
@@ -214,7 +232,8 @@ class DataUtil {
 		authStore.accountSet(account);
 
 		const pin = Storage.get('pin');
-		const { root, profile } = blockStore;
+		const { root, profile, widgets } = blockStore;
+		const { workspace, redirect } = commonStore;
 
 		if (!root) {
 			console.error('[onAuth] No root defined');
@@ -226,7 +245,11 @@ class DataUtil {
 			return;
 		};
 
-		crumbs.init();
+		if (!widgets) {
+			console.error('[onAuth] No widgets defined');
+			return;
+		};
+
 		keyboard.initPinCheck();
 
 		analytics.profile(account);
@@ -272,11 +295,20 @@ class DataUtil {
 				],
 				noDeps: true,
 				ignoreDeleted: true,
+			},
+			{
+				subId: Constant.subId.space,
+				keys: Constant.defaultRelationKeys.concat([ 'spaceDashboardId' ]),
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space },
+				],
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
 			}
 		];
 
 		let cnt = 0;
-		let cb = (item: any) => {
+		const cb = (item: any) => {
 			if (item.onSubscribe) {
 				item.onSubscribe();
 			};
@@ -289,7 +321,11 @@ class DataUtil {
 				if (pin && !keyboard.isPinChecked) {
 					Util.route('/auth/pin-check');
 				} else {
-					Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
+					if (redirect) {
+						Util.route(redirect);
+					} else {
+						ObjectUtil.openHome('route');
+					};
 					commonStore.redirectSet('');
 				};
 
@@ -315,16 +351,18 @@ class DataUtil {
 				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
-			for (let item of subscriptions) {
-				this.searchSubscribe(item, () => { cb(item); });
-			};
+			C.ObjectOpen(widgets, '', (message: any) => {
+				for (const item of subscriptions) {
+					this.searchSubscribe(item, () => { cb(item); });
+				};
 
-			if (profile) {
-				this.subscribeIds({
-					subId: Constant.subId.profile, 
-					ids: [ profile ], 
-				});
-			};
+				if (profile) {
+					this.subscribeIds({
+						subId: Constant.subId.profile, 
+						ids: [ profile ], 
+					});
+				};
+			});
 		});
 	};
 
@@ -617,7 +655,7 @@ class DataUtil {
 		};
 
 		let details = [];
-		let mapper = (it: any) => { 
+		const mapper = (it: any) => { 
 			keys.forEach((k: string) => { it[k] = it[k] || ''; });
 			return { id: it[idField], details: it }; 
 		};
@@ -629,7 +667,7 @@ class DataUtil {
 		dbStore.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
 	};
 
-	searchSubscribe (param: any, callBack?: (message: any) => void) {
+	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
 		const { config, workspace } = commonStore;
 
 		param = Object.assign({
@@ -722,7 +760,7 @@ class DataUtil {
 		});
 	};
 
-	search (param: any, callBack?: (message: any) => void) {
+	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
 		const { config, workspace } = commonStore;
 
 		param = Object.assign({
@@ -816,21 +854,30 @@ class DataUtil {
 		});
 	};
 
-	setWindowTitle (rootId: string) {
-		const object = detailStore.get(rootId, rootId, []);
-		const name = this.getObjectName(object);
+	setWindowTitle (rootId: string, objectId: string) {
+		const object = detailStore.get(rootId, objectId, []);
 
-		this.setWindowTitleText(name);
+		this.setWindowTitleText(this.getObjectName(object));
 	};
 
 	setWindowTitleText (name: string) {
-		document.title = [ Util.shorten(name, 60), Constant.appName ].join(' - ');
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const title = [ Util.shorten(name, 60) ];
+
+		if (!space._empty_) {
+			title.push(space.name);
+		};
+
+		title.push(Constant.appName);
+
+		document.title = title.join(' - ');
 	};
 
 	graphFilters () {
 		const { workspace } = commonStore;
+		const { profile } = blockStore;
 		const skipTypes = [ Constant.typeId.space ].concat(this.getFileTypes()).concat(this.getSystemTypes());
-		const skipIds = [ '_anytype_profile', blockStore.profile ];
+		const skipIds = [ '_anytype_profile', profile ];
 
 		return [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },

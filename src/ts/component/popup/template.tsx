@@ -48,7 +48,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 				</div>
 
 				<ListObjectPreview 
-					ref={(ref: any) => { this.ref = ref; }}
+					ref={ref => { this.ref = ref; }}
 					getItems={() => { return items; }}
 					offsetX={-128}
 					onClick={this.onClick} 

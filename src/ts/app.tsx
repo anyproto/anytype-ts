@@ -1,60 +1,67 @@
 import * as React from 'react';
+import * as Sentry from '@sentry/browser';
+import * as hs from 'history';
+import $ from 'jquery';
+import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import $ from 'jquery';
-import raf from 'raf';
-import * as hs from 'history';
-import * as Sentry from '@sentry/browser';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview, Mark, Encode } from 'Lib';
 
 configure({ enforceActions: 'never' });
 
-import 'react-virtualized/styles.css';
 import 'katex/dist/katex.min.css';
 import 'prismjs/themes/prism.css';
+import 'react-virtualized/styles.css';
 import 'emoji-mart/css/emoji-mart.css';
 
-import 'scss/font.scss';
 import 'scss/common.scss';
 import 'scss/debug.scss';
+import 'scss/font.scss';
 
+import 'scss/component/button.scss';
+import 'scss/component/cover.scss';
+import 'scss/component/deleted.scss';
+import 'scss/component/drag.scss';
+import 'scss/component/dragbox.scss';
+import 'scss/component/dragLayer.scss';
+import 'scss/component/editor.scss';
+import 'scss/component/emptySearch.scss';
+import 'scss/component/error.scss';
+import 'scss/component/filter.scss';
+import 'scss/component/footer.scss';
+import 'scss/component/frame.scss';
 import 'scss/component/header.scss';
 import 'scss/component/headSimple.scss';
-import 'scss/component/footer.scss';
-import 'scss/component/cover.scss';
-import 'scss/component/input.scss';
-import 'scss/component/inputWithFile.scss';
-import 'scss/component/button.scss';
 import 'scss/component/icon.scss';
 import 'scss/component/iconObject.scss';
-import 'scss/component/textarea.scss';
-import 'scss/component/error.scss';
-import 'scss/component/frame.scss';
-import 'scss/component/switch.scss';
-import 'scss/component/title.scss';
-import 'scss/component/select.scss';
-import 'scss/component/emptySearch.scss';
-import 'scss/component/tag.scss';
-import 'scss/component/dragLayer.scss';
-import 'scss/component/dragbox.scss';
-import 'scss/component/selection.scss';
+import 'scss/component/input.scss';
+import 'scss/component/inputWithFile.scss';
+import 'scss/component/list/previewObject.scss';
+import 'scss/component/list/widget.scss';
 import 'scss/component/loader.scss';
-import 'scss/component/deleted.scss';
-import 'scss/component/progress.scss';
-import 'scss/component/editor.scss';
-import 'scss/component/toast.scss';
-import 'scss/component/tooltip.scss';
-import 'scss/component/drag.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
-import 'scss/component/sync.scss';
-import 'scss/component/filter.scss';
+import 'scss/component/progress.scss';
+import 'scss/component/select.scss';
+import 'scss/component/selection.scss';
 import 'scss/component/sidebar.scss';
+import 'scss/component/switch.scss';
+import 'scss/component/sync.scss';
+import 'scss/component/tag.scss';
+import 'scss/component/textarea.scss';
+import 'scss/component/title.scss';
+import 'scss/component/toast.scss';
+import 'scss/component/tooltip.scss';
+
+import 'scss/component/widget/common.scss';
+import 'scss/component/widget/space.scss';
+import 'scss/component/widget/list.scss';
+import 'scss/component/widget/tree.scss';
 
 import 'scss/component/list/object.scss';
 import 'scss/component/list/previewObject.scss';
@@ -70,95 +77,101 @@ import 'scss/component/media/video.scss';
 import 'scss/component/hightlight.scss';
 
 import 'scss/page/auth.scss';
-import 'scss/page/main/index.scss';
 import 'scss/page/main/edit.scss';
+import 'scss/page/main/graph.scss';
 import 'scss/page/main/history.scss';
+import 'scss/page/main/index.scss';
+import 'scss/page/main/media.scss';
+import 'scss/page/main/navigation.scss';
+import 'scss/page/main/relation.scss';
 import 'scss/page/main/set.scss';
 import 'scss/page/main/space.scss';
-import 'scss/page/main/type.scss';
-import 'scss/page/main/relation.scss';
-import 'scss/page/main/media.scss';
 import 'scss/page/main/store.scss';
+import 'scss/page/main/type.scss';
+import 'scss/page/main/archive.scss';
 import 'scss/page/main/graph.scss';
 import 'scss/page/main/navigation.scss';
 import 'scss/page/main/block.scss';
+import 'scss/page/main/empty.scss';
 
-import 'scss/block/common.scss';
-import 'scss/block/text.scss';
-import 'scss/block/media.scss';
-import 'scss/block/file.scss';
-import 'scss/block/link.scss';
 import 'scss/block/bookmark.scss';
-import 'scss/block/div.scss';
-import 'scss/block/layout.scss';
-import 'scss/block/iconPage.scss';
-import 'scss/block/iconUser.scss';
+import 'scss/block/common.scss';
 import 'scss/block/cover.scss';
-import 'scss/block/relation.scss';
-import 'scss/block/featured.scss';
-import 'scss/block/type.scss';
-import 'scss/block/latex.scss';
-import 'scss/block/table.scss';
-import 'scss/block/tableOfContents.scss';
 import 'scss/block/dataview.scss';
 import 'scss/block/dataview/cell.scss';
-import 'scss/block/dataview/view/common.scss';
-import 'scss/block/dataview/view/grid.scss';
 import 'scss/block/dataview/view/board.scss';
-import 'scss/block/dataview/view/list.scss';
+import 'scss/block/dataview/view/common.scss';
 import 'scss/block/dataview/view/gallery.scss';
+import 'scss/block/dataview/view/grid.scss';
+import 'scss/block/dataview/view/list.scss';
+import 'scss/block/div.scss';
+import 'scss/block/featured.scss';
+import 'scss/block/file.scss';
+import 'scss/block/iconPage.scss';
+import 'scss/block/iconUser.scss';
+import 'scss/block/latex.scss';
+import 'scss/block/layout.scss';
+import 'scss/block/link.scss';
+import 'scss/block/media.scss';
+import 'scss/block/relation.scss';
+import 'scss/block/table.scss';
+import 'scss/block/tableOfContents.scss';
+import 'scss/block/text.scss';
+import 'scss/block/type.scss';
 
 import 'scss/popup/common.scss';
-import 'scss/popup/settings.scss';
-import 'scss/popup/search.scss';
-import 'scss/popup/prompt.scss';
-import 'scss/popup/preview.scss';
-import 'scss/popup/help.scss';
-import 'scss/popup/shortcut.scss';
 import 'scss/popup/confirm.scss';
-import 'scss/popup/page.scss';
-import 'scss/popup/template.scss';
 import 'scss/popup/export.scss';
+import 'scss/popup/help.scss';
+import 'scss/popup/page.scss';
+import 'scss/popup/preview.scss';
+import 'scss/popup/prompt.scss';
+import 'scss/popup/search.scss';
+import 'scss/popup/settings.scss';
+import 'scss/popup/shortcut.scss';
+import 'scss/popup/template.scss';
 
 import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
-import 'scss/menu/smile.scss';
+import 'scss/menu/button.scss';
+import 'scss/menu/common.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/onboarding.scss';
+import 'scss/menu/relation.scss';
 import 'scss/menu/select.scss';
-import 'scss/menu/button.scss';
+import 'scss/menu/smile.scss';
 import 'scss/menu/thread.scss';
 import 'scss/menu/type.scss';
-import 'scss/menu/relation.scss';
+import 'scss/menu/widget.scss';
 
-import 'scss/menu/search/text.scss';
 import 'scss/menu/search/object.scss';
+import 'scss/menu/search/text.scss';
 
 import 'scss/menu/preview/object.scss';
 
-import 'scss/menu/block/context.scss';
 import 'scss/menu/block/common.scss';
+import 'scss/menu/block/context.scss';
+import 'scss/menu/block/cover.scss';
+import 'scss/menu/block/icon.scss';
+import 'scss/menu/block/latex.scss';
 import 'scss/menu/block/link.scss';
 import 'scss/menu/block/linkSettings.scss';
-import 'scss/menu/block/icon.scss';
-import 'scss/menu/block/cover.scss';
 import 'scss/menu/block/mention.scss';
 import 'scss/menu/block/relation.scss';
-import 'scss/menu/block/latex.scss';
 
+import 'scss/menu/dataview/calendar.scss';
 import 'scss/menu/dataview/common.scss';
-import 'scss/menu/dataview/sort.scss';
+import 'scss/menu/dataview/create/bookmark.scss';
+import 'scss/menu/dataview/file.scss';
 import 'scss/menu/dataview/filter.scss';
-import 'scss/menu/dataview/relation.scss';
 import 'scss/menu/dataview/group.scss';
 import 'scss/menu/dataview/object.scss';
-import 'scss/menu/dataview/calendar.scss';
 import 'scss/menu/dataview/option.scss';
-import 'scss/menu/dataview/file.scss';
+import 'scss/menu/dataview/relation.scss';
+import 'scss/menu/dataview/sort.scss';
+import 'scss/menu/dataview/source.scss';
 import 'scss/menu/dataview/text.scss';
 import 'scss/menu/dataview/view.scss';
-import 'scss/menu/dataview/source.scss';
-import 'scss/menu/dataview/create/bookmark.scss';
 
 import 'scss/media/print.scss';
 
@@ -170,17 +183,16 @@ import Routes from 'json/route.json';
 
 const memoryHistory = hs.createMemoryHistory;
 const history = memoryHistory();
-
 interface RouteElement { path: string; };
 
 interface State {
 	loading: boolean;
 };
-
+	
 declare global {
-	interface Window { 
+	interface Window {
 		Electron: any;
-		Store: any; 
+		Store: any;
 		$: any;
 		Lib: any;
 		Graph: any;
@@ -219,9 +231,9 @@ window.Lib = {
 
 /* 
 spy(event => {
-    if (event.type == 'action') {
-        console.log('[Mobx].event', event.name, event.arguments);
-    };
+		if (event.type == 'action') {
+				console.log('[Mobx].event', event.name, event.arguments);
+		};
 });
 enableLogging({
 	predicate: () => true,
@@ -234,7 +246,7 @@ enableLogging({
 
 Sentry.init({
 	release: window.Electron.version.app,
-	environment: (window.Electron.isPackaged ? 'production' : 'development'),
+	environment: window.Electron.isPackaged ? 'production' : 'development',
 	dsn: Constant.sentry,
 	maxBreadcrumbs: 0,
 	beforeSend: (e: any) => {
@@ -244,19 +256,19 @@ Sentry.init({
 	integrations: [
 		new Sentry.Integrations.GlobalHandlers({
 			onerror: true,
-			onunhandledrejection: true
-		})
-	]
+			onunhandledrejection: true,
+		}),
+	],
 });
 
 class RoutePage extends React.Component<RouteComponentProps> { 
 
-	render () {
+	render() {
 		return (
 			<SelectionProvider>
 				<DragProvider>
-					<ListPopup key="listPopup" {...this.props} />
-					<ListMenu key="listMenu" {...this.props} />
+					<ListPopup key='listPopup' {...this.props} />
+					<ListMenu key='listMenu' {...this.props} />
 
 					<Page {...this.props} />
 				</DragProvider>
@@ -336,7 +348,6 @@ class App extends React.Component<object, State> {
 							{Routes.map((item: RouteElement, i: number) => (
 								<Route path={item.path} exact={true} key={i} component={RoutePage} />
 							))}
-							<Redirect to='/main/index' />
 						</Switch>
 					</div>
 				</Provider>
@@ -349,7 +360,6 @@ class App extends React.Component<object, State> {
 	};
 
 	componentDidUpdate () {
-		this.initTheme(commonStore.theme);
 	};
 	
 	init () {
@@ -379,22 +389,6 @@ class App extends React.Component<object, State> {
 
 		Storage.delete('lastSurveyCanceled');
 		commonStore.coverSetDefault();
-	};
-
-	initTheme (theme: string) {
-		const head = $('head');
-
-		head.find('#link-prism').remove();
-
-		if (theme == 'system') {
-			theme = commonStore.nativeTheme;
-		};
-
-		if (theme) {
-			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${theme}/prism.css" />`);
-		};
-
-		Util.addBodyClass('theme', theme);
 	};
 
 	checkMaximized () {
@@ -441,13 +435,12 @@ class App extends React.Component<object, State> {
 
 		Renderer.on('config', (e: any, config: any) => { 
 			commonStore.configSet(config, true);
-			this.initTheme(config.theme);
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
 			commonStore.nativeThemeSet(isDark);
 			commonStore.themeSet(commonStore.theme);
-  		});
+		});
 	};
 
 	onInit (e: any, data: any) {
@@ -468,7 +461,6 @@ class App extends React.Component<object, State> {
 		authStore.accountPathSet(dataPath);
 
 		this.initStorage();
-		this.initTheme(config.theme);
 
 		if (redirect) {
 			Storage.delete('redirect');

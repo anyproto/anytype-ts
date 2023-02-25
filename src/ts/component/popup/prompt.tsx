@@ -27,7 +27,7 @@ const PopupPrompt = observer(class PopupPrompt extends React.Component<I.Popup> 
 			<form onSubmit={this.onSubmit}>
 				{title ? <Title text={title} /> : ''}
 				{label ? <Label text={label} /> : ''}
-				<Input ref={(ref: any) => { this.refValue = ref; }} value={value} readonly={readonly} placeholder={placeholder} maxLength={maxLength} />
+				<Input ref={ref => { this.refValue = ref; }} value={value} readonly={readonly} placeholder={placeholder} maxLength={maxLength} />
 				<Button type="input" text={textConfirm} />
 				<Button text={textCancel} color="grey" onClick={this.onCancel} />
 			</form>

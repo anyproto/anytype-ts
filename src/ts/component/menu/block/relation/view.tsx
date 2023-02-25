@@ -28,19 +28,21 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId, readonly } = data;
-		const sections = this.getSections();
 		const root = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 
 		if (!root) {
 			return null;
 		};
 
+		const sections = this.getSections();
+		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
+		const isLocked = root.isLocked();
+
 		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		let allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 
-		if (root.isLocked()) {
+		if (isLocked) {
 			allowedBlock = false;
 			allowedRelation = false;
 			allowedValue = false;
@@ -144,9 +146,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 	onScroll () {
 		const win = $(window);
-		const { list } = menuStore;
+		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
 
-		for (let menu of list) {
+		for (let menu of menus) {
 			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
 		};
 	};

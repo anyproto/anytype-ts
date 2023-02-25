@@ -210,19 +210,8 @@ class PopupShortcut extends React.Component<Props, State> {
 
 			markdown: [
 				{
-					description: 'To format your blocks using Markdown, simply use any of these commands at the beginning of any new line.',
+					name: 'While typing', 
 					children: [
-						{ com: '# + Space',			 name: 'Create an H1 heading' },
-						{ com: '# # + Space',		 name: 'Create an H2 heading' },
-						{ com: '# # # + Space',		 name: 'Create an H3 heading' },
-						{ com: '" + Space',			 name: 'Create a highlighted block' },
-						{ com: '* or + or - and Space',	 name: 'Create a bulleted list' },
-						{ com: '[] + Space',		 name: 'Create a to-do checkbox' },
-						{ com: '1. + Space',		 name: 'Create a numbered list' },
-						{ com: '>  + Space',		 name: 'Create a toggle list' },
-						{ com: '```',				 name: 'Create a code block' },
-						{ com: '---',				 name: 'Create line divider' },
-						{ com: '***',				 name: 'Create dots divider' },
 						{ com: '`',					 name: 'Inline code' },
 						{ com: '** or __',			 name: 'Inline bold' },
 						{ com: '* or _',			 name: 'Inline italic' },
@@ -239,6 +228,22 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '(r)',				 name: 'Inserts: ®' },
 						{ com: '(tm)',				 name: 'Inserts: ™' },
 						{ com: '...',				 name: 'Inserts: …' },
+					]
+				},
+				{
+					name: 'At the beginning of any new line', 
+					children: [
+						{ com: '# + Space',			 name: 'Create an H1 heading' },
+						{ com: '# # + Space',		 name: 'Create an H2 heading' },
+						{ com: '# # # + Space',		 name: 'Create an H3 heading' },
+						{ com: '" + Space',			 name: 'Create a highlighted block' },
+						{ com: '* or + or - and Space',	 name: 'Create a bulleted list' },
+						{ com: '[] + Space',		 name: 'Create a to-do checkbox' },
+						{ com: '1. + Space',		 name: 'Create a numbered list' },
+						{ com: '>  + Space',		 name: 'Create a toggle list' },
+						{ com: '```',				 name: 'Create a code block' },
+						{ com: '---',				 name: 'Create line divider' },
+						{ com: '***',				 name: 'Create dots divider' },
 					]
 				},
 			],

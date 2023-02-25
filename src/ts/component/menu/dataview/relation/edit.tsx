@@ -107,7 +107,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					{!isReadonly ? (
 						<div className="inputWrap">
 							<Input 
-								ref={(ref: any) => { this.ref = ref; }} 
+								ref={ref => { this.ref = ref; }} 
 								value={relation ? relation.name : ''} 
 								onChange={this.onChange}
 								onMouseEnter={this.menuClose}

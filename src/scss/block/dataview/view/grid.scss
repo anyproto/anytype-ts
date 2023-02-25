@@ -67,8 +67,8 @@
 			.row:hover {
 				.cellContent.isName.canEdit {
 					.name { width: calc(100% - 40px) !important; }
-					.icon.edit { display: block; }
 				}
+				.icon.edit { display: block; }
 			}
 
 			.row > .selectable { display: grid; }

@@ -3,9 +3,12 @@
 #tooltip { position: fixed; left: 0px; top: 0px; z-index: 1000; pointer-events: none; }
 
 .tooltip { 
-	position: absolute; border-radius: 4px; background: $colorVeryDarkGrey; padding: 3px 7px; text-transform: none;
+	position: absolute; border-radius: 4px; background: #373632; padding: 3px 7px; text-transform: none;
 	@include text-small; color: $colorWhite; white-space: nowrap; transform: scale3d(0.5, 0.5, 1); opacity: 0;
 }
 .tooltip.anim { transition-duration: 0.2s; transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); transition-property: opacity, transform; }
 .tooltip.show { transform: scale3d(1, 1, 1); opacity: 1; }
-.tooltip .txt { line-height: 1; margin-top: -1px; }
+.tooltip {
+	.txt { line-height: 1; margin-top: -1px; }
+	.caption { color: $colorDarkGrey; }
+}

@@ -1,0 +1,10 @@
+@import "~scss/_vars";
+
+.pageMainEmpty {
+	.mid { 
+		text-align: center; width: 600px; position: absolute; left: 50%; top: 50%; transform: translate3d(-50%,-50%,0px); 
+		display: flex; flex-direction: column; gap: 24px 0px; align-items: center;
+	}
+
+	.icon.ghost { width: 64px; height: 64px; }
+}

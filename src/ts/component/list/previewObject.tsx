@@ -40,7 +40,7 @@ class ListObjectPreview extends React.Component<Props> {
 					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
 				>
 					<PreviewObject 
-						ref={(ref: any) => { this.refObj[item.id] = ref; }} 
+						ref={ref => { this.refObj[item.id] = ref; }} 
 						rootId={item.id} 
 						onClick={(e: any) => { this.onClick(e, item); }} 
 					/>

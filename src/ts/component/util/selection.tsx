@@ -304,7 +304,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		let x1 = this.x;
 		let y1 = this.y;
 
-		if (isPopup) {
+		if (isPopup && this.containerOffset) {
 			x1 = x1 + this.containerOffset.left;
 			y1 = y1 + this.containerOffset.top - this.top;
 		};

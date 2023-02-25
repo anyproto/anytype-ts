@@ -103,7 +103,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 					<AutoSizer className="scrollArea">
 						{({ width, height }) => (
 							<VList
-								ref={(ref: any) => { this.refList = ref; }}
+								ref={ref => { this.refList = ref; }}
 								width={width}
 								height={height}
 								deferredMeasurmentCache={this.cache}

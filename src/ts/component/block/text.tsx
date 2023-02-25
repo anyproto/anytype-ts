@@ -137,10 +137,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 							id={'lang-' + id} 
 							arrowClassName="light" 
 							value={fields.lang} 
-							ref={(ref: any) => { this.refLang = ref; }} 
+							ref={ref => { this.refLang = ref; }} 
 							options={options} 
 							onChange={this.onLang}
 							noFilter={false} 
+							readonly={readonly}
 						/>
 						<div className="buttons">
 							<div className="btn" onClick={this.onToggleWrap}>
@@ -282,8 +283,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		} else {
 			html = Mark.fromUnicode(html);
 			html = Mark.toHtml(html, this.marks);
-			html = html.replace(/\n/g, '<br/>');
 		};
+
+		html = html.replace(/\n/g, '<br/>');
 
 		if (this.refEditable) {
 			this.refEditable.setValue(html);
@@ -846,7 +848,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					ret = true;
 				});
 
-				if (!ret) {
+				if (!ret && range) {
 					const d = range.from - filter.from;
 					if (d >= 0) {
 						const part = value.substr(filter.from, d).replace(/^\//, '');

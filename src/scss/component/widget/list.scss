@@ -1,0 +1,77 @@
+@import "~scss/_vars";
+
+.widget.widgetList { display: flex; flex-direction: column; padding-bottom: 12px; };
+.widget.widgetList {
+	.loaderWrapper { position: relative; }
+	.head { padding-bottom: 0px; }
+	.innerWrap { height: 100%; }
+	.contentWrapper { flex-grow: 1; }
+
+	#viewSelect { padding: 0px 16px 6px 16px; }
+	#viewSelect {
+		.viewList { width: 100%; overflow-x: auto; overflow-y: hidden; }
+		.viewList {
+			.inner { padding: 0px 16px; white-space: nowrap; }
+
+			.viewItem { 
+				@include text-common; font-weight: 500; color: $colorMediumGrey; transition: $transitionFast; 	margin-right: 16px; display: inline-block; 
+				vertical-align: top; cursor: pointer;
+			}
+			.viewItem:last-child { margin: 0px; }
+			.viewItem:hover, .viewItem.active { color: $colorBlack; }
+		}
+
+		.select { border: none; margin-left: -6px; padding-right: 16px; }
+		.select {
+			.item { @include text-small; line-height: 18px !important; font-weight: 500; }
+			.icon.arrow { 
+				width: 8px !important; height: 5px !important; margin-top: -2.5px !important; background-image: url('~img/arrow/widget.svg') !important; 
+				background-size: contain; right: 4px !important;
+			}
+		}
+	}
+
+	.body { display: flex; flex-direction: column; gap: 2px; padding: 0px 4px 4px 4px; }
+	.body {
+		.item { cursor: pointer; height: 64px; transition: $transitionFast; border-radius: 6px; }
+		.item:hover { background-color: $colorHover; }
+		.item:hover {
+			.info { width: calc(100% - 96px); }
+			.buttons { display: flex; }
+		}
+
+		.item { 
+			.inner { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 8px 12px; height: 100%; }
+			.dropTarget { border-radius: 6px; height: 100%; }
+			.iconObject { flex-shrink: 0; background: $colorVeryLightGrey; border-radius: 10px; }
+			.iconObject.isTask, .iconObject.isBookmark { background: none; }
+
+			.info { width: calc(100% - 60px); }
+			.name { @include text-overflow-nw; }
+			.descr { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
+
+			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
+			.buttons.active { display: flex; }
+			.buttons {
+				.icon { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; flex-shrink: 0; background-size: 20px; }
+				.icon:hover { background-color: $colorHover; }
+				.icon.active { opacity: 1; background-color: $colorHover; }
+				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+			}
+		}
+	}
+};
+
+.widget.widgetList.isPreview { padding: 0px; }
+.widget.widgetList.isPreview {
+	.head { padding: 0px; border: 0px; margin: 0px; }
+	.head {
+		.flex { padding: 20px 16px 10px 10px; }
+	}
+
+	#viewSelect { border-bottom: 1px solid $colorBorderLight; padding: 0px 0px 10px 0px; }
+
+	.body { height: 100%; overflow-x: hidden; overflow-y: overlay; padding-bottom: 0px; }
+	.ReactVirtualized__List { padding: 12px 0px 8px 0px; }
+	.contentWrapper { height: calc(100% - 77px); }
+}

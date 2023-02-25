@@ -66,7 +66,9 @@
 				.buttons { flex-shrink: 0; }
 				.buttons {
 					.icon { width: 28px !important; height: 28px !important; background-size: 20px; border-radius: 4px; transition: $transitionFast; }
-					.icon.lock { background-size: 16px; background-image: url('~img/icon/store/lock.svg'); }
+					.icon.lock { 
+						margin-right: -2px; width: 16px !important; height: 16px !important; background-size: 16px; background-image: url('~img/icon/store/lock.svg'); 
+					}
 					.icon.check { background-size: 28px; background-image: url('~img/icon/store/check0.svg'); }
 					.icon.check:hover { background-image: url('~img/icon/store/check1.svg'); }
 					.icon.plus { background-size: 28px; background-image: url('~img/icon/store/plus0.svg'); opacity: 0; }

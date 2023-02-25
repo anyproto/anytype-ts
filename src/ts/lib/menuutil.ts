@@ -129,7 +129,7 @@ class MenuUtil {
 	// Action menu
 	getActions (param: any) {
 		const { hasText, hasFile, hasBookmark, hasTurnObject } = param;
-		const cmd = keyboard.ctrlSymbol();
+		const cmd = keyboard.cmdSymbol();
 		const items: any[] = [
 			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
@@ -331,6 +331,7 @@ class MenuUtil {
 		sections = sections.map((s: any, i: number) => {
 			s.id = (undefined !== s.id) ? s.id : i;
 
+			s.children = s.children.filter(it => it);
 			s.children = s.children.map((c: any, i: number) => {
 				c.id = (undefined !== c.id) ? c.id : i;
 				c.itemId = c.id;

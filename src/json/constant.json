@@ -13,7 +13,13 @@
 	},
 
 	"coverCnt": 13,
-	"limitMenuRecords": 100,
+	"limit": {
+		"menuRecords": 100,
+		"widgetRecords": {
+			"tree": 20,
+			"list": 4
+		}
+	},
 
 	"default": {
 		"lang": "en",
@@ -57,7 +63,8 @@
 		"viewEdit":		 [ "select" ],
 		"featuredType":	 [ "searchObject", "typeSuggest" ],
 		"dataviewHead":	 [ "dataviewSource", "searchObject" ],
-		"store":		 [ "typeSuggest", "relationSuggest" ]
+		"store":		 [ "typeSuggest", "relationSuggest" ],
+		"widget":		 [ "searchObject", "select" ]
 	},
 
 	"popupPinIds": [ "search" ],
@@ -128,7 +135,7 @@
 	],
 
 	"sidebarRelationKeys": [
-		"id", "name", "snippet", "layout", "type", "iconEmoji", "iconImage", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
+		"id", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
 		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions"
 	],
 
@@ -147,12 +154,14 @@
 		"search": "search",
 		"profile": "profile",
 		"deleted": "deleted",
-		"sidebar": "sidebar",
 		"type": "type",
 		"relation": "relation",
 		"option": "option",
 		"store": "store",
-		"graph": "graph"
+		"archive": "archive",
+		"sidebar": "sidebar",
+		"graph": "graph",
+		"space": "space"
 	},
 
 	"typeId": {
@@ -190,10 +199,16 @@
 		"header": "header"
 	},
 
+	"widgetId": {
+		"favorite": "favorite",
+		"recent": "recent",
+		"set": "set"
+	},
+
 	"size": {
 		"editor": 704,
 		"blockMenu": 48,
-		"image": 2048,
+		"image": 1920,
 		"headerWindows": 30,
 		"iconPage": 256,
 
@@ -202,7 +217,7 @@
 
 		"sidebar": {
 			"height": { "min": 400 },
-			"width": { "min": 180, "max": 500, "default": 240 }
+			"width": { "min": 240, "max": 500, "default": 240 }
 		},
 
 		"table": {

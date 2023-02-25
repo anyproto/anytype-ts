@@ -242,9 +242,10 @@
 	"blockBookmarkError": { "en": "There was an error fetching the url" },
 
 	"popupSettingsTitle": { "en": "Settings" },
-	"popupSettingsAccountTitle": { "en": "Account & data" },
+	"popupSettingsAccountTitle": { "en": "Account &amp; data" },
 	"popupSettingsAccountDeleteTitle": { "en": "Delete account" },
 	"popupSettingsAccountMoveTitle": { "en": "Account data location" },
+	"popupSettingsSpaceTitle": { "en": "Space" },
 	"popupSettingsPersonalTitle": { "en": "Personalization" },
 	"popupSettingsAppearanceTitle": { "en": "Appearance" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
@@ -462,6 +463,7 @@
 
 	"defaultNamePage": { "en": "Untitled" },
 	"defaultNameSet": { "en": "New set" },
+	"defaultNameSpace": { "en": "Untitled space" },
 	"defaultNameType": { "en": "New type" },
 	"defaultNameRelation": { "en": "New relation" },
 	"defaultNameBookmark": { "en": "Paste link" },
@@ -503,5 +505,17 @@
 	"surveyObjectTitle": { "en": "Tell us how it's going!" },
 	"surveyObjectText": { "en": "Hi there, we hope you're enjoying your experience with Anytype! Would you take 5 minutes to help us improve our product?" },
 	"surveyObjectConfirm": { "en": "Sure, let's go" },
-	"surveyObjectCancel": { "en": "No thanks" }
+	"surveyObjectCancel": { "en": "No thanks" },
+
+	"widget0Name": { "en": "Link" },
+	"widget0Description": { "en": "Сompact version of the object" },
+	"widget1Name": { "en": "Tree" },
+	"widget1Description": { "en": "Hierarchical structure of objects" },
+	"widget2Name": { "en": "List" },
+	"widget2Description": { "en": "Widget with list view of set object" },
+
+	"widgetFavorite": { "en": "Favorites" },
+	"widgetRecent": { "en": "Recent" },
+	"widgetSet": { "en": "Sets" }
+
 }

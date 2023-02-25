@@ -1,6 +1,6 @@
 import { I, keyboard } from 'Lib';
 
-const cmd = keyboard.ctrlSymbol();
+const cmd = keyboard.cmdSymbol();
 const hl = (t: string) => `<span class="highlight">${t}</span>`;
 const block = (style: I.TextStyle, text: string) => { return { style, text }; };
 const title = (t: string) => block(I.TextStyle.Title, t);

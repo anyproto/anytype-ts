@@ -57,7 +57,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 							{preview ? <img src={preview} className="iconImage c64" /> : ''}
 						</div>
 						<Label text={translate('authRegisterLabel')} />
-						<Input ref={(ref: any) => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
+						<Input ref={ref => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
 						<Button type="input" text={translate('authRegisterSubmit')} />
 					</form>
 				</Frame>
