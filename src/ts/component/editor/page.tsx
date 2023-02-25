@@ -809,15 +809,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			};
 		};
 
-		for (const item of styleParam) {
-			let style = null;
+		if (!isInsideTable && block.isText()) {
+			for (const item of styleParam) {
+				let style = null;
 
-			keyboard.shortcut(item.key, e, (pressed: string) => {
-				style = item.style;
-			});
+				keyboard.shortcut(item.key, e, (pressed: string) => {
+					style = item.style;
+				});
 
-			if (style !== null) {
-				C.BlockListTurnInto(rootId, [ block.id ], style);
+				if (style !== null) {
+					C.BlockListTurnInto(rootId, [ block.id ], style);
+				};
 			};
 		};
 
