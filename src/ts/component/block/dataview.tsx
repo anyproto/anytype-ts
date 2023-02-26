@@ -61,6 +61,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSourceSelect = this.onSourceSelect.bind(this);
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
+		this.onDragRecordStart = this.onDragRecordStart.bind(this);
+		this.onRecordDrop = this.onRecordDrop.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
@@ -176,6 +178,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							onContext={this.onContext}
 							objectOrderUpdate={this.objectOrderUpdate}
 							applyObjectOrder={this.applyObjectOrder}
+							onDragRecordStart={this.onDragRecordStart}
 						/>
 					</div>
 				);
@@ -763,6 +766,52 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					blockId: block.id,
 				}
 			});
+		});
+	};
+
+	onDragRecordStart (e: any, index: number) {
+		e.stopPropagation();
+
+		console.log(e)
+
+		const { dataset, block } = this.props;
+		const { selection, onDragStart } = dataset || {};
+		const record = this.getRecord(index);
+
+		let ids = selection.get(I.SelectType.Record);
+		if (!ids.length) {
+			ids = [ record.id ];
+		};
+
+		if (!selection || !onDragStart) {
+			return;
+		};
+
+		if (!block.isDraggable()) {
+			e.preventDefault();
+			return;
+		};
+
+		keyboard.disableSelection(true);
+
+		onDragStart(e, I.DropType.Record, ids, this);
+	};
+
+	onRecordDrop (targetId, ids, position) {
+		const { rootId, block } = this.props;
+		const subId = dbStore.getSubId(rootId, block.id);
+		const view = this.getView();
+
+		let records = dbStore.getRecords(subId, '');
+		let orders = [];
+		let oldIndex = records.indexOf(ids[0]);
+		let targetIndex = records.indexOf(targetId);
+
+		records = arrayMove(records, oldIndex, targetIndex);
+		orders = [ { viewId: view.id, groupId: '', objectIds: records } ];
+
+		this.objectOrderUpdate(orders, records, (message) => {
+			dbStore.recordsSet(subId, '', records);
 		});
 	};
 

@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
 import {I, C, focus, keyboard, Util, scrollOnMove, Action, Preview, DataUtil} from 'Lib';
-import {blockStore, detailStore} from 'Store';
+import {blockStore, dbStore, detailStore} from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -29,6 +29,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
+
+	origin: any = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -194,7 +196,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const sidebar = $('#sidebar');
 		const layer = $('#dragLayer');
 		const body = $('body');
-		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey }; 
+		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey };
+
+		this.origin = component;
 
 		e.stopPropagation();
 		focus.clear(true);
@@ -312,8 +316,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		const processAddRecord = () => {
 			DataUtil.getObjectById(targetContextId, (object) => {
-				console.log('OBJECT: ', object)
-
 				if (object.type === Constant.typeId.collection) {
 					// add to collection
 					C.ObjectCollectionAdd(targetContextId, ids);
@@ -403,12 +405,16 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			};
 
 			case I.DropType.Record: {
-				
+
 				switch (position) {
 					case I.BlockPosition.Top:
 					case I.BlockPosition.Bottom: {
-						console.log('RECORD SORT')
 						// Sort
+						const { onRecordDrop } = this.origin
+
+						if (onRecordDrop) {
+							onRecordDrop(targetId, ids, position);
+						};
 						break;
 					};
 
@@ -617,7 +623,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				this.setPosition(I.BlockPosition.Top);
 			};
 
-			if (!isTargetBot && 
+			if (!isTargetBot &&
 			[
 				I.TextStyle.Paragraph, 
 				I.TextStyle.Toggle, 

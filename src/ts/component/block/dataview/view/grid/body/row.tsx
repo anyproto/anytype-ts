@@ -5,6 +5,7 @@ import { dbStore } from 'Store';
 import { DropTarget, Icon } from 'Component';
 import Cell from './cell';
 import $ from 'jquery';
+import arrayMove from "array-move";
 
 interface Props extends I.ViewComponent {
 	index: number;
@@ -16,16 +17,8 @@ interface Props extends I.ViewComponent {
 
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
-	node: any = null;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onDragStart = this.onDragStart.bind(this);
-	};
-
 	render () {
-		const { rootId, index, getRecord, style, onContext, getColumnWidths, isInline, getVisibleRelations, isCollection } = this.props;
+		const { rootId, index, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection } = this.props;
 		const relations = getVisibleRelations();
 		const record = getRecord(index);
 		const widths = getColumnWidths('', 0);
@@ -80,7 +73,12 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 		if (isCollection) {
 			content = (
 				<React.Fragment>
-					<Icon className="dnd" draggable={true} onDragStart={this.onDragStart} />
+					<Icon
+						className="dnd"
+						draggable={true}
+						onClick={(e: any) => { onContext(e, record.id); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, index) }}
+					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record} canDropMiddle={true}>
 						{content}
 					</DropTarget>
@@ -90,7 +88,6 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		return (
 			<div
-				ref={node => this.node = node}
 				id={'row-' + index}
 				className={cn.join(' ')}
 				style={style}
@@ -99,34 +96,6 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 				{content}
 			</div>
 		);
-	};
-
-	onDragStart (e: any) {
-		e.stopPropagation();
-
-		const { dataset, block, index, getRecord } = this.props;
-		const { selection, onDragStart } = dataset || {};
-		const record = getRecord(index);
-		const target = $(this.node);
-		const clone = target.clone();
-
-		let ids = selection.get(I.SelectType.Record);
-		if (!ids.length) {
-			ids = [ record.id ];
-		};
-
-		if (!selection || !onDragStart) {
-			return;
-		};
-
-		if (!block.isDraggable()) {
-			e.preventDefault();
-			return;
-		};
-
-		keyboard.disableSelection(true);
-
-		onDragStart(e, I.DropType.Record, ids, this);
 	};
 
 });
