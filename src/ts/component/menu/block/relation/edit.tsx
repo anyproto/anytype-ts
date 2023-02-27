@@ -295,9 +295,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				valueMapper: it => dbStore.getType(it.id),
 				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
-					this.save();
 					this.forceUpdate();
 
+					if (relation.id) {
+						this.save();
+					};
+					
 					if (callBack) {
 						callBack();
 					};
@@ -485,8 +488,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		return readonly || !allowed || (relation && relation.isReadonlyRelation);
 	};
-
-
 
 });
 
