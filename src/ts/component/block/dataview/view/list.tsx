@@ -21,10 +21,9 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, getView, isPopup, onRecordAdd, isInline, getLimit, getEmpty } = this.props;
+		const { rootId, block, getView, isPopup, onRecordAdd, isInline, getLimit, getEmpty, getRecords } = this.props;
 		const view = getView();
-		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
+		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const limit = getLimit();
 		const length = records.length;

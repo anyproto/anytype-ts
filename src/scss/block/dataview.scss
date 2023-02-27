@@ -181,6 +181,10 @@
 
 	.block.blockDataview.isCollection {
 		.dataviewControls { padding-left: 8px; }
+
+		.dataviewControls.viewList {
+			.line { width: 100%; margin: 0px; }
+		}
 	}
 
 	.block.blockDataview.showMenu {

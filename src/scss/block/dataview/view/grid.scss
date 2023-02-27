@@ -158,12 +158,6 @@
 	.block.blockDataview.isCollection {
 		.viewItem.viewGrid {
 			.row .icon.dnd { left: 0; height: 32px; top: 8px; z-index: 1; }
-			.row:hover {
-				.icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
-				.icon.dnd:hover {
-					background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;
-				}
-			}
 
 			.cellHead:first-child { padding-left: 8px; }
 			.cell:first-child { padding-left: 20px; }
