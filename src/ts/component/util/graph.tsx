@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewGraph } from 'Component';
-import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation } from 'Lib';
+import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
 interface Props {
@@ -200,6 +200,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	updateSettings () {
 		this.send('updateSettings', commonStore.graph);
+
+		analytics.event('GraphSettings');
 	};
 
 	onDragStart (e: any) {
