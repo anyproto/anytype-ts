@@ -22,11 +22,7 @@ const SORT_IDS = [
 	'blockDataviewViewSet',
 	'blockDataviewViewDelete',
 ];
-<<<<<<< HEAD
-const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
-=======
 const SKIP_IDS = [];
->>>>>>> master
 const SKIP_SENTRY_ERRORS = [ 'LinkPreview' ];
 
 class Dispatcher {
