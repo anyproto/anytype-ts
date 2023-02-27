@@ -1,5 +1,5 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action, Dataview } from 'Lib';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, Renderer, Action, Dataview } from 'Lib';
 import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
@@ -22,7 +22,11 @@ const SORT_IDS = [
 	'blockDataviewViewSet',
 	'blockDataviewViewDelete',
 ];
+<<<<<<< HEAD
 const SKIP_IDS = [ 'blockOpenBreadcrumbs', 'blockSetBreadcrumbs' ];
+=======
+const SKIP_IDS = [];
+>>>>>>> master
 const SKIP_SENTRY_ERRORS = [ 'LinkPreview' ];
 
 class Dispatcher {
@@ -122,6 +126,8 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
 		if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'blockDataviewObjectOrderUpdate';
 
+		if (v == V.BLOCKSETWIDGET)	 		t = 'blockSetWidget';
+
 		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
 		if (v == V.SUBSCRIPTIONPOSITION)		 t = 'subscriptionPosition';
@@ -188,13 +194,7 @@ class Dispatcher {
 			const type = this.eventType(message.getValueCase());
 			const fn = 'get' + Util.ucFirst(type);
 			const data = message[fn] ? message[fn]() : {};
-			
-			let needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
-
-			// Do not log breadcrumbs details to clean up logs
-			if (rootId.match('virtualBreadcrumbs')) {
-				needLog = false;
-			};
+			const needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
 
 			switch (type) {
 
@@ -227,7 +227,6 @@ class Dispatcher {
 
 				case 'objectRemove': {
 					ids = data.getIdsList();
-					crumbs.removeItems(I.CrumbsType.Recent, ids);
 					break;
 				};
 
@@ -979,6 +978,7 @@ class Dispatcher {
 	sort (c1: any, c2: any) {
 		const idx1 = SORT_IDS.findIndex(it => it == this.eventType(c1.getValueCase()));
 		const idx2 = SORT_IDS.findIndex(it => it == this.eventType(c2.getValueCase()));
+
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
 		return 0;
@@ -1043,7 +1043,6 @@ class Dispatcher {
 		};
 
 		const t0 = performance.now();
-
 		let t1 = 0;
 		let t2 = 0;
 		let d = null;

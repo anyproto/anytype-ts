@@ -102,7 +102,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		
 		return (
 			<div ref={node => this.node = node}>
-				<Header component="mainHistory" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainHistory" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
@@ -139,7 +139,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 				<Footer 
 					component="mainEdit" 
-					ref={(ref: any) => { this.refFooter = ref; }} 
+					ref={ref => { this.refFooter = ref; }} 
 					{...this.props} 
 				/>
 			</div>
@@ -315,7 +315,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				};
 				return;
 			};

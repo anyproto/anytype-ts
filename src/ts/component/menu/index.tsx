@@ -70,6 +70,8 @@ import MenuDataviewSource from './dataview/source';
 import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
 
+import MenuWidget from './widget';
+
 import Constant from 'json/constant.json';
 
 interface State {
@@ -144,6 +146,8 @@ const Components: any = {
 	dataviewSource:			 MenuDataviewSource,
 	dataviewContext:		 MenuDataviewContext,
 	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
+
+	widget:				 MenuWidget,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {
@@ -253,7 +257,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 					<div className="content">
 						<Component 
-							ref={(ref: any) => { this.ref = ref; }}
+							ref={ref => { this.ref = ref; }}
 							{...this.props} 
 							setActive={this.setActive}
 							setHover={this.setHover}

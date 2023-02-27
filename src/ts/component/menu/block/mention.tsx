@@ -103,7 +103,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={(ref: any) => { this.refList = ref; }}
+										ref={ref => { this.refList = ref; }}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -171,7 +171,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	getSections () {
-		const filter = this.getFilter();
+		const filter = this.getFilter().replace(/\\/g, '');
 		const sections: any[] = [];
 
 		if (this.items.length) {
@@ -224,7 +224,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limitMenuRecords,
+			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (callBack) {
 				callBack(null);
@@ -246,7 +246,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limitMenuRecords;
+			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};

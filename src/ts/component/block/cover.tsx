@@ -107,7 +107,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 					
 					<div className="dragWrap">
 						<Drag 
-							ref={(ref: any) => { this.refDrag = ref; }} 
+							ref={ref => { this.refDrag = ref; }} 
 							onStart={this.onScaleStart} 
 							onMove={this.onScaleMove} 
 							onEnd={this.onScaleEnd} 

@@ -238,6 +238,12 @@ class Analytics {
 				break;
 			};
 
+			case 'AddWidget':
+			case 'EditWidget': {
+				data.type = I.WidgetLayout[data.type];
+				break;
+			};
+
 			case 'SurveyShow':
 			case 'SurveyOpen':
 			case 'SurveySkip': {

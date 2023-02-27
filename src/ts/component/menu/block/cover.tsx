@@ -79,7 +79,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		if ([ Tab.Unsplash, Tab.Library ].includes(this.tab)) {
 			filterElement = (
 				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }}
+					ref={ref => { this.refFilter = ref; }}
 					value={filter}
 					onChange={this.onFilterChange} 
 				/>

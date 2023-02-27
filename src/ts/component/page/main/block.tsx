@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
-import { I, C, Util, crumbs, Action } from 'Lib';
+import { I, C, Util, Action, ObjectUtil } from 'Lib';
 import { blockStore } from 'Store';
 import Errors from 'json/error.json';
 
@@ -96,12 +96,10 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				};
 				return;
 			};
-
-			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();

@@ -108,7 +108,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 									return (
 										<div ref={registerChild}>
 											<Masonry
-												ref={(ref: any) => { this.ref = ref; }}
+												ref={ref => { this.ref = ref; }}
 												autoHeight={true}
 												height={Number(height) || 0}
 												width={Number(width) || 0}

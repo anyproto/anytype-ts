@@ -89,7 +89,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }} 
+					ref={ref => { this.refFilter = ref; }} 
 					placeholderFocus="Filter objects..." 
 					value={filter}
 					onChange={this.onFilterChange} 
@@ -107,7 +107,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={(ref: any) => { this.refList = ref; }}
+											ref={ref => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -225,7 +225,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limitMenuRecords,
+			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (callBack) {
 				callBack(message);
@@ -250,7 +250,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limitMenuRecords;
+			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};

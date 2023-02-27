@@ -10,11 +10,7 @@ interface Detail {
 
 interface Item {
 	id: string;
-	details: {
-		type: string;
-		relationKey: string;
-		id: string;
-	};
+	details: any;
 };
 
 class DetailStore {

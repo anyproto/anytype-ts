@@ -178,7 +178,6 @@ export interface Cell {
 	getRecord(index: number): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;
 	onClick?(e: any): void;
-	onParentClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;

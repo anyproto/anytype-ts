@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, DataUtil, ObjectUtil, MenuUtil, Util, focus, crumbs, Action, analytics, Relation } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, MenuUtil, Util, focus, Action, analytics, Relation } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -56,8 +56,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		const { config } = commonStore;
 		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
-		const object = check.object;
+		const object = Util.objectCopy(detailStore.get(rootId, rootId));
 		const subIdTemplate = this.getSubIdTemplate();
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
@@ -111,11 +110,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		return (
 			<div>
-				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainEdit" ref={ref => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
-				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
+				<div className="blocks wrapper">
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
-					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type="type" rootId={rootId} onCreate={this.onCreate} />
+					<HeadSimple ref={ref => this.refHead = ref} type="type" rootId={rootId} onCreate={this.onCreate} />
 
 					{showTemplates ? (
 						<div className="section template">
@@ -133,7 +132,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 								<div className="content">
 									<ListObjectPreview 
 										key="listTemplate"
-										ref={(ref: any) => { this.refListPreview = ref; }}
+										ref={ref => { this.refListPreview = ref; }}
 										getItems={() => { return templates; }}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
@@ -228,12 +227,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				};
 				return;
 			};
-
-			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.loadTemplates();

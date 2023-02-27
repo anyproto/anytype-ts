@@ -23,7 +23,6 @@ import { focus } from './focus';
 import { Encode, Decode } from './struct';
 import { scrollOnMove } from './scrollOnMove';
 import { analytics } from './analytics';
-import { crumbs } from './crumbs';
 import { history } from './history';
 import Action from './action';
 import Onboarding from './onboarding';
@@ -69,7 +68,6 @@ export {
 	M,
 	translate,
 	analytics,
-	crumbs,
 	history,
 	scrollOnMove,
 	Encode,

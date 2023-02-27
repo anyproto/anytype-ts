@@ -28,12 +28,6 @@ export enum CoverType {
 	Source	 = 5,
 };
 
-export enum CrumbsType {
-	Page	 = 'page',
-	Popup	 = 'popup',
-	Recent	 = 'recent',
-};
-
 export enum NavigationType {
 	Go		 = 0,
 	Move	 = 1,
@@ -127,8 +121,6 @@ export enum TabIndex {
 	Favorite	 = 'favorite',
 	Recent		 = 'recent',
 	Set			 = 'set',
-	Space		 = 'space',
-	Shared		 = 'shared',
 	Archive		 = 'archive',
 };
 
@@ -138,8 +130,9 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	dataset?: I.Dataset;
 	tabs?: any[];
 	tab?: string;
+	text?: string;
+	layout?: I.ObjectLayout;
 	onTab?: (id: string) => void;
-	onHome?: () => void;
 	onForward?: () => void;
 	onBack?: () => void;
 	onSearch?: () => void;
@@ -160,7 +153,8 @@ export interface PageComponent extends RouteComponentProps<any> {
 	storageSet?(data: any): void;
 };
 
-export interface FooterComponent extends RouteComponentProps<any> {
+export interface FooterComponent {
+	onAdd?: (e: any) => void;
 	onHelp?: (e: any) => void;
 	onTogglePanel?: (toggle: boolean) => void;
 };

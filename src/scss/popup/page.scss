@@ -17,20 +17,17 @@
 				.ReactVirtualized__List { padding-top: 48px; }
 			}
 
-			.pageMainType {
-				.wrapper { padding-top: 52px; }
-			}
-
 			.pageMainRelation, .pageMainBookmark {
 				.wrapper { padding-top: 126px; }
+			}
+
+			.pageMainType {
+				.wrapper { padding-top: 54px; }
 			}
 
 			#bodyWrapper { padding-top: 30px; }
 
 			.footer { display: block; }
-			.footer {
-				#button-expand { display: none !important; }
-			}
 		}
 
 		.deleteWrapper { position: absolute; }
@@ -39,6 +36,9 @@
 		#wrap { height: 100%; }
 
 		.page { padding: 0px; }
+		.header {
+			.icon.toggleSidebar { display: none; }
+		}
 		.footer { display: none; }
 
 		.pageMainEdit {
@@ -57,10 +57,6 @@
 					.elements { width: 100%; left: 0px; }
 				}
 			}
-		}
-
-		.pageMainType {
-			.wrapper { padding-top: 0px; }
 		}
 
 		.pageMainRelation, .pageMainBookmark {

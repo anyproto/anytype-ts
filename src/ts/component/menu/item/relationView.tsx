@@ -81,7 +81,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 					className={[ 'cell', Relation.className(format), (!readonly ? 'canEdit' : '') ].join(' ')} 
 				>
 					<Cell 
-						ref={(ref: any) => { onRef(cellId, ref); }} 
+						ref={ref => { onRef(cellId, ref); }} 
 						rootId={rootId}
 						subId={rootId}
 						block={block}

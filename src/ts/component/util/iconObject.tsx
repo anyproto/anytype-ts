@@ -26,6 +26,7 @@ interface Props {
 	forceLetter?: boolean;
 	noRemove?: boolean;
 	noClick?: boolean;
+	menuParam?: Partial<I.MenuParam>;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
@@ -41,6 +42,13 @@ const IDS40 = [
 	I.ObjectLayout.Image, 
 	I.ObjectLayout.Type,
 	I.ObjectLayout.Space,
+];
+
+const LAYOUT_EMOJI = [ 
+	I.ObjectLayout.Page, 
+	I.ObjectLayout.Set, 
+	I.ObjectLayout.Space, 
+	I.ObjectLayout.Type,
 ];
 
 const IconSize = {
@@ -154,6 +162,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		offsetY: 0,
 		tooltipY: I.MenuDirection.Bottom,
 		color: 'grey',
+		menuParam: {},
 	};
 
 	constructor (props: Props) {
@@ -270,6 +279,14 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
+			case I.ObjectLayout.Bookmark: {
+				if (iconImage) {
+					icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+				};
+				break;
+			};
+
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
 				icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
@@ -326,8 +343,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	onMouseDown (e: any) {
 		const { canEdit, onClick, onCheckbox } = this.props;
 		const object = this.getObject();
-		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const layoutsEmoji = [ I.ObjectLayout.Page, I.ObjectLayout.Set, I.ObjectLayout.Type ];
+		const { layout } = object;
 
 		if (onClick) {
 			onClick(e);
@@ -342,7 +358,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			onCheckbox(e);
 		};
 
-		if (layoutsEmoji.indexOf(layout) >= 0) {
+		if (LAYOUT_EMOJI.includes(layout)) {
 			e.stopPropagation();
 			this.onEmoji(e);
 		};
@@ -351,16 +367,15 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	onEmoji (e: any) {
 		e.stopPropagation();
 
-		const { id, offsetX, offsetY, onSelect, onUpload, noRemove } = this.props;
+		const { id, offsetX, offsetY, onSelect, onUpload, noRemove, menuParam } = this.props;
 		const object = this.getObject();
-		const { iconEmoji, iconImage } = object;
-		const layout = Number(object.layout) || I.ObjectLayout.Page;
+		const { iconEmoji, iconImage, layout } = object;
 		const noUpload = layout == I.ObjectLayout.Type;
 
 		menuStore.open('smile', { 
 			element: `#${id}`,
-			offsetX: offsetX,
-			offsetY: offsetY,
+			offsetX,
+			offsetY,
 			data: {
 				noUpload,
 				noRemove: noRemove || !(iconEmoji || iconImage),
@@ -375,7 +390,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 						onUpload(hash);
 					};
 				}
-			}
+			},
+			...menuParam,
 		});
 	};
 
@@ -448,7 +464,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	userSvg (): string {
 		const object = this.getObject();
-		const layout = Number(object.layout) || I.ObjectLayout.Page;
+		const { layout } = object;
 		const iconSize = this.iconSize();
 		const name = this.iconName();
 		
@@ -461,7 +477,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	commonSvg (): string {
 		const object = this.getObject();
-		const layout = Number(object.layout) || I.ObjectLayout.Page;
+		const { layout } = object;
 		const iconSize = this.iconSize();
 		const name = this.iconName();
 

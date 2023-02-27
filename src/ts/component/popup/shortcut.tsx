@@ -104,7 +104,7 @@ class PopupShortcut extends React.Component<Props, State> {
 			main: [
 				{
 					name: 'Basics', children: [
-						{ mac: `${cmd} + N`,			 com: 'Ctrl + N',			 name: 'Create a new object on the dashboard' },
+						{ mac: `${cmd} + N`,			 com: 'Ctrl + N',			 name: 'Create new object' },
 						{ mac: `${cmd} + Shift + N`,	 com: 'Ctrl + Shift + N',	 name: 'New Anytype window' },
 						{ mac: `${cmd} + Option + N`,	 com: 'Ctrl + Alt + N',		 name: 'Create a new object in new window' },
 						{ mac: `${cmd} + Enter`,		 com: 'Ctrl + Enter',		 name: 'Opens object in new window from search interface' },
@@ -155,7 +155,7 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ mac: `${cmd} + X`,			 com: 'Ctrl + X',			 name: 'Cut selected block/blocks or text part' },
 						{ mac: `${cmd} + V`,			 com: 'Ctrl + V',			 name: 'Paste data outside Anytype, block/blocks or text part' },
 						{ mac: `${cmd} + D`,			 com: 'Ctrl + D',			 name: 'Duplicate selected block/blocks' },
-						{ mac: `${cmd} + E`,			 com: 'Ctrl + E',		 name: 'Launch emoji menu' },
+						{ mac: `${cmd} + E, ${cmd} + .`, com: 'Ctrl + E, Ctrl + .',		 name: 'Show emoji picker 🏄‍♂️' },
 					]
 				},
 
@@ -176,10 +176,11 @@ class PopupShortcut extends React.Component<Props, State> {
 			navigation: [
 				{
 					name: 'Basics', children: [
+						{ mac: `${cmd} + ,(comma)`,			 com: 'Ctrl + ,(comma)',			 name: 'Open settings' },
 						{ mac: `${cmd} + O`,			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
 						{ mac: `${cmd} + Option + O`,	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
 						{ mac: `${cmd} + S`,			 com: 'Ctrl + S',			 name: 'Open the search pane' },
-						{ mac: `${cmd} + Enter`,		 com: 'Alt + H',			 name: 'Return to the home screen' },
+						{ com: 'Alt + H',				 name: 'Return to the home screen' },
 						{ mac: `${cmd} + [`,			 com: 'Alt + ←',			 name: 'Show the previous page from history' },
 						{ mac: `${cmd} + ]`,			 com: 'Alt + →',			 name: 'Show the next page from history' },
 					]
@@ -197,31 +198,22 @@ class PopupShortcut extends React.Component<Props, State> {
 
 				{
 					name: 'Page navigation', children: [
+						{ mac: `${cmd} + Shift + T`, com: 'Ctrl + Shift + T', name: 'Expand / Collapse Toggle' },
 						{ com: '↓',				 name: 'Go down one line' },
 						{ com: '↑',				 name: 'Go up one line' },
 						{ mac: `${cmd} + ←`,	 com: 'Ctrl + ←',	 name: 'Go to the start of the line' },
 						{ mac: `${cmd} + →`,	 com: 'Ctrl + →',	 name: 'Go to the end of the line' },
 						{ mac: `${cmd} + ↑`,	 com: 'Ctrl + ↑',	 name: 'Go to the start of the page' },
 						{ mac: `${cmd} + ↓`,	 com: 'Ctrl + ↓',	 name: 'Go to the end of the page' },
+						{ mac: `${cmd} + Shift + ↑↓`,	 com: 'Ctrl + Shift + ↑↓',	 name: 'Move selected block(s) around' },
 					]
 				},
 			],
 
 			markdown: [
 				{
-					description: 'To format your blocks using Markdown, simply use any of these commands at the beginning of any new line.',
+					name: 'While typing', 
 					children: [
-						{ com: '# + Space',			 name: 'Create an H1 heading' },
-						{ com: '# # + Space',		 name: 'Create an H2 heading' },
-						{ com: '# # # + Space',		 name: 'Create an H3 heading' },
-						{ com: '" + Space',			 name: 'Create a highlighted block' },
-						{ com: '* or + or - and Space',	 name: 'Create a bulleted list' },
-						{ com: '[] + Space',		 name: 'Create a to-do checkbox' },
-						{ com: '1. + Space',		 name: 'Create a numbered list' },
-						{ com: '>  + Space',		 name: 'Create a toggle list' },
-						{ com: '```',				 name: 'Create a code block' },
-						{ com: '---',				 name: 'Create line divider' },
-						{ com: '***',				 name: 'Create dots divider' },
 						{ com: '`',					 name: 'Inline code' },
 						{ com: '** or __',			 name: 'Inline bold' },
 						{ com: '* or _',			 name: 'Inline italic' },
@@ -238,6 +230,22 @@ class PopupShortcut extends React.Component<Props, State> {
 						{ com: '(r)',				 name: 'Inserts: ®' },
 						{ com: '(tm)',				 name: 'Inserts: ™' },
 						{ com: '...',				 name: 'Inserts: …' },
+					]
+				},
+				{
+					name: 'At the beginning of any new line', 
+					children: [
+						{ com: '# + Space',			 name: 'Create an H1 heading' },
+						{ com: '# # + Space',		 name: 'Create an H2 heading' },
+						{ com: '# # # + Space',		 name: 'Create an H3 heading' },
+						{ com: '" + Space',			 name: 'Create a highlighted block' },
+						{ com: '* or + or - and Space',	 name: 'Create a bulleted list' },
+						{ com: '[] + Space',		 name: 'Create a to-do checkbox' },
+						{ com: '1. + Space',		 name: 'Create a numbered list' },
+						{ com: '>  + Space',		 name: 'Create a toggle list' },
+						{ com: '```',				 name: 'Create a code block' },
+						{ com: '---',				 name: 'Create line divider' },
+						{ com: '***',				 name: 'Create dots divider' },
 					]
 				},
 			],

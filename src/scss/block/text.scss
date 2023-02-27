@@ -184,8 +184,7 @@
 		.additional .buttons { opacity: 1; }
 	}
 	.block.blockText.textCode.isReadonly > .wrapContent > .selectable > .dropTarget > .flex {
-		#value { white-space: pre !important; }
-		.additional { display: none; }
+		.additional .buttons { display: none; }
 	}
 	.block.blockText.textCode.isUnwrapped > .wrapContent > .selectable > .dropTarget #value { white-space: nowrap; overflow-x: auto; }
 

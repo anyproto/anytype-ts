@@ -113,7 +113,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isInline) {
 			head = (
 				<Head 
-					ref={(ref: any) => { this.refHead = ref; }} 
+					ref={ref => this.refHead = ref} 
 					{...this.props} 
 					readonly={false} 
 					getData={this.getData} 
@@ -133,7 +133,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!isDragging) {
 			controls = (
 				<Controls 
-					ref={(ref: any) => { this.refControls = ref; }} 
+					ref={ref => this.refControls = ref} 
 					{...this.props} 
 					className={className}
 					readonly={false} 
@@ -155,7 +155,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					<Empty
 						{...this.props}
 						title="Type or relation has been deleted"
-						description="Visit the Marketplace to re-install these entities or select another source."
+						description="Visit the Anytype library to re-install these entities or select another source."
 						button="Select source"
 						className={isInline ? 'withHead' : ''}
 						withButton={true}
@@ -397,6 +397,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				offset: 0, 
 				limit: offset + this.getLimit(view.type), 
 				clear,
+				sources,
 			}, (message: any) => {
 				if (clear) {
 					this.setState({ loading: false });

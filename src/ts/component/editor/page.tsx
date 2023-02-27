@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
+import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -96,7 +96,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 						<PageHeadEdit 
 							{...this.props} 
-							ref={(ref: any) => { this.refHeader = ref; }}
+							ref={ref => { this.refHeader = ref; }}
 							onKeyDown={this.onKeyDownBlock}
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
@@ -225,19 +225,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate(() => { Util.route('/main/index'); });
+					Util.onErrorUpdate(() => { ObjectUtil.openHome('route'); });
 				} else 
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.isDeleted = true;
 					this.forceUpdate();
 				} else {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				};
 				return;
 			};
 
-			crumbs.addRecent(rootId);
-			
 			this.scrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.loading = false;
 			this.focusTitle();
@@ -501,6 +499,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const ids = selection.get(I.SelectType.Block);
 		const cmd = keyboard.cmdKey();
 		const readonly = this.isReadonly();
+		const styleParam = this.getStyleParam();
 
 		// Select all
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
@@ -526,7 +525,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		});
 
 		// Redo
-		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, (pressed: string) => {
 			if (readonly) {
 				e.preventDefault();
 				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
@@ -598,6 +597,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom, () => { focus.clear(true); });
 			});
 
+			for (const item of styleParam) {
+				let style = null;
+
+				keyboard.shortcut(item.key, e, (pressed: string) => {
+					style = item.style;
+				});
+
+				if (style !== null) {
+					C.BlockListTurnInto(rootId, ids, style);
+				};
+			};
+
 			// Open action menu
 			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
 				menuStore.closeAll([ 'blockContext', 'blockAdd' ], () => {
@@ -616,6 +627,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 						}
 					});
 				});
+			});
+
+			// Move blocks with arrows
+			keyboard.shortcut(`${cmd}+shift+arrowup, ${cmd}+shift+arrowdown`, e, (pressed: string) => {
+				this.onCtrlShiftArrowEditor(e, pressed);
 			});
 		};
 
@@ -673,6 +689,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			return;
 		};
 
+		const styleParam = this.getStyleParam();
 		const platform = Util.getPlatform();
 		const cmd = keyboard.cmdKey();
 
@@ -716,38 +733,43 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			});
 
 			// Undo
-			keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+z`, e, () => {
 				e.preventDefault();
-				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onUndo(rootId, () => { focus.clear(true); });
 			});
 
 			// Redo
-			keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
-				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onRedo(rootId, () => { focus.clear(true); });
 			});
 
 			// Search
-			keyboard.shortcut(`${cmd}+f`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+f`, e, () => {
 				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from));
 			});
 
+			if (block.isTextToggle()) {
+				keyboard.shortcut(`${cmd}+shift+t`, e, () => {
+					blockStore.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
+				});
+			};
 		};
 
 		// History
-		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
 			e.preventDefault();
 			this.onHistory(e);
 		});
 
 		// Duplicate
-		keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+d`, e, () => {
 			e.preventDefault();
 			Action.duplicate(rootId, rootId, block.id, [ block.id ], I.BlockPosition.Bottom);
 		});
 
 		// Open action menu
-		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, () => {
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockAction', { 
 					element: `#block-${block.id}`,
@@ -782,6 +804,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 			if (type !== null) {
 				this.onMarkBlock(e, type, text, marks, param, range);
+			};
+		};
+
+		if (!isInsideTable && block.isText()) {
+			for (const item of styleParam) {
+				let style = null;
+
+				keyboard.shortcut(item.key, e, (pressed: string) => {
+					style = item.style;
+				});
+
+				if (style !== null) {
+					C.BlockListTurnInto(rootId, [ block.id ], style);
+				};
 			};
 		};
 
@@ -843,6 +879,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 	};
 
+	getStyleParam () {
+		const cmd = keyboard.cmdKey();
+		return [
+			{ key: `${cmd}+0`, style: I.TextStyle.Paragraph },
+			{ key: `${cmd}+1`, style: I.TextStyle.Header1 },
+			{ key: `${cmd}+2`, style: I.TextStyle.Header2 },
+			{ key: `${cmd}+3`, style: I.TextStyle.Header3 },
+			{ key: `${cmd}+4`, style: I.TextStyle.Quote },
+			{ key: `${cmd}+5`, style: I.TextStyle.Callout },
+			{ key: `${cmd}+6`, style: I.TextStyle.Checkbox },
+			{ key: `${cmd}+7`, style: I.TextStyle.Bulleted },
+			{ key: `${cmd}+8`, style: I.TextStyle.Numbered },
+			{ key: `${cmd}+9`, style: I.TextStyle.Toggle },
+		];
+	};
+
 	getMarkParam () {
 		const cmd = keyboard.cmdKey();
 		return [
@@ -901,20 +953,25 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	};
 
 	// Move blocks with arrows
-	onCtrlShiftArrowBlock (e: any, pressed: string) {
+	onCtrlShiftArrowEditor (e: any, pressed: string) {
 		e.preventDefault();
 
-		const { rootId } = this.props;
-		const { focused } = focus.state;
-		const block = blockStore.getLeaf(rootId, focused);
+		const { dataset, rootId } = this.props;
+		const { selection } = dataset || {};
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const ids = selection.get(I.SelectType.Block, false);
 
+		if (!ids.length) {
+			return;
+		};
+
+		const block = blockStore.getLeaf(rootId, dir > 0 ? ids[ids.length - 1] : ids[0]);
 		if (!block) {
 			return;
 		};
 
-		const dir = pressed.match(Key.up) ? -1 : 1;
 		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
-			return !it.isIcon() && !it.isTextTitle() && !it.isSystem();
+			return !it.isIcon() && !it.isTextTitle() && !it.isTextDescription() && !it.isFeatured() && !it.isSystem();
 		});
 
 		if (!next) {
@@ -943,7 +1000,65 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
-		Action.move(rootId, rootId, next.id, [ block.id ], position, () => { focus.apply(); });
+		Action.move(rootId, rootId, next.id, ids, position, () => { 
+			if (nextParent && nextParent.isTextToggle()) {
+				blockStore.toggle(rootId, nextParent.id, true);
+			};
+
+			selection.renderSelection(); 
+		});
+	};
+
+	// Move blocks with arrows
+	onCtrlShiftArrowBlock (e: any, pressed: string) {
+		e.preventDefault();
+
+		const { rootId } = this.props;
+		const { focused } = focus.state;
+		const block = blockStore.getLeaf(rootId, focused);
+
+		if (!block) {
+			return;
+		};
+
+		const dir = pressed.match(Key.up) ? -1 : 1;
+		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
+			return !it.isIcon() && !it.isTextTitle() && !it.isTextDescription() && !it.isFeatured() && !it.isSystem();
+		});
+
+		if (!next) {
+			return;
+		};
+
+		const element = blockStore.getMapElement(rootId, block.id);
+		const parentElement = blockStore.getMapElement(rootId, block.parentId);
+		const nextElement = blockStore.getMapElement(rootId, next.id)
+		const nextParent = blockStore.getLeaf(rootId, next.parentId);
+		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
+
+		if (!element || !parentElement || !nextElement || !nextParent || !nextParentElement) {
+			return;
+		};
+
+		let isFirst = block.id == parentElement.childrenIds[0];
+		let isLast = block.id == parentElement.childrenIds[parentElement.childrenIds.length - 1];
+		let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+
+		if ((dir > 0) && next.canHaveChildren() && nextElement.childrenIds.length) {
+			position = isLast ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
+		};
+
+		if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
+			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+		};
+
+		Action.move(rootId, rootId, next.id, [ block.id ], position, () => {
+			if (nextParent && nextParent.isTextToggle()) {
+				blockStore.toggle(rootId, nextParent.id, true);
+			};
+
+			focus.apply(); 
+		});
 	};
 
 	// Move focus to first/last block
@@ -1592,8 +1707,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const currentTo = range.to;
 		const block = blockStore.getLeaf(rootId, focused);
 
-	
-
 		if (!block) {
 			return;
 		};
@@ -1604,80 +1717,89 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 		const options: any[] = [
 			{ id: 'link', name: 'Paste as link' },
-			(isEmpty && !isInsideTable) ? { id: 'object', name: 'Create bookmark object' } : null,
+			isEmpty && !isInsideTable ? { id: 'object', name: 'Create bookmark object' } : null,
 			!isInsideTable ? { id: 'block', name: 'Create bookmark' } : null,
 			{ id: 'cancel', name: 'Paste as text' },
 			//{ id: 'embed', name: 'Paste as embed' },
 		].filter(it => it);
 
-		menuStore.closeAll();
-
-		window.setTimeout(() => {
-			menuStore.open('select', { 
-				element: `#block-${focused}`,
-				offsetX: Constant.size.blockMenu,
-				onOpen: () => {
+		menuStore.open('select', { 
+			element: `#block-${focused}`,
+			offsetX: Constant.size.blockMenu,
+			onOpen: () => {
+				if (block) {
 					window.setTimeout(() => {
 						focus.set(block.id, { from: currentFrom, to: currentTo });
 						focus.apply();
 					});
+				};
+			},
+			data: {
+				value: '',
+				options,
+				onSelect: (event: any, item: any) => {
+					let value = block.content.text;
+					let to = 0;
+					let marks = Util.objectCopy(block.content.marks || []);
+
+					switch (item.id) {
+						case 'link':
+							if (currentFrom == currentTo) {
+								value = Util.stringInsert(value, url + ' ', currentFrom, currentFrom);
+								to = currentFrom + url.length;
+							} else {
+								to = currentTo;
+							};
+
+							marks.push({
+								type: I.MarkType.Link,
+								range: { from: currentFrom, to },
+								param: url,
+							});
+
+							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+								focus.set(block.id, { from: to + 1, to: to + 1 });
+								focus.apply();
+							});
+							break;
+
+						case 'object':
+							C.ObjectToBookmark(rootId, url, (message: any) => {
+								if (message.error.code) {
+									return;
+								};
+
+								ObjectUtil.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
+
+								analytics.event('CreateObject', {
+									objectType: Constant.typeId.bookmark,
+									layout: I.ObjectLayout.Bookmark,
+									template: '',
+								});
+							});
+							break;
+
+						case 'block':
+							C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
+								if (!message.error.code) {
+									analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
+								};
+							});
+							break;
+
+						case 'cancel':
+							value = Util.stringInsert(block.content.text, url + ' ', currentFrom, currentFrom);
+							to = currentFrom + url.length;
+
+							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
+								focus.set(block.id, { from: to + 1, to: to + 1 });
+								focus.apply();
+							});
+							break;
+					};
 				},
-				data: {
-					value: '',
-					options,
-					onSelect: (event: any, item: any) => {
-						let value = block.content.text;
-						let to = range.from + url.length;
-						let marks = Util.objectCopy(block.content.marks || []);
-
-						switch (item.id) {
-							case 'link':
-								value = Util.stringInsert(value, url + ' ', range.from, range.from);
-								marks.push({ type: I.MarkType.Link, range: { from: range.from, to }, param: url });
-
-								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
-									focus.set(block.id, { from: to + 1, to: to + 1 });
-									focus.apply();
-								});
-								break;
-
-							case 'object':
-								C.ObjectToBookmark(rootId, url, (message: any) => {
-									if (message.error.code) {
-										return;
-									};
-
-									ObjectUtil.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
-
-									analytics.event('CreateObject', {
-										objectType: Constant.typeId.bookmark,
-										layout: I.ObjectLayout.Bookmark,
-										template: '',
-									});
-								});
-								break;
-
-							case 'block':
-								C.BlockBookmarkCreateAndFetch(rootId, focused, length ? I.BlockPosition.Bottom : I.BlockPosition.Replace, url, (message: any) => {
-									if (!message.error.code) {
-										analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Bookmark });
-									};
-								});
-								break;
-
-							case 'cancel':
-								value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
-
-								DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
-									focus.set(block.id, { from: to + 1, to: to + 1 });
-									focus.apply();
-								});
-								break;
-						};
-					},
-				}
-			});
-		}, Constant.delay.menu);
+			}
+		});
 	};
 
 	getClipboardData (e: any) {

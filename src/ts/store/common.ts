@@ -49,6 +49,7 @@ class CommonStore {
 	public pinTimeId = 0;
 	public isFullScreen = false;
 	public autoSidebarValue = false;
+	public isSidebarFixedValue = false;
 	public redirect = '';
 	public languages: string[] = [];
 	public workspaceId = '';
@@ -91,6 +92,8 @@ class CommonStore {
 			nativeThemeIsDark: observable,
 			typeId: observable,
 			isFullScreen: observable,
+			autoSidebarValue: observable,
+			isSidebarFixedValue: observable,
 			workspaceId: observable,
             config: computed,
             progress: computed,
@@ -172,6 +175,10 @@ class CommonStore {
 
 	get autoSidebar(): boolean {
 		return Boolean(this.autoSidebarValue || Storage.get('autoSidebar'));
+	};
+
+	get isSidebarFixed(): boolean {
+		return Boolean(this.isSidebarFixedValue)  || Storage.get('isSidebarFixed');
 	};
 
 	get theme(): string {
@@ -308,6 +315,11 @@ class CommonStore {
 		Storage.set('autoSidebar', this.autoSidebarValue);
 	};
 
+	isSidebarFixedSet (v: boolean) {
+		this.isSidebarFixedValue = Boolean(v);
+		Storage.set('isSidebarFixed', this.isSidebarFixedValue);
+	};
+
 	fullscreenSet (v: boolean) {
 		const body = $('body');
 		
@@ -341,7 +353,15 @@ class CommonStore {
 	};
 
 	setThemeClass() {
-		Util.addBodyClass('theme', this.getThemeClass());
+		const head = $('head');
+		const c = this.getThemeClass();
+
+		Util.addBodyClass('theme', c);
+
+		head.find('#link-prism').remove();
+		if (c == 'dark') {
+			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
+		};
 	};
 
 	nativeThemeSet (isDark: boolean) {
@@ -357,6 +377,7 @@ class CommonStore {
 
 		blockStore.rootSet(info.homeObjectId);
 		blockStore.profileSet(info.profileObjectId);
+		blockStore.widgetsSet(info.widgetsId);
 
 		this.gatewaySet(info.gatewayUrl);
 		this.workspaceSet(info.accountSpaceId);

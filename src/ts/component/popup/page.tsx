@@ -21,7 +21,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		return (
 			<div id="wrap">
 				<Page 
-					ref={(ref: any) => { this.ref = ref; }} 
+					ref={ref => { this.ref = ref; }} 
 					{...this.props} 
 					rootId={matchPopup.params.id} 
 					isPopup={true} 

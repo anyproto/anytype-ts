@@ -44,14 +44,17 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		let opts: any = null;
 		let deleteText = 'Delete';
+		let deleteIcon = 'remove';
 
 		switch (ref) {
 			case 'type':
 				deleteText = 'Unlink from type';
+				deleteIcon = 'unlink';
 				break;
 
 			case 'object':
 				deleteText = 'Unlink from object';
+				deleteIcon = 'unlink';
 				break;
 		};
 
@@ -121,7 +124,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					{!isReadonly ? (
 						<div className="inputWrap">
 							<Input 
-								ref={(ref: any) => { this.ref = ref; }} 
+								ref={ref => { this.ref = ref; }} 
 								value={relation ? relation.name : ''}
 								onChange={this.onChange} 
 								onMouseEnter={this.menuClose}
@@ -162,7 +165,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					<div className="section">
 						{relation ? <MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} /> : ''}
 						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
-						{canDelete ? <MenuItemVertical icon="remove" name={deleteText} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
+						{canDelete ? <MenuItemVertical icon={deleteIcon} name={deleteText} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
 			</form>
@@ -448,7 +451,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
-			analytics.event('CreateRelation', { format: item.format, type: ref });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: ref });
 		});
 	};
 

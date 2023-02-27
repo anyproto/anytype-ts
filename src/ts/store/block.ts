@@ -4,11 +4,11 @@ import { I, M, Util, Storage, Mark, translate } from 'Lib';
 import { detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-
 class BlockStore {
 
     public rootId = '';
     public profileId = '';
+	public widgetsId = '';
     public recentId = '';
 
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
@@ -25,6 +25,7 @@ class BlockStore {
             recent: computed,
             rootSet: action,
             profileSet: action,
+            widgetsSet: action,
             recentSet: action,
             set: action,
             clear: action,
@@ -45,6 +46,10 @@ class BlockStore {
 		return this.profileId;
 	};
 
+	get widgets (): string {
+		return this.widgetsId;
+	};
+
     get recent (): string {
 		return this.recentId;
 	};
@@ -55,6 +60,10 @@ class BlockStore {
 
 	profileSet (id: string) {
 		this.profileId = String(id || '');
+	};
+
+	widgetsSet (id: string) {
+		this.widgetsId = String(id || '');
 	};
 
     recentSet (id: string) {
@@ -101,6 +110,7 @@ class BlockStore {
 
     clearAll () {
 		this.profileSet('');
+		this.widgetsSet('');
 		this.recentSet('');
 		this.rootSet('');
 

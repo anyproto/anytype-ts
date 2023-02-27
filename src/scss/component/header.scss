@@ -33,11 +33,11 @@
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: pointer; }
-	.icon.big.home, .icon.big.expand { width: 32px; margin-right: 10px; }
+	.icon.big.expand, .icon.big.toggleSidebar { width: 32px; margin-right: 10px; }
 	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
 	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
 
-	.icon.home { background-image: url('~img/icon/header/home.svg'); }
+	.icon.toggleSidebar { background-image: url('~img/icon/sidebar/toggle-sidebar.svg'); }
 	.icon.back { background-image: url('~img/icon/header/back.svg'); }
 	.icon.forward { background-image: url('~img/icon/header/back.svg'); }
 	.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
@@ -47,7 +47,6 @@
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
 	.icon.graph { background-image: url('~img/icon/header/graph.svg'); }
-
 	.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
 }
 
@@ -92,6 +91,10 @@
 }
 .header.mainHistory.snapLeft { right: 254px; }
 
+.header.mainEdit {
+	.icon.nav { display: none; }
+}
+
 .header.isCommon { background: $colorWhite; height: 38px; }
 .header.isCommon {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; }
@@ -122,12 +125,16 @@
 	.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }
 
+.header.withSidebar {
+	.icon.toggleSidebar { display: none; }
+}
+
 .popup {
 	.header { position: sticky; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
 	.header {
 		.side.left { padding-left: 14px !important; }
 		.side.left {
-			.icon.home { display: none; }
+			.icon.sidebar { display: none; }
 			.icon.expand { display: inline-block; }
 		}
 	}

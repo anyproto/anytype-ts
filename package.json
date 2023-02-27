@@ -1,6 +1,6 @@
 {
-	"name": "anytype2",
-	"version": "0.31.1-beta",
+	"name": "anytype",
+	"version": "0.31.5-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -181,7 +181,7 @@
 		"generateUpdatesFilesForAllChannels": true,
 		"beforeBuild": "./electron/hook/beforebuild.js",
 		"afterSign": "./electron/hook/notarize.js",
-		"appId": "com.anytype.anytype2",
+		"appId": "com.anytype.anytype",
 		"compression": "normal",
 		"productName": "Anytype",
 		"protocols": [
@@ -527,7 +527,7 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "at9412003",
+					"name": "anytype-release",
 					"region": "fra1"
 				}
 			],
@@ -546,7 +546,7 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "at9412003",
+					"name": "anytype-release",
 					"region": "fra1"
 				}
 			]
@@ -560,14 +560,13 @@
 			"target": [
 				"snap",
 				"AppImage",
-				"deb",
-				"rpm"
+				"deb"
 			],
 			"description": "Anytype",
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "at9412003",
+					"name": "anytype-release",
 					"region": "fra1"
 				}
 			]

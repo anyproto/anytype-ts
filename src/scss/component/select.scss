@@ -22,3 +22,8 @@
 	}
 	.item::before { display: none; }
 }
+
+.select.isReadonly { cursor: default; }
+.select.isReadonly {
+	.icon.arrow { display: none; }
+}

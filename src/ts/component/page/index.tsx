@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight } from 'Lib';
+import { observer } from 'mobx-react';
+import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, DataUtil } from 'Lib';
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
+import Constant from 'json/constant.json';
 
 import PageAuthSelect from './auth/select';
 import PageAuthInvite from './auth/invite';
@@ -12,8 +13,6 @@ import PageAuthOnboard from './auth/onboard';
 
 import PageAuthNotice from './auth/notice';
 import PageAuthLogin from './auth/login';
-import PageAuthPinSelect from './auth/pin/select';
-import PageAuthPinConfirm from './auth/pin/confirm';
 import PageAuthPinCheck from './auth/pin/check';
 import PageAuthAccountSelect from './auth/account/select';
 // import PageAuthSetup from './auth/setup';
@@ -21,6 +20,7 @@ import PageAuthAccountSelect from './auth/account/select';
 import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
 
+import PageMainEmpty from './main/empty';
 import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
@@ -33,9 +33,8 @@ import PageMainStore from './main/store';
 import PageMainGraph from './main/graph';
 import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
+import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
-
-import Constant from 'json/constant.json';
 
 const Components: any = {
 	'/':					 PageAuthSelect,
@@ -45,17 +44,15 @@ const Components: any = {
 	'auth/onboard':			 PageAuthOnboard,
 
 	'auth/login':			 PageAuthLogin,
-	'auth/account-select':	 PageAuthAccountSelect,
-
-	'auth/pin-select':		 PageAuthPinSelect,
-	'auth/pin-confirm':		 PageAuthPinConfirm,
 	'auth/pin-check':		 PageAuthPinCheck,
+	'auth/account-select':	 PageAuthAccountSelect,
 	
 	'auth/deleted':			 PageAuthDeleted,
 	'auth/share':			 PageAuthShare,
 
 	'object/share':			 PageAuthShare,
-			
+
+	'main/empty':			 PageMainEmpty,		
 	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
@@ -68,7 +65,16 @@ const Components: any = {
 	'main/graph':			 PageMainGraph,
 	'main/navigation':		 PageMainNavigation,
 	'main/create':			 PageMainCreate,
+	'main/archive':			 PageMainArchive,
 	'main/block':			 PageMainBlock,
+};
+
+const Titles = {
+	index: 'Dashboard',
+	graph: 'Graph',
+	navigation: 'Flow',
+	store: 'Library',
+	archive: 'Bin',
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
@@ -101,37 +107,33 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return <div>Page component &quot;{path}&quot; not found</div>;
 		};
 
-		let sb = (
-			<Sidebar 
-				ref={(ref: any) => { 
-					if (!this.refSidebar) {
-						this.refSidebar = ref; 
-						this.forceUpdate(); 
-					};
-				}} 
-				{...this.props} 
-			/>
-		);
-		let wrap = (
+		const wrap = (
 			<div id="page" className={'page ' + this.getClass('page')}>
-				<Component ref={(ref: any) => this.refChild = ref} refSidebar={this.refSidebar} {...this.props} />
+				<Component ref={ref => this.refChild = ref} refSidebar={this.refSidebar} {...this.props} />
 			</div>
 		);
-		let content = null;
 
+		let content = null;
 		if (isPopup || !showSidebar) {
 			content = wrap;
 		} else {
 			content = (
 				<div className="pageFlex">
-					{sb}
+					<Sidebar 
+						ref={ref => { 
+							if (!this.refSidebar) {
+								this.refSidebar = ref; 
+								this.forceUpdate(); 
+							};
+						}} 
+						{...this.props} 
+					/>
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />
 				</div>
 			);
 		};
-		
 		return content;
 	};
 	
@@ -173,21 +175,21 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { isPopup, history } = this.props;
 		const match = this.getMatch();
-		const isIndex = !match.params.page;
-		const isAuth = match.params.page == 'auth';
-		const isMain = match.params.page == 'main';
-		const isMainIndex = isMain && (match.params.action == 'index');
-		const isPinCheck = isAuth && (match.params.action == 'pin-check');
+		const { page, action } = match.params || {};
+		const isIndex = !page;
+		const isAuth = page == 'auth';
+		const isMain = page == 'main';
+		const isMainIndex = isMain && (action == 'index');
+		const isPinCheck = isAuth && (action == 'pin-check');
 		const pin = Storage.get('pin');
 		const win = $(window);
-		const path = [ match.params.page, match.params.action ].join('/');
+		const path = [ page, action ].join('/');
 		const Component = Components[path];
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
 
 		if (!Component) {
-			Util.route('/main/index');
 			return;
 		};
 
@@ -206,6 +208,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
+		if (!isPopup && Titles[action]) {
+			DataUtil.setWindowTitleText(Titles[action]);
+		};
+
 		this.setBodyClass();
 		this.resize();
 		this.event();
@@ -217,7 +223,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		Onboarding.start(Util.toCamelCase([ match.params?.page, match.params?.action ].join('-')), isPopup);
+		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
 		if (isPopup) {
@@ -258,7 +264,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				textConfirm: 'Ok',
 				canCancel: false,
 				onConfirm: () => {
-					this.refChild.onTab(I.TabIndex.Shared);
 				}
 			},
 		});
