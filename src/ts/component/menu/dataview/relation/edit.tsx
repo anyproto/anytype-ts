@@ -599,7 +599,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
-			analytics.event('CreateRelation', { format: item.format, type: ref });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: ref });
 		});
 	};
 
