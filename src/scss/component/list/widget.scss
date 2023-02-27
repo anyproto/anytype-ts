@@ -1,0 +1,34 @@
+@import "~scss/_vars";
+
+.listWidget { overflow: hidden; overflow-y: scroll; padding: 0px 12px 10px 12px; gap: 12px 0px; height: 100%; }
+.listWidget {
+	> .buttons { display: flex; justify-content: center; width: 100%; gap: 0px 8px; }
+	> .buttons {
+		.button {
+			box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 8px; width: 100%; min-width: 60px; max-width: 200px; background-color: $colorWhite; 
+			color: $colorDarkGrey; cursor: pointer; font-weight: 400;
+		}
+		.button:hover { background-color: $colorVeryLightGrey; }
+
+		.button.disabled { background: $colorVeryLightGrey; max-width: 80px; }
+		.button.edit { 
+			box-shadow: 0px 0px; background: $colorHover; border-radius: 6px; @include text-common; color: $colorBlack; line-height: 26px; width: auto;
+			padding: 0px 10px;
+		}
+	}
+}
+
+.listWidget.isEditing {
+	> .buttons { position: fixed; bottom: 0px; left: 0px; padding: 16px; }
+
+	.widget {
+		.head { cursor: grab; }
+		.icon.remove { display: block; }
+	}
+
+	.widget.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 4px; width: 100%; border-radius: 2px; left: 0px; } 
+	.widget.isOver.top::before { top: -8px; }
+	.widget.isOver.bottom::before { bottom: -8px; }
+}
+
+.listWidget.isListPreview { overflow: hidden; }

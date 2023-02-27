@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Label, Button } from 'Component';
-import { Util } from 'Lib';
+import { ObjectUtil } from 'Lib';
 import { popupStore } from 'Store';
 
 interface Props {
@@ -25,7 +25,7 @@ class Deleted extends React.Component<Props> {
 			onClick = () => { popupStore.close('page'); };
 		} else {
 			textButton = 'Back to dashboard';
-			onClick = () => { Util.route('/main/index'); };
+			onClick = () => { ObjectUtil.openHome('route'); };
 		};
 
 		return (

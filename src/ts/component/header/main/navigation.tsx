@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Icon } from 'Component';
-import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
+import { Icon } from 'Component';
+import { I, keyboard, ObjectUtil, sidebar } from 'Lib';
 
-const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent> {
+const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent, object> {
 
 	constructor (props: I.HeaderComponent) {
 		super(props);
@@ -12,13 +12,13 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	render () {
-		const { onHome, onForward, onBack, tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const { onForward, onBack, tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
 
 		return (
 			<React.Fragment>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="home big" tooltip="Home" onClick={onHome} />
+					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 				</div>
@@ -42,12 +42,6 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 				<div className="side right" />
 			</React.Fragment>
 		);
-	};
-
-	componentDidMount(): void {
-		if (!this.props.isPopup) {
-			DataUtil.setWindowTitleText('Navigation');
-		};
 	};
 
 	onOpen () {

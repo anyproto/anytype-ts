@@ -56,7 +56,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 				<div className="filter isName">
 					<div className="inner">
 						<Input 
-							ref={(ref: any) => { this.ref = ref; }} 
+							ref={ref => this.ref = ref} 
 							value={name} 
 							readonly={readonly}
 							placeholder={translate('menuDataviewViewEditName')}

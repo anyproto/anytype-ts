@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Frame, Cover, Title, Error, Button, Header, Footer } from 'Component';
-import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer } from 'Lib';
+import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer, ObjectUtil } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -34,7 +34,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				break;
 
 			case 'register':
-			case 'add': 
 				title = translate('authSetupRegister');
 				break;
 
@@ -75,7 +74,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				break;
 
 			case 'register':
-			case 'add': 
 				this.add();
 				break;
 
@@ -175,10 +173,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 							if (match.params.id == 'register') {
 								Util.route('/auth/success');
 							};
-								
-							if (match.params.id == 'add') {
-								Util.route('/auth/pin-select/add');
-							};
 						};
 					});
 				});
@@ -209,7 +203,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				this.setError(message.error.description);
 			} else {
 				Storage.set('shareSuccess', 1);
-				Util.route('/main/index');
+				ObjectUtil.openHome('route');
 			};
 		});
 	};

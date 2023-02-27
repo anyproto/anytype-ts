@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Title, Label, Error, Header, Footer } from 'Component';
-import { I, Util, C, Action, Survey } from 'Lib';
+import { I, Util, C, Action, Survey, ObjectUtil } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
@@ -138,7 +138,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	onCancel (e: any) {
 		C.AccountDelete(true, (message: any) => {
 			authStore.accountSet({ status: message.status });
-			Util.route('/main/index');
+			ObjectUtil.openHome('route');
 		});
 	};
 	

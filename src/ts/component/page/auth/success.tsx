@@ -2,8 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Component';
-import { I, translate, DataUtil, analytics, Util, Preview } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { I, translate, DataUtil, analytics, Util, Preview, Storage } from 'Lib';
+import { commonStore, authStore, blockStore } from 'Store';
+import Constant from 'json/constant.json';
 
 const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I.PageComponent, object> {
 
@@ -34,7 +35,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 						
 					<div className="textareaWrap">
 						<Textarea 
-							ref={(ref: any) => this.refPhrase = ref} 
+							ref={ref => this.refPhrase = ref} 
 							id="phrase" 
 							value={translate('popupSettingsPhraseStub')} 
 							className="isBlurred"
@@ -60,7 +61,12 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	};
 
 	onSubmit (e: any) {
-		DataUtil.onAuth(authStore.account);
+		DataUtil.onAuth(authStore.account, () => {
+			const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
+			if (blocks.length) {
+				Storage.setToggle('widget', blocks[0].parentId, true);
+			};
+		});
 	};
 
 	onFocus (e: any) {

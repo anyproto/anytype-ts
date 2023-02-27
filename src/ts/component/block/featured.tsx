@@ -142,7 +142,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								}}
 							>
 								<Cell
-									ref={(ref: any) => { this.cellRefs.set(id, ref); }}
+									ref={ref => this.cellRefs.set(id, ref)}
 									elementId={id}
 									rootId={rootId}
 									subId={rootId}

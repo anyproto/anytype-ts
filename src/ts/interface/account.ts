@@ -19,6 +19,7 @@ export interface AccountInfo {
 	deviceId: string;
 	localStoragePath: string;
 	accountSpaceId: string;
+	widgetsId: string;
 };
 
 export interface AccountConfig {

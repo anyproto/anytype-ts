@@ -137,7 +137,7 @@ class MenuStore {
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = ids && ids.length ? this.menuList.filter(it => ids.includes(it.id)) : this.menuList;
 
-		items.forEach(it => { this.close(it.id); });
+		items.forEach(it => this.close(it.id));
 
 		this.clearTimeout();
 		if (callBack) {
@@ -156,7 +156,7 @@ class MenuStore {
 	};
 
 	checkKey (key: string) {
-		return this.menuList.find((it: I.Menu) => { return it.param.menuKey == key; }) ? true : false;
+		return this.menuList.find(it => it.param.menuKey == key) ? true : false;
 	};
 
 };

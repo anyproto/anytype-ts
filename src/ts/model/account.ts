@@ -9,6 +9,7 @@ class AccountInfo implements I.AccountInfo {
 	deviceId = '';
 	localStoragePath = '';
 	accountSpaceId = '';
+	widgetsId = '';
 	
 	constructor (props: I.AccountInfo) {
 		this.homeObjectId = String(props.homeObjectId || '');
@@ -17,6 +18,7 @@ class AccountInfo implements I.AccountInfo {
 		this.deviceId = String(props.deviceId || '');
 		this.localStoragePath = String(props.localStoragePath || '');
 		this.accountSpaceId = String(props.accountSpaceId || '');
+		this.widgetsId = String(props.widgetsId || '');
 
 		makeObservable(this, {
 			homeObjectId: observable,
@@ -25,6 +27,7 @@ class AccountInfo implements I.AccountInfo {
 			deviceId: observable,
 			localStoragePath: observable,
 			accountSpaceId: observable,
+			widgetsId: observable,
 		});
 
 		intercept(this as any, (change: any) => { return Util.intercept(this, change); });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, keyboard, DataUtil, ObjectUtil } from 'Lib';
-import { commonStore, menuStore } from 'Store';
+import { I, ObjectUtil, DataUtil, keyboard, sidebar } from 'Lib';
+import { detailStore, commonStore, menuStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
@@ -18,13 +18,13 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	render () {
-		const { onHome, onForward, onBack, tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const { onForward, onBack, tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
 
 		return (
 			<React.Fragment>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="home big" tooltip="Home" onClick={onHome} />
+					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 				</div>
@@ -55,13 +55,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	componentDidMount(): void {
-		const { isPopup, rootId } = this.props;
-
-		if (!isPopup) {
-			DataUtil.setWindowTitleText('Graph');
-		};
-
-		this.rootId = rootId;
+		this.rootId = this.props.rootId;
 	};
 
 	onOpen () {

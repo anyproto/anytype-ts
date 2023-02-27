@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, DataUtil, ObjectUtil, keyboard } from 'Lib';
-import { blockStore, detailStore, popupStore } from 'Store';
+import { I, DataUtil, ObjectUtil, keyboard, sidebar } from 'Lib';
+import { blockStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.HeaderComponent> {
@@ -16,7 +16,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 	};
 
 	render () {
-		const { rootId, onHome, onForward, onBack, onGraph, onSearch, onTooltipShow, onTooltipHide } = this.props;
+		const { rootId, onForward, onBack, onGraph, onSearch, onTooltipShow, onTooltipHide } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -32,7 +32,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 			<React.Fragment>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="home big" tooltip="Home" onClick={onHome} />
+					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
 					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
 					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 					
@@ -110,7 +110,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 		const { rootId, isPopup } = this.props;
 
 		if (!isPopup) {
-			DataUtil.setWindowTitle(rootId);
+			DataUtil.setWindowTitle(rootId, rootId);
 		};
 	};
 	

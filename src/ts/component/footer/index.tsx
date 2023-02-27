@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { I, sidebar } from 'Lib';
+import { ObjectUtil, I, sidebar } from 'Lib';
 import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';
-import FooterMainIndex from './main/index';
+import FooterMainIndex from './main';
 import FooterMainEdit from './main/edit';
+import FooterMainGraph from './main/graph';
+import FooterMainNavigation from './main/navigation';
 
 interface Props extends I.FooterComponent {
 	component: string;
@@ -14,6 +16,8 @@ const Components = {
 	authIndex:			 FooterAuthIndex,
 	mainIndex:			 FooterMainIndex,
 	mainEdit:			 FooterMainEdit,
+	mainGraph:			 FooterMainGraph,
+	mainNavigation:		 FooterMainNavigation,
 };
 
 class Footer extends React.Component<Props> {
@@ -23,6 +27,7 @@ class Footer extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
+		this.onAdd = this.onAdd.bind(this);
 		this.onHelp = this.onHelp.bind(this);
 	};
 	
@@ -34,9 +39,10 @@ class Footer extends React.Component<Props> {
 		return (
 			<div id="footer" className={cn.join(' ')}>
 				<Component 
-					ref={(ref: any) => this.refChild = ref} 
+					ref={ref => this.refChild = ref} 
 					{...this.props} 
 					onHelp={this.onHelp}
+					onAdd={this.onAdd}
 				/>
 			</div>
 		);
@@ -49,6 +55,12 @@ class Footer extends React.Component<Props> {
 	componentDidUpdate () {
 		sidebar.resizePage();	
 		this.refChild.forceUpdate();
+	};
+
+	onAdd () {
+		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
+			ObjectUtil.openAuto({ id: message.targetId });
+		});
 	};
 
 	onHelp () {

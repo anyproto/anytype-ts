@@ -51,7 +51,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 					<div className="sides">
 						<div className="side left">
 							<Select 
-								ref={(ref: any) => { this.refMonth = ref; }}
+								ref={ref => { this.refMonth = ref; }}
 								id="month"
 								value={String(m || '')} 
 								options={months} 
@@ -63,7 +63,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 						</div>
 						<div className="side right">
 							<Select 
-								ref={(ref: any) => { this.refYear = ref; }}
+								ref={ref => { this.refYear = ref; }}
 								id="year" 
 								value={String(y || '')} 
 								options={years} 

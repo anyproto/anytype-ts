@@ -1,10 +1,10 @@
 @import "~scss/_vars";
 
-.preview {
+.previewWrapper {
 	position: absolute; left: 0px; top: 0px; width: 344px; z-index: 1000; display: none; opacity: 0; 
 	transition: opacity 0.2s ease-in-out;
 }
-.preview {
+.previewWrapper {
 	.content { background: $colorWhite; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px; position: relative; height: 100%; overflow: hidden; }
 	.loaderWrapper { height: 24px !important; margin: 16px auto; border: 0px !important; }
 	.polygon { position: absolute; left: 0px; width: 100%; cursor: pointer; }
@@ -26,11 +26,11 @@
 	}
 }
 
-.preview {
+.previewWrapper {
 	.head { border-top: 1px solid $colorBorderLight; bottom: 0px; padding-bottom: 11px; }
 	.img { border-radius: 8px 8px 0px 0px; border-top: 0px; }
 }
 
-.preview.withHead {
+.previewWrapper.withHead {
 	.content { padding-bottom: 44px; }
 }

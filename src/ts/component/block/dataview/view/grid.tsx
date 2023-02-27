@@ -76,39 +76,37 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 				>
 					{({ onRowsRendered, registerChild }) => (
 						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-							{({ height, isScrolling, registerChild, scrollTop }) => {
-								return (
-									<AutoSizer disableHeight={true}>
-										{({ width }) => {
-											return (
-												<div ref={registerChild}>
-													<List
-														autoHeight={true}
-														height={Number(height) || 0}
-														width={Number(width) || 0}
-														isScrolling={isScrolling}
-														rowCount={length}
-														rowHeight={this.getRowHeight()}
-														onRowsRendered={onRowsRendered}
-														rowRenderer={({ key, index, style }) => (
-															<BodyRow 
-																key={'grid-row-' + view.id + index} 
-																{...this.props} 
-																readonly={!isAllowedObject}
-																index={index} 
-																style={{ ...style, top: style.top + 2 }}
-																cellPosition={this.cellPosition}
-																getColumnWidths={this.getColumnWidths}
-															/>
-														)}
-														scrollTop={scrollTop}
-													/>
-												</div>
-											);
-										}}
-									</AutoSizer>
-								);
-							}}
+							{({ height, isScrolling, registerChild, scrollTop }) => (
+								<AutoSizer disableHeight={true}>
+									{({ width }) => {
+										return (
+											<div ref={registerChild}>
+												<List
+													autoHeight={true}
+													height={Number(height) || 0}
+													width={Number(width) || 0}
+													isScrolling={isScrolling}
+													rowCount={length}
+													rowHeight={this.getRowHeight()}
+													onRowsRendered={onRowsRendered}
+													rowRenderer={({ key, index, style }) => (
+														<BodyRow 
+															key={'grid-row-' + view.id + index} 
+															{...this.props} 
+															readonly={!isAllowedObject}
+															index={index} 
+															style={{ ...style, top: style.top + 2 }}
+															cellPosition={this.cellPosition}
+															getColumnWidths={this.getColumnWidths}
+														/>
+													)}
+													scrollTop={scrollTop}
+												/>
+											</div>
+										);
+									}}
+								</AutoSizer>
+							)}
 						</WindowScroller>
 					)}
 				</InfiniteLoader>
@@ -189,8 +187,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 
 	onScroll () {
 		const win = $(window);
+		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
 
-		for (let menu of menuStore.list) {
+		for (let menu of menus) {
 			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
 		};
 

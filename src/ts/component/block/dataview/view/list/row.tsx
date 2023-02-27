@@ -32,7 +32,7 @@ const Row = observer(class Row extends React.Component<Props> {
 						<Cell
 							key={'list-cell-' + relation.relationKey}
 							elementId={id}
-							ref={(ref: any) => { onRef(ref, id); }}
+							ref={ref => { onRef(ref, id); }}
 							{...this.props}
 							subId={subId}
 							relationKey={relation.relationKey}

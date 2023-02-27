@@ -987,6 +987,30 @@ const BlockDataviewRelationDelete = (contextId: string, blockId: string, relatio
 	dispatcher.request(BlockDataviewRelationDelete.name, request, callBack);
 };
 
+const BlockDataviewSetSource = (contextId: string, blockId: string, sources: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockDataview.SetSource.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setSourceList(sources);
+
+	dispatcher.request(BlockDataviewSetSource.name, request, callBack);
+};
+
+// ---------------------- BLOCK WIDGET ---------------------- //
+
+const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, callBack?: (message: any) => void) => {
+	const request = new Rpc.Block.CreateWidget.Request();
+
+	request.setContextid(contextId);
+	request.setTargetid(targetId);
+	request.setBlock(Mapper.To.Block(block));
+	request.setPosition(position);
+	request.setWidgetlayout(layout);
+
+	dispatcher.request(BlockCreateWidget.name, request, callBack);
+};
+
 // ---------------------- HISTORY ---------------------- //
 
 const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (message: any) => void) => {
@@ -1152,28 +1176,6 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 	});
 };
 
-const ObjectOpenBreadcrumbs = (callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.OpenBreadcrumbs.Request();
-
-	dispatcher.request(ObjectOpenBreadcrumbs.name, request, (message: any) => {
-		if (!message.error.code) {
-			dispatcher.onObjectView(message.objectId, '', message.objectView);
-		};
-
-		if (callBack) {
-			callBack(message);
-		};
-	});
-};
-
-const ObjectSetBreadcrumbs = (contextId: string, pageIds: string[], callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.SetBreadcrumbs.Request();
-	
-	request.setBreadcrumbsid(contextId);
-	request.setIdsList(pageIds);
-
-	dispatcher.request(ObjectSetBreadcrumbs.name, request, callBack);
-};
 
 const ObjectClose = (objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Close.Request();
@@ -1413,6 +1415,15 @@ const ObjectGraph = (filters: any[], limit: number, types: string[], keys: strin
 	request.setKeysList(keys);
 
 	dispatcher.request(ObjectGraph.name, request, callBack);
+};
+
+const ObjectWorkspaceSetDashboard = (contextId: string, objectId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.WorkspaceSetDashboard.Request();
+	
+	request.setContextid(contextId);
+    request.setObjectid(objectId);
+
+	dispatcher.request(ObjectWorkspaceSetDashboard.name, request, callBack);
 };
 
 const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: any) => void) => {
@@ -1758,6 +1769,8 @@ export {
 	BlockDataviewRelationAdd,
 	BlockDataviewRelationDelete,
 
+	BlockCreateWidget,
+
 	HistoryGetVersions,	
 	HistoryShowVersion,
 	HistorySetVersion,
@@ -1770,8 +1783,6 @@ export {
 
 	ObjectOpen,
 	ObjectShow,
-	ObjectOpenBreadcrumbs,
-	ObjectSetBreadcrumbs,
 	ObjectClose,
 	ObjectUndo,
 	ObjectRedo,
@@ -1799,6 +1810,8 @@ export {
 	ObjectCreateObjectType,
 	ObjectCreateRelation,
 	ObjectCreateRelationOption,
+
+	ObjectWorkspaceSetDashboard,
 
 	RelationListRemoveOption,
 

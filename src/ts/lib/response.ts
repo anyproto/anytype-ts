@@ -143,13 +143,6 @@ const NavigationGetObjectInfoWithLinks = (response: any) => {
 	};
 };
 
-const ObjectOpenBreadcrumbs = (response: any) => {
-	return {
-		objectId: response.getObjectid(),
-		objectView: Mapper.From.ObjectView(response.getObjectview()),
-	};
-};
-
 const BlockCreate = (response: any) => {
 	return {
 		blockId: response.getBlockid(),
@@ -407,7 +400,6 @@ export {
 
 	ObjectOpen,
 	ObjectShow,
-	ObjectOpenBreadcrumbs,
 	ObjectImportList,
 	
 	BlockSplit,

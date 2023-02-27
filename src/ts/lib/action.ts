@@ -1,6 +1,5 @@
-import { I, C, focus, analytics, Renderer, Preview, Util } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, Util, Storage } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 class Action {
@@ -71,6 +70,10 @@ class Action {
 	};
 	
 	download (block: I.Block, route: string) {
+		if (!block) {
+			return;
+		};
+
 		const { content } = block;
 		const { type, hash } = content;
 
@@ -78,7 +81,7 @@ class Action {
 			return;
 		};
 		
-		const url = block.isFileImage() ? commonStore.imageUrl(hash, Constant.size.image) : commonStore.fileUrl(hash);
+		const url = block.isFileImage() ? commonStore.imageUrl(hash, 1000000) : commonStore.fileUrl(hash);
 		Renderer.send('download', url);
 
 		analytics.event('DownloadMedia', { type, route });
@@ -133,6 +136,26 @@ class Action {
 		});
 	};
 
+	removeWidget (id: string) {
+		const { widgets } = blockStore;
+		const block = blockStore.getLeaf(widgets, id);
+
+		if (!block) {
+			return;
+		};
+
+		C.BlockListDelete(widgets, [ id ]);
+		Storage.deleteToggleId('widget', id);
+		Storage.deleteToggle(`widget${id}`);
+
+		const childrenIds = blockStore.getChildrenIds(widgets, id);
+		if (childrenIds.length) {
+			Storage.deleteToggle(`widget${childrenIds[0]}`);
+		};
+
+		analytics.event('DeleteWidget');
+	};
+
 	focusToEnd (rootId: string, id: string) {
 		const block = blockStore.getLeaf(rootId, id);
 		if (!block) {
@@ -149,12 +172,12 @@ class Action {
 			properties: [ 'openFile' ], 
 		};
 
-		if (extensions.length) {
+		if (extensions && extensions.length) {
 			options.filters = [ { name: '', extensions } ];
 		};
 		
 		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
-			if ((filePaths == undefined) || !filePaths.length) {
+			if ((typeof filePaths === 'undefined') || !filePaths.length) {
 				return;
 			};
 			

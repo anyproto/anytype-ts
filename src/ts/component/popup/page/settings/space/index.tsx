@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Icon, Title, Label, Input, IconObject } from 'Component';
-import { C, DataUtil, I, translate } from 'Lib';
+import { Icon, Label, Input, IconObject } from 'Component';
+import { C, ObjectUtil, DataUtil, I, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore } from 'Store';
+import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import Head from '../head';
 
@@ -13,216 +13,117 @@ interface Props extends I.Popup {
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<Props> {
 
-    name = 'Anytype Space';
     refName: any = null;
-    homePage: any = null;
-    team: any[] = [];
-    isAdmin = false;
+    dashboardId = '';
 
     constructor (props: any) {
         super(props);
 
-        this.onHomePage = this.onHomePage.bind(this);
-        this.onIconClick = this.onIconClick.bind(this);
-        this.onUpload = this.onUpload.bind(this);
+        this.onDashboard = this.onDashboard.bind(this);
+        this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
+		this.onName = this.onName.bind(this);
     };
 
     render () {
-        const { onPage } = this.props;
-        const cnIcon = ['spaceIcon'];
-
-        let title = <Title text={this.name} />;
-        let spaceLeave = (
-            <div className="row red" onClick={() => { onPage('spaceLeave'); }}>
-                <Label text={translate('popupSettingsSpaceLeaveTitle')} />
-            </div>
-        );
-		let preview = null;
-
-        if (this.isAdmin) {
-            cnIcon.push('canEdit');
-
-            title = (
-				<Input
-					className="title"
-					ref={ref => this.refName = ref}
-					value={this.name}
-					placeholder={DataUtil.defaultName('page')}
-					onKeyUp={this.onName}
-            	/>
-			);
-
-            spaceLeave = (
-                <div className="row red" onClick={() => { onPage('spaceRemove'); }}>
-                    <Label text={translate('popupSettingsSpaceRemoveTitle')} />
-                </div>
-            );
-        };
-
-		if (this.team.length) {
-			preview = (
-				<div className="team">
-					{this.team.slice(0, 3).map((el: any, i: number) => (
-						<IconObject size={32} key={i} object={el} />
-					))}
-				</div>
-			);
-		};
+		const subId = Constant.subId.space;
+		const space = detailStore.get(subId, commonStore.workspace);
+		const home = detailStore.get(subId, space.spaceDashboardId);
+		const name = this.checkName(space.name);
 
         return (
             <div>
 				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
 
-                <div className="spaceSettingsHeader">
+                <div className="spaceInfo">
                     <IconObject
-                        id="spacePic"
-                        className={cnIcon.join(' ')}
+						id="spaceIcon"
                         size={96}
-                        object={{name: this.name, layout: I.ObjectLayout.Human, id: 'randomIdOfTheTestObject'}}
-                        onClick={this.onIconClick}
+                        object={space}
+						forceLetter={true}
+						canEdit={true}
+						menuParam={{ horizontal: I.MenuDirection.Center }}
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload} 
                     />
 
-                    {title}
+                    <Input
+						className="title"
+						ref={ref => this.refName = ref}
+						value={name}
+						placeholder={DataUtil.defaultName('space')}
+						onKeyUp={this.onName}
+					/>
                 </div>
 
                 <div className="rows">
-                    <div className="row" onClick={() => { onPage('spaceInvite'); }}>
-                        <Label text={translate('popupSettingsSpaceInviteTitle')} />
-                        <Icon className="arrow" />
-                    </div>
-
                     <div className="row flex">
                         <div className="side left">
                             <Label text={translate('popupSettingsSpaceHomepageTitle')} />
                         </div>
+
                         <div className="side right">
-                            <div id="homePage" className="select" onClick={this.onHomePage}>
+                            <div id="dashboard" className="select" onClick={this.onDashboard}>
                                 <div className="item">
-                                    <div className="name">{this.homePage || 'Select'}</div>
-                                </div>
+                                    <div className="name">
+										{home._empty_ ? 'Select' : home.name}
+									</div>
+								</div>
                                 <Icon className="arrow light" />
                             </div>
                         </div>
                     </div>
-
-                    <div className="row flex" onClick={() => { onPage('spaceTeam'); }}>
-                        <div className="side left">
-                            <Label text={translate('popupSettingsSpaceTeamTitle')} />
-                        </div>
-                        <div className="side right">
-                            {preview || <Icon className="arrow light" />}
-                        </div>
-                    </div>
-
-                    {spaceLeave}
                 </div>
             </div>
         );
     };
 
-    componentDidMount() {
-        this.loadProfiles();
-    };
+    onSelect (icon: string) {
+		ObjectUtil.setIcon(commonStore.workspace, icon, '');
+	};
 
-    onIconClick () {
+	onUpload (hash: string) {
+		ObjectUtil.setIcon(commonStore.workspace, '', hash);
+	};
+
+    onDashboard () {
         const { getId } = this.props;
-
-        if (!this.isAdmin) {
-            return;
-        };
-
-        const options = [
-            { id: 'upload', name: 'Change' },
-            { id: 'remove', name: 'Remove' }
-        ];
-
-        menuStore.open('select', {
-            element: `#${getId()} #spacePic`,
-            horizontal: I.MenuDirection.Center,
-            data: {
-                value: '',
-                options,
-                onSelect: (e: any, item: any) => {
-                    switch (item.id) {
-                        case 'upload': {
-                            // this.onUpload(object.id);
-                            break;
-                        };
-
-                        case 'remove': {
-                            // ObjectUtil.setIcon(object.id, '', '');
-                            break;
-                        };
-                    };
-                },
-            }
-        });
-    };
-
-    onUpload () {
-        const options = {
-            properties: [ 'openFile' ],
-            filters: [ { name: '', extensions: Constant.extension.image } ]
-        };
-
-        window.Electron.showOpenDialog(options).then((result) => {
-            const files = result.filePaths;
-            if ((files == undefined) || !files.length) {
-                return;
-            };
-
-            this.setState({ loading: true });
-
-            C.FileUpload('', files[0], I.FileType.Image, (message: any) => {
-                if (message.error.code) {
-                    return;
-                };
-
-                // ObjectUtil.setIcon(rootId, '', message.hash, () => {
-                //     this.setState({ loading: false });
-                // });
-            });
-        });
-    };
-
-    onHomePage () {
-        const { getId } = this.props;
+		const { workspace } = commonStore;
+		const skipTypes = DataUtil.getFileTypes().concat(DataUtil.getSystemTypes());
 
         menuStore.open('searchObject', {
-            element: `#${getId()} #homePage`,
+            element: `#${getId()} #dashboard`,
             horizontal: I.MenuDirection.Right,
             data: {
                 filters: [
-                    { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.page }
-                ],
-                position: I.BlockPosition.Bottom,
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+				],
                 canAdd: true,
                 onSelect: (el: any) => {
-                    this.homePage = el.name;
-                    this.forceUpdate();
+					C.ObjectWorkspaceSetDashboard(workspace, el.id, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: el.id } }, false);
+						detailStore.update(Constant.subId.space, { id: el.id, details: el }, false);
+						ObjectUtil.openHome('route');
+					});
                 }
             }
         });
     };
 
-    onName (v: string) {
-        // set space name
+    onName (e: any, v: string) {
+		ObjectUtil.setName(commonStore.workspace, this.checkName(v));
     };
 
-    loadProfiles () {
-        const filters = [
-            { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: 'ot-profile' }
-        ];
-
-        C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
-            if (message.error.code || !message.records.length) {
-                return;
-            };
-
-            this.team = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
-            this.forceUpdate();
-        });
-    };
+	checkName (v: string): string {
+		if ((v == DataUtil.defaultName('space')) || (v == DataUtil.defaultName('page'))) {
+			v = '';
+		};
+		return v;
+	};
 
 });
 

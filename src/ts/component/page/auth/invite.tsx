@@ -41,7 +41,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 					<Error text={error} />
 							
 					<form className="form" onSubmit={this.onSubmit}>
-						<Input ref={(ref: any) => this.ref = ref} placeholder={translate('authInvitePlaceholder')} />
+						<Input ref={ref => this.ref = ref} placeholder={translate('authInvitePlaceholder')} />
 						<div className="buttons">
 							<Button type="input" text={translate('authInviteLogin')} />
 						</div>

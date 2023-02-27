@@ -37,7 +37,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 					<p>You will be logged out on all other devices. You will have 30 days to recover it. Afterwards it will be deleted permanently</p>
 
 					<div className="check" onClick={this.onCheck}>
-						<Checkbox ref={(ref: any) => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
+						<Checkbox ref={ref => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
 					</div>
 				</div>
 

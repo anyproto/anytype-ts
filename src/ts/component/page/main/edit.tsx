@@ -28,7 +28,7 @@ class PageMainEdit extends React.Component<Props> {
 			<React.Fragment>
 				<Header 
 					component="mainEdit" 
-					ref={(ref: any) => { this.refHeader = ref; }} 
+					ref={ref => { this.refHeader = ref; }} 
 					rootId={rootId}
 					{...this.props} 
 				/>
@@ -39,7 +39,7 @@ class PageMainEdit extends React.Component<Props> {
 				
 				<Footer 
 					component="mainEdit" 
-					ref={(ref: any) => { this.refFooter = ref; }} 
+					ref={ref => { this.refFooter = ref; }} 
 					{...this.props} 
 				/>
 			</React.Fragment>

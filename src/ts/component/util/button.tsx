@@ -16,6 +16,7 @@ interface Props {
 	tooltipY?: I.MenuDirection;
 	dataset?: any;
 	onClick?(e: any): void;
+	onMouseEnter?(e: any): void;
 };
 
 class Button extends React.Component<Props> {
@@ -84,11 +85,15 @@ class Button extends React.Component<Props> {
 	};
 
 	onMouseEnter (e: any) {
-		const { tooltip, tooltipX, tooltipY } = this.props;
+		const { tooltip, tooltipX, tooltipY, onMouseEnter } = this.props;
 		const node = $(this.node);
 		
 		if (tooltip) {
 			Preview.tooltipShow(tooltip, node, tooltipX, tooltipY);
+		};
+
+		if (onMouseEnter) {
+			onMouseEnter(e);
 		};
 	};
 	

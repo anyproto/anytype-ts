@@ -158,6 +158,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						className={className}
 					/>
 				);
+
 				body = (
 					<div className="content">
 						<ViewComponent 
@@ -362,6 +363,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				offset: 0, 
 				limit: offset + this.getLimit(view.type), 
 				clear,
+				sources,
 				collectionId: isCollection ? this.getObjectId() : '',
 			}, (message: any) => {
 				if (clear) {

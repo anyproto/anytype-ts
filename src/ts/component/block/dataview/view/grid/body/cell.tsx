@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { I, DataUtil, Relation } from 'Lib';
-import { Cell } from 'Component';
-import { dbStore } from 'Store';
 import { observer } from 'mobx-react';
-
+import { I, Relation } from 'Lib';
+import { Cell, Icon } from 'Component';
+import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -22,6 +21,14 @@ interface Props {
 };
 
 const BodyCell = observer(class BodyCell extends React.Component<Props> {
+
+	ref = null;
+
+	constructor (props: Props) {
+		super(props);
+
+		this.onEdit = this.onEdit.bind(this);
+	};
 
 	render () {
 		const { rootId, block, className, relationKey, index, readonly, onRef, onCellClick, onCellChange, getIdPrefix } = this.props;
@@ -45,6 +52,11 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 			cn.push(className);
 		};
 
+		let iconEdit = null;
+		if (relation.relationKey == 'name') {
+			iconEdit = <Icon className="edit" onClick={this.onEdit} />;
+		};
+
 		return (
 			<div 
 				key={id} 
@@ -53,7 +65,10 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 				onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }} 
 			>
 				<Cell 
-					ref={(ref: any) => { onRef(ref, id); }} 
+					ref={ref => { 
+						this.ref = ref;
+						onRef(ref, id); 
+					}} 
 					{...this.props}
 					subId={subId}
 					relationKey={relation.relationKey}
@@ -62,8 +77,14 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 					onCellChange={onCellChange}
 					maxWidth={Constant.size.dataview.cell.edit}
 				/>
+				{iconEdit}
 			</div>
 		);
+	};
+
+	onEdit (e: React.MouseEvent) {
+		e.stopPropagation();
+		this.ref.onClick(e);
 	};
 
 });
