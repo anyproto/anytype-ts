@@ -379,14 +379,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	getRecords (): any[] {
-		const { rootId, block } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
-
-		return this.applyObjectOrder(Util.objectCopy(records));
-	};
-
 	getLimit (type: I.ViewType): number {
 		const { isInline } = this.props;
 		const view = this.getView();
@@ -406,6 +398,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			
 		};
 		return limit;
+	};
+
+	getRecords (): string[] {
+		const { rootId, block } = this.props;
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
+
+		return this.applyObjectOrder(Util.objectCopy(records));
 	};
 
 	getRecord (index: number) {
