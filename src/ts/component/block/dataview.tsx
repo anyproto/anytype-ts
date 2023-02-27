@@ -18,6 +18,7 @@ import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 import Empty from './dataview/empty';
 import {set} from "mobx";
+import {sorted} from "is";
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -47,6 +48,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		super(props);
 		
 		this.loadData = this.loadData.bind(this);
+		this.getRecords = this.getRecords.bind(this);
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
 		this.getSources = this.getSources.bind(this);
@@ -78,8 +80,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const object = detailStore.get(rootId, targetId);
 		const isCollection = this.isCollection();
 
-		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
+		const records = this.getRecords();
 		const emptyObj = (!sources.length && !isCollection) || (!records.length && isCollection);
 
 		if (!views.length) {
@@ -169,6 +170,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							{...dataviewProps}
 							bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 							pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
+							getRecords={this.getRecords}
 							getKeys={this.getKeys}
 							getIdPrefix={this.getIdPrefix}
 							getLimit={() => this.getLimit(view.type)}
@@ -275,7 +277,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (!isInline && !keyboard.isFocused) {
 			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-				selection.set(I.SelectType.Record, dbStore.getRecords(subId, ''));
+				selection.set(I.SelectType.Record, this.getRecords());
 			});
 		};
 
@@ -377,6 +379,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
+	getRecords (): any[] {
+		const { rootId, block } = this.props;
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = dbStore.getRecords(subId, '');
+
+		return this.applyObjectOrder(Util.objectCopy(records));
+	};
+
 	getLimit (type: I.ViewType): number {
 		const { isInline } = this.props;
 		const view = this.getView();
@@ -401,7 +411,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getRecord (index: number) {
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
+		const records = this.getRecords();
 
 		if (index > records.length - 1) {
 			return {};
@@ -515,7 +525,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				const object = message.details;
-				const records = dbStore.getRecords(subId, '');
+				const records = this.getRecords();
 				const oldIndex = records.indexOf(message.objectId);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
 
@@ -804,7 +814,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = dbStore.getSubId(rootId, block.id);
 		const view = this.getView();
 
-		let records = dbStore.getRecords(subId, '');
+		let records = this.getRecords();
 		let orders = [];
 		let oldIndex = records.indexOf(ids[0]);
 		let targetIndex = records.indexOf(targetId);
@@ -922,7 +932,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	applyObjectOrder (records: any[], groupId?: string) {
+	applyObjectOrder (records: any[], groupId?: string): string[] {
 		const { block } = this.props;
 		const view = this.getView();
 		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (groupId ? it.groupId == groupId : true));

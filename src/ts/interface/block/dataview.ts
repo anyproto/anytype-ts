@@ -111,6 +111,7 @@ export interface ViewComponent {
 	className?: string;
 	onRef?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
+	getRecords?(): any[];
 	getRecord(index: number): any;
 	getView?(): View;
 	getSources?(): string[];
