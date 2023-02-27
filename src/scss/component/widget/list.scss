@@ -41,7 +41,7 @@
 		}
 
 		.item { 
-			.inner { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 8px 12px; height: 100%; }
+			.inner { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 8px 12px; height: 100%; justify-content: space-between; }
 			.dropTarget { border-radius: 6px; height: 100%; }
 			.iconObject { flex-shrink: 0; background: $colorVeryLightGrey; border-radius: 10px; }
 			.iconObject.isTask, .iconObject.isBookmark { background: none; }

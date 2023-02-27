@@ -103,6 +103,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const buttons = node.find('.buttons');
 		const more = node.find('.icon.more');
 		const menuParam: any = {
+			classNameWrap: 'fromSidebar',
 			onOpen: () => {
 				buttons.addClass('active');
 				more.addClass('active');

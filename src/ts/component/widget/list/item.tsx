@@ -25,7 +25,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 		let inner = (
 			<div className="inner">
-				<IconObject object={object} size={48} iconSize={iconSize} forceLetter={true} />
+				<IconObject object={object} size={48} iconSize={iconSize} />
 				<div className="info">
 					<ObjectName object={object} />
 					<ObjectDescription object={object} />
@@ -82,6 +82,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const buttons = node.find('.buttons');
 		const more = node.find('.icon.more');
 		const menuParam: any = {
+			classNameWrap: 'fromSidebar',
 			onOpen: () => {
 				buttons.addClass('active');
 				more.addClass('active');
