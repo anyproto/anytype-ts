@@ -653,6 +653,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			if ((isTargetBot || isTargetCol) && (this.position != I.BlockPosition.None)) {
 				this.setPosition(I.BlockPosition.Bottom);
 			};
+
+			if ((dropType == I.DropType.Record) && (this.hoverData.dropType == I.DropType.Record) && !canDropMiddle) {
+				this.setPosition(I.BlockPosition.Top);
+			};
 		};
 
 		if (this.frame) {

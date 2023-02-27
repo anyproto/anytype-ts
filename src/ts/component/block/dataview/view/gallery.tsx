@@ -31,11 +31,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd, getVisibleRelations, getEmpty } = this.props;
+		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd, getVisibleRelations, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
+		const records = getRecords();
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);

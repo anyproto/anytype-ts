@@ -79,7 +79,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 						onClick={(e: any) => { onContext(e, record.id); }}
 						onDragStart={(e: any) => { onDragRecordStart(e, index) }}
 					/>
-					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record} canDropMiddle={true}>
+					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}
 					</DropTarget>
 				</React.Fragment>

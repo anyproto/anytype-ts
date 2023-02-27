@@ -20,10 +20,11 @@ const Card = observer(class Card extends React.Component<Props> {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
+		this.onDragStart = this.onDragStart.bind(this);
 	};
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection, onDragRecordStart } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -115,11 +116,13 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		return (
 			<div 
-				ref={node => this.node = node} 
+				ref={node => this.node = node}
 				className={cn.join(' ')} 
-				style={style} 
+				style={style}
+				draggable={true}
 				onClick={this.onClick}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				onDragStart={this.onDragStart}
 			>
 				{content}
 			</div>
@@ -150,6 +153,14 @@ const Card = observer(class Card extends React.Component<Props> {
 		node.find('.cellContent').removeClass('last');
 		if (last.length) {
 			last.addClass('last');
+		};
+	};
+
+	onDragStart (e: any) {
+		const { isCollection, index, onDragRecordStart } = this.props;
+
+		if (isCollection) {
+			onDragRecordStart(e, index);
 		};
 	};
 
