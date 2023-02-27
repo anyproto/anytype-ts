@@ -324,7 +324,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onClick (e: any, item: any) {
-		ObjectUtil.openPopup(item);
+		ObjectUtil.openAuto(item);
 	};
 
 	onCreateType (e: any) {

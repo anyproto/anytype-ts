@@ -59,7 +59,7 @@ class Footer extends React.Component<Props> {
 
 	onAdd () {
 		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-			ObjectUtil.openPopup({ id: message.targetId });
+			ObjectUtil.openAuto({ id: message.targetId });
 		});
 	};
 
