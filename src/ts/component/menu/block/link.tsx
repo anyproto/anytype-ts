@@ -124,7 +124,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 						<AutoSizer className="scrollArea">
 							{({ width, height }) => (
 								<List
-									ref={(ref: any) => { this.refList = ref; }}
+									ref={ref => { this.refList = ref; }}
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
@@ -146,7 +146,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={(ref: any) => { this.refFilter = ref; }} 
+					ref={ref => { this.refFilter = ref; }} 
 					placeholder="Paste link or search objects" 
 					value={filter}
 					onChange={this.onFilterChange}
@@ -284,13 +284,12 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limitMenuRecords;
+			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};
 
 	load (clear: boolean, callBack?: (message: any) => void) {
-		const { config } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { skipIds, filter } = data;
@@ -315,7 +314,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limitMenuRecords,
+			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (callBack) {
 				callBack(null);

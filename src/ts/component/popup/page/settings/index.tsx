@@ -15,30 +15,30 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 	render () {
 		const { onPage } = this.props;
 		const { account } = authStore;
-		const { config } = commonStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+
 		let rows = [
-			{ id: 'personal', title: 'popupSettingsPersonalTitle', icon: 'personal' },
-			{ id: 'appearance', title: 'popupSettingsAppearanceTitle', icon: 'appearance' },
-			{ id: 'importIndex', title: 'popupSettingsImportTitle', icon: 'import' },
-			{ id: 'exportMarkdown', title: 'popupSettingsExportTitle', icon: 'export' }
+			{ id: 'personal', title: translate('popupSettingsPersonalTitle'), icon: 'personal' },
+			{ id: 'appearance', title: translate('popupSettingsAppearanceTitle'), icon: 'appearance' },
+			{ id: 'importIndex', title: translate('popupSettingsImportTitle'), icon: 'import' },
+			{ id: 'exportMarkdown', title: translate('popupSettingsExportTitle'), icon: 'export' }
 		];
 
 		if (account) {
-			const accountRows = [ { id: 'account', title: 'popupSettingsAccountTitle', icon: '' } ];
-			
-			if (config.experimental) {
-				accountRows.push({ id: 'spaceIndex', title: 'popupSettingsSpaceTitle', icon: '' });
-			};
-
-			rows = accountRows.concat(rows);
+			rows = [ 
+				{ id: 'account', title: translate('popupSettingsAccountTitle'), icon: '' },
+				{ id: 'spaceIndex', title: (space._empty_ ? translate('popupSettingsSpaceTitle') : space.name), icon: '' }
+			].concat(rows);
 		};
 
 		const Row = (row: any) => {
 			let icon = null;
 			if (row.id == 'account') {
 				icon = <IconObject object={profile} size={32} />;
+			} else 
+			if (row.id == 'spaceIndex') {
+				icon = <IconObject object={space} size={32} />;
 			} else 
 			if (row.icon) {
 				icon = <Icon className={row.icon} />;
@@ -47,7 +47,7 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 			return (
 				<div className="row" onClick={() => { onPage(row.id); }}>
 					{icon}
-					<Label text={translate(row.title)} />
+					<Label text={row.title} />
 					<Icon className="arrow" />
 				</div>
 			);

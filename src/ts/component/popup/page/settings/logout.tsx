@@ -50,7 +50,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 				<div className="inputs">
 					<div className="textareaWrap">
 						<Textarea 
-							ref={(ref: any) => this.refPhrase = ref} 
+							ref={ref => this.refPhrase = ref} 
 							id="phrase" 
 							value={translate('popupSettingsPhraseStub')} 
 							className="isBlurred"

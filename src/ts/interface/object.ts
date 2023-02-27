@@ -41,11 +41,13 @@ export enum ObjectLayout {
 	
 	Database	 = 20,
 
-	Navigation	 = 100,
-	Graph		 = 101,
-	Store		 = 102,
-	History		 = 103,
-	Block		 = 104,
+	Empty		 = 100,
+	Navigation	 = 101,
+	Graph		 = 102,
+	Store		 = 103,
+	History		 = 104,
+	Archive		 = 105,
+	Block		 = 106,
 
 	Video		 = 1000,
 	Audio		 = 1001,

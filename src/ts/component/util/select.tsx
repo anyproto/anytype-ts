@@ -18,6 +18,7 @@ interface Props {
 	noFilter: boolean;
 	horizontal?: I.MenuDirection;
 	isMultiple?: boolean;
+	readonly?: boolean;
 	onChange? (id: any): void;
 };
 
@@ -48,12 +49,20 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, className, arrowClassName } = this.props;
+		const { id, className, arrowClassName, readonly } = this.props;
 		const { options } = this.state;
-		const cn = [ 'select', (className ? className : '') ];
+		const cn = [ 'select' ];
 		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];
 		const value = Relation.getArrayValue(this.state.value);
 		const current: any[] = [];
+
+		if (className) {
+			cn.push(className);
+		};
+
+		if (readonly) {
+			cn.push('isReadonly');
+		};
 		
 		value.forEach((id: string) => {
 			const option = options.find(item => item.id == id);
@@ -122,11 +131,17 @@ class Select extends React.Component<Props, State> {
 		};
 	};
 	
-	show () {
-		const { id, horizontal, menuClassName, menuClassNameWrap, onChange, menuWidth, noFilter, isMultiple } = this.props;
+	show (e: React.MouseEvent) {
+		e.stopPropagation();
+
+		const { id, horizontal, menuClassName, menuClassNameWrap, onChange, menuWidth, noFilter, isMultiple, readonly } = this.props;
 		const { value, options } = this.state;
 		const elementId = `#select-${id}`;
 		const element = this.props.element || elementId;
+
+		if (readonly) {
+			return;
+		};
 		
 		menuStore.open('select', { 
 			element,

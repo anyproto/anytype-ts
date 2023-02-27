@@ -176,7 +176,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={(ref: any) => { this.refList = ref; }}
+											ref={ref => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}

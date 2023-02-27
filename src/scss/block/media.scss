@@ -79,7 +79,7 @@
 				.icon { opacity: 0 !important; }
 			}
 
-			.loaderWrapper { width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; }
+			.loaderWrapper { width: 100%; height: 48px; position: relative; left: 0px; top: 0px; }
 
 			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; cursor: pointer; }
 			.react-pdf__Page { position: static !important; }

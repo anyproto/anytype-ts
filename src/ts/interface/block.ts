@@ -29,6 +29,7 @@ export enum BlockType {
 	TableColumn			 = 'tableColumn',
 	TableRow			 = 'tableRow',
 	TableOfContents		 = 'tableOfContents',
+	Widget		 		 = 'widget',
 };
 
 export enum BlockPosition {
@@ -89,16 +90,16 @@ export interface BlockStructure {
 };
 
 export interface Block {
-	id: string;
+	id?: string;
 	type: BlockType;
 	layout?: I.ObjectLayout;
 	parentId?: string;
-	fields: any;
+	fields?: any;
 	hAlign?: BlockHAlign;
 	vAlign?: BlockVAlign;
 	bgColor?: string;
 	content: any;
-	childrenIds: string[];
+	childrenIds?: string[];
 	
 	getLength?(): number;
 	isSystem?(): boolean;

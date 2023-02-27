@@ -111,7 +111,7 @@ class Keyboard {
 
 		this.shortcut(`${cmd}+\\`, e, () => {
 			e.preventDefault();
-			sidebar.data.fixed ? sidebar.collapse() : sidebar.expand();
+			commonStore.isSidebarFixed ? sidebar.collapse() : sidebar.expand();
 		});
 
 		// Navigation
@@ -167,10 +167,16 @@ class Keyboard {
 			});
 
 			// Navigation search
-			this.shortcut(`${cmd}+s`, e, () => {
+			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
 				if (popupStore.isOpen('search') || !this.isPinChecked) {
 					return;
 				};
+
+				// Check if smth is selected to prevent search from opening
+				if ((pressed == `${cmd}+k`) && (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length))) {
+					return;
+				};
+
 				this.onSearchPopup();
 			});
 
@@ -194,10 +200,9 @@ class Keyboard {
 			});
 
 			// Go to dashboard
-			this.shortcut('cmd+enter, alt+h', e, (pressed: string) => {
-				const check = isMac ? pressed == 'cmd+enter' : true;
-				if (check && authStore.account && !popupStore.isOpen('search')) {
-					Util.route('/main/index');
+			this.shortcut('alt+h', e, () => {
+				if (authStore.account && !popupStore.isOpen('search')) {
+					ObjectUtil.openHome('route');
 				};
 			});
 
@@ -205,6 +210,16 @@ class Keyboard {
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
 				this.pageCreate();
+			});
+
+			// Settings
+			this.shortcut(`${cmd}+comma`, e, () => {
+				popupStore.open('settings', {});
+			});
+
+			// Store
+			this.shortcut(`${cmd}+alt+l`, e, () => {
+				ObjectUtil.openRoute({ layout: I.ObjectLayout.Store });
 			});
 		};
 
@@ -295,7 +310,7 @@ class Keyboard {
 			let prev = Util.history.entries[Util.history.index - 1];
 
 			if (account && !prev) {
-				Util.route('/main/index');
+				ObjectUtil.openHome('route');
 				return;
 			};
 
@@ -771,9 +786,8 @@ class Keyboard {
 		};
 	};
 
-	ctrlSymbol () {
-		const platform = Util.getPlatform();
-		return platform == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+	cmdSymbol () {
+		return Util.getPlatform() == I.Platform.Mac ? '&#8984;' : 'Ctrl';
 	};
 
 	cmdKey () {

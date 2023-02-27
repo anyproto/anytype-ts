@@ -21,7 +21,7 @@ const BlockIconPage = observer(class BlockIconPage extends React.Component<I.Blo
 				<IconObject 
 					id={`block-icon-${rootId}`} 
 					canEdit={!readonly} 
-					getObject={() => { return detailStore.get(rootId, rootId, []); }} 
+					getObject={() => detailStore.get(rootId, rootId, [])} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
 					size={96} 

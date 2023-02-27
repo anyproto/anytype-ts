@@ -101,7 +101,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={(ref: any) => { this.refFilter = ref; }} 
+						ref={ref => { this.refFilter = ref; }} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -126,7 +126,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={(ref: any) => { this.refList = ref; }}
+											ref={ref => { this.refList = ref; }}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -271,7 +271,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limitMenuRecords,
+			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (callBack) {
 				callBack(message);
@@ -296,7 +296,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
-			this.offset += Constant.limitMenuRecords;
+			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
 	};

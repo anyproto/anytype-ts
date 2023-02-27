@@ -74,10 +74,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 						{loading ? <Loader /> : (
 							<div id="columns" className="columns">
 								{groups.map((group: any, i: number) => (
-									<Column
-										key={`board-column-${group.id}`}
-										ref={(ref: any) => { this.columnRefs[group.id] = ref; }}
-										{...this.props}
+									<Column 
+										key={`board-column-${group.id}`} 
+										ref={ref => this.columnRefs[group.id] = ref}
+										{...this.props} 
 										{...group}
 										onRecordAdd={this.onRecordAdd}
 										onDragStartColumn={this.onDragStartColumn}

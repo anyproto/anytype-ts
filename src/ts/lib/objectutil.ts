@@ -1,8 +1,30 @@
 import { I, C, keyboard, Util, history as historyPopup, Renderer } from 'Lib';
-import { commonStore, blockStore, popupStore } from 'Store';
+import { commonStore, blockStore, popupStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class ObjectUtil {
+
+	openHome (type: string) {
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const empty = { layout: I.ObjectLayout.Empty };
+
+		if (!space.spaceDashboardId) {
+			this.openRoute(empty);
+			return;
+		};
+
+		const home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
+		if (home._empty_) {
+			this.openRoute(empty);
+			return;
+		};
+
+		switch (type) {
+			case 'route': this.openRoute(home); break;
+			case 'auto': this.openAuto(home); break;
+			case 'popup': this.openPopup(home); break;
+		};
+	};
 
 	actionByLayout (v: I.ObjectLayout): string {
 		v = v || I.ObjectLayout.Page;
@@ -21,7 +43,9 @@ class ObjectUtil {
 			case I.ObjectLayout.Graph:		 r = 'graph'; break;
 			case I.ObjectLayout.Store:		 r = 'store'; break;
 			case I.ObjectLayout.History:	 r = 'history'; break;
+			case I.ObjectLayout.Archive:	 r = 'archive'; break;
 			case I.ObjectLayout.Block:		 r = 'block'; break;
+			case I.ObjectLayout.Empty:		 r = 'empty'; break;
 		};
 		return r;
 	};
@@ -57,24 +81,12 @@ class ObjectUtil {
 			return '';
 		};
 
-		let action = this.actionByLayout(object.layout);
-		let id = object.id;
-
-		if ((action == 'edit') && (object.id == blockStore.root)) {
-			action = 'index';
-			id = '';
-		};
-
+		const action = this.actionByLayout(object.layout);
 		if (!action) {
 			return '';
 		};
 
-		const route = [ 'main', action ];
-		if (id) {
-			route.push(id);
-		};
-
-		return route.join('/');
+		return [ 'main', action, object.id ].join('/');
 	};
 
 	openRoute (object: any) {

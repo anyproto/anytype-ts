@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, DataUtil, Util, crumbs, Action } from 'Lib';
+import { I, M, C, DataUtil, Util, Action, ObjectUtil } from 'Lib';
 import { blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -57,13 +57,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				ref={node => this.node = node}
 				className={[ 'setWrapper', check.className ].join(' ')}
 			>
-				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainEdit" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
 				<div className="blocks wrapper">
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-					<HeadSimple ref={(ref: any) => { this.refHead = ref;}} type={isCollection ? 'collection' : 'set'} rootId={rootId} />
+					<HeadSimple ref={ref => { this.refHead = ref;}} type={isCollection ? 'collection' : 'set'} rootId={rootId} />
 
 					{children.map((block: I.Block, i: number) => (
 						<Block 
@@ -113,12 +113,10 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				};
 				return;
 			};
-
-			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();

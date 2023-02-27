@@ -37,7 +37,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	render () {
 		const { isEditing } = this.state;
-		const { index, relation, viewType, getView, getRecord, textLimit, isInline, iconSize, onParentClick, placeholder } = this.props;
+		const { index, relation, viewType, getView, getRecord, textLimit, isInline, iconSize, placeholder } = this.props;
 		const record = getRecord(index);
 		
 		if (!record) {
@@ -99,7 +99,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 				EditorComponent = (item: any) => (
 					<Input 
-						ref={(ref: any) => { this.ref = ref; }} 
+						ref={ref => { this.ref = ref; }} 
 						id="input" 
 						{...item} 
 						maskOptions={maskOptions} 
@@ -111,7 +111,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			} else {
 				EditorComponent = (item: any) => (
 					<Input 
-						ref={(ref: any) => { this.ref = ref; }} 
+						ref={ref => { this.ref = ref; }} 
 						id="input" 
 						{...item} 
 						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}
@@ -177,11 +177,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 		};
 
-		let content: any = null;
-
+		let icon = null;
 		if (relation.relationKey == 'name') {
-			let icon = null;
-
 			if (!view || (view && !view.hideIcon)) {
 				icon = (
 					<IconObject 
@@ -202,25 +199,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			if (record.layout == I.ObjectLayout.Note) {
 				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};
-
-			content = (
-				<React.Fragment>
-					{icon}
-					<Name name={value} />
-					<Icon 
-						className="edit" 
-						onMouseDown={(e: any) => { 
-							e.stopPropagation(); 
-							onParentClick(e);
-						}} 
-					/>
-				</React.Fragment>
-			);
-		} else {
-			content = <Name name={value} />;
 		};
 
-		return content;
+		return (
+			<React.Fragment>
+				{icon}
+				<Name name={value} />
+			</React.Fragment>
+		);
 	};
 
 	componentDidMount () {

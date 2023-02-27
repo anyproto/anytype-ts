@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
-import { I, M, C, Util, crumbs, Action, Renderer } from 'Lib';
-import { commonStore, blockStore, detailStore } from 'Store';
+import { I, M, C, Util, Action, Renderer, ObjectUtil } from 'Lib';
+import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
 interface State {
@@ -90,7 +90,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 		return (
 			<div ref={node => this.node = node}>
-				<Header component="mainEdit" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainEdit" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div id="blocks" className={cn.join(' ')}>
 					{file ? (
@@ -167,12 +167,10 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				};
 				return;
 			};
-
-			crumbs.addRecent(rootId);
 
 			this.loading = false;
 			this.forceUpdate();
@@ -243,10 +241,9 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	onDownload (e: any) {
 		const rootId = this.getRootId();
 		const blocks = blockStore.getBlocks(rootId);
-		const block = blocks.find((it: I.Block) => { return it.isFile(); });
-		const { content } = block;
+		const block = blocks.find(it => it.isFile());
 		
-		Renderer.send('download', commonStore.fileUrl(content.hash));
+		Action.download(block, 'media');
 	};
 
 	getRootId () {

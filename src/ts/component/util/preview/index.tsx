@@ -34,7 +34,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	render () {
 		const { preview } = commonStore;
 		const { type, param, noUnlink } = preview;
-		const cn = [ 'preview' ];
+		const cn = [ 'previewWrapper' ];
 
 		let head = null;
 		let content = null;
@@ -49,7 +49,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					</div>
 				);
 
-				content = <PreviewLink ref={(ref: any) => { this.ref = ref; }} url={param} position={this.position} />;
+				content = <PreviewLink ref={ref => { this.ref = ref; }} url={param} position={this.position} />;
 				break;
 
 			case I.MarkType.Object:
@@ -61,7 +61,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					);
 				};
 
-				content = <PreviewObject ref={(ref: any) => { this.ref = ref; }} rootId={param} setObject={this.setObject} position={this.position} />;
+				content = <PreviewObject ref={ref => { this.ref = ref; }} rootId={param} setObject={this.setObject} position={this.position} />;
 				break;
 		};
 

@@ -113,14 +113,13 @@ class Cell extends React.Component<Props> {
 				onMouseLeave={this.onMouseLeave}
 			>
 				<CellComponent 
-					ref={(ref: any) => { this.ref = ref; }} 
+					ref={ref => { this.ref = ref; }} 
 					{...this.props} 
 					id={id} 
 					key={id}
 					canEdit={canEdit}
 					relation={relation}
 					onChange={this.onChange} 
-					onParentClick={this.onClick}
 				/>
 			</div>
 		);

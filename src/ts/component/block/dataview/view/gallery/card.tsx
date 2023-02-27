@@ -73,7 +73,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								key={'list-cell-' + view.id + relation.relationKey}
 								{...this.props}
 								subId={subId}
-								ref={(ref: any) => { onRef(ref, id); }}
+								ref={ref => { onRef(ref, id); }}
 								relationKey={relation.relationKey}
 								viewType={view.type}
 								idPrefix={idPrefix}

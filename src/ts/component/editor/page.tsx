@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, crumbs, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
+import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -96,7 +96,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 						<PageHeadEdit 
 							{...this.props} 
-							ref={(ref: any) => { this.refHeader = ref; }}
+							ref={ref => { this.refHeader = ref; }}
 							onKeyDown={this.onKeyDownBlock}
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
@@ -225,19 +225,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate(() => { Util.route('/main/index'); });
+					Util.onErrorUpdate(() => { ObjectUtil.openHome('route'); });
 				} else 
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.isDeleted = true;
 					this.forceUpdate();
 				} else {
-					Util.route('/main/index');
+					ObjectUtil.openHome('route');
 				};
 				return;
 			};
 
-			crumbs.addRecent(rootId);
-			
 			this.scrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.loading = false;
 			this.focusTitle();
@@ -501,6 +499,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const ids = selection.get(I.SelectType.Block);
 		const cmd = keyboard.cmdKey();
 		const readonly = this.isReadonly();
+		const styleParam = this.getStyleParam();
 
 		// Select all
 		keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
@@ -526,7 +525,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		});
 
 		// Redo
-		keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, (pressed: string) => {
 			if (readonly) {
 				e.preventDefault();
 				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
@@ -597,6 +596,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				e.preventDefault();
 				Action.duplicate(rootId, rootId, ids[ids.length - 1], ids, I.BlockPosition.Bottom, () => { focus.clear(true); });
 			});
+
+			for (const item of styleParam) {
+				let style = null;
+
+				keyboard.shortcut(item.key, e, (pressed: string) => {
+					style = item.style;
+				});
+
+				if (style !== null) {
+					C.BlockListTurnInto(rootId, ids, style);
+				};
+			};
 
 			// Open action menu
 			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
@@ -678,6 +689,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			return;
 		};
 
+		const styleParam = this.getStyleParam();
 		const platform = Util.getPlatform();
 		const cmd = keyboard.cmdKey();
 
@@ -721,38 +733,43 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			});
 
 			// Undo
-			keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+z`, e, () => {
 				e.preventDefault();
-				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onUndo(rootId, () => { focus.clear(true); });
 			});
 
 			// Redo
-			keyboard.shortcut(`${cmd}+shift+z`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
-				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onRedo(rootId, () => { focus.clear(true); });
 			});
 
 			// Search
-			keyboard.shortcut(`${cmd}+f`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+f`, e, () => {
 				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from));
 			});
 
+			if (block.isTextToggle()) {
+				keyboard.shortcut(`${cmd}+shift+t`, e, () => {
+					blockStore.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
+				});
+			};
 		};
 
 		// History
-		keyboard.shortcut('ctrl+h, cmd+y', e, (pressed: string) => {
+		keyboard.shortcut('ctrl+h, cmd+y', e, () => {
 			e.preventDefault();
 			this.onHistory(e);
 		});
 
 		// Duplicate
-		keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+d`, e, () => {
 			e.preventDefault();
 			Action.duplicate(rootId, rootId, block.id, [ block.id ], I.BlockPosition.Bottom);
 		});
 
 		// Open action menu
-		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, () => {
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockAction', { 
 					element: `#block-${block.id}`,
@@ -787,6 +804,20 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 			if (type !== null) {
 				this.onMarkBlock(e, type, text, marks, param, range);
+			};
+		};
+
+		if (!isInsideTable && block.isText()) {
+			for (const item of styleParam) {
+				let style = null;
+
+				keyboard.shortcut(item.key, e, (pressed: string) => {
+					style = item.style;
+				});
+
+				if (style !== null) {
+					C.BlockListTurnInto(rootId, [ block.id ], style);
+				};
 			};
 		};
 
@@ -846,6 +877,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				this.onCtrlShiftArrowBlock(e, pressed);
 			});
 		};
+	};
+
+	getStyleParam () {
+		const cmd = keyboard.cmdKey();
+		return [
+			{ key: `${cmd}+0`, style: I.TextStyle.Paragraph },
+			{ key: `${cmd}+1`, style: I.TextStyle.Header1 },
+			{ key: `${cmd}+2`, style: I.TextStyle.Header2 },
+			{ key: `${cmd}+3`, style: I.TextStyle.Header3 },
+			{ key: `${cmd}+4`, style: I.TextStyle.Quote },
+			{ key: `${cmd}+5`, style: I.TextStyle.Callout },
+			{ key: `${cmd}+6`, style: I.TextStyle.Checkbox },
+			{ key: `${cmd}+7`, style: I.TextStyle.Bulleted },
+			{ key: `${cmd}+8`, style: I.TextStyle.Numbered },
+			{ key: `${cmd}+9`, style: I.TextStyle.Toggle },
+		];
 	};
 
 	getMarkParam () {
@@ -1692,15 +1739,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				options,
 				onSelect: (event: any, item: any) => {
 					let value = block.content.text;
-					let to = range.from + url.length;
+					let to = 0;
 					let marks = Util.objectCopy(block.content.marks || []);
 
 					switch (item.id) {
 						case 'link':
-							value = Util.stringInsert(value, url + ' ', range.from, range.from);
+							if (currentFrom == currentTo) {
+								value = Util.stringInsert(value, url + ' ', currentFrom, currentFrom);
+								to = currentFrom + url.length;
+							} else {
+								to = currentTo;
+							};
+
 							marks.push({
 								type: I.MarkType.Link,
-								range: { from: range.from, to: to },
+								range: { from: currentFrom, to },
 								param: url,
 							});
 
@@ -1735,7 +1788,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 							break;
 
 						case 'cancel':
-							value = Util.stringInsert(block.content.text, url + ' ', range.from, range.from);
+							value = Util.stringInsert(block.content.text, url + ' ', currentFrom, currentFrom);
+							to = currentFrom + url.length;
 
 							DataUtil.blockSetText(rootId, block.id, value, marks, true, () => {
 								focus.set(block.id, { from: to + 1, to: to + 1 });

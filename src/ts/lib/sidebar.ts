@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Storage, Util, keyboard } from 'Lib';
+import { I, keyboard, Storage, Util } from 'Lib';
 import { commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -9,21 +9,24 @@ interface SidebarData {
 	y: number;
 	width: number;
 	height: number;
-	fixed: boolean;
-	snap: I.MenuDirection;
+	snap: I.MenuDirection.Left | I.MenuDirection.Right | null;
 };
 
 const SNAP_THRESHOLD = 30;
 const SHOW_THRESHOLD = 30;
-const ANIMATION = 300;
+const ANIMATION = 200;
 
 class Sidebar {
-
-	data: SidebarData = { x: 0, y: 0, width: 0, height: 0, fixed: false, snap: null };
-	obj: any = null;
-	fixed = false;
+	
+	data: SidebarData = {
+		x: 0,
+		y: 0,
+		width: 0,
+		height: 0,
+		snap: I.MenuDirection.Left,
+	};
+	obj: JQuery<HTMLElement> = null;
 	animating = false;
-
 	timeoutHide = 0;
 	timeoutAnim = 0;
 
@@ -33,112 +36,30 @@ class Sidebar {
 		const stored = Storage.get('sidebar');
 		if (stored) {
 			this.set(stored);
-			return;
-		};
-
-		const platform = Util.getPlatform();
-		const isWindows = platform == I.Platform.Windows;
-		const offset = isWindows ? Constant.size.headerWindows : 0;
-		const win = $(window);
-		const wh = win.height();
-		const height = this.maxHeight();
-		const y = (wh - offset) / 2 - height / 2 + offset;
-
-		this.set({
-			height,
-			width: Constant.size.sidebar.width.default,
-			y,
-			x: 0,
-			fixed: true,
-			snap: I.MenuDirection.Left,
-		});
-
-		this.resizePage();
-		this.fixed = false;
-
-		commonStore.autoSidebarSet(true);
-	};
-
-	set (v: any) {
-		v = Object.assign(this.data, v);
-
-		const { x, y } = this.checkCoords(v.x, v.y);
-		const snap = this.getSnap();
-
-		v.fixed = Boolean(v.fixed);
-		v.x = x;
-		v.y = y;
-		v.width = this.checkWidth(v.width);
-		v.height = this.checkHeight(v.height);
-		v.snap = snap;
-
-		this.data = Object.assign(this.data, v);
-		this.save();
-		this.setStyle();
-	};
-
-	save () {
-		Storage.set('sidebar', this.data);
-	};
-
-	setStyle () {
-		if (!this.obj || !this.obj.length) {
-			return;
-		};
-
-		const { fixed, x, y, width, height, snap } = this.data;
-		const css: any = { left: '', right: '', width };
-		const cn = [];
-
-		if (fixed) {
-			cn.push('fixed active');
 		} else {
-			css.top = y;
-			css.height = height;
-		};
+			const platform = Util.getPlatform();
+			const isWindows = platform == I.Platform.Windows;
+			const offset = isWindows ? 30 : 0;
+			const { wh } = this.getWindowDimensions();
+			const height = this.getMaxHeight();
+			const y = (wh - offset) / 2 - height / 2 + offset;
 
-		if (snap === null) {
-			css.left = x;
-		};
-		if (snap == I.MenuDirection.Left) {
-			cn.push('left');
-		};
-		if (snap == I.MenuDirection.Right) {
-			cn.push('right');
-		};
+			this.set({
+				height,
+				width: Constant.size.sidebar.width.default,
+				y,
+				x: 0,
+				snap: I.MenuDirection.Left,
+			});
 
-		this.obj.removeClass('left right fixed');
-		this.obj.css(css).addClass(cn.join(' '));
+			this.resizePage();
 
-		this.resizeHead();
-		this.checkButton();
+			commonStore.autoSidebarSet(true);
+			commonStore.isSidebarFixedSet(false);
+		};
 	};
 
-	setWidth (v: number) {
-		this.data.width = this.checkWidth(v);
-		this.save();
-		this.setStyle();
-	};
-
-	setHeight (v: number) {
-		this.data.height = this.checkHeight(v);
-		this.save();
-		this.setStyle();
-	};
-
-	setFixed (v: boolean) {
-		this.data.fixed = v;
-		this.data.snap = this.getSnap();
-
-		this.checkButton();
-		this.resizeHead();
-		this.resizePage();
-		this.save();
-
-		$(window).trigger('resize');
-	};
-
-	onMouseMove () {
+	onMouseMove (): void {
 		window.clearTimeout(this.timeoutHide);
 
 		if (!this.obj || !this.obj.length) {
@@ -150,17 +71,19 @@ class Sidebar {
 			return;
 		};
 
-		const { autoSidebar } = commonStore;
-		const { x } = keyboard.mouse.page;
-		const { width, snap } = this.data;
-		const win = $(window);
-		const ww = win.width();
-		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview' ]);
-		const popupOpen = popupStore.isOpen();
-
-		if (this.data.fixed || this.animating || !autoSidebar) {
+		if (
+			this.animating ||
+			commonStore.isSidebarFixed ||
+			!commonStore.autoSidebar
+		) {
 			return;
 		};
+
+		const { x } = keyboard.mouse.page;
+		const { width, snap } = this.data;
+		const { ww } = this.getWindowDimensions();
+		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview', 'widget' ]);
+		const popupOpen = popupStore.isOpen();
 
 		let show = false;
 		let hide = false;
@@ -168,7 +91,7 @@ class Sidebar {
 		if (snap == I.MenuDirection.Left) {
 			if (x <= SHOW_THRESHOLD) {
 				show = true;
-			}
+			};
 			if (x >= width + 20) {
 				hide = true;
 			};
@@ -199,9 +122,9 @@ class Sidebar {
 		if (hide && this.obj.hasClass('active')) {
 			this.timeoutHide = window.setTimeout(() => { this.hide(); }, 200);
 		};
-	};
+	}
 
-	collapse () {
+	collapse (): void {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
@@ -212,7 +135,7 @@ class Sidebar {
 		const { x, y, width, height, snap } = this.data;
 		const css: any = { top: 0, height: '100%' };
 		const mouse = keyboard.mouse.page;
-		
+
 		let tx = 0;
 		if (snap == I.MenuDirection.Left) {
 			css.left = 0;
@@ -229,9 +152,12 @@ class Sidebar {
 		this.obj.addClass('anim');
 		this.setFixed(false);
 
-		raf(() => { 
+		raf(() => {
 			const css: any = {};
-			if ((this.data.snap === null) || (autoSidebar && (mouse.x >= x) && (mouse.x <= x + width))) {
+			if (
+				(this.data.snap === null) ||
+				(autoSidebar && (mouse.x >= x) && (mouse.x <= x + width))
+			) {
 				css.top = y;
 				css.height = height;
 				css.transform = `translate3d(0px,0px,0px)`;
@@ -240,6 +166,7 @@ class Sidebar {
 				css.height = '100%';
 				css.transform = `translate3d(${tx}%,0px,0px)`;
 			};
+
 			this.obj.css(css);
 		});
 
@@ -250,9 +177,9 @@ class Sidebar {
 				this.obj.removeClass('active');
 			};
 		});
-	};
+	}
 
-	expand () {
+	expand (): void {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
@@ -278,15 +205,21 @@ class Sidebar {
 		this.setFixed(true);
 
 		raf(() => {
-			this.obj.css({ top: 0 }).addClass('fixed'); 
+			this.obj.css({ top: 0 }).addClass('fixed');
 		});
 
 		this.removeAnimation(() => {
-			this.obj.css({ transform: '', height: this.data.height, top: this.data.y, left: '', right: '' });
+			this.obj.css({
+				transform: '',
+				height: this.data.height,
+				top: this.data.y,
+				left: '',
+				right: '',
+			});
 		});
-	};
+	}
 
-	show () {
+	show (): void {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
@@ -296,7 +229,7 @@ class Sidebar {
 		this.removeAnimation();
 	};
 
-	hide () {
+	hide (): void {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
@@ -305,14 +238,14 @@ class Sidebar {
 		this.removeAnimation();
 	};
 
-	removeAnimation (callBack?: () => void) {
+	private removeAnimation (callBack?: () => void): void {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
 
 		window.clearTimeout(this.timeoutAnim);
-		this.timeoutAnim = window.setTimeout(() => { 
-			this.obj.removeClass('anim'); 
+		this.timeoutAnim = window.setTimeout(() => {
+			this.obj.removeClass('anim');
 			this.animating = false;
 
 			if (callBack) {
@@ -321,14 +254,14 @@ class Sidebar {
 		}, ANIMATION);
 	};
 
-	resize () {
-		const { fixed, snap, width } = this.data;
-		const win = $(window);
-		const ww = win.width();
-		const set: any = {};
+	resize (): void {
+		const { isSidebarFixed } = commonStore;
+		const { snap, width } = this.data;
+		const { ww } = this.getWindowDimensions();
+		const set: Partial<SidebarData> = {};
 
-		if (!fixed) {
-			set.height = this.maxHeight();
+		if (!isSidebarFixed) {
+			set.height = this.getMaxHeight();
 		};
 		if (snap == I.MenuDirection.Left) {
 			set.x = 0;
@@ -342,20 +275,9 @@ class Sidebar {
 		};
 	};
 
-	resizeHead () {
-		if (!this.obj || !this.obj.length) {
-			return;
-		};
-
-		const head = this.obj.find('#head');
-		const platform = Util.getPlatform();
-
-		head.css({ height: this.data.fixed ? (platform == I.Platform.Windows ? Constant.size.headerWindows : Util.sizeHeader()) : 12 });
-	};
-
 	resizePage () {
-		const { fixed, snap } = this.data;
-		const win = $(window);
+		const { isSidebarFixed } = commonStore;
+		const { snap } = this.data;
 		const page = $('#page.isFull');
 		const header = page.find('#header');
 		const footer = page.find('#footer');
@@ -364,17 +286,19 @@ class Sidebar {
 		const dummyRight = $('#sidebarDummyRight');
 
 		let width = 0;
+		let dummy = null;
+
 		if (this.obj && this.obj.length) {
-			if (fixed && (this.obj.css('display') != 'none')) {
+			if (isSidebarFixed && (this.obj.css('display') != 'none')) {
 				width = this.obj.outerWidth();
 			};
 		};
 
-		let pageWidth = win.width() - width;
-		let css: any = { width: '' };
-		let cssLoader: any = { width: pageWidth, left: '', right: '' };
-		let dummy = null;
-
+		const { ww } = this.getWindowDimensions();
+		const pageWidth = ww - width;
+		const css: any = { width: '' };
+		const cssLoader: any = { width: pageWidth, left: '', right: '' };
+		
 		header.css(css).removeClass('withSidebar snapLeft snapRight');
 		footer.css(css).removeClass('withSidebar snapLeft snapRight');
 
@@ -383,7 +307,7 @@ class Sidebar {
 
 		css.width = header.outerWidth() - width;
 
-		if (fixed) {
+		if (isSidebarFixed) {
 			header.addClass('withSidebar');
 			footer.addClass('withSidebar');
 		};
@@ -414,26 +338,143 @@ class Sidebar {
 		loader.css(cssLoader);
 		header.css(css);
 		footer.css(css);
-
-		this.checkButton();
 	};
 
-	checkButton () {
-		const { fixed } = this.data;
-		const button = $('#footer #button-expand');
-
-		if (!button.length) {
+	private resizeHead (): void {
+		if (!this.obj || !this.obj.length) {
 			return;
 		};
 
-		fixed ? button.hide() : button.show();
+		const { isSidebarFixed } = commonStore;
+		const head = this.obj.find('#head');
+		const platform = Util.getPlatform();
+
+		let height = 12;
+		if (isSidebarFixed) {
+			height = platform == I.Platform.Windows ? Constant.size.headerWindows : Util.sizeHeader();
+		};
+
+		head.css({ height });
 	};
 
-	checkCoords (x: number, y: number): { x: number, y: number } {
-		const { width, height } = this.data;
+	private save (): void {
+		Storage.set('sidebar', this.data);
+	};
+
+	set (v: Partial<SidebarData>) {
+		v = Object.assign(this.data, v);
+
+		const width = this.limitWidth(v.width);
+		const height = this.limitHeight(v.height);
+		const { x, y } = this.limitCoords(v.x, v.y, width, height);
+
+		this.data = Object.assign<SidebarData, Partial<SidebarData>>(this.data, {
+			x,
+			y,
+			width,
+			height,
+			snap: this.getSnap(x, width),
+		});
+
+		this.save();
+		this.resizePage();
+		this.setStyle();
+	};
+
+	setWidth (width: number): void {
+		this.set({ width });
+	};
+
+	setHeight (height: number): void {
+		this.set({ height });
+	};
+
+	private setStyle (): void {
+		if (!this.obj || !this.obj.length) {
+			return;
+		};
+
+		const { x, y, width, height, snap } = this.data;
+		const css: any = { left: '', right: '', width };
+		const cn = [];
+
+		if (commonStore.isSidebarFixed) {
+			cn.push('fixed active');
+		} else {
+			css.top = y;
+			css.height = height;
+		};
+
+		if (snap === null) {
+			css.left = x;
+		};
+		if (snap == I.MenuDirection.Left) {
+			cn.push('left');
+		};
+		if (snap == I.MenuDirection.Right) {
+			cn.push('right');
+		};
+
+		this.obj.removeClass('left right fixed');
+		this.obj.css(css).addClass(cn.join(' '));
+
+		this.resizeHead();
+	};
+
+	private setFixed (v: boolean): void {
+		commonStore.isSidebarFixedSet(v);
+		this.data.snap = this.getSnap(this.data.x, this.data.width);
+
+		this.resizeHead();
+		this.resizePage();
+		this.save();
+
+		$(window).trigger('resize');
+	};
+
+	/**
+	 * Get width and height of window DOM node
+	 */
+	private getWindowDimensions (): { ww: number; wh: number } {
 		const win = $(window);
-		const wh = win.height();
 		const ww = win.width();
+		const wh = win.height();
+
+		return { ww, wh };
+	};
+
+	/**
+	 * Get the side to snap the sidebar to
+	 */
+	private getSnap (x: number, width: number): I.MenuDirection.Left | I.MenuDirection.Right | null {
+		const { ww } = this.getWindowDimensions();
+
+		if (x <= SNAP_THRESHOLD) {
+			return I.MenuDirection.Left;
+		} else 
+		if (x + width >= ww - SNAP_THRESHOLD) {
+			return I.MenuDirection.Right;
+		} else 
+		if (commonStore.isSidebarFixed) {
+			return I.MenuDirection.Left;
+		} else {
+			return null;
+		};
+	};
+
+	/**
+	 * Get max height allowed
+	 */
+	private getMaxHeight (): number {
+		const { wh } = this.getWindowDimensions();
+		return wh - Util.sizeHeader() - 52 - 10;
+	};
+
+	/**
+	 * Limit the sidebar coordinates to the max and min bounds
+	 */
+	private limitCoords (x: number, y: number, width: number, height: number ): { x: number; y: number } {
+		const { ww, wh } = this.getWindowDimensions();
 		const hh = Util.sizeHeader();
 
 		x = Number(x);
@@ -447,39 +488,21 @@ class Sidebar {
 		return { x, y };
 	};
 
-	getSnap (): I.MenuDirection {
-		const { x, width, fixed } = this.data;
-		const win = $(window);
-		const ww = win.width();
-
-		let snap = null;
-		if (x <= SNAP_THRESHOLD) {
-			snap = I.MenuDirection.Left;
-		} else
-		if (x + width >= ww - SNAP_THRESHOLD) {
-			snap = I.MenuDirection.Right;
-		};
-		if (fixed && (snap === null)) {
-			snap = I.MenuDirection.Left;
-		};
-		return snap;
-	};
-
-	checkWidth (width: number): number {
+	/**
+	 * Limit the sidebar width to the max and min bounds
+	 */
+	private limitWidth (width: number): number {
 		const { min, max } = Constant.size.sidebar.width;
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
 
-	checkHeight (height: number): number {
+	/**
+	 * Limit the sidebar height to the max and min bounds
+	 */
+	private limitHeight (height: number): number {
 		const { min } = Constant.size.sidebar.height;
-		return Math.max(min, Math.min(this.maxHeight(), Number(height) || 0));
+		return Math.max(min, Math.min(this.getMaxHeight(), Number(height) || 0));
 	};
-
-	maxHeight (): number {
-		const win = $(window);
-		return win.height() - Util.sizeHeader() - 52 - 10;
-	};
-
 };
 
- export const sidebar: Sidebar = new Sidebar();
+export const sidebar: Sidebar = new Sidebar();

@@ -57,7 +57,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 				<div className="inputs">
 					<div className="textareaWrap">
 						<Textarea 
-							ref={(ref: any) => this.refPhrase = ref} 
+							ref={ref => this.refPhrase = ref} 
 							id="phrase" 
 							value={translate('popupSettingsPhraseStub')} 
 							className="isBlurred"

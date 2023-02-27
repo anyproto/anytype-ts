@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ListIndex, Cover, Header, Footer, Filter, EmptySearch } from 'Component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'Store';
-import { I, C, Util, DataUtil, ObjectUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'Lib';
+import { commonStore, blockStore, detailStore, menuStore, dbStore, authStore } from 'Store';
+import { I, C, Util, DataUtil, ObjectUtil, translate, Storage, analytics, keyboard, Action } from 'Lib';
 import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
 
@@ -48,7 +48,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		this.onSelectionFavorite = this.onSelectionFavorite.bind(this);
 		this.onSelectionAll = this.onSelectionAll.bind(this);
 		this.onSelectionNone = this.onSelectionNone.bind(this);
-		this.onSelectionClose = this.onSelectionClose.bind(this);
 	};
 	
 	render () {
@@ -140,7 +139,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 			<div ref={node => this.node = node}>
 				<Cover {...cover} className="main" />
 				<Header {...this.props} component="mainIndex" />
-				<Footer {...this.props} component="mainIndex" />
 				
 				<div id="body" className="wrapper">
 					<div id="title" className="title">
@@ -174,7 +172,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 								<div id="searchWrap" className="btn searchWrap" onClick={this.onSearch}>
 									<Icon className="search" />
 									<Filter 
-										ref={(ref: any) => { this.refFilter = ref; }} 
+										ref={ref => { this.refFilter = ref; }} 
 										placeholder="" 
 										placeholderFocus="" 
 										value={filter}
@@ -182,7 +180,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 										onClear={this.onFilterClear}
 									/>
 								</div>
-								{(tab.id == I.TabIndex.Recent) && list.length ? <div className="btn" onClick={this.onClear}>Clear</div> : ''}
 							</div>
 						</div>
 
@@ -203,6 +200,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 						{content}
 					</div>
 				</div>
+				<Footer {...this.props} component="mainIndex" />
 			</div>
 		);
 	};
@@ -303,24 +301,12 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 	};
 
 	getTabs () {
-		const { config } = commonStore;
-
-		let tabs: any[] = [
+		return [
 			{ id: I.TabIndex.Favorite, name: 'Favorites' },
 			{ id: I.TabIndex.Recent, name: 'Recent' },
 			{ id: I.TabIndex.Set, name: 'Sets', load: true },
+			{ id: I.TabIndex.Archive, name: 'Bin', load: true },
 		];
-
-		if (config.experimental) {
-			tabs.push({ id: I.TabIndex.Space, name: 'Spaces', load: true });
-		};
-
-		if (config.allowSpaces) {
-			tabs.push({ id: I.TabIndex.Shared, name: 'Shared', load: true });
-		};
-
-		tabs.push({ id: I.TabIndex.Archive, name: 'Bin', load: true });
-		return tabs;
 	};
 
 	onTab (id: I.TabIndex) {
@@ -369,16 +355,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 
 		if (tab.id == I.TabIndex.Set) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
-		};
-
-		if (tab.id == I.TabIndex.Space) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space });
-		};
-
-		if (tab.id == I.TabIndex.Shared) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotEqual, value: Constant.typeId.space });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.NotEmpty, value: null });
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'isHighlighted', condition: I.FilterCondition.Equal, value: true });
 		};
 
 		if (filter) {
@@ -501,12 +477,11 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 				};
 			};
 		} else {
-			let idx = this.selected.indexOf(item.id);
-			if (idx >= 0) {
-				this.selected.splice(idx, 1);
+			if (this.selected.includes(item.id)) {
+				this.selected = this.selected.filter(it => it != item.id);
 			} else {
 				this.selected.push(item.id);
-			};	
+			};
 		};
 
 		this.selected = Util.arrayUnique(this.selected);
@@ -931,21 +906,14 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 
 	getSelectedIndexes () {
 		const list = this.getList();
-		const indexes = this.selected.map(id => {
-			return list.findIndex(it => it.id === id);
-		});
+		const indexes = this.selected.map(id => list.findIndex(it => it.id == id));
+
 		return indexes.filter(idx => idx >= 0);
 	};
 
 	getSelectionRange (index1: number, index2: number) {
 		const [ start, end ] = (index1 >= index2) ? [ index2, index1 ] : [ index1 + 1, index2 + 1 ];
 		return [ start, end ];
-	};
-
-	onClear () { 
-		const recent = crumbs.get(I.CrumbsType.Recent);
-		recent.ids = [];
-		crumbs.save(I.CrumbsType.Recent, recent);
 	};
 
 });

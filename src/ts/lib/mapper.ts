@@ -25,6 +25,7 @@ const Mapper = {
 		if (v == V.TABLECOLUMN)			 t = I.BlockType.TableColumn;
 		if (v == V.TABLEROW)			 t = I.BlockType.TableRow;
 		if (v == V.TABLEOFCONTENTS)		 t = I.BlockType.TableOfContents;
+		if (v == V.WIDGET)		 		 t = I.BlockType.Widget;
 		return t;
 	},
 
@@ -58,6 +59,7 @@ const Mapper = {
 				deviceId: obj.getDeviceid(),
 				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
+				widgetsId: obj.getWidgetsid(),
 			};
 		},
 
@@ -227,6 +229,12 @@ const Mapper = {
 		BlockTableRow: (obj: any) => {
 			return {
 				isHeader: obj.getIsheader(),
+			};
+		},
+
+		BlockWidget: (obj: any) => {
+			return {
+				layout: obj.getLayout(),
 			};
 		},
 
@@ -623,6 +631,14 @@ const Mapper = {
 		BlockTableOfContents: () => {
 			const content = new Model.Block.Content.TableOfContents();
 	
+			return content;
+		},
+
+		BlockWidget: (obj: any) => {
+			const content = new Model.Block.Content.Widget();
+			
+			content.setLayout(obj.layout);
+
 			return content;
 		},
 

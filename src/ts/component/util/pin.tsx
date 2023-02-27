@@ -25,6 +25,12 @@ class Pin extends React.Component<Props> {
 	refObj: any = {};
 	timeout = 0;
 
+	constructor (props: Props) {
+		super(props);
+
+		this.onClick = this.onClick.bind(this);
+	};
+
 	render () {
 		const { size } = this.props;
 		const inputs = [];
@@ -34,10 +40,10 @@ class Pin extends React.Component<Props> {
 		};
 
 		return (
-			<div className="pin">
+			<div className="pin" onClick={this.onClick}>
 				{inputs.map((item: any, i: number) => (
 					<Input 
-						ref={(ref: any) => this.refObj[item.id] = ref} 
+						ref={ref => this.refObj[item.id] = ref} 
 						maxLength={1} 
 						key={i} 
 						onFocus={(e) => { this.onFocus(e, item.id); }} 
@@ -78,6 +84,10 @@ class Pin extends React.Component<Props> {
 
 	focus () {
 		this.refObj[(this.n || 1)].focus();
+	};
+
+	onClick () {
+		this.focus();
 	};
 
 	onFocus (e: any, id: number) {
