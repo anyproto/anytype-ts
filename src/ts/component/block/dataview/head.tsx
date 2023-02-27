@@ -169,7 +169,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	onTitleOver (e: any, item: any) {
-		const { rootId, block, getData } = this.props;
+		const { rootId, block, loadData } = this.props;
 		const { targetObjectId } = block.content;
 
 		if (!item.arrow) {
@@ -189,7 +189,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		const onCreate = (message: any) => {
 			if (message.views && message.views.length) {
-				window.setTimeout(() => { getData(message.views[0].id, 0, true); }, 50);
+				window.setTimeout(() => { loadData(message.views[0].id, 0, true); }, 50);
 			};
 		};
 

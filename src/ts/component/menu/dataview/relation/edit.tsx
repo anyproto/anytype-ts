@@ -268,7 +268,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView, loadData } = data;
 		const view = getView();
 		const relation = this.getRelation();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
@@ -353,7 +353,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 							Dataview.relationAdd(rootId, blockId, relation.relationKey, Math.max(0, idx + item.dir), view, (message: any) => {
 								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
-								getData(view.id, 0);
+								loadData(view.id, 0);
 
 								if (onChange) {
 									onChange(message);

@@ -46,7 +46,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	constructor (props: Props) {
 		super(props);
 		
-		this.getData = this.getData.bind(this);
+		this.loadData = this.loadData.bind(this);
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
 		this.getSources = this.getSources.bind(this);
@@ -120,7 +120,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const dataviewProps = {
 			readonly: false,
-			getData: this.getData,
+			loadData: this.loadData,
 			getView: this.getView,
 			getSources: this.getSources,
 			getRecord: this.getRecord,
@@ -209,7 +209,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (view) {
 			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
-			this.getData(view.id, 0, true);
+			this.loadData(view.id, 0, true);
 		};
 
 		if (root.isObjectSet()) {
@@ -225,7 +225,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
 		if (viewId && (viewId != this.viewId)) {
-			this.getData(viewId, 0, true);
+			this.loadData(viewId, 0, true);
 		};
 
 		this.resize();
@@ -250,7 +250,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.unbind();
 		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
 		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
-		win.on(`updateDataviewData.${block.id}`, () => { this.getData(this.getView().id, 0, true);});
+		win.on(`updateDataviewData.${block.id}`, () => { this.loadData(this.getView().id, 0, true);});
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
 		});
@@ -313,15 +313,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return Util.arrayUnique(keys);
 	};
 
-	getData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
+	loadData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
 		if (!viewId) {
-			console.log('[BlockDataview.getData] No view id');
+			console.log('[BlockDataview.loadData] No view id');
 			return;
 		};
 
 		const view = this.getView(viewId);
 		if (!view) {
-			console.log('[BlockDataview.getData] No view');
+			console.log('[BlockDataview.loadData] No view');
 			return;
 		};
 
@@ -334,7 +334,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const isCollection = this.isCollection();
 
 		if (!sources.length && !isCollection) {
-			console.log('[BlockDataview.getData] No sources');
+			console.log('[BlockDataview.loadData] No sources');
 			return;
 		}
 
@@ -705,7 +705,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (message.views && message.views.length) {
-					window.setTimeout(() => { this.getData(message.views[0].id, 0, true); }, 50);
+					window.setTimeout(() => { this.loadData(message.views[0].id, 0, true); }, 50);
 				};
 
 				if (isInline) {

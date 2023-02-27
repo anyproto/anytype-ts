@@ -211,14 +211,14 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {
-		let { rootId, block, getData, getView, getLimit } = this.props;
+		let { rootId, block, loadData, getView, getLimit } = this.props;
 		let subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
 		let view = getView();
 
 		return new Promise((resolve, reject) => {
 			offset += getLimit();
-			getData(view.id, offset, false, resolve);
+			loadData(view.id, offset, false, resolve);
 			dbStore.metaSet(subId, '', { offset });
 		});
 	};

@@ -349,7 +349,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	onCellAdd (e: any) {
-		const { rootId, block, readonly, getData, getView } = this.props;
+		const { rootId, block, readonly, loadData, getView } = this.props;
 
 		menuStore.open('dataviewRelationList', { 
 			element: `#block-${block.id} #cell-add`,
@@ -357,7 +357,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 			offsetY: 10,
 			data: {
 				readonly,
-				getData,
+				loadData,
 				getView,
 				rootId,
 				blockId: block.id,
@@ -383,14 +383,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		let { rootId, block, getData, getView, getLimit } = this.props;
+		let { rootId, block, loadData, getView, getLimit } = this.props;
 		let subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
 		let view = getView();
 
         return new Promise((resolve, reject) => {
 			offset += getLimit();
-			getData(view.id, offset, false, resolve);
+			loadData(view.id, offset, false, resolve);
 			dbStore.metaSet(subId, '', { offset });
 		});
 	};

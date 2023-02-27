@@ -197,7 +197,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
 
@@ -225,11 +225,11 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView, loadData } = data;
 		const view = getView();
 
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => {
-			getData(view.id, 0);
+			loadData(view.id, 0);
 		});
 
 		menuStore.close('select');
@@ -245,7 +245,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView } = data;
+		const { rootId, blockId, loadData, getView } = data;
 		const view = getView();
 
 		menuStore.open('dataviewFilterValues', {
@@ -256,7 +256,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 				...data,
 				save: () => {
 					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, view.getFilter(item.id), () => {
-						getData(view.id, 0);
+						loadData(view.id, 0);
 					});
 				},
 				itemId: item.id,
@@ -271,12 +271,12 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onSortEnd (result: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView, loadData } = data;
 		const view = getView();
 		const { oldIndex, newIndex } = result;
 		
 		view.filters = arrayMove(view.filters as I.Filter[], oldIndex, newIndex);
-		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => { getData(view.id, 0); });
+		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => { loadData(view.id, 0); });
 
 		keyboard.disableSelection(false);
 		analytics.event('RepositionFilter');

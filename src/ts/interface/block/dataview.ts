@@ -110,7 +110,7 @@ export interface ViewComponent {
 	isCollection?: boolean;
 	className?: string;
 	onRef?(ref: any, id: string): void;
-	getData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
+	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecord(index: number): any;
 	getView?(): View;
 	getSources?(): string[];

@@ -151,7 +151,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			return;
 		};
 
-		const { rootId, block, readonly, getData, getView, getSources, getVisibleRelations, isInline } = this.props;
+		const { rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, isInline } = this.props;
 		const view = getView();
 		const obj = $(element);
 		const node = $(this.node);
@@ -172,8 +172,8 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			data: {
 				readonly,
 				rootId,
-				blockId: block.id, 
-				getData,
+				blockId: block.id,
+				loadData,
 				getView,
 				getSources,
 				getVisibleRelations,
@@ -247,7 +247,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	onViewEdit (e: any, element: string, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView, getData, getSources, isInline } = this.props;
+		const { rootId, block, getView, loadData, getSources, isInline } = this.props;
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const view = dbStore.getView(rootId, block.id, item.id);
 
@@ -264,7 +264,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				view: observable.box(view),
 				isInline,
 				getView,
-				getData,
+				loadData,
 				getSources,
 				onSave: () => { this.forceUpdate(); },
 			}

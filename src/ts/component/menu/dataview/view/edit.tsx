@@ -403,7 +403,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView, getSources, onSelect, onSave, readonly } = data;
+		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly } = data;
 		const view = data.view.get();
 		const current = getView();
 		const sources = getSources();
@@ -427,7 +427,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 							onSave();
 						};
 
-						getData(message.viewId, 0);
+						loadData(message.viewId, 0);
 						analytics.event('AddView', { type: view.type });
 					});
 					break;
@@ -446,7 +446,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 					if (next) {
 						C.BlockDataviewViewDelete(rootId, blockId, view.id, () => {
 							if (current.id == view.id) {
-								getData(next.id, 0);
+								loadData(next.id, 0);
 							};
 
 							analytics.event('RemoveView');

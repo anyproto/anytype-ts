@@ -50,7 +50,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 	};
 
 	onEdit (e: any) {
-		const { rootId, block, readonly, getData, getView, relationKey } = this.props;
+		const { rootId, block, readonly, loadData, getView, relationKey } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || keyboard.isResizing) {
@@ -67,7 +67,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 			onOpen: () => { obj.addClass('active'); },
 			onClose: () => { obj.removeClass('active'); },
 			data: {
-				getData,
+				loadData,
 				getView,
 				rootId,
 				blockId: block.id,
