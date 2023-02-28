@@ -71,7 +71,8 @@
 				.icon.edit { display: block; }
 			}
 
-			.row > .selectable { display: grid; }
+			.row > .selectable,
+			.row > .dropTarget > .selectable { display: grid; }
 
 			.cellContent { width: 100%; overflow: hidden; height: 20px; line-height: 20px; }
 			.cellContent {
