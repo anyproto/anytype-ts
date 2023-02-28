@@ -334,6 +334,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
 				break;
 			};
+
+			case Constant.widgetId.collection: {
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection });
+				break;
+			};
 		};
 
 		DataUtil.searchSubscribe({
@@ -346,7 +351,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	isCollection (blockId: string) {
-		return [ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set ].includes(blockId);
+		return [ 
+			Constant.widgetId.favorite, 
+			Constant.widgetId.recent, 
+			Constant.widgetId.set, 
+			Constant.widgetId.collection,
+		].includes(blockId);
 	};
 
 });

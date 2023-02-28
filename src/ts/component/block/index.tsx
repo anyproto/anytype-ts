@@ -30,7 +30,6 @@ import Constant from 'json/constant.json';
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	css?: any;
 	iconSize?: number;
-	isDragging?: boolean;
 };
 
 const SNAP = 0.01;
@@ -67,7 +66,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isDragging, isInsideTable } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable } = this.props;
 		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
@@ -80,7 +79,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let canSelect = !isInsideTable;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = false;
-		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'align' + hAlign ];
+		let cn: string[] = [ 'block', DataUtil.blockClass(block), 'align' + hAlign ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -142,7 +141,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.File: {
-				if (isDragging || (style == I.FileStyle.Link)) {
+				if (style == I.FileStyle.Link) {
 					blockComponent = <BlockFile key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 					break;
 				};

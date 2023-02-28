@@ -57,7 +57,7 @@ class DataUtil {
 		return icon;
 	};
 
-	blockClass (block: any, isDragging?: boolean) {
+	blockClass (block: any) {
 		const { content } = block;
 		const { style, type, state } = content;
 		const dc = Util.toCamelCase('block-' + block.type);
@@ -68,7 +68,7 @@ class DataUtil {
 				c.push('withFile');
 			};
 
-			if (isDragging || (style == I.FileStyle.Link) || (type == I.FileType.File)) {
+			if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
 				c.push(dc);
 			} else {
 				c.push('blockMedia');

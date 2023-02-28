@@ -3,6 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
+import { set } from 'mobx';
 import { throttle } from 'lodash';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
@@ -17,12 +18,9 @@ import ViewBoard from './dataview/view/board';
 import ViewGallery from './dataview/view/gallery';
 import ViewList from './dataview/view/list';
 import Empty from './dataview/empty';
-import {set} from "mobx";
-import {sorted} from "is";
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
-	isDragging?: boolean
 };
 
 interface State {
@@ -72,26 +70,24 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, isDragging } = this.props;
+		const { rootId, block, isPopup, isInline } = this.props;
 		const { loading } = this.state;
+
 		const views = dbStore.getViews(rootId, block.id);
-		const sources = this.getSources();
-		const targetId = this.getObjectId();
-		const object = detailStore.get(rootId, targetId);
-		const isCollection = this.isCollection();
-
-		const records = this.getRecords();
-		const emptyObj = (!sources.length && !isCollection) || (!records.length && isCollection);
-
 		if (!views.length) {
 			return null;
 		};
 
 		const view = this.getView();
-
 		if (!view) {
 			return null;
 		};
+
+		const sources = this.getSources();
+		const targetId = this.getObjectId();
+		const object = detailStore.get(rootId, targetId);
+		const isCollection = this.isCollection();
+		//const records = this.getRecords();
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
@@ -144,48 +140,46 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			);
 		};
 
-		if (!isDragging) {
-			if (loading) {
-				body = <Loader id="set-loader" />
-			} else
-			if (emptyObj) {
-				body = this.getEmpty(object.type);
-			} else {
-				controls = (
-					<Controls 
-						ref={(ref: any) => { this.refControls = ref; }} 
+		if (loading) {
+			body = <Loader id="set-loader" />
+		} else
+		if (!isCollection && !sources.length) {
+			body = this.getEmpty('source');
+		} else {
+			controls = (
+				<Controls 
+					ref={(ref: any) => { this.refControls = ref; }} 
+					{...this.props}
+					{...dataviewProps}
+					className={className}
+				/>
+			);
+
+			body = (
+				<div className="content">
+					<ViewComponent 
+						key={'view' + view.id}
+						ref={(ref: any) => { this.refView = ref; }} 
+						onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
 						{...this.props}
 						{...dataviewProps}
-						className={className}
+						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
+						pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
+						getRecords={this.getRecords}
+						getKeys={this.getKeys}
+						getIdPrefix={this.getIdPrefix}
+						getLimit={() => this.getLimit(view.type)}
+						getVisibleRelations={this.getVisibleRelations}
+						getEmpty={this.getEmpty}
+						onCellClick={this.onCellClick}
+						onCellChange={this.onCellChange}
+						onContext={this.onContext}
+						objectOrderUpdate={this.objectOrderUpdate}
+						applyObjectOrder={this.applyObjectOrder}
+						onDragRecordStart={this.onDragRecordStart}
 					/>
-				);
-
-				body = (
-					<div className="content">
-						<ViewComponent 
-							key={'view' + view.id}
-							ref={(ref: any) => { this.refView = ref; }} 
-							onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
-							{...this.props}
-							{...dataviewProps}
-							bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-							pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-							getRecords={this.getRecords}
-							getKeys={this.getKeys}
-							getIdPrefix={this.getIdPrefix}
-							getLimit={() => this.getLimit(view.type)}
-							getVisibleRelations={this.getVisibleRelations}
-							getEmpty={this.getEmpty}
-							onCellClick={this.onCellClick}
-							onCellChange={this.onCellChange}
-							onContext={this.onContext}
-							objectOrderUpdate={this.objectOrderUpdate}
-							applyObjectOrder={this.applyObjectOrder}
-							onDragRecordStart={this.onDragRecordStart}
-						/>
-					</div>
-				);
-			};
+				</div>
+			);
 		};
 
 		return (
@@ -200,12 +194,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, block, isPopup, isDragging } = this.props;
-
-		if (isDragging) {
-			return;
-		};
-
+		const { rootId, block, isPopup } = this.props;
 		const view = this.getView();
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -839,24 +828,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getEmpty (type: string) {
 		const { isInline } = this.props;
-		let emptyProps = { title: '', description: '', button: '', onClick: (e) => {}};
+
+		let emptyProps = { 
+			title: '', 
+			description: '', 
+			button: '', 
+			onClick: e => {},
+		};
 
 		switch (type) {
-			case Constant.typeId.set:
+			case 'source':
 				emptyProps = {
 					title: 'Type or relation has been deleted',
 					description: 'Visit the Marketplace to re-install these entities or select another source.',
 					button: 'Select query',
 					onClick: this.onEmpty,
-				};
-				break;
-
-			case Constant.typeId.collection:
-				emptyProps = {
-					title: 'No objects',
-					description: 'Add first object to continue',
-					button: 'Create object',
-					onClick: (e) => this.onRecordAdd(e, 1),
 				};
 				break;
 
@@ -877,7 +863,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				className={isInline ? 'withHead' : ''}
 				withButton={true}
 			/>
-		)
+		);
 	};
 
 	isAllowedObject () {

@@ -517,6 +517,7 @@
 
 	"widgetFavorite": { "en": "Favorites" },
 	"widgetRecent": { "en": "Recent" },
-	"widgetSet": { "en": "Sets" }
+	"widgetSet": { "en": "Sets" },
+	"widgetCollection": { "en": "Collections" }
 
 }
