@@ -40,8 +40,9 @@
 		
 		.tab { padding: 44px 48px 48px 48px; }
 
-		.sectionName { @include text-small; padding: 30px 0px 4px 0px; color: $colorDarkGrey; }
-		.sectionName.center { text-align: center; }
+		.label.small, .label.sectionName { @include text-small; color: $colorDarkGrey; }
+		.label.sectionName { padding: 30px 0px 4px 0px; }
+		.label.sectionName.center { text-align: center; }
 
 		.tabIndex { padding: 24px 48px 48px 48px; }
 		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete, .tabExportMarkdown, .tabSpaceIndex, .tabSpaceInvite, .tabSpaceTeam, .tabSpaceLeave, .tabSpaceRemove {
@@ -49,7 +50,7 @@
 				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
 				@include text-paragraph; line-height: 28px;
 			}
-			.row.flex { display: flex; }
+			.row.flex { display: flex; align-items: center; flex-direction: row; }
 			.row.red { color: $colorRed; }
 
 			.row {
@@ -339,14 +340,16 @@
 		.tabSpaceIndex {
 			.spaceInfo { text-align: center; }
 			.spaceInfo {
-				.iconObject { margin: 0px auto 20px; }
+				.iconObject { margin: 0px auto 12px auto; }
 				.iconObject.canEdit { cursor: pointer; }
 				.iconObject.canEdit:hover:after { opacity: 1; }
 
 				.input { margin-bottom: 12px; padding: 8px 0px 16px; height: auto; border-bottom: 1px solid $colorBorderDark; width: 384px; }
 			}
 
-			.row .team .iconObject { margin-right: -4px; box-shadow: 0 0 0 2px $colorWhite; }
+			.name {
+				.input { padding: 0; @include text-header2; }
+			}
 		}
 
 		.tabSpaceInvite, .tabSpaceLeave, .tabSpaceRemove {
