@@ -355,8 +355,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 				isToggle = target.isTextToggle();
 		
-				if (target.isLink() && (position == I.BlockPosition.InnerFirst)) {
-					targetContextId = target.content.targetBlockId;
+				if ((target.isLink() || target.isBookmark()) && (position == I.BlockPosition.InnerFirst)) {
+					targetContextId = target.getTargetObjectId();
 					targetId = '';
 
 					if (contextId == targetContextId) {
@@ -419,7 +419,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 					case I.BlockPosition.Top:
 					case I.BlockPosition.Bottom: {
 						// Sort
-						const { onRecordDrop } = this.origin
+						const { onRecordDrop } = this.origin;
 
 						if (onRecordDrop) {
 							onRecordDrop(targetId, ids);
@@ -555,15 +555,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				this.setPosition(I.BlockPosition.Right);
 			};
 
-			const recalcPosition = () => {
-				if (ey <= y + height * 0.5) {
-					this.setPosition(I.BlockPosition.Top);
-				} else
-				if (ey >= y + height * 0.5) {
-					this.setPosition(I.BlockPosition.Bottom);
-				};
-			};
-
 			if (this.position == I.BlockPosition.Bottom) {
 				const targetBot = this.objectData.get(this.hoverData.cacheKey + '-bot');
 				if (targetBot) {
@@ -574,39 +565,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			// canDropMiddle flag for restricted objects
 			if ((this.position == I.BlockPosition.InnerFirst) && !canDropMiddle) {
-				recalcPosition();
-			};
-
-			// You can't drop on Icon
-			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(type) >= 0) {
-				this.setPosition(I.BlockPosition.None);
-			};
-
-			// You can't drop on Title and Description
-			if (isText && ([ I.TextStyle.Title, I.TextStyle.Description ].indexOf(style) >= 0)) {
-				this.setPosition(I.BlockPosition.None);
-			};
-
-			// You can only drop into Paragraphs, Lists and Callout
-			if (
-				(this.position == I.BlockPosition.InnerFirst) &&
-				isText &&
-				([ 
-					I.TextStyle.Paragraph, 
-					I.TextStyle.Toggle, 
-					I.TextStyle.Checkbox, 
-					I.TextStyle.Numbered, 
-					I.TextStyle.Bulleted, 
-					I.TextStyle.Callout,
-					I.TextStyle.Quote,
-				].indexOf(style) < 0)
-			) {
-				recalcPosition();
-			};
-
-			// You can't drop on Featured or Type
-			if (isFeatured || isType) {
-				this.setPosition(I.BlockPosition.None);
+				this.recalcPosition(ey, y, height);
 			};
 
 			// You can drop vertically on Layout.Row
@@ -633,16 +592,17 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			};
 
 			if (!isTargetBot &&
-			[
-				I.TextStyle.Paragraph, 
-				I.TextStyle.Toggle, 
-				I.TextStyle.Checkbox, 
-				I.TextStyle.Numbered, 
-				I.TextStyle.Bulleted, 
-				I.TextStyle.Callout,
-				I.TextStyle.Quote,
-			].includes(style) && 
-			(this.position == I.BlockPosition.Bottom)) {
+				[
+					I.TextStyle.Paragraph, 
+					I.TextStyle.Toggle, 
+					I.TextStyle.Checkbox, 
+					I.TextStyle.Numbered, 
+					I.TextStyle.Bulleted, 
+					I.TextStyle.Callout,
+					I.TextStyle.Quote,
+				].includes(style) && 
+				(this.position == I.BlockPosition.Bottom)
+			) {
 				this.setPosition(I.BlockPosition.None);
 			};
 
@@ -669,6 +629,15 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				obj.addClass('isOver ' + this.getDirectionClass(this.position));
 			};
 		});
+	};
+
+	recalcPosition = (ey: number, y: number, height: number) => {
+		if (ey <= y + height * 0.5) {
+			this.setPosition(I.BlockPosition.Top);
+		} else
+		if (ey >= y + height * 0.5) {
+			this.setPosition(I.BlockPosition.Bottom);
+		};
 	};
 
 	setClass (ids: string[]) {

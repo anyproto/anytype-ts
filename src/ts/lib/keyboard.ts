@@ -214,7 +214,9 @@ class Keyboard {
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
-				popupStore.open('settings', {});
+				if (!popupStore.isOpen('settings')) {
+					popupStore.open('settings', {});
+				};
 			});
 
 			// Store

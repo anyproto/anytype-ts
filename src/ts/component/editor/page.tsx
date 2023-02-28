@@ -1005,6 +1005,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				blockStore.toggle(rootId, nextParent.id, true);
 			};
 
+			if (next && next.isTextToggle()) {
+				blockStore.toggle(rootId, next.id, true);
+			};
+
 			selection.renderSelection(); 
 		});
 	};
@@ -1055,6 +1059,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		Action.move(rootId, rootId, next.id, [ block.id ], position, () => {
 			if (nextParent && nextParent.isTextToggle()) {
 				blockStore.toggle(rootId, nextParent.id, true);
+			};
+
+			if (next && next.isTextToggle()) {
+				blockStore.toggle(rootId, next.id, true);
 			};
 
 			focus.apply(); 

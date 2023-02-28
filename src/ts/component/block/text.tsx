@@ -654,6 +654,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `ctrl+shift+l`, preventDefault: false },
 		];
 
+		for (let i = 0; i < 9; ++i) {
+			saveKeys.push({ key: `${cmd}+${i}`, preventDefault: false });
+		};
+
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 			if (menuOpen) {
 				e.preventDefault();

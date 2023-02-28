@@ -176,6 +176,7 @@ class PopupShortcut extends React.Component<Props, State> {
 			navigation: [
 				{
 					name: 'Basics', children: [
+						{ mac: `${cmd} + ,(comma)`,			 com: 'Ctrl + ,(comma)',			 name: 'Open settings' },
 						{ mac: `${cmd} + O`,			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
 						{ mac: `${cmd} + Option + O`,	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
 						{ mac: `${cmd} + S`,			 com: 'Ctrl + S',			 name: 'Open the search pane' },
@@ -197,6 +198,7 @@ class PopupShortcut extends React.Component<Props, State> {
 
 				{
 					name: 'Page navigation', children: [
+						{ mac: `${cmd} + Shift + T`, com: 'Ctrl + Shift + T', name: 'Expand / Collapse Toggle' },
 						{ com: '↓',				 name: 'Go down one line' },
 						{ com: '↑',				 name: 'Go up one line' },
 						{ mac: `${cmd} + ←`,	 com: 'Ctrl + ←',	 name: 'Go to the start of the line' },
