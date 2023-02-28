@@ -114,7 +114,7 @@ class Action {
 				callBack(message);
 			};
 
-			analytics.event((contextId == targetContextId ? 'MoveBlock' : 'ReorderBlock'), { count: blockIds.length });
+			analytics.event((contextId == targetContextId ? 'ReorderBlock' : 'MoveBlock'), { count: blockIds.length });
 		});
 	};
 

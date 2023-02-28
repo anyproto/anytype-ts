@@ -339,7 +339,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					value: block.align,
 					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, [ blockId ], align, () => {
-							analytics.event('ChangeBlockHAlign', { align, count: 1 });
+							analytics.event('ChangeBlockAlign', { align, count: 1 });
 						});
 						
 						close();

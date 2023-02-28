@@ -26,7 +26,7 @@ const PopupSettingsSpaceInvite = observer(class PopupSettingsSpaceInvite extends
                 <Title text={translate('popupSettingsSpaceInviteTitle')} />
 
                 <div className="rows">
-                    <div className="row flex">
+                    <div className="row">
                         <div className="side left">
                             <Label text={translate('popupSettingsSpaceInviteMemberRights')} />
                         </div>

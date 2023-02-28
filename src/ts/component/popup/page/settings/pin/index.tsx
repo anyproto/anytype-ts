@@ -50,7 +50,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 								<Label text={translate('popupSettingsPinOff')} />
 							</div>
 
-							<div className="row flex">
+							<div className="row">
 								<div className="side left">
 									<Label text="PIN code check time-out" />
 								</div>

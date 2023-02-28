@@ -799,11 +799,22 @@ class App extends React.Component<object, State> {
 					raf(() => { 
 						focus.apply(); 
 
-						if (item.id == 'add-to-dictionary') {
-							Renderer.send('spellcheckAdd', param.misspelledWord);
-						} else {
-							blockStore.updateContent(rootId, focused, { text: value });
-							DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
+						switch (item.id) {
+							default: {
+								blockStore.updateContent(rootId, focused, { text: value });
+								DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
+								break;
+							};
+
+							case 'add-to-dictionary': {
+								Renderer.send('spellcheckAdd', param.misspelledWord);
+								break;
+							};
+
+							case 'disable-spellcheck': {
+								Renderer.send('setLanguage', []);
+								break;
+							};
 						};
 					});
 				},
