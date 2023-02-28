@@ -57,6 +57,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 								arrowClassName="light"
 								menuWidth={300}
 								isMultiple={true}
+								noFilter={false}
 							/>
 						</div>
 					</div>
