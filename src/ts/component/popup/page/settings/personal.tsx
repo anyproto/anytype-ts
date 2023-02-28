@@ -30,7 +30,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
 				<div className="rows">
-					<div className="row flex">
+					<div className="row">
 						<div className="side left">
 							<Label text="Default Object type" />
 						</div>
@@ -44,7 +44,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						</div>
 					</div>
 
-					<div className="row flex">
+					<div className="row">
 						<div className="side left">
 							<Label text="Spellcheck languages" />
 						</div>
@@ -61,7 +61,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						</div>
 					</div>
 
-					<div className="row flex">
+					<div className="row">
 						<div className="side left">
 							<Label text="Automatically hide and show Sidebar" />
 						</div>

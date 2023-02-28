@@ -36,7 +36,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 				<Label text={translate('popupSettingsExportMarkdownText')} />
 
 				{items.map((item: any, i: number) => (
-					<div key={i} className="row flex">
+					<div key={i} className="row">
 						<div className="side left">
 							<Label text={item.name} />
 						</div>

@@ -61,7 +61,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						</div>
 					</div>
 
-					<div className="row flex">
+					<div className="row">
 						<div className="side left">
 							<Label text="Type" />
 						</div>
@@ -71,7 +71,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						</div>
 					</div>
 
-					<div className="row flex">
+					<div className="row">
 						<div className="side left">
 							<Label text={translate('popupSettingsSpaceHomepageTitle')} />
 							<Label className="small" text="Select an object to set as your homepage" />
