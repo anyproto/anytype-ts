@@ -98,6 +98,7 @@ class DragLayer extends React.Component<object, State> {
 				wrap.addClass('blocks');
 
 				items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(Util.objectCopy(it)));
+
 				items.forEach(block => {
 					const el = $(`#block-${block.id}`);
 
@@ -110,7 +111,7 @@ class DragLayer extends React.Component<object, State> {
 				const add = $('<div class="menu vertical menuBlockRelationView"></div>');
 
 				wrap.addClass('menus').append(add);
-				
+
 				items = ids.map(relationKey => dbStore.getRelationByKey(relationKey)).filter(it => it);
 				items.forEach(item => {
 					const el = $(`#menuBlockRelationView #item-${item.id}`);
@@ -120,6 +121,19 @@ class DragLayer extends React.Component<object, State> {
 			};
 
 			case I.DropType.Record: {
+				const cn = $(`.drop-target-${ids[0]}`).parents('.viewItem').attr('class');
+				const dataview = $('<div class="block blockDataview"></div>');
+				const view = $('<div />');
+
+				view.addClass(cn);
+				dataview.append(view);
+				wrap.addClass('blocks').append(dataview);
+
+				ids.forEach(id => {
+					const el = $(`.drop-target-${id}`).parent();
+
+					view.append(el.clone().addClass('record'));
+				});
 				break;
 			};
 		};

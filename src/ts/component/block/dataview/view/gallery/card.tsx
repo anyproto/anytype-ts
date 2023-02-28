@@ -115,7 +115,8 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		return (
-			<div 
+			<div
+				id={'record-' + record.id}
 				ref={node => this.node = node}
 				className={cn.join(' ')} 
 				style={style}

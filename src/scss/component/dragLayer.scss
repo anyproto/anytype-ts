@@ -18,6 +18,13 @@
 			}
 		}
 		.block:last-child { margin: 0px; }
+
+		.block.blockDataview { width: 0px !important; }
+		.block.blockDataview {
+			.viewItem {
+				.record { left: 0px !important; top: 0px !important; overflow: hidden; }
+			}
+		}
 	}
 
 	.menus {

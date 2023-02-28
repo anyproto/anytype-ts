@@ -784,8 +784,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onDragRecordStart (e: any, index: number) {
 		e.stopPropagation();
 
-		console.log(e)
-
 		const { dataset, block } = this.props;
 		const { selection, onDragStart } = dataset || {};
 		const record = this.getRecord(index);
