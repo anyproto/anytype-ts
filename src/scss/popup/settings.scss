@@ -14,7 +14,7 @@
 		.pin { text-align: center; }
 
 		.label.center { text-align: center; }
-		.label.grey { color: $colorDarkGrey; }
+		.label.grey { color: $colorMediumGrey; }
 		
 		.head { 
 			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 8px 12px; background: $colorWhite; z-index: 1;
@@ -65,7 +65,6 @@
 				.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 				.icon.other { background-image: url('~img/icon/popup/settings/other.svg'); }
 				
-				.label { display: inline-block; vertical-align: top; }
 				.icon.arrow { 
 					width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/arrow.svg'); position: absolute; right: 0px;
 					top: 50%; margin: -12px 0px 0px 0px; 

@@ -67,13 +67,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						</div>
 
 						<div className="side right">
-							<div className="select">
-								<div className="item">
-									<div className="name">
-										Personal
-									</div>
-								</div>
-							</div>
+							<Label className="grey" text="Personal" />
 						</div>
 					</div>
 
