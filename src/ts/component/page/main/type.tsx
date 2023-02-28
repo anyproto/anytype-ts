@@ -410,11 +410,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const relations = (object.recommendedRelations || []).map(it => dbStore.getRelationById(it)).filter(it => it);
 
 		menuStore.open('relationSuggest', { 
-			element: $(e.currentTarget),
+			element: '#page .section.relation #item-add',
 			offsetX: 32,
 			data: {
 				filter: '',
-				rootId: rootId,
+				rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: relations.map(it => it.relationKey).concat(Constant.systemRelationKeys),
@@ -437,10 +437,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const relation = dbStore.getRelationById(id);
 		
 		menuStore.open('blockRelationEdit', { 
-			element: $(e.currentTarget),
-			horizontal: I.MenuDirection.Center,
+			element: `#page .section.relation #item-${id}`,
+			offsetX: 32,
 			data: {
-				rootId: rootId,
+				rootId,
 				relationId: id,
 				readonly: !allowed,
 				ref: 'type',
