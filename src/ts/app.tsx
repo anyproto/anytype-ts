@@ -379,9 +379,7 @@ class App extends React.Component<object, State> {
 		console.log('[Process] os version:', window.Electron.version.system, 'arch:', window.Electron.arch);
 		console.log('[App] version:', window.Electron.version.app, 'isPackaged', window.Electron.isPackaged);
 
-		$(window).off('resize.app').on('resize.app', () => {
-			this.checkMaximized();
-		});
+		$(window).off('resize.app').on('resize.app', () => { this.checkMaximized(); });
 	};
 
 	initStorage () {
