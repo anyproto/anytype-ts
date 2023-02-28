@@ -41,8 +41,8 @@ const PopupSettingsUserInfo = observer(class PopupSettingsUserInfo extends React
 				</div>
 
                 <div className="name">
-                    <Label className="sectionName" text="Name" />
-                    <Input 
+					<Label className="small" text="Name" />
+					<Input 
 						ref={ref => this.ref = ref} 
 						value={object.name} 
 						onKeyUp={this.onName} 

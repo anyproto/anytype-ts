@@ -446,12 +446,10 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				relation: observable.box(relation),
 				valueMapper: it => dbStore.getType(it.id),
 				onChange: (value: any, callBack?: () => void) => {
-					const vr = this.getViewRelation();
-
 					this.objectTypes = value;
 					this.forceUpdate();
 
-					if (vr) {
+					if (relation.id) {
 						this.save();
 					};
 
@@ -571,7 +569,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const relation = this.getViewRelation();
 		const item: any = { 
-			name: name, 
+			name, 
 			relationFormat: this.format,
 			relationFormatObjectTypes: (this.format == I.RelationType.Object) ? this.objectTypes || [] : [],
 		};
@@ -599,7 +597,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
-			analytics.event('CreateRelation', { format: item.format, type: ref });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: ref });
 		});
 	};
 

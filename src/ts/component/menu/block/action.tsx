@@ -756,7 +756,12 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			ids = [ blockId ];
 		};
 
-		C.BlockListConvertToObjects(rootId, ids, type);
+		C.BlockListConvertToObjects(rootId, ids, type, () => {
+			analytics.event('CreateObject', {
+				route: 'TurnInto',
+				objectType: type,
+			});
+		});
 	};
 
 	setFocus (id: string) {

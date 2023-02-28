@@ -182,13 +182,14 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		switch (type) {
 			
-			default:
-				marks = Mark.toggle(marks, { type: type, param: '', range: { from, to } });
+			default: {
+				marks = Mark.toggle(marks, { type, param: '', range: { from, to } });
 				menuStore.updateData(this.props.id, { marks });
 				onChange(marks);
 				break;
+			};
 				
-			case 'style':
+			case 'style': {
 
 				menuParam.data = Object.assign(menuParam.data, {
 					onSelect: (item: any) => {
@@ -215,11 +216,11 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				});
 
 				menuId = 'blockStyle';
-
 				focusApply = false;
 				break;
+			};
 				
-			case 'more':
+			case 'more': {
 				menuId = 'blockMore';
 				menuParam.subIds = Constant.menuIds.more;
 
@@ -234,9 +235,10 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					},
 				});
 				break;
+			};
 				
-			case I.MarkType.Link:
-				mark = Mark.getInRange(marks, type, { from: from, to: to });
+			case I.MarkType.Link: {
+				mark = Mark.getInRange(marks, type, { from, to });
 
 				menuParam = Object.assign(menuParam, {
 					offsetY: param.offsetY,
@@ -250,7 +252,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 					type: mark ? mark.type : null,
 					skipIds: [ rootId ],
 					onChange: (newType: I.MarkType, param: string) => {
-						marks = Mark.toggleLink({ type: newType, param: param, range: { from: from, to: to } }, marks);
+						marks = Mark.toggleLink({ type: newType, param, range: { from, to } }, marks);
 						menuStore.updateData(this.props.id, { marks });
 						onChange(marks);
 
@@ -262,29 +264,27 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 				closeContext = true;
 				focusApply = false;
 				break;
-				
-			case I.MarkType.Color:
-				mark = Mark.getInRange(marks, I.MarkType.Color, { from: from, to: to });
-				menuParam.data = Object.assign(menuParam.data, {
-					value: (mark ? mark.param : ''),
-					onChange: (param: string) => {
-						if (!mark && !param) {
-							return;
-						};
-
-						Storage.set('color', param);
-
-						marks = Mark.toggle(marks, { type: I.MarkType.Color, param: param, range: { from: from, to: to } });
-						menuStore.updateData(this.props.id, { marks });
-						onChange(marks);
-					},
-				});
-
-				menuId = 'blockColor';
-				break;
-				
+			};
+			
 			case I.MarkType.BgColor:
-				mark = Mark.getInRange(marks, I.MarkType.BgColor, { from: from, to: to });
+			case I.MarkType.Color: {
+				let storageKey = ''
+
+				switch (type) {
+					case I.MarkType.Color: {
+						storageKey = 'color';
+						menuId = 'blockColor';
+						break;
+					};
+
+					case I.MarkType.BgColor: {
+						storageKey = 'bgColor';
+						menuId = 'blockBackground';
+						break;
+					};
+				};
+
+				mark = Mark.getInRange(marks, type, { from, to });
 				menuParam.data = Object.assign(menuParam.data, {
 					value: (mark ? mark.param : ''),
 					onChange: (param: string) => {
@@ -292,15 +292,15 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 							return;
 						};
 
-						Storage.set('bgColor', param);
+						Storage.set(storageKey, param);
 
-						marks = Mark.toggle(marks, { type: I.MarkType.BgColor, param: param, range: { from: from, to: to } });
+						marks = Mark.toggle(marks, { type, param, range: { from, to } });
 						menuStore.updateData(this.props.id, { marks });
 						onChange(marks);
 					},
 				});
-				menuId = 'blockBackground';
 				break;
+			};
 		};
 
 		focusApply ? focus.apply() : focus.clear(false);

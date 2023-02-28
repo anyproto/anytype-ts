@@ -35,10 +35,10 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 		const Row = (row: any) => {
 			let icon = null;
 			if (row.id == 'account') {
-				icon = <IconObject object={profile} size={32} />;
+				icon = <IconObject object={profile} size={32} forceLetter={true} />;
 			} else 
 			if (row.id == 'spaceIndex') {
-				icon = <IconObject object={space} size={32} />;
+				icon = <IconObject object={space} size={32} forceLetter={true} />;
 			} else 
 			if (row.icon) {
 				icon = <Icon className={row.icon} />;

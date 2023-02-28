@@ -295,9 +295,12 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				valueMapper: it => dbStore.getType(it.id),
 				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
-					this.save();
 					this.forceUpdate();
 
+					if (relation.id) {
+						this.save();
+					};
+					
 					if (callBack) {
 						callBack();
 					};
@@ -451,7 +454,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
-			analytics.event('CreateRelation', { format: item.format, type: ref });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: ref });
 		});
 	};
 
@@ -485,8 +488,6 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		return readonly || !allowed || (relation && relation.isReadonlyRelation);
 	};
-
-
 
 });
 
