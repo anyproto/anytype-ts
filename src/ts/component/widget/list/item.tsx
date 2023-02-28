@@ -79,17 +79,14 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 		const { subId, id } = this.props;
 		const node = $(this.node);
-		const buttons = node.find('.buttons');
 		const more = node.find('.icon.more');
 		const menuParam: any = {
 			classNameWrap: 'fromSidebar',
 			onOpen: () => {
-				buttons.addClass('active');
-				more.addClass('active');
+				node.addClass('active');
 			},
 			onClose: () => {
-				buttons.removeClass('active');
-				more.removeClass('active');
+				node.removeClass('active');
 			},
 			data: {
 				objectIds: [ id ],
