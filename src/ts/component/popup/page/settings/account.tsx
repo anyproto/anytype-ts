@@ -32,8 +32,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 		this.onLogout = this.onLogout.bind(this);
 		this.onFileOffload = this.onFileOffload.bind(this);
-		this.onDelete = this.onDelete.bind(this);
-		this.onDeleteCancel = this.onDeleteCancel.bind(this);
 		this.onLocationMove = this.onLocationMove.bind(this);
 	};
 
@@ -104,27 +102,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	onLogout (e: any) {
 		this.props.onPage('logout');
-	};
-
-	onDelete (e: any) {
-		const check = this.refCheckbox.getValue();
-		if (!check) {
-			return;
-		};
-
-		C.AccountDelete(false, (message: any) => {
-			if (message.error.code) {
-				return;
-			};
-
-			authStore.accountSet({ status: message.status });		
-			this.props.close();
-			Util.route('/auth/deleted');
-		});
-	};
-
-	onDeleteCancel (e: any) {
-		C.AccountDelete(true);
 	};
 
 	onFileOffload (e: any) {

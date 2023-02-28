@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Title, Label, Checkbox } from 'Component';
-import { I, C, translate, Util } from 'Lib';
+import { I, C, translate, Util, analytics } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -64,6 +64,8 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 			authStore.accountSet({ status: message.status });		
 			this.props.close();
 			Util.route('/auth/deleted');
+
+			analytics.event('DeleteAccount');
 		});
 	};
 
