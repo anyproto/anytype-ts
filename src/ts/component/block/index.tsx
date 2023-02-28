@@ -104,16 +104,14 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		switch (type) {
 			case I.BlockType.Text: {
-				canDropMiddle = canDrop;
+				canDropMiddle = canDrop && block.canHaveChildren();
 
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
 
 				if (block.isTextQuote()) {
-					additional = (
-						<div className="line" />
-					);
+					additional = <div className="line" />;
 				};
 
 				blockComponent = <BlockText key={`block-${block.id}-component`} ref={setRef} {...this.props} onToggle={this.onToggle} />;
@@ -127,12 +125,14 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.IconPage: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockIconPage key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
 				
 			case I.BlockType.IconUser: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockIconUser key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -173,11 +173,6 @@ const Block = observer(class Block extends React.Component<Props> {
 				break;
 			};
 				
-			case I.BlockType.Bookmark: {
-				blockComponent = <BlockBookmark key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
-				break;
-			};
-			
 			case I.BlockType.Dataview: {
 				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace() || root.isObjectCollection());
 				if (canSelect) {
@@ -203,6 +198,17 @@ const Block = observer(class Block extends React.Component<Props> {
 				};
 
 				blockComponent = <BlockLink key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
+				break;
+			};
+
+			case I.BlockType.Bookmark: {
+				const object = detailStore.get(rootId, content.targetObjectId, [ 'restrictions' ]);
+				
+				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+					canDropMiddle = canDrop;
+				};
+
+				blockComponent = <BlockBookmark key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
 				
@@ -276,7 +282,17 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			if (lastId) {
 				targetColumn = (
-					<DropTarget {...this.props} isTargetColumn={true} rootId={rootId} id={lastId} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} onClick={this.onEmptyColumn} />
+					<DropTarget 
+						{...this.props} 
+						isTargetColumn={true} 
+						rootId={rootId} 
+						id={lastId} 
+						style={style} 
+						type={type} 
+						dropType={I.DropType.Block} 
+						canDropMiddle={canDropMiddle} 
+						onClick={this.onEmptyColumn} 
+					/>
 				);
 			};
 		};

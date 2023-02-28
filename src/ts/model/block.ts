@@ -416,6 +416,19 @@ class Block implements I.Block {
 
 		return l;
 	};
+
+	getTargetObjectId () {
+		switch (this.type) {
+			case I.BlockType.Link: {
+				return this.content.targetBlockId;
+			};
+			default: {
+				return this.content.targetObjectId;
+			};
+		};
+
+	};
+
 };
 
 export default Block;
