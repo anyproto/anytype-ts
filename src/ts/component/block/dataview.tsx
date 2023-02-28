@@ -807,7 +807,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		onDragStart(e, I.DropType.Record, ids, this);
 	};
 
-	onRecordDrop (targetId, ids) {
+	onRecordDrop (targetId: string, ids: string[]) {
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const view = this.getView();

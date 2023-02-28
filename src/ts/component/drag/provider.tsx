@@ -422,7 +422,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 						const { onRecordDrop } = this.origin
 
 						if (onRecordDrop) {
-							onRecordDrop(targetId, ids, position);
+							onRecordDrop(targetId, ids);
 						};
 						break;
 					};
