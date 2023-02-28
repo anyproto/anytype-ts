@@ -457,6 +457,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	checkNodes (e: any, ex: number, ey: number) {
 		let dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
+		let isItemDrag = Util.getDataTransferItems(dataTransfer.items).length ? true : false;
 		let isFileDrag = dataTransfer.types.includes('Files');
 		let data: any = {};
 
@@ -565,6 +566,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			// canDropMiddle flag for restricted objects
 			if ((this.position == I.BlockPosition.InnerFirst) && !canDropMiddle) {
+				this.recalcPosition(ey, y, height);
+			};
+
+			// Recalc position if dataTransfer items are dragged
+			if (isItemDrag && (this.position != I.BlockPosition.None)) {
 				this.recalcPosition(ey, y, height);
 			};
 
