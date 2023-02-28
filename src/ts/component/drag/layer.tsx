@@ -100,9 +100,14 @@ class DragLayer extends React.Component<object, State> {
 				items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(Util.objectCopy(it)));
 
 				items.forEach(block => {
-					const el = $(`#block-${block.id}`);
+					const clone = $(`#block-${block.id}`).clone();
 
-					wrap.append(el.clone());
+					if (block.isDataview()) {
+						clone.find('.viewItem').remove();
+						clone.find('.dataviewControls').remove();
+					};
+
+					wrap.append(clone);
 				});
 				break;
 			};
