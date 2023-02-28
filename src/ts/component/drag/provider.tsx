@@ -568,16 +568,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				this.recalcPosition(ey, y, height);
 			};
 
-			// You can't drop on Title and Description
-			if (isText && [ I.TextStyle.Title, I.TextStyle.Description ].includes(style)) {
-				this.setPosition(I.BlockPosition.None);
-			};
-
-			// You can't drop on Featured or Type
-			if (isFeatured || isType) {
-				this.setPosition(I.BlockPosition.None);
-			};
-
 			// You can drop vertically on Layout.Row
 			if ((type == I.BlockType.Layout) && (style == I.LayoutStyle.Row)) {
 				if (isTargetTop) {

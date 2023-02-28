@@ -114,6 +114,10 @@ const Block = observer(class Block extends React.Component<Props> {
 					additional = <div className="line" />;
 				};
 
+				if (block.isTextTitle() || block.isTextDescription()) {
+					canDrop = false;
+				};
+
 				blockComponent = <BlockText key={`block-${block.id}-component`} ref={setRef} {...this.props} onToggle={this.onToggle} />;
 				break;
 			};
@@ -214,6 +218,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.Cover: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockCover key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -224,12 +229,14 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Featured: {
+				canDrop = false;
 				blockComponent = <BlockFeatured key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
 
 			case I.BlockType.Type: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockType key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
