@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Header, Footer, DotIndicator, KeyPhrase, Error } from 'Component';
+import { Frame, Title, Label, Button, Header, Footer, DotIndicator, KeyPhrase, Error, Icon } from 'Component';
 import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -31,6 +31,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	constructor (props: I.PageComponent) {
         super(props);
 		this.onNext = this.onNext.bind(this);
+		this.onBack = this.onBack.bind(this);
+		this.createWallet = this.createWallet.bind(this);
 		this.createAccount = this.createAccount.bind(this);
 	};
 	
@@ -65,6 +67,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			<div>
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
+				<Icon className="back" onClick={this.onBack} />
 				<Frame>
 					{dotIndicator}
 					{title}
@@ -81,68 +84,66 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		);
 	};
 
-	componentDidMount(): void {
+	componentDidMount (): void {
 		Animation.to();
+		this.createWallet();
 	};
 
-	componentDidUpdate(): void {
+	componentDidUpdate (): void {
 		Animation.to();
 	}
 
 	async onNext () {
-		if (this.state.stage === OnboardStage.VOID) {
-			await this.createAccount();
-		}
 		Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
 	}
+	
+	async onBack () {
+		if (this.state.stage === OnboardStage.VOID) {
+			Util.route('/auth/invite');
+		} else {
+			Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage - 1 })) });
+		}
+	}
 
-	async createAccount (): Promise<void> {
-		const { walletPath, accountPath, name, icon, code } = authStore;
+	createWallet () {
+		const { walletPath } = authStore;
+		commonStore.defaultTypeSet(Constant.typeId.note); // TODO necessary?
+		C.WalletCreate(walletPath, message => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+			}
+			authStore.phraseSet(message.mnemonic);
+		});
+	}
 
-		commonStore.defaultTypeSet(Constant.typeId.note);
+	createAccount () {
+		const { accountPath, name, icon, code } = authStore;
 
-		return new Promise((resolve, reject) => {
-			C.WalletCreate(walletPath, message => {
+		DataUtil.createSession(message => {
+			if (message.error.code) {
+				const error = Errors.AccountCreate[message.error.code] || message.error.description;
+				this.setState({ error });
+			}
+
+			C.AccountCreate(name, icon, accountPath, code, message => {
 				if (message.error.code) {
-					this.setState({ error: message.error.description });
-					reject();
+					const error = Errors.AccountCreate[message.error.code] || message.error.description;
+					this.setState({ error });
 				}
-	
-				authStore.phraseSet(message.mnemonic);
-	
-				DataUtil.createSession(message => {
-					if (message.error.code) {
-						this.setState({ error: message.error.description });
-						reject();
-					}
-	
-					C.AccountCreate(name, icon, accountPath, code, message => {
-						if (message.error.code) {
-							const error = Errors.AccountCreate[message.error.code] || message.error.description;
-							reject();
-							this.setState({ error });
-						}
 
-						if (message.config) {
-							commonStore.configSet(message.config, false);
-						};
+				if (message.config) {
+					commonStore.configSet(message.config, false);
+				};
 
-						const accountId = message.account.id;
-
-						authStore.accountSet(message.account);
-						authStore.previewSet('');
-
-						Storage.set('timeRegister', Util.time());
-
-						Renderer.send('keytarSet', accountId, authStore.phrase);
-						analytics.event('CreateAccount');
-
-						resolve();
-					});
-				});
+				authStore.accountSet(message.account);
+				authStore.previewSet('');
+				Storage.set('timeRegister', Util.time());
+				Renderer.send('keytarSet', message.account.id, authStore.phrase);
+				analytics.event('CreateAccount');
 			});
 		})
 	};
+	
 });
 
 export default PageAuthOnboard;

@@ -12,13 +12,6 @@
 	}
 }
 
-.pageAuthRegister {
-    .iconObject { background-image: url('#{$themePath}/icon/picture.svg'); }
-
-	.advanced { color: $colorSecondary; }
-	.advanced:hover { color: $colorPrimary; }
-}
-
 .pageAuthDeleted {
 	.row { border-color: $colorLineSecondary; }
 	.pie .inner { border-color: $colorLineSecondary; }

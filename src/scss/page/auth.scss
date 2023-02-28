@@ -44,14 +44,9 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
 }
 
-.pageAuthPinSelect, .pageAuthPinConfirm, .pageAuthPinCheck {
+.pageAuthPinCheck {
 	.input { width: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
 	.input:last-child { margin: 0px; }
-}
-
-.pageAuthSetup {
-	.title { margin: 0px; }
-	.label { margin: 15px 0px 0px 0px; display: none; }
 }
 
 .pageAuthAccountSelect {
@@ -80,30 +75,13 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	}
 }
 
-.pageAuthSuccess {
-	.label { margin-bottom: 10px; }
-	.textareaWrap { color: $colorIce; }
-	.button { width: 210px; }
+.pageAuthOnboard,
+.pageAuthInvite {
+	.icon.back { height: 40px; width: 40px; position: fixed; left: 20px; top: 0; bottom: 0; margin: auto 0; z-index: 1; }
 }
 
-.pageAuthRegister {
-	.advanced { line-height: 24px; cursor: pointer; position: absolute; top: 8px; right: 16px; color: $colorDarkGrey; transition: $transitionFast; }
-	.advanced:hover { color: $colorBlack; }
-
-	.frame { padding-bottom: 36px; }
-	.fileWrap { background-color: $colorBorderDark; display: block; margin: 0 auto 24px; }
-
-	.label { margin-bottom: 0; }
-	.input-text { display: block; text-align: center; padding-bottom: 9px; width: 360px; margin: 0 auto 32px; font-size: 28px; line-height: 32px; font-weight: 700; border: solid 0px; border-bottom: solid 1px $colorBorderDark; }
-	.button { vertical-align: middle; width: 134px; padding: 0px; }
-	.iconObject { background-image: url('~img/icon/camera.svg'); background-size: 40px 30px; background-repeat: no-repeat; background-position: center; }
-	.iconObject.active {
-		.image { background-size: cover; }
-	}
-
-	.row.flex { flex-direction: row; align-items: center; gap: 0px 16px; margin-bottom: 16px; }
-
-	.row.location { @include text-small; @include text-overflow-nw; }
+.pageAuthOnboard {
+	.textareaWrap { color: $colorIce; }
 }
 
 .pageAuthDeleted {
