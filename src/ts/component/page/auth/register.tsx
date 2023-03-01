@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Label, Error, Input, Button, Header, Footer, Icon } from 'Component';
-import { FileUtil, Util, translate, I, Action, Animation } from 'Lib';
+import { FileUtil, Util, translate, I, Action } from 'Lib';
 import { commonStore, authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -34,14 +34,12 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 
 		return (
 			<div>
+				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
-					<div 
-						className="backWrap animation" 
-						onClick={this.onCancel}
-					>
+					<div className="authBackWrap" onClick={this.onCancel}>
 						<Icon className="back" />
 						<div className="name">{translate('commonBack')}</div>
 					</div>
@@ -55,19 +53,12 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 					<Error text={error} />
 		
 					<form onSubmit={this.onSubmit}>
-						<div 
-							className="iconObject isHuman c96 fileWrap animation" 
-							onClick={this.onFileClick}
-						>
+						<div className="iconObject isHuman c96 fileWrap" onClick={this.onFileClick}>
 							{preview ? <img src={preview} className="iconImage c64" /> : ''}
 						</div>
-
-						<Label className="animation" text={translate('authRegisterLabel')} />
-						<Input className="animation" ref={ref => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
-
-						<div className="buttons animation">
-							<Button type="input" text={translate('authRegisterSubmit')} />
-						</div>
+						<Label text={translate('authRegisterLabel')} />
+						<Input ref={ref => this.refName = ref} placeholder={translate('authRegisterName')} value={name} onKeyUp={this.onNameChange} />
+						<Button type="input" text={translate('authRegisterSubmit')} />
 					</form>
 				</Frame>
 			</div>
@@ -75,7 +66,6 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	};
 	
 	componentDidMount () {
-		Animation.to();
 		this.refName.focus();
 	};
 	
@@ -121,7 +111,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		};
 		
 		if (!error) {
-			Animation.from(() => { Util.route('/auth/invite/' + match.params.id); });
+			Util.route('/auth/invite/' + match.params.id);
 		} else {
 			this.setState({ error: error });
 		};
@@ -137,7 +127,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	}
 
 	onCancel (e: any) {
-		Animation.from(() => { Util.route('/auth/select'); });
+		Util.route('/auth/select');
 	};
 	
 });
