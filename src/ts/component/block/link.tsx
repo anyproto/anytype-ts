@@ -1,9 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, DataUtil, ObjectUtil, translate, keyboard, focus } from 'Lib';
+import { I, DataUtil, ObjectUtil, translate, keyboard, focus, Preview } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
@@ -21,6 +20,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		this.onUpload = this.onUpload.bind(this);
 		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onFocus = this.onFocus.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render() {
@@ -179,6 +180,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp} 
 				onFocus={this.onFocus}
+				onMouseEnter={this.onMouseEnter}
+				onMouseLeave={this.onMouseLeave}
 			>
 				{element}
 			</div>
@@ -276,6 +279,19 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const object = detailStore.get(rootId, targetBlockId, []);
 
 		ObjectUtil.setDone(targetBlockId, !object.done);
+	};
+
+	onMouseEnter () {
+		const { block } = this.props;
+		const { targetBlockId } = block.content;
+		const node = $(this.node);
+		const name = node.find('.name');
+
+		Preview.previewShow(name, { param: targetBlockId, type: I.MarkType.Object, noUnlink: true });
+	};
+
+	onMouseLeave () {
+		Preview.previewHide(false);
 	};
 
 	resize () {
