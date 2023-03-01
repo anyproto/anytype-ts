@@ -526,7 +526,7 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "at9412003",
+					"name": "anytype-release",
 					"region": "fra1"
 				}
 			],
@@ -545,7 +545,7 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "at9412003",
+					"name": "anytype-release",
 					"region": "fra1"
 				}
 			]
@@ -560,7 +560,6 @@
 				"snap",
 				"AppImage",
 				"deb",
-				"rpm"
 			],
 			"description": "Anytype",
 			"publish": [
