@@ -1,40 +1,54 @@
-# Anytype Desktop Client
+# Anytype
+Official Anytype client for desktop usage on MacOS, Linux, and Windows.
 
-## Installation
-------------
+## Building the source
+### Installation
 
-	git clone git@github.com:anytypeio/js-anytype.git
-	cd js-anytype
-	npm install -D
-  
-## Install node addon library and protobuf bindings
-### Fetch the latest binary from the [github releases](https://github.com/anytypeio/go-anytype-middleware/releases/latest)
+```shell
+git clone git@github.com:anytypeio/js-anytype.git
+cd js-anytype
+npm install -D
+```
 
-	./update.sh <GITHUB_USER> <GITHUB_TOKEN> <macos-latest|ubuntu-latest|windows-latest>
+Also, [install `gitleaks`](https://github.com/zricethezav/gitleaks#installing) to ensure proper work of pre-commit hooks.
+
+### Install node addon library and protobuf bindings
+Fetch the latest binary from the [github releases](https://github.com/anytypeio/go-anytype-middleware/releases/latest)
+
+```shell
+./update.sh <GITHUB_USER> <GITHUB_TOKEN> <macos-latest|ubuntu-latest|windows-latest>
+```
 	
-### Or compile from the source code
+Or compile from the source code. Follow instructions at [`go-anytype-middleware`.](https://github.com/anytypeio/go-anytype-middleware#how-to-build)
 
-Follow instructions at [go-anytype-middleware](https://github.com/anytypeio/go-anytype-middleware#how-to-build)
+### Building
+```shell
+npm run dist:(mac|win|linux)
+```
 
-## Run the local dev-server
-------------
+Options:
+- `ELECTRON_SKIP_NOTARIZE=1` — skip MacOS notarization process
+
+## Running
 
 ### MacOS, Linux
-	SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev
+```shell
+SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev
+```
 
 ### Windows
-	SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev-win
-	
-### NPM env vars	
-	- SERVER_PORT - local server port
-	
-### GO env vars
-	- ANYPROF - profiler port, access http://localhost:<PORT>/debug/pprof/profile?seconds=30 for profiling
-  
-## Build
-------------
+```shell
+SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev-win
+```
 
-	npm run dist:(mac|win|linux)
-	
-### NPM env vars	
-	- ELECTRON_SKIP_NOTARIZE=1 - skip MacOS notarization process
+Options:
+- `SERVER_PORT` — NPM variable, local server port
+- `ANYPROF` — Go variable, profiler port, access `http://localhost:<PORT>/debug/pprof/profile?seconds=30` for profiling
+
+## Contribution
+Thank you for your desire to develop Anytype together. 
+
+Currently, we're not ready to accept PRs, but we will in the nearest future.
+
+## License
+To be announced.
