@@ -78,6 +78,10 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onKeyDown (e: any) {
+		if (menuStore.isOpen()) {
+			return;
+		};
+
 		const { onKeyDown } = this.props;
 		const items = this.getItems();
 		const cmd = keyboard.cmdKey();
