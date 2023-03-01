@@ -190,7 +190,6 @@ class Analytics {
 				break;
 			};
 
-			case 'AddSort':
 			case 'ChangeSortValue': {
 				data.type = Number(data.type) || 0;
 				data.type = I.SortType[data.type];
