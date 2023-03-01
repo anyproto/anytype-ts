@@ -6,7 +6,7 @@ import Constant from 'json/constant.json';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
-	'type', 'objectType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
+	'type', 'objectType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group'
 ];
 const KEY_CONTEXT = 'analyticsContext';
@@ -303,7 +303,6 @@ class Analytics {
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
 			'main/relation':	 'ScreenRelation',
-			'main/set':			 'ScreenSet',
 			'main/edit':		 'ScreenObject',
 			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
