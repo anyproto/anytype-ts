@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Frame, Title, Input, Error, Button, Header, Footer, Icon } from 'Component';
-import { I, Util, translate, C, keyboard, Animation } from 'Lib';
-import { authStore } from 'Store';
+import { Frame, Cover, Title, Input, Error, Button, Header, Footer, Icon } from 'Component';
+import { I, Util, translate, C, keyboard } from 'Lib';
+import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -25,28 +25,27 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	render () {
+		const { cover } = commonStore;
 		const { error } = this.state;
 		
         return (
 			<div>
+				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
-
-				<Icon className="arrow back animation" onClick={this.onCancel} />
 				
 				<Frame>
-					<Title text={translate('authLoginTitle')} className="animation" />
-					<Error text={error} className="animation" />
+					<div className="authBackWrap" onClick={this.onCancel}>
+						<Icon className="back" />
+						<div className="name">{translate('commonBack')}</div>
+					</div>
+					<Title text={translate('authLoginTitle')} />
+					<Error text={error} />
 							
 					<form onSubmit={this.onSubmit}>
-						<Input 
-							ref={(ref: any) => this.phraseRef = ref} 
-							className="animation" 
-							placeholder={translate('authLoginLabel')} 
-							onKeyDown={this.onKeyDown} 
-						/>
+						<Input ref={ref => this.phraseRef = ref} placeholder={translate('authLoginLabel')} onKeyDown={this.onKeyDown} />
 
-						<div className="buttons animation">
+						<div className="buttons">
 							<Button type="input" text={translate('authLoginLogin')} />
 						</div>
 					</form>
@@ -56,7 +55,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	componentDidMount () {
-		Animation.to();
 		this.phraseRef.focus();
 	};
 	
@@ -80,16 +78,18 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			};
 
 			authStore.phraseSet(phrase);
-			Animation.from(() => { Util.route('/auth/account-select'); });
+			Util.route('/auth/account-select');
 		});
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('enter', e, () => { this.onSubmit(e); });
+		keyboard.shortcut('enter', e, (pressed: string) => {
+			this.onSubmit(e);
+		})
 	};
 	
 	onCancel (e: any) {
-		Animation.from(() => { Util.route('/auth/select'); });
+		Util.route('/auth/select');
 	};
 	
 });
