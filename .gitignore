@@ -14,3 +14,4 @@ tools
 docs/*
 electron/env.json
 src/json/schema
+licenses.json

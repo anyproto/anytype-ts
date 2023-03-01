@@ -2,3 +2,10 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npx lint-staged --concurrent false
+
+# Checking for secrets
+gitleaks protect --verbose --redact --staged
+
+# Checking dependencies' licenses
+license-checker --production --json --out licenses.json
+node check-licenses.js
