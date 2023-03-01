@@ -5,6 +5,7 @@ import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const BORDER = 12;
+const DELAY_TOOLTIP = 500;
 
 class Preview {
 
@@ -12,7 +13,9 @@ class Preview {
 		toast: 0,
 		tooltip: 0,
 		preview: 0,
+		delay: 0,
 	};
+	delayTooltip = DELAY_TOOLTIP;
 
 	tooltipShow (text: string, element: any, typeX: I.MenuDirection, typeY: I.MenuDirection) {
 		if (!element.length || keyboard.isResizing) {
@@ -68,7 +71,12 @@ class Preview {
 			x = Math.min(win.width() - ow - BORDER, x);
 
 			node.css({ left: x, top: y }).addClass('show');
-		}, 250);
+
+			window.clearTimeout(this.timeout.delay);
+
+			this.timeout.delay = window.setTimeout(() => { this.delayTooltip = DELAY_TOOLTIP; }, 500);
+			this.delayTooltip = 100;
+		}, this.delayTooltip);
 	};
 
 	tooltipHide (force: boolean) {
@@ -80,6 +88,7 @@ class Preview {
 
 		obj.removeClass('show');
 		window.clearTimeout(this.timeout.tooltip);
+		window.clearTimeout(this.timeout.delay);
 	};
 
 	previewShow (element: any, param: any) {

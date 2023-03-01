@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/browser';
 import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
-import { Router, Route, Switch, Redirect } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';

@@ -1,10 +1,21 @@
 @import "~scss/_vars";
 
 .pageMainEmpty {
-	.mid { 
-		text-align: center; width: 600px; position: absolute; left: 50%; top: 50%; transform: translate3d(-50%,-50%,0px); 
-		display: flex; flex-direction: column; gap: 24px 0px; align-items: center;
-	}
+	.wrapper { width: 704px; margin: 0px auto; padding: 48px 0px; }
+	.wrapper {
 
-	.icon.ghost { width: 64px; height: 64px; }
+		.iconObject { margin: 0px 0px 24px 0px; }
+		.title { line-height: 40px; margin: 0px 0px 8px 0px; }
+		> .label { @include text-paragraph; margin: 0px 0px 44px 0px; }
+
+		.row { 
+			display: flex; flex-direction: row; align-items: center; padding: 14px 0px 13px 0px; border-bottom: 1px solid $colorBorderLight; justify-content: space-between;
+			@include text-paragraph; 
+		}
+
+		.select { transition: none; border: 0px; color: $colorMediumGrey; max-width: 100%; max-height: 164px; overflow: auto; }
+		.select { 
+			.icon.arrow { top: 3px; margin: 0px !important; }
+		}
+	}
 }

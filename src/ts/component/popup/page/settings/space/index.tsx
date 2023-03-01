@@ -122,6 +122,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 						detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: el.id } }, false);
 						detailStore.update(Constant.subId.space, { id: el.id, details: el }, false);
+
 						ObjectUtil.openHome('route');
 					});
 				}
