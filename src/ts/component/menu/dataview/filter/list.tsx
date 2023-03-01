@@ -197,7 +197,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, isInline, isCollection } = data;
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
 
@@ -219,13 +219,17 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		C.BlockDataviewFilterAdd(rootId, blockId, view.id, newItem);
 
 		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
-		analytics.event('AddFilter', { condition: newItem.condition });
+		analytics.event('AddFilter', {
+			condition: newItem.condition,
+			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+			embedType: isInline ? 'inline' : 'object'
+		});
 	};
 
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, loadData } = data;
+		const { rootId, blockId, getView, loadData, isInline, isCollection } = data;
 		const view = getView();
 
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => {
@@ -233,7 +237,10 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		});
 
 		menuStore.close('select');
-		analytics.event('RemoveFilter');
+		analytics.event('RemoveFilter', {
+			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+			embedType: isInline ? 'inline' : 'object'
+		});
 	};
 
 	onOver (e: any, item: any) {
@@ -271,7 +278,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onSortEnd (result: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, loadData } = data;
+		const { rootId, blockId, getView, loadData, isInline, isCollection } = data;
 		const view = getView();
 		const { oldIndex, newIndex } = result;
 		
@@ -279,7 +286,10 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => { loadData(view.id, 0); });
 
 		keyboard.disableSelection(false);
-		analytics.event('RepositionFilter');
+		analytics.event('RepositionFilter', {
+			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+			embedType: isInline ? 'inline' : 'object'
+		});
 	};
 
 	getItems () {

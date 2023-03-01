@@ -194,7 +194,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	componentDidMount () {
-		const { rootId, block, isPopup } = this.props;
+		const { rootId, block, isPopup, isInline } = this.props;
 		const view = this.getView();
 		const root = blockStore.getLeaf(rootId, rootId);
 
@@ -209,6 +209,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.resize();
 		this.rebind();
+
+		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
+		analytics.event(eventName, { embedType: isInline ? 'inline' : 'object' });
 	};
 
 	componentDidUpdate () {

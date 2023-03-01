@@ -403,7 +403,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly } = data;
+		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly, isInline, isCollection } = data;
 		const view = data.view.get();
 		const current = getView();
 		const sources = getSources();
@@ -415,6 +415,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		if (item.sectionId == 'type') {
 			this.param.type = item.id;
 			this.save();
+
+			analytics.event('ChangeViewType', {
+				type: item.id,
+				objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+				embedType: isInline ? 'inline' : 'object'
+			});
 		} else 
 		if (view.id) {
 			this.preventSaveOnClose = true;
@@ -428,7 +434,11 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 						};
 
 						loadData(message.viewId, 0);
-						analytics.event('AddView', { type: view.type });
+						analytics.event('DuplicateView', {
+							type: view.type,
+							objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+							embedType: isInline ? 'inline' : 'object'
+						});
 					});
 					break;
 				};
@@ -449,7 +459,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 								loadData(next.id, 0);
 							};
 
-							analytics.event('RemoveView');
+							analytics.event('RemoveView', {
+								objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+								embedType: isInline ? 'inline' : 'object'
+							});
 						});
 					};
 					break;

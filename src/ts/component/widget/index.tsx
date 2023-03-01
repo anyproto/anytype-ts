@@ -190,7 +190,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 			case Constant.widgetId.favorite:
 			case Constant.widgetId.recent:
-			case Constant.widgetId.set: {
+			case Constant.widgetId.set:
+			case Constant.widgetId.collection: {
 				object = {
 					id: targetBlockId,
 					name: translate(Util.toCamelCase(`widget-${targetBlockId}`)),
