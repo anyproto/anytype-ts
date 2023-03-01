@@ -14,7 +14,7 @@ class ObjectUtil {
 		};
 
 		const home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
-		if (home._empty_) {
+		if (home._empty_ || home.isArchived) {
 			this.openRoute(empty);
 			return;
 		};
