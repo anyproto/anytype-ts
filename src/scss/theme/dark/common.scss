@@ -211,6 +211,7 @@ html.themeDark {
     .progress {
         .inner { background: $colorBgLight; }
         .inner {
+			.fill { background: $colorSecondary; }
             .label { color: $colorPrimary; }
             .bar { background: $colorHover; }
         }
