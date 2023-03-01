@@ -254,8 +254,9 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, getView, blockId, isInline, isCollection } = data;
+		const { rootId, getView, getTarget, blockId, isInline } = data;
 		const view = getView();
+		const object = getTarget();
 		const relationOptions = this.getRelationOptions();
 
 		if (!relationOptions.length) {
@@ -273,8 +274,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
 			
 			analytics.event('AddSort', {
-				objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-				embedType: isInline ? 'inline' : 'object'
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
 			});
 		});
 	};
@@ -282,9 +283,10 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	onChange (id: number, k: string, v: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, isInline, isCollection } = data;
+		const { rootId, blockId, getView, isInline, getTarget } = data;
 		const view = getView();
 		const item = view.getSort(id);
+		const object = getTarget();
 
 		item[k] = v;
 
@@ -292,8 +294,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 		analytics.event('ChangeSortValue', {
 			type: item.type,
-			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-			embedType: isInline ? 'inline' : 'object'
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
 		});
 		this.forceUpdate();
 	};
@@ -301,15 +303,16 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, isInline, isCollection } = data;
+		const { rootId, blockId, getView, getTarget, isInline } = data;
+		const object = getTarget();
 		const view = getView();
 
 		C.BlockDataviewSortRemove(rootId, blockId, view.id, [ item.id ]);
 
 		menuStore.close('select');
 		analytics.event('RemoveSort', {
-			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-			embedType: isInline ? 'inline' : 'object'
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
 		});
 	};
 
@@ -321,16 +324,18 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { oldIndex, newIndex,  } = result;
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, isInline, isCollection } = data;
+		const { rootId, blockId, getView, isInline, getTarget } = data;
 		const view = getView();
+		const object = getTarget();
 
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
 		C.BlockDataviewSortSort(rootId, blockId, view.id, view.sorts.map(it => it.id));
 
 		keyboard.disableSelection(false);
+
 		analytics.event('RepositionSort', {
-			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-			embedType: isInline ? 'inline' : 'object'
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
 		});
 	};
 

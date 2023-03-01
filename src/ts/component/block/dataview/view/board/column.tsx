@@ -145,9 +145,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean) {
-		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit, rootId, isInline } = this.props;
-		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget } = this.props;
+		const object = getTarget();
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		

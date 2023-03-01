@@ -152,7 +152,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			return;
 		};
 
-		const { rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, isInline, isCollection } = this.props;
+		const { rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection } = this.props;
 		const view = getView();
 		const obj = $(element);
 		const node = $(this.node);
@@ -178,6 +178,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				getView,
 				getSources,
 				getVisibleRelations,
+				getTarget,
 				isInline,
 				isCollection,
 				view: observable.box(view),
@@ -214,8 +215,9 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	onViewAdd (e: any) {
 		e.persist();
 
-		const { rootId, block, getSources, isInline, isCollection } = this.props;
+		const { rootId, block, getSources, getTarget, isInline } = this.props;
 		const sources = getSources();
+		const object = getTarget();
 
 		const newView = {
 			name: `New view`,
@@ -234,23 +236,26 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			};
 
 			this.onViewEdit(e, `#views #view-item-${block.id}-${message.viewId}`, view);
+
 			analytics.event('AddView', {
 				type: view.type,
-				objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-				embedType: isInline ? 'inline' : 'object'
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
 			});
 		});
 	};
 
 	onViewSet (item: any) {
-		const { rootId, block, isInline, isCollection } = this.props;
+		const { rootId, block, isInline, getTarget } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
+		const object = getTarget();
 
 		dbStore.metaSet(subId, '', { viewId: item.id });
+
 		analytics.event('SwitchView', {
 			type: item.type,
-			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-			embedType: isInline ? 'inline' : 'object'
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
 		});
 	};
 
@@ -288,17 +293,19 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { rootId, block, isInline, isCollection } = this.props;
+		const { rootId, block, isInline, getTarget } = this.props;
+		const object = getTarget();
 
 		let views = dbStore.getViews(rootId, block.id);
 		let view = views[oldIndex];
 		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, block.id, ids);
+
 		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex, () => {
 			analytics.event('RepositionView', {
-				objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-				embedType: isInline ? 'inline' : 'object'
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
 			});
 		});
 

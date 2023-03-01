@@ -131,9 +131,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	loadGroupList () {
-		const { rootId, block, getView, isInline } = this.props;
-		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		const { rootId, block, getView, getTarget } = this.props;
+		const object = getTarget();
 		const view = getView();
 		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
 

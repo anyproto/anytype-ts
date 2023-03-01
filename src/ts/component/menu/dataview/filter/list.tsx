@@ -197,9 +197,10 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, isInline, isCollection } = data;
+		const { rootId, blockId, getView, isInline, getTarget } = data;
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
+		const object = getTarget();
 
 		if (!relationOptions.length) {
 			return;
@@ -219,18 +220,20 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		C.BlockDataviewFilterAdd(rootId, blockId, view.id, newItem);
 
 		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
+
 		analytics.event('AddFilter', {
 			condition: newItem.condition,
-			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-			embedType: isInline ? 'inline' : 'object'
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
 		});
 	};
 
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, loadData, isInline, isCollection } = data;
+		const { rootId, blockId, getView, loadData, isInline, isCollection, getTarget } = data;
 		const view = getView();
+		const object = getTarget();
 
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => {
 			loadData(view.id, 0);
@@ -238,8 +241,8 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 
 		menuStore.close('select');
 		analytics.event('RemoveFilter', {
-			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-			embedType: isInline ? 'inline' : 'object'
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
 		});
 	};
 
@@ -278,17 +281,19 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onSortEnd (result: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, loadData, isInline, isCollection } = data;
+		const { rootId, blockId, getView, loadData, isInline, getTarget } = data;
 		const view = getView();
+		const object = getTarget();
 		const { oldIndex, newIndex } = result;
 		
 		view.filters = arrayMove(view.filters as I.Filter[], oldIndex, newIndex);
 		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => { loadData(view.id, 0); });
 
 		keyboard.disableSelection(false);
+
 		analytics.event('RepositionFilter', {
-			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-			embedType: isInline ? 'inline' : 'object'
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
 		});
 	};
 

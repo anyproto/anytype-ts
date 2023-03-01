@@ -54,6 +54,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getIdPrefix = this.getIdPrefix.bind(this);
 		this.getVisibleRelations = this.getVisibleRelations.bind(this);
 		this.getEmpty = this.getEmpty.bind(this);
+		this.getTarget = this.getTarget.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -119,8 +120,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			readonly: false,
 			loadData: this.loadData,
 			getView: this.getView,
+			getTarget: this.getTarget,
 			getSources: this.getSources,
 			getRecord: this.getRecord,
+			getRecords: this.getRecords,
+			getKeys: this.getKeys,
+			getIdPrefix: this.getIdPrefix,
+			getLimit: () => this.getLimit(view.type),
+			getVisibleRelations: this.getVisibleRelations,
+			getEmpty: this.getEmpty,
 			onRecordAdd: this.onRecordAdd,
 			isAllowedObject: this.isAllowedObject,
 			isCollection,
@@ -165,12 +173,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						{...dataviewProps}
 						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 						pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-						getRecords={this.getRecords}
-						getKeys={this.getKeys}
-						getIdPrefix={this.getIdPrefix}
-						getLimit={() => this.getLimit(view.type)}
-						getVisibleRelations={this.getVisibleRelations}
-						getEmpty={this.getEmpty}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						onContext={this.onContext}
@@ -211,7 +213,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.rebind();
 
 		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
-		analytics.event(eventName, { embedType: isInline ? 'inline' : 'object' });
+		analytics.event(eventName, { embedType: analytics.embedType(isInline) });
 	};
 
 	componentDidUpdate () {
@@ -438,15 +440,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getSources (): string[] {
+		const target = this.getTarget();
+		return target._empty_ ? [] : target.setOf;
+	};
+
+	getTarget () {
 		const { rootId, block, isInline } = this.props;
 		const { targetObjectId } = block.content;
 
-		if (isInline && !targetObjectId) {
-			return [];
-		};
-
-		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
-		return object.setOf || [];
+		return detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 	};
 
 	onEmpty (e: any) {

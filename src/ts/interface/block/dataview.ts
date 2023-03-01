@@ -115,6 +115,7 @@ export interface ViewComponent {
 	getRecord(index: number): any;
 	getView?(): View;
 	getSources?(): string[];
+	getTarget?(): any;
 	getKeys?(viewId: string): string[];
 	getIdPrefix?(): string;
 	getLimit?(): number;

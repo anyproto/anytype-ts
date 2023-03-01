@@ -217,12 +217,13 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	onAdd () {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, loadData, getSources, isInline, isCollection } = data;
+		const { rootId, blockId, getView, loadData, getSources, isInline, getTarget } = data;
 		const view = getView();
 		const sources = getSources();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const object = getTarget();
 
 		for (let relation of relations) {
 			if (relation.isHidden || !relation.isVisible) {
@@ -267,8 +268,8 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 
 			analytics.event('AddView', {
 				type: view.type,
-				objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-				embedType: isInline ? 'inline' : 'object'
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
 			});
 		});
 	};
@@ -297,14 +298,16 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	onClick (e: any, item: any) {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, isInline, isCollection } = data;
+		const { rootId, blockId, isInline, getTarget } = data;
 		const subId = dbStore.getSubId(rootId, blockId);
+		const object = getTarget();
 
 		dbStore.metaSet(subId, '', { viewId: item.id });
+
 		analytics.event('SwitchView', {
 			type: item.type,
-			objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
-			embedType: isInline ? 'inline' : 'object'
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
 		});
 
 		close();

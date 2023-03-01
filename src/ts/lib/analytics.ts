@@ -350,6 +350,10 @@ class Analytics {
 		return code ? Util.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
+	embedType (isInline: boolean): string {
+		return isInline ? 'inline' : 'object';
+	};
+
 };
 
  export const analytics: Analytics = new Analytics();
