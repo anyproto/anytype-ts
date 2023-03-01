@@ -115,7 +115,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				additional = (
 					<IconObject 
 						id={`block-${id}-icon`}
-						object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage }} 
+						object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage, layout: I.ObjectLayout.Page }} 
 						canEdit={!readonly} 
 						onSelect={this.onSelectIcon} 
 						onUpload={this.onUploadIcon}
