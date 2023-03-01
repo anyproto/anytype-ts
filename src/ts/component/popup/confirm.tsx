@@ -27,9 +27,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		return (
 			<React.Fragment>
 				{icon ? (
-					<div className="iconObject c64">
-						<Icon className={icon} />
-					</div>
+					<Icon className={icon} />
 				) : ''}
 				<Title text={title} />
 				<Label text={text} />
