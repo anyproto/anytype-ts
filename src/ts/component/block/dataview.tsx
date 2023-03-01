@@ -156,7 +156,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			);
 
 			body = (
-				<div className="content">
+				<div className={[ 'content', isCollection ? 'isCollection': '' ].join(' ')}>
 					<ViewComponent 
 						key={'view' + view.id}
 						ref={(ref: any) => { this.refView = ref; }} 

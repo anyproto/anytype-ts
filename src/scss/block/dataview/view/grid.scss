@@ -121,6 +121,15 @@
 				.cellContent { min-width: unset; }
 			}
 		}
+
+		.isCollection {
+			.viewItem.viewGrid {
+				.row .icon.dnd { left: 0; height: 32px; top: 8px; z-index: 1; }
+
+				.cellHead:first-child { padding-left: 8px; }
+				.cell:first-child { padding-left: 20px; }
+			}
+		}
     }
 
 	.block.blockDataview.isInline {
@@ -153,15 +162,6 @@
 			.icon.edit { height: 40px; }
 
 			.loadMore { padding-top: 11px; margin-top: 0px; }
-		}
-	}
-
-	.block.blockDataview.isCollection {
-		.viewItem.viewGrid {
-			.row .icon.dnd { left: 0; height: 32px; top: 8px; z-index: 1; }
-
-			.cellHead:first-child { padding-left: 8px; }
-			.cell:first-child { padding-left: 20px; }
 		}
 	}
 }

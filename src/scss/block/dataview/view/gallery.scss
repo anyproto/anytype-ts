@@ -63,6 +63,12 @@
 			}
 
 		}
+
+		.isCollection {
+			.viewItem.viewGallery {
+				.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 4px; height: 100%; border-radius: 2px; top: 0px; left: 0px; }
+			}
+		}
 	}
 }
 
@@ -78,12 +84,6 @@
 			.card { width: auto; }
 
 			.loadMore { padding: 0px 2px 10px;}
-		}
-	}
-
-	.block.blockDataview.isCollection {
-		.viewItem.viewGallery {
-			.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 4px; height: 100%; border-radius: 2px; top: 0px; left: 0px; }
 		}
 	}
 }
