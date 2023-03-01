@@ -21,7 +21,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
-		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render() {
@@ -181,7 +180,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				onKeyUp={this.onKeyUp} 
 				onFocus={this.onFocus}
 				onMouseEnter={this.onMouseEnter}
-				onMouseLeave={this.onMouseLeave}
 			>
 				{element}
 			</div>
@@ -288,10 +286,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const name = node.find('.name');
 
 		Preview.previewShow(name, { param: targetBlockId, type: I.MarkType.Object, noUnlink: true });
-	};
-
-	onMouseLeave () {
-		Preview.previewHide(false);
 	};
 
 	resize () {
