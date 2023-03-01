@@ -392,7 +392,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onChange (k: string, v: any, timeout?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView, itemId, save } = data;
+		const { getView, itemId, save, isInline, isCollection } = data;
 		const view = getView();
 
 		if (!view) {
@@ -448,7 +448,11 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			};
 
 			view.setFilter(item);
-			analytics.event('ChangeFilterValue', { condition: item.condition });
+			analytics.event('ChangeFilterValue', {
+				condition: item.condition,
+				objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+				embedType: isInline ? 'inline' : 'object'
+			});
 
 			save();
 			this.forceUpdate();

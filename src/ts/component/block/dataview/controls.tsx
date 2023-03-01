@@ -288,7 +288,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { rootId, block } = this.props;
+		const { rootId, block, isInline, isCollection } = this.props;
 
 		let views = dbStore.getViews(rootId, block.id);
 		let view = views[oldIndex];
@@ -296,7 +296,10 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 		dbStore.viewsSort(rootId, block.id, ids);
 		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex, () => {
-			analytics.event('RepositionView');
+			analytics.event('RepositionView', {
+				objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+				embedType: isInline ? 'inline' : 'object'
+			});
 		});
 
 		keyboard.disableSelection(false);

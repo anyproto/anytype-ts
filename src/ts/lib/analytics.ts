@@ -177,7 +177,9 @@ class Analytics {
 			};
 
 			case 'AddView':
-			case 'SwitchView': {
+			case 'SwitchView':
+			case 'DuplicateView':
+			case 'ChangeViewType': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ViewType[data.type];
 				break;

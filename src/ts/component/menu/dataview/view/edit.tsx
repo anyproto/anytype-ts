@@ -415,6 +415,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		if (item.sectionId == 'type') {
 			this.param.type = item.id;
 			this.save();
+
+			analytics.event('ChangeViewType', {
+				type: item.id,
+				objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+				embedType: isInline ? 'inline' : 'object'
+			});
 		} else 
 		if (view.id) {
 			this.preventSaveOnClose = true;
@@ -428,7 +434,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 						};
 
 						loadData(message.viewId, 0);
-						analytics.event('AddView', {
+						analytics.event('DuplicateView', {
 							type: view.type,
 							objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
 							embedType: isInline ? 'inline' : 'object'
@@ -453,7 +459,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 								loadData(next.id, 0);
 							};
 
-							analytics.event('RemoveView');
+							analytics.event('RemoveView', {
+								objectType: isCollection ? Constant.typeId.collection : Constant.typeId.set,
+								embedType: isInline ? 'inline' : 'object'
+							});
 						});
 					};
 					break;
