@@ -1,22 +1,24 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Button, Icon, Header } from 'Component';
-import { I, Util } from 'Lib';
-import { popupStore } from 'Store';
+import { Title, Label, IconObject, Header, Icon } from 'Component';
+import { I, C, Util, DataUtil, ObjectUtil } from 'Lib';
+import { detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.PageComponent> {
 
-	_isMounted = false;
 	node = null;
 
 	constructor (props: I.PageComponent) {
 		super(props);
 
-		this.onClick = this.onClick.bind(this);
+		this.onDashboard = this.onDashboard.bind(this);
 	};
 	
 	render () {
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
+
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -24,55 +26,58 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 			>
 				<Header component="mainEmpty" text="Search" layout={I.ObjectLayout.Space} {...this.props} />
 
-				<div className="mid">
-					<Icon className="ghost" />
-					<Title text="Your space does not have home page yet" />
+				<div className="wrapper">
+					<IconObject object={space} size={112} forceLetter={true} />
+					<Title text={space.name} />
+					<Label text="Select an object to set as your homepage. You can always change it in Settings." />
 							
-					<div className="buttons">
-						<Button text="Select home page" color="blank" onClick={this.onClick} />
+					<div className="row">
+						<div className="side left">
+							<Label text="Homepage" />
+						</div>
+
+						<div className="side right">
+							<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
+								<div className="item">
+									<div className="name">
+										{home._empty_ || home.isArchived ? 'Select' : home.name}
+									</div>
+								</div>
+								<Icon className="arrow light" />
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		);
 	};
 	
-	componentDidMount () {
-		this._isMounted = true;
-	};
+	onDashboard () {
+		const { workspace } = commonStore;
+		const skipTypes = DataUtil.getFileTypes().concat(DataUtil.getSystemTypes());
 
-	componentWillUnmount () {
-		this._isMounted = false;
-	};
+		menuStore.open('searchObject', {
+			element: `#empty-dashboard-select`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+				],
+				canAdd: true,
+				onSelect: (el: any) => {
+					C.ObjectWorkspaceSetDashboard(workspace, el.id, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
 
-	onClick () {
-		popupStore.open('settings', { data: { page: 'spaceIndex' } });
-	};
+						detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: el.id } }, false);
+						detailStore.update(Constant.subId.space, { id: el.id, details: el }, false);
 
-	resize () {
-		const win = $(window);
-		const obj = Util.getPageContainer(this.props.isPopup);
-		const node = $(this.node);
-		const wrapper = obj.find('.wrapper');
-		const platform = Util.getPlatform();
-		const isPopup = this.props.isPopup && !obj.hasClass('full');
-		const oh = obj.height();
-		const header = node.find('#header');
-		const hh = header.height();
-		
-		let wh = isPopup ? oh - hh : win.height();
-
-		if (platform == I.Platform.Windows) {
-			wh -= Constant.size.headerWindows;
-		};
-
-		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
-		
-		if (isPopup) {
-			const element = $('#popupPage .content');
-			if (element.length) {
-				element.css({ minHeight: 'unset', height: '100%' });
-			};
-		};
+						ObjectUtil.openHome('route');
+					});
+				}
+			}
+		});
 	};
 
 });
