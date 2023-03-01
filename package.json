@@ -35,7 +35,6 @@
 		"name": "Anytype",
 		"email": "info@anytype.io"
 	},
-	"license": "",
 	"bugs": {
 		"url": "https://github.com/anytypeio/js-anytype/issues"
 	},
@@ -70,8 +69,9 @@
 		"eslint-plugin-react": "^7.31.11",
 		"file-loader": "^6.2.0",
 		"git-revision-webpack-plugin": "^3.0.6",
-		"husky": "^8.0.0",
+		"husky": "^8.0.3",
 		"json-loader": "^0.5.7",
+		"license-checker": "^25.0.1",
 		"lint-staged": "^13.0.3",
 		"prettier": "^2.7.1",
 		"sass-loader": "^8.0.2",
@@ -526,7 +526,7 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "anytype-release",
+					"name": "at9412003",
 					"region": "fra1"
 				}
 			],
@@ -545,7 +545,7 @@
 			"publish": [
 				{
 					"provider": "spaces",
-					"name": "anytype-release",
+					"name": "at9412003",
 					"region": "fra1"
 				}
 			]
@@ -559,7 +559,8 @@
 			"target": [
 				"snap",
 				"AppImage",
-				"deb"
+				"deb",
+				"rpm"
 			],
 			"description": "Anytype",
 			"publish": [
@@ -575,5 +576,10 @@
 		"{src,electron}/*.{ts,tsx}": "npx tsc --noEmit -p tsconfig.json",
 		"{src,electron}/*.{js,jsx,ts,tsx}": "npx eslint --fix",
 		"{src,electron}/*.{js,jsx,ts,tsx,html,css,scss,json}": "npx prettier --fix"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "npm run precommit && git add licenses.json"
+		}
 	}
 }
