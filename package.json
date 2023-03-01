@@ -35,6 +35,7 @@
 		"name": "Anytype",
 		"email": "info@anytype.io"
 	},
+	"license": "",
 	"bugs": {
 		"url": "https://github.com/anytypeio/js-anytype/issues"
 	},
@@ -559,7 +560,7 @@
 			"target": [
 				"snap",
 				"AppImage",
-				"deb",
+				"deb"
 			],
 			"description": "Anytype",
 			"publish": [
