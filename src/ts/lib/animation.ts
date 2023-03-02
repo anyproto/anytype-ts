@@ -45,11 +45,10 @@ class Animation {
 	};
 
 	getSortedNodes (dir: I.AnimDirection) {
-		const nodes = [];
+		const nodes: { el: JQuery<HTMLElement>, index: number, type: I.AnimType}[] = [];
 
-		$('.animation').each((i: number, el: any) => {
-			el = $(el);
-
+		$('.animation').each((i, elem) => {
+			const el = $(elem);
 			const type = Number(el.attr('data-animation-type')) || I.AnimType.Normal;
 
 			let index = 0;
@@ -77,14 +76,13 @@ class Animation {
 		return nodes;
 	};
 
-	initNodes (css: any, dir: I.AnimDirection) {
+	initNodes (css: object, dir: I.AnimDirection) {
 		const nodes = this.getSortedNodes(dir);
 
-		let n = 0;
 		let delay = 0;
 
-		for (let node of nodes) {
-			let { el, type } = node;
+		for (const node of nodes) {
+			const { el, type } = node;
 
 			switch (type) {
 				case I.AnimType.Normal: {
@@ -94,7 +92,7 @@ class Animation {
 				};
 
 				case I.AnimType.Text: {
-					el.html(el.attr('data-content'));
+					
 
 					if (dir == I.AnimDirection.From) {
 						this.applyCss(el, css, Duration.Normal, delay);
@@ -102,32 +100,32 @@ class Animation {
 						break;
 					};
 
-					const html = el.html();
-					const words = html.split(' ');
+					el.html("");
 
-					el.html('');
-
-					words.forEach(word => {
-						const w = $('<span></span>').text(word).addClass('animationWord');
-
+					const processWord = (word) => {
+						const w = $('<span></span>').html(word).addClass('animationWord');
 						el.append(w);
 						el.append(' ');
-
 						this.applyCss(w, css, Duration.Word, delay);
 						delay += Duration.Word * WORD_DELAY_COEF;
-						n++;
-					});
+					}
+
+					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach(child => {
+						if (child.nodeType === 3) {
+							child.textContent.trim().split(' ').forEach(processWord)
+						} else {
+							processWord(child)
+						}
+					})
 					break;
 				};
 			};
-
-			n++;
 		};
 
 		return nodes;
 	};
 
-	applyCss (obj, css: any, duration: number, delay: number) {
+	applyCss (obj: JQuery<HTMLElement>, css: object, duration: number, delay: number) {
 		obj.css({ ...css, transition: '' });
 
 		raf(() => {

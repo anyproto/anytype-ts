@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Header, Footer, DotIndicator, KeyPhrase, Error, Icon } from 'Component';
-import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, } from 'Lib';
+import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -34,6 +34,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.onBack = this.onBack.bind(this);
 		this.createWallet = this.createWallet.bind(this);
 		this.createAccount = this.createAccount.bind(this);
+		this.onMoreInfoPopup = this.onMoreInfoPopup.bind(this);
+		this.onAccountDataLocation = this.onAccountDataLocation.bind(this);
 	};
 	
 	render () {
@@ -53,10 +55,24 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		let label = <Label className="animation" text={translate(`authOnboard${stageNameMap[stage]}Label`)} />;
 		let submit = <Button text={translate(`authOnboard${stageNameMap[stage]}Submit`)} onClick={this.onNext} />;
 		let dotIndicator = <DotIndicator activeIndex={this.state.stage} count={4} />;
+		let accountStorageInfo = null;
+		let accountNameField = null;
 
 		if (stage === OnboardStage.VOID || (stage === OnboardStage.KEY_PHRASE && this.state.keyPhraseCopied)) {
 			submit = <Button text={translate(`authOnboardSubmit`)} onClick={this.onNext} />;
 		}
+
+		if (stage === OnboardStage.KEY_PHRASE || stage === OnboardStage.OFFLINE) {
+			accountStorageInfo = <span onClick={this.onAccountDataLocation}><Icon className="settings" />Account data location</span>
+		}
+
+		if (stage === OnboardStage.SOUL) {
+			accountNameField = <div className="animation"><input type="text" placeholder="Account name" onChange={e => authStore.nameSet(e.target.value)} /></div>
+			// TODO disabled if no text set
+			submit = <Button className="disabled"text={translate(`authOnboard${stageNameMap[stage]}Submit`)} onClick={this.onNext} />;;
+		}
+
+
 		if (stage === OnboardStage.SOUL_CREATING || stage === OnboardStage.SPACE_CREATING) {
 			label = null;
 			submit = null;
@@ -72,13 +88,16 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{dotIndicator}
 					{title}
 					{label}	
+					{accountNameField}
 					<Error text={error} />
-					{ this.state.stage === OnboardStage.KEY_PHRASE ? <KeyPhrase/> : null }
+					{ this.state.stage === OnboardStage.KEY_PHRASE ? <div className="animation"><KeyPhrase/></div> : null }
 					<div className="buttons">
 						<div className="animation">
 							{submit}
+							{ this.state.stage === OnboardStage.KEY_PHRASE ? <span onClick={this.onMoreInfoPopup}>More info</span> : null}
 						</div>
 					</div>
+					{accountStorageInfo}
 				</Frame>
 			</div>
 		);
@@ -143,7 +162,14 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			});
 		})
 	};
-	
+
+	onMoreInfoPopup () {
+		alert("wow");
+	}
+
+	onAccountDataLocation () {
+		alert("wow");
+	}
 });
 
 export default PageAuthOnboard;
