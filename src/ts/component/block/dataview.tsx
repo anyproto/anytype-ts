@@ -441,7 +441,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getSources (): string[] {
 		const target = this.getTarget();
-		return target._empty_ ? [] : target.setOf;
+		return target._empty_ || this.isCollection() ? [] : target.setOf;
 	};
 
 	getTarget () {
