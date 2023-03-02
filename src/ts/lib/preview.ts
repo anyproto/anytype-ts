@@ -5,7 +5,7 @@ import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const BORDER = 12;
-const DELAY_TOOLTIP = 500;
+const DELAY_TOOLTIP = 650;
 
 class Preview {
 
