@@ -14,14 +14,6 @@
 		}
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
-		.button { padding: 0px 8px; }
-		.button {
-			.icon.plus-small { 
-				margin: 0px 4px 0px 0px; width: 12px; height: 12px; background-image: url('~img/icon/dataview/button/plus-small.svg'); 
-				vertical-align: middle; background-size: 100%;
-			}
-		}
-
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorDarkGrey;
 			border-bottom: 1px solid $colorBorderLight; transition: $transitionFast; cursor: pointer;
@@ -137,6 +129,7 @@
 				.viewSelect { display: inline-block; line-height: 20px; }
 			}
 
+			.button { padding: 0px 8px; @include text-common; }
 			.button.addRecord { margin-left: 4px; }
 		}
 		.dataviewControls.viewGrid {

@@ -22,7 +22,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		const textConfirm = data.textConfirm || translate('commonOk');
 		const textCancel = data.textCancel || translate('commonCancel');
 		const colorConfirm = data.colorConfirm || 'black';
-		const colorCancel = data.colorCancel || 'grey';
+		const colorCancel = data.colorCancel || 'blank';
 		
 		return (
 			<React.Fragment>

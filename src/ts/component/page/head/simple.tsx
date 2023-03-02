@@ -104,7 +104,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				arrow = true;
 			};
 
-			button = <Button id="button-create" color="black" text={text} arrow={arrow} onClick={onCreate} />;
+			button = <Button id="button-create" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
 		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
@@ -112,12 +112,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			let className = '';
 
 			if (this.isInstalled()) {
-				className = 'grey filled disabled';
+				className = 'blank disabled';
 			} else {
 				onClick = this.onInstall;
 			};
 
-			button = <Button id="button-install" color="black" text="Install" className={className} onClick={onClick} />;
+			button = <Button id="button-install" text="Install" className={className} onClick={onClick} />;
 		};
 
 		return (

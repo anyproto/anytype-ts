@@ -123,9 +123,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 						{isAllowedObject ? (
 							<Button 
 								id={`button-${block.id}-add-record`}
-								color="addRecord orange" 
-								icon="plus-small" 
-								className="c28" 
+								className="addRecord c28" 
 								tooltip="Create new object" 
 								text="New" 
 								onClick={(e: any) => { onRecordAdd(e, -1); }} 
