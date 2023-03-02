@@ -116,7 +116,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					<IconObject 
 						id={`block-${id}-icon`}
 						object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage, layout: I.ObjectLayout.Page }} 
-						canEdit={!readonly} 
+						canEdit={!readonly}
+						iconSize={20}
 						onSelect={this.onSelectIcon} 
 						onUpload={this.onUploadIcon}
 						noRemove={true}
