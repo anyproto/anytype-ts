@@ -802,16 +802,28 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {
-		const { rootId, block } = this.props;
+		const { rootId, block, dataset } = this.props;
+		const { selection } = dataset || {};
 		const subId = dbStore.getSubId(rootId, block.id);
 		const view = this.getView();
 
 		let records = this.getRecords();
 		let orders = [];
-		let oldIndex = records.indexOf(ids[0]);
-		let targetIndex = records.indexOf(targetId);
 
-		records = arrayMove(records, oldIndex, targetIndex);
+		if (selection) {
+			selection.clear();
+		};
+
+		if (records.indexOf(targetId) > records.indexOf(ids[0])) {
+			ids = ids.reverse();
+		};
+
+		ids.forEach((id, index) => {
+			const oldIndex = records.indexOf(id);
+			const targetIndex = records.indexOf(targetId);
+			records = arrayMove(records, oldIndex, targetIndex);
+		});
+
 		orders = [ { viewId: view.id, groupId: '', objectIds: records } ];
 
 		this.objectOrderUpdate(orders, records, (message) => {

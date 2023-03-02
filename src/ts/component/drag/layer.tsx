@@ -134,10 +134,15 @@ class DragLayer extends React.Component<object, State> {
 				dataview.append(view);
 				wrap.addClass('blocks').append(dataview);
 
-				ids.forEach(id => {
+				ids.forEach((id, idx) => {
 					const el = $(`.drop-target-${id}`).parent();
+					const style = {
+						marginLeft: idx * 10,
+						marginTop: idx * 10,
+						zIndex: ids.length - idx
+					};
 
-					view.append(el.clone().addClass('record'));
+					view.append(el.clone().addClass('record').css(style));
 				});
 				break;
 			};
