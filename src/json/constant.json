@@ -81,6 +81,7 @@
 		"links", 
 		"internalFlags", 
 		"restrictions",
+		"spaceDashboardId",
 
 		"source",
 		"sourceObject", 
