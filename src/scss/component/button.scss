@@ -1,41 +1,33 @@
 @import "~scss/_vars";
 
 .button { 
-	display: inline-block; text-align: center; border: 0px;	font-weight: 500; text-decoration: none; cursor: pointer;
-	height: 40px; line-height: 38px; padding: 0px 16px; border-radius: 8px; transition: $transitionFast;
+	display: inline-flex; border: 0px; font-weight: 500; text-decoration: none; cursor: pointer;
+	height: 40px; padding: 0px 16px; border-radius: 8px; transition: $transitionFast;
 	font-size: 16px; vertical-align: middle; position: relative; overflow: hidden; letter-spacing: -0.2px;
+	align-items: center; justify-content: center;
 }
+
 .button.orange { background: $colorOrange; color: $colorWhite; }
 .button.orange:hover { background: #f09c0e; }
 
 .button.black { background: $colorBlack; color: $colorWhite; }
-.button.black:hover { color: $colorSecondary; }
+.button.black:hover { background: #41403d; }
 .button.black {
 	.arrow { background-image: url('~img/arrow/button/white.svg'); }
 }
 
-.button.red { background: $colorRed; color: $colorWhite; }
-.button.red:hover { background: #cc481d; }
-
-.button.grey { background: none; color: $colorBlack; box-shadow: 0px 0px 0px 1px $colorBorderDark inset; }
-.button.grey:hover { background: none; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
-
-.button.grey.filled { background: $colorBorderLight; color: $colorWhite; box-shadow: 0px 0px; }
-.button.grey.filled:hover { box-shadow: 0px 0px; }
+.button.red { color: $colorRed; border: solid 1px $colorBorderDark; }
+.button.red:hover { background: #fee7e0; }
 
 .button.dark { background: rgba(0,0,0,0.3); color: $colorWhite; }
 .button.dark:hover { background: rgba(0,0,0,0.4); }
 
-.button.blank { line-height: 36px; background: none; border: solid 1px $colorBorderLight; }
-.button.blank:hover { border-color: $colorBlack; }
+.button.blank { background: none; border: solid 1px $colorBorderDark; }
+.button.blank:hover { background: $colorHover; }
 
-.button.blank.red { color: $colorRed; }
-.button.blank.red:hover { background-color: transparent; }
-
-.button.c28 { @include text-small; height: 28px; line-height: 28px; border-radius: 6px; }
-.button.c28.blank { line-height: 26px; }
-
-.button.c16 { @include text-9; height: 16px; line-height: 14px; border-radius: 4px; padding: 0px 4px; }
+.button.c36 { @include text-common; height: 36px; border-radius: 6px; }
+.button.c28 { @include text-small; height: 28px; border-radius: 6px; }
+.button.c16 { @include text-9; height: 16px; border-radius: 4px; padding: 0px 4px; }
 
 input.button { line-height: 1; }
 
@@ -45,7 +37,7 @@ input.button { line-height: 1; }
 }
 
 .button.simple { 
-	height: auto; line-height: 1; padding: 0px; color: $colorMediumGrey; font-weight: bold; line-height: 1.43; 
+	height: auto; padding: 0px; color: $colorMediumGrey; font-weight: bold; line-height: 1.43; 
 	letter-spacing: 0.1px; 
 }
 .button.simple:hover { color: $colorBlack; }

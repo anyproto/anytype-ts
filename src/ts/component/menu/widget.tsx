@@ -66,8 +66,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						<div className="buttons">
 							<Button 
 								id="button-save"
-								color={this.target ? 'orange' : 'grey'}
-								className="c28 filled"
+								color={this.target ? 'blank' : 'blank'}
+								className="c28"
 								text="Add widget"
 								onClick={this.save} 
 								onMouseEnter={() => menuStore.closeAll(Constant.menuIds.widget)} 
@@ -112,8 +112,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const node = $(this.node);
 		const button = node.find('#button-save');
 
-		button.removeClass('orange grey');
-		button.addClass((this.target !== null) && (this.layout !== null) ? 'orange' : 'grey');
+		button.removeClass('black blank');
+		button.addClass((this.target !== null) && (this.layout !== null) ? 'black' : 'blank');
 	};
 
     getSections () {

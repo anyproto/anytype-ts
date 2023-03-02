@@ -133,7 +133,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				))}
 
 				<div className="buttons">
-					<Button color="orange" text="Export" onClick={this.onConfirm} />
+					<Button text="Export" onClick={this.onConfirm} />
 					<Button color="blank" text="Cancel" onClick={this.onCancel} />
 				</div>
 			</React.Fragment>
