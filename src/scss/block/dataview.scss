@@ -129,7 +129,7 @@
 				.viewSelect { display: inline-block; line-height: 20px; }
 			}
 
-			.button { padding: 0px 8px; }
+			.button { padding: 0px 8px; @include text-common; }
 			.button.addRecord { margin-left: 4px; }
 		}
 		.dataviewControls.viewGrid {
