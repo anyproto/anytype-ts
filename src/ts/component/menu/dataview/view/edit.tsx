@@ -57,7 +57,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 					<div className="inner">
 						<Input 
 							ref={ref => this.ref = ref} 
-							value={name} 
+							value={name}
 							readonly={readonly}
 							placeholder={translate('menuDataviewViewEditName')}
 							maxLength={32} 
@@ -84,6 +84,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		this.param = Util.objectCopy(data.view.get());
 		this.forceUpdate();
 		this.rebind();
+
+		window.setTimeout(() => this.resize(), 5);
 	};
 
 	componentDidUpdate () {

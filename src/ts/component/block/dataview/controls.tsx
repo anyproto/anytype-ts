@@ -260,7 +260,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	onViewEdit (e: any, element: string, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView, loadData, getSources, isInline, isCollection } = this.props;
+		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const view = dbStore.getView(rootId, block.id, item.id);
 
@@ -277,6 +277,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				view: observable.box(view),
 				isInline,
 				isCollection,
+				getTarget,
 				getView,
 				loadData,
 				getSources,
