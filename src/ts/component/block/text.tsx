@@ -1277,7 +1277,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onMouseDown (e: any) {
-		const { dataset, block, isInsideTable } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 
 		window.clearTimeout(this.timeoutClick);

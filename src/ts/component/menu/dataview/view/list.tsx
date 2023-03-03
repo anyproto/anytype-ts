@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
-import { observable } from 'mobx';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
 import arrayMove from 'array-move';
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
 import { I, C, Util, keyboard, Relation, analytics } from 'Lib';
-import {menuStore, dbStore, blockStore, detailStore} from 'Store';
-import Constant from "json/constant.json";
+import { menuStore, dbStore, blockStore } from 'Store';
 
 const HEIGHT = 28;
 const LIMIT = 20;
@@ -17,7 +16,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	
 	_isMounted = false;
 	node: any = null;
-	n = 0;
+	n = -1;
 	top = 0;
 	refList: any = null;
 	cache: any = {};

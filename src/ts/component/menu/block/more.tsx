@@ -8,7 +8,7 @@ import Url from 'json/url.json';
 
 class MenuBlockMore extends React.Component<I.Menu> {
 	
-	n = 0;
+	n = -1;
 	
 	constructor (props: I.Menu) {
 		super(props);

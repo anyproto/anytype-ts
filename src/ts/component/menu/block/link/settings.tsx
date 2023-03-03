@@ -8,7 +8,7 @@ import Constant from 'json/constant.json';
 
 const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React.Component<I.Menu> {
 	
-	n = 0;
+	n = -1;
 	timeout = 0;
 
 	constructor (props: I.Menu) {
@@ -99,7 +99,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			isSub: true,
 			data: {
 				rebind: this.rebind,
-				value: content[item.itemId],
+				value: String(content[item.itemId]),
 				options: [],
 				onSelect: (e: any, el: any) => {
 					this.save(item.itemId, el.id);

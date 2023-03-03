@@ -16,7 +16,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	timeoutChange = 0;
 	refValue: any = null;
 	range: any = null;
-	n = 0;
+	n = -1;
 
 	constructor (props: I.Menu) {
 		super(props);

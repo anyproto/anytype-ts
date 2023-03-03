@@ -10,7 +10,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
     _isMounted = false;
 	node: any = null;
-    n = 0;
+    n = -1;
 	target = null;
 	layout: I.WidgetLayout = null;
 

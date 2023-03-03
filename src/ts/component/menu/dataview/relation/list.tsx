@@ -15,7 +15,7 @@ const LIMIT = 20;
 const MenuRelationList = observer(class MenuRelationList extends React.Component<I.Menu> {
 	
 	node: any = null;
-	n = 0;
+	n = -1;
 	top = 0;
 	cache: any = {};
 	refList: any = null;
