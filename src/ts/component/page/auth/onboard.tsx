@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Header, Footer, DotIndicator, KeyPhrase, Error, Icon } from 'Component';
-import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics } from 'Lib';
-import { authStore, commonStore } from 'Store';
+import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview } from 'Lib';
+import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
@@ -36,6 +36,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.createAccount = this.createAccount.bind(this);
 		this.onMoreInfoPopup = this.onMoreInfoPopup.bind(this);
 		this.onAccountDataLocation = this.onAccountDataLocation.bind(this);
+		this.onKeyPhraseTooltip = this.onKeyPhraseTooltip.bind(this);
 	};
 	
 	render () {
@@ -64,6 +65,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage === OnboardStage.KEY_PHRASE || stage === OnboardStage.OFFLINE) {
 			accountStorageInfo = <span className="animation storageInfo bottom" onClick={this.onAccountDataLocation}><Icon className="dataLocation" />Account data location</span>
+			label = <Label className="animation" text={translate(`authOnboard${stageNameMap[stage]}Label`)} onClick={this.onKeyPhraseTooltip}  />;
 		}
 
 		if (stage === OnboardStage.SOUL) {
@@ -162,12 +164,18 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		})
 	};
 
+	onKeyPhraseTooltip () {
+		Preview.tooltipShow(translate('authOnboardKeyPhraseTooltip'), $('.label'), I.MenuDirection.Bottom, I.MenuDirection.None)
+	}
+
 	onMoreInfoPopup () {
-		alert("wow");
+		// popupStore.open('', {});
 	}
 
 	onAccountDataLocation () {
-		alert("wow");
+		const { accountPath } = authStore;
+		const text = `${translate('authOnboardAccountDataLocationTooltip')}:<br/>${accountPath}`
+		Preview.tooltipShow(text, $('.storageInfo'), I.MenuDirection.Top, I.MenuDirection.None)
 	}
 });
 

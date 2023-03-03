@@ -122,14 +122,14 @@
 	"authOnboardSubmit": { "en": "Next" },
 	"authOnboardMoreInfo": { "en": "More info" },
 	"authOnboardAccountDataLocation": { "en": "Account data location" },
-	"authOnboardAccountDataLocationLabel": { "en": "Your key files will be stored here" },
+	"authOnboardAccountDataLocationTooltip": { "en": "Your key files will be stored here" },
 
 	"authOnboardVoidTitle": { "en": "This is your Void" },
 	"authOnboardVoidLabel": { "en": "Everything you create will be stored here. It is a special encrypted place, which exist on your machine and is backed up to the network." },
 	
-	"authOnboardKeyPhraseTitle": { "en": "Your Void is encrypted by the Key" },
+	"authOnboardKeyPhraseTitle": { "en": "Your Void is encrypted by your Key" },
 	"authOnboardKeyPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. if you lose it there is no way to recover it. Keep it in safe place <span class='questionMark'>?</span>" },
-	"authOnboardKeyPhraseTooltip": { "en": "How to secure the phrase? In system password storage. We will do it for you On a piece of paper in safe and secure place Inside password manager if you use one" },
+	"authOnboardKeyPhraseTooltip": { "en": "How to secure your phrase: <ul><li>In system password storage. We will do it for you</li><li>On a piece of paper stored in a secure place</li><li>Inside a password manager if you use one</li></ul>" },
 	"authOnboardKeyPhraseSubmit": { "en": "Show and copy" },
 	
 	"authOnboardOfflineTitle": { "en": "Anytype is an offline-first application" },

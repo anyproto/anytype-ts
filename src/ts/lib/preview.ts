@@ -40,9 +40,8 @@ class Preview {
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
-			const node = $('<div class="tooltip anim"><div class="txt"></div></div>');
+			const node = $(`<div class="tooltip anim"><div class="txt">${Util.lbBr(text)}</div></div>`);
 
-			node.find('.txt').html(Util.lbBr(text));
 			obj.html('').append(node);
 			
 			const ow = node.outerWidth();
