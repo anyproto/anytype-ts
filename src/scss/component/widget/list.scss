@@ -33,7 +33,7 @@
 
 	.body { display: flex; flex-direction: column; gap: 2px; padding: 0px 4px 4px 4px; }
 	.body {
-		.item { cursor: pointer; height: 64px; transition: $transitionFast; border-radius: 6px; }
+		.item { cursor: pointer; height: 64px; border-radius: 6px; }
 		.item:hover { background-color: $colorHover; }
 		.item:hover, .item.active {
 			.info { width: calc(100% - 96px); }
