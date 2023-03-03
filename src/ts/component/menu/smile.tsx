@@ -72,7 +72,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 					onMouseDown={(e: any) => { this.onMouseDown(e, item.id, item.smile, item.skin); }}
 					onContextMenu={(e: any) => { this.onSkin(e, item.id, item.smile); }}
 				>
-					<div className="iconObject c32" data-code={str}>
+					<div 
+						className="iconObject c32" 
+						{...Util.dataProps({ code: str })}
+					>
 						<IconEmoji className="c32" size={28} icon={str} />
 					</div>
 				</div>

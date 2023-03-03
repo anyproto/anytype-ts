@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { RouteComponentProps } from 'react-router';
-import { I, C, DataUtil, keyboard, focus, Storage } from 'Lib';
+import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
@@ -30,7 +30,6 @@ import Constant from 'json/constant.json';
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	css?: any;
 	iconSize?: number;
-	isDragging?: boolean;
 };
 
 const SNAP = 0.01;
@@ -67,7 +66,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isDragging, isInsideTable } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable } = this.props;
 		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
@@ -79,8 +78,8 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		let canSelect = !isInsideTable;
 		let canDrop = !readonly && !isInsideTable;
-		let canDropMiddle = canDrop;
-		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'align' + hAlign ];
+		let canDropMiddle = false;
+		let cn: string[] = [ 'block', DataUtil.blockClass(block), 'align' + hAlign ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -104,14 +103,18 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		switch (type) {
 			case I.BlockType.Text: {
+				canDropMiddle = canDrop && block.canHaveChildren();
+
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
 
 				if (block.isTextQuote()) {
-					additional = (
-						<div className="line" />
-					);
+					additional = <div className="line" />;
+				};
+
+				if (block.isTextTitle() || block.isTextDescription()) {
+					canDrop = false;
 				};
 
 				blockComponent = <BlockText key={`block-${block.id}-component`} ref={setRef} {...this.props} onToggle={this.onToggle} />;
@@ -125,18 +128,20 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.IconPage: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockIconPage key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
 				
 			case I.BlockType.IconUser: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockIconUser key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
 				
 			case I.BlockType.File: {
-				if (isDragging || (style == I.FileStyle.Link)) {
+				if (style == I.FileStyle.Link) {
 					blockComponent = <BlockFile key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 					break;
 				};
@@ -171,13 +176,8 @@ const Block = observer(class Block extends React.Component<Props> {
 				break;
 			};
 				
-			case I.BlockType.Bookmark: {
-				blockComponent = <BlockBookmark key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
-				break;
-			};
-			
 			case I.BlockType.Dataview: {
-				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace());
+				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace() || root.isObjectCollection());
 				if (canSelect) {
 					cn.push('isInline');
 				};
@@ -192,16 +192,29 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.Link: {
 				const object = detailStore.get(rootId, content.targetBlockId, [ 'restrictions' ]);
-				if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
-					canDropMiddle = false;
+				
+				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+					canDropMiddle = canDrop;
 				};
 
 				blockComponent = <BlockLink key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
+
+			case I.BlockType.Bookmark: {
+				const object = detailStore.get(rootId, content.targetObjectId, [ 'restrictions' ]);
+				
+				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+					canDropMiddle = canDrop;
+				};
+
+				blockComponent = <BlockBookmark key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
+				break;
+			};
 				
 			case I.BlockType.Cover: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockCover key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -212,12 +225,14 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Featured: {
+				canDrop = false;
 				blockComponent = <BlockFeatured key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
 
 			case I.BlockType.Type: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockType key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -229,7 +244,6 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			case I.BlockType.Table: {
 				renderChildren = false;
-				canDropMiddle = false;
 				blockComponent = <BlockTable key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -271,7 +285,17 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			if (lastId) {
 				targetColumn = (
-					<DropTarget {...this.props} isTargetColumn={true} rootId={rootId} id={lastId} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} onClick={this.onEmptyColumn} />
+					<DropTarget 
+						{...this.props} 
+						isTargetColumn={true} 
+						rootId={rootId} 
+						id={lastId} 
+						style={style} 
+						type={type} 
+						dropType={I.DropType.Block} 
+						canDropMiddle={canDropMiddle} 
+						onClick={this.onEmptyColumn} 
+					/>
 				);
 			};
 		};
@@ -281,8 +305,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				<div 
 					id={'selectable-' + id} 
 					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
-					data-id={id} 
-					data-type={I.SelectType.Block}
+					{...Util.dataProps({ id, type: I.SelectType.Block })}
 				>
 					{object}
 				</div>
@@ -295,9 +318,9 @@ const Block = observer(class Block extends React.Component<Props> {
 			<div 
 				ref={node => this.node = node}
 				id={'block-' + id} 
-				data-id={id} 
 				className={cn.join(' ')} 
 				style={css}
+				{...Util.dataProps({ id })}
 			>
 				<div className="wrapMenu">
 					<Icon 

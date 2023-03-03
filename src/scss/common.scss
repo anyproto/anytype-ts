@@ -126,6 +126,7 @@ html.platformWindows, html.platformLinux {
 }
 ::-webkit-input-placeholder { color: $colorSecondary !important; }
 .isBlurred { filter: blur(7px); }
+.animationWord { display: inline-block; }
 
 .fileWrap { position: relative; overflow: hidden; cursor: pointer; }
 .fileWrap { 

@@ -32,7 +32,8 @@ class ObjectUtil {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Set:		 r = 'set'; break;
+			case I.ObjectLayout.Set:
+			case I.ObjectLayout.Collection:	 r = 'set'; break;
 			case I.ObjectLayout.Space:		 r = 'space'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;

@@ -107,21 +107,28 @@ export interface ViewComponent {
 	dataset?: I.Dataset;
 	isPopup?: boolean;
 	isInline?: boolean;
+	isCollection?: boolean;
 	className?: string;
 	onRef?(ref: any, id: string): void;
-	getData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
+	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
+	getRecords?(): string[];
 	getRecord(index: number): any;
 	getView?(): View;
 	getSources?(): string[];
+	getTarget?(): any;
 	getKeys?(viewId: string): string[];
 	getIdPrefix?(): string;
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
+	getEmpty?(type: string): any;
 	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
 	onCellClick?(e: any, key: string, index: number): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
+	onDragRecordStart?: (e: any, index: number) => void;
 	isAllowedObject?: () => boolean;
+	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
+	applyObjectOrder?: (records: any[], groupId?: string) => any[];
 };
 
 export interface ViewEmpty {

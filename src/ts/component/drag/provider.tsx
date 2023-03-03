@@ -4,8 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, Util, scrollOnMove, Action, Preview } from 'Lib';
-import { blockStore } from 'Store';
+import {I, C, focus, keyboard, Util, scrollOnMove, Action, Preview, DataUtil} from 'Lib';
+import {blockStore, dbStore, detailStore} from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -29,6 +29,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	objects: any = null;
 	objectData: Map<string, any> = new Map();
+
+	origin: any = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -203,7 +205,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const sidebar = $('#sidebar');
 		const layer = $('#dragLayer');
 		const body = $('body');
-		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey }; 
+		const dataTransfer = { rootId, dropType, ids, withAlt: e.altKey };
+
+		this.origin = component;
 
 		e.stopPropagation();
 		focus.clear(true);
@@ -288,7 +292,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		scrollOnMove.onMouseUp(e);
 	};
 
-	onDrop (e: any, type: string, targetId: string, position: I.BlockPosition) {
+	onDrop (e: any, targetType: string, targetId: string, position: I.BlockPosition) {
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 
@@ -301,8 +305,46 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		let targetContextId = keyboard.getRootId();
 		let isToggle = false;
 
+		const processSourceBlock = () => {
+			const cb = () => {
+				if (isToggle && (position == I.BlockPosition.InnerFirst)) {
+					blockStore.toggle(contextId, targetId, true);
+				};
+
+				if (selection) {
+					selection.renderSelection();
+				};
+			};
+
+			if (withAlt) {
+				Action.duplicate(contextId, targetContextId, targetId, ids, position, cb);
+			} else {
+				Action.move(contextId, targetContextId, targetId, ids, position, cb);
+			};
+		};
+
+		const processAddRecord = () => {
+			DataUtil.getObjectById(targetContextId, (object) => {
+				if (object.type === Constant.typeId.collection) {
+					// add to collection
+					C.ObjectCollectionAdd(targetContextId, ids);
+				} else {
+					ids.forEach((key: string) => {
+						const newBlock = {
+							type: I.BlockType.Link,
+							content: {
+								...DataUtil.defaultLinkSettings(),
+								targetBlockId: key,
+							}
+						};
+						C.BlockCreate(targetContextId, targetId, position, newBlock);
+					});
+				};
+			});
+		};
+
 		// DropTarget type
-		switch (type) {
+		switch (targetType) {
 			case I.DropType.Block: {
 				const target = blockStore.getLeaf(targetContextId, targetId);
 				
@@ -313,8 +355,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 				isToggle = target.isTextToggle();
 		
-				if (target.isLink() && (position == I.BlockPosition.InnerFirst)) {
-					targetContextId = target.content.targetBlockId;
+				if ((target.isLink() || target.isBookmark()) && (position == I.BlockPosition.InnerFirst)) {
+					targetContextId = target.getTargetObjectId();
 					targetId = '';
 
 					if (contextId == targetContextId) {
@@ -329,6 +371,22 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 						targetId = parent.id;
 					};
 				};
+
+				// Source type
+				switch (dropType) {
+					case I.DropType.Block: {
+						processSourceBlock();
+						break;
+					};
+
+					case I.DropType.Relation: {
+						ids.forEach((key: string) => {
+							C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
+						});
+						break;
+					};
+				};
+
 				break;
 			};
 
@@ -339,40 +397,47 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			case I.DropType.Menu: {
 				targetContextId = targetId;
 				targetId = '';
+
+				// Source type
+				switch (dropType) {
+					case I.DropType.Block: {
+						processSourceBlock();
+						break;
+					};
+
+					case I.DropType.Record: {
+						processAddRecord();
+						break;
+					};
+				};
+				break;
+			};
+
+			case I.DropType.Record: {
+
+				switch (position) {
+					case I.BlockPosition.Top:
+					case I.BlockPosition.Bottom: {
+						// Sort
+						const { onRecordDrop } = this.origin;
+
+						if (onRecordDrop) {
+							onRecordDrop(targetId, ids);
+						};
+						break;
+					};
+
+					case I.BlockPosition.InnerFirst: {
+						processAddRecord();
+						break;
+					};
+				};
+
 				break;
 			};
 		};
 
 		console.log('[DragProvider].onDrop from:', contextId, 'to: ', targetContextId);
-
-		// Source type
-		switch (dropType) {
-			case I.DropType.Block: {
-				const cb = () => {
-					if (isToggle && (position == I.BlockPosition.InnerFirst)) {
-						blockStore.toggle(contextId, targetId, true);
-					};
-
-					if (selection) {
-						selection.renderSelection();
-					};
-				};
-
-				if (withAlt) {
-					Action.duplicate(contextId, targetContextId, targetId, ids, position, cb);
-				} else {
-					Action.move(contextId, targetContextId, targetId, ids, position, cb);
-				};
-				break;
-			};
-
-			case I.DropType.Relation: {
-				ids.forEach((key: string) => {
-					C.BlockCreate(targetContextId, targetId, position, { type: I.BlockType.Relation, content: { key } });
-				});
-				break;
-			};
-		};
 	};
 
 	onScroll () {
@@ -392,6 +457,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	checkNodes (e: any, ex: number, ey: number) {
 		let dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
+		let isItemDrag = Util.getDataTransferItems(dataTransfer.items).length ? true : false;
 		let isFileDrag = dataTransfer.types.includes('Files');
 		let data: any = {};
 
@@ -490,15 +556,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				this.setPosition(I.BlockPosition.Right);
 			};
 
-			const recalcPosition = () => {
-				if (ey <= y + height * 0.5) {
-					this.setPosition(I.BlockPosition.Top);
-				} else
-				if (ey >= y + height * 0.5) {
-					this.setPosition(I.BlockPosition.Bottom);
-				};
-			};
-
 			if (this.position == I.BlockPosition.Bottom) {
 				const targetBot = this.objectData.get(this.hoverData.cacheKey + '-bot');
 				if (targetBot) {
@@ -509,47 +566,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			// canDropMiddle flag for restricted objects
 			if ((this.position == I.BlockPosition.InnerFirst) && !canDropMiddle) {
-				recalcPosition();
+				this.recalcPosition(ey, y, height);
 			};
 
-			// You can't drop on Icon
-			if ([ I.BlockType.IconPage, I.BlockType.IconUser ].indexOf(type) >= 0) {
-				this.setPosition(I.BlockPosition.None);
-			};
-
-			// You can't drop on Title and Description
-			if (isText && ([ I.TextStyle.Title, I.TextStyle.Description ].indexOf(style) >= 0)) {
-				this.setPosition(I.BlockPosition.None);
-			};
-
-			// You can only drop into Paragraphs, Lists and Callout
-			if (
-				(this.position == I.BlockPosition.InnerFirst) &&
-				isText &&
-				([ 
-					I.TextStyle.Paragraph, 
-					I.TextStyle.Toggle, 
-					I.TextStyle.Checkbox, 
-					I.TextStyle.Numbered, 
-					I.TextStyle.Bulleted, 
-					I.TextStyle.Callout,
-					I.TextStyle.Quote,
-				].indexOf(style) < 0)
-			) {
-				recalcPosition();
-			};
-
-			// You can only drop into text blocks and links
-			if (
-				(this.position == I.BlockPosition.InnerFirst) &&
-				![ I.BlockType.Text, I.BlockType.Link ].includes(type)
-			) {
-				recalcPosition();
-			};
-
-			// You can't drop on Featured or Type
-			if (isFeatured || isType) {
-				this.setPosition(I.BlockPosition.None);
+			// Recalc position if dataTransfer items are dragged
+			if (isItemDrag && (this.position != I.BlockPosition.None)) {
+				this.recalcPosition(ey, y, height);
 			};
 
 			// You can drop vertically on Layout.Row
@@ -575,17 +597,18 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				this.setPosition(I.BlockPosition.Top);
 			};
 
-			if (!isTargetBot && 
-			[
-				I.TextStyle.Paragraph, 
-				I.TextStyle.Toggle, 
-				I.TextStyle.Checkbox, 
-				I.TextStyle.Numbered, 
-				I.TextStyle.Bulleted, 
-				I.TextStyle.Callout,
-				I.TextStyle.Quote,
-			].includes(style) && 
-			(this.position == I.BlockPosition.Bottom)) {
+			if (!isTargetBot &&
+				[
+					I.TextStyle.Paragraph, 
+					I.TextStyle.Toggle, 
+					I.TextStyle.Checkbox, 
+					I.TextStyle.Numbered, 
+					I.TextStyle.Bulleted, 
+					I.TextStyle.Callout,
+					I.TextStyle.Quote,
+				].includes(style) && 
+				(this.position == I.BlockPosition.Bottom)
+			) {
 				this.setPosition(I.BlockPosition.None);
 			};
 
@@ -595,6 +618,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			if ((isTargetBot || isTargetCol) && (this.position != I.BlockPosition.None)) {
 				this.setPosition(I.BlockPosition.Bottom);
+			};
+
+			if ((dropType == I.DropType.Record) && (this.hoverData.dropType == I.DropType.Record) && !canDropMiddle) {
+				this.setPosition(I.BlockPosition.Top);
 			};
 		};
 
@@ -608,6 +635,15 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				obj.addClass('isOver ' + this.getDirectionClass(this.position));
 			};
 		});
+	};
+
+	recalcPosition = (ey: number, y: number, height: number) => {
+		if (ey <= y + height * 0.5) {
+			this.setPosition(I.BlockPosition.Top);
+		} else
+		if (ey >= y + height * 0.5) {
+			this.setPosition(I.BlockPosition.Bottom);
+		};
 	};
 
 	setClass (ids: string[]) {

@@ -309,7 +309,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = dbStore.getType(rootId);
-		const allowedObject = (type.smartblockTypes || []).indexOf(I.SmartBlockType.Page) >= 0;
+		const allowedObject = ((type.smartblockTypes || []).indexOf(I.SmartBlockType.Page) >= 0)
+			|| ([Constant.typeId.collection, Constant.typeId.set].includes(rootId));
 		const options = [];
 
 		if (allowedObject) {
@@ -347,6 +348,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const details: any = {
 			type: rootId,
+		};
+
+		if ([Constant.typeId.collection, Constant.typeId.set].includes(rootId)) {
+			details.layout = rootId == Constant.typeId.set ? I.ObjectLayout.Set : I.ObjectLayout.Collection;
 		};
 
 		const create = (template: any) => {

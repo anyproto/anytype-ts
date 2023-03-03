@@ -8,6 +8,7 @@ import { blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 import Errors from 'json/error.json';
+import Constant from 'json/constant.json';
 
 interface State {
 	isDeleted: boolean;
@@ -45,6 +46,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
+		const { object } = check;
+		const isCollection = object.type === Constant.typeId.collection;
 
 		const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
@@ -60,7 +63,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 				<div className="blocks wrapper">
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-					<HeadSimple ref={ref => { this.refHead = ref;}} type="set" rootId={rootId} />
+					<HeadSimple ref={ref => { this.refHead = ref;}} type={isCollection ? 'collection' : 'set'} rootId={rootId} />
 
 					{children.map((block: I.Block, i: number) => (
 						<Block 

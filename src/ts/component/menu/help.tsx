@@ -66,7 +66,7 @@ class MenuHelp extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const btn = <Button color="orange" className="c16" text={window.Electron.version.app} />;
+		const btn = <Button className="c16" text={window.Electron.version.app} />;
 
 		return [
 			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn },

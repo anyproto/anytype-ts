@@ -3,6 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
+import { set } from 'mobx';
 import { throttle } from 'lodash';
 import { Loader } from 'Component';
 import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
@@ -20,7 +21,6 @@ import Empty from './dataview/empty';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
-	isDragging?: boolean
 };
 
 interface State {
@@ -45,13 +45,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	constructor (props: Props) {
 		super(props);
 		
-		this.getData = this.getData.bind(this);
+		this.loadData = this.loadData.bind(this);
+		this.getRecords = this.getRecords.bind(this);
 		this.getRecord = this.getRecord.bind(this);
 		this.getView = this.getView.bind(this);
 		this.getSources = this.getSources.bind(this);
 		this.getKeys = this.getKeys.bind(this);
 		this.getIdPrefix = this.getIdPrefix.bind(this);
 		this.getVisibleRelations = this.getVisibleRelations.bind(this);
+		this.getEmpty = this.getEmpty.bind(this);
+		this.getTarget = this.getTarget.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -59,29 +62,33 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onSourceSelect = this.onSourceSelect.bind(this);
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
+		this.onDragRecordStart = this.onDragRecordStart.bind(this);
+		this.onRecordDrop = this.onRecordDrop.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
+		this.isCollection = this.isCollection.bind(this);
+		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
+		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, isDragging } = this.props;
+		const { rootId, block, isPopup, isInline } = this.props;
 		const { loading } = this.state;
-		const views = dbStore.getViews(rootId, block.id);
-		const sources = this.getSources();
-		const targetId = this.getObjectId();
-		const object = detailStore.get(rootId, targetId);
 
+		const views = dbStore.getViews(rootId, block.id);
 		if (!views.length) {
 			return null;
 		};
 
 		const view = this.getView();
-
 		if (!view) {
 			return null;
 		};
 
-		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.relation);
+		const sources = this.getSources();
+		const targetId = this.getObjectId();
+		const object = detailStore.get(rootId, targetId);
+		const isCollection = this.isCollection();
+		//const records = this.getRecords();
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
@@ -89,7 +96,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let head = null;
 		let controls = null;
 		let body = null;
-		let content = null;
 
 		switch (view.type) {
 			default:
@@ -110,141 +116,93 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				break;
 		};
 
+		const dataviewProps = {
+			readonly: false,
+			loadData: this.loadData,
+			getView: this.getView,
+			getTarget: this.getTarget,
+			getSources: this.getSources,
+			getRecord: this.getRecord,
+			getRecords: this.getRecords,
+			getKeys: this.getKeys,
+			getIdPrefix: this.getIdPrefix,
+			getLimit: () => this.getLimit(view.type),
+			getVisibleRelations: this.getVisibleRelations,
+			getEmpty: this.getEmpty,
+			onRecordAdd: this.onRecordAdd,
+			isAllowedObject: this.isAllowedObject,
+			isCollection,
+			isInline
+		};
+
 		if (isInline) {
 			head = (
 				<Head 
-					ref={ref => this.refHead = ref} 
-					{...this.props} 
-					readonly={false} 
-					getData={this.getData} 
-					getView={this.getView} 
-					getSources={this.getSources}
-					getRecord={this.getRecord}
-					onRecordAdd={this.onRecordAdd}
+					ref={(ref: any) => { this.refHead = ref; }} 
+					{...this.props}
+					{...dataviewProps}
 					onSourceSelect={this.onSourceSelect}
 					onSourceTypeSelect={this.onSourceTypeSelect}
 					className={className}
-					isInline={isInline}
-					isAllowedObject={this.isAllowedObject}
 				/>
 			);
 		};
 
-		if (!isDragging) {
+		if (loading) {
+			body = <Loader id="set-loader" />
+		} else
+		if (!isCollection && !sources.length) {
+			body = this.getEmpty('source');
+		} else {
 			controls = (
 				<Controls 
-					ref={ref => this.refControls = ref} 
-					{...this.props} 
+					ref={(ref: any) => { this.refControls = ref; }} 
+					{...this.props}
+					{...dataviewProps}
 					className={className}
-					readonly={false} 
-					getData={this.getData} 
-					getView={this.getView} 
-					getSources={this.getSources}
-					getRecord={this.getRecord}
-					onRecordAdd={this.onRecordAdd}
-					isInline={isInline}
-					isAllowedObject={this.isAllowedObject}
 				/>
 			);
 
-			if (loading) {
-				body = <Loader id="set-loader" />
-			} else
-			if (!types.length && !relations.length) {
-				body = (
-					<Empty
+			body = (
+				<div className={[ 'content', isCollection ? 'isCollection': '' ].join(' ')}>
+					<ViewComponent 
+						key={'view' + view.id}
+						ref={(ref: any) => { this.refView = ref; }} 
+						onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
 						{...this.props}
-						title="Type or relation has been deleted"
-						description="Visit the Anytype library to re-install these entities or select another source."
-						button="Select source"
-						className={isInline ? 'withHead' : ''}
-						withButton={true}
-						onClick={this.onEmpty}
+						{...dataviewProps}
+						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
+						pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
+						onCellClick={this.onCellClick}
+						onCellChange={this.onCellChange}
+						onContext={this.onContext}
+						objectOrderUpdate={this.objectOrderUpdate}
+						applyObjectOrder={this.applyObjectOrder}
+						onDragRecordStart={this.onDragRecordStart}
 					/>
-				);
-			} else {
-				body = (
-					<div className="content">
-						<ViewComponent 
-							key={'view' + view.id}
-							ref={(ref: any) => { this.refView = ref; }} 
-							onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
-							{...this.props} 
-							bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-							pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-							readonly={false} 
-							getData={this.getData} 
-							getRecord={this.getRecord}
-							getView={this.getView} 
-							getSources={this.getSources}
-							getKeys={this.getKeys}
-							getIdPrefix={this.getIdPrefix}
-							getLimit={() => this.getLimit(view.type)}
-							getVisibleRelations={this.getVisibleRelations}
-							onRecordAdd={this.onRecordAdd}
-							onCellClick={this.onCellClick}
-							onCellChange={this.onCellChange}
-							onContext={this.onContext}
-							isInline={isInline}
-							isAllowedObject={this.isAllowedObject}
-						/>
-					</div>
-				);
-			};
-		};
-
-		if (!sources.length) {
-			content = (
-				<React.Fragment>
-					<div className="hoverArea">
-						{head}
-					</div>
-
-					<Empty
-						{...this.props}
-						title="No query selected"
-						description="All objects satisfying your query will be displayed in Set"
-						button="Select query"
-						className={isInline ? 'withHead' : ''}
-						withButton={true}
-						onClick={this.onEmpty}
-					/>
-				</React.Fragment>
-			);
-		} else {
-			content = (
-				<React.Fragment>
-					<div className="hoverArea">
-						{head}
-						{controls}
-					</div>
-					{body}
-				</React.Fragment>
+				</div>
 			);
 		};
 
 		return (
-			<div
-				ref={node => this.node = node}
-			>
-				{content}
+			<div ref={node => this.node = node}>
+				<div className="hoverArea">
+					{head}
+					{controls}
+				</div>
+				{body}
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		const { rootId, block, isPopup, isDragging } = this.props;
-
-		if (isDragging) {
-			return;
-		};
-
+		const { rootId, block, isPopup, isInline } = this.props;
 		const view = this.getView();
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (view) {
 			dbStore.metaSet(rootId, block.id, { viewId: view.id, offset: 0, total: 0 });
-			this.getData(view.id, 0, true);
+			this.loadData(view.id, 0, true);
 		};
 
 		if (root.isObjectSet()) {
@@ -253,6 +211,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.resize();
 		this.rebind();
+
+		const eventName = this.isCollection() ? 'ScreenCollection' : 'ScreenSet';
+		analytics.event(eventName, { embedType: analytics.embedType(isInline) });
 	};
 
 	componentDidUpdate () {
@@ -260,7 +221,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { viewId } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 
 		if (viewId && (viewId != this.viewId)) {
-			this.getData(viewId, 0, true);
+			this.loadData(viewId, 0, true);
 		};
 
 		this.resize();
@@ -275,7 +236,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id}`);
+		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection`);
 	};
 
 	rebind () {
@@ -285,7 +246,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.unbind();
 		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
 		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
-		win.on(`updateDataviewData.${block.id}`, () => { this.getData(this.getView().id, 0, true);});
+		win.on(`updateDataviewData.${block.id}`, () => { this.loadData(this.getView().id, 0, true);});
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
 		});
@@ -310,7 +271,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (!isInline && !keyboard.isFocused) {
 			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-				selection.set(I.SelectType.Record, dbStore.getRecords(subId, ''));
+				selection.set(I.SelectType.Record, this.getRecords());
 			});
 		};
 
@@ -348,15 +309,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return Util.arrayUnique(keys);
 	};
 
-	getData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
+	loadData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
 		if (!viewId) {
-			console.log('[BlockDataview.getData] No view id');
+			console.log('[BlockDataview.loadData] No view id');
 			return;
 		};
 
 		const view = this.getView(viewId);
 		if (!view) {
-			console.log('[BlockDataview.getData] No view');
+			console.log('[BlockDataview.loadData] No view');
 			return;
 		};
 
@@ -366,9 +327,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = dbStore.getSubId(rootId, block.id);
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
+		const isCollection = this.isCollection();
 
-		if (!sources.length) {
-			console.log('[BlockDataview.getData] No sources');
+		if (!sources.length && !isCollection) {
+			console.log('[BlockDataview.loadData] No sources');
 			return;
 		}
 
@@ -398,6 +360,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				limit: offset + this.getLimit(view.type), 
 				clear,
 				sources,
+				collectionId: isCollection ? this.getObjectId() : '',
 			}, (message: any) => {
 				if (clear) {
 					this.setState({ loading: false });
@@ -431,10 +394,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return limit;
 	};
 
-	getRecord (index: number) {
+	getRecords (): string[] {
 		const { rootId, block } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
+
+		return this.applyObjectOrder(Util.objectCopy(records));
+	};
+
+	getRecord (index: number) {
+		const { rootId, block } = this.props;
+		const subId = dbStore.getSubId(rootId, block.id);
+		const records = this.getRecords();
 
 		if (index > records.length - 1) {
 			return {};
@@ -469,15 +440,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getSources (): string[] {
+		const target = this.getTarget();
+		return target._empty_ || this.isCollection() ? [] : target.setOf;
+	};
+
+	getTarget () {
 		const { rootId, block, isInline } = this.props;
 		const { targetObjectId } = block.content;
 
-		if (isInline && !targetObjectId) {
-			return [];
-		};
-
-		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
-		return object.setOf || [];
+		return detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 	};
 
 	onEmpty (e: any) {
@@ -502,6 +473,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const element = $(e.currentTarget);
 		const view = this.getView();
 		const subId = dbStore.getSubId(rootId, block.id);
+		const isCollection = this.isCollection();
 		const conditions = [
 			I.FilterCondition.Equal,
 			I.FilterCondition.In,
@@ -512,6 +484,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {
 			type: types.length ? types[0].id : commonStore.type,
+		};
+		const flags: I.ObjectFlag[] = [];
+
+		if (!types.length || isCollection) {
+			flags.push(I.ObjectFlag.SelectType);
 		};
 
 		if (relations.length) {
@@ -534,7 +511,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.creating = true;
 
 		const create = (template: any) => {
-			C.ObjectCreate(details, [], template?.id, (message: any) => {
+			C.ObjectCreate(details, flags, template?.id, (message: any) => {
 				this.creating = false;
 
 				if (message.error.code) {
@@ -542,9 +519,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				const object = message.details;
-				const records = dbStore.getRecords(subId, '');
+				const records = this.getRecords();
 				const oldIndex = records.indexOf(message.objectId);
 				const newIndex = dir > 0 ? records.length - 1 : 0;
+
+				if (isCollection) {
+					C.ObjectCollectionAdd(objectId, [ object.id ]);
+				};
 
 				if (oldIndex < 0) {
 					dbStore.recordAdd(subId, '', object.id, newIndex);
@@ -555,7 +536,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', newIndex);
 				const ref = this.refCells.get(id);
 
-				if (ref && (view.type == I.ViewType.Grid)) {
+				if (ref && (view.type == I.ViewType.Grid) && !isCollection) {
 					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 
@@ -693,6 +674,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, dataset } = this.props;
 		const { selection } = dataset || {};
 		const subId = dbStore.getSubId(rootId, block.id);
+		const isCollection = this.isCollection();
 		
 		let ids = selection.get(I.SelectType.Record);
 		if (!ids.length) {
@@ -706,8 +688,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			},
 			onClose: () => { selection.clear(); },
 			data: {
+				targetId: this.getObjectId(),
 				objectIds: ids,
 				subId,
+				isCollection,
 			}
 		});
 	};
@@ -725,7 +709,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (message.views && message.views.length) {
-					window.setTimeout(() => { this.getData(message.views[0].id, 0, true); }, 50);
+					window.setTimeout(() => { this.loadData(message.views[0].id, 0, true); }, 50);
 				};
 
 				if (isInline) {
@@ -791,6 +775,62 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
+	onDragRecordStart (e: any, index: number) {
+		e.stopPropagation();
+
+		const { dataset, block } = this.props;
+		const { selection, onDragStart } = dataset || {};
+		const record = this.getRecord(index);
+
+		let ids = selection.get(I.SelectType.Record);
+		if (!ids.length) {
+			ids = [ record.id ];
+		};
+
+		if (!selection || !onDragStart) {
+			return;
+		};
+
+		if (!block.isDraggable()) {
+			e.preventDefault();
+			return;
+		};
+
+		keyboard.disableSelection(true);
+
+		onDragStart(e, I.DropType.Record, ids, this);
+	};
+
+	onRecordDrop (targetId: string, ids: string[]) {
+		const { rootId, block, dataset } = this.props;
+		const { selection } = dataset || {};
+		const subId = dbStore.getSubId(rootId, block.id);
+		const view = this.getView();
+
+		let records = this.getRecords();
+		let orders = [];
+
+		if (selection) {
+			selection.clear();
+		};
+
+		if (records.indexOf(targetId) > records.indexOf(ids[0])) {
+			ids = ids.reverse();
+		};
+
+		ids.forEach((id, index) => {
+			const oldIndex = records.indexOf(id);
+			const targetIndex = records.indexOf(targetId);
+			records = arrayMove(records, oldIndex, targetIndex);
+		});
+
+		orders = [ { viewId: view.id, groupId: '', objectIds: records } ];
+
+		this.objectOrderUpdate(orders, records, (message) => {
+			dbStore.recordsSet(subId, '', records);
+		});
+	};
+
 	getIdPrefix () {
 		return [ 'dataviewCell', this.props.block.id ].join('-');
 	};
@@ -801,6 +841,46 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const relations = dbStore.getObjectRelations(rootId, block.id).map(it => it.relationKey);
 
 		return view.getVisibleRelations().filter(it => relations.includes(it.relationKey));
+	};
+
+	getEmpty (type: string) {
+		const { isInline } = this.props;
+
+		let emptyProps = { 
+			title: '', 
+			description: '', 
+			button: '', 
+			onClick: e => {},
+		};
+
+		switch (type) {
+			case 'source':
+				emptyProps = {
+					title: 'Type or relation has been deleted',
+					description: 'Visit the Marketplace to re-install these entities or select another source.',
+					button: 'Select query',
+					onClick: this.onEmpty,
+				};
+				break;
+
+			case 'view':
+				emptyProps = {
+					title: 'No objects',
+					description: 'Create your first one to begin',
+					button: 'Create object',
+					onClick: (e) => this.onRecordAdd(e, 1),
+				};
+
+		};
+
+		return (
+			<Empty
+				{...this.props}
+				{...emptyProps}
+				className={isInline ? 'withHead' : ''}
+				withButton={true}
+			/>
+		);
 	};
 
 	isAllowedObject () {
@@ -817,6 +897,58 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		return allowed;
+	};
+
+	isCollection () {
+		const { rootId } = this.props;
+		const targetId = this.getObjectId();
+		const object = detailStore.get(rootId, targetId);
+
+		return object.type === Constant.typeId.collection;
+	};
+
+	objectOrderUpdate (orders: any[], records: any[], callBack?: (message0: any) => void) {
+		const { rootId, block } = this.props;
+		const view = this.getView();
+
+		C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			orders.forEach((it: any) => {
+				let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
+				if (old) {
+					set(old, it);
+				} else {
+					block.content.objectOrder.push(it);
+				};
+
+				window.setTimeout(() => { this.applyObjectOrder(records, it.groupId); }, 30);
+			});
+
+			if (callBack) {
+				callBack(message);
+			};
+		});
+	};
+
+	applyObjectOrder (records: any[], groupId?: string): string[] {
+		const { block } = this.props;
+		const view = this.getView();
+		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (groupId ? it.groupId == groupId : true));
+		const objectIds = el ? el.objectIds || [] : [];
+
+		records.sort((c1: any, c2: any) => {
+			const idx1 = objectIds.indexOf(c1);
+			const idx2 = objectIds.indexOf(c2);
+
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
+
+		return records;
 	};
 
 	resize () {

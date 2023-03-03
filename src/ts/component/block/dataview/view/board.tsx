@@ -41,7 +41,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
-		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 	};
 
 	render () {
@@ -77,13 +76,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 								{groups.map((group: any, i: number) => (
 									<Column 
 										key={`board-column-${group.id}`} 
-										ref={ref => { this.columnRefs[group.id] = ref; }}
+										ref={ref => this.columnRefs[group.id] = ref}
 										{...this.props} 
 										{...group}
-										onRecordAdd={this.onRecordAdd} 
+										onRecordAdd={this.onRecordAdd}
 										onDragStartColumn={this.onDragStartColumn}
 										onDragStartCard={this.onDragStartCard}
-										applyObjectOrder={this.applyObjectOrder}
 										getSubId={() => { return dbStore.getGroupSubId(rootId, block.id, group.id); }}
 									/>
 								))}
@@ -133,9 +131,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	loadGroupList () {
-		const { rootId, block, getView, isInline } = this.props;
-		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		const { rootId, block, getView, getTarget } = this.props;
+		const object = getTarget();
 		const view = getView();
 		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
 
@@ -197,7 +194,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onRecordAdd (groupId: string, dir: number) {
-		const { rootId, block, getView, isInline } = this.props;
+		const { rootId, block, getView, isInline, isCollection, objectOrderUpdate } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
 		const objectId = isInline ? block.content.targetObjectId : rootId;
@@ -216,6 +213,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
 		]; 
+		const flags: I.ObjectFlag[] = [];
+
+		if (!types.length || isCollection) {
+			flags.push(I.ObjectFlag.SelectType);
+		};
 
 		details[view.groupRelationKey] = group.value;
 
@@ -241,7 +243,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		const create = (template: any) => {
-			C.ObjectCreate(details, [], template?.id, (message: any) => {
+			C.ObjectCreate(details, flags, template?.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -252,12 +254,16 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const newIndex = dir > 0 ? records.length : 0;
 				const update = arrayMove(records, oldIndex, newIndex);
 
-				C.BlockDataviewObjectOrderUpdate(rootId, block.id, [ { viewId: view.id, groupId, objectIds: update } ], () => {
+				if (isCollection) {
+					C.ObjectCollectionAdd(objectId, [ object.id ]);
+				};
+
+				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
 					dbStore.recordsSet(subId, '', update);
 				});
 
 				analytics.event('CreateObject', {
-					route: 'Set',
+					route: isCollection ? 'Collection' : 'Set',
 					objectType: object.type,
 					layout: object.layout,
 					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
@@ -547,7 +553,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return;
 		};
 
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, objectOrderUpdate } = this.props;
 		const view = getView();
 		const oldSubId = dbStore.getGroupSubId(rootId, block.id, current.groupId);
 		const newSubId = dbStore.getGroupSubId(rootId, block.id, this.newGroupId);
@@ -555,21 +561,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const change = current.groupId != this.newGroupId;
 
 		let records: any[] = [];
-
-		const setOrder = (orders: any[]) => {
-			C.BlockDataviewObjectOrderUpdate(rootId, block.id, orders, () => {
-				orders.forEach((it: any) => {
-					let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
-					if (old) {
-						set(old, it);
-					} else {
-						block.content.objectOrder.push(it);
-					};
-
-					window.setTimeout(() => { this.applyObjectOrder(it.groupId, records); }, 30);
-				});
-			});
-		};
+		let orders: any[] = [];
 
 		if (change) {
 			detailStore.update(newSubId, { id: record.id, details: record }, true);
@@ -579,20 +571,28 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			dbStore.recordAdd(newSubId, '', record.id, this.newIndex);
 
 			C.ObjectSetDetails(record.id, [ { key: view.groupRelationKey, value: newGroup.value } ], () => {
-				setOrder([
+				orders = [
 					{ viewId: view.id, groupId: current.groupId, objectIds: dbStore.getRecords(oldSubId, '') },
 					{ viewId: view.id, groupId: this.newGroupId, objectIds: dbStore.getRecords(newSubId, '') }
-				]);
+				];
+
+				objectOrderUpdate(orders, records);
 			});
 		} else {
 			if (current.index + 1 == this.newIndex) {
 				return;
 			};
 
-			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
-			dbStore.recordsSet(oldSubId, '', records);
+			if (this.newIndex > current.index) {
+				this.newIndex -= 1;
+			};
 
-			setOrder([ { viewId: view.id, groupId: current.groupId, objectIds: records } ]);
+			records = arrayMove(dbStore.getRecords(oldSubId, ''), current.index, this.newIndex);
+			orders = [ { viewId: view.id, groupId: current.groupId, objectIds: records } ];
+
+			objectOrderUpdate(orders, records, (message) => {
+				dbStore.recordsSet(oldSubId, '', records);
+			});
 		};
 	};
 
@@ -620,24 +620,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		});
 
 		return groups;
-	};
-
-	applyObjectOrder (groupId: string, records: any[]) {
-		const { block, getView } = this.props;
-		const view = getView();
-		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
-		const objectIds = el ? el.objectIds || [] : [];
-
-		records.sort((c1: any, c2: any) => {
-			const idx1 = objectIds.indexOf(c1);
-			const idx2 = objectIds.indexOf(c2);
-
-			if (idx1 > idx2) return 1;
-			if (idx1 < idx2) return -1;
-			return 0;
-		});
-
-		return records;
 	};
 
 	onScrollView () {
@@ -686,7 +668,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	onView (e: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView, getData, getSources, isInline } = this.props;
+		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
 		const view = getView();
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 
@@ -700,9 +682,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				readonly: !allowed,
 				view: observable.box(view),
 				isInline,
+				isCollection,
 				getView,
-				getData,
+				loadData,
 				getSources,
+				getTarget,
 				onSave: () => { this.forceUpdate(); },
 			}
 		});

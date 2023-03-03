@@ -4,21 +4,22 @@ import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 type SearchSubscribeParams = Partial<{
-	subId: string,
-	idField: string,
-	filters: I.Filter[],
-	sorts: I.Sort[],
-	keys: string[],
-	sources: string[],
-	offset: number,
-	limit: number,
-	ignoreWorkspace: boolean,
-	ignoreHidden: boolean,
-	ignoreDeleted: boolean,
-	withArchived: boolean,
-	noDeps: boolean,
-	afterId: string,
-	beforeId: string,
+	subId: string;
+	idField: string;
+	filters: I.Filter[];
+	sorts: I.Sort[];
+	keys: string[];
+	sources: string[];
+	collectionId: string;
+	afterId: string;
+	beforeId: string;
+	offset: number;
+	limit: number;
+	ignoreWorkspace: boolean;
+	ignoreHidden: boolean;
+	ignoreDeleted: boolean;
+	withArchived: boolean;
+	noDeps: boolean;
 }>;
 
 class DataUtil {
@@ -56,7 +57,7 @@ class DataUtil {
 		return icon;
 	};
 
-	blockClass (block: any, isDragging?: boolean) {
+	blockClass (block: any) {
 		const { content } = block;
 		const { style, type, state } = content;
 		const dc = Util.toCamelCase('block-' + block.type);
@@ -67,7 +68,7 @@ class DataUtil {
 				c.push('withFile');
 			};
 
-			if (isDragging || (style == I.FileStyle.Link) || (type == I.FileType.File)) {
+			if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
 				c.push(dc);
 			} else {
 				c.push('blockMedia');
@@ -233,7 +234,7 @@ class DataUtil {
 
 		const pin = Storage.get('pin');
 		const { root, profile, widgets } = blockStore;
-		const { workspace, redirect } = commonStore;
+		const { redirect } = commonStore;
 
 		if (!root) {
 			console.error('[onAuth] No root defined');
@@ -406,13 +407,14 @@ class DataUtil {
 	};
 
 	getObjectTypesForNewObject (param?: any) {
-		const { withSet, withBookmark, withDefault } = param || {};
+		const { withSet, withBookmark, withCollection, withDefault } = param || {};
 		const { workspace, config } = commonStore;
 		const page = dbStore.getType(Constant.typeId.page);
 		const note = dbStore.getType(Constant.typeId.note);
 		const set = dbStore.getType(Constant.typeId.set);
 		const task = dbStore.getType(Constant.typeId.task);
 		const bookmark = dbStore.getType(Constant.typeId.bookmark);
+		const collection = dbStore.getType(Constant.typeId.collection);
 
 		const skip = [ 
 			Constant.typeId.note, 
@@ -438,6 +440,10 @@ class DataUtil {
 		};
 
 		items.sort(this.sortByName);
+
+		if (withCollection && collection) {
+			items.unshift(collection);
+		};
 
 		if (withSet && set) {
 			items.unshift(set);
@@ -472,24 +478,38 @@ class DataUtil {
 		};
 
 		switch (object.layout) {
-			default: {
+			default:
+			case I.ObjectLayout.Page:
 				ret.withIcon = iconEmoji || iconImage;
 				break;
-			};
-
-			case I.ObjectLayout.Bookmark:
-			case I.ObjectLayout.Task: {
-				break;
-			};
 
 			case I.ObjectLayout.Human:
-			case I.ObjectLayout.Relation:
-			case I.ObjectLayout.File:
-			case I.ObjectLayout.Image: {
 				ret.withIcon = true;
 				break;
-			};
 
+			case I.ObjectLayout.Bookmark:
+			case I.ObjectLayout.Task:
+				break;
+
+			case I.ObjectLayout.Set:
+				ret.withIcon = iconEmoji || iconImage;
+				break;
+
+			case I.ObjectLayout.Image:
+				ret.withIcon = true;
+				break;
+
+			case I.ObjectLayout.File:
+				ret.withIcon = true;
+				break;
+
+			case I.ObjectLayout.Type:
+				ret.withIcon = true;
+				break;
+
+			case I.ObjectLayout.Relation:
+				ret.withIcon = true;
+				break;
 		};
 
 		if (checkType) {
@@ -686,9 +706,11 @@ class DataUtil {
 			noDeps: false,
 			afterId: '',
 			beforeId: '',
+			collectionId: ''
 		}, param);
 
-		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived } = param;
+
+		const { subId, idField, filters, sorts, sources, offset, limit, ignoreWorkspace, ignoreHidden, ignoreDeleted, afterId, beforeId, noDeps, withArchived, collectionId } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!subId) {
@@ -714,7 +736,7 @@ class DataUtil {
 
 		keys.push(idField);
 
-		C.ObjectSearchSubscribe(subId, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, (message: any) => {
+		C.ObjectSearchSubscribe(subId, filters, sorts, keys, sources, offset, limit, ignoreWorkspace, afterId, beforeId, noDeps, collectionId, (message: any) => {
 			this.onSubscribe(subId, idField, keys, message);
 
 			if (callBack) {

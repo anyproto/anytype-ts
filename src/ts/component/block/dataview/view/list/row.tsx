@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, Relation } from 'Lib';
-import { Cell } from 'Component';
+import { I, Relation, Util } from 'Lib';
+import {Cell, DropTarget, Icon} from 'Component';
 import { dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
@@ -16,7 +16,7 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline } = this.props;
+		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -55,12 +55,27 @@ const Row = observer(class Row extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					data-id={record.id}
-					data-type={I.SelectType.Record}
+					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
 					{content}
 				</div>
 			)
+		};
+
+		if (isCollection) {
+			content = (
+				<React.Fragment>
+					<Icon
+						className="dnd"
+						draggable={true}
+						onClick={(e: any) => { onContext(e, record.id); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, index) }}
+					/>
+					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+						{content}
+					</DropTarget>
+				</React.Fragment>
+			);
 		};
 
 		return (

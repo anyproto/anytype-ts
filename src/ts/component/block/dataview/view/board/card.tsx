@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { I, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
+import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import Cell from 'Component/block/dataview/cell';
+import { Cell, DropTarget } from 'Component';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -17,7 +17,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, isCollection } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -56,11 +56,18 @@ const Card = observer(class Card extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					data-id={record.id}
-					data-type={I.SelectType.Record}
+					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
 					{content}
 				</div>
+			);
+		};
+
+		if (isCollection) {
+			content = (
+				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+					{content}
+				</DropTarget>
 			);
 		};
 
@@ -69,11 +76,11 @@ const Card = observer(class Card extends React.Component<Props> {
 				ref={node => this.node = node} 
 				id={`card-${record.id}`}
 				className={cn.join(' ')} 
-				data-id={record.id}
 				draggable={true}
 				onDragStart={(e: any) => { onDragStartCard(e, groupId, record); }}
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				{...Util.dataProps({ id: record.id })}
 			>
 				{content}
 			</div>

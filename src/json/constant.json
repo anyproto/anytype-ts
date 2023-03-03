@@ -180,6 +180,7 @@
 		"task": "ot-task",
 		"bookmark": "ot-bookmark",
 		"option": "ot-relationOption",
+		"collection": "ot-collection",
 		"dashboard": "ot-dashboard"
 	},
 
@@ -203,7 +204,8 @@
 	"widgetId": {
 		"favorite": "favorite",
 		"recent": "recent",
-		"set": "set"
+		"set": "set",
+		"collection": "collection"
 	},
 
 	"size": {

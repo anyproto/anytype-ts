@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Preview } from 'Lib';
+import { I, Util, Preview } from 'Lib';
 import { Icon } from 'Component';
 
 interface Props {
@@ -14,6 +14,7 @@ interface Props {
 	tooltip?: string;
 	tooltipX?: I.MenuDirection;
 	tooltipY?: I.MenuDirection;
+	dataset?: any;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 };
@@ -24,7 +25,7 @@ class Button extends React.Component<Props> {
 
 	public static defaultProps = {
 		subType: 'submit',
-		color: 'orange',
+		color: 'black',
 		className: '',
 		tooltipX: I.MenuDirection.Center,
 		tooltipY: I.MenuDirection.Bottom,
@@ -38,7 +39,7 @@ class Button extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, type, subType, icon, arrow, text, className, color, onClick } = this.props;
+		const { id, type, subType, icon, arrow, text, className, color, onClick, dataset } = this.props;
 		const cn = [ 'button', color, className ];
 
 		let content = null;
@@ -54,6 +55,7 @@ class Button extends React.Component<Props> {
 						onMouseDown={onClick} 
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave}
+						{...Util.dataProps(dataset)}
 					>
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
@@ -73,6 +75,7 @@ class Button extends React.Component<Props> {
 						onMouseDown={onClick} 
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave} 
+						{...Util.dataProps(dataset)}
 					/>
 				);
 				break;

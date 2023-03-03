@@ -1294,7 +1294,7 @@ const ObjectSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], full
 	dispatcher.request(ObjectSearch.name, request, callBack);
 };
 
-const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, callBack?: (message: any) => void) => {
+const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], sources: string[], offset: number, limit: number, ignoreWorkspace: boolean, afterId: string, beforeId: string, noDeps: boolean, collectionId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SearchSubscribe.Request();
 
 	request.setSubid(subId);
@@ -1308,6 +1308,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setAfterid(afterId);
 	request.setBeforeid(beforeId);
 	request.setNodepsubscription(noDeps);
+	request.setCollectionid(collectionId);
 
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
 };
@@ -1434,6 +1435,14 @@ const ObjectToSet = (contextId: string, sources: string[], callBack?: (message: 
 	dispatcher.request(ObjectToSet.name, request, callBack);
 };
 
+const ObjectToCollection = (contextId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ToCollection.Request();
+
+	request.setContextid(contextId);
+
+	dispatcher.request(ObjectToCollection.name, request, callBack);
+};
+
 const ObjectToBookmark = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ToBookmark.Request();
 	
@@ -1475,6 +1484,33 @@ const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) 
 	request.setObjectid(objectId);
 
 	dispatcher.request(ObjectShareByLink.name, request, callBack);
+};
+
+const ObjectCollectionAdd = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectCollection.Add.Request();
+
+	request.setContextid(contextId);
+	request.setObjectidsList(objectIds);
+
+	dispatcher.request(ObjectCollectionAdd.name, request, callBack);
+};
+
+const ObjectCollectionRemove = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectCollection.Remove.Request();
+
+	request.setContextid(contextId);
+	request.setObjectidsList(objectIds);
+
+	dispatcher.request(ObjectCollectionRemove.name, request, callBack);
+};
+
+const ObjectCollectionSort = (contextId: string, objectIds: string[], callBack?: (message: any) => void) => {
+	const request = new Rpc.ObjectCollection.Sort.Request();
+
+	request.setContextid(contextId);
+	request.setObjectidsList(objectIds);
+
+	dispatcher.request(ObjectCollectionSort.name, request, callBack);
 };
 
 // ---------------------- OBJECT LIST ---------------------- //
@@ -1780,6 +1816,7 @@ export {
 	RelationListRemoveOption,
 
 	ObjectToSet,
+	ObjectToCollection,
 	ObjectToBookmark,
 
 	ObjectSetDetails,
@@ -1788,6 +1825,10 @@ export {
 	ObjectSetIsFavorite,
 	ObjectSetIsArchived,
 	ObjectSetSource,
+
+	ObjectCollectionAdd,
+	ObjectCollectionRemove,
+	ObjectCollectionSort,
 
 	ObjectListDuplicate,
 	ObjectListDelete,

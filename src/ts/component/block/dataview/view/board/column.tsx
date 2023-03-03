@@ -14,7 +14,6 @@ interface Props extends I.ViewComponent {
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
-	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 };
 
 interface State {
@@ -73,7 +72,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 				ref={node => this.node = node} 
 				id={'column-' + id} 
 				className={cn.join(' ')}
-				data-id={id}
+				{...Util.dataProps({ id })}
 			>
 				<div className="head">
 					<div className="sides">
@@ -146,9 +145,8 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean) {
-		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit, rootId, isInline } = this.props;
-		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
+		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget } = this.props;
+		const object = getTarget();
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
 		
@@ -205,7 +203,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			ignoreHidden: true,
 			ignoreDeleted: true,
 		}, () => {
-			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecords(subId, '')));
+			dbStore.recordsSet(subId, '', applyObjectOrder(dbStore.getRecords(subId, ''), id));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -220,7 +218,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
-		return applyObjectOrder(id, Util.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => ({ id }));
+		return applyObjectOrder(Util.objectCopy(dbStore.getRecords(getSubId(), '')), id).map(id => ({ id }));
 	};
 
 	onLoadMore () {

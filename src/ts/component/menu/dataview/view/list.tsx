@@ -34,7 +34,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { getData, rootId, blockId } = data;
+		const { loadData, rootId, blockId } = data;
 		const items = this.getItems();
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 
@@ -51,7 +51,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 				style={item.style}
 			>
 				{allowed ? <Handle /> : ''}
-				<div className="clickable" onClick={(e: any) => { getData(item.id, 0); }}>
+				<div className="clickable" onClick={(e: any) => { loadData(item.id, 0); }}>
 					<div className="name">{item.name}</div>
 				</div>
 				<div className="buttons">
@@ -216,12 +216,13 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	onAdd () {
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData, getSources } = data;
+		const { rootId, blockId, getView, loadData, getSources, isInline, getTarget } = data;
 		const view = getView();
 		const sources = getSources();
 		const relations = Util.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+		const object = getTarget();
 
 		for (let relation of relations) {
 			if (relation.isHidden || !relation.isVisible) {
@@ -259,12 +260,16 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 					readonly: !allowed,
 					view: observable.box(view),
 					onSave: () => {
-						getData(view.id, 0);
+						loadData(view.id, 0);
 					},
 				},
 			});
 
-			analytics.event('AddView', { type: view.type });
+			analytics.event('AddView', {
+				type: view.type,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
 		});
 	};
 
@@ -292,11 +297,17 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 	onClick (e: any, item: any) {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { rootId, blockId } = data;
+		const { rootId, blockId, isInline, getTarget } = data;
 		const subId = dbStore.getSubId(rootId, blockId);
+		const object = getTarget();
 
 		dbStore.metaSet(subId, '', { viewId: item.id });
-		analytics.event('SwitchView', { type: item.type });
+
+		analytics.event('SwitchView', {
+			type: item.type,
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
 
 		close();
 	};

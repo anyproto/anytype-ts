@@ -896,28 +896,28 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			});
 		};
 
+		// Parse markdown commands
 		if (block.canHaveMarks() && !isInsideTable) {
-			// Parse markdown commands
 			for (let k in Markdown) {
 				const reg = new RegExp(`^(${k} )`);
-				const style = Markdown[k];
+				const newStyle = Markdown[k];
 
-				if (!value.match(reg) || ((style == I.TextStyle.Numbered) && block.isTextHeader())) {
+				if ((newStyle == content.style) || !value.match(reg) || ((newStyle == I.TextStyle.Numbered) && block.isTextHeader())) {
 					continue;
 				};
 
 				value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
 
-				this.marks = style == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[style] + 1));
+				this.marks = newStyle == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + 1));
 				this.setValue(value);
 
 				DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
-					C.BlockListTurnInto(rootId, [ id ], style, () => {
+					C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
 						focus.set(block.id, { from: 0, to: 0 });
 						focus.apply();
 					});
 
-					if (style == I.TextStyle.Toggle) {
+					if (newStyle == I.TextStyle.Toggle) {
 						blockStore.toggle(rootId, id, true);
 					};
 				});

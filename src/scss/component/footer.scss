@@ -2,7 +2,10 @@
 
 .footer { position: fixed; bottom: 0px; width: 100%; z-index: 20; }
 .footer {
-	.copy { width: 120px; position: absolute; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: $colorWhite; }
+	.copy { 
+		width: 120px; position: absolute; left: 50%; bottom: 12px; z-index: 10; text-align: center; margin-left: -60px; color: $colorWhite; 
+		opacity: 0.6;
+	}
 
 	.icon { cursor: pointer; z-index: 10; }
 	.icon.big { 

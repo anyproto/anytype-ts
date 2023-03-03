@@ -292,6 +292,12 @@ const ObjectToSet = (response: any) => {
 	};
 };
 
+const ObjectToCollection = (response: any) => {
+	return {
+		objectId: response.getCollectionid(),
+	};
+};
+
 const ObjectToBookmark = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
@@ -384,6 +390,7 @@ export {
 	ObjectGraph,
 
 	ObjectToSet,
+	ObjectToCollection,
 	ObjectShareByLink,
 	ObjectToBookmark,
 

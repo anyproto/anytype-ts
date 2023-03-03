@@ -49,11 +49,14 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 	render () {
 		const { rootId, block, id, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
 		const cellId = Relation.cellId(PREFIX, relationKey, '0');
-		const fcn = [ 'fav' ];
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
-		const cn = [ 'item', 'sides' ];
 		const object = detailStore.get(rootId, rootId, [ relationKey ]);
 		const value = object[relationKey];
+
+		const cn = [ 'item', 'sides' ];
+		const fcn = [ 'fav' ];
+		const icn = [ 'info' ];
+		const ccn = [ 'cell', Relation.className(format) ];
 
 		if (isHidden) {
 			cn.push('isHidden');
@@ -64,22 +67,24 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		if (isFeatured) {
 			fcn.push('active');
 		};
+		if (canEdit) {
+			icn.push('canEdit');
+		};
+		if (!readonly) {
+			ccn.push('canEdit');
+		};
 
 		return (
-			<div className={cn.join(' ')}>
+			<div id={`item-${id}`} className={cn.join(' ')}>
 				<div 
-					id={`item-${id}`} 
-					className={[ 'info', (canEdit ? 'canEdit' : '') ].join(' ')} 
+					className={icn.join(' ')} 
 					onClick={(e: any) => { onEdit(e, id); }}
 				>
 					{canDrag ? <Icon className="dnd" draggable={true} onDragStart={this.onDragStart} /> : ''}
 					{readonly ? <Icon className="lock" /> : ''}
 					{name}
 				</div>
-				<div
-					id={cellId} 
-					className={[ 'cell', Relation.className(format), (!readonly ? 'canEdit' : '') ].join(' ')} 
-				>
+				<div id={cellId} className={ccn.join(' ')}>
 					<Cell 
 						ref={ref => { onRef(cellId, ref); }} 
 						rootId={rootId}

@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { I } from 'Lib';
+import {DataUtil, I, keyboard, Util} from 'Lib';
 import { observer } from 'mobx-react';
 import { dbStore } from 'Store';
-
+import { DropTarget, Icon } from 'Component';
 import Cell from './cell';
+import $ from 'jquery';
+import arrayMove from "array-move";
 
 interface Props extends I.ViewComponent {
 	index: number;
@@ -16,7 +18,7 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { index, getRecord, style, onContext, getColumnWidths, isInline, getVisibleRelations } = this.props;
+		const { rootId, index, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection } = this.props;
 		const relations = getVisibleRelations();
 		const record = getRecord(index);
 		const widths = getColumnWidths('', 0);
@@ -60,8 +62,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					data-id={record.id}
-					data-type={I.SelectType.Record}
+					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 					style={{ gridTemplateColumns: str }}
 				>
 					{content}
@@ -69,11 +70,27 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			);
 		};
 
+		if (isCollection) {
+			content = (
+				<React.Fragment>
+					<Icon
+						className="dnd"
+						draggable={true}
+						onClick={(e: any) => { onContext(e, record.id); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, index) }}
+					/>
+					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+						{content}
+					</DropTarget>
+				</React.Fragment>
+			);
+		};
+
 		return (
-			<div 
-				id={'row-' + index} 
-				className={cn.join(' ')} 
-				style={style} 
+			<div
+				id={'row-' + index}
+				className={cn.join(' ')}
+				style={style}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
 				{content}

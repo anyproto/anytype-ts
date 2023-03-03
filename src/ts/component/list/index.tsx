@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { blockStore, dbStore } from 'Store';
-import { I, DataUtil, ObjectUtil, translate } from 'Lib';
+import { I, Util, DataUtil, ObjectUtil, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -57,7 +57,10 @@ const ListIndex = observer(class ListIndex extends React.Component<Props> {
 
 			if (_empty_) {
 				return (
-					<div className="item isLoading" data-target-id={targetId}>
+					<div 
+						className="item isLoading" 
+						{...Util.dataProps({ 'target-id': targetId })}
+					>
 						<div className="iconObject c48 animatedBackground" />
 						<div className="line lineName animatedBackground" />
 						<div className="line lineType animatedBackground" />
@@ -78,8 +81,7 @@ const ListIndex = observer(class ListIndex extends React.Component<Props> {
 					className={cn.join(' ')} 
 					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
 					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
-					data-id={item.id}
-					data-target-block-id={targetId}
+					{...Util.dataProps({ id: item.id, 'target-block-id': targetId })}
 				>
 					{icon}
 

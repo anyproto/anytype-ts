@@ -1,22 +1,3 @@
-/*
-@font-face {
-	font-family: 'Mono'; font-style: normal; font-weight: 400;
-	src: url('~font/mono/regular.ttf') format('truetype');
-}
-@font-face {
-	font-family: 'Mono'; font-style: bold; font-weight: 600;
-	src: url('~font/mono/bold.ttf') format('truetype');
-}
-@font-face {
-	font-family: 'Mono'; font-style: italic; font-weight: 400;
-	src: url('~font/mono/italic.ttf') format('truetype');
-}
-@font-face {
-	font-family: 'Mono'; font-style: italic; font-weight: 600;
-	src: url('~font/mono/bolditalic.ttf') format('truetype');
-}
-*/
-
 @font-face {
 	font-family: 'Plex'; font-style: normal; font-weight: 400;
 	src: url('~font/plex/regular.ttf') format('truetype');
@@ -33,33 +14,6 @@
 	font-family: 'Plex'; font-style: italic; font-weight: 600;
 	src: url('~font/plex/bolditalic.ttf') format('truetype');
 }
-
-/*
-@font-face {
-	font-family: 'Lcg'; font-style: normal; font-weight: 400;
-	src: url('~font/lcg/regular.otf') format('opentype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: italic; font-weight: 400;
-	src: url('~font/lcg/italic.otf') format('opentype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: normal; font-weight: 500;
-	src: url('~font/lcg/medium.otf') format('opentype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: italic; font-weight: 500;
-	src: url('~font/lcg/mediumitalic.ttf') format('truetype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: bold; font-weight: 600;
-	src: url('~font/lcg/bold.otf') format('opentype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: italic; font-weight: 600;
-	src: url('~font/lcg/bolditalic.ttf') format('truetype');
-}
-*/
 
 @font-face {
 	font-family: 'Inter'; font-style: normal; font-weight: 400;
@@ -89,3 +43,52 @@
 	font-family: 'Inter'; font-style: normal; font-weight: 700;
 	src: url('~font/inter/extrabold.ttf') format('truetype');
 }
+
+@font-face {
+	font-family: 'Riccione'; font-style: normal; font-weight: 500;
+	src: url('~font/riccione/regular.ttf') format('truetype');
+}
+
+/*
+@font-face {
+	font-family: 'Mono'; font-style: normal; font-weight: 400;
+	src: url('~font/mono/regular.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Mono'; font-style: bold; font-weight: 600;
+	src: url('~font/mono/bold.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Mono'; font-style: italic; font-weight: 400;
+	src: url('~font/mono/italic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Mono'; font-style: italic; font-weight: 600;
+	src: url('~font/mono/bolditalic.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Lcg'; font-style: normal; font-weight: 400;
+	src: url('~font/lcg/regular.otf') format('opentype');
+}
+@font-face {
+	font-family: 'Lcg'; font-style: italic; font-weight: 400;
+	src: url('~font/lcg/italic.otf') format('opentype');
+}
+@font-face {
+	font-family: 'Lcg'; font-style: normal; font-weight: 500;
+	src: url('~font/lcg/medium.otf') format('opentype');
+}
+@font-face {
+	font-family: 'Lcg'; font-style: italic; font-weight: 500;
+	src: url('~font/lcg/mediumitalic.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Lcg'; font-style: bold; font-weight: 600;
+	src: url('~font/lcg/bold.otf') format('opentype');
+}
+@font-face {
+	font-family: 'Lcg'; font-style: italic; font-weight: 600;
+	src: url('~font/lcg/bolditalic.ttf') format('truetype');
+}
+*/
