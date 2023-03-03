@@ -12,6 +12,7 @@ import Constant from 'json/constant.json';
 
 import Head from './dataview/head';
 import Controls from './dataview/controls';
+import Selection from './dataview/selection';
 
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
@@ -157,9 +158,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
 		} else {
-			controls = (
-				<Controls 
-					ref={(ref: any) => { this.refControls = ref; }} 
+			controls = this.multiselect ? (
+				<Selection
+					{...this.props}
+					{...dataviewProps}
+				/>
+			) : (
+				<Controls
+					ref={(ref: any) => { this.refControls = ref; }}
 					{...this.props}
 					{...dataviewProps}
 					className={className}

@@ -132,8 +132,23 @@
 			.button { padding: 0px 8px; @include text-common; }
 			.button.addRecord { margin-left: 4px; }
 		}
-		.dataviewControls.viewGrid {
+		.dataviewControls.viewGrid,
+		.dataviewControls.dataviewSelection {
 			.line { width: 100%; margin: 0px; }
+		}
+
+		.dataviewSelection { height: 76px; }
+		.dataviewSelection {
+			.side.left { @include text-paragraph; font-weight: 600; color: $colorBlack;  }
+
+			.side.right {
+				.element {
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; font-weight: 400; line-height: 28px; cursor: pointer;
+					transition: $transitionFast;
+				}
+				.element.orange { color: $colorOrange; }
+				.element:hover { background-color: $colorHover; }
+			}
 		}
 
 		.content {
