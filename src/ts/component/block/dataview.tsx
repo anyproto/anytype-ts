@@ -240,7 +240,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection`);
+		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection selection.end`);
 	};
 
 	rebind () {
@@ -254,6 +254,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
 		});
+		win.on('selection.end', () => { this.onMultiselect(); });
 	};
 
 	onKeyDown (e: any) {
@@ -955,14 +956,28 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return records;
 	};
 
-	onMultiselect (records?: any[]) {
-		records = records || [];
+	onMultiselect (id?: string) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+		const ids = selection ? selection.get(I.SelectType.Record) : [];
 
-		this.switchMultiselect(true);
+		if (id) {
+			if (!ids.includes(id)) {
+				ids.push(id);
+			}
+			else {
+				ids.splice(ids.indexOf(id), 1);
+			};
+
+			selection.set(I.SelectType.Record, ids);
+		};
+
+		this.switchMultiselect(!!ids.length);
 		window.setTimeout(() => menuStore.closeAll(), 5);
 	};
 
 	switchMultiselect (v: boolean) {
+		console.log('MULTISELECT: ', v)
 		this.multiselect = v;
 		this.forceUpdate();
 	};

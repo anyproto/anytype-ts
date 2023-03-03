@@ -267,6 +267,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 					this.set(type, ids.concat(slice));
 				};
 			};
+		} else {
+			$(window).trigger('selection.end');
 		};
 		
 		scrollOnMove.onMouseUp(e);
