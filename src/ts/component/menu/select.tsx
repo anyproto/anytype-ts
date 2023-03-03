@@ -334,8 +334,6 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		console.log(item.id, value);
-
 		return item.checkbox || value.includes(String(item.id));
 	};
 

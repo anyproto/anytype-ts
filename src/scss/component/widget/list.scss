@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.widget.widgetList { display: flex; flex-direction: column; padding-bottom: 12px; };
+.widget.widgetList { display: flex; flex-direction: column; padding-bottom: 4px; };
 .widget.widgetList {
 	.loaderWrapper { position: relative; }
 	.head { padding-bottom: 0px; }
