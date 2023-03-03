@@ -151,6 +151,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				<div id="wrapper" className="contentWrapper">
 					{content}
 				</div>
+
+				<div className="dimmer" />
 			</div>
 		);
 	};

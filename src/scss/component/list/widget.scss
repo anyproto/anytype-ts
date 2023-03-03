@@ -25,8 +25,8 @@
 		.head { cursor: grab; }
 		.icon.remove { display: block; }
 	}
-	.widget::after {
-		content: ""; position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab;
+	.widget {
+		.dimmer { display: block; }
 	}
 
 	.widget.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 4px; width: 100%; border-radius: 2px; left: 0px; } 

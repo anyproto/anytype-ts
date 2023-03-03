@@ -28,6 +28,7 @@
 		.buttons.active { visibility: visible; } 
 	}
 
+	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 	.label.empty { text-align: center; @include text-small; }
 
 	.contentWrapper { transition: height 0.3s ease-out; }
