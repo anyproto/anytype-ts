@@ -1289,15 +1289,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			
 			this.clicks = 0;
 
-			if (isInsideTable) {
-				focus.set(block.id, { from: 0, to: block.getLength() });
-				focus.apply();
-			} else {
-				selection.set(I.SelectType.Block, [ block.id ]);
-				focus.clear(true);
-				menuStore.close('blockContext');
-				window.clearTimeout(this.timeoutContext);
-			};
+			focus.set(block.id, { from: 0, to: block.getLength() });
+			focus.apply();
 		};
 	};
 	
