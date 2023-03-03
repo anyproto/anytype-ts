@@ -41,6 +41,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	viewId = '';
 	creating = false;
 	frame = 0;
+	multiselect: boolean = false;
 
 	constructor (props: Props) {
 		super(props);
@@ -68,6 +69,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.isCollection = this.isCollection.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
+		this.switchMultiselect = this.switchMultiselect.bind(this);
+		this.onMultiselect = this.onMultiselect.bind(this);
 	};
 
 	render () {
@@ -179,6 +182,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						objectOrderUpdate={this.objectOrderUpdate}
 						applyObjectOrder={this.applyObjectOrder}
 						onDragRecordStart={this.onDragRecordStart}
+						onMultiselect={this.onMultiselect}
 					/>
 				</div>
 			);
@@ -949,6 +953,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 
 		return records;
+	};
+
+	onMultiselect (records?: any[]) {
+		records = records || [];
+
+		this.switchMultiselect(true);
+		window.setTimeout(() => menuStore.closeAll(), 5);
+	};
+
+	switchMultiselect (v: boolean) {
+		this.multiselect = v;
+		this.forceUpdate();
 	};
 
 	resize () {

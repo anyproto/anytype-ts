@@ -129,6 +129,7 @@ export interface ViewComponent {
 	isAllowedObject?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
 	applyObjectOrder?: (records: any[], groupId?: string) => any[];
+	onMultiselect?: (records?: any[]) => void;
 };
 
 export interface ViewEmpty {
