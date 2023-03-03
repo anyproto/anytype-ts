@@ -6,21 +6,15 @@ import { PreviewLink, PreviewObject } from 'Component';
 import { I, Util, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
-interface State {
-	object: any;
-};
-
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-const PreviewComponent = observer(class PreviewComponent extends React.Component<object, State> {
-	
-	state = {
-		object: null,
-	};
+const PreviewComponent = observer(class PreviewComponent extends React.Component {
+
+	state = null;
 	ref: any = null;
 	
-	constructor (props: any) {
+	constructor (props) {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
@@ -28,12 +22,11 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		this.onEdit = this.onEdit.bind(this);
 		this.onUnlink = this.onUnlink.bind(this);
 		this.position = this.position.bind(this);
-		this.setObject = this.setObject.bind(this);
 	};
 	
 	render () {
 		const { preview } = commonStore;
-		const { type, param, noUnlink } = preview;
+		const { type, target, noUnlink } = preview;
 		const cn = [ 'previewWrapper' ];
 
 		let head = null;
@@ -49,7 +42,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					</div>
 				);
 
-				content = <PreviewLink ref={ref => { this.ref = ref; }} url={param} position={this.position} />;
+				content = <PreviewLink ref={ref => { this.ref = ref; }} url={target} position={this.position} />;
 				break;
 
 			case I.MarkType.Object:
@@ -61,7 +54,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					);
 				};
 
-				content = <PreviewObject ref={ref => { this.ref = ref; }} rootId={param} setObject={this.setObject} position={this.position} />;
+				content = <PreviewObject ref={ref => { this.ref = ref; }} rootId={target} setObject={this.setState} position={this.position} />;
 				break;
 		};
 
@@ -83,37 +76,36 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		);
 	};
 	
-	onClick (e: any) {
+	onClick (e) {
 		const { preview } = commonStore;
-		const { type, param } = preview;
-		const { object } = this.state;
+		const { type, target } = preview;
 
 		switch (type) {
 			case I.MarkType.Link:
-				Renderer.send('urlOpen', param);	
+				Renderer.send('urlOpen', target);	
 				break;
 
 			case I.MarkType.Object:
-				ObjectUtil.openEvent(e, object);
+				ObjectUtil.openEvent(e, this.state);
 				break;
 		};
 	};
 	
 	onCopy () {
 		const { preview } = commonStore;
-		const { param } = preview;
+		const { target } = preview;
 		
-		Util.clipboardCopy({ text: param });
+		Util.clipboardCopy({ text: target });
 		Preview.previewHide(true);
 	};
 	
-	onEdit (e: any) {
+	onEdit (e) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const { preview } = commonStore;
 		const { marks, range, onChange } = preview;
-		const mark = Mark.getInRange(marks, I.MarkType.Link, { from: range.from, to: range.to });
+		const mark = Mark.getInRange(marks, I.MarkType.Link, range);
 		const win = $(window);
 		const rect = Util.objectCopy($('#preview').get(0).getBoundingClientRect());
 
@@ -125,7 +117,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				filter: mark ? mark.param : '',
 				type: mark ? mark.type : null,
 				onChange: (newType: I.MarkType, param: string) => {
-					onChange(Mark.toggleLink({ type: newType, param: param, range: range }, marks));
+					onChange(Mark.toggleLink({ type: newType, param, range }, marks));
 				}
 			}
 		});
@@ -135,12 +127,8 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const { preview } = commonStore;
 		const { type, range, onChange } = preview;
 		
-		onChange(Mark.toggleLink({ type: type, param: '', range: range }, preview.marks));
+		onChange(Mark.toggleLink({ type, param: '', range }, preview.marks));
 		Preview.previewHide(true);
-	};
-
-	setObject (object: any) {
-		this.setState({ object });
 	};
 
 	position () {
@@ -162,7 +150,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const nh = element.outerHeight();
 		const ow = obj.outerWidth();
 		const oh = obj.outerHeight();
-		const css: any = { opacity: 0, left: 0, top: 0 };
+		const css = { opacity: 0, left: 0, top: 0 };
 		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + OFFSET_Y, clipPath: '' };
 
 		let typeY = I.MenuDirection.Bottom;		
