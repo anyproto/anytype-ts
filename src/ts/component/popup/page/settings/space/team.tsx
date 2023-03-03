@@ -51,31 +51,25 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 
         const length = this.team.length;
 
-        const Member = (item: any) => {
-            return (
-                <div
-                    id={'item-' + item.id}
-                    className="row flex"
-                    style={item.style}
-                >
-                    <div className="side left">
-                        <IconObject size={32} object={item} />
-                        <ObjectName object={item} />
-                    </div>
-                    <div className="side right">
-                        <Select
-                            id="memberType"
-                            value={'reader'}
-                            options={memberOptions}
-                            arrowClassName="light"
-                            horizontal={I.MenuDirection.Right}
-                            onChange={(v: any) => {
-                            }}
-                        />
-                    </div>
-                </div>
-            )
-        };
+        const Member = (item: any) => (
+			<div id={'item-' + item.id} className="row" style={item.style} >
+				<div className="side left">
+					<IconObject size={32} object={item} />
+					<ObjectName object={item} />
+				</div>
+				<div className="side right">
+					<Select
+						id="memberType"
+						value={'reader'}
+						options={memberOptions}
+						arrowClassName="light"
+						horizontal={I.MenuDirection.Right}
+						onChange={(v: any) => {
+						}}
+					/>
+				</div>
+			</div>
+		);
 
         const rowRenderer = (param: any) => {
             const item: any = this.team[param.index];

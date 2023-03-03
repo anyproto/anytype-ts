@@ -415,10 +415,6 @@ const Block = observer(class Block extends React.Component<Props> {
 		const elementId = `#button-block-menu-${block.id}`;
 		const element = $(elementId);
 
-		if (!block.isText()) {
-			focus.set(block.id, { from: 0, to: 0 });
-		};
-
 		selection.set(I.SelectType.Block, this.ids);
 
 		// Hide block menus and plus button

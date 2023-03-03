@@ -115,8 +115,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				additional = (
 					<IconObject 
 						id={`block-${id}-icon`}
-						object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage }} 
-						canEdit={!readonly} 
+						object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage, layout: I.ObjectLayout.Page }} 
+						canEdit={!readonly}
+						iconSize={20}
 						onSelect={this.onSelectIcon} 
 						onUpload={this.onUploadIcon}
 						noRemove={true}
@@ -653,6 +654,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+space`, preventDefault: false },
 			{ key: `ctrl+shift+l`, preventDefault: false },
 		];
+
+		for (let i = 0; i < 9; ++i) {
+			saveKeys.push({ key: `${cmd}+${i}`, preventDefault: false });
+		};
 
 		keyboard.shortcut('enter, shift+enter', e, (pressed: string) => {
 			if (menuOpen) {

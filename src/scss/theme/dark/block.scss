@@ -263,7 +263,8 @@
 	/* BlockTable */
 
 	.block.blockTable { 
-		.plusButton .icon { background-color: rgba(236, 217, 27, 0.25); }
+		.plusButton .icon { background-color: #42413a; }
+		.plusButton.circle .icon { background-color: #5c5a54; }
 
 		.handle { 
 			.inner::before { background-color: $colorBlack; }

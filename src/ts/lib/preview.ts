@@ -5,6 +5,7 @@ import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const BORDER = 12;
+const DELAY_TOOLTIP = 650;
 
 
 /**
@@ -16,7 +17,9 @@ class Preview {
 		toast: 0,
 		tooltip: 0,
 		preview: 0,
+		delay: 0,
 	};
+	delayTooltip = DELAY_TOOLTIP;
 
   /**
    * Displays a tooltip with the given text and position relative to the specified element.
@@ -78,7 +81,12 @@ class Preview {
 			x = Math.min(win.width() - ow - BORDER, x);
 
 			node.css({ left: x, top: y }).addClass('show');
-		}, 250);
+
+			window.clearTimeout(this.timeout.delay);
+
+			this.timeout.delay = window.setTimeout(() => { this.delayTooltip = DELAY_TOOLTIP; }, 500);
+			this.delayTooltip = 100;
+		}, this.delayTooltip);
 	};
 
 	/**
@@ -94,6 +102,7 @@ class Preview {
 
 		obj.removeClass('show');
 		window.clearTimeout(this.timeout.tooltip);
+		window.clearTimeout(this.timeout.delay);
 	};
 
 	/**

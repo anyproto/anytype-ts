@@ -5,8 +5,8 @@ export interface Preview {
     /** object ID or URL */
 	target: string;
 	element: JQuery<HTMLElement>;
-	range: I.TextRange;
-	marks: I.Mark[];
+	range?: I.TextRange;
+	marks?: I.Mark[];
 	noUnlink?: boolean;
 	onChange?(marks: I.Mark[]): void;
 };

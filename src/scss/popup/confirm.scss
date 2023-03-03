@@ -2,15 +2,14 @@
 
 .popups {
 	.popup.popupConfirm {
-		.innerWrap { width: 672px; padding: 32px 48px 40px 48px; }
-		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.48px; margin-bottom: 16px; }
-		.label { margin-bottom: 26px; user-select: text !important; }
-		.button { margin-right: 16px; }
-		.button.last-child { margin: 0px; }
+		.innerWrap { width: 424px; padding: 32px; text-align: center; }
 
+		.title { @include text-header3; margin-bottom: 4px; }
+		.label { margin-bottom: 20px; user-select: text !important; word-wrap: break-word; }
+		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 		.iconObject { margin-bottom: 12px; }
 
-		.icon { width: 32px; height: 32px; }
+		.icon { width: 32px; height: 32px; margin: 0px 0px 16px 0px; }
 		.icon.update { background-image: url('~img/icon/update.svg'); }
 	}	
 }

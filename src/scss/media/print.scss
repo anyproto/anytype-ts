@@ -8,7 +8,7 @@ html.printMedia {
 	#sidebar { display: none; }
 	.sidebarDummy { display: none; }
 	.progress { display: none; }
-	.toast { display: none; }
+	.toast { display: none !important; }
 
 	#drag, #previewLink, .menu, 
 	.editorControls, .controlButtons, 

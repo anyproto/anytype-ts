@@ -14,7 +14,7 @@
 		.pin { text-align: center; }
 
 		.label.center { text-align: center; }
-		.label.grey { color: $colorDarkGrey; }
+		.label.grey { color: $colorMediumGrey; }
 		
 		.head { 
 			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 8px 12px; background: $colorWhite; z-index: 1;
@@ -40,16 +40,16 @@
 		
 		.tab { padding: 44px 48px 48px 48px; }
 
-		.sectionName { @include text-small; padding: 30px 0px 4px 0px; color: $colorDarkGrey; }
-		.sectionName.center { text-align: center; }
+		.label.small, .label.sectionName { @include text-small; color: $colorDarkGrey; }
+		.label.sectionName { padding: 30px 0px 4px 0px; }
+		.label.sectionName.center { text-align: center; }
 
 		.tabIndex { padding: 24px 48px 48px 48px; }
 		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete, .tabExportMarkdown, .tabSpaceIndex, .tabSpaceInvite, .tabSpaceTeam, .tabSpaceLeave, .tabSpaceRemove {
 			.row { 
 				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
-				@include text-paragraph; line-height: 28px;
+				@include text-paragraph; line-height: 28px; display: flex; align-items: center; flex-direction: row;
 			}
-			.row.flex { display: flex; }
 			.row.red { color: $colorRed; }
 
 			.row {
@@ -64,7 +64,6 @@
 				.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 				.icon.other { background-image: url('~img/icon/popup/settings/other.svg'); }
 				
-				.label { display: inline-block; vertical-align: top; }
 				.icon.arrow { 
 					width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/arrow.svg'); position: absolute; right: 0px;
 					top: 50%; margin: -12px 0px 0px 0px; 
@@ -339,14 +338,16 @@
 		.tabSpaceIndex {
 			.spaceInfo { text-align: center; }
 			.spaceInfo {
-				.iconObject { margin: 0px auto 20px; }
+				.iconObject { margin: 0px auto 12px auto; }
 				.iconObject.canEdit { cursor: pointer; }
 				.iconObject.canEdit:hover:after { opacity: 1; }
 
 				.input { margin-bottom: 12px; padding: 8px 0px 16px; height: auto; border-bottom: 1px solid $colorBorderDark; width: 384px; }
 			}
 
-			.row .team .iconObject { margin-right: -4px; box-shadow: 0 0 0 2px $colorWhite; }
+			.name {
+				.input { padding: 0; @include text-header2; }
+			}
 		}
 
 		.tabSpaceInvite, .tabSpaceLeave, .tabSpaceRemove {

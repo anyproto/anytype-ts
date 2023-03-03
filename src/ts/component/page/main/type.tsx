@@ -56,7 +56,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		const { config } = commonStore;
 		const rootId = this.getRootId();
-		const object = Util.objectCopy(detailStore.get(rootId, rootId));
+		const check = DataUtil.checkDetails(rootId);
+		const object = check.object;
 		const subIdTemplate = this.getSubIdTemplate();
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
@@ -112,7 +113,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			<div>
 				<Header component="mainEdit" ref={ref => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
-				<div className="blocks wrapper">
+				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
 					<HeadSimple ref={ref => this.refHead = ref} type="type" rootId={rootId} onCreate={this.onCreate} />
 
@@ -409,11 +410,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const relations = (object.recommendedRelations || []).map(it => dbStore.getRelationById(it)).filter(it => it);
 
 		menuStore.open('relationSuggest', { 
-			element: $(e.currentTarget),
+			element: '#page .section.relation #item-add',
 			offsetX: 32,
 			data: {
 				filter: '',
-				rootId: rootId,
+				rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: relations.map(it => it.relationKey).concat(Constant.systemRelationKeys),
@@ -436,10 +437,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const relation = dbStore.getRelationById(id);
 		
 		menuStore.open('blockRelationEdit', { 
-			element: $(e.currentTarget),
-			horizontal: I.MenuDirection.Center,
+			element: `#page .section.relation #item-${id}`,
+			offsetX: 32,
 			data: {
-				rootId: rootId,
+				rootId,
 				relationId: id,
 				readonly: !allowed,
 				ref: 'type',

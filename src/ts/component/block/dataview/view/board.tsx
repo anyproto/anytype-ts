@@ -211,6 +211,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const details: any = {
 			type: types.length ? types[0].id : commonStore.type,
 		};
+		const conditions = [
+			I.FilterCondition.Equal,
+			I.FilterCondition.In,
+			I.FilterCondition.AllIn,
+		]; 
 
 		details[view.groupRelationKey] = group.value;
 
@@ -222,6 +227,17 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			relations.forEach((it: any) => {
 				details[it.id] = Relation.formatValue(it, null, true);
 			});
+		};
+
+		for (let filter of view.filters) {
+			if (!conditions.includes(filter.condition) || !filter.value) {
+				continue;
+			};
+			
+			const relation = dbStore.getRelationByKey(filter.relationKey);
+			if (relation && !relation.isReadonlyValue) {
+				details[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
+			};
 		};
 
 		const create = (template: any) => {
