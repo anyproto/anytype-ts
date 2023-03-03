@@ -29,7 +29,6 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
         return (
 			<div>
 				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
 				<Icon className="back" onClick={this.onBack} />
 				<Frame>
 

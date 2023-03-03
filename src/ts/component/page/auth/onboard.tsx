@@ -63,7 +63,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		}
 
 		if (stage === OnboardStage.KEY_PHRASE || stage === OnboardStage.OFFLINE) {
-			accountStorageInfo = <span onClick={this.onAccountDataLocation}><Icon className="settings" />Account data location</span>
+			accountStorageInfo = <span className="animation storageInfo bottom" onClick={this.onAccountDataLocation}><Icon className="dataLocation" />Account data location</span>
 		}
 
 		if (stage === OnboardStage.SOUL) {
@@ -82,7 +82,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
         return (
 			<div>
 				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
 				<Icon className="back" onClick={this.onBack} />
 				<Frame>
 					{dotIndicator}
@@ -94,8 +93,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<div className="buttons">
 						<div className="animation">
 							{submit}
-							{ this.state.stage === OnboardStage.KEY_PHRASE ? <span onClick={this.onMoreInfoPopup}>More info</span> : null}
 						</div>
+						{ this.state.stage === OnboardStage.KEY_PHRASE ? <span className="animation moreInfo" onClick={this.onMoreInfoPopup}>More info</span> : null}
 					</div>
 					{accountStorageInfo}
 				</Frame>

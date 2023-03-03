@@ -128,7 +128,8 @@
 	"authOnboardVoidLabel": { "en": "Everything you create will be stored here. It is a special encrypted place, which exist on your machine and is backed up to the network." },
 	
 	"authOnboardKeyPhraseTitle": { "en": "Your Void is encrypted by the Key" },
-	"authOnboardKeyPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. if you lose it there is no way to recover it. Keep it in safe place" },
+	"authOnboardKeyPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. if you lose it there is no way to recover it. Keep it in safe place <span class='questionMark'>?</span>" },
+	"authOnboardKeyPhraseTooltip": { "en": "How to secure the phrase? In system password storage. We will do it for you On a piece of paper in safe and secure place Inside password manager if you use one" },
 	"authOnboardKeyPhraseSubmit": { "en": "Show and copy" },
 	
 	"authOnboardOfflineTitle": { "en": "Anytype is an offline-first application" },
