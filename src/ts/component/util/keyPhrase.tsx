@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Util, Preview } from 'Lib';
 import { authStore } from 'Store';
 
 const COLORS = [
@@ -22,7 +21,6 @@ const KeyPhrase = observer(class KeyPhrase extends React.Component<Props> {
 		return (
 			<div
 				className={"keyPhrase " + (this.props.isBlurred ? "isBlurred" : "")}
-				onClick={this.onClick}
 				>
 					{authStore.phrase.split(' ').map((word, index) => {
 						// rotate through the colors
@@ -34,10 +32,6 @@ const KeyPhrase = observer(class KeyPhrase extends React.Component<Props> {
 			</div>
 		);
 	};
-	onClick = () => {
-		Util.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
-	}
 });
 
 export default KeyPhrase;

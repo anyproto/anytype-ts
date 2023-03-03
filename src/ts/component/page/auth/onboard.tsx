@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Header, Footer, DotIndicator, KeyPhrase, Error, Icon } from 'Component';
+import { Frame, Title, Label, Button, Header, DotIndicator, KeyPhrase, Error, Icon } from 'Component';
 import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview } from 'Lib';
 import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -24,20 +24,9 @@ type State = {
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 	state: State = {
-		stage: OnboardStage.VOID,
+		stage: OnboardStage.SOUL_CREATING,
 		keyPhraseCopied: false,
 	}
-
-	constructor (props: I.PageComponent) {
-        super(props);
-		this.onNext = this.onNext.bind(this);
-		this.onBack = this.onBack.bind(this);
-		this.createWallet = this.createWallet.bind(this);
-		this.createAccount = this.createAccount.bind(this);
-		this.onMoreInfoPopup = this.onMoreInfoPopup.bind(this);
-		this.onAccountDataLocation = this.onAccountDataLocation.bind(this);
-		this.onKeyPhraseTooltip = this.onKeyPhraseTooltip.bind(this);
-	};
 	
 	render () {
 		const { stage, error } = this.state;
@@ -60,13 +49,14 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		let accountNameField = null;
 		let moreInfo = null;
 		let keyPhrase = null;
+		let soulContent = null;
 
 		if (stage === OnboardStage.VOID || (stage === OnboardStage.KEY_PHRASE && this.state.keyPhraseCopied)) {
 			submit = <Button text={translate(`authOnboardSubmit`)} onClick={this.onNext} />;
 		}
 
 		if (stage === OnboardStage.KEY_PHRASE) {
-			keyPhrase = <div className="animation"><KeyPhrase isBlurred={!this.state.keyPhraseCopied}/></div>;
+			keyPhrase = <div className="animation" onClick={this.copyAndUnblurKeyPhrase}><KeyPhrase isBlurred={!this.state.keyPhraseCopied}/></div>;
 			moreInfo = <span className="animation moreInfo" onClick={this.onMoreInfoPopup}>More info</span>;
 		}
 
@@ -76,9 +66,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		}
 
 		if (stage === OnboardStage.SOUL) {
-			accountNameField = <div className="animation"><input type="text" placeholder="Account name" onChange={e => authStore.nameSet(e.target.value)} /></div>
-			// TODO disabled if no text set
-			submit = <Button className="disabled"text={translate(`authOnboard${stageNameMap[stage]}Submit`)} onClick={this.onNext} />;;
+			accountNameField = <div className="animation"><input type="text" placeholder="Enter your name" onChange={e => authStore.nameSet(e.target.value)} /></div>
+			const isEnabled = authStore.name && authStore.name.length > 0;
+			submit = <Button className={isEnabled ? "" : "disabled"} text={translate(`authOnboard${stageNameMap[stage]}Submit`)} onClick={() => { if (isEnabled) this.onNext() }} />;
 		}
 
 
@@ -86,6 +76,18 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			label = null;
 			submit = null;
 			dotIndicator = null;
+			soulContent = (
+				<div className="soulContent animation">
+					<div>
+						<Icon className="soul" />
+						<span className="accountName">{authStore.name}</span>
+					</div>
+					<div className="line"/>
+					<div>
+						<Icon className="space" />
+						<span>Personal Space</span>
+					</div>
+				</div>);
 		}
 
         return (
@@ -97,6 +99,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{title}
 					{label}	
 					{accountNameField}
+					{soulContent}
 					<Error text={error} />
 					{keyPhrase}
 					<div className="buttons">
@@ -122,18 +125,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		}
 	}
 
-	async onNext () {
+	onNext = () => {
 		if (this.state.stage === OnboardStage.KEY_PHRASE && !this.state.keyPhraseCopied) {
-			this.setState({ keyPhraseCopied: true });
-			Util.clipboardCopy({ text: authStore.phrase });
-			Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
-
+			this.copyAndUnblurKeyPhrase();
 		} else {
 			Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
 		}
 	}
 	
-	async onBack () {
+	onBack = () => {
 		if (this.state.stage === OnboardStage.VOID) {
 			Util.route('/auth/invite');
 		} else {
@@ -141,7 +141,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		}
 	}
 
-	createWallet () {
+	createWallet = () => {
 		const { walletPath } = authStore;
 		commonStore.defaultTypeSet(Constant.typeId.note); // TODO necessary?
 		C.WalletCreate(walletPath, message => {
@@ -152,7 +152,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		});
 	}
 
-	createAccount () {
+	createAccount = () => {
 		const { accountPath, name, icon, code } = authStore;
 
 		DataUtil.createSession(message => {
@@ -180,15 +180,21 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		})
 	};
 
-	onKeyPhraseTooltip () {
+	copyAndUnblurKeyPhrase = () => {
+		this.setState({ keyPhraseCopied: true });
+		Util.clipboardCopy({ text: authStore.phrase });
+		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
+	}
+
+	onKeyPhraseTooltip = () => {
 		Preview.tooltipShow(translate('authOnboardKeyPhraseTooltip'), $('.label'), I.MenuDirection.Bottom, I.MenuDirection.None)
 	}
 
-	onMoreInfoPopup () {
+	onMoreInfoPopup = () => {
 		// popupStore.open('', {});
 	}
 
-	onAccountDataLocation () {
+	onAccountDataLocation = () => {
 		const { accountPath } = authStore;
 		const text = `${translate('authOnboardAccountDataLocationTooltip')}:<br/>${accountPath}`
 		Preview.tooltipShow(text, $('.storageInfo'), I.MenuDirection.Top, I.MenuDirection.None)

@@ -119,6 +119,54 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 		flex-direction: column;
 		gap: 12px;
 	}
+	input {
+		border-radius: 26px;
+		background: rgba(44, 43, 39, 0.3);
+		font-size: 18px;
+		padding: 20px;
+		margin: 20px;
+		color: white;
+	}
+	input:hover {
+		cursor: pointer;
+		background: rgba(44, 43, 39, 0.5);
+	}
+	input::placeholder {
+		color: #5C5A54;
+	}
+	.soulContent {
+		display: flex;
+		flex-direction: row;
+		align-items: space-between;
+		width: 120px;
+		div {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+		.line {
+			position: absolute;
+			height: 1px;
+			width: 100%;
+			top: 25px;
+			background: white;
+			z-index: 0;
+		}
+		.icon.soul {
+			border-radius: 100%;
+			z-index: 1;
+			width: 48px;
+			height: 48px;
+			background: radial-gradient(50% 50% at 50% 50%, #FFA15E 22.92%, #B6C1FF 100%);
+		}
+		.icon.space {
+			border-radius: 4px;
+			z-index: 1;
+			width: 48px;
+			height: 48px;
+			background: white;
+		}
+	}
 }
 
 .pageAuthDeleted {
