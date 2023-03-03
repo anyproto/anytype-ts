@@ -27,6 +27,13 @@
 		.label.grey { color: $colorSecondary; }
 
 		.sides {
+			> .side.left { background: $colorBgLight; }
+			> .side.left {
+				.space:hover, .space.active { background: $colorHover; }
+				.item:hover, .item.active { background: $colorHover; }
+				.iconObject { background-color: $colorBgIcon; }
+			}
+
 			> .side.right {
 				.head { background: $colorBlack; }
 				.head {
