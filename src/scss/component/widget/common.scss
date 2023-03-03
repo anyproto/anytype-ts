@@ -28,12 +28,6 @@
 		.buttons.active { visibility: visible; } 
 	}
 
-	.head::before {
-		content: ""; position: absolute; background: $colorHover; width: calc(100% - 8px); height: 28px; left: 4px; top: 10px; border-radius: 4px;
-		pointer-events: none; opacity: 0;
-	}
-	.head:hover::before { opacity: 1; }
-
 	.label.empty { text-align: center; @include text-small; }
 
 	.contentWrapper { transition: height 0.3s ease-out; }
