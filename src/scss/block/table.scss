@@ -59,7 +59,7 @@
 		.plusButton.horizontal { height: 18px; width: 100%; left: 0px; bottom: -18px; padding-top: 4px; }
 		.plusButton.circle { position: absolute; height: 18px; width: 18px; right: -18px; bottom: 0px; padding-top: 4px; padding-left: 4px; opacity: 1; }
 		.plusButton.circle {
-			.icon { border-radius: 50%; background-color: $colorSecondary; }
+			.icon { border-radius: 50%; background-color: $colorBorderLight; }
 		}
 		
 		.plusButton:hover, .plusButton.active {
