@@ -70,7 +70,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	getItems () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
-		const items = DataUtil.getObjectTypesForNewObject({ withSet: true, withCollection: true, withDefault: true }).filter(it => it.id != object.type);
+		const items = DataUtil.getObjectTypesForNewObject({ withCollection: true, withDefault: true }).filter(it => it.id != object.type);
 
 		items.push({ id: 'menu', icon: 'search', name: 'My types' });
 
