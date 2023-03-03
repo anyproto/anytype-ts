@@ -202,3 +202,11 @@
         .item.add:hover { background: $colorHover; }
     }
 }
+
+/* PageMainEmpty */
+
+.pageMainEmpty {
+    .wrapper {
+        .row { border-color: $colorLinePrimary; }
+    }
+}
