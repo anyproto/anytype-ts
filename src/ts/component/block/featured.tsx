@@ -304,13 +304,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const type = detailStore.get(rootId, object.type, []);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
+		const allowedObject = (type.smartblockTypes || []).indexOf(I.SmartBlockType.Page) >= 0;
 		const options: any[] = [];
 
 		if (!type.isArchived && !type.isDeleted) {
 			options.push({ id: 'open', name: 'Open type' });
 		};
 
-		if (!readonly && allowed) {
+		if (!readonly && allowed && allowedObject) {
 			options.push({ id: 'change', name: 'Change type', arrow: true });
 		};
 
