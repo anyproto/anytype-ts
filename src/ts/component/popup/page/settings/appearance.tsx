@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Icon, Title, Label } from 'Component';
+import { Icon, Title, Label, Switch } from 'Component';
 import { I, translate, analytics, Renderer } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -15,7 +15,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance extends React.Component<Props> {
 
 	render () {
-		const { onPage } = this.props;
+		const { autoSidebar } = commonStore;
 		const { theme } = commonStore;
 		const themes: any[] = [
 			{ id: '', class: 'light', name: 'Light' },
@@ -23,36 +23,40 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 			{ id: 'system', class: 'system', name: 'System' },
 		];
 
-		const inner = <div className="inner" />;
-
 		return (
-			<div>
-				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
+			<React.Fragment>
 				<Title text={translate('popupSettingsAppearanceTitle')} />
 
 				<div className="rows">
-					<div className="row" onClick={() => { onPage('wallpaper'); }}>
-						<Icon className="wallpaper" />
-						<Label text={translate('popupSettingsWallpaperTitle')} />
-						<Icon className="arrow" />
-					</div>
-
-					<Label className="sectionName center" text="Mode" />
+					<Label className="section" text="Color mode" />
 
 					<div className="buttons">
 						{themes.map((item: any, i: number) => (
 							<div 
 								key={i} 
-								className={[ 'btn', (theme == item.id ? 'active' : '') ].join(' ')} 
+								className={[ 'btn', (theme == item.id ? 'active' : ''), item.class ].join(' ')} 
 								onClick={() => { this.onTheme(item.id); }}
 							>
-								<Icon className={item.class} inner={inner} />
+								<div className="bg">
+									<Icon />
+								</div>
 								<Label text={item.name} />
 							</div>
 						))}
 					</div>
+
+					<div className="rows">
+						<div className="row">
+							<div className="side left">
+								<Label text="Automatically hide and show Sidebar" />
+							</div>
+							<div className="side right">
+								<Switch value={autoSidebar} className="big" onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 

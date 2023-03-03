@@ -17,12 +17,11 @@
 }
 
 .button.red { color: $colorRed; border: solid 1px $colorBorderDark; }
-.button.red:hover { background: #fee7e0; }
 
 .button.dark { background: rgba(0,0,0,0.3); color: $colorWhite; }
 .button.dark:hover { background: rgba(0,0,0,0.4); }
 
-.button.blank { background: none; border: solid 1px $colorBorderDark; }
+.button.blank { background: none; border: solid 1px $colorBorderDark; font-weight: 400; }
 .button.blank:hover { background: $colorHover; }
 
 .button.c36 { @include text-common; height: 36px; border-radius: 6px; }

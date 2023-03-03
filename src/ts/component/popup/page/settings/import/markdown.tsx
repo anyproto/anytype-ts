@@ -33,7 +33,7 @@ class PopupSettingsPageImportMarkdown extends React.Component<Props> {
 
 				<Label className="last" text={translate('popupSettingsImportZip')} />
 				
-				<Button text={translate('popupSettingsImportOk')} onClick={this.onImport} />
+				<Button className="c36" text={translate('popupSettingsImportOk')} onClick={this.onImport} />
 
 				<Label className="last" text={translate('popupSettingsImportWarning')} />
 			</div>

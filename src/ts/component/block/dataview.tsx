@@ -808,7 +808,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const view = this.getView();
 
 		let records = this.getRecords();
-		let orders = [];
+		let oldIndex = records.indexOf(ids[0]);
+		let targetIndex = records.indexOf(targetId);
+
+		records = arrayMove(records, oldIndex, targetIndex);
 
 		if (selection) {
 			selection.clear();
@@ -821,12 +824,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		ids.forEach((id, index) => {
 			const oldIndex = records.indexOf(id);
 			const targetIndex = records.indexOf(targetId);
+
 			records = arrayMove(records, oldIndex, targetIndex);
 		});
 
-		orders = [ { viewId: view.id, groupId: '', objectIds: records } ];
-
-		this.objectOrderUpdate(orders, records, (message) => {
+		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records, (message) => {
 			dbStore.recordsSet(subId, '', records);
 		});
 	};

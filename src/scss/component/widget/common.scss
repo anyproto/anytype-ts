@@ -10,7 +10,7 @@
 			.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
 			.clickable {
 				.iconObject { flex-shrink: 0; }
-				.name { @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 600; flex-grow: 1; }
+				.name { @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 700; flex-grow: 1; }
 			}
 		}
 
@@ -71,7 +71,7 @@
 }
 
 .button.widget { 
-	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 600; padding: 12px 16px;
+	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 700; padding: 12px 16px;
 	display: flex; position: relative; gap: 0px 12px; flex-direction: row; align-items: center;
 }
 .button.widget {

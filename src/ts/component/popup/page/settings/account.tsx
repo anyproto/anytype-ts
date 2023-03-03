@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Icon, Title, Label } from 'Component';
-import { I, C, Storage, translate, Util, analytics } from 'Lib';
-import { authStore, commonStore, popupStore } from 'Store';
+import { Icon, Title, Label, IconObject, Input, Loader } from 'Component';
+import { I, C, Storage, translate, Util, analytics, Action, DataUtil, ObjectUtil } from 'Lib';
+import { authStore, commonStore, popupStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
+import Constant from 'json/constant.json';
 import Head from './head';
-import UserInfo from '../../settings/userinfo';
 
 interface Props extends I.Popup {
 	prevPage: string;
@@ -15,21 +15,26 @@ interface Props extends I.Popup {
 
 interface State {
 	error: string;
+	loading: boolean;
 };
 
 const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, State> {
 
-	refPhrase: any = null;
+	refName: any = null;
 	pinConfirmed = false;
 	format = '';
 	refCheckbox: any = null;
 	state = {
 		error: '',
+		loading: false,
 	};
 
 	constructor (props: Props) {
 		super(props);
 
+		this.onMenu = this.onMenu.bind(this);
+		this.onUpload = this.onUpload.bind(this);
+		this.onName = this.onName.bind(this);
 		this.onLogout = this.onLogout.bind(this);
 		this.onFileOffload = this.onFileOffload.bind(this);
 		this.onLocationMove = this.onLocationMove.bind(this);
@@ -37,66 +42,69 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	render () {
 		const { onPage } = this.props;
-		const { error } = this.state;
+		const { error, loading } = this.state;
 		const { account } = authStore;
 		const { config } = commonStore;
-		const pin = Storage.get('pin');
+		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 		const canDelete = account.status.type == I.AccountStatusType.Active;
 		const canMove = config.experimental;
 
 		return (
-			<div>
-				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
+			<React.Fragment>
 				<Title text={translate('popupSettingsAccountTitle')} />
 
 				{error ? <div className="message">{error}</div> : ''}
 
-				<UserInfo {...this.props} />
+				<div className="iconWrapper">
+					{loading ? <Loader /> : ''}
+					<IconObject 
+						id="userpic" 
+						object={profile} 
+						size={112} 
+						onClick={this.onMenu} 
+					/>
+				</div>
 
 				<div className="rows">
-					<Label className="sectionName" text="Access" />
 
-					<div className="row" onClick={() => { onPage('phrase'); }}>
-						<Icon className="phrase" />
-						<Label text={translate('popupSettingsPhraseTitle')} />
-						<Icon className="arrow" />
-					</div>
-
-					<div className="row" onClick={() => { onPage('pinIndex'); }}>
-						<Icon className="pin" />
-						<Label text={translate('popupSettingsPinTitle')} />
-						<div className="status">
-							{pin ? 'on' : 'off'}
+					<div className="row">
+						<div className="name">
+							<Label className="small" text="Name" />
+							<Input 
+								ref={ref => this.refName = ref} 
+								value={profile.name} 
+								onKeyUp={this.onName} 
+								placeholder={DataUtil.defaultName('page')} 
+							/>
 						</div>
-						<Icon className="arrow" />
 					</div>
 
-					<Label className="sectionName" text="Data" />
+					<Label className="section" text="Data" />
 
-					<div className="row" onClick={this.onFileOffload}>
+					<div className="row cp" onClick={this.onFileOffload}>
 						<Label text="Clear file cache" />
 					</div>
 
-					<Label className="sectionName" text="Account" />
+					<Label className="section" text="Account" />
 
 					{canMove ? (
-						<div id="row-location" className="row location" onClick={this.onLocationMove}>
+						<div id="row-location" className="row cp" onClick={this.onLocationMove}>
 							<Label text={translate('popupSettingsAccountMoveTitle')} />
 							<Icon className="arrow" />
 						</div>
 					) : ''}
 
 					{canDelete ? (
-						<div className="row" onClick={() => { onPage('delete'); }}>
+						<div className="row cp" onClick={() => { onPage('delete'); }}>
 							<Label text={translate('popupSettingsAccountDeleteTitle')} />
 						</div>
 					) : ''}
 
-					<div className="row red" onClick={this.onLogout}>
+					<div className="row red cp" onClick={this.onLogout}>
 						<Label text={translate('popupSettingsLogout')} />
 					</div>
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 
@@ -140,7 +148,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		});
 	};
 
-	onLocationMove (e: any) {
+	onLocationMove () {
 		const { account } = authStore;
 		const { setLoading } = this.props;
 		const accountPath = account.info.localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
@@ -165,6 +173,67 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				setLoading(false);
 			});
 		});
+	};
+
+	onMenu () {
+		const { getId } = this.props;
+        const object = this.getObject();
+
+        if (!object.iconImage) {
+            this.onUpload();
+            return;
+        };
+
+        const options = [
+            { id: 'upload', name: 'Change' },
+            { id: 'remove', name: 'Remove' }
+        ];
+
+        menuStore.open('select', {
+            element: `#${getId()} #userpic`,
+            horizontal: I.MenuDirection.Center,
+            data: {
+                value: '',
+                options,
+                onSelect: (e: any, item: any) => {
+					switch (item.id) {
+						case 'upload': {
+							this.onUpload();
+							break;
+						};
+
+						case 'remove': {
+							ObjectUtil.setIcon(blockStore.profile, '', '');
+							break;
+						};
+					};
+                },
+            }
+        });
+    };
+
+    onUpload () {
+		Action.openFile(Constant.extension.cover, paths => {
+			this.setState({ loading: true });
+
+            C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+                if (message.error.code) {
+                    return;
+                };
+
+                ObjectUtil.setIcon(blockStore.profile, '', message.hash, () => {
+                    this.setState({ loading: false });
+                });
+            });
+		});
+    };
+
+    onName () {
+        ObjectUtil.setName(blockStore.profile, this.refName.getValue());
+    };
+
+	getObject () {
+		return detailStore.get(Constant.subId.profile, blockStore.profile);
 	};
 
 });

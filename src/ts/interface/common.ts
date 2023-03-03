@@ -88,6 +88,7 @@ export enum ImportType {
 	Markdown = 1,
 	External = 2,
 	Html	 = 3,
+	Text	 = 4,
 };
 
 export enum ExportFormat {

@@ -23,17 +23,15 @@ class MenuContext extends React.Component<I.Menu> {
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						return (
-							<MenuItemVertical 
-								key={i} 
-								{...action} 
-								icon={action.icon || action.id}
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-								onClick={(e: any) => { this.onClick(e, action); }} 
-							/>
-						);
-					})}
+					{item.children.map((action: any, i: number) => (
+						<MenuItemVertical 
+							key={i} 
+							{...action} 
+							icon={action.icon || action.id}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
+							onClick={(e: any) => { this.onClick(e, action); }} 
+						/>
+					))}
 				</div>
 			</div>
 		);

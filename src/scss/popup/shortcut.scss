@@ -22,7 +22,7 @@
 			.section { margin-bottom: 25px; }
 			.section:last-child { margin-bottom: 0px; }
 			.section {
-				.name { @include text-paragraph; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid $colorBorderLight; }
+				.name { @include text-paragraph; font-weight: 700; padding-bottom: 12px; border-bottom: 1px solid $colorBorderLight; }
 
 				.items {
 					.item { display: flex; flex-direction: row; padding: 12px 0px; border-bottom: 1px solid $colorBorderLight; }

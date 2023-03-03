@@ -106,7 +106,7 @@
 			.views {
 				.viewItem { 
 					display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; white-space: nowrap; 
-					@include text-paragraph; font-weight: 600; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; 
+					@include text-paragraph; font-weight: 700; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; 
 					line-height: 28px; 
 				}
 				.viewItem { 

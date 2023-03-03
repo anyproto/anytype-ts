@@ -1,9 +1,8 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Icon, Title, Label, Switch, Select } from 'Component';
 import { I, translate, analytics, Renderer } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
-import { observer } from 'mobx-react';
-import Head from './head';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Popup {
@@ -20,13 +19,12 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	};
 
 	render () {
-		const { autoSidebar, config } = commonStore;
+		const { config } = commonStore;
 		const type = dbStore.getType(commonStore.type);
 		const languages = this.getLanguages();
 
 		return (
-			<div>
-				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
+			<React.Fragment>
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
 				<div className="rows">
@@ -61,17 +59,8 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							/>
 						</div>
 					</div>
-
-					<div className="row">
-						<div className="side left">
-							<Label text="Automatically hide and show Sidebar" />
-						</div>
-						<div className="side right">
-							<Switch value={autoSidebar} className="big" onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
-						</div>
-					</div>
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 

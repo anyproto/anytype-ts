@@ -44,7 +44,7 @@
 		.emptySearch { padding: 56px 0px; border: 1px solid $colorBorderDark; border-radius: 12px; height: auto; @include text-paragraph; }
 		.emptySearch { 
 			.txt { width: 512px; }
-			b { font-weight: 600; }
+			b { font-weight: 700; }
 		}
 
 		.items { height: 100%; }
@@ -55,7 +55,7 @@
 			.item { height: 48px; line-height: 48px; display: flex; position: relative; cursor: pointer; justify-content: space-between; }
 			.item {
 				.flex { 
-					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 600;
+					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 700;
 					gap: 0px 8px; transition: $transitionFast; max-width: calc(100% - 70px);
 				}
 				.flex:hover { background: $colorHover; }

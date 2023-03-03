@@ -19,27 +19,23 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const Item = (item: any) => {
 			return (
 				<div className={[ 'item', item.id ].join(' ')} onClick={() => { this.onClick(item.id); }} >
-					<div className="txt">
-						<Icon />
-						<div className="name">{item.name}</div>
-					</div>
+					<Icon />
+					<div className="name">{item.name}</div>
 				</div>
 			);
 		};
 
 		return (
-			<div>
-				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
-
+			<React.Fragment>
 				<Title text={translate('popupSettingsImportTitle')} />
-				<Label className="center" text={translate('popupSettingsImportText')} />
+				<Label className="description" text={translate('popupSettingsImportText')} />
 
 				<div className="items">
 					{items.map((item: any, i: number) => (
 						<Item key={i} {...item} />
 					))}
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 
@@ -50,35 +46,27 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const fn = Util.toCamelCase('onImport-' + item.id);
 
 		if (item.skipPage && this[fn]) {
-			 this[fn]();
+			this[fn]();
 		} else {
 			onPage(Util.toCamelCase('import-' + item.id));
 		};
 	};
 
 	getItems () {
-		const { config } = commonStore;
-		
-		let items = [
+		return [
 			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
 			{ id: 'html', name: 'HTML', skipPage: true },
+			{ id: 'text', name: 'Text', skipPage: true },
 		];
-		if (!config.experimental) {
-			items = items.filter(it => [ 'html' ].includes(it.id));
-		};
-
-		return items;
 	};
 
-	onImportHtml () {
+	onImportCommon (type: I.ImportType, extensions: string[]) {
 		const { close, onImport } = this.props;
 		const platform = Util.getPlatform();
 		const options: any = { 
 			properties: [ 'openFile' ],
-			filters: [
-				{ name: '', extensions: [ 'zip', 'html', 'htm', 'mhtml' ] }
-			]
+			filters: [ { name: '', extensions } ]
 		};
 
 		if (platform == I.Platform.Mac) {
@@ -86,14 +74,22 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		};
 
 		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
+			const paths = result.filePaths;
+			if ((paths == undefined) || !paths.length) {
 				return;
 			};
 
 			close();
-			onImport(I.ImportType.Html, { paths: files });
+			onImport(type, { paths });
 		});
+	};
+
+	onImportHtml () {
+		this.onImportCommon(I.ImportType.Html, [ 'zip', 'html', 'htm', 'mhtml' ]);
+	};
+
+	onImportText () {
+		this.onImportCommon(I.ImportType.Text, [ 'zip', 'txt' ]);
 	};
 
 });

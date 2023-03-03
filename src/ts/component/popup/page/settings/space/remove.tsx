@@ -21,7 +21,7 @@ const PopupSettingsSpaceRemove = observer(class PopupSettingsSpaceRemove extends
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
                 <Title text={Util.sprintf(translate('popupSettingsSpaceRemove'), space.name)} />
                 <Label text={translate('popupSettingsSpaceRemoveText')} />
-                <Button className="blank red" text={translate('popupSettingsSpaceRemoveButton')} />
+                <Button color="red" className="c36" text={translate('popupSettingsSpaceRemoveButton')} />
             </div>
         );
     };

@@ -13,8 +13,9 @@ class ObjectUtil {
 			return;
 		};
 
-		const home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
-		if (home._empty_ || home.isArchived) {
+		const home = this.getSpaceDashboard();
+
+		if (!home) {
 			this.openRoute(empty);
 			return;
 		};
@@ -23,6 +24,36 @@ class ObjectUtil {
 			case 'route': this.openRoute(home); break;
 			case 'auto': this.openAuto(home); break;
 			case 'popup': this.openPopup(home); break;
+		};
+	};
+
+	getSpaceDashboard () {
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+
+		if (!space.spaceDashboardId) {
+			return null;
+		};
+
+		let home = null;
+		if (space.spaceDashboardId == 'graph') {
+			home = this.graph();
+		} else {
+			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
+		};
+
+		if (home._empty_ || home.isArchived) {
+			return null;
+		};
+
+		return home;
+	};
+
+	graph () {
+		return { 
+			id: 'graph', 
+			name: 'Graph', 
+			iconEmoji: ':earth_americas:',
+			layout: I.ObjectLayout.Graph,
 		};
 	};
 

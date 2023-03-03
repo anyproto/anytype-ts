@@ -23,53 +23,40 @@
     /* PopupSettings */
 
     .popup.popupSettings {
-        .head { background: $colorBlack; }
-        .head {
-            .element { color: $colorSecondary; }
-            .element {
-                .icon.back { background-image: url('#{$themePath}/icon/popup/settings/back0.svg'); } 
-            }
-
-            .element:hover { color: $colorPrimary; }
-			.element:hover {
-				.icon.back { background-image: url('#{$themePath}/icon/popup/settings/back1.svg'); } 
-			}
-        }
-
-		.sectionName { color: $colorSecondary; }
-		.select { color: $colorSecondary; }
+		
 		.label.grey { color: $colorSecondary; }
 
-        .tab .row { border-color: $colorLineSecondary; }
-        
-        .tabWallpaper .item.active { border-color: $colorLinePrimary; }
-        .tabWallpaper .item .cover.upload { background-color: $colorBlack !important; border-color: $colorLinePrimary; }
+		.sides {
+			> .side.right {
+				.head { background: $colorBlack; }
+				.head {
+					.element:hover { background-color: $colorHover; }
+				}
 
-        .tabPinIndex, .tabPinSelect, .tabPinConfirm {
-            .button.blank { border-color: $colorLineSecondary; }
-            .button.blank:hover { color: $colorPrimary; }
+				.label.section, .label.small { color: $colorSecondary; }
+				.row { border-color: $colorLineSecondary; }
 
-            .input { border-color: $colorLinePrimary; }
-        }
+				.input { border-color: $colorLinePrimary; }
 
-        .tabPhrase {
+				.select { color: $colorSecondary; }
+				.select:hover { background-color: $colorHover; }
+			}
+
+		}
+
+        .side.right.tabPhrase {
             .qrWrap { background: $colorMediumGrey; }
 			.textareaWrap { background-color: $colorBgLight; }
         }
 
-        .tabImportIndex {
+        .side.right.tabImportIndex {
             .item { border-color: $colorLineSecondary; }
             .item:hover, .item.active { border-color: $colorLinePrimary; }
             .item.notion .icon { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
             .item.roam .icon { background-image: url('#{$themePath}/icon/popup/settings/import/roam.svg'); }
         }
 
-		.tabImportNotion {
-			.inputWrapper { 
-				.input { border-color: $colorLinePrimary; }
-			}
-
-			.line { background-color: $colorLinePrimary; }
+		.side.right.tabImportNotion {
 			.btn { color: $colorSecondary; }
 			.btn {
 				.icon.help { background-image: url('#{$themePath}/icon/popup/settings/help0.svg'); }
@@ -80,24 +67,34 @@
 			}
 		}
 
-		.tabImportNotionHelp {
+		.side.right.tabImportNotionHelp {
 			.icon.notion { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
 			.list img { border-color: $colorLinePrimary; }
 		}
 
-		.tabImportNotionWarning {
-			.listWrapper { border-color: $colorLineSecondary; }
-		}
-
-		.tabAccount {
-			.userInfo {
-				.name { border-color: $colorLinePrimary; }
+		.side.right.tabAppearance {
+			.btn.light { 
+				.bg { background-color: $colorWhite; }
 			}
-		}
 
-		.tabSpaceIndex {
-			.spaceInfo {
-				.input { border-color: $colorLinePrimary; }
+			.btn.dark {
+				.bg { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
+				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
+			}
+			.btn.system {
+				.bg::before, .bg::after {
+					content: ''; position: absolute; top: 0px; width: 50%; height: 100%;
+				}
+				.bg::before { left: 0px; background: $colorWhite; border-radius: 14px 0px 0px 14px; }
+				.bg::after { right: 0px; box-shadow: 0px 0px 0px 1px $colorLinePrimary; border-radius: 0px 14px 14px 0px; }
+				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
+			}
+
+			.btn.active {
+				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
+			}
+			.btn.system.active {
+				.bg::before { box-shadow: 0px 0px; }
 			}
 		}
     }

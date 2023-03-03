@@ -11,12 +11,7 @@
 
 	.authBackWrap { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; }
 	.authBackWrap {
-		.icon.back { width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/back0.svg'); transition: none; }
-	}
-
-	.authBackWrap:hover { color: $colorBlack; }
-	.authBackWrap:hover {
-		.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); }
+		.icon.back { width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/back.svg'); transition: none; }
 	}
 
 	.textareaWrap { margin: 0px 0px 32px 0px; }
@@ -69,7 +64,7 @@
 			.icon.user { width: 48px; height: 48px; line-height: 50px; font-size: 21px; letter-spacing: -0.16px; margin-right: 12px; }
 			.name { 
 				font-size: 18px; line-height: 26px; display: inline-block; vertical-align: middle; width: calc(100% - 60px); height: 26px; 
-				font-weight: 600; margin-top: 2px; @include text-overflow-nw;   
+				font-weight: 700; margin-top: 2px; @include text-overflow-nw;   
 			}
 		}
 		
