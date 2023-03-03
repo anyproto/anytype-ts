@@ -28,7 +28,6 @@
 			cursor: pointer;
 		}
 		.name { flex-grow: 1; @include text-overflow-nw; }
-		.icon.preview { width: 20px; height: 20px; background-image: url('~img/icon/sidebar/preview.svg'); }
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 		.buttons.active { display: flex; }
@@ -37,6 +36,7 @@
 			.icon:hover { background-color: $colorHover; }
 			.icon.active { opacity: 1; background-color: $colorHover; }
 			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+			.icon.preview { background-size: 16px 14px; background-image: url('~img/icon/sidebar/preview.svg'); }
 		}
 	}
 

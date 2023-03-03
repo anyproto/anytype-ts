@@ -65,16 +65,11 @@
 }
 
 .button.widget { 
-	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 700; padding: 12px 16px;
-	display: flex; position: relative; gap: 0px 12px; flex-direction: row; align-items: center;
+	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; font-weight: 700; padding: 12px 16px;
+	display: flex; position: relative; gap: 0px 12px; justify-content: flex-start;
 }
 .button.widget {
 	.icon { height: 20px; width: 20px; margin: 0px; }
 	.icon.library { background-image: url('~img/icon/sidebar/library.svg'); }
 	.icon.bin { background-image: url('~img/icon/sidebar/bin.svg'); }
 }
-.button.widget::before {
-	content: ""; position: absolute; background: $colorHover; width: calc(100% - 8px); height: 24px; left: 4px; top: 10px; border-radius: 4px;
-	pointer-events: none; transition: $transitionFast; opacity: 0;
-}
-.button.widget:hover::before { opacity: 1; }
