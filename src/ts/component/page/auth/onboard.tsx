@@ -58,9 +58,16 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		let dotIndicator = <DotIndicator activeIndex={this.state.stage} count={4} />;
 		let accountStorageInfo = null;
 		let accountNameField = null;
+		let moreInfo = null;
+		let keyPhrase = null;
 
 		if (stage === OnboardStage.VOID || (stage === OnboardStage.KEY_PHRASE && this.state.keyPhraseCopied)) {
 			submit = <Button text={translate(`authOnboardSubmit`)} onClick={this.onNext} />;
+		}
+
+		if (stage === OnboardStage.KEY_PHRASE) {
+			keyPhrase = <div className="animation"><KeyPhrase isBlurred={!this.state.keyPhraseCopied}/></div>;
+			moreInfo = <span className="animation moreInfo" onClick={this.onMoreInfoPopup}>More info</span>;
 		}
 
 		if (stage === OnboardStage.KEY_PHRASE || stage === OnboardStage.OFFLINE) {
@@ -91,12 +98,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{label}	
 					{accountNameField}
 					<Error text={error} />
-					{ this.state.stage === OnboardStage.KEY_PHRASE ? <div className="animation"><KeyPhrase/></div> : null }
+					{keyPhrase}
 					<div className="buttons">
 						<div className="animation">
 							{submit}
 						</div>
-						{ this.state.stage === OnboardStage.KEY_PHRASE ? <span className="animation moreInfo" onClick={this.onMoreInfoPopup}>More info</span> : null}
+						{moreInfo}
 					</div>
 					{accountStorageInfo}
 				</Frame>
@@ -109,12 +116,21 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.createWallet();
 	};
 
-	componentDidUpdate (): void {
-		Animation.to();
+	componentDidUpdate (prevProps, prevState): void {
+		if (prevState.stage !== this.state.stage) {
+			Animation.to();
+		}
 	}
 
 	async onNext () {
-		Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
+		if (this.state.stage === OnboardStage.KEY_PHRASE && !this.state.keyPhraseCopied) {
+			this.setState({ keyPhraseCopied: true });
+			Util.clipboardCopy({ text: authStore.phrase });
+			Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
+
+		} else {
+			Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
+		}
 	}
 	
 	async onBack () {

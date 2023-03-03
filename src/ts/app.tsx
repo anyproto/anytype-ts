@@ -48,6 +48,7 @@ import 'scss/component/input.scss';
 import 'scss/component/inputWithFile.scss';
 import 'scss/component/list/previewObject.scss';
 import 'scss/component/list/widget.scss';
+import 'scss/component/keyPhrase.scss';
 import 'scss/component/loader.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';

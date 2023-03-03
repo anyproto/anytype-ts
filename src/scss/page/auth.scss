@@ -77,7 +77,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 
 .pageAuthOnboard,
 .pageAuthInvite {
-	.frame { max-width: 415px; display: flex; flex-direction: column; gap: 12px; }
+	.frame { max-width: 415px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; }
 	.label { color: #5C5A54; }
 	.icon.back { height: 40px; width: 40px; position: fixed; left: 20px; top: 0; bottom: 0; margin: auto 0; z-index: 1; }
@@ -88,6 +88,11 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.storageInfo,
 	.moreInfo {
 		color: #5C5A54;
+	}
+	.storageInfo,
+	.moreInfo,
+	.questionMark:hover {
+		cursor: pointer;
 	}
 	.bottom {
 		position: fixed;
