@@ -307,9 +307,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const child = this.getTargetBlock();
 		const { layout } = block.content;
 		const { targetBlockId } = child?.content;
-		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
-		];
+		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
 		];
@@ -327,6 +325,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 			case Constant.widgetId.recent: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
+				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
 				break;
 			};
 
