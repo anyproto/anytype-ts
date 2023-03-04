@@ -7,6 +7,7 @@ import FooterMainIndex from './main';
 import FooterMainEdit from './main/edit';
 import FooterMainGraph from './main/graph';
 import FooterMainNavigation from './main/navigation';
+import FooterMainStore from './main/store';
 
 interface Props extends I.FooterComponent {
 	component: string;
@@ -18,6 +19,7 @@ const Components = {
 	mainEdit:			 FooterMainEdit,
 	mainGraph:			 FooterMainGraph,
 	mainNavigation:		 FooterMainNavigation,
+	mainStore:			 FooterMainStore,
 };
 
 class Footer extends React.Component<Props> {
