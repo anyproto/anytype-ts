@@ -53,7 +53,7 @@
 	
 	.menu.vertical { width: 224px; }
 	.menu.vertical {
-		.content { overflow-y: overlay; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
+		.content { overflow-y: auto; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__List { padding: 8px 0px; }
 
 		.loaderWrapper { 
@@ -210,6 +210,14 @@
 		.item.active {
 			.name { width: 100%; }
 			.icon.chk { display: none; }
+		}
+	}
+}
+
+html.platformWindows {
+	.menus {
+		.menu.vertical {
+			.content { overflow-y: overlay; }
 		}
 	}
 }

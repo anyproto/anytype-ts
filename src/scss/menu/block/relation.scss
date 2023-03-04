@@ -53,7 +53,7 @@
 			}
 		}
 
-		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: overlay; }
+		.scrollWrap { padding: 22px 0px 16px 0px; height: calc(100% - 45px); overflow-x: hidden; overflow-y: auto; }
 		.item { padding: 0px 26px; cursor: default; }
 		.item:hover {
 			.icon.fav { opacity: 1; }
@@ -173,5 +173,13 @@
 body.isDragging {
 	.menus {
 		.menu.menuBlockRelationView { opacity: 0.5; }
+	}
+}
+
+html.platformWindows {
+	.menus {
+		.menu.menuBlockRelationView {
+			.scrollWrap { overflow-y: overlay; }
+		}
 	}
 }

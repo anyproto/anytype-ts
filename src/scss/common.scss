@@ -5,7 +5,7 @@ html, body { height: 100%; }
 
 body {
 	font-family: 'Inter'; @include text-common; color: $colorBlack;
-	overflow-x: hidden; overflow-y: overlay; background: #fff;
+	overflow-x: hidden; overflow-y: auto; background: #fff;
 	-webkit-font-smoothing: antialiased;
 	backface-visibility: hidden;
 	transform-style: flat;
@@ -83,6 +83,7 @@ html.platformWindows {
 		.icon.close:hover { background-image: url('~img/icon/header/windows/close1.svg'); }
 	}
 
+	body { overflow-y: overlay; }
 	.page { padding-top: 30px; }
 	
 	.header { top: 30px !important; }

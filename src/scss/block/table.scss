@@ -7,7 +7,7 @@
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable {
 		.scrollWrap { width: 100%; padding: 5px; line-height: 0px; }
-		.scrollWrap.withScroll { overflow-x: overlay; padding-bottom: 8px; }
+		.scrollWrap.withScroll { overflow-x: auto; padding-bottom: 8px; }
 
 		.scrollWrap > .inner { display: inline-block; position: relative; }
 
@@ -195,6 +195,14 @@
 		.cell {
 			.block { min-height: 40px; }
 			.icon.menu { display: none; }
+		}
+	}
+}
+
+html.platformWindows {
+	.blocks {
+		.block.blockTable {
+			.scrollWrap.withScroll { overflow-x: overlay; }
 		}
 	}
 }

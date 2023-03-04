@@ -14,7 +14,6 @@ class ObjectUtil {
 		};
 
 		const home = this.getSpaceDashboard();
-
 		if (!home) {
 			this.openRoute(empty);
 			return;
@@ -29,7 +28,6 @@ class ObjectUtil {
 
 	getSpaceDashboard () {
 		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
-
 		if (!space.spaceDashboardId) {
 			return null;
 		};
@@ -44,7 +42,6 @@ class ObjectUtil {
 		if (home._empty_ || home.isArchived) {
 			return null;
 		};
-
 		return home;
 	};
 
