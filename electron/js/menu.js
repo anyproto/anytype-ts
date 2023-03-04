@@ -255,6 +255,10 @@ class MenuManager {
 					label: 'Export localstore',
 					click: () => { Util.send(this.win, 'command', 'exportLocalstore'); }
 				},
+				{
+					label: 'Export Account',
+					click: () => { Util.send(this.win, 'command', 'exportAccount'); }
+				},
 
 				Separator,
 

@@ -179,6 +179,14 @@ const AccountMove = (path: string, callBack?: (message: any) => void) => {
 	dispatcher.request(AccountMove.name, request, callBack);
 };
 
+const AccountExport = (path: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.Export.Request();
+	
+	request.setPath(path);
+
+	dispatcher.request(AccountExport.name, request, callBack);
+};
+
 // ---------------------- FILE ---------------------- //
 
 const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
@@ -1622,6 +1630,7 @@ export {
 	AccountStop,
 	AccountDelete,
 	AccountMove,
+	AccountExport,
 
 	DebugSync,
 	DebugTree,
