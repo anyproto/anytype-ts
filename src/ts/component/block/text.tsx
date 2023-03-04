@@ -1204,7 +1204,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onSelect (e: any) {
 		const { rootId, dataset, block, isPopup, isInsideTable } = this.props;
-		const ids = DataUtil.selectionGet('', false, this.props);
+		const ids = DataUtil.selectionGet('', false, true, this.props);
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);

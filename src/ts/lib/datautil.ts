@@ -205,7 +205,7 @@ class DataUtil {
 		return icon;
 	};
 	
-	selectionGet (id: string, withChildren: boolean, props: any): string[] {
+	selectionGet (id: string, withChildren: boolean, save: boolean, props: any): string[] {
 		const { dataset } = props;
 		const { selection } = dataset || {};
 		
@@ -214,10 +214,14 @@ class DataUtil {
 		};
 		
 		let ids: string[] = selection.get(I.SelectType.Block, withChildren);
-		if (id && ids.indexOf(id) < 0) {
+		if (id && !ids.includes(id)) {
 			selection.clear();
 			selection.set(I.SelectType.Block, [ id ]);
 			ids = selection.get(I.SelectType.Block, withChildren);
+
+			if (!save) {
+				selection.clear();
+			};
 		};
 		return ids;
 	};

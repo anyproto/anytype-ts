@@ -780,7 +780,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 					offsetX: Constant.size.blockMenu,
 					data: {
 						blockId: block.id,
-						blockIds: DataUtil.selectionGet(block.id, true, this.props),
+						blockIds: DataUtil.selectionGet(block.id, true, true, this.props),
 						rootId: rootId,
 						dataset: dataset,
 					},

@@ -539,7 +539,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 				
 			case 'background': {
-				ids = DataUtil.selectionGet(blockId, false, this.props);
+				ids = DataUtil.selectionGet(blockId, false, false, this.props);
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -647,7 +647,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const ids = DataUtil.selectionGet(blockId, false, data);
+		const ids = DataUtil.selectionGet(blockId, false, false, data);
 
 		switch (item.itemId) {
 			case 'download': {

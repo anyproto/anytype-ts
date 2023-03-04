@@ -63,6 +63,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
 	};
 
 	render () {
@@ -321,6 +322,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				className={cn.join(' ')} 
 				style={css}
 				{...Util.dataProps({ id })}
+				onContextMenu={this.onContextMenu} 
 			>
 				<div className="wrapMenu">
 					<Icon 
@@ -330,7 +332,6 @@ const Block = observer(class Block extends React.Component<Props> {
 						onDragStart={this.onDragStart} 
 						onMouseDown={this.onMenuDown} 
 						onClick={this.onMenuClick} 
-						onContextMenu={this.onMenuClick} 
 					/>
 				</div>
 				
@@ -418,7 +419,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		
 		keyboard.disableSelection(true);
 
-		this.ids = DataUtil.selectionGet(block.id, false, this.props);
+		this.ids = DataUtil.selectionGet(block.id, false, true, this.props);
 		onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
@@ -426,32 +427,54 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { block } = this.props;
 
 		focus.clear(true);
-		this.ids = DataUtil.selectionGet(block.id, true, this.props);
+		this.ids = DataUtil.selectionGet(block.id, true, false, this.props);
 	};
 	
-	onMenuClick (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const { dataset, rootId, block, blockRemove } = this.props;
+	onMenuClick () {
+		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
-		const elementId = `#button-block-menu-${block.id}`;
-		const element = $(elementId);
+		const element = $(`#button-block-menu-${block.id}`);
 
 		selection.set(I.SelectType.Block, this.ids);
+
+		this.menuOpen({
+			horizontal: I.MenuDirection.Right,
+			offsetX: element.outerWidth(),
+			recalcRect: () => {
+				const offset = element.offset();
+				return { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
+			},
+		});
+	};
+
+	onContextMenu (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { block } = this.props;
+
+		this.ids = DataUtil.selectionGet(block.id, true, false, this.props);
+
+		this.menuOpen({
+			recalcRect: () => {
+				return { x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 };
+			}
+		});
+	};
+
+	menuOpen (param?: any) {
+		const { dataset, rootId, block, blockRemove } = this.props;
+		const { selection } = dataset || {};
 
 		// Hide block menus and plus button
 		$('#button-block-add').removeClass('show');
 		$('.block.showMenu').removeClass('showMenu');
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
-		menuStore.open('blockAction', { 
-			offsetX: element.outerWidth(),
-			horizontal: I.MenuDirection.Right,
-			recalcRect: () => {
-				const offset = element.offset();
-				return { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
+		const menuParam = Object.assign({
+			onClose: () => {
+				selection.clear();
+				focus.apply();
 			},
 			data: {
 				blockId: block.id,
@@ -459,12 +482,10 @@ const Block = observer(class Block extends React.Component<Props> {
 				rootId,
 				dataset,
 				blockRemove,
-			},
-			onClose: () => {
-				selection.clear();
-				focus.apply();
 			}
-		});
+		}, param || {});
+
+		menuStore.open('blockAction', menuParam);
 	};
 	
 	onResizeStart (e: any, index: number) {
