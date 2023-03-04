@@ -179,6 +179,15 @@ const AccountMove = (path: string, callBack?: (message: any) => void) => {
 	dispatcher.request(AccountMove.name, request, callBack);
 };
 
+const AccountRecoverFromLegacyExport = (path: string, rootPath: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.RecoverFromLegacyExport.Request();
+	
+	request.setPath(path);
+	request.setRootpath(rootPath);
+
+	dispatcher.request(AccountRecoverFromLegacyExport.name, request, callBack);
+};
+
 // ---------------------- FILE ---------------------- //
 
 const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition, paths: string[], callBack?: (message: any) => void) => {
@@ -1227,6 +1236,14 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			request.setMarkdownparams(params);
 			break;
 
+		case I.ImportType.Migration:
+			params = new Rpc.Object.Import.Request.MigrationParams();
+			params.setAddress(options.address);
+			params.setPath(options.path);
+
+			request.setMigrationparams(params);
+			break;
+
 		case I.ImportType.Html:
 			params = new Rpc.Object.Import.Request.HtmlParams();
 			params.setPathList(options.paths);
@@ -1672,6 +1689,7 @@ export {
 
 	AccountCreate,
 	AccountRecover,
+	AccountRecoverFromLegacyExport,
 	AccountSelect,
 	AccountStop,
 	AccountDelete,
