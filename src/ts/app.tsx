@@ -711,6 +711,13 @@ class App extends React.Component<object, State> {
 				});
 				break;
 
+			case 'importAccount':
+				Action.openFile([ 'zip' ], paths => {
+					C.AccountRecoverFromLegacyExport(paths[0], authStore.walletPath, (message: any) => {
+					});
+				});
+				break;
+
 			case 'debugSync':
 				C.DebugSync(100, (message: any) => {
 					if (!message.error.code) {
