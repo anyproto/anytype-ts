@@ -105,11 +105,16 @@ init = (param) => {
 	// Center initially on root node
 	setTimeout(() => {
 		const root = getNodeById(data.rootId);
-		if (!root) {
-			return;
+
+		let x = width / 2;
+		let y = height / 2;
+		
+		if (root) {
+			x = root.x;
+			y = root.y;
 		};
 
-		transform = Object.assign(transform, getCenter(root.x, root.y));
+		transform = Object.assign(transform, getCenter(x, y));
 		send('onTransform', { ...transform });
 		redraw();
 	}, 100);
