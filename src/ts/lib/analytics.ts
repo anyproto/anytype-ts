@@ -49,8 +49,6 @@ class Analytics {
 			osVersion: window.Electron.version.os,
 		});
 
-		console.log(amplitude);
-
 		console.log('[Analytics].init', this.instance);
 
 		this.isInit = true;
