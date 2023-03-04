@@ -714,6 +714,9 @@ class App extends React.Component<object, State> {
 			case 'importAccount':
 				Action.openFile([ 'zip' ], paths => {
 					C.AccountRecoverFromLegacyExport(paths[0], authStore.walletPath, (message: any) => {
+						C.ObjectImport({ path: paths[0], address: message.address }, [], false, I.ImportType.Migration, I.ImportMode.AllOrNothing, () => {
+						
+						});
 					});
 				});
 				break;
