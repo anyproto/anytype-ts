@@ -421,6 +421,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				filter: '',
 				rootId,
 				ref: 'type',
+				object,
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: relations.map(it => it.relationKey).concat(Constant.systemRelationKeys),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

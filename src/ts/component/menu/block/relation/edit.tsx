@@ -438,6 +438,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange, ref } = data;
+		const object = detailStore.get(rootId, rootId);
 
 		C.ObjectCreateRelation(item, [], (message: any) => {
 			if (message.error.code) {
@@ -454,7 +455,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
-			analytics.event('CreateRelation', { format: item.relationFormat, type: ref });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};
 

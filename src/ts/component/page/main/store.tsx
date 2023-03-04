@@ -323,6 +323,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.getData(true);
 
 		menuStore.closeAll(Constant.menuIds.store);
+
+		analytics.event('LibraryView', { view: id, type: this.tab });
 	};
 
 	onClick (e: any, item: any) {

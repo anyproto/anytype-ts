@@ -7,7 +7,7 @@ import Constant from 'json/constant.json';
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
 	'type', 'objectType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group'
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -247,6 +247,16 @@ class Analytics {
 			case 'SurveyOpen':
 			case 'SurveySkip': {
 				data.type = I.SurveyType[data.type];
+				break;
+			};
+
+			case 'LibraryView': {
+				const types = {
+					library: 'your',
+					marketplace: 'library',
+				};
+
+				data.view = types[data.view];
 				break;
 			};
 		};
