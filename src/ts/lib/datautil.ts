@@ -327,10 +327,11 @@ class DataUtil {
 					Util.route('/auth/pin-check');
 				} else {
 					if (redirect) {
-						Util.route(redirect);
+						Util.route(redirect, true);
 					} else {
-						ObjectUtil.openHome('route');
+						ObjectUtil.openHome('route', { replace: true });
 					};
+
 					commonStore.redirectSet('');
 				};
 
