@@ -211,11 +211,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page: {
-				if (iconOption) {
-					onOption();
-					break;
-				};
-
 				if (iconImage) {
 					cn.push('withImage');
 				};
@@ -223,6 +218,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else 
+				if (iconOption) {
+					onOption();
+				} else
 				if (forceLetter) {
 					onLetter();
 				};
@@ -230,17 +228,17 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			};
 
 			case I.ObjectLayout.Human: {
-				if (iconOption) {
-					onOption();
-					break;
-				};
-
 				if (iconImage) {
 					cn.push('withImage');
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+				} else 
+				if (iconOption) {
+					onOption();
+				} else {
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={this.userSvg()} className={icn.join(' ')} />;
 				};
-
-				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, iconSize * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;
 			};
 
