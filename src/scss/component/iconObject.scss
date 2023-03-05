@@ -35,7 +35,7 @@
 .iconObject.c28 { width: 28px; height: 28px; }
 .iconObject.c32 { width: 32px; height: 32px; }
 .iconObject.c40 { width: 40px; height: 40px; }
-.iconObject.c48 { display: block; width: 48px; height: 48px; border-radius: 0px; overflow: hidden; }
+.iconObject.c48 { display: block; width: 48px; height: 48px; overflow: hidden; }
 .iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c80 { display: block; width: 80px; height: 80px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
@@ -61,3 +61,14 @@
 .iconObject.isHuman.withImage { background-color: unset !important; }
 
 .iconObject.canEdit { cursor: pointer; }
+
+.iconObject.withOption.c0 {}
+.iconObject.withOption.c1 {}
+.iconObject.withOption.c2 {}
+.iconObject.withOption.c3 {}
+.iconObject.withOption.c4 {}
+.iconObject.withOption.c5 {}
+.iconObject.withOption.c6 {}
+.iconObject.withOption.c7 {}
+.iconObject.withOption.c8 { background-image: radial-gradient(50% 50% at 50% 50%, #FFA15E 22.92%, #B6C1FF 100%); }
+.iconObject.withOption.c9 {}
