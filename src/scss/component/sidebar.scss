@@ -39,6 +39,7 @@
 
 	> .top { display: flex; flex-direction: row-reverse; }
 	> .head { position: relative; flex-shrink: 0; flex-grow: 1; -webkit-app-region: no-drag; cursor: grab; }
+	> .body { height: calc(100% - 52px); position: relative; flex-grow: 1; overflow: hidden; overflow-y: scroll; overscroll-behavior: none; }
 
 	.sidebarHeader { display: flex; flex-direction: row; align-items: center; padding: 0px 12px; }
 	.sidebarHeader {
@@ -49,8 +50,6 @@
 		.icon:hover { background-color: $colorHover; }
 		.icon.toggleSidebar { background-image: url('~img/icon/sidebar/toggle-sidebar.svg'); }
 	}
-
-	> .body { height: calc(100% - 52px); position: relative; flex-grow: 1; }
 }
 
 html.bodyMainIndex {
