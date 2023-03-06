@@ -51,7 +51,7 @@
 				.clickable { width: 228px; padding: 4px; display: flex; transition: $transitionFast; border-radius: 4px; }
 
 				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
-				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorVeryDarkGrey; }
+				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorDarkGrey; }
 			}
 			.item.canEdit, .item.add {
 				.clickable { cursor: pointer; }

@@ -79,7 +79,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
 					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
-						{item.isRoot ? iconHome : <IconObject object={item} forceLetter={true} size={48} />}
+						{item.isRoot ? iconHome : <IconObject object={item} forceLetter={true} size={48} iconSize={24} />}
 						<div className="info">
 							<ObjectName object={item} />
 							<ObjectDescription object={item} />

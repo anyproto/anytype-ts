@@ -6,7 +6,7 @@
 		.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }
 
 		.cellHead { 
-			text-align: left; color: $colorVeryDarkGrey; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
+			text-align: left; color: $colorDarkGrey; padding: 14px 0px 14px 14px; white-space: nowrap; font-weight: 400; line-height: 20px; position: relative; 
 			@include text-overflow-nw;
 		}
 		.cellHead {

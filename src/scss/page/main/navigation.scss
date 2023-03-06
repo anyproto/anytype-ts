@@ -9,11 +9,14 @@
 			height: 80px; border: 1px solid $colorBorderLight; border-radius: 8px;
 		}
 		.item {
-			.inner { padding: 16px; }
-			.iconObject { position: absolute; left: 16px; top: 16px; transition: $transitionFast; }
-			.info { border: 0px; margin-top: -2px; padding: 0px 0px 0px 60px; display: inline-block; vertical-align: middle; width: 100%; }
+			.inner { padding: 16px; display: flex; align-items: center; gap: 0px 16px; height: 100%; }
+
+			.iconObject { flex-shrink: 0; }
+			.info { border: 0px; flex-grow: 1; width: calc(100% - 64px); }
+
 			.name { width: 100%; line-height: 22px; height: 22px; @include text-overflow-nw;  }
-			.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: $colorVeryDarkGrey; }
+			.descr { width: 100%; @include text-small; max-height: 18px; @include text-overflow-nw; color: $colorDarkGrey; }
+
 			.icon.arrow { 
 				width: 24px; height: 24px; position: absolute; right: -24px; top: 50%; transform: translateY(-50%);
 				background-image: url('~img/arrow/nav0.svg');
@@ -53,7 +56,7 @@
 	.selected {
 		.iconObject { margin-bottom: 8px; }
 		.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }
-		.descr { @include text-small; color: $colorVeryDarkGrey; @include text-overflow; max-height: 54px; }
+		.descr { @include text-small; color: $colorDarkGrey; @include text-overflow; max-height: 54px; }
 		.cover { position: relative; height: 156px; margin-top: 11px; border-radius: 2px; }
 
 		.buttons { margin-top: 16px; display: flex; }
