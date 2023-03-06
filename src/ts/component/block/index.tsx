@@ -455,7 +455,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		focus.clear(true);
 		menuStore.closeAll([], () => {
-			this.ids = DataUtil.selectionGet(block.id, true, false, this.props);
+			this.ids = DataUtil.selectionGet(block.id, true, true, this.props);
 			this.menuOpen({
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
 			});
