@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
+import { Icon } from 'Component';
 import { I, keyboard, Preview, sidebar } from 'Lib';
 import { commonStore } from 'Store';
-import Header from './header';
 import ListWidget from 'Component/list/widget';
 
 interface Props {
@@ -38,13 +38,19 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
                 id="sidebar" 
                 className={cn.join(' ')} 
             >
-                <div className="top">
-					<div id="head" className="head" onMouseDown={this.onDragStart} />
-					{commonStore.isSidebarFixed ? <Header /> : null}
+                <div className="head" draggable={true} onDragStart={this.onDragStart}>
+					<Icon
+						className="toggleSidebar"
+						tooltip="Close sidebar"
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => { sidebar.collapse(); }}
+					/>
 				</div>
-				<div id="body" className="body">
-					<ListWidget dataset={this.props.dataset}></ListWidget>
+
+				<div className="body">
+					<ListWidget {...this.props} />
 				</div>
+
 				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
 				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
             </div>
@@ -93,6 +99,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	// Event Handlers
 
 	onDragStart (e: React.MouseEvent) {
+		console.log('onDragStart');
+
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -164,8 +172,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		if (dir == I.MenuType.Horizontal) {
 			sidebar.setWidth(
 				snap == I.MenuDirection.Right
-					? this.ox - e.pageX + width
-					: e.pageX - this.ox
+					? (this.ox - e.pageX + width)
+					: (e.pageX - this.ox)
 			);
 		};
 

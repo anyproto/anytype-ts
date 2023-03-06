@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.widget { background: $colorWhite; border-radius: 12px; transform: translate(0px, 0px); position: relative; margin: 0px 0px 12px 0px; }
+.widget { background: $colorWhite; border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }
 .widget {
 	.head { width: 100%; position: relative; display: flex; flex-direction: column; cursor: pointer; padding: 12px 8px 10px 16px; z-index: 2; }
