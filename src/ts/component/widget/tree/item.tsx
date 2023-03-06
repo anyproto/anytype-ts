@@ -10,7 +10,7 @@ interface Props extends I.WidgetTreeItem {
 	index: number;
 	treeKey: string;
 	style;
-	isDraggable?: boolean;
+	isEditing?: boolean;
 	onClick?(e: React.MouseEvent, props): void;
 	onToggle?(e: React.MouseEvent, props): void;
 	setActive?(id: string): void;
@@ -28,14 +28,14 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, parentId, treeKey, depth, style, numChildren, isDraggable, onClick } = this.props;
+		const { id, parentId, treeKey, depth, style, numChildren, isEditing, onClick } = this.props;
 		const subKey = this.getSubKey();
 		const subId = dbStore.getSubId(subKey, parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
 		const object = detailStore.get(subId, id);
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
-		const canDrop = !isDraggable && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+		const canDrop = !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 		const paddingLeft = (depth - 1) * 12;
 
 		let arrow = null;

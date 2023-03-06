@@ -93,6 +93,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						disableContextMenu={true} 
 						onDragStart={this.onDragStart}
 						onDragOver={this.onDragOver}
+						isEditing={isEditing}
 					/>
 
 					{blocks.map((block, i) => (
@@ -100,7 +101,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 							{...this.props}
 							key={`widget-${block.id}`}
 							block={block}
-							isDraggable={isEditing}
+							isEditing={isEditing}
 							onDragStart={this.onDragStart}
 							onDragOver={this.onDragOver}
 							setPreview={this.setPreview}
@@ -113,7 +114,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						color="" 
 						className="widget" 
 						icon="library" 
-						onClick={e => ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store })} 
+						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store }) : null} 
 					/>
 
 					<Button 
@@ -121,7 +122,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						color="" 
 						className="widget" 
 						icon="bin" 
-						onClick={e => ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Archive })} 
+						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Archive }) : null} 
 					/>
 
 					<div className="buttons">
@@ -210,7 +211,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		e.preventDefault();
 
 		const target = $(e.currentTarget);
-		if (!target.hasClass('isDraggable')) {
+		if (!target.hasClass('isEditing')) {
 			return;
 		};
 
