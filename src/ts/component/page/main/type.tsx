@@ -64,12 +64,12 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
-		const showTemplates = !NO_TEMPLATES.includes(rootId);
+		const showTemplates = object.isInstalled && !NO_TEMPLATES.includes(rootId);
 
 		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
+		const allowedTemplate = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 
 		const relations = (object.recommendedRelations || []).map(id => dbStore.getRelationById(id)).filter((it: any) => {
 			if (!it || Constant.systemRelationKeys.includes(it.relationKey)) {
