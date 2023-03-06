@@ -76,8 +76,8 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 					<Icon
 						className="dnd"
 						draggable={true}
-						onClick={() => { onMultiselect(record.id) }}
-						onDragStart={(e: any) => { onDragRecordStart(e, index) }}
+						onClick={() => { onMultiselect(record.id); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
 					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}

@@ -16,7 +16,7 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart } = this.props;
+		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiselect } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -68,8 +68,8 @@ const Row = observer(class Row extends React.Component<Props> {
 					<Icon
 						className="dnd"
 						draggable={true}
-						onClick={(e: any) => { onContext(e, record.id); }}
-						onDragStart={(e: any) => { onDragRecordStart(e, index) }}
+						onClick={(e: any) => { onMultiselect(record.id); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
 					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}
