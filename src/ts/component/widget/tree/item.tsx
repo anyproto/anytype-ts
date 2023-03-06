@@ -33,7 +33,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const subId = dbStore.getSubId(subKey, parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
 		const object = detailStore.get(subId, id);
-		const cn = [ 'item', 'c' + id, (isOpen ? 'active' : '') ];
+		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
 		const canDrop = !isDraggable && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 		const paddingLeft = (depth - 1) * 12;
@@ -100,18 +100,11 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const { id, parentId, getSubId } = this.props;
 		const subId = getSubId(parentId);
 		const node = $(this.node);
-		const buttons = node.find('.buttons');
 		const more = node.find('.icon.more');
 		const menuParam: any = {
 			classNameWrap: 'fromSidebar',
-			onOpen: () => {
-				buttons.addClass('active');
-				more.addClass('active');
-			},
-			onClose: () => {
-				buttons.removeClass('active');
-				more.removeClass('active');
-			},
+			onOpen: () => { node.addClass('active'); },
+			onClose: () => { node.removeClass('active'); },
 			data: {
 				objectIds: [ id ],
 				subId,
