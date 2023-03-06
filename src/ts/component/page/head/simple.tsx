@@ -34,7 +34,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const check = DataUtil.checkDetails(rootId);
 		const object = check.object;
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const canEditIcon = allowDetails && (object.type != Constant.typeId.relation);
 		const placeholder = {
 			title: DataUtil.defaultName(type),
 			description: 'Add a description',
@@ -47,6 +46,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			Constant.storeTypeId.relation,
 		].includes(object.type);
 
+		let canEditIcon = allowDetails;
+		if (object.type == Constant.typeId.relation) {
+			canEditIcon = false;
+		};
 
 		const Editor = (item: any) => {
 			return (
@@ -74,6 +77,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let descr = null;
 		let featured = null;
 		let cn = [ 'headSimple', check.className ];
+		let buttonId = '';
 
 		if (isTypeOrRelation) {
 			size = 32;
@@ -100,20 +104,20 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				arrow = true;
 			};
 
-			button = <Button id="button-create" color="black" text={text} arrow={arrow} onClick={onCreate} />;
+			button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
 		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
-			let onClick = null;
-			let className = '';
+			const cn = [ 'c36' ];
 
+			let onClick = null;
 			if (this.isInstalled()) {
-				className = 'grey filled disabled';
+				cn.push('blank disabled');
 			} else {
 				onClick = this.onInstall;
 			};
 
-			button = <Button id="button-install" color="black" text="Install" className={className} onClick={onClick} />;
+			button = <Button id="button-install" text="Install" className={cn.join(' ')} onClick={onClick} />;
 		};
 
 		return (
@@ -125,6 +129,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 							size={size} 
 							iconSize={iconSize}
 							object={object} 
+							forceLetter={true}
 							canEdit={canEditIcon} 
 							onSelect={this.onSelect} 
 							onUpload={this.onUpload} 

@@ -7,6 +7,7 @@ import { C, I, Util, analytics, Relation, Dataview, keyboard } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
+import Constant from "json/constant.json";
 
 const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
 
@@ -122,9 +123,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 						{isAllowedObject ? (
 							<Button 
 								id={`button-${block.id}-add-record`}
-								color="addRecord orange" 
-								icon="plus-small" 
-								className="c28" 
+								className="addRecord c28" 
 								tooltip="Create new object" 
 								text="New" 
 								onClick={(e: any) => { onRecordAdd(e, -1); }} 
@@ -151,7 +150,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			return;
 		};
 
-		const { rootId, block, readonly, getData, getView, getSources, getVisibleRelations, isInline } = this.props;
+		const { rootId, block, readonly, loadData, getView, getSources, getVisibleRelations, getTarget, isInline, isCollection } = this.props;
 		const view = getView();
 		const obj = $(element);
 		const node = $(this.node);
@@ -172,12 +171,14 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			data: {
 				readonly,
 				rootId,
-				blockId: block.id, 
-				getData,
+				blockId: block.id,
+				loadData,
 				getView,
 				getSources,
 				getVisibleRelations,
+				getTarget,
 				isInline,
+				isCollection,
 				view: observable.box(view),
 			},
 		};
@@ -212,8 +213,9 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	onViewAdd (e: any) {
 		e.persist();
 
-		const { rootId, block, getSources } = this.props;
+		const { rootId, block, getSources, getTarget, isInline } = this.props;
 		const sources = getSources();
+		const object = getTarget();
 
 		const newView = {
 			name: `New view`,
@@ -232,43 +234,58 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			};
 
 			this.onViewEdit(e, `#views #view-item-${block.id}-${message.viewId}`, view);
-			analytics.event('AddView', { type: view.type });
+
+			analytics.event('AddView', {
+				type: view.type,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
 		});
 	};
 
 	onViewSet (item: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, isInline, getTarget } = this.props;
 		const subId = dbStore.getSubId(rootId, block.id);
+		const object = getTarget();
 
 		dbStore.metaSet(subId, '', { viewId: item.id });
-		analytics.event('SwitchView', { type: item.type });
+
+		analytics.event('SwitchView', {
+			type: item.type,
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
 	};
 
 	onViewEdit (e: any, element: string, item: any) {
 		e.stopPropagation();
 
-		const { rootId, block, getView, getData, getSources, isInline } = this.props;
+		const { rootId, block, getView, loadData, getSources, isInline, isCollection, getTarget } = this.props;
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const view = dbStore.getView(rootId, block.id, item.id);
 
 		this.onViewSet(view);
 
-		menuStore.open('dataviewViewEdit', { 
-			element: element,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			data: {
-				rootId,
-				blockId: block.id,
-				readonly: !allowed,
-				view: observable.box(view),
-				isInline,
-				getView,
-				getData,
-				getSources,
-				onSave: () => { this.forceUpdate(); },
-			}
-		});
+		window.setTimeout(() => {
+			menuStore.open('dataviewViewEdit', { 
+				element,
+				horizontal: I.MenuDirection.Center,
+				noFlipY: true,
+				data: {
+					rootId,
+					blockId: block.id,
+					readonly: !allowed,
+					view: observable.box(view),
+					isInline,
+					isCollection,
+					getTarget,
+					getView,
+					loadData,
+					getSources,
+					onSave: () => { this.forceUpdate(); },
+				}
+			});
+		}, 50);
 	};
 
 	onSortStart () {
@@ -277,15 +294,20 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 	onSortEnd (result: any) {
 		const { oldIndex, newIndex } = result;
-		const { rootId, block } = this.props;
+		const { rootId, block, isInline, getTarget } = this.props;
+		const object = getTarget();
 
 		let views = dbStore.getViews(rootId, block.id);
 		let view = views[oldIndex];
 		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, block.id, ids);
+
 		C.BlockDataviewViewSetPosition(rootId, block.id, view.id, newIndex, () => {
-			analytics.event('RepositionView');
+			analytics.event('RepositionView', {
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
 		});
 
 		keyboard.disableSelection(false);

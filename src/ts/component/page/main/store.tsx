@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Title, Icon, IconObject, Header, Filter, Button, EmptySearch } from 'Component';
+import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
 import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -243,6 +243,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 						</InfiniteLoader>
 					</div>
 				</div>
+
+				<Footer component="mainStore" />
 			</div>
 		);
 	};
@@ -321,6 +323,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.getData(true);
 
 		menuStore.closeAll(Constant.menuIds.store);
+
+		analytics.event('LibraryView', { view: id, type: this.tab });
 	};
 
 	onClick (e: any, item: any) {

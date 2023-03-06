@@ -16,7 +16,7 @@ const LIMIT = 20;
 const MenuFilterList = observer(class MenuFilterList extends React.Component<I.Menu> {
 	
 	node: any = null;
-	n = 0;
+	n = -1;
 	top = 0;
 	cache: any = {};
 	refList: any = null;
@@ -197,9 +197,10 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onAdd (e: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView, isInline, getTarget } = data;
 		const view = getView();
 		const relationOptions = this.getRelationOptions();
+		const object = getTarget();
 
 		if (!relationOptions.length) {
 			return;
@@ -219,21 +220,30 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		C.BlockDataviewFilterAdd(rootId, blockId, view.id, newItem);
 
 		obj.animate({ scrollTop: obj.get(0).scrollHeight }, 50);
-		analytics.event('AddFilter', { condition: newItem.condition });
+
+		analytics.event('AddFilter', {
+			condition: newItem.condition,
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
 	};
 
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView, loadData, isInline, isCollection, getTarget } = data;
 		const view = getView();
+		const object = getTarget();
 
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, [ item.id ], () => {
-			getData(view.id, 0);
+			loadData(view.id, 0);
 		});
 
 		menuStore.close('select');
-		analytics.event('RemoveFilter');
+		analytics.event('RemoveFilter', {
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
 	};
 
 	onOver (e: any, item: any) {
@@ -245,7 +255,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onClick (e: any, item: any) {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView } = data;
+		const { rootId, blockId, loadData, getView } = data;
 		const view = getView();
 
 		menuStore.open('dataviewFilterValues', {
@@ -256,7 +266,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 				...data,
 				save: () => {
 					C.BlockDataviewFilterReplace(rootId, blockId, view.id, item.id, view.getFilter(item.id), () => {
-						getData(view.id, 0);
+						loadData(view.id, 0);
 					});
 				},
 				itemId: item.id,
@@ -271,15 +281,20 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	onSortEnd (result: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView, loadData, isInline, getTarget } = data;
 		const view = getView();
+		const object = getTarget();
 		const { oldIndex, newIndex } = result;
 		
 		view.filters = arrayMove(view.filters as I.Filter[], oldIndex, newIndex);
-		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => { getData(view.id, 0); });
+		C.BlockDataviewFilterSort(rootId, blockId, view.id, view.filters.map(it => it.id), () => { loadData(view.id, 0); });
 
 		keyboard.disableSelection(false);
-		analytics.event('RepositionFilter');
+
+		analytics.event('RepositionFilter', {
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
 	};
 
 	getItems () {

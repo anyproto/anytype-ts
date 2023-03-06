@@ -47,8 +47,9 @@ class Animation {
 	getSortedNodes (dir: I.AnimDirection) {
 		const nodes: { el: JQuery<HTMLElement>, index: number, type: I.AnimType}[] = [];
 
-		$('.animation').each((i, elem) => {
-			const el = $(elem);
+		$('.animation').each((i: number, el: any) => {
+			el = $(el);
+
 			const type = Number(el.attr('data-animation-type')) || I.AnimType.Normal;
 
 			let index = 0;
@@ -92,15 +93,13 @@ class Animation {
 				};
 
 				case I.AnimType.Text: {
-					
-
 					if (dir == I.AnimDirection.From) {
 						this.applyCss(el, css, Duration.Normal, delay);
 						delay += Duration.Normal;
 						break;
 					};
 
-					el.html("");
+					el.html('');
 
 					const processWord = (word) => {
 						const w = $('<span></span>').html(word).addClass('animationWord');
@@ -112,11 +111,11 @@ class Animation {
 
 					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach(child => {
 						if (child.nodeType === 3) {
-							child.textContent.trim().split(' ').forEach(processWord)
+							child.textContent.trim().split(' ').forEach(processWord);
 						} else {
 							processWord(child)
-						}
-					})
+						};
+					});
 					break;
 				};
 			};

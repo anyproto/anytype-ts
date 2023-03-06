@@ -11,7 +11,7 @@
 	.side.left {
 		.iconObject { flex-shrink: 0; }
 		.txt { width: calc(100% - 64px); }
-		.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
+		.name { @include text-paragraph; @include text-overflow-nw; font-weight: 700; }
 		.type { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
 	}
 

@@ -63,6 +63,12 @@
 			}
 
 		}
+
+		.isCollection {
+			.viewItem.viewGallery {
+				.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 4px; height: 100%; border-radius: 2px; top: 0px; left: 0px; }
+			}
+		}
 	}
 }
 

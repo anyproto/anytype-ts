@@ -156,7 +156,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				{!isReadonly ? (
 					<div className="section">
 						<div className="inputWrap">
-							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="grey" className="filled c28" />
+							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="blank" className="c28" />
 						</div>
 					</div>
 				) : ''}
@@ -227,7 +227,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const button = node.find('#button');
 		const canSave = name.length && (this.format !== null) && !this.isReadonly();
 
-		button.removeClass('orange grey').addClass(canSave ? 'orange' : 'grey');
+		button.removeClass('black blank').addClass(canSave ? 'black' : 'blank');
 	};
 
 	onRelationType (e: any) {
@@ -438,6 +438,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange, ref } = data;
+		const object = detailStore.get(rootId, rootId);
 
 		C.ObjectCreateRelation(item, [], (message: any) => {
 			if (message.error.code) {
@@ -454,7 +455,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
-			analytics.event('CreateRelation', { format: item.relationFormat, type: ref });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};
 

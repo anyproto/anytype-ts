@@ -5,7 +5,6 @@ import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualiz
 import { dbStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
 import { I, translate } from 'Lib';
-import Empty from '../empty';
 import Row from './list/row';
 
 const HEIGHT = 32;
@@ -22,27 +21,16 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, getView, isPopup, onRecordAdd, isInline, getLimit } = this.props;
+		const { rootId, block, getView, isPopup, onRecordAdd, isInline, getLimit, getEmpty, getRecords } = this.props;
 		const view = getView();
-		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
+		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
 
 		if (!length) {
-			return (
-				<Empty 
-					{...this.props}
-					title="No objects found" 
-					description="Create your first one to begin"
-					button="Create object"
-					className={isInline ? 'withHead' : ''}
-					withButton={isAllowedObject}
-					onClick={(e: any) => onRecordAdd(e, 1)}
-				/>
-			);
+			return getEmpty('view');
 		};
 
 		let content = null;
@@ -141,14 +129,14 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		let { rootId, block, getData, getView, getLimit } = this.props;
+		let { rootId, block, loadData, getView, getLimit } = this.props;
 		let subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
 		let view = getView();
 
         return new Promise((resolve, reject) => {
 			offset += getLimit();
-			getData(view.id, offset, false, resolve);
+			loadData(view.id, offset, false, resolve);
 			dbStore.metaSet(subId, '', { offset });
 		});
 	};

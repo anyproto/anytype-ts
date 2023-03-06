@@ -102,6 +102,7 @@ export interface Block {
 	childrenIds?: string[];
 	
 	getLength?(): number;
+	getTargetObjectId?(): string;
 	isSystem?(): boolean;
 	isLocked?(): boolean;
 

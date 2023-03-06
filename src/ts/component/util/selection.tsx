@@ -123,6 +123,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const win = $(window);
 		const nodes = this.getPageContainer().find('.selectable');
 		const container = Util.getScrollContainer(isPopup);
+		const selectionRect = $('#selection-rect');
+
+		isPopup ? selectionRect.addClass('fromPopup') : selectionRect.removeClass('fromPopup');
 		
 		this.x = e.pageX;
 		this.y = e.pageY;
@@ -304,7 +307,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		let x1 = this.x;
 		let y1 = this.y;
 
-		if (isPopup && this.containerOffset) {
+		if (isPopup) {
 			x1 = x1 + this.containerOffset.left;
 			y1 = y1 + this.containerOffset.top - this.top;
 		};

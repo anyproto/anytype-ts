@@ -6,7 +6,6 @@ import $ from 'jquery';
 import { Icon, LoadMore } from 'Component';
 import { I, C, Util, translate, keyboard, Relation } from 'Lib';
 import { dbStore, menuStore, blockStore } from 'Store';
-import Empty from '../empty';
 import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import Constant from 'json/constant.json';
@@ -36,28 +35,18 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getLimit, getVisibleRelations } = this.props;
+		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getRecords, getLimit, getVisibleRelations, getEmpty } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
+		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
 
 		if (!length) {
-			return (
-				<Empty 
-					{...this.props}
-					title="No objects found" 
-					description="Create your first one to begin"
-					button="Create object"
-					className={isInline ? 'withHead' : ''}
-					withButton={isAllowedObject}
-					onClick={(e: any) => onRecordAdd(e, 1)}
-				/>
-			);
+			return getEmpty('view');
 		};
 
 		let content = null;
@@ -360,7 +349,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	onCellAdd (e: any) {
-		const { rootId, block, readonly, getData, getView } = this.props;
+		const { rootId, block, readonly, loadData, getView, isInline, isCollection } = this.props;
 
 		menuStore.open('dataviewRelationList', { 
 			element: `#block-${block.id} #cell-add`,
@@ -368,9 +357,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 			offsetY: 10,
 			data: {
 				readonly,
-				getData,
+				loadData,
 				getView,
 				rootId,
+				isInline,
+				isCollection,
 				blockId: block.id,
 				onAdd: () => { menuStore.closeAll(Constant.menuIds.cellAdd); }
 			}
@@ -394,14 +385,14 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
-		let { rootId, block, getData, getView, getLimit } = this.props;
+		let { rootId, block, loadData, getView, getLimit } = this.props;
 		let subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
 		let view = getView();
 
         return new Promise((resolve, reject) => {
 			offset += getLimit();
-			getData(view.id, offset, false, resolve);
+			loadData(view.id, offset, false, resolve);
 			dbStore.metaSet(subId, '', { offset });
 		});
 	};

@@ -14,14 +14,6 @@
 		}
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
-		.button { padding: 0px 8px; }
-		.button {
-			.icon.plus-small { 
-				margin: 0px 4px 0px 0px; width: 12px; height: 12px; background-image: url('~img/icon/dataview/button/plus-small.svg'); 
-				vertical-align: middle; background-size: 100%;
-			}
-		}
-
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorDarkGrey;
 			border-bottom: 1px solid $colorBorderLight; transition: $transitionFast; cursor: pointer;
@@ -114,7 +106,7 @@
 			.views {
 				.viewItem { 
 					display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; white-space: nowrap; 
-					@include text-paragraph; font-weight: 600; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; 
+					@include text-paragraph; font-weight: 700; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; 
 					line-height: 28px; 
 				}
 				.viewItem { 
@@ -137,6 +129,7 @@
 				.viewSelect { display: inline-block; line-height: 20px; }
 			}
 
+			.button { padding: 0px 8px; @include text-common; }
 			.button.addRecord { margin-left: 4px; }
 		}
 		.dataviewControls.viewGrid {
@@ -144,8 +137,16 @@
 		}
 
 		.content {
-			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
+			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
 			.scrollWrap { background: #fff; padding-bottom: 14px; }
+		}
+
+		.content.isCollection {
+			.dataviewControls { padding-left: 8px; }
+
+			.dataviewControls.viewList {
+				.line { width: 100%; margin: 0px; }
+			}
 		}
 
 		.hoverArea:hover {
@@ -200,6 +201,16 @@ html.platformMac {
 			.content {
 				.scrollWrap { padding: 0px; }
 				.scroll::-webkit-scrollbar { display: none; }
+			}
+		}
+	}
+}
+
+html.platformWindows {
+	.blocks {
+		.block.blockDataview {
+			.content {
+				.scroll { overflow: overlay; }
 			}
 		}
 	}

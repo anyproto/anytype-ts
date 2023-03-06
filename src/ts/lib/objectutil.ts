@@ -4,7 +4,8 @@ import Constant from 'json/constant.json';
 
 class ObjectUtil {
 
-	openHome (type: string) {
+	openHome (type: string, param?: any) {
+		const fn = Util.toCamelCase(`open-${type}`);
 		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
 		const empty = { layout: I.ObjectLayout.Empty };
 
@@ -13,16 +14,42 @@ class ObjectUtil {
 			return;
 		};
 
-		const home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
-		if (home._empty_ || home.isArchived) {
-			this.openRoute(empty);
+		const home = this.getSpaceDashboard();
+		if (!home) {
+			this.openRoute(empty, param);
 			return;
 		};
 
-		switch (type) {
-			case 'route': this.openRoute(home); break;
-			case 'auto': this.openAuto(home); break;
-			case 'popup': this.openPopup(home); break;
+		if (this[fn]) {
+			this[fn](home, param);
+		};
+	};
+
+	getSpaceDashboard () {
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		if (!space.spaceDashboardId) {
+			return null;
+		};
+
+		let home = null;
+		if (space.spaceDashboardId == 'graph') {
+			home = this.graph();
+		} else {
+			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
+		};
+
+		if (home._empty_ || home.isArchived) {
+			return null;
+		};
+		return home;
+	};
+
+	graph () {
+		return { 
+			id: 'graph', 
+			name: 'Graph', 
+			iconEmoji: ':earth_americas:',
+			layout: I.ObjectLayout.Graph,
 		};
 	};
 
@@ -32,7 +59,8 @@ class ObjectUtil {
 		let r = '';
 		switch (v) {
 			default:						 r = 'edit'; break;
-			case I.ObjectLayout.Set:		 r = 'set'; break;
+			case I.ObjectLayout.Set:
+			case I.ObjectLayout.Collection:	 r = 'set'; break;
 			case I.ObjectLayout.Space:		 r = 'space'; break;
 			case I.ObjectLayout.Type:		 r = 'type'; break;
 			case I.ObjectLayout.Relation:	 r = 'relation'; break;
@@ -49,32 +77,6 @@ class ObjectUtil {
 		return r;
 	};
 
-	openEvent (e: any, object: any, popupParam?: any) {
-		if (!object) {
-			return;
-		};
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (e.shiftKey || popupStore.isOpen('page')) {
-			this.openPopup(object, popupParam);
-		} else
-		if ((e.metaKey || e.ctrlKey)) {
-			this.openWindow(object);
-		} else {
-			this.openRoute(object);
-		};
-	};
-
-	openAuto (object: any, popupParam?: any) {
-		if (popupStore.isOpen('page')) {
-			this.openPopup(object, popupParam);
-		} else {
-			this.openRoute(object);
-		};
-	};
-	
 	route (object: any): string {
 		if (!object) {
 			return '';
@@ -88,13 +90,36 @@ class ObjectUtil {
 		return [ 'main', action, object.id ].join('/');
 	};
 
-	openRoute (object: any) {
-		keyboard.setSource(null);
-
-		const route = this.route(object);
-		if (route) {
-			Util.route('/' + route);
+	openEvent (e: any, object: any, param?: any) {
+		if (!object) {
+			return;
 		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (e.shiftKey || popupStore.isOpen('page')) {
+			this.openPopup(object, param);
+		} else
+		if ((e.metaKey || e.ctrlKey)) {
+			this.openWindow(object);
+		} else {
+			this.openRoute(object);
+		};
+	};
+
+	openAuto (object: any, param?: any) {
+		popupStore.isOpen('page') ? this.openPopup(object, param) : this.openRoute(object, param);
+	};
+	
+	openRoute (object: any, param?: any) {
+		const route = this.route(object);
+		if (!route) {
+			return;
+		};
+
+		keyboard.setSource(null);
+		Util.route('/' + route, (param || {}).replace);
 	};
 
 	openWindow (object: any) {
@@ -104,7 +129,7 @@ class ObjectUtil {
 		};
 	};
 
-	openPopup (object: any, popupParam?: any) {
+	openPopup (object: any, param?: any) {
 		if (!object) {
 			return;
 		};
@@ -117,8 +142,7 @@ class ObjectUtil {
 			return;
 		};
 
-		let param: any = Object.assign(popupParam || {}, {});
-
+		param = param || {};
 		param.data = Object.assign(param.data || {}, { 
 			matchPopup: { 
 				params: {

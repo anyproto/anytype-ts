@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell, Cover, Icon, MediaAudio, MediaVideo } from 'Component';
+import { Cell, Cover, Icon, MediaAudio, MediaVideo, DropTarget } from 'Component';
 import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -20,10 +20,11 @@ const Card = observer(class Card extends React.Component<Props> {
 		super(props);
 
 		this.onClick = this.onClick.bind(this);
+		this.onDragStart = this.onDragStart.bind(this);
 	};
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection, onDragRecordStart } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -105,13 +106,24 @@ const Card = observer(class Card extends React.Component<Props> {
 			);
 		};
 
+		if (isCollection) {
+			content = (
+				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+					{content}
+				</DropTarget>
+			);
+		};
+
 		return (
-			<div 
-				ref={node => this.node = node} 
+			<div
+				id={'record-' + record.id}
+				ref={node => this.node = node}
 				className={cn.join(' ')} 
-				style={style} 
+				style={style}
+				draggable={true}
 				onClick={this.onClick}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				onDragStart={this.onDragStart}
 			>
 				{content}
 			</div>
@@ -142,6 +154,14 @@ const Card = observer(class Card extends React.Component<Props> {
 		node.find('.cellContent').removeClass('last');
 		if (last.length) {
 			last.addClass('last');
+		};
+	};
+
+	onDragStart (e: any) {
+		const { isCollection, index, onDragRecordStart } = this.props;
+
+		if (isCollection) {
+			onDragRecordStart(e, index);
 		};
 	};
 

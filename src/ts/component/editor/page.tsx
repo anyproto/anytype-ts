@@ -147,7 +147,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		keyboard.disableClose(false);
 
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
+		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e, isPopup); });
 		win.on('paste.editor' + namespace, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e, {});
@@ -483,7 +483,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		});
 	};
 	
-	onKeyDownEditor (e: any) {
+	onKeyDownEditor (e: any, isPopup: boolean) {
+		if (!isPopup && popupStore.isOpen('page')) {
+			return;
+		};
+
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const menuOpen = menuStore.isOpen();
@@ -776,7 +780,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 					offsetX: Constant.size.blockMenu,
 					data: {
 						blockId: block.id,
-						blockIds: DataUtil.selectionGet(block.id, true, this.props),
+						blockIds: DataUtil.selectionGet(block.id, true, true, this.props),
 						rootId: rootId,
 						dataset: dataset,
 					},
@@ -1098,7 +1102,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			ids[method]();
 		} else {
 			const idx = (dir < 0) ? 0 : idsWithChildren.length - 1;
-			const next = blockStore.getNextBlock(rootId, idsWithChildren[idx], dir, (it: any) => { return !it.isSystem(); });
+			const next = blockStore.getNextBlock(rootId, idsWithChildren[idx], dir, it => !it.isSystem());
 
 			method = dir < 0 ? 'unshift' : 'push';
 			if (next) {
@@ -1149,7 +1153,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 			focus.clear(true);
 			selection.set(I.SelectType.Block, [ block.id ]);
-
 			menuStore.closeAll([ 'blockContext', 'blockAction' ]);
 		};
 

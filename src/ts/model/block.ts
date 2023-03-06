@@ -169,6 +169,10 @@ class Block implements I.Block {
 		return this.isPage() && (this.layout == I.ObjectLayout.Set);
 	};
 
+	isObjectCollection (): boolean {
+		return this.isPage() && (this.layout == I.ObjectLayout.Collection);
+	};
+
 	isObjectSpace (): boolean { 
 		return this.isPage() && (this.layout == I.ObjectLayout.Space);
 	};
@@ -412,6 +416,19 @@ class Block implements I.Block {
 
 		return l;
 	};
+
+	getTargetObjectId () {
+		switch (this.type) {
+			case I.BlockType.Link: {
+				return this.content.targetBlockId;
+			};
+			default: {
+				return this.content.targetObjectId;
+			};
+		};
+
+	};
+
 };
 
 export default Block;

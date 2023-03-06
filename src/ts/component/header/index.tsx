@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, ObjectUtil, Util, keyboard, sidebar, Preview } from 'Lib';
+import { I, ObjectUtil, Renderer, keyboard, sidebar, Preview } from 'Lib';
 import { menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
@@ -40,6 +40,7 @@ class Header extends React.Component<Props> {
 		this.onTooltipShow = this.onTooltipShow.bind(this);
 		this.onTooltipHide = this.onTooltipHide.bind(this);
 		this.menuOpen = this.menuOpen.bind(this);
+		this.onDoubleClick = this.onDoubleClick.bind(this);
 	};
 	
 	render () {
@@ -52,7 +53,7 @@ class Header extends React.Component<Props> {
 		};
 
 		return (
-			<div id="header" className={cn.join(' ')}>
+			<div id="header" className={cn.join(' ')} onDoubleClick={this.onDoubleClick}>
 				<Component 
 					ref={ref => this.refChild = ref} 
 					{...this.props} 
@@ -101,6 +102,10 @@ class Header extends React.Component<Props> {
 
 	onTooltipHide () {
 		Preview.tooltipHide(false);
+	};
+
+	onDoubleClick () {
+		Renderer.send('winCommand', 'maximize');
 	};
 
 	menuOpen (id: string, elementId: string, param: Partial<I.MenuParam>) {

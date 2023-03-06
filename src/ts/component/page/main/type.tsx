@@ -64,7 +64,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
-		const showTemplates = !NO_TEMPLATES.includes(rootId);
+		const showTemplates = object.isInstalled && !NO_TEMPLATES.includes(rootId);
 
 		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -309,7 +309,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = dbStore.getType(rootId);
-		const allowedObject = (type.smartblockTypes || []).indexOf(I.SmartBlockType.Page) >= 0;
+		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page)
+			|| [ Constant.typeId.collection, Constant.typeId.set ].includes(rootId);
 		const options = [];
 
 		if (allowedObject) {
@@ -347,6 +348,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const details: any = {
 			type: rootId,
+		};
+
+		if (rootId == Constant.typeId.collection) {
+			details.layout = I.ObjectLayout.Collection;
+		};
+
+		if (rootId == Constant.typeId.set) {
+			details.layout = I.ObjectLayout.Set;
 		};
 
 		const create = (template: any) => {
@@ -416,6 +425,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				filter: '',
 				rootId,
 				ref: 'type',
+				object,
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: relations.map(it => it.relationKey).concat(Constant.systemRelationKeys),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

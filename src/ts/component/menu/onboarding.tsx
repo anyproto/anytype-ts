@@ -25,9 +25,13 @@ class MenuOnboarding extends React.Component<I.Menu> {
 
 		const Steps = () => (
 			<div className="steps">
-				{[...Array(l)].map((e, i) => {
-					return <div className={i === current ? 'step active' : 'step'} onClick={(e: any) => { this.onClick(e, i)}} key={i} />
-				})}
+				{[ ...Array(l) ].map((e: number, i: number) => (
+					<div 
+						key={i}
+						className={[ 'step', (i == current ? 'active' : 'step') ].join(' ')} 
+						onClick={e => this.onClick(e, i)} 
+					/>
+				))}
 			</div>
 		);
 
@@ -38,19 +42,20 @@ class MenuOnboarding extends React.Component<I.Menu> {
 			>
 				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
 				<div className="descr" dangerouslySetInnerHTML={{ __html: item.description }} />
-
 				<Icon className="close" onClick={this.onClose} />
 
 				{l > 1 ? (
 					<div className="bottom">
 						<div>
 							<Steps />
+
 							{category ? (
 								<div className="category">
 									<b>Onboarding:</b> {category}
 								</div>
 							) : ''}
 						</div>
+
 						<div className="round" onClick={(e: any) => { this.onArrow(e, 1); }}>
 							<Icon className={current == l - 1 ? 'tick' : 'arrow'} />
 						</div>

@@ -16,7 +16,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	timeoutChange = 0;
 	refValue: any = null;
 	range: any = null;
-	n = 0;
+	n = -1;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -392,8 +392,9 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 	onChange (k: string, v: any, timeout?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const { getView, itemId, save } = data;
+		const { getView, itemId, save, isInline, getTarget } = data;
 		const view = getView();
+		const object = getTarget();
 
 		if (!view) {
 			return;
@@ -448,7 +449,12 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			};
 
 			view.setFilter(item);
-			analytics.event('ChangeFilterValue', { condition: item.condition });
+
+			analytics.event('ChangeFilterValue', {
+				condition: item.condition,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
 
 			save();
 			this.forceUpdate();

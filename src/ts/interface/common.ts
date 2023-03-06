@@ -12,6 +12,7 @@ export enum DropType {
 	Block	 = 'block',
 	Menu	 = 'menu',
 	Relation = 'relation',
+	Record	 = 'record',
 };
 
 export enum SelectType {
@@ -83,10 +84,12 @@ export enum ImportMode {
 };
 
 export enum ImportType {
-	Notion	 = 0,
-	Markdown = 1,
-	External = 2,
-	Html	 = 3,
+	Notion		 = 0,
+	Markdown	 = 1,
+	External	 = 2,
+	Migration	 = 3,
+	Html		 = 5,
+	Text		 = 6,
 };
 
 export enum ExportFormat {

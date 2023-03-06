@@ -59,7 +59,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					/>
 				</div>
 
-				<Footer component="mainGraph" />
+				<Footer component="mainEdit" />
 			</div>
 		);
 	};

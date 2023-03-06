@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { Loader } from 'Component';
+import { observer } from 'mobx-react';
+import { Loader, IconObject, ObjectName, Icon } from 'Component';
 import { I, C, Storage, Util, analytics, Action, keyboard } from 'Lib';
-import { popupStore } from 'Store';
+import { popupStore, detailStore, commonStore, blockStore } from 'Store';
+import Constant from 'json/constant.json';
 
-import PageIndex from './page/settings/index';
 import PageAccount from './page/settings/account';
 import PageDelete from './page/settings/delete';
 import PagePersonal from './page/settings/personal';
 import PageAppearance from './page/settings/appearance';
-import PageWallpaper from './page/settings/wallpaper';
 import PagePhrase from './page/settings/phrase';
 import PageLogout from './page/settings/logout';
 
@@ -37,12 +36,10 @@ interface State {
 };
 
 const Components: any = {
-	index:				 PageIndex,
 	account:			 PageAccount,
 	delete:				 PageDelete,
 	personal:			 PagePersonal,
 	appearance:			 PageAppearance,
-	wallpaper:			 PageWallpaper,
 	phrase:				 PagePhrase,
 	logout:				 PageLogout,
 
@@ -67,7 +64,7 @@ const Components: any = {
 
 const PopupSettings = observer(class PopupSettings extends React.Component<I.Popup, State> {
 
-	refPhrase: any = null;
+	node = null;
 	state = {
 		loading: false,
 	};
@@ -91,6 +88,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { page } = data;
 		const { loading } = this.state;
+		const sections = this.getSections().filter(it => !it.isHidden);
+		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
 
 		let content = null;
 
@@ -111,10 +111,58 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			);
 		};
 
+		const Section = (item: any) => (
+			<div className="section">
+				{item.name ? <div className="name">{item.name}</div> : ''}
+
+				<div className="items">
+					{item.children.map((action: any, i: number) => {
+						let icon = null;
+						if (action.id == 'account') {
+							icon = <IconObject object={profile} size={22} iconSize={22} forceLetter={true} />;
+						} else {
+							icon = <Icon className={action.icon || action.id} />;
+						};
+
+						return (
+							<div 
+								key={i} 
+								id={`item-${action.id}`} 
+								className="item" 
+								onClick={() => { this.onPage(action.id); }}
+							>
+								{icon}
+								<div className="name">{action.name}</div>
+							</div>
+						);
+					})}
+				</div>
+			</div>
+		);
+
 		return (
-			<div className={[ 'tab', Util.toCamelCase('tab-' + page) ].join(' ')}>
-				{loading ? <Loader id="loader" /> : ''}
-				{content}
+			<div 
+				ref={node => this.node = node}
+				className="sides"
+			>
+				<div id="sideLeft" className="side left">
+
+					<div className="space" onClick={() => this.onPage('spaceIndex')}>
+						<IconObject object={space} forceLetter={true} size={40} />
+						<div className="txt">
+							<ObjectName object={space} />
+							<div className="type">Personal space</div>
+						</div>
+					</div>
+
+					{sections.map((item: any, i: number) => (
+						<Section key={i} {...item} />
+					))}
+				</div>
+				<div id="sideRight" className={[ 'side', 'right', Util.toCamelCase('tab-' + page) ].join(' ')}>
+					{loading ? <Loader id="loader" /> : ''}
+					{content}
+				</div>
 			</div>
 		);
 	};
@@ -124,7 +172,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { page } = data;
 
-		this.onPage(page || 'index');
+		this.onPage(page || 'spaceIndex');
 		this.rebind();
 
 		keyboard.disableNavigation(true);
@@ -132,10 +180,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 	componentDidUpdate () {
 		this.props.position();
+		this.setActive();
 	};
 
 	componentWillUnmount () {
-		$(window).off('resize.settings');
 		this.unbind();
 		keyboard.disableNavigation(false);
 	};
@@ -151,6 +199,47 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 	unbind () {
 		$(window).off('resize.settings keydown.settings mousedown.settings');
+	};
+
+	getSections () {
+		return [
+			{ 
+				name: 'Space', isHidden: true, children: [
+					{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
+				]
+			},
+			{ 
+				name: 'Account & data', children: [
+					{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
+					{ id: 'phrase', name: 'Recovery phrase' },
+					{ id: 'pinIndex', name: 'Pin code', icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+					//{ id: 'cloud', name: 'Cloud storage' },
+				] 
+			},
+			{ 
+				name: 'Customization', children: [
+					{ id: 'personal', name: 'Personalization' },
+					{ id: 'appearance', name: 'Appearance' },
+				] 
+			},
+			{ 
+				name: 'Integrations', children: [
+					{ id: 'importIndex', name: 'Import', icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
+					{ id: 'exportMarkdown', name: 'Export', icon: 'export' },
+				] 
+			},
+		];
+	};
+
+	getItems () {
+		const sections = this.getSections();
+		
+		let items: any[] = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+		
+		return items;
 	};
 
 	setConfirmPin (v: () => void) {
@@ -224,6 +313,31 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 	onBack () {
 		this.prevPage ? this.onPage(this.prevPage) : this.props.close();
+	};
+
+	setActive () {
+		const { param } = this.props;
+		const { data } = param;
+		const { page } = data || {};
+		const node = $(this.node);
+		const obj = node.find('#sideLeft');
+		const items = this.getItems();
+
+		obj.find('.active').removeClass('active');
+
+		let active = '';
+		for (const item of items) {
+			if ((item.id == page) || (item.subPages || []).includes(page)) {
+				active = item.id;
+				break;
+			};
+		};
+
+		if (active == 'spaceIndex') {
+			obj.find('.space').addClass('active');
+		} else {
+			obj.find(`#item-${active}`).addClass('active');
+		};
 	};
 
 });

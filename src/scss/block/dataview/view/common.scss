@@ -73,6 +73,18 @@
 				.cellContent.c-url { text-transform: uppercase; }
 			}
 		}
+
+		.isCollection {
+			.viewItem.viewGrid,
+			.viewItem.viewList {
+				.row:hover {
+					.icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
+					.icon.dnd:hover {
+						background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;
+					}
+				}
+			}
+		}
 	}
 
 	.block.blockDataview.isInline {

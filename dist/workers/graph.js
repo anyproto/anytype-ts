@@ -105,11 +105,16 @@ init = (param) => {
 	// Center initially on root node
 	setTimeout(() => {
 		const root = getNodeById(data.rootId);
-		if (!root) {
-			return;
+
+		let x = width / 2;
+		let y = height / 2;
+		
+		if (root) {
+			x = root.x;
+			y = root.y;
 		};
 
-		transform = Object.assign(transform, getCenter(root.x, root.y));
+		transform = Object.assign(transform, getCenter(x, y));
 		send('onTransform', { ...transform });
 		redraw();
 	}, 100);
@@ -122,9 +127,9 @@ initTheme = (theme) => {
 			Color = {
 				bg: '#fff',
 				link: '#dfddd0',
-				arrow: '#aca996',
-				node: '#aca996',
-				text: '#aca996',
+				arrow: '#b6b6b6',
+				node: '#b6b6b6',
+				text: '#b6b6b6',
 				highlight: '#ffb522',
 				selected: '#2aa7ee',
 			}; 
@@ -136,7 +141,7 @@ initTheme = (theme) => {
 				bg: '#1e1e1b',
 				link: '#484843',
 				arrow: '#929082',
-				node: '#aca996',
+				node: '#b6b6b6',
 				text: '#929082',
 				highlight: '#ffb522',
 				selected: '#2aa7ee',

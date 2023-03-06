@@ -22,7 +22,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		const textConfirm = data.textConfirm || translate('commonOk');
 		const textCancel = data.textCancel || translate('commonCancel');
 		const colorConfirm = data.colorConfirm || 'black';
-		const colorCancel = data.colorCancel || 'grey';
+		const colorCancel = data.colorCancel || 'blank';
 		
 		return (
 			<React.Fragment>
@@ -31,8 +31,8 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 				<Label text={text} />
 
 				<div className="buttons">
-					{canConfirm ? <Button text={textConfirm} color={colorConfirm} onClick={this.onConfirm} /> : ''}
-					{canCancel ? <Button text={textCancel} color={colorCancel}  onClick={this.onCancel} /> : ''}
+					{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={this.onConfirm} /> : ''}
+					{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={this.onCancel} /> : ''}
 				</div>
 			</React.Fragment>
 		);

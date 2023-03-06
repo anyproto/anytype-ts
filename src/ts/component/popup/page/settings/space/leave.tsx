@@ -21,7 +21,7 @@ const PopupSettingsSpaceLeave = observer(class PopupSettingsSpaceLeave extends R
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
                 <Title text={Util.sprintf(translate('popupSettingsSpaceLeave'), space.name)} />
                 <Label text={translate('popupSettingsSpaceLeaveText')} />
-                <Button className="blank red" text={translate('popupSettingsSpaceLeaveButton')} />
+                <Button color="red" className="c36" text={translate('popupSettingsSpaceLeaveButton')} />
             </div>
         );
     };

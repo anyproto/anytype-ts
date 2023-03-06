@@ -6,8 +6,8 @@ import Constant from 'json/constant.json';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
-	'type', 'objectType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group'
+	'type', 'objectType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -48,8 +48,6 @@ class Analytics {
 			platform: Util.getPlatform(),
 			osVersion: window.Electron.version.os,
 		});
-
-		console.log(amplitude);
 
 		console.log('[Analytics].init', this.instance);
 
@@ -177,7 +175,9 @@ class Analytics {
 			};
 
 			case 'AddView':
-			case 'SwitchView': {
+			case 'SwitchView':
+			case 'DuplicateView':
+			case 'ChangeViewType': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ViewType[data.type];
 				break;
@@ -190,7 +190,6 @@ class Analytics {
 				break;
 			};
 
-			case 'AddSort':
 			case 'ChangeSortValue': {
 				data.type = Number(data.type) || 0;
 				data.type = I.SortType[data.type];
@@ -250,6 +249,16 @@ class Analytics {
 				data.type = I.SurveyType[data.type];
 				break;
 			};
+
+			case 'LibraryView': {
+				const types = {
+					library: 'your',
+					marketplace: 'library',
+				};
+
+				data.view = types[data.view];
+				break;
+			};
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -303,7 +312,6 @@ class Analytics {
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',
 			'main/relation':	 'ScreenRelation',
-			'main/set':			 'ScreenSet',
 			'main/edit':		 'ScreenObject',
 			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
@@ -348,6 +356,10 @@ class Analytics {
 
 		const code = (undefined !== map[id]) ? map[id] : id;
 		return code ? Util.toUpperCamelCase([ prefix, code ].join('-')) : '';
+	};
+
+	embedType (isInline: boolean): string {
+		return isInline ? 'inline' : 'object';
 	};
 
 };

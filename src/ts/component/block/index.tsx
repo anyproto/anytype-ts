@@ -30,7 +30,6 @@ import Constant from 'json/constant.json';
 interface Props extends I.BlockComponent, RouteComponentProps<any> {
 	css?: any;
 	iconSize?: number;
-	isDragging?: boolean;
 };
 
 const SNAP = 0.01;
@@ -64,10 +63,11 @@ const Block = observer(class Block extends React.Component<Props> {
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isDragging, isInsideTable } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable } = this.props;
 		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
@@ -79,8 +79,8 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		let canSelect = !isInsideTable;
 		let canDrop = !readonly && !isInsideTable;
-		let canDropMiddle = canDrop;
-		let cn: string[] = [ 'block', DataUtil.blockClass(block, isDragging), 'align' + hAlign ];
+		let canDropMiddle = false;
+		let cn: string[] = [ 'block', DataUtil.blockClass(block), 'align' + hAlign ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -104,14 +104,18 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		switch (type) {
 			case I.BlockType.Text: {
+				canDropMiddle = canDrop && block.canHaveChildren();
+
 				if (block.isTextCheckbox() && checked) {
 					cn.push('isChecked');
 				};
 
 				if (block.isTextQuote()) {
-					additional = (
-						<div className="line" />
-					);
+					additional = <div className="line" />;
+				};
+
+				if (block.isTextTitle() || block.isTextDescription()) {
+					canDrop = false;
 				};
 
 				blockComponent = <BlockText key={`block-${block.id}-component`} ref={setRef} {...this.props} onToggle={this.onToggle} />;
@@ -125,18 +129,20 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.IconPage: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockIconPage key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
 				
 			case I.BlockType.IconUser: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockIconUser key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
 				
 			case I.BlockType.File: {
-				if (isDragging || (style == I.FileStyle.Link)) {
+				if (style == I.FileStyle.Link) {
 					blockComponent = <BlockFile key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 					break;
 				};
@@ -171,13 +177,8 @@ const Block = observer(class Block extends React.Component<Props> {
 				break;
 			};
 				
-			case I.BlockType.Bookmark: {
-				blockComponent = <BlockBookmark key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
-				break;
-			};
-			
 			case I.BlockType.Dataview: {
-				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace());
+				canDrop = canSelect = !(root.isObjectSet() || root.isObjectSpace() || root.isObjectCollection());
 				if (canSelect) {
 					cn.push('isInline');
 				};
@@ -192,16 +193,29 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 			case I.BlockType.Link: {
 				const object = detailStore.get(rootId, content.targetBlockId, [ 'restrictions' ]);
-				if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
-					canDropMiddle = false;
+				
+				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+					canDropMiddle = canDrop;
 				};
 
 				blockComponent = <BlockLink key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
+
+			case I.BlockType.Bookmark: {
+				const object = detailStore.get(rootId, content.targetObjectId, [ 'restrictions' ]);
+				
+				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
+					canDropMiddle = canDrop;
+				};
+
+				blockComponent = <BlockBookmark key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
+				break;
+			};
 				
 			case I.BlockType.Cover: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockCover key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -212,12 +226,14 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Featured: {
+				canDrop = false;
 				blockComponent = <BlockFeatured key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
 
 			case I.BlockType.Type: {
 				canSelect = false;
+				canDrop = false;
 				blockComponent = <BlockType key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -229,7 +245,6 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			case I.BlockType.Table: {
 				renderChildren = false;
-				canDropMiddle = false;
 				blockComponent = <BlockTable key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -271,7 +286,17 @@ const Block = observer(class Block extends React.Component<Props> {
 
 			if (lastId) {
 				targetColumn = (
-					<DropTarget {...this.props} isTargetColumn={true} rootId={rootId} id={lastId} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} onClick={this.onEmptyColumn} />
+					<DropTarget 
+						{...this.props} 
+						isTargetColumn={true} 
+						rootId={rootId} 
+						id={lastId} 
+						style={style} 
+						type={type} 
+						dropType={I.DropType.Block} 
+						canDropMiddle={canDropMiddle} 
+						onClick={this.onEmptyColumn} 
+					/>
 				);
 			};
 		};
@@ -297,6 +322,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				className={cn.join(' ')} 
 				style={css}
 				{...Util.dataProps({ id })}
+				onContextMenu={this.onContextMenu} 
 			>
 				<div className="wrapMenu">
 					<Icon 
@@ -306,7 +332,6 @@ const Block = observer(class Block extends React.Component<Props> {
 						onDragStart={this.onDragStart} 
 						onMouseDown={this.onMenuDown} 
 						onClick={this.onMenuClick} 
-						onContextMenu={this.onMenuClick} 
 					/>
 				</div>
 				
@@ -394,7 +419,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		
 		keyboard.disableSelection(true);
 
-		this.ids = DataUtil.selectionGet(block.id, false, this.props);
+		this.ids = DataUtil.selectionGet(block.id, false, true, this.props);
 		onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
@@ -402,32 +427,54 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { block } = this.props;
 
 		focus.clear(true);
-		this.ids = DataUtil.selectionGet(block.id, true, this.props);
+		this.ids = DataUtil.selectionGet(block.id, true, false, this.props);
 	};
 	
-	onMenuClick (e: any) {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const { dataset, rootId, block, blockRemove } = this.props;
+	onMenuClick () {
+		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
-		const elementId = `#button-block-menu-${block.id}`;
-		const element = $(elementId);
+		const element = $(`#button-block-menu-${block.id}`);
 
 		selection.set(I.SelectType.Block, this.ids);
+
+		this.menuOpen({
+			horizontal: I.MenuDirection.Right,
+			offsetX: element.outerWidth(),
+			recalcRect: () => {
+				const offset = element.offset();
+				return { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
+			},
+		});
+	};
+
+	onContextMenu (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { block } = this.props;
+
+		focus.clear(true);
+		menuStore.closeAll([], () => {
+			this.ids = DataUtil.selectionGet(block.id, true, true, this.props);
+			this.menuOpen({
+				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
+			});
+		});
+	};
+
+	menuOpen (param?: any) {
+		const { dataset, rootId, block, blockRemove } = this.props;
+		const { selection } = dataset || {};
 
 		// Hide block menus and plus button
 		$('#button-block-add').removeClass('show');
 		$('.block.showMenu').removeClass('showMenu');
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
-		menuStore.open('blockAction', { 
-			offsetX: element.outerWidth(),
-			horizontal: I.MenuDirection.Right,
-			recalcRect: () => {
-				const offset = element.offset();
-				return { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 };
+		const menuParam = Object.assign({
+			onClose: () => {
+				selection.clear();
+				focus.apply();
 			},
 			data: {
 				blockId: block.id,
@@ -435,12 +482,10 @@ const Block = observer(class Block extends React.Component<Props> {
 				rootId,
 				dataset,
 				blockRemove,
-			},
-			onClose: () => {
-				selection.clear();
-				focus.apply();
 			}
-		});
+		}, param || {});
+
+		menuStore.open('blockAction', menuParam);
 	};
 	
 	onResizeStart (e: any, index: number) {

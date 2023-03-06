@@ -10,7 +10,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
     _isMounted = false;
 	node: any = null;
-    n = 0;
+    n = -1;
 	target = null;
 	layout: I.WidgetLayout = null;
 
@@ -66,8 +66,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						<div className="buttons">
 							<Button 
 								id="button-save"
-								color={this.target ? 'orange' : 'grey'}
-								className="c28 filled"
+								color={this.target ? 'blank' : 'blank'}
+								className="c28"
 								text="Add widget"
 								onClick={this.save} 
 								onMouseEnter={() => menuStore.closeAll(Constant.menuIds.widget)} 
@@ -112,8 +112,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const node = $(this.node);
 		const button = node.find('#button-save');
 
-		button.removeClass('orange grey');
-		button.addClass((this.target !== null) && (this.layout !== null) ? 'orange' : 'grey');
+		button.removeClass('black blank');
+		button.addClass((this.target !== null) && (this.layout !== null) ? 'black' : 'blank');
 	};
 
     getSections () {
@@ -286,6 +286,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
 							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':books:' },
+							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':books:' },
 							{ isDiv: true },
 						].concat(items);
 					};

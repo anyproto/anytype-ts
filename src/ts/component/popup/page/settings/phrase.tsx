@@ -19,7 +19,7 @@ interface State {
 
 const QRColor = {
 	'': '#fff',
-	dark: '#aca996',
+	dark: '#b6b6b6',
 };
 
 const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends React.Component<Props, State> {
@@ -36,23 +36,19 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
-		this.onCopy = this.onCopy.bind(this);
 		this.onCode = this.onCode.bind(this);
 	};
 
 	render () {
 		const { entropy, showCode } = this.state;
 		const { theme } = commonStore;
-		const { phrase } = authStore;
 
 		return (
 			<div
 				ref={node => this.node = node}
 			>
-				<Head {...this.props} returnTo="account" name={translate('popupSettingsAccountTitle')} />
-				
 				<Title text={translate('popupSettingsPhraseTitle')} />
-				<Label text={translate('popupSettingsPhraseText')} />
+				<Label className="description" text={translate('popupSettingsPhraseText')} />
 				
 				<div className="inputs">
 					<div className="textareaWrap">
@@ -68,25 +64,16 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 							readonly={true} 
 						/>
 					</div>
-
-					<Button id="button-phrase" color="blank" text={translate('popupSettingsPhraseShowPhrase')} onClick={this.onCopy} />
 				</div>
 
-				<div className="sides">
-					<div className="side left">
-						<b>{translate('popupSettingsMobileQRSubTitle')}</b>
-						<Label text={translate('popupSettingsMobileQRText')} />
-					</div>
+				<Title className="sub" text={translate('popupSettingsMobileQRSubTitle')} />
+				<Label className="description" text={translate('popupSettingsMobileQRText')} />
 
-					<div className={[ 'side', 'right', (!showCode ? 'isBlurred' : '') ].join(' ')} onClick={this.onCode}>
-						<div className="qrWrap">
-							<QRCode value={showCode ? entropy : translate('popupSettingsCodeStub')} bgColor={QRColor[theme]} size={100} />
-						</div>
+				<div className="qrWrap" onClick={this.onCode}>
+					<div className={!showCode ? 'isBlurred' : ''}>
+						<QRCode value={showCode ? entropy : translate('popupSettingsCodeStub')} bgColor={QRColor[theme]} size={116} />
 					</div>
 				</div>
-
-				<Button id="button-qr" color="blank" text={translate(showCode ? 'popupSettingsPhraseHideQR' : 'popupSettingsPhraseShowQR')} onClick={this.onCode} />
-
 			</div>
 		);
 	};
@@ -106,7 +93,6 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	onFocus () {
 		const node = $(this.node);
 		const phrase = node.find('#phrase');
-		const button = node.find('#button-phrase');
 
 		this.refPhrase.setValue(authStore.phrase);
 		this.refPhrase.select();
@@ -115,31 +101,17 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
 
 		phrase.removeClass('isBlurred');
-		button.text(translate('popupSettingsPhraseHidePhrase'));
 		analytics.event('KeychainCopy', { type: 'ScreenSettings' });
 	};
 
 	onBlur () {
 		const node = $(this.node);
 		const phrase = node.find('#phrase');
-		const button = node.find('#button-phrase');
 
 		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));
 
 		phrase.addClass('isBlurred');
 		window.getSelection().removeAllRanges();
-		button.text(translate('popupSettingsPhraseShowPhrase'));
-	};
-
-	onCopy () {
-		const node = $(this.node);
-		const phrase = node.find('#phrase');
-
-		if (phrase.hasClass('isBlurred')) {
-			this.onFocus();
-		} else {
-			this.onBlur();
-		};
 	};
 
 	onCode () {

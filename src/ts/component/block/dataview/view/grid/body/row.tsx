@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { I, Util } from 'Lib';
 import { observer } from 'mobx-react';
+import { DropTarget, Icon } from 'Component';
+import { I, Util } from 'Lib';
+
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
@@ -14,7 +16,7 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { index, getRecord, style, onContext, getColumnWidths, isInline, getVisibleRelations } = this.props;
+		const { rootId, index, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection } = this.props;
 		const relations = getVisibleRelations();
 		const record = getRecord(index);
 		const widths = getColumnWidths('', 0);
@@ -66,11 +68,27 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			);
 		};
 
+		if (isCollection) {
+			content = (
+				<React.Fragment>
+					<Icon
+						className="dnd"
+						draggable={true}
+						onClick={(e: any) => { onContext(e, record.id); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, index) }}
+					/>
+					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+						{content}
+					</DropTarget>
+				</React.Fragment>
+			);
+		};
+
 		return (
-			<div 
-				id={'row-' + index} 
-				className={cn.join(' ')} 
-				style={style} 
+			<div
+				id={'row-' + index}
+				className={cn.join(' ')}
+				style={style}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
 				{content}

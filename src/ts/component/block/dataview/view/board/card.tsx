@@ -2,7 +2,7 @@ import * as React from 'react';
 import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import Cell from 'Component/block/dataview/cell';
+import { Cell, DropTarget } from 'Component';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -17,7 +17,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, isCollection } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -60,6 +60,14 @@ const Card = observer(class Card extends React.Component<Props> {
 				>
 					{content}
 				</div>
+			);
+		};
+
+		if (isCollection) {
+			content = (
+				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+					{content}
+				</DropTarget>
 			);
 		};
 

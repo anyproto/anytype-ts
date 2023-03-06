@@ -17,11 +17,6 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	}
 	.icon.arrow.back:hover { background: url('~img/arrow/auth1.svg'); }
 
-	.backWrap:hover { color: $colorBlack; }
-	.backWrap:hover {
-		.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); }
-	}
-
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
 	
@@ -62,7 +57,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 			.icon.user { width: 48px; height: 48px; line-height: 50px; font-size: 21px; letter-spacing: -0.16px; margin-right: 12px; }
 			.name { 
 				font-size: 18px; line-height: 26px; display: inline-block; vertical-align: middle; width: calc(100% - 60px); height: 26px; 
-				font-weight: 600; margin-top: 2px; @include text-overflow-nw;   
+				font-weight: 700; margin-top: 2px; @include text-overflow-nw;   
 			}
 		}
 		

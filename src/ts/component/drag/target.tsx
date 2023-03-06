@@ -29,7 +29,7 @@ class DropTarget extends React.Component<Props> {
 	render () {
 		const { id, rootId, cacheKey, targetContextId, dropType, type, style, children, className, canDropMiddle, isTargetTop, isTargetBottom, isTargetColumn } = this.props;
 		const key = [ dropType, cacheKey || id ];
-		const cn = [ 'dropTarget', 'isDroppable', 'root-' + rootId ];
+		const cn = [ 'dropTarget', 'isDroppable', 'root-' + rootId, 'drop-target-' + id ];
 
 		if (className) {
 			cn.push(className);
@@ -55,7 +55,7 @@ class DropTarget extends React.Component<Props> {
 				{...Util.dataProps({
 					id,
 					type,
-					style,
+					style: Number(style) || 0,
 					'root-id': rootId,
 					'cache-key': key.join('-'),
 					'drop-type': dropType,

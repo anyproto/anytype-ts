@@ -25,7 +25,7 @@ class Button extends React.Component<Props> {
 
 	public static defaultProps = {
 		subType: 'submit',
-		color: 'orange',
+		color: 'black',
 		className: '',
 		tooltipX: I.MenuDirection.Center,
 		tooltipY: I.MenuDirection.Bottom,

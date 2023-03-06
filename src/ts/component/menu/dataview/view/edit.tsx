@@ -57,7 +57,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 					<div className="inner">
 						<Input 
 							ref={ref => this.ref = ref} 
-							value={name} 
+							value={name}
 							readonly={readonly}
 							placeholder={translate('menuDataviewViewEditName')}
 							maxLength={32} 
@@ -84,6 +84,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		this.param = Util.objectCopy(data.view.get());
 		this.forceUpdate();
 		this.rebind();
+
+		window.setTimeout(() => this.resize(), 5);
 	};
 
 	componentDidUpdate () {
@@ -403,10 +405,11 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getData, getView, getSources, onSelect, onSave, readonly } = data;
+		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly, isInline, getTarget } = data;
 		const view = data.view.get();
 		const current = getView();
 		const sources = getSources();
+		const object = getTarget();
 
 		if (readonly || item.arrow) {
 			return;
@@ -415,6 +418,12 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		if (item.sectionId == 'type') {
 			this.param.type = item.id;
 			this.save();
+
+			analytics.event('ChangeViewType', {
+				type: item.id,
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
 		} else 
 		if (view.id) {
 			this.preventSaveOnClose = true;
@@ -427,8 +436,13 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 							onSave();
 						};
 
-						getData(message.viewId, 0);
-						analytics.event('AddView', { type: view.type });
+						loadData(message.viewId, 0);
+
+						analytics.event('DuplicateView', {
+							type: view.type,
+							objectType: object.type,
+							embedType: analytics.embedType(isInline)
+						});
 					});
 					break;
 				};
@@ -446,10 +460,13 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 					if (next) {
 						C.BlockDataviewViewDelete(rootId, blockId, view.id, () => {
 							if (current.id == view.id) {
-								getData(next.id, 0);
+								loadData(next.id, 0);
 							};
 
-							analytics.event('RemoveView');
+							analytics.event('RemoveView', {
+								objectType: object.type,
+								embedType: analytics.embedType(isInline)
+							});
 						});
 					};
 					break;

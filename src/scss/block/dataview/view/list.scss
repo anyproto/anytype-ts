@@ -75,6 +75,16 @@
 
 			.loadMore { margin-top: 2px; }
         }
+
+		.isCollection {
+			.viewItem.viewList { padding-left: 2px; }
+			.viewItem.viewList {
+				.row.add { padding-left: 20px; }
+				.row .icon.dnd { left: 1px; height: 24px; top: 0px; z-index: 1; }
+
+				.cellContent:first-child { padding-left: 20px; }
+			}
+		}
     }
 
 	.block.blockDataview.isInline {

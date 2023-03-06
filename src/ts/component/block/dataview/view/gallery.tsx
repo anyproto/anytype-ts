@@ -5,7 +5,6 @@ import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, cr
 import { I, Relation, DataUtil } from 'Lib';
 import { dbStore, detailStore, blockStore } from 'Store';
 import { LoadMore } from 'Component';
-import Empty from '../empty';
 import Card from './gallery/card';
 import Constant from 'json/constant.json';
 
@@ -32,11 +31,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd, getVisibleRelations } = this.props;
+		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd, getVisibleRelations, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const records = dbStore.getRecords(subId, '');
+		const records = getRecords();
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
@@ -44,17 +43,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const length = records.length;
 
 		if (!length) {
-			return (
-				<Empty 
-					{...this.props}
-					title="No objects found" 
-					description="Create your first one to begin"
-					button="Create object"
-					className={isInline ? 'withHead' : ''}
-					withButton={allowed}
-					onClick={(e: any) => onRecordAdd(e, 1)}
-				/>
-			);
+			return getEmpty('view');
 		};
 
 		// Subscriptions on dependent objects
@@ -222,14 +211,14 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {
-		let { rootId, block, getData, getView, getLimit } = this.props;
+		let { rootId, block, loadData, getView, getLimit } = this.props;
 		let subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
 		let view = getView();
 
 		return new Promise((resolve, reject) => {
 			offset += getLimit();
-			getData(view.id, offset, false, resolve);
+			loadData(view.id, offset, false, resolve);
 			dbStore.metaSet(subId, '', { offset });
 		});
 	};

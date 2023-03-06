@@ -55,6 +55,7 @@ const IconSize = {
 	16: 16,
 	18: 18,
 	20: 18,
+	22: 18,
 	24: 20,
 	26: 22,
 	28: 22,
@@ -73,6 +74,7 @@ const FontSize = {
 	16: 10,
 	18: 10,
 	20: 12,
+	22: 14,
 	24: 14,
 	26: 16,
 	32: 18,	
@@ -131,9 +133,9 @@ const CheckboxTask1 = require('img/icon/object/checkbox1.svg').default;
 const Ghost = require('img/icon/ghost.svg').default;
 
 const BgColor = {
-	grey:	 '#f3f2ec',
+	grey:	 '#f2f2f2',
 	black:	 '#2c2b27',
-	brown:	 '#aca996',
+	brown:	 '#b6b6b6',
 	orange:	 '#ffb522',
 	red:	 '#f55522',
 	purple:	 '#ab50cc',
@@ -144,7 +146,7 @@ const BgColor = {
 };
 
 const Color = {
-	'':		 '#aca996',
+	'':		 '#b6b6b6',
 	dark:	 '#dfddd3'
 };
 
@@ -379,7 +381,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			offsetX,
 			offsetY,
 			data: {
-				noUpload,
+				noUpload: noUpload,
 				noRemove: noRemove || !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					if (onSelect) {

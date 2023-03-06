@@ -138,7 +138,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				{!isReadonly ? (
 					<div className="section" onMouseEnter={this.menuClose}>
 						<div className="inputWrap">
-							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="grey" className="filled c28" />
+							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="blank" className="c28" />
 						</div>
 					</div>
 				) : ''}
@@ -268,11 +268,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView, getData } = data;
+		const { rootId, blockId, getView, loadData } = data;
 		const view = getView();
 		const relation = this.getRelation();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const idx = view.relations.findIndex(it => it.relationKey == relation.relationKey);
+		const object = detailStore.get(rootId, rootId);
 
 		if (!relation) {
 			return;
@@ -350,10 +351,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						filter: '',
 						ref: 'dataview',
 						skipKeys: relations.map(it => it.relationKey),
+						object,
 						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 							Dataview.relationAdd(rootId, blockId, relation.relationKey, Math.max(0, idx + item.dir), view, (message: any) => {
 								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);
-								getData(view.id, 0);
+								loadData(view.id, 0);
 
 								if (onChange) {
 									onChange(message);
@@ -548,7 +550,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const button = node.find('#button');
 		const canSave = name.length && (this.format !== null) && !this.isReadonly();
 
-		button.removeClass('orange grey').addClass(canSave ? 'orange' : 'grey');
+		button.removeClass('black blank').addClass(canSave ? 'black' : 'blank');
 	};
 
 	isReadonly () {
@@ -581,6 +583,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange, ref } = data;
+		const object = detailStore.get(rootId, rootId);
 
 		C.ObjectCreateRelation(item, [], (message: any) => {
 			if (message.error.code) {
@@ -597,7 +600,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			};
 
 			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
-			analytics.event('CreateRelation', { format: item.relationFormat, type: ref });
+			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};
 

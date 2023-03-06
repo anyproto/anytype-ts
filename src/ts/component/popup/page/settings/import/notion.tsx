@@ -32,10 +32,11 @@ class PopupSettingsPageImportNotion extends React.Component<Props, State> {
 		const { error } = this.state;
 
 		return (
-			<div>
-				<Head {...this.props} returnTo="importIndex" name={translate('popupSettingsImportTitle')} />
+			<React.Fragment>
+				<Head {...this.props} returnTo="importIndex" name={translate('commonBack')} />
+
 				<Title text="Notion" />
-				<Label className="center" text="Import your Notion files through the Notion API with 2 simple steps" />
+				<Label className="description" text="Import your Notion files through the Notion API with 2 simple steps" />
 
 				<div className="inputWrapper flex">
 					<div className="errorWrapper">
@@ -46,7 +47,7 @@ class PopupSettingsPageImportNotion extends React.Component<Props, State> {
 						/>
 						{error ? <Error text={error} /> : ''}
 					</div>
-					<Button text={translate('popupSettingsImportOk')} onClick={this.onImport} />
+					<Button text={translate('popupSettingsImportOk')} className="c36" onClick={this.onImport} />
 				</div>
 
 				<div className="line" />
@@ -68,7 +69,7 @@ class PopupSettingsPageImportNotion extends React.Component<Props, State> {
 						<Label className="grey" text="Select document -> ... -> Add Connections -> Confirm Integration" />
 					</li>
 				</ol>
-			</div>
+			</React.Fragment>
 		);
 	};
 

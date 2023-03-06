@@ -70,7 +70,7 @@ class PopupHelp extends React.Component<Props, State> {
 
 					{isWhatsNew && !showFull ? (
 						<div className="buttons">
-							<Button color="orange" text="Older releases" onClick={() => { this.setState({ showFull: true }) }} />
+							<Button text="Older releases" onClick={() => { this.setState({ showFull: true }) }} />
 						</div>
 					) : ''}
 				</div>

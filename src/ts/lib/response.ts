@@ -72,6 +72,12 @@ const AccountDelete = (response: any) => {
 	};
 };
 
+const AccountRecoverFromLegacyExport = (response: any) => {
+	return {
+		address: response.getAddress(),
+	};
+};
+
 const ObjectCreate = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
@@ -292,6 +298,12 @@ const ObjectToSet = (response: any) => {
 	};
 };
 
+const ObjectToCollection = (response: any) => {
+	return {
+		objectId: response.getCollectionid(),
+	};
+};
+
 const ObjectToBookmark = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
@@ -369,6 +381,7 @@ export {
 	AccountCreate,
 	AccountSelect,
 	AccountDelete,
+	AccountRecoverFromLegacyExport,
 
 	ObjectCreate,
 	ObjectCreateSet,
@@ -384,6 +397,7 @@ export {
 	ObjectGraph,
 
 	ObjectToSet,
+	ObjectToCollection,
 	ObjectShareByLink,
 	ObjectToBookmark,
 

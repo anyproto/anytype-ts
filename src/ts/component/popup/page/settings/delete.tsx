@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Checkbox } from 'Component';
+import { Title, Button, Checkbox } from 'Component';
 import { I, C, translate, Util, analytics } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -29,23 +29,19 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 			<div
 				ref={node => this.node = node}
 			>
-				<Head {...this.props} returnTo="account" name={translate('commonCancel')} />
+				<Head {...this.props} returnTo="account" name={translate('commonBack')} />
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 				<div className="text">
 					<b>We&apos;re sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request.</b>
 					<p>You will be logged out on all other devices. You will have 30 days to recover it. Afterwards it will be deleted permanently</p>
-
-					<div className="check" onClick={this.onCheck}>
-						<Checkbox ref={ref => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
-					</div>
 				</div>
 
-				<div className="rows">
-					<div id="row-delete" className="row disabled" onClick={this.onDelete}>
-						<Label text={translate('commonDelete')} />
-					</div>
+				<div className="check" onClick={this.onCheck}>
+					<Checkbox ref={ref => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
 				</div>
+
+				<Button id="button" text={translate('commonDelete')} color="red c36" className="disabled" onClick={this.onDelete} />
 			</div>
 		);
 	};
@@ -71,13 +67,11 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 
 	onCheck () {
 		const node = $(this.node);
-		const row = node.find('#row-delete');
+		const button = node.find('#button');
 		const value = this.refCheckbox.getValue();
 
-		row.removeClass('red disabled');
-
 		this.refCheckbox.setValue(!value);
-		!value ? row.addClass('red') : row.addClass('disabled');
+		value ? button.removeClass('disabled') : button.addClass('disabled');
 	};
 
 });

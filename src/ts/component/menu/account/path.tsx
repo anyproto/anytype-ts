@@ -19,7 +19,7 @@ const MenuAccountPath = observer(class MenuAccountPath extends React.Component<I
             <div>
                 <Label className="bold" text="Account data location" />
                 <Label text={accountPath} onClick={this.onClick} />
-                <Button onClick={this.onClick} text={'Customize'} color="grey" className="c28" />
+                <Button onClick={this.onClick} text={'Customize'} color="blank" className="c28" />
             </div>
         );
     };

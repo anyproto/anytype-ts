@@ -1,9 +1,9 @@
 import * as React from 'react';
+import arrayMove from 'array-move';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import arrayMove from 'array-move';
-import $ from 'jquery';
 import { Icon, IconObject, Select } from 'Component';
 import { I, C, Relation, Util, keyboard, analytics } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
@@ -15,7 +15,7 @@ const LIMIT = 20;
 const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	
 	node: any = null;
-	n = 0;
+	n = -1;
 	top = 0;
 	cache: any = {};
 	refList: any = null;
@@ -254,8 +254,9 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	onAdd () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { rootId, getView, blockId } = data;
+		const { rootId, getView, getTarget, blockId, isInline } = data;
 		const view = getView();
+		const object = getTarget();
 		const relationOptions = this.getRelationOptions();
 
 		if (!relationOptions.length) {
@@ -271,35 +272,48 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 		C.BlockDataviewSortAdd(rootId, blockId, view.id, newItem, () => {
 			content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
-			analytics.event('AddSort', { type: newItem.type });
+			
+			analytics.event('AddSort', {
+				objectType: object.type,
+				embedType: analytics.embedType(isInline)
+			});
 		});
 	};
 
 	onChange (id: number, k: string, v: string) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, isInline, getTarget } = data;
 		const view = getView();
 		const item = view.getSort(id);
+		const object = getTarget();
 
 		item[k] = v;
 
 		C.BlockDataviewSortReplace(rootId, blockId, view.id, item.id, { ...item });
 
-		analytics.event('ChangeSortValue', { type: item.type });
+		analytics.event('ChangeSortValue', {
+			type: item.type,
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
 		this.forceUpdate();
 	};
 	
 	onRemove (e: any, item: any) {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, getTarget, isInline } = data;
+		const object = getTarget();
 		const view = getView();
 
 		C.BlockDataviewSortRemove(rootId, blockId, view.id, [ item.id ]);
 
 		menuStore.close('select');
-		analytics.event('RemoveSort');
+		analytics.event('RemoveSort', {
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
 	};
 
 	onSortStart () {
@@ -310,14 +324,19 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { oldIndex, newIndex,  } = result;
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, blockId, getView } = data;
+		const { rootId, blockId, getView, isInline, getTarget } = data;
 		const view = getView();
+		const object = getTarget();
 
 		view.sorts = arrayMove(view.sorts, oldIndex, newIndex);
 		C.BlockDataviewSortSort(rootId, blockId, view.id, view.sorts.map(it => it.id));
 
 		keyboard.disableSelection(false);
-		analytics.event('RepositionSort');
+
+		analytics.event('RepositionSort', {
+			objectType: object.type,
+			embedType: analytics.embedType(isInline)
+		});
 	};
 
 	onScroll ({ scrollTop }) {

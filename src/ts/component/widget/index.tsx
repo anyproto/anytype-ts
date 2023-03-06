@@ -43,7 +43,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	render (): React.ReactNode {
 		const { loading } = this.state;
-		const { block, isDraggable, isPreview, onDragStart, onDragOver, setPreview } = this.props;
+		const { block, isPreview, isEditing, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
 		const { layout } = block.content;
 		const { targetBlockId } = child?.content || {};
@@ -60,9 +60,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		if (isPreview) {
 			cn.push('isPreview');
-		};
-		if (isDraggable) {
-			cn.push('isDraggable');
 		};
 
 		let icon = null;
@@ -92,10 +89,13 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		if (layout != I.WidgetLayout.Space) {
 			let onClick = null;
-			if (!this.isCollection(targetBlockId)) {
-				onClick = e => ObjectUtil.openEvent(e, object);
-			} else {
-				onClick = () => setPreview(isPreview ? '' : block.id);
+
+			if (!isEditing) {
+				if (!this.isCollection(targetBlockId)) {
+					onClick = e => ObjectUtil.openEvent(e, object);
+				} else {
+					onClick = () => setPreview(isPreview ? '' : block.id);
+				};
 			};
 
 			head = (
@@ -140,7 +140,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				ref={node => this.node = node}
 				id={key}
 				className={cn.join(' ')}
-				draggable={isDraggable}
+				draggable={isEditing}
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
 			>
@@ -151,6 +151,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				<div id="wrapper" className="contentWrapper">
 					{content}
 				</div>
+
+				<div className="dimmer" />
 			</div>
 		);
 	};
@@ -190,7 +192,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 			case Constant.widgetId.favorite:
 			case Constant.widgetId.recent:
-			case Constant.widgetId.set: {
+			case Constant.widgetId.set:
+			case Constant.widgetId.collection: {
 				object = {
 					id: targetBlockId,
 					name: translate(Util.toCamelCase(`widget-${targetBlockId}`)),
@@ -307,9 +310,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const child = this.getTargetBlock();
 		const { layout } = block.content;
 		const { targetBlockId } = child?.content;
-		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
-		];
+		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
 		];
@@ -327,11 +328,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 			case Constant.widgetId.recent: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
+				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
 				break;
 			};
 
 			case Constant.widgetId.set: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set });
+				break;
+			};
+
+			case Constant.widgetId.collection: {
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection });
 				break;
 			};
 		};
@@ -346,7 +353,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	isCollection (blockId: string) {
-		return [ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set ].includes(blockId);
+		return [ 
+			Constant.widgetId.favorite, 
+			Constant.widgetId.recent, 
+			Constant.widgetId.set, 
+			Constant.widgetId.collection,
+		].includes(blockId);
 	};
 
 });

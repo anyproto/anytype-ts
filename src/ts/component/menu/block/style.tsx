@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import { I, keyboard, MenuUtil, analytics } from 'Lib';
 import { blockStore } from 'Store';
 
 const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.Menu> {
 	
-	n = 0;
+	n = -1;
 	
 	constructor (props: I.Menu) {
 		super(props);
@@ -43,11 +43,11 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 	};
 	
 	componentDidMount () {
-		const items = this.getItems();
-		const active = this.getActive();
-
-		this.n = items.findIndex((it: any) => { return it.itemId == active; });
 		this.rebind();
+	};
+
+	componentWillUnmount(): void {
+		this.unbind();	
 	};
 	
 	rebind () {
