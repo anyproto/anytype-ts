@@ -211,10 +211,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		e.preventDefault();
 
 		const target = $(e.currentTarget);
-		if (!target.hasClass('isEditing')) {
-			return;
-		};
-
 		const y = e.pageY - $(window).scrollTop();
 
 		raf.cancel(this.frame);
