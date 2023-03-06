@@ -129,13 +129,14 @@ const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, avatarPath: string, storePath: string, code: string, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, avatarPath: string, storePath: string, code: string, icon: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 	
 	request.setName(name);
 	request.setAvatarlocalpath(avatarPath);
 	request.setStorepath(storePath);
 	request.setAlphainvitecode(code);
+	request.setIcon(icon);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -1332,7 +1333,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setAfterid(afterId);
 	request.setBeforeid(beforeId);
 	request.setNodepsubscription(noDeps);
-	request.setCollectionid(collectionId);
+	//request.setCollectionid(collectionId);
 
 	dispatcher.request(ObjectSearchSubscribe.name, request, callBack);
 };
