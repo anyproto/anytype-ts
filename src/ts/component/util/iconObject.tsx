@@ -203,7 +203,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		};
 
 		let onOption = () => {
-			cn.push(`withOption c${iconOption}`);
+			cn.push(`withImage withOption c${iconOption}`);
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 			icon = <div></div>;
 		};
