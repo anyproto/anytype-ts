@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .switch { 
-	width: 26px; height: 16px; background: #e0ded2; border-radius: 16px; position: relative; cursor: pointer; 
+	width: 26px; height: 16px; background: $colorBorderLight; border-radius: 16px; position: relative; cursor: pointer; 
 	display: inline-block; vertical-align: middle;
 }
 .switch {
