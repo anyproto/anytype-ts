@@ -151,7 +151,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				authStore.phraseSet(message.mnemonic);
 
 				DataUtil.createSession((message: any) => {
-					C.AccountCreate(name, icon, accountPath, code, (message: any) => {
+					C.AccountCreate(name, icon, accountPath, code, Util.rand(0, 9), (message: any) => {
 						if (message.error.code) {
 							const error = Errors.AccountCreate[message.error.code] || message.error.description;
 							this.setError(error);

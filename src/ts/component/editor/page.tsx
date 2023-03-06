@@ -2174,7 +2174,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { isPopup, rootId } = this.props;
 		const container = Util.getPageContainer(isPopup);
 		const root = blockStore.getLeaf(rootId, rootId);
-		const size = Constant.size.editor;
 
 		let mw = container.width();
 		let width = 0;
@@ -2182,7 +2181,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		if (root && root.isObjectSet()) {
 			width = mw - 192;
 		} else {
-			mw -= 120;
+			const size = mw * 0.6;
+
+			mw -= 96;
 			w = (mw - size) * w;
 			width = Math.max(size, Math.min(mw, size + w));
 		};

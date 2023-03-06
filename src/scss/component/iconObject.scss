@@ -35,7 +35,7 @@
 .iconObject.c28 { width: 28px; height: 28px; }
 .iconObject.c32 { width: 32px; height: 32px; }
 .iconObject.c40 { width: 40px; height: 40px; }
-.iconObject.c48 { display: block; width: 48px; height: 48px; border-radius: 0px; overflow: hidden; }
+.iconObject.c48 { display: block; width: 48px; height: 48px; overflow: hidden; }
 .iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c80 { display: block; width: 80px; height: 80px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
@@ -56,8 +56,25 @@
 
 .iconObject.withLetter { background-color: $colorVeryLightGrey; }
 
-.iconObject.withImage { border-radius: 2px !important; }
+.iconObject.withImage { border-radius: 4px !important; }
+.iconObject.withImage.c96 { border-radius: 6px !important; }
+.iconObject.withImage.c112, .iconObject.withImage.c128 { border-radius: 8px !important; }
 .iconObject.isHuman { border-radius: 100% !important; }
 .iconObject.isHuman.withImage { background-color: unset !important; }
 
 .iconObject.canEdit { cursor: pointer; }
+
+.iconObject.withOption::before { content: ''; width: 100%; height: 100%; display: block; border-radius: inherit; }
+.iconObject.withOption.c1::before { background-image: radial-gradient(50% 50% at 50% 50%, $colorOrange 22.92%, $colorGreen 100%); }
+.iconObject.withOption.c2::before {}
+.iconObject.withOption.c3::before {}
+.iconObject.withOption.c4::before {}
+.iconObject.withOption.c5::before {}
+.iconObject.withOption.c6::before {}
+.iconObject.withOption.c7::before {}
+.iconObject.withOption.c8::before { background-image: radial-gradient(50% 50% at 50% 50%, #FFA15E 22.92%, #B6C1FF 100%); }
+.iconObject.withOption.c9::before {}
+.iconObject.withOption.c10::before {}
+
+.iconObject.withOption.isSpace { background: #000; }
+.iconObject.withOption.isSpace::before { width: 50%; height: 50%; border-radius: 50%; position: absolute; left: 50%; top: 50%; margin: -25% 0px 0px -25%; }
