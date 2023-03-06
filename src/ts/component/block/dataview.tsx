@@ -249,7 +249,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection selection.end`);
+		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection selectionEnd selectionClear.${I.SelectType.Record}`);
 	};
 
 	rebind () {
@@ -263,7 +263,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
 		});
-		win.on('selection.end', () => { this.onMultiselect(); });
+		win.on(`selectionEnd`, () => { this.onMultiselect(); });
+		win.on(`selectionClear.${I.SelectType.Record}`, () => {
+			console.log('SELECTION CLEAR')
+			// this.onMultiselect();
+		});
 	};
 
 	onKeyDown (e: any) {
@@ -826,6 +830,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (selection) {
 			selection.clear();
+			this.switchMultiselect(false);
 		};
 
 		if (!ids.length) {
@@ -971,8 +976,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onMultiselect (id?: string) {
 		const { dataset } = this.props;
-		const { selection } = dataset || {};
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const { selection } = dataset 	|| {};
+		let ids = selection ? selection.get(I.SelectType.Record) : [];
+
+		if (this.multiselect && id && !ids.length) {
+			ids = this.selected;
+		};
 
 		if (id) {
 			if (!ids.includes(id)) {

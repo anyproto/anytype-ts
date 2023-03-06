@@ -268,7 +268,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				};
 			};
 		} else {
-			$(window).trigger('selection.end');
+			$(window).trigger(`selectionEnd`);
 		};
 		
 		scrollOnMove.onMouseUp(e);
@@ -520,6 +520,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		for (let i in I.SelectType) {
 			const type = I.SelectType[i];
 			const ids = this.get(type, true);
+
+			if (!ids.length) {
+				$(window).trigger(`selectionClear.${I.SelectType[i]}`);
+			};
 
 			for (let id of ids) {
 				$(`#selectable-${id}`).addClass('isSelectionSelected');

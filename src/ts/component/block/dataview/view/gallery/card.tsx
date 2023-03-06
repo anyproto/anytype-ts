@@ -24,7 +24,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection, onDragRecordStart } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -62,36 +62,39 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		let content = (
-			<div className="itemContent">
-				{cover}
+			<React.Fragment>
+				<Icon className="checkbox" onClick={(e: any) => { this.onSelect(e, record.id); }} />
+				<div className="itemContent" onClick={this.onClick} onContextMenu={(e: any) => { onContext(e, record.id); }}>
+					{cover}
 
-				<div className="inner">
-					{relations.map((relation: any, i: number) => {
-						const id = Relation.cellId(idPrefix, relation.relationKey, index);
-						return (
-							<Cell
-								elementId={id}
-								key={'list-cell-' + view.id + relation.relationKey}
-								{...this.props}
-								subId={subId}
-								ref={ref => { onRef(ref, id); }}
-								relationKey={relation.relationKey}
-								viewType={view.type}
-								idPrefix={idPrefix}
-								index={index}
-								arrayLimit={2}
-								showTooltip={true}
-								onClick={(e: any) => {
-									e.stopPropagation();
-									onCellClick(e, relation.relationKey, index);
-								}}
-								tooltipX={I.MenuDirection.Left}
-								iconSize={18}
-							/>
-						);
-					})}
+					<div className="inner">
+						{relations.map((relation: any, i: number) => {
+							const id = Relation.cellId(idPrefix, relation.relationKey, index);
+							return (
+								<Cell
+									elementId={id}
+									key={'list-cell-' + view.id + relation.relationKey}
+									{...this.props}
+									subId={subId}
+									ref={ref => { onRef(ref, id); }}
+									relationKey={relation.relationKey}
+									viewType={view.type}
+									idPrefix={idPrefix}
+									index={index}
+									arrayLimit={2}
+									showTooltip={true}
+									onClick={(e: any) => {
+										e.stopPropagation();
+										onCellClick(e, relation.relationKey, index);
+									}}
+									tooltipX={I.MenuDirection.Left}
+									iconSize={18}
+								/>
+							);
+						})}
+					</div>
 				</div>
-			</div>
+			</React.Fragment>
 		);
 
 		if (!isInline) {
@@ -121,8 +124,6 @@ const Card = observer(class Card extends React.Component<Props> {
 				className={cn.join(' ')} 
 				style={style}
 				draggable={true}
-				onClick={this.onClick}
-				onContextMenu={(e: any) => { onContext(e, record.id); }}
 				onDragStart={this.onDragStart}
 			>
 				{content}
@@ -163,6 +164,13 @@ const Card = observer(class Card extends React.Component<Props> {
 		if (isCollection) {
 			onDragRecordStart(e, index);
 		};
+	};
+
+	onSelect (e: any, id: string) {
+		const { onMultiselect } = this.props;
+		e.preventDefault();
+
+		onMultiselect(id);
 	};
 
 	onClick (e: any) {
