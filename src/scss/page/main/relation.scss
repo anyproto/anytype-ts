@@ -22,19 +22,6 @@
 		.section {
 			.title { @include text-header3; margin-bottom: 14px; }
 		}
-
-		.section.relation {
-			.item { display: flex; }
-			.item {
-				.clickable { width: 228px; padding: 4px; display: flex; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
-				.clickable:hover { background: $colorHover; }
-
-				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
-				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorVeryDarkGrey; }
-				.value { color: $colorMediumGrey; padding: 4px; line-height: 20px; cursor: pointer; transition: $transitionFast; border-radius: 4px; }
-				.value:hover { background: $colorHover; }
-			}
-		}
 	}
 }
 
