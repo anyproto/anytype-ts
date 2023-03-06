@@ -43,7 +43,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	render (): React.ReactNode {
 		const { loading } = this.state;
-		const { block, isDraggable, isPreview, onDragStart, onDragOver, setPreview } = this.props;
+		const { block, isPreview, isEditing, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
 		const { layout } = block.content;
 		const { targetBlockId } = child?.content || {};
@@ -60,9 +60,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		if (isPreview) {
 			cn.push('isPreview');
-		};
-		if (isDraggable) {
-			cn.push('isDraggable');
 		};
 
 		let icon = null;
@@ -92,10 +89,13 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		if (layout != I.WidgetLayout.Space) {
 			let onClick = null;
-			if (!this.isCollection(targetBlockId)) {
-				onClick = e => ObjectUtil.openEvent(e, object);
-			} else {
-				onClick = () => setPreview(isPreview ? '' : block.id);
+
+			if (!isEditing) {
+				if (!this.isCollection(targetBlockId)) {
+					onClick = e => ObjectUtil.openEvent(e, object);
+				} else {
+					onClick = () => setPreview(isPreview ? '' : block.id);
+				};
 			};
 
 			head = (
@@ -140,7 +140,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				ref={node => this.node = node}
 				id={key}
 				className={cn.join(' ')}
-				draggable={isDraggable}
+				draggable={isEditing}
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
 			>

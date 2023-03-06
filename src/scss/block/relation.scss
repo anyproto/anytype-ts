@@ -23,7 +23,7 @@
 		.info {
 			.name { 
 				display: inline-block; vertical-align: top; @include text-common; line-height: 20px; @include text-overflow-nw; 
-				color: $colorVeryDarkGrey; width: 100%;
+				color: $colorDarkGrey; width: 100%;
 			}
 			.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
 			.icon.ghost { width: 20px; height: 20px; }

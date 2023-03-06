@@ -263,12 +263,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 		const range = getRange(this.input);
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const text = cb.getData('text/plain');
+		const to = range.end + text.length;
 
-		this.setValue(Util.stringInsert(this.getValue(), cb.getData('text/plain'), range.start, range.end));
-
-		const length = this.getValue().length;
-
-		this.setRange({ start: length, end: length });
+		this.setValue(Util.stringInsert(this.getValue(), text, range.start, range.end));
+		this.setRange({ start: to, end: to });
 		this.focus();
 	};
 

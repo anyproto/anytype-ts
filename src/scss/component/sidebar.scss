@@ -16,6 +16,12 @@
 	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px rgba(0, 0, 0, 0); border-right: 1px solid $colorBorderLight;
 	transform: translate3d(0px, 0px, 0px);
 }
+.sidebar.fixed {
+	> .head { height: 52px; cursor: default; }
+	> .head {
+		.icon { display: block; }
+	}
+}
 .sidebar.anim { transition-property: left, top, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease-in-out; }
 .sidebar.active { transform: translate3d(0px, 0px, 0px); }
 
@@ -38,27 +44,17 @@
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 
 	> .top { display: flex; flex-direction: row-reverse; }
-	> .head { position: relative; flex-shrink: 0; flex-grow: 1; -webkit-app-region: no-drag; cursor: grab; }
+	> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overflow-y: scroll; overscroll-behavior: none; }
 
-	.sidebarHeader { display: flex; flex-direction: row; align-items: center; padding: 0px 12px; }
-	.sidebarHeader {
-		.icon {
-			width: 32px; height: 28px; flex-basis: 20%; flex-grow: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-direction: row;
-			background-size: 20px; cursor: pointer; border-radius: 6px;
-		}
+	> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 12px; height: 12px; cursor: grab; }
+	> .head {
+		.icon { width: 32px; height: 28px; cursor: pointer; background-size: 20px; cursor: pointer; border-radius: 6px; display: none; }
 		.icon:hover { background-color: $colorHover; }
-		.icon.toggleSidebar { background-image: url('~img/icon/sidebar/toggle-sidebar.svg'); }
 	}
-
-	> .body { height: calc(100% - 52px); position: relative; flex-grow: 1; }
-}
-
-html.bodyMainIndex {
-	#sidebar { display: none; }
 }
 
 html.platformWindows {
-	.sidebar {
-		> .head { -webkit-app-region: drag; }
+	.sidebar.fixed {
+		> .head { height: 38px; }
 	}
 }	

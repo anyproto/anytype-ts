@@ -184,6 +184,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedReload = object.source && block.isObjectBookmark();
 		const allowedInstall = !object.isInstalled && [ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type);
 		const allowedUninstall = object.isInstalled && [ Constant.typeId.type, Constant.typeId.relation ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+		const hasShortMenu = block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectCollection() || block.isObjectSpace();
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedDelete)		 pageRemove = null;
@@ -202,8 +203,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (allowedUninstall)	 archive = null;
 
 		let sections = [];
-		if (block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectSpace()) {
-			if (!block.isObjectSet()) {
+		if (hasShortMenu) {
+			if (!block.isObjectSet() && !block.isObjectCollection()) {
 				pageCopy = null;
 			};
 

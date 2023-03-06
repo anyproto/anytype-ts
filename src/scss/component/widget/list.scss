@@ -81,7 +81,7 @@
 
 	#viewSelect { border-bottom: 1px solid $colorBorderLight; padding: 0px 0px 10px 0px; }
 
-	.body { height: 100%; overflow-x: hidden; overflow-y: auto; padding-bottom: 0px; }
-	.ReactVirtualized__List { padding: 12px 0px 8px 0px; }
+	.body { height: 100%; padding-bottom: 0px; }
+	.ReactVirtualized__List { padding: 12px 0px; }
 	.contentWrapper { height: calc(100% - 77px); }
 }

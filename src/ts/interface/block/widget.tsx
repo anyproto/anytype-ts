@@ -12,7 +12,7 @@ export interface WidgetComponent {
 	dataset?: any;
 	parent?: I.Block;
 	block: I.Block;
-	isDraggable?: boolean;
+	isEditing?: boolean;
 	isPreview?: boolean;
 	isCollection?: (blockId: string) => boolean;
 	setPreview?: (id: string) => void;

@@ -230,10 +230,9 @@ class Keyboard {
 
 	pageCreate () {
 		const { focused } = focus.state;
-		const isMainIndex = this.isMainIndex();
-		const isMainEditor = this.isMainEditor();
+		const isMain = this.isMain();
 
-		if (!isMainIndex && !isMainEditor) {
+		if (!isMain) {
 			return;
 		};
 

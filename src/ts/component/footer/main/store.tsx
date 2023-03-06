@@ -5,7 +5,7 @@ import { I } from 'Lib';
 const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComponent> {
 	
 	render () {
-		const { onHelp, onAdd } = this.props;
+		const { onHelp } = this.props;
 
 		return (
 			<React.Fragment>

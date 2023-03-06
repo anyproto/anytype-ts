@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.widget { background: $colorWhite; border-radius: 12px; transform: translate(0px, 0px); position: relative; margin: 0px 0px 12px 0px; }
+.widget { background: $colorWhite; border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }
 .widget {
 	.head { width: 100%; position: relative; display: flex; flex-direction: column; cursor: pointer; padding: 12px 8px 10px 16px; z-index: 2; }
@@ -27,6 +27,10 @@
 		.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; visibility: hidden; }
 		.buttons.active { visibility: visible; } 
 	}
+	.head:hover {
+		.flex > .clickable { width: calc(100% - 60px); }
+		.buttons { visibility: visible; }
+	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 	.label.empty { text-align: center; @include text-small; }
@@ -38,10 +42,6 @@
 		background-image: url('~img/icon/sidebar/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); display: none; z-index: 1;
 	}
 	.icon.remove:hover { background-color: $colorVeryLightGrey; }
-}
-.widget:hover {
-	.head > .flex > .clickable { width: calc(100% - 60px); }
-	.buttons { visibility: visible; }
 }
 
 .widget.isPreview {
@@ -66,7 +66,7 @@
 }
 
 .button.widget { 
-	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; font-weight: 700; padding: 12px 16px;
+	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; font-weight: 700; padding: 14px 16px;
 	display: flex; position: relative; gap: 0px 12px; justify-content: flex-start;
 }
 .button.widget {

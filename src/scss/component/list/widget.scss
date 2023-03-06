@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.listWidget { overflow: hidden; overflow-y: scroll; padding: 0px 12px 10px 12px; gap: 12px 0px; height: 100%; }
+.listWidget { display: flex; flex-direction: column; gap: 12px 0px; }
 .listWidget {
 	> .buttons { display: flex; justify-content: center; width: 100%; gap: 0px 8px; }
 	> .buttons {
@@ -34,4 +34,4 @@
 	.widget.isOver.bottom::before { bottom: -8px; }
 }
 
-.listWidget.isListPreview { overflow: hidden; }
+.listWidget.isListPreview { overflow: hidden; height: 100%; }

@@ -19,7 +19,7 @@ interface State {
 
 const QRColor = {
 	'': '#fff',
-	dark: '#aca996',
+	dark: '#b6b6b6',
 };
 
 const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends React.Component<Props, State> {

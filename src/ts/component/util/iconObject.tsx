@@ -133,9 +133,9 @@ const CheckboxTask1 = require('img/icon/object/checkbox1.svg').default;
 const Ghost = require('img/icon/ghost.svg').default;
 
 const BgColor = {
-	grey:	 '#f3f2ec',
+	grey:	 '#f2f2f2',
 	black:	 '#2c2b27',
-	brown:	 '#aca996',
+	brown:	 '#b6b6b6',
 	orange:	 '#ffb522',
 	red:	 '#f55522',
 	purple:	 '#ab50cc',
@@ -146,7 +146,7 @@ const BgColor = {
 };
 
 const Color = {
-	'':		 '#aca996',
+	'':		 '#b6b6b6',
 	dark:	 '#dfddd3'
 };
 

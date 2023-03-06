@@ -327,10 +327,11 @@ class DataUtil {
 					Util.route('/auth/pin-check');
 				} else {
 					if (redirect) {
-						Util.route(redirect);
+						Util.route(redirect, true);
 					} else {
-						ObjectUtil.openHome('route');
+						ObjectUtil.openHome('route', { replace: true });
 					};
+
 					commonStore.redirectSet('');
 				};
 
@@ -470,7 +471,7 @@ class DataUtil {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled', 'recommendedRelations' ].concat(Constant.coverRelationKeys));
+		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled', 'recommendedRelations', 'smartblockTypes' ].concat(Constant.coverRelationKeys));
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;

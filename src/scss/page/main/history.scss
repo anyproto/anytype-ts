@@ -21,7 +21,7 @@
 
 		.item { padding: 5px 16px 5px 30px; cursor: pointer; transition: $transitionFast; position: relative; }
 		.item {
-			.name { @include text-small; color: $colorVeryDarkGrey; @include text-overflow-nw; }
+			.name { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
 			.date { @include text-overflow-nw; }
 			.icon.arrow { 
 				width: 20px; height: 20px; background-image: url('~img/arrow/historyList.svg'); position: absolute; left: 9px; top: 6px;

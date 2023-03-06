@@ -122,7 +122,7 @@ class Sidebar {
 		if (hide && this.obj.hasClass('active')) {
 			this.timeoutHide = window.setTimeout(() => { this.hide(); }, 200);
 		};
-	}
+	};
 
 	collapse (): void {
 		if (!this.obj || !this.obj.length) {
