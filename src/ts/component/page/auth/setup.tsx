@@ -48,6 +48,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		
 		return (
 			<div ref={node => this.node = node}>
+				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				

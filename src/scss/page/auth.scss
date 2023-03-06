@@ -11,7 +11,7 @@
 
 	.authBackWrap { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; }
 	.authBackWrap {
-		.icon.back { width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/back.svg'); transition: none; }
+		.icon.back { width: 20px; height: 20px; background-size: 8px; background-image: url('~img/icon/popup/settings/back.svg'); transition: none; }
 	}
 
 	.textareaWrap { margin: 0px 0px 32px 0px; }
