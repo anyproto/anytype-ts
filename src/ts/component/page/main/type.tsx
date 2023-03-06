@@ -69,7 +69,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
-		const allowedTemplate = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
+		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 
 		const relations = (object.recommendedRelations || []).map(id => dbStore.getRelationById(id)).filter((it: any) => {
 			if (!it || Constant.systemRelationKeys.includes(it.relationKey)) {
