@@ -43,6 +43,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	creating = false;
 	frame = 0;
 	multiselect: boolean = false;
+	selected: string[];
 
 	constructor (props: Props) {
 		super(props);
@@ -72,6 +73,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
 		this.switchMultiselect = this.switchMultiselect.bind(this);
 		this.onMultiselect = this.onMultiselect.bind(this);
+		this.multiselectAction = this.multiselectAction.bind(this);
 	};
 
 	render () {
@@ -162,6 +164,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				<Selection
 					{...this.props}
 					{...dataviewProps}
+					multiselectAction={this.multiselectAction}
 				/>
 			) : (
 				<Controls
@@ -825,6 +828,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			selection.clear();
 		};
 
+		if (!ids.length) {
+			return;
+		};
+
 		if (records.indexOf(targetId) > records.indexOf(ids[0])) {
 			ids = ids.reverse();
 		};
@@ -978,14 +985,39 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			selection.set(I.SelectType.Record, ids);
 		};
 
+		this.selected = ids;
 		this.switchMultiselect(!!ids.length);
 		window.setTimeout(() => menuStore.closeAll(), 5);
 	};
 
 	switchMultiselect (v: boolean) {
-		console.log('MULTISELECT: ', v)
+		if (!v) {
+			this.selected = [];
+		};
+
 		this.multiselect = v;
 		this.forceUpdate();
+	};
+
+	multiselectAction (e: any, action: string) {
+		const objectId = this.getObjectId();
+
+		switch (action) {
+			case 'archive': {
+				const length = this.selected.length;
+				C.ObjectListSetIsArchived(this.selected, true, () => {
+					analytics.event('MoveToBin', { count: length });
+				});
+				break;
+			};
+
+			case 'unlink': {
+				C.ObjectCollectionRemove(objectId, this.selected);
+				break;
+			};
+		};
+
+		this.switchMultiselect(false);
 	};
 
 	resize () {
