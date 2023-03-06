@@ -273,6 +273,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			return;
 		};
 
+		const { loading } = this.state;
+		if (loading) {
+			return;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { type, dataMapper, dataSort, dataChange, skipIds, keys, ignoreWorkspace } = data;
