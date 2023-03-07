@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Header, DotIndicator, KeyPhrase, Error, Icon, IconObject } from 'Component';
-import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview } from 'Lib';
+import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview, keyboard } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -26,7 +26,7 @@ type State = {
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 	soulContentRef: any = null;
 	state: State = {
-		stage: OnboardStage.OFFLINE,
+		stage: OnboardStage.VOID,
 		keyPhraseCopied: false,
 		iconOption: Util.rand(1, Constant.iconCnt)
 	}
@@ -44,11 +44,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			[OnboardStage.SPACE_CREATING]: "SpaceCreating",
 		}
 
+		const backButton = this.canMoveBackward() ? <Icon className="back" onClick={this.onBack} /> : null;
+		let dotIndicator = <DotIndicator activeIndex={this.state.stage} count={4} />;
 		const title = <Title className="animation" text={translate(`authOnboard${stageNameMap[stage]}Title`)} />;
 		let label = <Label className="animation" text={translate(`authOnboard${stageNameMap[stage]}Label`)} />;
 		let submit = <Button text={translate(`authOnboard${stageNameMap[stage]}Submit`)} onClick={this.onNext} />;
-		let dotIndicator = <DotIndicator activeIndex={this.state.stage} count={4} />;
-		let backButton = <Icon className="back" onClick={this.onBack} />;
 		let accountStorageInfo = null;
 		let accountNameField = null;
 		let moreInfo = null;
@@ -71,8 +71,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage === OnboardStage.SOUL) {
 			accountNameField = <div className="animation"><input type="text" placeholder="Enter your name" onChange={e => authStore.nameSet(e.target.value)} /></div>
-			const isEnabled = authStore.name && authStore.name.length > 0;
-			submit = <Button className={isEnabled ? "" : "disabled"} text={translate(`authOnboard${stageNameMap[stage]}Submit`)} onClick={() => { if (isEnabled) this.onNext() }} />;
+			submit = <Button className={this.canMoveForward() ? "" : "disabled"} text={translate(`authOnboard${stageNameMap[stage]}Submit`)} onClick={this.onNext} />;
 		}
 
 
@@ -80,7 +79,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			label = null;
 			submit = null;
 			dotIndicator = null;
-			backButton = null;
 			const cn = ["soulContent", "animation"];
 			if (stage === OnboardStage.SOUL_CREATING) {
 				cn.push("soulCreating");
@@ -132,15 +130,39 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	componentDidMount (): void {
 		Animation.to();
 		this.createWallet();
+		$(window).on('keydown.navigation', (e: any) => { this.onKeyDown(e); });
 	};
 
+	componentWillUnmount(): void {
+		$(window).off('keydown.navigation');
+	}
+	
 	componentDidUpdate (prevProps, prevState): void {
 		if (prevState.stage !== this.state.stage) {
 			Animation.to();
 		}
 	}
 
+	onKeyDown (e: any) {
+		keyboard.shortcut('enter', e, () => { this.onNext(); });
+	};
+	
+
+	canMoveForward = (): boolean => {
+		const { stage } = this.state;
+		const nameNotEmpty = authStore.name && authStore.name.length > 0;
+		return (
+			   stage === OnboardStage.VOID
+			|| stage === OnboardStage.KEY_PHRASE
+			|| stage === OnboardStage.OFFLINE
+			|| (stage === OnboardStage.SOUL && nameNotEmpty)
+		)
+	}
+
 	onNext = () => {
+		if (!this.canMoveForward()) {
+			return;
+		}
 		const { stage, keyPhraseCopied } = this.state;
 
 		if (stage === OnboardStage.KEY_PHRASE && !keyPhraseCopied) {
@@ -154,7 +176,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		}
 
 		if (stage === OnboardStage.SOUL_CREATING) {
-			// setTimeout(() => this.onNext(), 5000);
+			setTimeout(() => this.onNext(), 5000);
 		}
 
 		if (stage === OnboardStage.SPACE_CREATING) {
@@ -165,8 +187,16 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
 	}
-	
+
+	canMoveBackward = (): boolean => {
+		const { stage } = this.state;
+		return stage <= OnboardStage.SOUL;
+	}
+
 	onBack = () => {
+		if (!this.canMoveBackward()) {
+			return;
+		}
 		if (this.state.stage === OnboardStage.VOID) {
 			Util.route('/auth/invite');
 		} else {
