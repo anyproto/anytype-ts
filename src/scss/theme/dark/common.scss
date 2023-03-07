@@ -89,7 +89,7 @@ html.themeDark {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
 
-    .button.blank { border-color: $colorLineSecondary; }
+    .button.blank { color: $colorPrimary; border-color: $colorLineSecondary; }
     .button.blank:hover { border-color: #525148; background: $colorHover; }
 
 	.button.red { border-color: $colorLineSecondary; }
