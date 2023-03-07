@@ -96,9 +96,22 @@
 				.cellContent.c-select {
 					.tagItem { margin: 0px 8px 0px 0px; }
 				}
+
+				.icon.checkbox {
+					width: 40px; height: 40px; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: pointer;
+					background-image: url('~img/icon/index/checkbox0.svg'); opacity: 0; transition: none; background-size: 20px;
+				}
+
+				.isSelectionSelected {
+					.icon.checkbox { background-image: url('~img/icon/index/checkbox1.svg'); opacity: 1; }
+				}
 			}
 			.card:last-child { margin: 0px; }
-			.card.add:hover, .card:hover .cardContent { border-color: $colorBorderDark; }
+
+			.card.add:hover, .card:hover {
+				.cardContent { border-color: $colorBorderDark; }
+				.icon.checkbox { opacity: 1; }
+			}
 
 			.card.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 4px; width: 100%; border-radius: 2px; left: 0px; } 
 			.card.isOver.top::before { top: -6px; }

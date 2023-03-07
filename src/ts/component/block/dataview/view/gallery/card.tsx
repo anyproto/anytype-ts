@@ -24,7 +24,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
+		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection, onMultiselect } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -63,7 +63,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<React.Fragment>
-				<Icon className="checkbox" onClick={(e: any) => { this.onSelect(e, record.id); }} />
+				<Icon className="checkbox" onClick={(e: any) => { onMultiselect(record.id); }} />
 				<div className="itemContent" onClick={this.onClick} onContextMenu={(e: any) => { onContext(e, record.id); }}>
 					{cover}
 
@@ -164,13 +164,6 @@ const Card = observer(class Card extends React.Component<Props> {
 		if (isCollection) {
 			onDragRecordStart(e, index);
 		};
-	};
-
-	onSelect (e: any, id: string) {
-		const { onMultiselect } = this.props;
-		e.preventDefault();
-
-		onMultiselect(id);
 	};
 
 	onClick (e: any) {
