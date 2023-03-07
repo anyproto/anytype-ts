@@ -24,7 +24,7 @@ type State = {
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 	state: State = {
-		stage: OnboardStage.SOUL_CREATING,
+		stage: OnboardStage.VOID,
 		keyPhraseCopied: false,
 	}
 	
@@ -153,7 +153,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	}
 
 	createAccount = () => {
-		const { accountPath, name, icon, code } = authStore;
+		const { accountPath, name, code } = authStore;
+
+		const icon = Util.rand(1, Constant.iconCnt);
 
 		DataUtil.createSession(message => {
 			if (message.error.code) {
@@ -161,7 +163,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				this.setState({ error });
 			}
 
-			C.AccountCreate(name, icon, accountPath, code, message => {
+			C.AccountCreate(name, "", accountPath, code, icon, message => {
 				if (message.error.code) {
 					const error = Errors.AccountCreate[message.error.code] || message.error.description;
 					this.setState({ error });
