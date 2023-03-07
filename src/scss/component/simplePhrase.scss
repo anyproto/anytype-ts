@@ -1,4 +1,4 @@
-.keyPhrase {
+.simplePhrase {
     border-radius: 26px;
     background: rgba(44, 43, 39, 0.3);
     height: 86px;
@@ -21,9 +21,9 @@
     .lavender { color: #AB50CC; }
 }
 
-.keyPhrase:hover {
+.simplePhrase:hover {
     cursor: pointer;
     background: rgba(44, 43, 39, 0.5);
 }
 
-.keyPhrase.isBlurred { filter: blur(7px); }
+.simplePhrase.isBlurred { filter: blur(7px); }

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { authStore } from 'Store';
 
 const COLORS = [
 	"orange",
@@ -13,18 +12,24 @@ const COLORS = [
 ];
 
 type Props = {
-	isBlurred: boolean 
+	isBlurred: boolean,
+	phrase: string
 }
 
-const KeyPhrase = observer(class KeyPhrase extends React.Component<Props> {
+const SimplePhrase = observer(class SimplePhrase extends React.Component<Props> {
 	render () {
+		const { phrase, isBlurred } = this.props;
+		const cn = ["simplePhrase"];
+		if (isBlurred) cn.push("isBlurred");
+
 		return (
 			<div
-				className={"keyPhrase " + (this.props.isBlurred ? "isBlurred" : "")}
+				className={cn.join(' ')}
 				>
-					{authStore.phrase.split(' ').map((word, index) => {
+					{phrase.split(' ').map((word, index) => {
 						// rotate through the colors
 						const color = COLORS[index % COLORS.length];
+						
 						// capitalize each word
 						word = word.charAt(0).toUpperCase() + word.slice(1);
 						return <span className={color} key={index}>{word}</span>
@@ -34,4 +39,4 @@ const KeyPhrase = observer(class KeyPhrase extends React.Component<Props> {
 	};
 });
 
-export default KeyPhrase;
+export default SimplePhrase;
