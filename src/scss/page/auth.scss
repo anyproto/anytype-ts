@@ -41,7 +41,7 @@
 	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
 }
 
-.pageAuthPinSelect, .pageAuthPinConfirm, .pageAuthPinCheck {
+.pageAuthPinCheck {
 	.input { width: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
 	.input:last-child { margin: 0px; }
 }
