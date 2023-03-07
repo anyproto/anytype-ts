@@ -23,7 +23,7 @@
 			.select:hover, .select.active { background: none; }
 		}
 
-		#value { font-size: 20px; line-height: 20px; width: 100%; overflow-x: auto; overflow-y: visible; padding-bottom: 10px; }
+		#value { font-size: 20px; line-height: 20px; width: 100%; overflow-x: auto; overflow-y: visible; }
 		#value:empty { display: none; }
 		#input { 
 			background: $colorVeryLightGrey; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
