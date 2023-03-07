@@ -1,9 +1,22 @@
-import { I } from "Lib";
+import { I } from 'Lib';
+
+export enum PreviewType {
+	Link	 = 0,
+	Object	 = 1,
+	Graph	 = 2,
+};
+
+export interface PreviewLink {
+	type: string;
+	title: string;
+	description: string;
+	faviconUrl: string;
+	imageUrl: string;
+};
 
 export interface Preview {
-	type: I.MarkType.Link | I.MarkType.Object,
-    /** object ID or URL */
-	target: string;
+	type: PreviewType,
+	target: string; /** object ID or URL */
 	element: JQuery<HTMLElement>;
 	range?: I.TextRange;
 	marks?: I.Mark[];

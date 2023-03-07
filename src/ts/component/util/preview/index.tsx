@@ -2,16 +2,22 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { PreviewLink, PreviewObject } from 'Component';
-import { I, Util, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
+import { PreviewLink, PreviewObject, PreviewGraph } from 'Component';
+import { I, Util, DataUtil, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
+
+interface State {
+	object: any;
+};
 
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-const PreviewComponent = observer(class PreviewComponent extends React.Component {
+const PreviewComponent = observer(class PreviewComponent extends React.Component<object, State> {
 
-	state = null;
+	state = {
+		object: null,
+	};
 	ref: any = null;
 	
 	constructor (props) {
@@ -22,18 +28,20 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		this.onEdit = this.onEdit.bind(this);
 		this.onUnlink = this.onUnlink.bind(this);
 		this.position = this.position.bind(this);
+		this.setObject = this.setObject.bind(this);
 	};
 	
 	render () {
 		const { preview } = commonStore;
 		const { type, target, noUnlink } = preview;
+		const { object } = this.state;
 		const cn = [ 'previewWrapper' ];
 
 		let head = null;
 		let content = null;
 
 		switch (type) {
-			case I.MarkType.Link:
+			case I.PreviewType.Link: {
 				head = (
 					<div className="head">
 						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('previewCopy')}</div>
@@ -42,10 +50,11 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					</div>
 				);
 
-				content = <PreviewLink ref={ref => { this.ref = ref; }} url={target} position={this.position} />;
+				content = <PreviewLink ref={ref => this.ref = ref} url={target} position={this.position} />;
 				break;
+			};
 
-			case I.MarkType.Object:
+			case I.PreviewType.Object: {
 				if (!noUnlink) {
 					head = (
 						<div className="head">
@@ -54,8 +63,18 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					);
 				};
 
-				content = <PreviewObject ref={ref => { this.ref = ref; }} rootId={target} setObject={this.setState} position={this.position} />;
+				content = <PreviewObject ref={ref => this.ref = ref} rootId={target} setObject={this.setObject} position={this.position} />;
 				break;
+			};
+
+			case I.PreviewType.Graph: {
+				if (!object) {
+					break;
+				};
+
+				content = <PreviewGraph ref={ref => this.ref = ref} object={object} />;
+				break;
+			};
 		};
 
 		if (head) {
@@ -75,19 +94,36 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			</div>
 		);
 	};
+
+	componentDidUpdate () {
+		const { preview } = commonStore;
+		const { type, target } = preview;
+		const { object } = this.state;
+
+		if ((type == I.PreviewType.Graph) && (!object || (object.id != target))) {
+			DataUtil.getObjectById(target, object => {
+				this.setObject(object);
+				this.position();
+			});
+		};
+	};
 	
 	onClick (e) {
 		const { preview } = commonStore;
 		const { type, target } = preview;
+		const { object } = this.state;
 
 		switch (type) {
-			case I.MarkType.Link:
+			case I.PreviewType.Link: {
 				Renderer.send('urlOpen', target);	
 				break;
+			};
 
-			case I.MarkType.Object:
-				ObjectUtil.openEvent(e, this.state);
+			case I.PreviewType.Graph:
+			case I.PreviewType.Object: {
+				ObjectUtil.openEvent(e, object);
 				break;
+			};
 		};
 	};
 	
@@ -125,10 +161,30 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	
 	onUnlink () {
 		const { preview } = commonStore;
-		const { type, range, onChange } = preview;
-		
-		onChange(Mark.toggleLink({ type, param: '', range }, preview.marks));
+		const { range, onChange } = preview;
+
+		onChange(Mark.toggleLink({ type: this.getMarkType(), param: '', range }, preview.marks));
 		Preview.previewHide(true);
+	};
+
+	getMarkType () {
+		const { preview } = commonStore;
+		const { type } = preview;
+
+		switch (type) {
+			case I.PreviewType.Link: {
+				return I.MarkType.Link;
+			};
+
+			case I.PreviewType.Graph:
+			case I.PreviewType.Object: {
+				return I.MarkType.Object;
+			};
+		};
+	};
+
+	setObject (object) {
+		this.setState({ object });
 	};
 
 	position () {
@@ -194,9 +250,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		obj.show().css(css);
 		poly.css(pcss);
 		
-		raf(() => { 
-			obj.css({ opacity: 1 });
-		});
+		raf(() => { obj.css({ opacity: 1 }); });
 	};
 
 });
