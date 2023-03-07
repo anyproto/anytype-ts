@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Header, DotIndicator, KeyPhrase, Error, Icon } from 'Component';
+import { Frame, Title, Label, Button, Header, DotIndicator, KeyPhrase, Error, Icon, IconObject } from 'Component';
 import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview } from 'Lib';
-import { authStore, commonStore, popupStore } from 'Store';
+import { authStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
@@ -19,17 +19,20 @@ enum OnboardStage {
 type State = {
 	stage: OnboardStage;
 	keyPhraseCopied: boolean;
-	error?: string
+	error?: string;
+	iconOption: number;
 }
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
+	soulContentRef: any = null;
 	state: State = {
-		stage: OnboardStage.VOID,
+		stage: OnboardStage.OFFLINE,
 		keyPhraseCopied: false,
+		iconOption: Util.rand(1, Constant.iconCnt)
 	}
 	
 	render () {
-		const { stage, error } = this.state;
+		const { stage, error, iconOption } = this.state;
 
 		// Mapping the Stages to text.json keys
 		const stageNameMap = {
@@ -45,6 +48,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		let label = <Label className="animation" text={translate(`authOnboard${stageNameMap[stage]}Label`)} />;
 		let submit = <Button text={translate(`authOnboard${stageNameMap[stage]}Submit`)} onClick={this.onNext} />;
 		let dotIndicator = <DotIndicator activeIndex={this.state.stage} count={4} />;
+		let backButton = <Icon className="back" onClick={this.onBack} />;
 		let accountStorageInfo = null;
 		let accountNameField = null;
 		let moreInfo = null;
@@ -76,16 +80,27 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			label = null;
 			submit = null;
 			dotIndicator = null;
+			backButton = null;
+			const cn = ["soulContent", "animation"];
+			if (stage === OnboardStage.SOUL_CREATING) {
+				cn.push("soulCreating");
+			}
+			if (stage === OnboardStage.SPACE_CREATING) {
+				cn.push("spaceCreating");
+			}
 			soulContent = (
-				<div className="soulContent animation">
-					<div>
-						<Icon className="soul" />
+				<div ref={ref => { this.soulContentRef = ref; }} className={cn.join(" ")}>
+					<div className="account">
+						<IconObject object={{iconOption, layout: I.ObjectLayout.Human}} size={48} />
 						<span className="accountName">{authStore.name}</span>
 					</div>
-					<div className="line"/>
-					<div>
-						<Icon className="space" />
-						<span>Personal Space</span>
+					<div className="lineLeft"/> 
+					<div className="lineRight"/> 
+					<div className="space">
+						<div className="spaceIcon">
+							<IconObject object={{iconOption, layout: I.ObjectLayout.Human}} size={42} />
+						</div>
+						<span className="spaceName">Personal Space</span>
 					</div>
 				</div>);
 		}
@@ -93,7 +108,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
         return (
 			<div>
 				<Header {...this.props} component="authIndex" />
-				<Icon className="back" onClick={this.onBack} />
+				{backButton}
 				<Frame>
 					{dotIndicator}
 					{title}
@@ -126,11 +141,29 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	}
 
 	onNext = () => {
-		if (this.state.stage === OnboardStage.KEY_PHRASE && !this.state.keyPhraseCopied) {
+		const { stage, keyPhraseCopied } = this.state;
+
+		if (stage === OnboardStage.KEY_PHRASE && !keyPhraseCopied) {
 			this.copyAndUnblurKeyPhrase();
-		} else {
-			Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
+			return;
 		}
+
+		if (stage === OnboardStage.SOUL) {
+			// this.createAccount();
+			setTimeout(() => this.onNext(), 5000);
+		}
+
+		if (stage === OnboardStage.SOUL_CREATING) {
+			// setTimeout(() => this.onNext(), 5000);
+		}
+
+		if (stage === OnboardStage.SPACE_CREATING) {
+			// TODO navigate to Usecases Screen
+			Util.route('/auth/use-cases');
+			return;
+		}
+
+		Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
 	}
 	
 	onBack = () => {
@@ -154,8 +187,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	createAccount = () => {
 		const { accountPath, name, code } = authStore;
-
-		const icon = Util.rand(1, Constant.iconCnt);
+		const { iconOption } = this.state;
 
 		DataUtil.createSession(message => {
 			if (message.error.code) {
@@ -163,7 +195,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				this.setState({ error });
 			}
 
-			C.AccountCreate(name, "", accountPath, code, icon, message => {
+			C.AccountCreate(name, "", accountPath, code, iconOption, message => {
 				if (message.error.code) {
 					const error = Errors.AccountCreate[message.error.code] || message.error.description;
 					this.setState({ error });

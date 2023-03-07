@@ -72,7 +72,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 
 .pageAuthOnboard,
 .pageAuthInvite {
-	.frame { max-width: 415px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+	.frame { width: 415px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; }
 	.label { color: #5C5A54; }
 	.icon.back { height: 40px; width: 40px; position: fixed; left: 20px; top: 0; bottom: 0; margin: auto 0; z-index: 1; }
@@ -130,36 +130,103 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 		color: #5C5A54;
 	}
 	.soulContent {
-		display: flex;
-		flex-direction: row;
-		align-items: space-between;
-		width: 120px;
-		div {
+		width: 100px;
+
+		.account,
+		.space,
+		.lineLeft,
+		.lineRight {
+			transition: all 600ms ease-in;
+			position: absolute;
 			display: flex;
 			flex-direction: column;
+		}
+
+		.account,
+		.space {
+			align-items: center;
 			gap: 12px;
+			width: 100px;
+			top: 0;
+			left: 0;
 		}
-		.line {
-			position: absolute;
-			height: 1px;
-			width: 100%;
-			top: 25px;
-			background: white;
+
+		.account {
+			z-index: 2;
+		}
+		.space {
+			transition: all 600ms ease-in, opacity 200ms ease-in;
+			z-index: 1;
+			opacity: 0;
+		}
+		.lineLeft,
+		.lineRight {
 			z-index: 0;
+			height: 1px;
+			top: 25px;
+			width: 0;
+			background: white;
 		}
-		.icon.soul {
-			border-radius: 100%;
-			z-index: 1;
-			width: 48px;
-			height: 48px;
-			background: radial-gradient(50% 50% at 50% 50%, #FFA15E 22.92%, #B6C1FF 100%);
+		.lineLeft {
+			right: 50%;
 		}
-		.icon.space {
-			border-radius: 4px;
-			z-index: 1;
+		.lineRight {
+			left: 50%;
+		}
+		
+		.iconObject { margin: 0; }
+		.spaceIcon {
+			border-radius: 8px;
 			width: 48px;
 			height: 48px;
 			background: white;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		} 
+
+		.accountName,
+		.spaceName {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			width: 100px;
+		}
+	}
+	.soulContent.soulCreating {
+		.iconObject {
+			background: white;
+			box-shadow: 0 0 0 0 white;
+			animation: pulse 2s infinite;
+		  }
+		  
+		  @keyframes pulse {
+			0% {
+			  transform: scale(0.95);
+			  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+			}
+			
+			70% {
+			  transform: scale(1);
+			  box-shadow: 0 0 0 12px rgba(255, 121, 63, 0);
+			}
+			
+			100% {
+			  transform: scale(0.95);
+			  box-shadow: 0 0 0 0 rgba(255, 121, 63, 0);
+			}
+		  }
+	}
+	.soulContent.spaceCreating {
+		.account {
+			transform: translateX(-100px);
+		}
+		.space {
+			transform: translateX(100px);
+			opacity: 1;
+		}
+		.lineLeft,
+		.lineRight {
+			width: 100px;
 		}
 	}
 }
