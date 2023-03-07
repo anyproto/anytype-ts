@@ -88,7 +88,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const targetId = this.getObjectId();
 		const object = detailStore.get(rootId, targetId);
 		const isCollection = this.isCollection();
-		//const records = this.getRecords();
+		const records = this.getRecords();
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
@@ -150,6 +150,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (loading) {
 			body = <Loader id="set-loader" />
+		} else
+		if (isInline && !targetId) {
+			body = this.getEmpty('target');
 		} else
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
@@ -253,13 +256,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		const { rootId, block, dataset, isInline } = this.props;
+		const { rootId, dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const length = ids.length;
-		const subId = dbStore.getSubId(rootId, block.id);
 
 		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
 			return;
@@ -848,7 +850,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getEmpty (type: string) {
-		const { isInline } = this.props;
+		const { isInline, block } = this.props;
 
 		let emptyProps = { 
 			title: '', 
@@ -858,23 +860,35 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		switch (type) {
-			case 'source':
+			case 'target': {
 				emptyProps = {
-					title: 'Type or relation has been deleted',
-					description: 'Visit the Marketplace to re-install these entities or select another source.',
+					title: 'No data source',
+					description: 'Connect one of your sets or create new<br/>one to continue',
+					button: 'Select source',
+					onClick: () => this.onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
+				};
+				break;
+			};
+
+			case 'source': {
+				emptyProps = {
+					title: 'No query selected',
+					description: 'Add search query to aggregate objects with equal<br/>types and relations in a live mode',
 					button: 'Select query',
 					onClick: this.onEmpty,
 				};
 				break;
+			};
 
-			case 'view':
+			case 'view': {
 				emptyProps = {
 					title: 'No objects',
 					description: 'Create your first one to begin',
 					button: 'Create object',
 					onClick: (e) => this.onRecordAdd(e, 1),
 				};
-
+				break;
+			};
 		};
 
 		return (
