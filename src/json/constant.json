@@ -13,6 +13,8 @@
 	},
 
 	"coverCnt": 13,
+	"iconCnt": 16,
+
 	"limit": {
 		"menuRecords": 100,
 		"widgetRecords": {

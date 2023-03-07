@@ -16,6 +16,7 @@ interface State {
 const NO_TEMPLATES = [ 
 	Constant.typeId.note, 
 	Constant.typeId.set, 
+	Constant.typeId.collection,
 	Constant.typeId.bookmark,
 ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
 
