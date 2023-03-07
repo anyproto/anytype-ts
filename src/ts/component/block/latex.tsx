@@ -56,9 +56,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
-				<div id="select" className="select" onClick={this.onTemplate}>
-					<div className="name">Template formula</div>
-					<Icon className="arrow light" />
+				<div className="selectWrap">
+					<div id="select" className="select" onClick={this.onTemplate}>
+						<div className="name">Template formula</div>
+						<Icon className="arrow light" />
+					</div>
 				</div>
 
 				<div id="value" onClick={this.onEdit} />
@@ -367,12 +369,13 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 		};
 
 		this.text = String(text || '');
-		this.value.html(katex.renderToString(this.text, { 
+
+		this.value.html(this.text ? katex.renderToString(this.text, { 
 			displayMode: true, 
 			throwOnError: false,
 			output: 'html',
 			trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-		}));
+		}) : '');
 
 		this.value.find('a').each((i: number, item: any) => {
 			item = $(item);

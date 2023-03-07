@@ -1868,9 +1868,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { rootId } = this.props;
 
 		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
-			window.setTimeout(() => {
-				this.focus(message.blockId, 0, 0, false);
-			}, 15);
+			if (param.type == I.BlockType.Text) {
+				window.setTimeout(() => { this.focus(message.blockId, 0, 0, false); }, 15);
+			};
 
 			if (callBack) {
 				callBack(message.blockId);
