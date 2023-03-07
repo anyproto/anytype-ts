@@ -124,13 +124,6 @@
 	"authPinCheckTitle": { "en": "Enter pin code" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
-	"authPinSelectTitle": { "en": "Choose pin code" },
-	"authPinSelectLabel": { "en": "This is one password you need to remember. You will need this password to login on this device." },
-
-	"authPinConfirmTitle": { "en": "Confirm pin code" },
-	"authPinConfirmLabel": { "en": "This is one password you need to remember. You will need this password to login on this device." },
-	"authPinConfirmError": { "en": "Pin codes do not match" },
-
 	"indexHi": { "en": "Hi, %s" },
 
 	"editorControlIcon": { "en": "Icon" },
