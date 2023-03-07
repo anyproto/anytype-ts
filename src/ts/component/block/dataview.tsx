@@ -661,7 +661,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		obj[relationKey] = value;
 
 		detailStore.update(subId, obj, false);
-		C.ObjectSetDetails(id, [ { key: relationKey, value: value } ], callBack);
+		C.ObjectSetDetails(id, [ { key: relationKey, value } ], callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
 		analytics.event(key, { type: 'dataview' });

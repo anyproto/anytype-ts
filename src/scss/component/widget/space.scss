@@ -7,7 +7,7 @@
 
 	.body { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; }
 
-	.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 16px; width: calc(100% - 40px); flex-grow: 1; }
+	.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 16px; flex-grow: 1; }
 	.side.left {
 		.iconObject { flex-shrink: 0; }
 		.txt { width: calc(100% - 64px); }
@@ -15,14 +15,14 @@
 		.type { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
 	}
 
-	.side.right { flex-shrink: 0; }
+	.side.right { flex-shrink: 0; opacity: 0; transition: $transitionFast; }
 
-	.icon { width: 28px; height: 28px; border-radius: 4px; background-size: 20px; opacity: 0; }
+	.icon { width: 28px; height: 28px; border-radius: 4px; background-size: 20px; }
 	.icon:hover { background-color: $colorHover; }
 	.icon.settings { background-image: url('~img/icon/widget/settings.svg'); }
 }
 
 .widget.widgetSpace:hover {
-	.info { width: calc(100% - 56px); }
-	.icon { opacity: 1; }
+	.side.left { width: calc(100% - 40px); }
+	.side.right { opacity: 1; }
 }

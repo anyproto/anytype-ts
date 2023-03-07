@@ -89,25 +89,20 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		if (layout != I.WidgetLayout.Space) {
 			let onClick = null;
-
-			if (!isEditing) {
-				if (!this.isCollection(targetBlockId)) {
-					onClick = e => ObjectUtil.openEvent(e, object);
-				} else {
-					onClick = () => setPreview(isPreview ? '' : block.id);
-				};
+			if (!this.isCollection(targetBlockId)) {
+				onClick = e => ObjectUtil.openEvent(e, object);
+			} else {
+				onClick = () => setPreview(isPreview ? '' : block.id);
 			};
 
 			head = (
 				<div className="head">
-					<div className="flex">
-						{back}
-						<div className="clickable" onClick={onClick}>
-							{icon}
-							<ObjectName object={object} />
-						</div>
-						{buttons}
+					{back}
+					<div className="clickable" onClick={onClick}>
+						{icon}
+						<ObjectName object={object} />
 					</div>
+					{buttons}
 				</div>
 			);
 		};

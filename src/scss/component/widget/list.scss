@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.widget.widgetList { display: flex; flex-direction: column; padding-bottom: 12px; };
+.widget.widgetList { display: flex; flex-direction: column; padding-bottom: 8px; };
 .widget.widgetList {
 	.loaderWrapper { position: relative; }
 	.head { padding-bottom: 0px; }
@@ -8,6 +8,7 @@
 	.contentWrapper { flex-grow: 1; }
 
 	#viewSelect { padding: 0px 16px 6px 16px; }
+	#viewSelect:empty { display: none; }
 	#viewSelect {
 		.viewList { width: 100%; overflow-x: auto; overflow-y: hidden; }
 		.viewList {
@@ -31,7 +32,7 @@
 		}
 	}
 
-	.body { display: flex; flex-direction: column; gap: 2px; padding: 0px 8px; }
+	.body { display: flex; flex-direction: column; padding: 0px 8px 4px 8px; }
 	.body {
 		.item { cursor: pointer; height: 64px; border-radius: 8px; position: relative; }
 		.item:hover, .item.active {

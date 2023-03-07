@@ -13,6 +13,8 @@
 	},
 
 	"coverCnt": 13,
+	"iconCnt": 16,
+
 	"limit": {
 		"menuRecords": 100,
 		"widgetRecords": {
@@ -105,6 +107,7 @@
 
 		"iconEmoji", 
 		"iconImage",
+		"iconOption",
 		
 		"coverId", 
 		"coverType", 
@@ -131,7 +134,7 @@
 	],
 
 	"defaultRelationKeys": [ 
-		"id", "workspaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "isHidden", "isArchived", 
+		"id", "workspaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
 		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions"
 	],
 

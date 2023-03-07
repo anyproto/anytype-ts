@@ -3,15 +3,15 @@
 .widget { background: $colorWhite; border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }
 .widget {
-	.head { width: 100%; position: relative; display: flex; flex-direction: column; cursor: pointer; padding: 12px 8px 10px 16px; z-index: 2; }
+	.head { 
+		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; justify-content: space-between; 
+		cursor: pointer; padding: 12px 8px 10px 16px;
+	}
 	.head {
-		.flex { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; justify-content: space-between; }
-		.flex {
-			.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
-			.clickable {
-				.iconObject { flex-shrink: 0; }
-				.name { @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 700; flex-grow: 1; }
-			}
+		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
+		.clickable {
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 700; flex-grow: 1; }
 		}
 
 		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
