@@ -70,14 +70,6 @@ export interface HistoryVersion {
 	time: number;
 };
 
-export interface PreviewLink {
-	type: string;
-	title: string;
-	description: string;
-	faviconUrl: string;
-	imageUrl: string;
-};
-
 export enum ImportMode {
 	AllOrNothing = 0,
 	IgnoreErrors = 1,

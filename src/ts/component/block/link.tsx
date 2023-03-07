@@ -286,9 +286,9 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { block } = this.props;
 		const { targetBlockId } = block.content;
 		const node = $(this.node);
-		const name = node.find('.name');
+		const element = node.find('.name');
 
-		Preview.previewShow(name, { param: targetBlockId, type: I.MarkType.Object, noUnlink: true });
+		Preview.previewShow({ element, target: targetBlockId, type: I.PreviewType.Graph, noUnlink: true });
 	};
 
 	resize () {
