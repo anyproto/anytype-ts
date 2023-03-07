@@ -35,6 +35,7 @@ import Tag from './util/tag';
 import Loader from './util/loader';
 import Deleted from './util/deleted';
 import Progress from './util/progress';
+import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
 
 import Pager from './util/pager';
@@ -111,6 +112,7 @@ export {
 	Loader,
 	Deleted,
 	Progress,
+	DotIndicator,
 	EmptySearch,
 	SelectionProvider,
 	Popup,

@@ -32,6 +32,7 @@ import 'scss/component/deleted.scss';
 import 'scss/component/drag.scss';
 import 'scss/component/dragbox.scss';
 import 'scss/component/dragLayer.scss';
+import 'scss/component/dotIndicator.scss';
 import 'scss/component/editor.scss';
 import 'scss/component/emptySearch.scss';
 import 'scss/component/error.scss';
