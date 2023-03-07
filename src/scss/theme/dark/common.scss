@@ -90,7 +90,7 @@ html.themeDark {
 	}
 
     .button.blank { border-color: $colorLineSecondary; }
-    .button.blank:hover { border-color: #525148; background: #dfddd0; color: #000; }
+    .button.blank:hover { border-color: #525148; background: $colorHover; }
 
 	.button.red { border-color: $colorLineSecondary; }
     .button.red:hover { border-color: #581f0c; background: #311107; }
@@ -344,6 +344,10 @@ html.themeDark {
 		.head::before { background-color: $colorHover; }
 	}
 
+	.widget.widgetSpace {
+		.icon:hover { background-color: $colorHover; }
+	}
+
 	.widget.isPreview {
 		.head { border-color: $colorLineSecondary; }
 	}
@@ -353,8 +357,13 @@ html.themeDark {
         .icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
         .icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
 
-        .item .inner:hover::before { background: $colorHover; }
-        .item.hover .inner::before { background: $colorHover; }
+        .item {
+			.inner:hover::before { background: $colorHover; }
+
+			.buttons {
+				.icon:hover { background-color: $colorHover; }
+			}
+		}
     }
 
 	.widget.widgetList {
@@ -375,6 +384,10 @@ html.themeDark {
 			.item {
 				.iconObject { background: $colorBgIcon; }
 				.iconObject.isTask, .iconObject.isBookmark { background: none; }
+
+				.buttons {
+					.icon:hover { background-color: $colorHover; }
+				}
 			}
 		}
 	}
