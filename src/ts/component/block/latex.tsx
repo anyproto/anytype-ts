@@ -100,8 +100,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 		this.setRange({ start: length, end: length });
 		this.setValue(this.text);
-
-		node.off('resize').on('resize', (e: any) => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -388,7 +386,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 		this.placeholderCheck(this.text);
 		this.updateRect();
-		this.resize();
 	};
 
 	placeholderCheck (value: string) {
@@ -397,6 +394,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 	onEdit (e: any) {
 		const { readonly } = this.props;
+		
 		if (readonly) {
 			return;
 		};
@@ -412,6 +410,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 	save (callBack?: (message: any) => void) {
 		const { rootId, block, readonly } = this.props;
+		
 		if (readonly) {
 			return;
 		};
@@ -419,7 +418,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 		const value = this.getValue();
 
 		blockStore.updateContent(rootId, block.id, { text: value });
-
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
@@ -427,7 +425,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 		this.range = range || { start: 0, end: 0 };
 	};
 
-	onSelect (e: any) {
+	onSelect () {
 		if (!this._isMounted) {
 			return;
 		};
@@ -439,15 +437,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 			keyboard.disableSelection(false);
 			this.win.off('mouseup.latex');
 		});
-	};
-
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		this.value.css({ height: 'auto' });
-		this.value.css({ height: this.value.height() + 20 });
 	};
 
 });
