@@ -1,9 +1,9 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockLatex { padding: 2px 0px; }
+	.block.blockLatex { padding: 6px 0px; }
 	.block.blockLatex { 
-		.wrap { padding: 6px 0px 8px 0px; }
+		.wrap { padding: 2px 0px; }
 		.wrap.isEditing { padding: 8px; box-shadow: 0px 0px 0px 1px $colorBorderDark; border-radius: 6px; }
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }

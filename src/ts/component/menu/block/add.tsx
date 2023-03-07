@@ -631,6 +631,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
 						};
 
+						// Auto-open BlockLatex edit mode
+						if (param.type == I.BlockType.Latex) {
+							window.setTimeout(() => { $(`#block-${newBlockId} #value`).trigger('click'); }, Constant.delay.menu);
+						};
+
 						if (param.type == I.BlockType.Dataview) {
 							window.setTimeout(() => { $(window).trigger(`setDataviewSource.${newBlockId}`); }, Constant.delay.menu);
 						};
