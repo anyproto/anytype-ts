@@ -63,7 +63,12 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<React.Fragment>
-				<Icon className="checkbox" onClick={(e: any) => { onMultiselect(record.id); }} />
+				<Icon
+					className="checkbox"
+					onClick={(e: any) => { onMultiselect(record.id); }}
+					onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
+					onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
+				/>
 				<div className="itemContent" onClick={this.onClick} onContextMenu={(e: any) => { onContext(e, record.id); }}>
 					{cover}
 

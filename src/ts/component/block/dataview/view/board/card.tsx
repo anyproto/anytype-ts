@@ -28,7 +28,12 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<React.Fragment>
-				<Icon className="checkbox" onClick={(e: any) => { onMultiselect(record.id); }} />
+				<Icon
+					className="checkbox"
+					onClick={(e: any) => { onMultiselect(record.id); }}
+					onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
+					onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
+				/>
 				<div className="cardContent" onClick={(e: any) => { this.onClick(e); }} onContextMenu={(e: any) => { onContext(e, record.id); }}>
 					{relations.map((relation: any, i: number) => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, 0);

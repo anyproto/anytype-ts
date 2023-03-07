@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, Relation, Util } from 'Lib';
+import {I, keyboard, Relation, Util} from 'Lib';
 import {Cell, DropTarget, Icon} from 'Component';
 import { dbStore } from 'Store';
 
@@ -70,6 +70,8 @@ const Row = observer(class Row extends React.Component<Props> {
 						draggable={true}
 						onClick={(e: any) => { onMultiselect(record.id); }}
 						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
+						onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
+						onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
 					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}

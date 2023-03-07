@@ -127,6 +127,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			loadData: this.loadData,
 			getView: this.getView,
 			getTarget: this.getTarget,
+			getObjectId: this.getObjectId(),
 			getSources: this.getSources,
 			getRecord: this.getRecord,
 			getRecords: this.getRecords,
@@ -265,8 +266,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 		win.on(`selectionEnd`, () => { this.onMultiselect(); });
 		win.on(`selectionClear.${I.SelectType.Record}`, () => {
-			console.log('SELECTION CLEAR')
-			// this.onMultiselect();
+			if (this.multiselect) {
+				this.switchMultiselect(false);
+			};
 		});
 	};
 
@@ -1011,8 +1013,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	multiselectAction (e: any, action: string) {
 		const objectId = this.getObjectId();
 
-		console.log('ACTION: ', action)
-
 		switch (action) {
 			case 'archive': {
 				const length = this.selected.length;
@@ -1023,7 +1023,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case 'unlink': {
-				console.log('SELECTED: ', this.selected)
 				C.ObjectCollectionRemove(objectId, this.selected);
 				break;
 			};

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I } from 'Lib';
+import {I, keyboard} from 'Lib';
 
 interface Props extends I.ViewComponent {
 	multiselectAction?(e: any, action: string): void;
@@ -40,6 +40,8 @@ const Selection = observer(class Selection extends React.Component<Props> {
 								key={i}
 								className={[ 'element' ].concat(item.className || []).join(' ')}
 								onClick={(e: any) => { multiselectAction(e, item.id); }}
+								onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
+								onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
 							>
 								{item.text}
 							</div>

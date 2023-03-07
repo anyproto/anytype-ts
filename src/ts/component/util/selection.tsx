@@ -521,8 +521,8 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			const type = I.SelectType[i];
 			const ids = this.get(type, true);
 
-			if (!ids.length) {
-				$(window).trigger(`selectionClear.${I.SelectType[i]}`);
+			if (!keyboard.isSelectionClearDisabled && !ids.length) {
+				$(window).trigger(`selectionClear.${type}`);
 			};
 
 			for (let id of ids) {

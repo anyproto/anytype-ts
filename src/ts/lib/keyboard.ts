@@ -32,6 +32,7 @@ class Keyboard {
 	isContextOpenDisabled = false;
 	isPasteDisabled = false;
 	isSelectionDisabled = false;
+	isSelectionClearDisabled = false;
 	
 	init () {
 		this.unbind();
