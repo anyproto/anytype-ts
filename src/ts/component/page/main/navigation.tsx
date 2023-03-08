@@ -79,7 +79,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			return (
 				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
 					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
-						{item.isRoot ? iconHome : <IconObject object={item} forceLetter={true} size={48} />}
+						{item.isRoot ? iconHome : <IconObject object={item} forceLetter={true} size={48} iconSize={24} />}
 						<div className="info">
 							<ObjectName object={item} />
 							<ObjectDescription object={item} />
@@ -146,8 +146,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				
 					{withButtons ? (
 						<div className="buttons">
-							<Button text={translate('popupNavigationOpen')} onClick={(e: any) => { this.onConfirm(e, item); }} />
-							{isPopup ? <Button text={translate('popupNavigationCancel')} color="blank" onClick={(e: any) => { popupStore.close('page'); }} /> : ''}
+							<Button text={translate('popupNavigationOpen')} className="c36" onClick={(e: any) => { this.onConfirm(e, item); }} />
+							{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={(e: any) => { popupStore.close('page'); }} /> : ''}
 						</div>
 					) : ''}
 				</div>
@@ -241,7 +241,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 						)}
 					</div>
 				</div>
-				<Footer component="mainNavigation" />
+
+				<Footer component="mainEdit" />
 			</div>
 		);
 	};
@@ -445,8 +446,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	loadPage (id: string) {
-		const filter = (it: I.PageInfo) => { return this.filterMapper(it); };
-
 		this.setState({ loading: true });
 
 		C.NavigationGetObjectInfoWithLinks(id, (message: any) => {
@@ -458,8 +457,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			let pagesIn = message.object.links.inbound.map(this.getPage);
 			let pagesOut = message.object.links.outbound.map(this.getPage);
 
-			pagesIn = pagesIn.filter(filter);
-			pagesOut = pagesOut.filter(filter);
+			pagesIn = pagesIn.filter(this.filterMapper);
+			pagesOut = pagesOut.filter(this.filterMapper);
 
 			this.panel = Panel.Center;
 			this.setState({ 
@@ -474,6 +473,10 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 	filterMapper (it: any) {
 		const { config } = commonStore;
+
+		if (!it.id) {
+			return false;
+		};
 
 		let ret = !it.isArchived && !it.isDeleted;
 		if (!config.debug.ho) {

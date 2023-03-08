@@ -24,7 +24,7 @@
 			.side.right { border-radius: 0px 12px 12px 0px; overflow: hidden; display: none; }
 
 			.name { @include text-common; line-height: 20px; font-weight: 500; @include clamp2; margin-bottom: 2px; }
-			.descr { @include text-small; line-height: 16px; color: $colorVeryDarkGrey; margin-bottom: 4px; @include clamp2; }
+			.descr { @include text-small; line-height: 16px; color: $colorDarkGrey; margin-bottom: 4px; @include clamp2; }
 			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
 		}
 		

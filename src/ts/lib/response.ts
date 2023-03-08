@@ -72,6 +72,12 @@ const AccountDelete = (response: any) => {
 	};
 };
 
+const AccountRecoverFromLegacyExport = (response: any) => {
+	return {
+		address: response.getAddress(),
+	};
+};
+
 const ObjectCreate = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
@@ -375,6 +381,7 @@ export {
 	AccountCreate,
 	AccountSelect,
 	AccountDelete,
+	AccountRecoverFromLegacyExport,
 
 	ObjectCreate,
 	ObjectCreateSet,

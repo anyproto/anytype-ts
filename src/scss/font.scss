@@ -17,78 +17,34 @@
 
 @font-face {
 	font-family: 'Inter'; font-style: normal; font-weight: 400;
-	src: url('~font/inter/regular.ttf') format('truetype');
+	src: url('~font/inter/regular.woff') format('woff');
 }
 @font-face {
 	font-family: 'Inter'; font-style: italic; font-weight: 400;
-	src: url('~font/inter/italic.ttf') format('truetype');
+	src: url('~font/inter/italic.woff') format('woff');
 }
 @font-face {
 	font-family: 'Inter'; font-style: normal; font-weight: 500;
-	src: url('~font/inter/medium.ttf') format('truetype');
+	src: url('~font/inter/medium.woff') format('woff');
 }
 @font-face {
 	font-family: 'Inter'; font-style: italic; font-weight: 500;
-	src: url('~font/inter/mediumitalic.ttf') format('truetype');
+	src: url('~font/inter/mediumitalic.woff') format('woff');
 }
 @font-face {
 	font-family: 'Inter'; font-style: normal; font-weight: 600;
-	src: url('~font/inter/bold.ttf') format('truetype');
+	src: url('~font/inter/semibold.woff') format('woff');
 }
 @font-face {
 	font-family: 'Inter'; font-style: italic; font-weight: 600;
-	src: url('~font/inter/bolditalic.ttf') format('truetype');
+	src: url('~font/inter/semibolditalic.woff') format('woff');
 }
 @font-face {
 	font-family: 'Inter'; font-style: normal; font-weight: 700;
-	src: url('~font/inter/extrabold.ttf') format('truetype');
+	src: url('~font/inter/bold.woff') format('woff');
 }
 
 @font-face {
 	font-family: 'Riccione'; font-style: normal; font-weight: 500;
 	src: url('~font/riccione/regular.ttf') format('truetype');
 }
-
-/*
-@font-face {
-	font-family: 'Mono'; font-style: normal; font-weight: 400;
-	src: url('~font/mono/regular.ttf') format('truetype');
-}
-@font-face {
-	font-family: 'Mono'; font-style: bold; font-weight: 600;
-	src: url('~font/mono/bold.ttf') format('truetype');
-}
-@font-face {
-	font-family: 'Mono'; font-style: italic; font-weight: 400;
-	src: url('~font/mono/italic.ttf') format('truetype');
-}
-@font-face {
-	font-family: 'Mono'; font-style: italic; font-weight: 600;
-	src: url('~font/mono/bolditalic.ttf') format('truetype');
-}
-
-@font-face {
-	font-family: 'Lcg'; font-style: normal; font-weight: 400;
-	src: url('~font/lcg/regular.otf') format('opentype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: italic; font-weight: 400;
-	src: url('~font/lcg/italic.otf') format('opentype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: normal; font-weight: 500;
-	src: url('~font/lcg/medium.otf') format('opentype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: italic; font-weight: 500;
-	src: url('~font/lcg/mediumitalic.ttf') format('truetype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: bold; font-weight: 600;
-	src: url('~font/lcg/bold.otf') format('opentype');
-}
-@font-face {
-	font-family: 'Lcg'; font-style: italic; font-weight: 600;
-	src: url('~font/lcg/bolditalic.ttf') format('truetype');
-}
-*/

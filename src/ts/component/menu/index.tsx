@@ -316,7 +316,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	componentDidUpdate () {
 		const { param } = this.props;
-		const { noAnimation, element } = param;
+		const { noAnimation } = param;
 		const node = $(this.node); 
 		const menu = node.find('.menu');
 
@@ -741,7 +741,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			if (item.isDiv) {
+			if (item.isDiv || item.isSection) {
 				onArrowDown();
 				return;
 			};
@@ -769,7 +769,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			if (item.isDiv) {
+			if (item.isDiv || item.isSection) {
 				onArrowUp();
 				return;
 			};

@@ -33,6 +33,7 @@
 		}
 		.dataviewEmpty.withHead { border-top: 0px; }
 		.dataviewEmpty {
+			.inner { width: 300px; }
 			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
 			.descr { @include text-small; margin: 0px 0px 8px 0px; }
 			.button { color: $colorBlack; }
@@ -106,7 +107,7 @@
 			.views {
 				.viewItem { 
 					display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; white-space: nowrap; 
-					@include text-paragraph; font-weight: 600; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; 
+					@include text-paragraph; font-weight: 700; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; 
 					line-height: 28px; 
 				}
 				.viewItem { 
@@ -152,7 +153,7 @@
 		}
 
 		.content {
-			.scroll { overflow-x: overlay; overflow-y: visible; transform: translate3d(0px,0px,0px); }
+			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
 			.scrollWrap { background: #fff; padding-bottom: 14px; }
 		}
 
@@ -216,6 +217,16 @@ html.platformMac {
 			.content {
 				.scrollWrap { padding: 0px; }
 				.scroll::-webkit-scrollbar { display: none; }
+			}
+		}
+	}
+}
+
+html.platformWindows {
+	.blocks {
+		.block.blockDataview {
+			.content {
+				.scroll { overflow: overlay; }
 			}
 		}
 	}

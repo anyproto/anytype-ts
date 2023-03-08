@@ -129,13 +129,14 @@ const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, avatarPath: string, storePath: string, code: string, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, avatarPath: string, storePath: string, code: string, icon: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 	
 	request.setName(name);
 	request.setAvatarlocalpath(avatarPath);
 	request.setStorepath(storePath);
 	request.setAlphainvitecode(code);
+	request.setIcon(icon);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
 };
@@ -177,6 +178,15 @@ const AccountMove = (path: string, callBack?: (message: any) => void) => {
 	request.setNewpath(path);
 
 	dispatcher.request(AccountMove.name, request, callBack);
+};
+
+const AccountRecoverFromLegacyExport = (path: string, rootPath: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Account.RecoverFromLegacyExport.Request();
+	
+	request.setPath(path);
+	request.setRootpath(rootPath);
+
+	dispatcher.request(AccountRecoverFromLegacyExport.name, request, callBack);
 };
 
 // ---------------------- FILE ---------------------- //
@@ -1227,11 +1237,26 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			request.setMarkdownparams(params);
 			break;
 
+		case I.ImportType.Migration:
+			params = new Rpc.Object.Import.Request.MigrationParams();
+			params.setAddress(options.address);
+			params.setPath(options.path);
+
+			request.setMigrationparams(params);
+			break;
+
 		case I.ImportType.Html:
 			params = new Rpc.Object.Import.Request.HtmlParams();
 			params.setPathList(options.paths);
 
 			request.setHtmlparams(params);
+			break;
+
+		case I.ImportType.Text:
+			params = new Rpc.Object.Import.Request.TxtParams();
+			params.setPathList(options.paths);
+
+			request.setTxtparams(params);
 			break;
 
 	};
@@ -1665,6 +1690,7 @@ export {
 
 	AccountCreate,
 	AccountRecover,
+	AccountRecoverFromLegacyExport,
 	AccountSelect,
 	AccountStop,
 	AccountDelete,

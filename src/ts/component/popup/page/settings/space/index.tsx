@@ -4,7 +4,6 @@ import { C, ObjectUtil, DataUtil, I, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
-import Head from '../head';
 
 interface Props extends I.Popup {
 	prevPage: string;
@@ -28,30 +27,26 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	render () {
 		const subId = Constant.subId.space;
 		const space = detailStore.get(subId, commonStore.workspace);
-		const home = detailStore.get(subId, space.spaceDashboardId);
 		const name = this.checkName(space.name);
+		const home = ObjectUtil.getSpaceDashboard();
 
 		return (
-			<div>
-				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
-
-				<div className="spaceInfo">
-					<IconObject
-						id="spaceIcon"
-						size={112}
-						object={space}
-						forceLetter={true}
-						canEdit={true}
-						menuParam={{ horizontal: I.MenuDirection.Center }}
-						onSelect={this.onSelect} 
-						onUpload={this.onUpload} 
-					/>
-				</div>
+			<React.Fragment>
+				<IconObject
+					id="spaceIcon"
+					size={112}
+					object={space}
+					forceLetter={true}
+					canEdit={true}
+					menuParam={{ horizontal: I.MenuDirection.Center }}
+					onSelect={this.onSelect} 
+					onUpload={this.onUpload} 
+				/>
 	
 				<div className="rows">
 					<div className="row">
 						<div className="name">
-							<Label className="small" text="Name" />
+							<Label className="small" text="Space name" />
 							<Input 
 								ref={ref => this.refName = ref} 
 								value={name} 
@@ -60,6 +55,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							/>
 						</div>
 					</div>
+
+					<Label className="section" text="Settings" />
 
 					<div className="row">
 						<div className="side left">
@@ -80,8 +77,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<div className="side right">
 							<div id="dashboard" className="select" onClick={this.onDashboard}>
 								<div className="item">
+									{home ? <IconObject size={20} iconSize={20} object={home} /> : ''}
 									<div className="name">
-										{home._empty_ ? 'Select' : home.name}
+										{home ? home.name : 'Select'}
 									</div>
 								</div>
 								<Icon className="arrow light" />
@@ -89,7 +87,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						</div>
 					</div>
 				</div>
-			</div>
+			</React.Fragment>
 		);
 	};
 
@@ -114,6 +112,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 				],
 				canAdd: true,
+				dataChange: (items: any[]) => {
+					return [
+						ObjectUtil.graph(),
+						{ isDiv: true },
+					].concat(items);
+				},
 				onSelect: (el: any) => {
 					C.ObjectWorkspaceSetDashboard(workspace, el.id, (message: any) => {
 						if (message.error.code) {

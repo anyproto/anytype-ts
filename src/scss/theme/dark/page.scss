@@ -86,6 +86,8 @@
 			.tab:hover, .tab.active { color: $colorPrimary; }
 		}
 
+		.emptySearch { border-color: $colorLinePrimary; }
+
 		.mid {
 			.filter { border-color: $colorLinePrimary; }
 		}
@@ -198,5 +200,13 @@
 .pageMainBookmark {
     .wrapper {
         .item.add:hover { background: $colorHover; }
+    }
+}
+
+/* PageMainEmpty */
+
+.pageMainEmpty {
+    .wrapper {
+        .row { border-color: $colorLinePrimary; }
     }
 }

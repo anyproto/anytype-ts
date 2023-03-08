@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Select } from 'Component';
+import { Title, Label, Select, Button } from 'Component';
 import { I, Util, Storage, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -37,40 +37,35 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 		});
 
 		return (
-			<div>
-				<Head {...this.props} returnTo="account" name={translate('popupSettingsAccountTitle')} />
-
+			<React.Fragment>
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinText')} />
-
-				<div className="rows">
-					{pin ? (
-						<React.Fragment>
-							<div className="row red" onClick={this.onTurnOffPin}>
-								<Label text={translate('popupSettingsPinOff')} />
+				
+				{pin ? (
+					<div className="rows">
+						<div className="row">
+							<div className="side left">
+								<Label text="PIN code check time-out" />
 							</div>
-
-							<div className="row">
-								<div className="side left">
-									<Label text="PIN code check time-out" />
-								</div>
-								<div className="side right">
-									<Select id="pinTime" arrowClassName="light" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
-								</div>
+							<div className="side right">
+								<Select id="pinTime" arrowClassName="light" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
 							</div>
-
-							<div className="row" onClick={this.onChangePin}>
-								<Label text={translate('popupSettingsPinChange')} />
-							</div>
-						</React.Fragment>
-					): (
-						<div className="row" onClick={this.onTurnOnPin}>
-							<Label text={translate('popupSettingsPinOn')} />
 						</div>
-					)}
-				</div>
 
-			</div>
+						<div className="row cp" onClick={this.onChangePin}>
+							<Label text={translate('popupSettingsPinChange')} />
+						</div>
+
+						<div className="row red cp" onClick={this.onTurnOffPin}>
+							<Label text={translate('popupSettingsPinOff')} />
+						</div>
+					</div>
+				): (
+					<div className="buttons">
+						<Button className="c36" text={translate('popupSettingsPinOn')} onClick={this.onTurnOnPin} />
+					</div>
+				)}
+			</React.Fragment>
 		);
 	};
 

@@ -6,7 +6,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCac
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
 import { I, C, Relation, keyboard, Dataview } from 'Lib';
-import { menuStore, dbStore, blockStore } from 'Store';
+import { menuStore, dbStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HEIGHT = 28;
@@ -15,7 +15,7 @@ const LIMIT = 20;
 const MenuRelationList = observer(class MenuRelationList extends React.Component<I.Menu> {
 	
 	node: any = null;
-	n = 0;
+	n = -1;
 	top = 0;
 	cache: any = {};
 	refList: any = null;
@@ -227,6 +227,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
+		const object = detailStore.get(rootId, rootId);
 
 		const onAdd = () => {
 			if (data.onAdd) {
@@ -246,6 +247,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				menuIdEdit: 'dataviewRelationEdit',
 				filter: '',
 				ref: 'dataview',
+				object,
 				skipKeys: relations.map(it => it.relationKey),
 				onAdd,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

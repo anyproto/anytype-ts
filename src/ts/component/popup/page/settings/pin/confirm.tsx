@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Title, Label, Pin, Error } from 'Component';
 import { I, Storage, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import Head from '../head';
 
 interface Props extends I.Popup {
 	prevPage: string;
@@ -33,15 +32,12 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 		const pin = Storage.get('pin');
 
 		return (
-			<div>
-				<Head {...this.props} name={translate('commonCancel')} />
-
+			<React.Fragment>
 				<Title text={translate('popupSettingsPinTitle')} />
-				<Label text={translate('popupSettingsPinVerify')} />
-				<Error text={error} />
-
+				<Label className="description" text={translate('popupSettingsPinVerify')} />
 				<Pin value={pin} onSuccess={this.onCheckPin} onError={this.onError} />
-			</div>
+				<Error text={error} />
+			</React.Fragment>
 		);
 	};
 

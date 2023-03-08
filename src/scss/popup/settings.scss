@@ -2,281 +2,207 @@
 
 .popups {
 	.popupSettings {
-		.innerWrap { width: 672px; }
-		.innerWrap.scroll { overflow-x: hidden; overflow-y: overlay; }
+		.innerWrap { width: 958px; height: 650px; }
+		.innerWrap.scroll {
+			.sides > .side.left { display: none; } 
+			.sides > .side.right { width: 100%; }
+		}
 		.content { height: 100%; }
 
-		.icon { transition: none; }
-		.title { font-size: 28px; line-height: 32px; letter-spacing: -0.36px; font-weight: 600; padding: 20px 0px; text-align: center; }
-		.description { margin-bottom: 26px; }
-		.inputs { margin-bottom: 32px; }
-		.textareaWrap { color: $colorIce; }
-		.pin { text-align: center; }
+		.sides { display: flex; height: 100%; }
+		.sides {
+			> .side { position: relative; }
+			> .side.left { width: 274px; background: $colorVeryLightGrey; padding: 16px 8px; overflow: auto; }
+			> .side.left {
+				.iconObject.withLetter { background-color: $colorBorderDark; }
 
-		.label.center { text-align: center; }
-		.label.grey { color: $colorMediumGrey; }
-		
-		.head { 
-			position: absolute; left: 0px; top: 0px; width: 100%; height: 40px; padding: 8px 12px; background: $colorWhite; z-index: 1;
-			border-radius: 12px 12px 0px 0px; text-align: left;
-		}
-		.head {
-			.icon.back { width: 24px; height: 24px; cursor: pointer; background-image: url('~img/icon/popup/settings/back0.svg'); margin-top: -2px; }
-			
-			.element { color: $colorDarkGrey; cursor: pointer; display: inline-block; height: 24px; line-height: 24px; }
-			.element:hover { color: $colorBlack; }
-			.element:hover {
-				.icon.back { background-image: url('~img/icon/popup/settings/back1.svg'); } 
-			}
-		}
-
-		.message { padding: 16px; background: #ffebe5; border-radius: 8px; color: $colorBlack; }
-		.message {
-			.button { flex-shrink: 0; background: none; padding: 0px; height: auto; @include text-common; color: #ee420b; }
-			.label { font-weight: 600; }
-			.flex { gap: 0px 16px; align-items: center; justify-content: space-between; }
-			b { display: block; }
-		}
-		
-		.tab { padding: 44px 48px 48px 48px; }
-
-		.label.small, .label.sectionName { @include text-small; color: $colorDarkGrey; }
-		.label.sectionName { padding: 30px 0px 4px 0px; }
-		.label.sectionName.center { text-align: center; }
-
-		.tabIndex { padding: 24px 48px 48px 48px; }
-		.tabIndex, .tabAccount, .tabAppearance, .tabPersonal, .tabPinIndex, .tabDelete, .tabExportMarkdown, .tabSpaceIndex, .tabSpaceInvite, .tabSpaceTeam, .tabSpaceLeave, .tabSpaceRemove {
-			.row { 
-				padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
-				@include text-paragraph; line-height: 28px; display: flex; align-items: center; flex-direction: row;
-			}
-			.row.red { color: $colorRed; }
-
-			.row {
-				.icon, .iconObject { width: 28px; height: 28px; margin: 0px 12px 0px 0px; vertical-align: top; }
-				.icon.account { background-image: url('~img/icon/popup/settings/account.svg'); }
-				.icon.personal { background-image: url('~img/icon/popup/settings/personal.svg'); }
-				.icon.appearance { background-image: url('~img/icon/popup/settings/appearance.svg'); }
-				.icon.wallpaper { background-image: url('~img/icon/popup/settings/wallpaper.svg'); }
-				.icon.phrase { background-image: url('~img/icon/popup/settings/phrase.svg'); }
-				.icon.pin { background-image: url('~img/icon/popup/settings/pin.svg'); }
-				.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
-				.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
-				.icon.other { background-image: url('~img/icon/popup/settings/other.svg'); }
-				
-				.icon.arrow { 
-					width: 24px; height: 24px; background-image: url('~img/icon/popup/settings/arrow.svg'); position: absolute; right: 0px;
-					top: 50%; margin: -12px 0px 0px 0px; 
+				.section { margin: 0px 0px 25px 0px; }
+				.section:last-child { margin: 0px; }
+				.section {
+					> .name { @include text-small; color: $colorDarkGrey; margin: 0px 0px 4px 0px; padding: 0px 8px; }
 				}
-				.icon.dot { 
-					width: 12px; height: 12px; border-radius: 100%; background: #ee420b; position: absolute; right: 24px;
-					top: 50%; margin: -6px 0px 0px 0px; 
-				}
-				
-				.side { width: 50%; line-height: 28px; }
-				.side.right { text-align: right; }
 
-				.side.c25 { width: 25%; }
-				.side.c75 { width: 75%; }
+				.space { 
+					display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px; 
+					border-radius: 8px; transition: $transitionFast; cursor: pointer;
+				}
+				.space:hover, .space.active { background: $colorBorderDark; }
+				.space {
+					.iconObject { flex-shrink: 0; }
+					.txt { width: calc(100% - 40px); }
+					.name { @include text-common; font-weight: 500; }
+					.type { @include text-small; color: $colorDarkGrey; }
+				}
+
+				.item { 
+					display: flex; flex-direction: row; gap: 0px 10px; margin: 0px 0px 2px 0px; padding: 5px 8px; 
+					cursor: pointer; border-radius: 8px; transition: $transitionFast;
+				}
+				.item:hover, .item.active { background: $colorBorderDark; }
+				.item {
+					.icon { width: 22px; height: 22px; }
+					.icon.personal { background-image: url('~img/icon/popup/settings/personal.svg'); }
+					.icon.cloud { background-image: url('~img/icon/popup/settings/cloud.svg'); }
+					.icon.appearance { background-image: url('~img/icon/popup/settings/appearance.svg'); }
+					.icon.wallpaper { background-image: url('~img/icon/popup/settings/wallpaper.svg'); }
+					.icon.phrase { background-image: url('~img/icon/popup/settings/phrase.svg'); }
+					.icon.pin { background-image: url('~img/icon/popup/settings/pin.svg'); }
+					.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
+					.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
+				}
 
 				.select { transition: none; border: 0px; color: $colorMediumGrey; max-width: 100%; }
 				.select { 
 					.icon.arrow { top: 3px; margin: 0px !important; }
 				}
-				.status { position: absolute; text-align: right; right: 24px; top: 50%; margin-top: -14px; height: 28px; color: $colorMediumGrey; }
 			}
 
-			.row.location { align-items: center; }
-			.row.location {
-				.side.right { @include text-small; }
-				.label { @include text-overflow-nw; width: 100%; }
-			}
-
-			.logout { color: $colorMediumGrey; cursor: pointer; text-align: center; @include text-paragraph; line-height: 28px; padding: 18px 0px; }
-			.logout:hover { color: $colorBlack; }
-		}
-
-		.tabAccount {
-			.userInfo { display: flex; align-items: flex-end; gap: 0px 24px; }
-			.userInfo {
-				.iconWrapper { position: relative; }
-				.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: rgba(255,255,255,0.3); }
-
-				.iconObject { flex-shrink: 0; width: 80px; cursor: pointer; }
-				.iconObject:after {
-					content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
-					background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
-					transition: $transitionFast; opacity: 0;
+			> .side.right { width: calc(100% - 274px); padding: 44px 54px; }
+			> .side.right {
+				.head { width: 100%; margin: 0px 0px 36px 0px; }
+				.head {
+					.icon.back { width: 8px; height: 8px; cursor: pointer; background-image: url('~img/icon/popup/settings/back.svg'); }
+					
+					.element { 
+						color: $colorDarkGrey; cursor: pointer; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 4px; 
+						border-radius: 6px; margin-left: -5px;
+					}
+					.element:hover { background: $colorHover; }
 				}
-				.iconObject:hover:after { opacity: 1; }
 
-				.name { width: 100%; padding-bottom: 12px; border-bottom: 1px solid $colorBorderLight; }
+				.title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
+				.description { margin: 0px 0px 24px 0px; }
+				b { font-weight: 500; }
+
+				.row { 
+					padding: 14px 0px 13px 0px; display: flex; justify-content: space-between; border-bottom: 1px solid $colorBorderLight; 
+					align-items: center; @include text-paragraph;
+				}
+				.row.red { color: $colorRed; }
+
+				.error { margin: 8px 0px 0px 0px; }
+
+				.label.small, .label.section, .label.grey { color: $colorDarkGrey; }
+				.label.small, .label.section { @include text-small; }
+				.label.section { margin: 30px 0px 4px 0px; }
+
+				.select { border: 0px; color: $colorDarkGrey; }
+
+				.name { width: 100%; }
 				.name {
-					.input { padding: 0; @include text-header2; }
+					.label { margin: 0px 0px 6px 0px; }
+					.input { @include text-header2; padding: 0px; }
+				}
+
+				.iconWrapper { position: relative; margin: 0px 0px 12px 0px; display: inline-block; }
+				.iconWrapper {
+					.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: rgba(255,255,255,0.3); }
+
+					.iconObject { flex-shrink: 0; cursor: pointer; }
+					.iconObject:after {
+						content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
+						background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
+						transition: $transitionFast; opacity: 0;
+					}
+					.iconObject:hover:after { opacity: 1; }
 				}
 			}
 		}
 
-		.tabDelete {
-			.text { margin-bottom: 10px; }
-			.text {
-				b { display: block; margin-bottom: 10px; }
-				p { margin-bottom: 10px; }
-				.check { display: flex; align-items: center; gap: 0px 6px; cursor: pointer; }
-			}
+		.tabSpaceIndex {
+			> .iconObject { margin: 0px 0px 12px 0px; }
 		}
 
-		.tabAppearance {
-			.buttons { display: flex; justify-content: space-evenly; }
+		.side.right.tabPhrase {
+			.inputs { margin: 0px 0px 54px 0px; }
+			.title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
 
-			.btn { text-align: center; @include text-small; cursor: pointer; }
-			.btn {
-				.icon { width: 128px; height: 68px; margin-bottom: 4px; border-radius: 14px; padding: 4px; }
-				.icon {
-					.inner { width: 120px; height: 60px; border-radius: 12px; background-size: cover; background-position: center; background-repeat: no-repeat; }
-				}
-
-				.icon.light .inner { background-image: url('~img/icon/popup/settings/theme/light.svg'); }
-				.icon.dark .inner { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
-				.icon.system .inner { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
-			}
-
-			.btn.active {
-				.icon { box-shadow: 0px 0px 0px 2px #ffee94 inset; }
-			}
-		}
-		
-		.tabWallpaper { overflow-y: overlay; height: 520px; }
-		.tabWallpaper {
-			.title { text-align: left; }
-			.covers { margin-left: -2px; width: 596px; display: flex; flex-wrap: wrap; gap: 16px 10px; }
-			
-			.row { margin-bottom: 24px; }
-			.row:last-child { margin: 0px; }
-			
-			.label { margin-bottom: 8px; } 
-			.label.name { margin-bottom: 11px; @include text-very-small; color: $colorMediumGrey; text-transform: uppercase; }
-			
-			.item { 
-				width: 108px; height: 70px; display: inline-block; vertical-align: top; cursor: pointer;
-				position: relative; border: 1px solid rgba(0,0,0,0); border-radius: 4px;
-			}
-			.item:hover, .item.active:hover { border: 2px solid $colorOrange; }
-			.item.active { border: 1px solid $colorBorderLight; }
-			
-			.item.fileWrap { margin: 0px 0px 0px -2px; }
-			
-			.item {
-				.cover.upload { 
-					background-image: url('~img/icon/popup/settings/upload.svg'); background-size: 24px 24px;
-					border: 1px solid $colorBorderLight; background-position: center;
-				}
-			}
-			
-			.cover { position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px); border-radius: 1px; }
-		}
-		
-		.tabPhrase {
-			.label { margin-bottom: 25px; }
-			.inputs { margin-bottom: 40px; }
-			.textareaWrap { margin-bottom: 20px; }
-
-			.sides { margin-bottom: 20px; display: flex; }
-			.sides { 
-				b { margin-bottom: 5px; display: block; }
-				.label { margin: 0px; }
-				.side { width: 100%; }
-				.side.right { text-align: right; font-size: 0px; width: 50%; padding: 6px;}
-				canvas { display: inline-block; }
-			}
-
-			.qrWrap { 
-				padding: 16px; border-radius: 12px; display: inline-block; width: 132px; height: 132px; 
-				background: $colorVeryLightGrey;
-			}
+			.qrWrap { padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; }
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
 			}
-
-			.button { font-size: 16px; }
 		}
 
-		.tabLogout {
-			.label { margin-bottom: 25px; }
-			.inputs { margin-bottom: 20px; }
-			.buttons { margin-top: 32px; display: flex; gap: 0px 16px; }
+		.side.right.tabLogout { padding-top: 22px; }
+		.side.right.tabLogout {
+			.inputs { margin: 0px 0px 24px 0px; }
+			.buttons { display: flex; gap: 0px 16px; }
 		}
 
-		.tabPinConfirm { text-align: center; }
-		
-		.tabPinSelect, .tabPinConfirm {
-			.label { margin-bottom: 23px; }
-			.input { 
-				width: 40px; height: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px;
-				border: 1px solid #e0ded2; 
+		.side.right.tabDelete { padding-top: 22px; }
+		.side.right.tabDelete {
+			.text { margin: 0px 0px 32px 0px; }
+			.text {
+				b { margin: 0px 0px 8px 0px; display: block; }
 			}
-			.input.active { box-shadow: 0px 0px 0px 1px $colorOrange inset; border-color: $colorOrange; }
-			.input-password { font-size: 14px; line-height: 1; }
-			.input:last-child { margin: 0px; }
-			
-			.button.blank { 
-				padding: 20px 0px; width: 100%; display: block; height: auto; line-height: 24px; background: none; color: #e89d00;
-				border: 0px; border-radius: 0px; border-bottom: 1px solid $colorBorderLight; @include text-paragraph; font-weight: 400;
-			}
-			.button.blank:hover { color: $colorBlack; }
 
-			.button.blank {
-				.txt { line-height: inherit; }
+			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; }
+		}
+
+		.side.right.tabAppearance {
+			.buttons { display: flex; gap: 0px 34px; margin: 0px 0px 32px 0px; }
+
+			.btn { text-align: center; @include text-small; cursor: pointer; }
+			.btn {
+				.bg { 
+					width: 120px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; 
+					position: relative;
+				}
+				.icon { width: 40px; height: 40px; display: block; z-index: 1; position: relative; }
+			}
+
+			.btn.light { 
+				.bg { box-shadow: 0px 0px 0px 1px $colorBorderDark; }
+				.icon { background-image: url('~img/icon/popup/settings/theme/light.svg'); }
+			}
+
+			.btn.dark {
+				.bg { background: $colorBlack; }
+				.icon { background-image: url('~img/icon/popup/settings/theme/dark.svg'); }
+			}
+			.btn.system {
+				.bg::before, .bg::after { content: ''; position: absolute; top: 0px; width: 50%; height: 100%; }
+				.bg::before { left: 0px; box-shadow: 0px 0px 0px 1px $colorBorderDark; border-radius: 14px 0px 0px 14px; }
+				.bg::after { right: 0px; background: $colorBlack; border-radius: 0px 14px 14px 0px; }
+				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
+			}
+
+			.btn.active {
+				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
+			}
+			.btn.system.active {
+				.bg::before { box-shadow: 0px 0px; }
 			}
 		}
 
-		.tabImportIndex {
-			.label { margin-bottom: 26px; }
-
-			.items { 
-				/*display: grid; grid-template-columns: repeat(4, 132px); grid-column-gap: 16px; grid-row-gap: 16px;*/
-				display: flex; justify-content: center; gap: 16px;
-			}
+		.side.right.tabImportIndex {
+			.items { display: flex; gap: 16px; }
 			.item { 
-				width: 132px; height: 84px; border: 1px solid $colorBorderLight; border-radius: 8px; 
-				text-align: center; transition: $transitionFast; line-height: 82px;	display: inline-block; cursor: pointer;
-				vertical-align: top; position: relative;
+				width: 132px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionFast; cursor: pointer; 
+				position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
 			}
-			.item:nth-child(4n + 4) { margin-right: 0px; }
 			.item:hover { border-color: $colorBlack; }
 
 			.item {
-				.icon { 
-					width: 28px; margin-bottom: 6px; height: 32px; background-size: contain; 
-					background-position: top center;
-				}
+				.icon { width: 28px; margin: 0px 0px 8px 0px; height: 28px; background-size: contain; background-position: top center; }
 				.name { @include text-small; }
 			}
 
-			.item.notion .icon {  background-image: url('~img/icon/popup/settings/import/notion.svg'); }
+			.item.notion .icon { background-image: url('~img/icon/popup/settings/import/notion.svg'); }
 			.item.markdown .icon { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
 			.item.html .icon { background-image: url('~img/icon/popup/settings/import/html.svg'); }
+			.item.text .icon { background-image: url('~img/icon/popup/settings/import/text.svg'); }
 		}
 
-		.tabImportNotion, .tabImportMarkdown {
-			.label, .path { margin-bottom: 10px; }
-			.label.last { margin: 0px; }
-			.button { margin: 25px 0px; }
-		}
-
-		.tabImportNotion, .tabImportNotionHelp, .tabImportNotionWarning {
-			.list { margin-left: 1em; }
-		}
-
-		.tabImportNotion {
-			.inputWrapper { flex-direction: row; align-items: flex-start; gap: 0px 8px; margin: 32px 0px; }
+		.side.right.tabImportNotion { padding-top: 22px; }
+		.side.right.tabImportNotion {
+			.inputWrapper { flex-direction: row; align-items: flex-start; gap: 0px 8px; margin: 0px 0px 58px 0px; }
 			.inputWrapper { 
-				.input { height: 40px; border: 1px solid $colorBorderDark; border-radius: 6px; }
+				.input { height: 36px; border: 1px solid $colorBorderDark; border-radius: 6px; }
 				.button { margin: 0px; flex-shrink: 0; }
 				.errorWrapper { flex-grow: 1; }
 				.error { @include text-small; margin: 2px 0px 0px 0px; }
 			}
-			.line { height: 1px; background: $colorBorderLight; margin: 0px 0px 24px 0px; }
 
 			.helpWrapper { flex-direction: row; align-items: center; gap: 0px 8px; margin: 0px 0px 16px 0px; justify-content: space-between; }
 			.helpWrapper {
@@ -295,7 +221,7 @@
 				}
 			}
 
-			.list { @include text-small; }
+			.list { @include text-small; margin-left: 1.35em; }
 			.list {
 				li { margin: 0px 0px 12px 0px; }
 				.label { margin: 0px 0px 4px 0px; }
@@ -303,10 +229,10 @@
 			}
 		}
 
-		.tabImportNotionHelp { overflow-x: hidden; overflow-y: overlay; padding-top: 76px; }
-		.tabImportNotionHelp {
-			.icon.notion { width: 28px; height: 28px; background-image: url('~img/icon/popup/settings/import/notion.svg'); }
-			.title { text-align: left; }
+		.side.right.tabImportNotionHelp { padding-top: 22px; }
+		.side.right.tabImportNotionHelp {
+			.icon.notion { width: 28px; height: 28px; background-image: url('~img/icon/popup/settings/import/notion.svg'); margin: 0px 0px 16px 0px; }
+			.title { margin: 0px 0px 44px 0px !important; }
 			.label.step { @include text-paragraph; font-weight: 700; margin: 0px 0px 16px 0px; }
 
 			.list { margin: 0px 0px 64px 1em; }
@@ -318,64 +244,13 @@
 			}
 		}
 
-		.tabImportNotionWarning {
-			.title { text-align: left; }
-			.listWrapper { padding: 16px; border: 1px solid $colorVeryLightGrey; border-radius: 8px; margin: 32px 0px 24px 0px; }
-
-			.list { @include text-small; }
-			.list {
-				li { margin: 0px 0px 12px 0px; }
-				.label { margin: 0px 0px 4px 0px; }
+		.side.right.tabExportMarkdown {
+			.labels {
+				.label { margin: 0px 0px 12px 0px; }
 				.label:last-child { margin: 0px; }
 			}
-		}
 
-		.tabExportMarkdown {
-			.label.last { margin: 0px; }
-			.button { margin-top: 25px; }
-		}
-
-		.tabSpaceIndex {
-			.spaceInfo { text-align: center; }
-			.spaceInfo {
-				.iconObject { margin: 0px auto 12px auto; }
-				.iconObject.canEdit { cursor: pointer; }
-				.iconObject.canEdit:hover:after { opacity: 1; }
-
-				.input { margin-bottom: 12px; padding: 8px 0px 16px; height: auto; border-bottom: 1px solid $colorBorderDark; width: 384px; }
-			}
-
-			.name {
-				.input { padding: 0; @include text-header2; }
-			}
-		}
-
-		.tabSpaceInvite, .tabSpaceLeave, .tabSpaceRemove {
-			.title { text-align: left; }
-		}
-
-		.tabSpaceInvite {
-			.label.description { margin: 20px 0px 28px; }
-		}
-
-		.tabSpaceLeave, .tabSpaceRemove {
-			.label { margin-bottom: 28px; }
-		}
-
-		.tabSpaceTeam {
-			.title { padding-bottom: 4px; }
-			.label.counter { text-align: center; margin-bottom: 20px; color: $colorDarkGrey; }
-
-			.filter { margin-bottom: 8px; padding: 0px; }
-
-			.rows { height: 100%; margin-bottom: 12px; }
-			.row { height: 44px; border: 0px; padding: 8px 0px; }
-			.row {
-				.left { display: flex; }
-				.right { font-size: 14px; }
-			}
-
-			.buttons { text-align: center; }
+			.rows { margin: 24px 0px; }
 		}
 	}
 }

@@ -104,20 +104,20 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				arrow = true;
 			};
 
-			button = <Button id="button-create" text={text} arrow={arrow} onClick={onCreate} />;
+			button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
 		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
-			let onClick = null;
-			let className = '';
+			const cn = [ 'c36' ];
 
+			let onClick = null;
 			if (this.isInstalled()) {
-				className = 'blank disabled';
+				cn.push('blank disabled');
 			} else {
 				onClick = this.onInstall;
 			};
 
-			button = <Button id="button-install" text="Install" className={className} onClick={onClick} />;
+			button = <Button id="button-install" text="Install" className={cn.join(' ')} onClick={onClick} />;
 		};
 
 		return (

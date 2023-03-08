@@ -28,11 +28,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 				</div>
 
 				<div className="side right">
-					<Icon
-						className="settings"
-						tooltip="Settings"
-						onClick={this.onOpenSettings}
-					/>
+					<Icon className="settings" tooltip="Settings" onClick={this.onOpenSettings} />
 				</div>
 			</div>
 		);

@@ -4,16 +4,6 @@ import { analytics, I, Storage, Util, DataUtil } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Preview {
-	type: I.MarkType,
-	param: string;
-	element: any;
-	range: I.TextRange;
-	marks: I.Mark[];
-	noUnlink?: boolean;
-	onChange?(marks: I.Mark[]): void;
-};
-
 interface Filter {
 	from: number;
 	text: string;
@@ -61,9 +51,9 @@ class CommonStore {
 		image: '',
 	};
 
-	public previewObj: Preview = { 
-		type: 0, 
-		param: '', 
+	public previewObj: I.Preview = { 
+		type: null, 
+		target: null, 
 		element: null, 
 		range: { from: 0, to: 0 }, 
 		marks: [],
@@ -129,7 +119,7 @@ class CommonStore {
 		return this.progressObj;
 	};
 
-    get preview(): Preview {
+    get preview(): I.Preview {
 		return this.previewObj;
 	};
 
@@ -249,7 +239,7 @@ class CommonStore {
 		this.filterSetText(text);
 	};
 
-    previewSet (preview: Preview) {
+    previewSet (preview: I.Preview) {
 		this.previewObj = preview;
 	};
 
@@ -292,7 +282,7 @@ class CommonStore {
 	};
 
 	previewClear () {
-		this.previewObj = { type: 0, param: '', element: null, range: { from: 0, to: 0 }, marks: [] };
+		this.previewObj = { type: null, target: null, element: null, range: { from: 0, to: 0 }, marks: [] };
 	};
 
 	toastClear () {

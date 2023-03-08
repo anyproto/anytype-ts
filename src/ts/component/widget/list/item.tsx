@@ -8,7 +8,7 @@ type Props = {
 	block: I.Block;
 	subId: string;
 	id: string;
-	isDraggable?: boolean;
+	isEditing?: boolean;
 	style?: any;
 };
 
@@ -17,11 +17,11 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	node = null;
 
 	render () {
-		const { subId, id, block, isDraggable, style } = this.props;
+		const { subId, id, block, isEditing, style } = this.props;
 		const rootId = keyboard.getRootId();
 		const object = detailStore.get(subId, id);
 		const iconSize = [ I.ObjectLayout.Task, I.ObjectLayout.Bookmark ].includes(object.layout) ? 20 : 28;
-		const canDrop = !isDraggable && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+		const canDrop = !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
 
 		let inner = (
 			<div className="inner">

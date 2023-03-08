@@ -236,8 +236,8 @@ class BlockStore {
 			list = this.unwrapTree([ this.wrapTree(rootId, rootId) ]);
 		};
 
-		const idx = list.findIndex((item: I.Block) => { return item.id == id; });
-		if (idx + dir < 0 || idx + dir > list.length - 1) {
+		const idx = list.findIndex(item => item.id == id);
+		if ((idx + dir < 0) || (idx + dir > list.length - 1)) {
 			return null;
 		};
 

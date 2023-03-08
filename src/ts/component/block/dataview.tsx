@@ -79,8 +79,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	render () {
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { loading } = this.state;
-
 		const views = dbStore.getViews(rootId, block.id);
+
 		if (!views.length) {
 			return null;
 		};
@@ -94,7 +94,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const targetId = this.getObjectId();
 		const object = detailStore.get(rootId, targetId);
 		const isCollection = this.isCollection();
-		//const records = this.getRecords();
+		const records = this.getRecords();
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
@@ -158,6 +158,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (loading) {
 			body = <Loader id="set-loader" />
 		} else
+		if (isInline && !targetId) {
+			body = this.getEmpty('target');
+		} else
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
 		} else {
@@ -168,8 +171,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					multiselectAction={this.multiselectAction}
 				/>
 			) : (
-				<Controls
-					ref={(ref: any) => { this.refControls = ref; }}
+				<Controls 
+					ref={(ref: any) => { this.refControls = ref; }} 
 					{...this.props}
 					{...dataviewProps}
 					className={className}
@@ -250,6 +253,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
+
 		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection selectionEnd selectionClear.${I.SelectType.Record}`);
 	};
 
@@ -273,13 +277,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		const { rootId, block, dataset, isInline } = this.props;
+		const { rootId, dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const length = ids.length;
-		const subId = dbStore.getSubId(rootId, block.id);
 
 		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
 			return;
@@ -461,7 +464,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getSources (): string[] {
 		const target = this.getTarget();
-		return target._empty_ || this.isCollection() ? [] : target.setOf;
+		const setOf = target._empty_ || this.isCollection() ? [] : target.setOf;
+
+		return Relation.getArrayValue(setOf);
 	};
 
 	getTarget () {
@@ -575,6 +580,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				element,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				data: {
+					details,
+				},
 			});
 			return;
 		};
@@ -681,7 +689,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		obj[relationKey] = value;
 
 		detailStore.update(subId, obj, false);
-		C.ObjectSetDetails(id, [ { key: relationKey, value: value } ], callBack);
+		C.ObjectSetDetails(id, [ { key: relationKey, value } ], callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
 		analytics.event(key, { type: 'dataview' });
@@ -827,33 +835,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = dbStore.getSubId(rootId, block.id);
 		const view = this.getView();
 
-		let records = this.getRecords();
-		let orders = [];
+		if (!ids.length) {
+			return;
+		};
 
 		if (selection) {
 			selection.clear();
 			this.switchMultiselect(false);
 		};
 
-		if (!ids.length) {
-			return;
-		};
-
+		let records = this.getRecords();
 		if (records.indexOf(targetId) > records.indexOf(ids[0])) {
 			ids = ids.reverse();
 		};
 
-		ids.forEach((id, index) => {
+		ids.forEach(id => {
 			const oldIndex = records.indexOf(id);
 			const targetIndex = records.indexOf(targetId);
+
 			records = arrayMove(records, oldIndex, targetIndex);
 		});
 
-		orders = [ { viewId: view.id, groupId: '', objectIds: records } ];
-
-		this.objectOrderUpdate(orders, records, (message) => {
-			dbStore.recordsSet(subId, '', records);
-		});
+		dbStore.recordsSet(subId, '', records);
+		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
 	};
 
 	getIdPrefix () {
@@ -869,7 +873,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getEmpty (type: string) {
-		const { isInline } = this.props;
+		const { isInline, block } = this.props;
 
 		let emptyProps = { 
 			title: '', 
@@ -879,23 +883,35 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		switch (type) {
-			case 'source':
+			case 'target': {
 				emptyProps = {
-					title: 'Type or relation has been deleted',
-					description: 'Visit the Marketplace to re-install these entities or select another source.',
+					title: 'No data source',
+					description: 'Connect one of your sets or create new<br/>one to continue',
+					button: 'Select source',
+					onClick: () => this.onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
+				};
+				break;
+			};
+
+			case 'source': {
+				emptyProps = {
+					title: 'No query selected',
+					description: 'Add search query to aggregate objects with equal<br/>types and relations in a live mode',
 					button: 'Select query',
 					onClick: this.onEmpty,
 				};
 				break;
+			};
 
-			case 'view':
+			case 'view': {
 				emptyProps = {
 					title: 'No objects',
 					description: 'Create your first one to begin',
 					button: 'Create object',
 					onClick: (e) => this.onRecordAdd(e, 1),
 				};
-
+				break;
+			};
 		};
 
 		return (

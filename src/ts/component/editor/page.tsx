@@ -147,7 +147,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		keyboard.disableClose(false);
 
 		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e); });
+		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e, isPopup); });
 		win.on('paste.editor' + namespace, (e: any) => {
 			if (!keyboard.isFocused) {
 				this.onPaste(e, {});
@@ -483,7 +483,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		});
 	};
 	
-	onKeyDownEditor (e: any) {
+	onKeyDownEditor (e: any, isPopup: boolean) {
+		if (!isPopup && popupStore.isOpen('page')) {
+			return;
+		};
+
 		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const menuOpen = menuStore.isOpen();
@@ -776,7 +780,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 					offsetX: Constant.size.blockMenu,
 					data: {
 						blockId: block.id,
-						blockIds: DataUtil.selectionGet(block.id, true, this.props),
+						blockIds: DataUtil.selectionGet(block.id, true, true, this.props),
 						rootId: rootId,
 						dataset: dataset,
 					},
@@ -1098,7 +1102,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			ids[method]();
 		} else {
 			const idx = (dir < 0) ? 0 : idsWithChildren.length - 1;
-			const next = blockStore.getNextBlock(rootId, idsWithChildren[idx], dir, (it: any) => { return !it.isSystem(); });
+			const next = blockStore.getNextBlock(rootId, idsWithChildren[idx], dir, it => !it.isSystem());
 
 			method = dir < 0 ? 'unshift' : 'push';
 			if (next) {
@@ -1149,7 +1153,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 			focus.clear(true);
 			selection.set(I.SelectType.Block, [ block.id ]);
-
 			menuStore.closeAll([ 'blockContext', 'blockAction' ]);
 		};
 
@@ -1865,9 +1868,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { rootId } = this.props;
 
 		C.BlockCreate(rootId, blockId, position, param, (message: any) => {
-			window.setTimeout(() => {
-				this.focus(message.blockId, 0, 0, false);
-			}, 15);
+			if (param.type == I.BlockType.Text) {
+				window.setTimeout(() => { this.focus(message.blockId, 0, 0, false); }, 15);
+			};
 
 			if (callBack) {
 				callBack(message.blockId);
@@ -2171,7 +2174,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { isPopup, rootId } = this.props;
 		const container = Util.getPageContainer(isPopup);
 		const root = blockStore.getLeaf(rootId, rootId);
-		const size = Constant.size.editor;
 
 		let mw = container.width();
 		let width = 0;
@@ -2179,7 +2181,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		if (root && root.isObjectSet()) {
 			width = mw - 192;
 		} else {
-			mw -= 120;
+			const size = mw * 0.6;
+
+			mw -= 96;
 			w = (mw - size) * w;
 			width = Math.max(size, Math.min(mw, size + w));
 		};

@@ -4,8 +4,6 @@ import { Title, Label, Button, Switch } from 'Component';
 import { I, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 
-import Head from '../head';
-
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
@@ -29,35 +27,42 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 		this.init();
 
 		return (
-			<div>
-				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
-
+			<React.Fragment>
 				<Title text={translate('popupSettingsExportMarkdownTitle')} />
-				<Label text={translate('popupSettingsExportMarkdownText')} />
 
-				{items.map((item: any, i: number) => (
-					<div key={i} className="row">
-						<div className="side left">
-							<Label text={item.name} />
-						</div>
-						<div className="side right">
-							<Switch
-								className="big"
-								value={this[item.id]}
-								onChange={(e: any, v: boolean) => {
-									this[item.id] = v;
-									this.save();
-								}}
-							/>
-						</div>
-					</div>
-				))}
+				<div className="labels">
+					<Label text={translate('popupSettingsExportMarkdownText1')} />
+					<Label text={translate('popupSettingsExportMarkdownText2')} />
+				</div>
 
-				<Button 
-					text={translate('popupSettingsExportOk')} 
-					onClick={() => { onExport(I.ExportFormat.Markdown, { zip: this.zip, nested: this.nested, files: this.files }); }} 
-				/>
-			</div>
+				<div className="rows">
+					{items.map((item: any, i: number) => (
+						<div key={i} className="row">
+							<div className="side left">
+								<Label text={item.name} />
+							</div>
+							<div className="side right">
+								<Switch
+									className="big"
+									value={this[item.id]}
+									onChange={(e: any, v: boolean) => {
+										this[item.id] = v;
+										this.save();
+									}}
+								/>
+							</div>
+						</div>
+					))}
+				</div>
+
+				<div className="buttons">
+					<Button 
+						text={translate('popupSettingsExportOk')} 
+						className="c36"
+						onClick={() => { onExport(I.ExportFormat.Markdown, { zip: this.zip, nested: this.nested, files: this.files }); }} 
+					/>
+				</div>
+			</React.Fragment>
 		);
 	};
 

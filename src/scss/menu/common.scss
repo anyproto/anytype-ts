@@ -53,7 +53,7 @@
 	
 	.menu.vertical { width: 224px; }
 	.menu.vertical {
-		.content { overflow-y: overlay; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
+		.content { overflow-y: auto; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
 		.ReactVirtualized__List { padding: 8px 0px; }
 
 		.loaderWrapper { 
@@ -61,7 +61,7 @@
 			background: rgba(255,255,255, 0.7);
 		}
 
-		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorBorderLight; white-space: nowrap; font-weight: 600; color: $colorMediumGrey; }
+		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorBorderLight; white-space: nowrap; font-weight: 700; color: $colorMediumGrey; }
 		.tabs {
 			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
 			.tab:hover, .tab.active { color: $colorBlack; }
@@ -81,7 +81,7 @@
 		
 		.item::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(80,73,28,0); z-index: 1;
-			transition: background 0.2s ease-in-out; pointer-events: none;
+			pointer-events: none;
 		}
 		.item.hover::before { background: $colorHover; }
 		.item.hover, .item:hover {
@@ -131,7 +131,7 @@
 		.item.withDescription {
 			.iconMain, .iconObject { width: 40px; height: 40px; border-radius: 6px; position: absolute; left: 14px; top: 8px; }
 			
-			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: $colorVeryDarkGrey; }
+			.descr { @include text-small; @include text-overflow-nw; line-height: 20px; height: 20px; color: $colorDarkGrey; }
 			.descr:empty { display: none; }
 
 			.info { line-height: 40px; width: calc(100% - 16px); }
@@ -210,6 +210,14 @@
 		.item.active {
 			.name { width: 100%; }
 			.icon.chk { display: none; }
+		}
+	}
+}
+
+html.platformWindows {
+	.menus {
+		.menu.vertical {
+			.content { overflow-y: overlay; }
 		}
 	}
 }

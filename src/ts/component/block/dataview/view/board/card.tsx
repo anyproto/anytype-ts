@@ -2,7 +2,7 @@ import * as React from 'react';
 import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import {Cell, DropTarget, Icon} from 'Component';
+import { Cell, DropTarget, Icon } from 'Component';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -86,6 +86,8 @@ const Card = observer(class Card extends React.Component<Props> {
 				className={cn.join(' ')} 
 				draggable={true}
 				onDragStart={(e: any) => { onDragStartCard(e, groupId, record); }}
+				onClick={(e: any) => { this.onClick(e); }}
+				onContextMenu={(e: any) => { onContext(e, record.id); }}
 				{...Util.dataProps({ id: record.id })}
 			>
 				{content}

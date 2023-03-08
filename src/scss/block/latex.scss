@@ -1,9 +1,9 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockLatex { padding: 2px 0px; }
+	.block.blockLatex { padding: 6px 0px; }
 	.block.blockLatex { 
-		.wrap { padding: 8px 0px; }
+		.wrap { padding: 2px 0px; }
 		.wrap.isEditing { padding: 8px; box-shadow: 0px 0px 0px 1px $colorBorderDark; border-radius: 6px; }
 		.wrap.isEditing {
 			.empty { padding-bottom: 18px; }
@@ -11,16 +11,19 @@
 			.select { display: inline-block; }
 		}
 
-		.select { 
-			border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
-			display: none; margin-bottom: 8px;
+		.selectWrap { text-align: left; }
+		.selectWrap {
+			.select { 
+				border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; 
+				display: none; margin-bottom: 8px;
+			}
+			.select {
+				.name { overflow: visible; }
+			}
+			.select:hover, .select.active { background: none; }
 		}
-		.select {
-			.name { overflow: visible; }
-		}
-		.select:hover, .select.active { background: none; }
 
-		#value { font-size: 20px; line-height: 20px; width: 100%; overflow-x: auto; overflow-y: visible; padding-bottom: 10px; }
+		#value { font-size: 20px; line-height: 20px; width: 100%; overflow-x: auto; overflow-y: visible; }
 		#value:empty { display: none; }
 		#input { 
 			background: $colorVeryLightGrey; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
@@ -29,5 +32,13 @@
 
 		.katex-display { margin: 0px; text-align: inherit; }
 		.katex { line-height: 1.5em; text-align: inherit; }
+	}
+}
+
+html.platformMac {
+	.blocks {
+		.block.blockLatex {
+			#value::-webkit-scrollbar { display: none; }
+		}
 	}
 }

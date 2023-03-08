@@ -26,17 +26,13 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 		
 		return (
 			<React.Fragment>
-				{icon ? (
-					<div className="iconObject c64">
-						<Icon className={icon} />
-					</div>
-				) : ''}
+				{icon ? <Icon className={icon} /> : ''}
 				<Title text={title} />
 				<Label text={text} />
 
 				<div className="buttons">
-					{canConfirm ? <Button text={textConfirm} color={colorConfirm} onClick={this.onConfirm} /> : ''}
-					{canCancel ? <Button text={textCancel} color={colorCancel}  onClick={this.onCancel} /> : ''}
+					{canConfirm ? <Button text={textConfirm} color={colorConfirm} className="c36" onClick={this.onConfirm} /> : ''}
+					{canCancel ? <Button text={textCancel} color={colorCancel} className="c36" onClick={this.onCancel} /> : ''}
 				</div>
 			</React.Fragment>
 		);

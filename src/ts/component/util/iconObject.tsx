@@ -55,6 +55,7 @@ const IconSize = {
 	16: 16,
 	18: 18,
 	20: 18,
+	22: 18,
 	24: 20,
 	26: 22,
 	28: 22,
@@ -73,6 +74,7 @@ const FontSize = {
 	16: 10,
 	18: 10,
 	20: 12,
+	22: 14,
 	24: 14,
 	26: 16,
 	32: 18,	
@@ -131,9 +133,9 @@ const CheckboxTask1 = require('img/icon/object/checkbox1.svg').default;
 const Ghost = require('img/icon/ghost.svg').default;
 
 const BgColor = {
-	grey:	 '#f3f2ec',
+	grey:	 '#f2f2f2',
 	black:	 '#2c2b27',
-	brown:	 '#aca996',
+	brown:	 '#b6b6b6',
 	orange:	 '#ffb522',
 	red:	 '#f55522',
 	purple:	 '#ab50cc',
@@ -144,7 +146,7 @@ const BgColor = {
 };
 
 const Color = {
-	'':		 '#aca996',
+	'':		 '#b6b6b6',
 	dark:	 '#dfddd3'
 };
 
@@ -181,7 +183,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { theme } = commonStore;
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
-		const { id, name, iconEmoji, iconImage, iconClass, done, relationFormat, isDeleted } = object || {};
+		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, isDeleted } = object || {};
 		const cn = [ 'iconObject', 'c' + size, DataUtil.layoutClass(object.id, layout) ];
 		const iconSize = this.iconSize();
 		
@@ -200,6 +202,12 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
 		};
 
+		let onOption = () => {
+			cn.push(`withImage withOption c${iconOption}`);
+			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
+			icon = <div></div>;
+		};
+
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page: {
@@ -210,6 +218,9 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				if (iconEmoji || iconImage || iconClass) {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else 
+				if (iconOption) {
+					onOption();
+				} else
 				if (forceLetter) {
 					onLetter();
 				};
@@ -219,10 +230,15 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			case I.ObjectLayout.Human: {
 				if (iconImage) {
 					cn.push('withImage');
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
+				} else 
+				if (iconOption) {
+					onOption();
+				} else {
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={this.userSvg()} className={icn.join(' ')} />;
 				};
-				
-				icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
-				icon = <img src={(iconImage ? commonStore.imageUrl(iconImage, iconSize * 2) : this.userSvg())} className={icn.join(' ')} />;
 				break;
 			};
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { Title, IconObject, Header, Loader, ObjectName, ObjectDescription, Checkbox, Icon, Filter } from 'Component';
+import { Title, IconObject, Header, Footer, Loader, ObjectName, ObjectDescription, Checkbox, Icon, Filter } from 'Component';
 import { C, I, DataUtil, Util, analytics } from 'Lib';
 import { menuStore, popupStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -171,6 +171,8 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 						)}
 					</div>
 				</div>
+
+				<Footer component="mainStore" />
 			</div>
 		);
 	};

@@ -42,6 +42,13 @@
         .iconObject { box-shadow: 0px 0px 0px 2px $colorBlack; }
     }
 
+	/* BlockFeatured */
+
+	.block.blockFeatured { color: $colorSecondary; }
+    .block.blockFeatured {
+        .cellContent:hover, .cellContent.hover { background: $colorHover; }
+    }
+
     /* BlockFile */
 
     .block.blockFile {
@@ -263,7 +270,8 @@
 	/* BlockTable */
 
 	.block.blockTable { 
-		.plusButton .icon { background-color: rgba(236, 217, 27, 0.25); }
+		.plusButton .icon { background-color: #42413A; background-image: url('#{$themePath}/icon/table/plus.svg'); }
+		.plusButton.circle .icon { background-color: #42413A; }
 
 		.handle { 
 			.inner::before { background-color: $colorBlack; }

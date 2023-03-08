@@ -261,8 +261,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				text: 'They will be accessible in the "Shared" tab in Home within a minute',
 				textConfirm: 'Ok',
 				canCancel: false,
-				onConfirm: () => {
-				}
+				onConfirm: () => {}
 			},
 		});
 	};

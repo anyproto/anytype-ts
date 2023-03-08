@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
-import {I, keyboard, Relation, Util} from 'Lib';
-import {Cell, DropTarget, Icon} from 'Component';
+import { observer } from 'mobx-react';
+import { I, keyboard, Relation, Util } from 'Lib';
+import { Cell, DropTarget, Icon } from 'Component';
 import { dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
