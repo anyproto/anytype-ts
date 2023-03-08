@@ -69,8 +69,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				id="scrollWrap"
 				className="wrap"
 			>
-				<div className="line" />
-
 				<div id="scroll" className="scroll">
 					<div className="viewItem viewBoard">
 						{loading ? <Loader /> : (

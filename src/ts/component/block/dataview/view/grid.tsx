@@ -118,8 +118,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				<div className="line" />
-
 				<div id="scroll" className="scroll">
 					<div id="scrollWrap" className="scrollWrap">
 						<div className="viewItem viewGrid">

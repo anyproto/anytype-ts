@@ -79,6 +79,7 @@
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
+		.dataviewControls::after { content: ''; display: block; height: 1px; width: 100%; background: $colorBorderLight; }
 		.dataviewControls {
 			.sides { gap: 0px 16px; }
 			.side { padding: 23px 0px; white-space: nowrap; line-height: 28px; }
@@ -151,7 +152,6 @@
 		}
 
 		.content {
-			.line { height: 1px; width: calc(100% - 14px); background: $colorBorderLight; margin-left: 14px; }
 			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
 			.scrollWrap { background: #fff; padding-bottom: 14px; }
 		}
@@ -185,7 +185,7 @@
 		.dataviewHead { padding-left: 0px; padding-right: 0px; }
 
 		.dataviewControls {
-			.side { padding-top: 9px; padding-bottom: 0px; }
+			.side { padding-top: 9px; padding-bottom: 9px; }
 			.side.left { padding-left: 0px; }
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }

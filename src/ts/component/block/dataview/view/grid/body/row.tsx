@@ -18,7 +18,7 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, index, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
+		const { rootId, index, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
 		const relations = getVisibleRelations();
 		const record = getRecord(index);
 		const widths = getColumnWidths('', 0);
@@ -39,7 +39,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			<React.Fragment>
 				{relations.map((relation: any, i: number) => (
 					<Cell
-						key={'grid-cell-' + relation.relationKey + record.id}
+						key={[ 'grid', block.id, relation.relationKey, record.id ].join(' ')}
 						{...this.props}
 						width={relation.width}
 						index={index}
