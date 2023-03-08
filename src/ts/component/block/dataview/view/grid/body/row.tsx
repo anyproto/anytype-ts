@@ -18,7 +18,7 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, index, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiselect } = this.props;
+		const { rootId, index, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
 		const relations = getVisibleRelations();
 		const record = getRecord(index);
 		const widths = getColumnWidths('', 0);
@@ -76,7 +76,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 					<Icon
 						className="dnd"
 						draggable={true}
-						onClick={() => { onMultiselect(record.id); }}
+						onClick={() => { onMultiSelect(record.id); }}
 						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
 						onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
 						onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}

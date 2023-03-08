@@ -17,7 +17,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, isCollection, onMultiselect } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -30,7 +30,7 @@ const Card = observer(class Card extends React.Component<Props> {
 			<React.Fragment>
 				<Icon
 					className="checkbox"
-					onClick={(e: any) => { onMultiselect(record.id); }}
+					onClick={(e: any) => { onMultiSelect(record.id); }}
 					onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
 					onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
 				/>

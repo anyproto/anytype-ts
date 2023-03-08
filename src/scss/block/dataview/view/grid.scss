@@ -17,9 +17,7 @@
 				@include text-overflow-nw;
 			}
 			.resize { width: 20px; height: 20px; position: absolute; right: 0px; top: 50%; margin-top: -10px; cursor: col-resize; z-index: 10; }
-			.resize {
-				.line { width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
-			}
+			.resize::after { content: ''; width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
 		}
 		.cellHead.small { text-align: center; }
 		.cellHead.small {

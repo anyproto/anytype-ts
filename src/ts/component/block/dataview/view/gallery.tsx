@@ -132,6 +132,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		return (
 			<div className="wrap">
 				<div className="viewItem viewGallery">
+					<div className="line" />
+
 					<div className={[ 'galleryWrap', DataUtil.cardSizeClass(cardSize) ].join(' ')}>
 						{content}
 					</div>

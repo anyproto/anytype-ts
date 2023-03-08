@@ -131,8 +131,6 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
  						) : ''}
 					</div>
 				</div>
-
-				<div className="line" />
 			</div>
 		);
 	};

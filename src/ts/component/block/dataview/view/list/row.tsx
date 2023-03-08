@@ -16,7 +16,7 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiselect } = this.props;
+		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiSelect } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -68,7 +68,7 @@ const Row = observer(class Row extends React.Component<Props> {
 					<Icon
 						className="dnd"
 						draggable={true}
-						onClick={(e: any) => { onMultiselect(record.id); }}
+						onClick={(e: any) => { onMultiSelect(record.id); }}
 						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
 						onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
 						onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}

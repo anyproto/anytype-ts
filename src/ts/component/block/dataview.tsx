@@ -38,11 +38,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	refHead: any = null;
 	refControls: any = null;
 	refCells: Map<string, any> = new Map();
+
 	menuContext: any = null;
 	viewId = '';
 	creating = false;
 	frame = 0;
-	multiselect: boolean = false;
+	isMultiSelecting = false;
 	selected: string[];
 
 	constructor (props: Props) {
@@ -71,9 +72,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.isCollection = this.isCollection.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
-		this.switchMultiselect = this.switchMultiselect.bind(this);
-		this.onMultiselect = this.onMultiselect.bind(this);
-		this.multiselectAction = this.multiselectAction.bind(this);
+		this.setMultiSelect = this.setMultiSelect.bind(this);
+		this.onMultiSelect = this.onMultiSelect.bind(this);
+		this.multiSelectAction = this.multiSelectAction.bind(this);
 	};
 
 	render () {
@@ -164,15 +165,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
 		} else {
-			controls = this.multiselect ? (
+			controls = this.isMultiSelecting ? (
 				<Selection
 					{...this.props}
 					{...dataviewProps}
-					multiselectAction={this.multiselectAction}
+					multiSelectAction={this.multiSelectAction}
 				/>
 			) : (
 				<Controls 
-					ref={(ref: any) => { this.refControls = ref; }} 
+					ref={ref => this.refControls = ref} 
 					{...this.props}
 					{...dataviewProps}
 					className={className}
@@ -183,7 +184,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				<div className={[ 'content', isCollection ? 'isCollection': '' ].join(' ')}>
 					<ViewComponent 
 						key={'view' + view.id}
-						ref={(ref: any) => { this.refView = ref; }} 
+						ref={ref => this.refView = ref} 
 						onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
 						{...this.props}
 						{...dataviewProps}
@@ -195,7 +196,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						objectOrderUpdate={this.objectOrderUpdate}
 						applyObjectOrder={this.applyObjectOrder}
 						onDragRecordStart={this.onDragRecordStart}
-						onMultiselect={this.onMultiselect}
+						onMultiSelect={this.onMultiSelect}
 					/>
 				</div>
 			);
@@ -268,10 +269,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
 		});
-		win.on(`selectionEnd`, () => { this.onMultiselect(); });
+		win.on(`selectionEnd`, () => { this.onMultiSelect(); });
 		win.on(`selectionClear.${I.SelectType.Record}`, () => {
-			if (this.multiselect) {
-				this.switchMultiselect(false);
+			if (this.isMultiSelecting) {
+				this.setMultiSelect(false);
 			};
 		});
 	};
@@ -841,7 +842,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (selection) {
 			selection.clear();
-			this.switchMultiselect(false);
+			this.setMultiSelect(false);
 		};
 
 		let records = this.getRecords();
@@ -992,61 +993,62 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return records;
 	};
 
-	onMultiselect (id?: string) {
+	onMultiSelect (id?: string) {
 		const { dataset } = this.props;
-		const { selection } = dataset 	|| {};
-		let ids = selection ? selection.get(I.SelectType.Record) : [];
+		const { selection } = dataset || {};
 
-		if (this.multiselect && id && !ids.length) {
-			ids = this.selected;
+		if (!selection) {
+			return;
+		};
+		
+		let ids = [];
+		if (this.isMultiSelecting && id && !ids.length) {
+			ids = this.selected || [];
+		} else {
+			ids = selection.get(I.SelectType.Record);
 		};
 
 		if (id) {
-			if (!ids.includes(id)) {
-				ids.push(id);
-			}
-			else {
-				ids.splice(ids.indexOf(id), 1);
-			};
-
+			ids = ids.includes(id) ? ids.filter(it => it != id) : ids.concat([ id ]);
 			selection.set(I.SelectType.Record, ids);
 		};
 
 		this.selected = ids;
-		this.switchMultiselect(!!ids.length);
-		window.setTimeout(() => menuStore.closeAll(), 5);
+		this.setMultiSelect(!!ids.length);
+
+		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
 	};
 
-	switchMultiselect (v: boolean) {
+	setMultiSelect (v: boolean) {
 		if (!v) {
 			this.selected = [];
 		};
 
-		this.multiselect = v;
+		this.isMultiSelecting = v;
 		this.forceUpdate();
 	};
 
-	multiselectAction (e: any, action: string) {
+	multiSelectAction (e: any, action: string) {
 		const objectId = this.getObjectId();
-		const length = this.selected.length;
+		const count = this.selected.length;
 
 		switch (action) {
 			case 'archive': {
 				C.ObjectListSetIsArchived(this.selected, true, () => {
-					analytics.event('MoveToBin', { count: length });
+					analytics.event('MoveToBin', { count });
 				});
 				break;
 			};
 
 			case 'unlink': {
 				C.ObjectCollectionRemove(objectId, this.selected, () => {
-					analytics.event('UnlinkFromCollection', { count: length });
+					analytics.event('UnlinkFromCollection', { count });
 				});
 				break;
 			};
 		};
 
-		this.switchMultiselect(false);
+		this.setMultiSelect(false);
 	};
 
 	resize () {

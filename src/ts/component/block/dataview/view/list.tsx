@@ -97,6 +97,8 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 				ref={node => this.node = node} 
 				className="wrap"
 			>
+				<div className="line" />
+
 				<div id="scroll" className="scroll">
 					<div id="scrollWrap" className="scrollWrap">
 						<div className="viewItem viewList">
