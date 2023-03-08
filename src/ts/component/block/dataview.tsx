@@ -1012,10 +1012,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	multiselectAction (e: any, action: string) {
 		const objectId = this.getObjectId();
+		const length = this.selected.length;
 
 		switch (action) {
 			case 'archive': {
-				const length = this.selected.length;
 				C.ObjectListSetIsArchived(this.selected, true, () => {
 					analytics.event('MoveToBin', { count: length });
 				});
@@ -1023,7 +1023,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case 'unlink': {
-				C.ObjectCollectionRemove(objectId, this.selected);
+				C.ObjectCollectionRemove(objectId, this.selected, () => {
+					analytics.event('UnlinkFromCollection', { count: length });
+				});
 				break;
 			};
 		};
