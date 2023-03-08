@@ -33,7 +33,9 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 				</div>
 
 				<div className="side center">
-					{version ? Util.date('d F Y H:i:s', version.time) : ''}
+					<div className="txt">
+						{version ? Util.date('d F Y H:i:s', version.time) : ''}
+					</div>
 				</div>
 
 				<div className="side right" onClick={this.onRestore}>

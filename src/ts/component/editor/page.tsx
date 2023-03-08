@@ -2193,7 +2193,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			width = Math.max(size, Math.min(mw, size + w));
 		};
 
-		return width;
+		return Math.max(300, width);
 	};
 
 	isReadonly () {
