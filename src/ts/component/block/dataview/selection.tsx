@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import {I, keyboard} from 'Lib';
+import { I, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
-	multiSelectAction?(e: any, action: string): void;
+	multiSelectAction?: (e: any, action: string) => void;
 };
 
 const Selection = observer(class Selection extends React.Component<Props> {
@@ -28,9 +28,7 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		};
 
 		return (
-			<div
-				className={cn.join(' ')}
-			>
+			<div className={cn.join(' ')}>
 				<div className="sides">
 					<div id="sideLeft" className="side left">{ids.length} selected</div>
 
@@ -48,11 +46,10 @@ const Selection = observer(class Selection extends React.Component<Props> {
 						))}
 					</div>
 				</div>
-
-				<div className="line" />
 			</div>
 		);
 	};
+
 });
 
 export default Selection;
