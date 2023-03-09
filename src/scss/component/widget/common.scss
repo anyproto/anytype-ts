@@ -39,7 +39,7 @@
 
 	.icon.remove {
 		position: absolute; top: -5px; right: -5px; height: 20px; width: 20px; border-radius: 50%; background-color: $colorWhite; cursor: pointer !important;
-		background-image: url('~img/icon/sidebar/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); display: none; z-index: 1;
+		background-image: url('~img/icon/sidebar/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); display: none; z-index: 2;
 	}
 	.icon.remove:hover { background-color: $colorVeryLightGrey; }
 }
