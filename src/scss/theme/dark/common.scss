@@ -344,6 +344,12 @@ html.themeDark {
 		.head::before { background-color: $colorHover; }
 	}
 
+	.widget.active {
+		.head {
+			.iconWrap.options { background-color: $colorHover; }
+		}
+	}
+
 	.widget.widgetSpace {
 		.icon:hover { background-color: $colorHover; }
 	}
