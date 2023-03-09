@@ -31,10 +31,10 @@ const Card = observer(class Card extends React.Component<Props> {
 				<Icon
 					className="checkbox"
 					onClick={(e: any) => { onMultiSelect(record.id); }}
-					onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
-					onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
+					onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
+					onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
 				/>
-				<div className="cardContent" onClick={(e: any) => { this.onClick(e); }} onContextMenu={(e: any) => { onContext(e, record.id); }}>
+				<div className="cardContent">
 					{relations.map((relation: any, i: number) => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, 0);
 						return (
@@ -123,7 +123,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
-		if (keyboard.withCommand(e) && ids.length) {
+		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
 			return;
 		};
 

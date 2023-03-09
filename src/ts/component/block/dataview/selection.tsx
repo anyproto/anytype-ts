@@ -38,8 +38,8 @@ const Selection = observer(class Selection extends React.Component<Props> {
 								key={i}
 								className={[ 'element' ].concat(item.className || []).join(' ')}
 								onClick={(e: any) => { multiSelectAction(e, item.id); }}
-								onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
-								onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
+								onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
+								onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
 							>
 								{item.text}
 							</div>

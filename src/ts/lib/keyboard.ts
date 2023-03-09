@@ -630,6 +630,10 @@ class Keyboard {
 		this.selection = v;
 	};
 
+	setSelectionClearDisabled (v: boolean) {
+		this.isSelectionClearDisabled = v;
+	};
+
 	initPinCheck () {
 		const { account } = authStore;
 		const { pinTime } = commonStore;

@@ -66,10 +66,10 @@ const Card = observer(class Card extends React.Component<Props> {
 				<Icon
 					className="checkbox"
 					onClick={(e: any) => { onMultiSelect(record.id); }}
-					onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
-					onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
+					onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
+					onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
 				/>
-				<div className="itemContent" onClick={this.onClick} onContextMenu={(e: any) => { onContext(e, record.id); }}>
+				<div className="itemContent">
 					{cover}
 
 					<div className="inner">
@@ -187,7 +187,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
-		if (keyboard.withCommand(e) && ids.length) {
+		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
 			return;
 		};
 

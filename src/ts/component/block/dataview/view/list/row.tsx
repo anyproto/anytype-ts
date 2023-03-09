@@ -70,8 +70,8 @@ const Row = observer(class Row extends React.Component<Props> {
 						draggable={true}
 						onClick={(e: any) => { onMultiSelect(record.id); }}
 						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
-						onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
-						onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
+						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
+						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
 					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}
