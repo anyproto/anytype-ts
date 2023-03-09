@@ -198,7 +198,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				// Sets can only become Link and List layouts, non-sets can't become List
 				if (treeSkipTypes.includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
-				} else {
+				};
+				if (![ Constant.typeId.set ].includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.List);
 				};
 			};
@@ -246,7 +247,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		switch (item.itemId) {
 			case 'source':
-				let filters: I.Filter[] = [];
+				let filters: I.Filter[] = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
+				];
 
 				switch (this.layout) {
 					case I.WidgetLayout.List: {
@@ -263,7 +266,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 								operator: I.FilterOperator.And, 
 								relationKey: 'type', 
 								condition: I.FilterCondition.NotIn, 
-								value: [ Constant.typeId.set, Constant.typeId.space ].concat(DataUtil.getSystemTypes()),
+								value: [ Constant.typeId.set, Constant.typeId.space ],
 							},
 						]);
 					};
