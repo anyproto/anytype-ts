@@ -442,10 +442,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getSources (): string[] {
-		const target = this.getTarget();
-		const setOf = target._empty_ || this.isCollection() ? [] : target.setOf;
+		if (this.isCollection()) {
+			return [];
+		};
 
-		return Relation.getArrayValue(setOf);
+		const { rootId } = this.props;
+		const target = this.getTarget();
+		const types = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.type).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.relation).map(it => it.id);
+
+		return [].concat(types).concat(relations);
 	};
 
 	getTarget () {
