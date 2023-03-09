@@ -23,8 +23,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	_isMounted = false;
 	node: any = null;
 	id = '';
-	timeoutMove = 0;
-	timeoutScreen = 0;
 	hoverId =  '';
 	hoverPosition: I.BlockPosition = I.BlockPosition.None;
 	scrollTop = 0;
@@ -34,6 +32,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	width = 0;
 	refHeader: any = null;
 	dir = 0;
+
+	timeoutUi = 0;
+	timeoutMove = 0;
+	timeoutScreen = 0;
+
 	frameMove = 0;
 	frameResize = 0;
 
@@ -248,7 +251,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				onOpen();
 			};
 
-			window.clearTimeout(this.timeoutMove);
+			window.clearTimeout(this.timeoutUi);
 			window.setTimeout(() => { 
 				this.uiShow(); 
 				this.resizePage();
@@ -341,8 +344,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		
 		this.uiHidden = true;
 		
-		window.clearTimeout(this.timeoutMove);
-		this.timeoutMove = window.setTimeout(() => {
+		window.clearTimeout(this.timeoutUi);
+		this.timeoutUi = window.setTimeout(() => {
 			$(window).off('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
 		}, 100);
 	};
@@ -374,9 +377,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const button = node.find('#button-block-add');
 
 		const out = () => {
-			button.removeClass('show');
-			node.find('.block.showMenu').removeClass('showMenu');
-			node.find('.block.isAdding').removeClass('isAdding top bottom');
+			window.clearTimeout(this.timeoutMove);
+			this.timeoutMove = window.setTimeout(() => {
+				button.removeClass('show');
+				node.find('.block.showMenu').removeClass('showMenu');
+				node.find('.block.isAdding').removeClass('isAdding top bottom');
+			}, 30);
 		};
 
 		if (
