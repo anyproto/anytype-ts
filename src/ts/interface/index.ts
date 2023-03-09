@@ -10,7 +10,6 @@ import {
 	ToastAction,
 	Option, 
 	HistoryVersion, 
-	PreviewLink, 
 	ImportType,
 	ImportMode,
 	ExportFormat, 
@@ -29,6 +28,7 @@ import {
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
+import { Preview, PreviewLink, PreviewType } from './preview';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 import { SmartBlockType, ObjectLayout, ObjectFlag, RelationType, RelationScope, OptionScope } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
@@ -85,7 +85,6 @@ export {
 	ToastAction,
 	Option,
 	HistoryVersion,
-	PreviewLink,
 	Source,
 	EdgeType,
 	GraphView,
@@ -115,6 +114,10 @@ export {
 
 	PopupParam,
 	Popup,
+
+	Preview,
+	PreviewLink,
+	PreviewType,
 
 	MenuTab,
 	MenuType,

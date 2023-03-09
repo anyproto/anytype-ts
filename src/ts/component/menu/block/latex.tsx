@@ -18,7 +18,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 	emptyLength = 0;
 	refList: any = null;
 	cache: any = {};
-	n = 0;
+	n = -1;
 	filter = '';
 	
 	constructor (props: I.Menu) {

@@ -102,7 +102,7 @@
 }
 
 .cell.isEditing.c-select, .cell.isEditing.c-object {
-	.cellContent { overflow-x: hidden !important; overflow-y: overlay !important; max-height: 200px; }
+	.cellContent { overflow-x: hidden !important; overflow-y: auto !important; max-height: 200px; }
 	.itemWrap { display: inline-block; }
 
 	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }

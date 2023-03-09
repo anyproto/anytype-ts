@@ -126,10 +126,10 @@ export interface ViewComponent {
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	onDragRecordStart?: (e: any, index: number) => void;
+	onMultiSelect?: (id: string) => void;
 	isAllowedObject?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
 	applyObjectOrder?: (records: any[], groupId?: string) => any[];
-	onMultiselect?: (id: string) => void;
 };
 
 export interface ViewEmpty {

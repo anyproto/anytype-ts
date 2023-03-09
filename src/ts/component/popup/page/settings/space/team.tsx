@@ -133,7 +133,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
                 </div>
 
                 <div className="buttons">
-                    <Button onClick={() => onPage('spaceInvite')} text={translate('popupSettingsSpaceTeamButton')} />
+                    <Button className="c36" onClick={() => onPage('spaceInvite')} text={translate('popupSettingsSpaceTeamButton')} />
                 </div>
             </div>
         );

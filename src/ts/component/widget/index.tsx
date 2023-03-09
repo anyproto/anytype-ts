@@ -43,7 +43,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	render (): React.ReactNode {
 		const { loading } = this.state;
-		const { block, isDraggable, isPreview, onDragStart, onDragOver, setPreview } = this.props;
+		const { block, isPreview, isEditing, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
 		const { layout } = block.content;
 		const { targetBlockId } = child?.content || {};
@@ -60,9 +60,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		if (isPreview) {
 			cn.push('isPreview');
-		};
-		if (isDraggable) {
-			cn.push('isDraggable');
 		};
 
 		let icon = null;
@@ -100,14 +97,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 			head = (
 				<div className="head">
-					<div className="flex">
-						{back}
-						<div className="clickable" onClick={onClick}>
-							{icon}
-							<ObjectName object={object} />
-						</div>
-						{buttons}
+					{back}
+					<div className="clickable" onClick={onClick}>
+						{icon}
+						<ObjectName object={object} />
 					</div>
+					{buttons}
 				</div>
 			);
 		};
@@ -140,7 +135,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				ref={node => this.node = node}
 				id={key}
 				className={cn.join(' ')}
-				draggable={isDraggable}
+				draggable={isEditing}
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
 			>
@@ -151,6 +146,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				<div id="wrapper" className="contentWrapper">
 					{content}
 				</div>
+
+				<div className="dimmer" />
 			</div>
 		);
 	};
@@ -308,9 +305,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const child = this.getTargetBlock();
 		const { layout } = block.content;
 		const { targetBlockId } = child?.content;
-		const sorts = [
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
-		];
+		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
 		];
@@ -328,6 +323,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 			case Constant.widgetId.recent: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
+				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
 				break;
 			};
 

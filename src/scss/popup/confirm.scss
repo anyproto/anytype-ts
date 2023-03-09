@@ -9,7 +9,7 @@
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 		.iconObject { margin-bottom: 12px; }
 
-		.icon { width: 32px; height: 32px; }
+		.icon { width: 32px; height: 32px; margin: 0px 0px 16px 0px; }
 		.icon.update { background-image: url('~img/icon/update.svg'); }
 	}	
 }

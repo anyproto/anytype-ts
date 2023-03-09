@@ -7,7 +7,7 @@
 	.block.blockTable { padding: 6px 0px; }
 	.block.blockTable {
 		.scrollWrap { width: 100%; padding: 5px; line-height: 0px; }
-		.scrollWrap.withScroll { overflow-x: overlay; padding-bottom: 8px; }
+		.scrollWrap.withScroll { overflow-x: auto; padding-bottom: 8px; }
 
 		.scrollWrap > .inner { display: inline-block; position: relative; }
 
@@ -51,15 +51,15 @@
 		.plusButton { z-index: 10; }
 		.plusButton { 
 			.icon { 
-				background-color: #fef9cc; background-image: url('~img/icon/table/plus.svg'); background-size: 10px; cursor: pointer; opacity: 0; 
+				background-color: $colorBorderLight; background-image: url('~img/icon/table/plus.svg'); background-size: 10px; cursor: pointer; opacity: 0; 
 				transition: $transitionFast; width: 100%; height: 100%; border-radius: 4px;
 			}
 		}
-		.plusButton.vertical { position: absolute; width: 18px; height: calc(100% - 16px); right: -18px; top: 0px; padding-left: 4px; }
+		.plusButton.vertical { position: absolute; width: 18px; height: calc(100% - 18px); right: -18px; top: 0px; padding-left: 4px; }
 		.plusButton.horizontal { height: 18px; width: 100%; left: 0px; bottom: -18px; padding-top: 4px; }
 		.plusButton.circle { position: absolute; height: 18px; width: 18px; right: -18px; bottom: 0px; padding-top: 4px; padding-left: 4px; opacity: 1; }
 		.plusButton.circle {
-			.icon { border-radius: 50%; }
+			.icon { border-radius: 50%; background-color: $colorBorderLight; }
 		}
 		
 		.plusButton:hover, .plusButton.active {
@@ -195,6 +195,14 @@
 		.cell {
 			.block { min-height: 40px; }
 			.icon.menu { display: none; }
+		}
+	}
+}
+
+html.platformWindows {
+	.blocks {
+		.block.blockTable {
+			.scrollWrap.withScroll { overflow-x: overlay; }
 		}
 	}
 }

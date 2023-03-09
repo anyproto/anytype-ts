@@ -70,24 +70,18 @@ export interface HistoryVersion {
 	time: number;
 };
 
-export interface PreviewLink {
-	type: string;
-	title: string;
-	description: string;
-	faviconUrl: string;
-	imageUrl: string;
-};
-
 export enum ImportMode {
 	AllOrNothing = 0,
 	IgnoreErrors = 1,
 };
 
 export enum ImportType {
-	Notion	 = 0,
-	Markdown = 1,
-	External = 2,
-	Html	 = 3,
+	Notion		 = 0,
+	Markdown	 = 1,
+	External	 = 2,
+	Migration	 = 3,
+	Html		 = 5,
+	Text		 = 6,
 };
 
 export enum ExportFormat {

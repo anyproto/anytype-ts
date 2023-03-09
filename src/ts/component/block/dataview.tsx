@@ -38,11 +38,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	refHead: any = null;
 	refControls: any = null;
 	refCells: Map<string, any> = new Map();
+
 	menuContext: any = null;
 	viewId = '';
 	creating = false;
 	frame = 0;
-	multiselect: boolean = false;
+	isMultiSelecting = false;
 	selected: string[];
 
 	constructor (props: Props) {
@@ -71,16 +72,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.isCollection = this.isCollection.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
-		this.switchMultiselect = this.switchMultiselect.bind(this);
-		this.onMultiselect = this.onMultiselect.bind(this);
-		this.multiselectAction = this.multiselectAction.bind(this);
+		this.setMultiSelect = this.setMultiSelect.bind(this);
+		this.onMultiSelect = this.onMultiSelect.bind(this);
+		this.multiSelectAction = this.multiSelectAction.bind(this);
 	};
 
 	render () {
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { loading } = this.state;
-
 		const views = dbStore.getViews(rootId, block.id);
+
 		if (!views.length) {
 			return null;
 		};
@@ -94,7 +95,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const targetId = this.getObjectId();
 		const object = detailStore.get(rootId, targetId);
 		const isCollection = this.isCollection();
-		//const records = this.getRecords();
+		const records = this.getRecords();
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
@@ -158,18 +159,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (loading) {
 			body = <Loader id="set-loader" />
 		} else
+		if (isInline && !targetId) {
+			body = this.getEmpty('target');
+		} else
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
 		} else {
-			controls = this.multiselect ? (
+			controls = this.isMultiSelecting ? (
 				<Selection
 					{...this.props}
 					{...dataviewProps}
-					multiselectAction={this.multiselectAction}
+					multiSelectAction={this.multiSelectAction}
 				/>
 			) : (
-				<Controls
-					ref={(ref: any) => { this.refControls = ref; }}
+				<Controls 
+					ref={ref => this.refControls = ref} 
 					{...this.props}
 					{...dataviewProps}
 					className={className}
@@ -180,7 +184,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				<div className={[ 'content', isCollection ? 'isCollection': '' ].join(' ')}>
 					<ViewComponent 
 						key={'view' + view.id}
-						ref={(ref: any) => { this.refView = ref; }} 
+						ref={ref => this.refView = ref} 
 						onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
 						{...this.props}
 						{...dataviewProps}
@@ -192,7 +196,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						objectOrderUpdate={this.objectOrderUpdate}
 						applyObjectOrder={this.applyObjectOrder}
 						onDragRecordStart={this.onDragRecordStart}
-						onMultiselect={this.onMultiselect}
+						onMultiSelect={this.onMultiSelect}
 					/>
 				</div>
 			);
@@ -250,6 +254,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
+
 		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection selectionEnd selectionClear.${I.SelectType.Record}`);
 	};
 
@@ -264,22 +269,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
 		});
-		win.on(`selectionEnd`, () => { this.onMultiselect(); });
+		win.on(`selectionEnd`, () => { this.onMultiSelect(); });
 		win.on(`selectionClear.${I.SelectType.Record}`, () => {
-			if (this.multiselect) {
-				this.switchMultiselect(false);
+			if (this.isMultiSelecting) {
+				this.setMultiSelect(false);
 			};
 		});
 	};
 
 	onKeyDown (e: any) {
-		const { rootId, block, dataset, isInline } = this.props;
+		const { rootId, dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const length = ids.length;
-		const subId = dbStore.getSubId(rootId, block.id);
 
 		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
 			return;
@@ -461,7 +465,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getSources (): string[] {
 		const target = this.getTarget();
-		return target._empty_ || this.isCollection() ? [] : target.setOf;
+		const setOf = target._empty_ || this.isCollection() ? [] : target.setOf;
+
+		return Relation.getArrayValue(setOf);
 	};
 
 	getTarget () {
@@ -575,6 +581,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				element,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				data: {
+					details,
+				},
 			});
 			return;
 		};
@@ -681,7 +690,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		obj[relationKey] = value;
 
 		detailStore.update(subId, obj, false);
-		C.ObjectSetDetails(id, [ { key: relationKey, value: value } ], callBack);
+		C.ObjectSetDetails(id, [ { key: relationKey, value } ], callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';		
 		analytics.event(key, { type: 'dataview' });
@@ -829,33 +838,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = dbStore.getSubId(rootId, block.id);
 		const view = this.getView();
 
-		let records = this.getRecords();
-		let orders = [];
-
-		if (selection) {
-			selection.clear();
-			this.switchMultiselect(false);
-		};
-
 		if (!ids.length) {
 			return;
 		};
 
+		if (selection) {
+			selection.clear();
+			this.setMultiSelect(false);
+		};
+
+		let records = this.getRecords();
 		if (records.indexOf(targetId) > records.indexOf(ids[0])) {
 			ids = ids.reverse();
 		};
 
-		ids.forEach((id, index) => {
+		ids.forEach(id => {
 			const oldIndex = records.indexOf(id);
 			const targetIndex = records.indexOf(targetId);
+
 			records = arrayMove(records, oldIndex, targetIndex);
 		});
 
-		orders = [ { viewId: view.id, groupId: '', objectIds: records } ];
-
-		this.objectOrderUpdate(orders, records, (message) => {
-			dbStore.recordsSet(subId, '', records);
-		});
+		dbStore.recordsSet(subId, '', records);
+		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
 	};
 
 	getIdPrefix () {
@@ -871,7 +876,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getEmpty (type: string) {
-		const { isInline } = this.props;
+		const { isInline, block } = this.props;
 
 		let emptyProps = { 
 			title: '', 
@@ -881,23 +886,35 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		switch (type) {
-			case 'source':
+			case 'target': {
 				emptyProps = {
-					title: 'Type or relation has been deleted',
-					description: 'Visit the Marketplace to re-install these entities or select another source.',
+					title: 'No data source',
+					description: 'Connect one of your sets or create new<br/>one to continue',
+					button: 'Select source',
+					onClick: () => this.onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
+				};
+				break;
+			};
+
+			case 'source': {
+				emptyProps = {
+					title: 'No query selected',
+					description: 'Add search query to aggregate objects with equal<br/>types and relations in a live mode',
 					button: 'Select query',
 					onClick: this.onEmpty,
 				};
 				break;
+			};
 
-			case 'view':
+			case 'view': {
 				emptyProps = {
 					title: 'No objects',
 					description: 'Create your first one to begin',
 					button: 'Create object',
 					onClick: (e) => this.onRecordAdd(e, 1),
 				};
-
+				break;
+			};
 		};
 
 		return (
@@ -978,61 +995,62 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return records;
 	};
 
-	onMultiselect (id?: string) {
+	onMultiSelect (id?: string) {
 		const { dataset } = this.props;
-		const { selection } = dataset 	|| {};
-		let ids = selection ? selection.get(I.SelectType.Record) : [];
+		const { selection } = dataset || {};
 
-		if (this.multiselect && id && !ids.length) {
-			ids = this.selected;
+		if (!selection) {
+			return;
+		};
+		
+		let ids = [];
+		if (this.isMultiSelecting && id && !ids.length) {
+			ids = this.selected || [];
+		} else {
+			ids = selection.get(I.SelectType.Record);
 		};
 
 		if (id) {
-			if (!ids.includes(id)) {
-				ids.push(id);
-			}
-			else {
-				ids.splice(ids.indexOf(id), 1);
-			};
-
+			ids = ids.includes(id) ? ids.filter(it => it != id) : ids.concat([ id ]);
 			selection.set(I.SelectType.Record, ids);
 		};
 
 		this.selected = ids;
-		this.switchMultiselect(!!ids.length);
-		window.setTimeout(() => menuStore.closeAll(), 5);
+		this.setMultiSelect(!!ids.length);
+
+		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
 	};
 
-	switchMultiselect (v: boolean) {
+	setMultiSelect (v: boolean) {
 		if (!v) {
 			this.selected = [];
 		};
 
-		this.multiselect = v;
+		this.isMultiSelecting = v;
 		this.forceUpdate();
 	};
 
-	multiselectAction (e: any, action: string) {
+	multiSelectAction (e: any, action: string) {
 		const objectId = this.getObjectId();
-		const length = this.selected.length;
+		const count = this.selected.length;
 
 		switch (action) {
 			case 'archive': {
 				C.ObjectListSetIsArchived(this.selected, true, () => {
-					analytics.event('MoveToBin', { count: length });
+					analytics.event('MoveToBin', { count });
 				});
 				break;
 			};
 
 			case 'unlink': {
 				C.ObjectCollectionRemove(objectId, this.selected, () => {
-					analytics.event('UnlinkFromCollection', { count: length });
+					analytics.event('UnlinkFromCollection', { count });
 				});
 				break;
 			};
 		};
 
-		this.switchMultiselect(false);
+		this.setMultiSelect(false);
 	};
 
 	resize () {

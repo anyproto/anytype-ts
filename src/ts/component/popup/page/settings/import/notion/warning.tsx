@@ -43,7 +43,7 @@ class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
 					</ol>
 				</div>
 
-				<Button text="Proceed" onClick={this.onImport} />
+				<Button className="c36" text="Proceed" onClick={this.onImport} />
 			</div>
 		);
 	};

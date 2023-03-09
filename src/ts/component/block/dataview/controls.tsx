@@ -131,8 +131,6 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
  						) : ''}
 					</div>
 				</div>
-
-				<div className="line" />
 			</div>
 		);
 	};
@@ -266,24 +264,26 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 		this.onViewSet(view);
 
-		menuStore.open('dataviewViewEdit', { 
-			element: element,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			data: {
-				rootId,
-				blockId: block.id,
-				readonly: !allowed,
-				view: observable.box(view),
-				isInline,
-				isCollection,
-				getTarget,
-				getView,
-				loadData,
-				getSources,
-				onSave: () => { this.forceUpdate(); },
-			}
-		});
+		window.setTimeout(() => {
+			menuStore.open('dataviewViewEdit', { 
+				element,
+				horizontal: I.MenuDirection.Center,
+				noFlipY: true,
+				data: {
+					rootId,
+					blockId: block.id,
+					readonly: !allowed,
+					view: observable.box(view),
+					isInline,
+					isCollection,
+					getTarget,
+					getView,
+					loadData,
+					getSources,
+					onSave: () => { this.forceUpdate(); },
+				}
+			});
+		}, 50);
 	};
 
 	onSortStart () {

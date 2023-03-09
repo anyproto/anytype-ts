@@ -23,7 +23,7 @@
 	.tabs { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; height: 100%; }
 	.tabs {
 		.tab { 
-			font-weight: 600; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
+			font-weight: 700; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
 			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(0,0,0,0);
 		}
 		.tab:hover { color: $colorBlack; }
@@ -37,7 +37,6 @@
 	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
 	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
 
-	.icon.toggleSidebar { background-image: url('~img/icon/sidebar/toggle-sidebar.svg'); }
 	.icon.back { background-image: url('~img/icon/header/back.svg'); }
 	.icon.forward { background-image: url('~img/icon/header/back.svg'); }
 	.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
@@ -74,7 +73,7 @@
 	.side.center { white-space: nowrap; }
 
 	.item { 
-		color: $colorVeryDarkGrey; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; 
+		color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; 
 		display: inline-block; vertical-align: middle; white-space: nowrap;
 	}
 	.item {

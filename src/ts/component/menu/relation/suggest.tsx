@@ -417,7 +417,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, ref } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, ref, object } = data;
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -451,7 +451,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 			if (item.isInstalled) {
 				cb(item);
-				analytics.event('AddExistingRelation', { format: item.format, type: ref });
+				analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type });
 			} else {
 				Action.install(item, (message: any) => { cb(message.details); });
 			};

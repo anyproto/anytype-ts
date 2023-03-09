@@ -1,17 +1,17 @@
 @import "~scss/_vars";
 
-.widget { background: $colorWhite; border-radius: 12px; transform: translate(0px, 0px); position: relative; margin: 0px 0px 12px 0px; }
+.widget { background: $colorWhite; border-radius: 12px; transform: translate(0px, 0px); position: relative; }
 .widget:last-child { margin: 0px; }
 .widget {
-	.head { width: 100%; position: relative; display: flex; flex-direction: column; cursor: pointer; padding: 12px 8px 10px 16px; }
+	.head { 
+		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; justify-content: space-between; 
+		cursor: pointer; padding: 12px 8px 10px 16px;
+	}
 	.head {
-		.flex { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; justify-content: space-between; }
-		.flex {
-			.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
-			.clickable {
-				.iconObject { flex-shrink: 0; }
-				.name { @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 600; flex-grow: 1; }
-			}
+		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
+		.clickable {
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 700; flex-grow: 1; }
 		}
 
 		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -27,13 +27,12 @@
 		.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; visibility: hidden; }
 		.buttons.active { visibility: visible; } 
 	}
-
-	.head::before {
-		content: ""; position: absolute; background: $colorHover; width: calc(100% - 8px); height: 28px; left: 4px; top: 10px; border-radius: 4px;
-		pointer-events: none; transition: $transitionFast; opacity: 0;
+	.head:hover {
+		.flex > .clickable { width: calc(100% - 60px); }
+		.buttons { visibility: visible; }
 	}
-	.head:hover::before { opacity: 1; }
 
+	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 	.label.empty { text-align: center; @include text-small; }
 
 	.contentWrapper { transition: height 0.3s ease-out; }
@@ -43,10 +42,6 @@
 		background-image: url('~img/icon/sidebar/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); display: none; z-index: 1;
 	}
 	.icon.remove:hover { background-color: $colorVeryLightGrey; }
-}
-.widget:hover {
-	.head > .flex > .clickable { width: calc(100% - 60px); }
-	.buttons { visibility: visible; }
 }
 
 .widget.isPreview {
@@ -71,16 +66,11 @@
 }
 
 .button.widget { 
-	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 600; padding: 12px 16px;
-	display: flex; position: relative; gap: 0px 12px; flex-direction: row; align-items: center;
+	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; font-weight: 700; padding: 14px 16px;
+	display: flex; position: relative; gap: 0px 12px; justify-content: flex-start;
 }
 .button.widget {
 	.icon { height: 20px; width: 20px; margin: 0px; }
 	.icon.library { background-image: url('~img/icon/sidebar/library.svg'); }
 	.icon.bin { background-image: url('~img/icon/sidebar/bin.svg'); }
 }
-.button.widget::before {
-	content: ""; position: absolute; background: $colorHover; width: calc(100% - 8px); height: 24px; left: 4px; top: 10px; border-radius: 4px;
-	pointer-events: none; transition: $transitionFast; opacity: 0;
-}
-.button.widget:hover::before { opacity: 1; }

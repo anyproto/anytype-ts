@@ -370,7 +370,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const nodes = this.loadTree();
 		const node = $(this.node);
 		const length = nodes.length;
-		const css: any = { height: HEIGHT * length + 12, paddingBottom: '' };
+		const css: any = { height: HEIGHT * length + 8, paddingBottom: '' };
 
 		if (isPreview) {
 			const head = $(`#widget-${parent.id} .head`);

@@ -16,19 +16,14 @@
 		.ReactVirtualized__List { padding: 0px 14px; }
 
 		.item { padding: 0px; text-align: center; }
+		.item:before { height: 78px; border-radius: 4px; }
 		.item {
-			.math { 
-				border: 0px; text-align: center; width: 100%; height: auto; position: static; display: inline-block; 
-				vertical-align: middle; 
-			}
+			.math { border: 0px; text-align: center; width: 100%; height: auto; position: static; display: inline-block; vertical-align: middle; }
 			.math {
 				.katex-display { margin: 0px; display: inline-block; vertical-align: middle; }
 			}
 		}
-		.item > .inner { 
-			border: 1px solid $colorBorderLight; border-radius: 4px; height: 78px; overflow: hidden; 
-			line-height: 74px;
-		}
+		.item > .inner { border: 1px solid $colorBorderLight; border-radius: 4px; height: 78px; overflow: hidden; line-height: 74px; }
 
 		.sectionName { padding: 5px 0px; }
 		.item.empty { padding: 12px 14px; }

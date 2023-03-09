@@ -1,9 +1,9 @@
 import * as React from 'react';
+import arrayMove from 'array-move';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import arrayMove from 'array-move';
-import $ from 'jquery';
 import { Icon, IconObject, Select } from 'Component';
 import { I, C, Relation, Util, keyboard, analytics } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
@@ -15,7 +15,7 @@ const LIMIT = 20;
 const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	
 	node: any = null;
-	n = 0;
+	n = -1;
 	top = 0;
 	cache: any = {};
 	refList: any = null;

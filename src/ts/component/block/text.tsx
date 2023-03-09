@@ -116,7 +116,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					<IconObject 
 						id={`block-${id}-icon`}
 						object={{ iconEmoji: (iconImage ? '' : (iconEmoji || ':bulb:')), iconImage, layout: I.ObjectLayout.Page }} 
-						canEdit={!readonly} 
+						canEdit={!readonly}
+						iconSize={20}
 						onSelect={this.onSelectIcon} 
 						onUpload={this.onUploadIcon}
 						noRemove={true}
@@ -322,26 +323,21 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		items.each((i: number, item: any) => {
+		items.each((i: number, item) => {
 			this.textStyle($(item));
 		});
 
 		items.off('mouseenter.link');
-		items.on('mouseenter.link', (e: any) => {
-			let el = $(e.currentTarget);
-			let range = String(el.attr('data-range') || '').split('-');
-			let url = String(el.attr('href') || '');
-			let scheme = Util.getScheme(url);
-			let isInside = scheme == Constant.protocol;
+		items.on('mouseenter.link', e => {
+			const element = $(e.currentTarget);
+			const range = String(element.attr('data-range') || '').split('-');
+			const url = String(element.attr('href') || '');
+			const scheme = Util.getScheme(url);
+			const isInside = scheme == Constant.protocol;
+
 			let route = '';
-			let param: any = {
-				range: { 
-					from: Number(range[0]) || 0,
-					to: Number(range[1]) || 0, 
-				},
-				marks: this.marks,
-				onChange: (marks: I.Mark[]) => { this.setMarks(marks); },
-			};
+			let target;
+			let type;
 
 			if (isInside) {
 				route = '/' + url.split('://')[1];
@@ -349,26 +345,31 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				const routeParam = Util.getRoute(route);
 				const object = detailStore.get(rootId, routeParam.id, []);
 
-				param = Object.assign(param, {
-					param: object.id,
-					type: I.MarkType.Object,
-				});
+				target = object.id;
+				type = I.PreviewType.Object;
 			} else {
-				url = Util.urlFix(url);
-				param = Object.assign(param, {
-					param: url,
-					type: I.MarkType.Link,
-				});
+				target = Util.urlFix(url);
+				type = I.PreviewType.Link;
 			};
 
-			Preview.previewShow(el, param);
+			Preview.previewShow({
+				target,
+				type,
+				element,
+				range: { 
+					from: Number(range[0]) || 0,
+					to: Number(range[1]) || 0, 
+				},
+				marks: this.marks,
+				onChange: this.setMarks,
+			});
 
-			el.off('click.link').on('click.link', (e: any) => {
+			element.off('click.link').on('click.link', e => {
 				e.preventDefault();
 				if (isInside) {
 					Util.route(route);
 				} else {
-					Renderer.send('urlOpen', url);
+					Renderer.send('urlOpen', target);
 				};
 			});
 		});
@@ -407,10 +408,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		items.off('mouseenter.object mouseleave.object');
 		items.on('mouseleave.object', () => { Preview.tooltipHide(false); });
-		items.on('mouseenter.object', (e: any) => {
-			const el = $(e.currentTarget);
-			const range = String(el.attr('data-range') || '').split('-');
-			const param = String(el.attr('data-param') || '');
+		items.on('mouseenter.object', e => {
+			const element = $(e.currentTarget);
+			const range = String(element.attr('data-range') || '').split('-');
+			const param = String(element.attr('data-param') || '');
 			const object = detailStore.get(rootId, param, []);
 			
 			let tt = '';
@@ -422,28 +423,29 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			if (tt) {
-				Preview.tooltipShow(tt, el, I.MenuDirection.Center, I.MenuDirection.Top);
+				Preview.tooltipShow(tt, element, I.MenuDirection.Center, I.MenuDirection.Top);
 				return;
 			};
 
-			if (!param || el.hasClass('disabled')) {
+			if (!param || element.hasClass('disabled')) {
 				return;
 			};
 
-			el.off('click.object').on('click.object', function (e: any) {
+			element.off('click.object').on('click.object', e => {
 				e.preventDefault();
 				ObjectUtil.openEvent(e, object);
 			});
 
-			Preview.previewShow(el, {
-				param: object.id,
-				type: I.MarkType.Object,
+			Preview.previewShow({
+				target: object.id,
+				type: I.PreviewType.Object,
+				element,
 				range: { 
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 
 				},
 				marks: this.marks,
-				onChange: (marks: I.Mark[]) => { this.setMarks(marks); }
+				onChange: this.setMarks,
 			});
 		});
 	};
@@ -503,33 +505,33 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		
 		items.off('mouseenter.mention');
 
-		items.on('mouseenter.mention', (e: any) => {
-			const el = $(e.currentTarget);
-			const range = String(el.attr('data-range') || '').split('-');
-			const param = String(el.attr('data-param') || '');
+		items.on('mouseenter.mention', e => {
+			const element = $(e.currentTarget);
+			const range = String(element.attr('data-range') || '').split('-');
+			const param = String(element.attr('data-param') || '');
 
-			if (!param || el.hasClass('disabled')) {
+			if (!param || element.hasClass('disabled')) {
 				return;
 			};
 
 			const object = detailStore.get(rootId, param, []);
 
-			el.off('click.mention').on('click.mention', function (e: any) {
+			element.off('click.mention').on('click.mention', e => {
 				e.preventDefault();
 				ObjectUtil.openEvent(e, object);
 			});
 
-			Preview.previewShow(el, {
-				param: object.id,
-				object: object,
-				type: I.MarkType.Object,
+			Preview.previewShow({
+				target: object.id,
+				type: I.PreviewType.Object,
+				element,
 				range: { 
 					from: Number(range[0]) || 0,
 					to: Number(range[1]) || 0, 
 				},
 				marks: this.marks,
 				noUnlink: true,
-				onChange: (marks: I.Mark[]) => { this.setMarks(marks); }
+				onChange: this.setMarks,
 			});
 		});
 	};
@@ -1203,7 +1205,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onSelect (e: any) {
 		const { rootId, dataset, block, isPopup, isInsideTable } = this.props;
-		const ids = DataUtil.selectionGet('', false, this.props);
+		const ids = DataUtil.selectionGet('', false, true, this.props);
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
@@ -1276,7 +1278,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	onMouseDown (e: any) {
-		const { dataset, block, isInsideTable } = this.props;
+		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 
 		window.clearTimeout(this.timeoutClick);
@@ -1288,15 +1290,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			
 			this.clicks = 0;
 
-			if (isInsideTable) {
-				focus.set(block.id, { from: 0, to: block.getLength() });
-				focus.apply();
-			} else {
-				selection.set(I.SelectType.Block, [ block.id ]);
-				focus.clear(true);
-				menuStore.close('blockContext');
-				window.clearTimeout(this.timeoutContext);
-			};
+			focus.set(block.id, { from: 0, to: block.getLength() });
+			focus.apply();
 		};
 	};
 	

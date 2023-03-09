@@ -42,10 +42,10 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 			<div
 				ref={node => this.node = node}
 			>
-				<Head {...this.props} returnTo="account" name={translate('popupSettingsAccountTitle')} />
+				<Head {...this.props} returnTo="account" name={translate('commonBack')} />
 				
 				<Title text={translate('popupSettingsPhraseTitle')} />
-				<Label text={translate('popupSettingsPhraseText')} />
+				<Label className="description" text={translate('popupSettingsPhraseText')} />
 				
 				<div className="inputs">
 					<div className="textareaWrap">
@@ -64,8 +64,8 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 				</div>
 
 				<div className="buttons">
-					<Button color="blank" text={translate('popupSettingsPhraseBackup')} onClick={this.onCopy} />
-					<Button color="blank" className="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
+					<Button className="c36" text={translate('popupSettingsPhraseBackup')} onClick={this.onCopy} />
+					<Button color="red" className="c36" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
 				</div>
 			</div>
 		);

@@ -16,7 +16,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	refFilter: any = null;
 	refList: any = null;
 	cache: any = {};
-	n = 0;
+	n = -1;
 	filter = '';
 	
 	constructor (props: I.Menu) {
@@ -153,7 +153,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		if (this.filter != filter) {
 			this.n = 0;
 		};
-
 
 		this.props.setActive();
 		this.props.position();

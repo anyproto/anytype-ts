@@ -16,6 +16,7 @@ interface State {
 const NO_TEMPLATES = [ 
 	Constant.typeId.note, 
 	Constant.typeId.set, 
+	Constant.typeId.collection,
 	Constant.typeId.bookmark,
 ].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
 
@@ -309,8 +310,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = dbStore.getType(rootId);
-		const allowedObject = ((type.smartblockTypes || []).indexOf(I.SmartBlockType.Page) >= 0)
-			|| ([Constant.typeId.collection, Constant.typeId.set].includes(rootId));
+		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page)
+			|| [ Constant.typeId.collection, Constant.typeId.set ].includes(rootId);
 		const options = [];
 
 		if (allowedObject) {
@@ -350,8 +351,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			type: rootId,
 		};
 
-		if ([Constant.typeId.collection, Constant.typeId.set].includes(rootId)) {
-			details.layout = rootId == Constant.typeId.set ? I.ObjectLayout.Set : I.ObjectLayout.Collection;
+		if (rootId == Constant.typeId.set) {
+			details.layout = I.ObjectLayout.Set;
+		} else
+		if (rootId == Constant.typeId.collection) {
+			details.layout = I.ObjectLayout.Collection;
 		};
 
 		const create = (template: any) => {
@@ -421,6 +425,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				filter: '',
 				rootId,
 				ref: 'type',
+				object,
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: relations.map(it => it.relationKey).concat(Constant.systemRelationKeys),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

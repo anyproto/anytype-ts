@@ -20,7 +20,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	timeout = 0;
 	cache: any = {};
 	refList: any = null;
-	n = 0;
+	n = -1;
 	filter = '';
 	
 	constructor (props: I.Menu) {
@@ -482,29 +482,33 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
-		const onCommand = (message: any) => {
-			focus.set(message.blockId || blockId, { from: length, to: length });
-			focus.apply();
+		const onCommand = (blockId: string) => {
+			const block = blockStore.getLeaf(rootId, blockId);
+
+			if (block.isText()) {
+				focus.set(blockId, { from: length, to: length });
+				focus.apply();
+			};
 		};
 
 		const cb = () => {
 			if (item.isTextColor) {
 				C.BlockTextListSetColor(rootId, [ blockId ], item.value, (message: any) => {
-					onCommand(message);
+					onCommand(message.blockId || blockId);
 					analytics.event('ChangeBlockColor', { color: item.value, count: 1 });
 				});
 			};
 
 			if (item.isBgColor) {
 				C.BlockListSetBackgroundColor(rootId, [ blockId ], item.value, (message: any) => {
-					onCommand(message);
+					onCommand(message.blockId || blockId);
 					analytics.event('ChangeBlockBackground', { color: item.value, count: 1 });
 				});
 			};
 
 			if (item.isAlign) {
 				C.BlockListSetAlign(rootId, [ blockId ], item.itemId, (message: any) => {
-					onCommand(message);
+					onCommand(message.blockId || blockId);
 					analytics.event('ChangeBlockAlign', { align: item.itemId, count: 1 });
 				});
 			};
@@ -573,7 +577,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				} else
 				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, (message: any) => {
-						onCommand(message);
+						onCommand(message.blockId || blockId);
 
 						analytics.event('CreateBlock', { 
 							middleTime: message.middleTime, 
@@ -622,12 +626,14 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					keyboard.setFocus(false);
 
 					blockCreate(blockId, position, param, (newBlockId: string) => {
-						focus.set(newBlockId, { from: length, to: length });
-						focus.apply();
-
 						// Auto-open BlockRelation suggest menu
 						if ((param.type == I.BlockType.Relation) && !param.content.key) {
 							window.setTimeout(() => { $(`#block-${newBlockId} .info`).trigger('click'); }, Constant.delay.menu);
+						};
+
+						// Auto-open BlockLatex edit mode
+						if (param.type == I.BlockType.Latex) {
+							window.setTimeout(() => { $(`#block-${newBlockId} #value`).trigger('click'); }, Constant.delay.menu);
 						};
 
 						if (param.type == I.BlockType.Dataview) {

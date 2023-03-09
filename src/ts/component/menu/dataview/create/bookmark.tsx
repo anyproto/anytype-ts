@@ -53,8 +53,10 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 	onSubmit (e: any) {
 		e.preventDefault();
 
-		const { close } = this.props;
+		const { close, param } = this.props;
+		const { data } = param;
 		const value = this.ref.getValue();
+		const details = data.details || {};
 
 		if (!value) {
 			return;
@@ -62,7 +64,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 
 		this.setState({ loading: true });
 
-		C.ObjectCreateBookmark({ source: value }, (message: any) => {
+		C.ObjectCreateBookmark({ ...details, source: value }, (message: any) => {
 			this.setState({ loading: false });
 
 			if (message.error.code) {

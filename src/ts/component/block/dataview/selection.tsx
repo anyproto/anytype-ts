@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import {I, keyboard} from 'Lib';
+import { I, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
-	multiselectAction?(e: any, action: string): void;
+	multiSelectAction?: (e: any, action: string) => void;
 };
 
 const Selection = observer(class Selection extends React.Component<Props> {
 
 	render () {
-		const { isInline, isCollection, dataset, multiselectAction } = this.props;
+		const { isInline, isCollection, dataset, multiSelectAction } = this.props;
 		const { selection } = dataset;
 		const cn = [ 'dataviewControls', 'dataviewSelection' ];
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
@@ -28,9 +28,7 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		};
 
 		return (
-			<div
-				className={cn.join(' ')}
-			>
+			<div className={cn.join(' ')}>
 				<div className="sides">
 					<div id="sideLeft" className="side left">{ids.length} selected</div>
 
@@ -39,7 +37,7 @@ const Selection = observer(class Selection extends React.Component<Props> {
 							<div
 								key={i}
 								className={[ 'element' ].concat(item.className || []).join(' ')}
-								onClick={(e: any) => { multiselectAction(e, item.id); }}
+								onClick={(e: any) => { multiSelectAction(e, item.id); }}
 								onMouseEnter={() => { keyboard.isSelectionClearDisabled = true; }}
 								onMouseLeave={() => { keyboard.isSelectionClearDisabled = false; }}
 							>
@@ -48,11 +46,10 @@ const Selection = observer(class Selection extends React.Component<Props> {
 						))}
 					</div>
 				</div>
-
-				<div className="line" />
 			</div>
 		);
 	};
+
 });
 
 export default Selection;
