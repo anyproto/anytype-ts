@@ -807,6 +807,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			ids = [ record.id ];
 		};
 
+		keyboard.isSelectionClearDisabled = false;
+
 		if (!selection || !onDragStart) {
 			return;
 		};
