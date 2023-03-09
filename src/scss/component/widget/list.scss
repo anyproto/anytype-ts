@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.widget.widgetList { display: flex; flex-direction: column; padding-bottom: 8px; };
+.widget.widgetList { display: flex; flex-direction: column; };
 .widget.widgetList {
 	.loaderWrapper { position: relative; }
 	.innerWrap { height: 100%; }
@@ -31,7 +31,7 @@
 		}
 	}
 
-	.body { display: flex; flex-direction: column; padding: 0px 8px 4px 8px; }
+	.body { display: flex; flex-direction: column; padding: 0px 8px 8px 8px; }
 	.body {
 		.item { cursor: pointer; height: 64px; border-radius: 8px; position: relative; }
 		.item:hover, .item.active {

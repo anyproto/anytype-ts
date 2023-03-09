@@ -28,7 +28,7 @@
 		.buttons.active { visibility: visible; } 
 	}
 	.head:hover {
-		.flex > .clickable { width: calc(100% - 60px); }
+		.clickable { width: calc(100% - 60px); }
 		.buttons { visibility: visible; }
 	}
 
