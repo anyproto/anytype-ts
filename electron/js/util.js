@@ -85,6 +85,9 @@ class Util {
 		} else {
 			dataPath.push(userPath);
 
+			if (is.development) {
+				dataPath.push('dev');
+			} else 
 			if ([ 'alpha', 'beta' ].includes(channel)) {
 				dataPath.push(channel);
 			};
