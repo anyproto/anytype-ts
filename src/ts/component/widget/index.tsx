@@ -217,7 +217,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const object = this.getObject();
 		const node = $(this.node);
 		const element = `#widget-${block.id} #button-options`;
-		const buttons = node.find('.head .buttons');
 
 		if (object._empty_) {
 			return;

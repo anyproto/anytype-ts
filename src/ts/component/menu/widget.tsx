@@ -186,13 +186,17 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			I.WidgetLayout.Link,
 		];
 
+		const treeSkipTypes = [ Constant.typeId.set, Constant.typeId.space ].concat(DataUtil.getSystemTypes());
+
 		if (this.target) {
+			const isCollection = [ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set, Constant.widgetId.collection ].includes(this.target.id);
+
 			// Favorites and Recents and Sets can only become List and Tree layouts
-			if ([ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set ].includes(this.target.id)) {
+			if (isCollection) {
 				options = options.filter(it => it != I.WidgetLayout.Link);
 			} else {
 				// Sets can only become Link and List layouts, non-sets can't become List
-				if (this.target.type == Constant.typeId.set) {
+				if (treeSkipTypes.includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				} else {
 					options = options.filter(it => it != I.WidgetLayout.List);
