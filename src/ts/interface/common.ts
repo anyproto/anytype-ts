@@ -188,6 +188,7 @@ export enum SliceOperation {
 
 export interface Dataset {
 	selection: {
+		isSelecting: boolean;
 		checkSelected: (type: I.SelectType) => boolean;
 		renderSelection: () => void;
 		scrollToElement: (id: string, dir: number) => void;
@@ -195,7 +196,7 @@ export interface Dataset {
 		get: (type: I.SelectType, withChildren?: boolean) => string[];
 		clear: () => void;
 		hide: () => void;
-		isSelecting: boolean;
+		setIsSelecting: (v: boolean) => void;
 	};
 	dragProvider: {
 		onScroll: () => void;

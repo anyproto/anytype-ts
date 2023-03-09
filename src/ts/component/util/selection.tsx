@@ -131,10 +131,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		this.y = e.pageY;
 		this.moved = false;
 		this.focused = focused;
-		this.isSelecting = true;
 		this.top = container.scrollTop();
 		this.cache.clear();
 		this.idsOnStart = new Map(this.ids);
+		this.setIsSelecting(true);
 
 		keyboard.disablePreview(true);
 
@@ -286,12 +286,13 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 	clearState () {
 		keyboard.disablePreview(false);
+		
 		this.hide();
+		this.setIsSelecting(false);
 
 		this.cache.clear();
 		this.focused = '';
 		this.range = null;
-		this.isSelecting = false;
 		this.nodes = [];
 	};
 
@@ -569,6 +570,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			dataset.selection = this;
 			return React.cloneElement(child, { dataset: dataset });
 		});
+	};
+
+	setIsSelecting (v: boolean) {
+		this.isSelecting = v;
 	};
 	
 });
