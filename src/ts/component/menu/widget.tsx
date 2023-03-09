@@ -186,9 +186,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			I.WidgetLayout.Link,
 		];
 
-		const treeSkipTypes = [ Constant.typeId.set, Constant.typeId.space ].concat(DataUtil.getSystemTypes());
-
 		if (this.target) {
+			const treeSkipTypes = [ Constant.typeId.set, Constant.typeId.space ].concat(DataUtil.getSystemTypes());
 			const isCollection = [ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set, Constant.widgetId.collection ].includes(this.target.id);
 
 			// Favorites and Recents and Sets can only become List and Tree layouts
