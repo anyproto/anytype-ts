@@ -18,7 +18,7 @@
 		.iconWrap:hover { background-color: $colorHover; }
 		.iconWrap.active { opacity: 1; background-color: $colorHover; }
 
-		.icon { width: 20px; height: 20px; }
+		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
 		.icon.options { background-image: url('~img/icon/widget/options.svg'); }
 		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
