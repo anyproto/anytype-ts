@@ -3,7 +3,6 @@
 .widget.widgetList { display: flex; flex-direction: column; padding-bottom: 8px; };
 .widget.widgetList {
 	.loaderWrapper { position: relative; }
-	.head { padding-bottom: 0px; }
 	.innerWrap { height: 100%; }
 	.contentWrapper { flex-grow: 1; }
 
@@ -74,13 +73,7 @@
 
 .widget.widgetList.isPreview { padding: 0px; }
 .widget.widgetList.isPreview {
-	.head { padding: 0px; border: 0px; margin: 0px; }
-	.head {
-		.flex { padding: 20px 16px 10px 10px; }
-	}
-
-	#viewSelect { border-bottom: 1px solid $colorBorderLight; padding: 0px 0px 10px 0px; }
-
+	.head { margin: 0px; }
 	.body { height: 100%; padding-bottom: 0px; }
 	.ReactVirtualized__List { padding: 12px 0px; }
 	.contentWrapper { height: calc(100% - 77px); }
