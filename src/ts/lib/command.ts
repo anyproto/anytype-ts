@@ -1345,7 +1345,7 @@ const ObjectGroupsSubscribe = (subId: string, relationKey: string, filters: I.Fi
 	request.setRelationkey(relationKey);
 	request.setFiltersList(filters.map(Mapper.To.Filter));
 	request.setSourceList(sources);
-	// request.setCollectionid(collectionId);
+	request.setCollectionid(collectionId);
 
 	dispatcher.request(ObjectGroupsSubscribe.name, request, callBack);
 };
