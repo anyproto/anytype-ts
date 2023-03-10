@@ -1,9 +1,11 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Frame, Title, Error, Button, Header, Footer } from 'Component';
-import { I, Storage, translate, C, DataUtil, Util, ObjectUtil } from 'Lib';
-import { authStore } from 'Store';
+import { Frame, Cover, Title, Error, Button, Header, Footer } from 'Component';
+import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer, ObjectUtil } from 'Lib';
+import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
+import Constant from 'json/constant.json';
+import Errors from 'json/error.json';
 
 interface State {
 	index: number;
@@ -21,6 +23,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	render () {
+		const { cover } = commonStore;
 		const { match } = this.props;
 		const { error } = this.state;
 		
@@ -45,6 +48,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		
 		return (
 			<div ref={node => this.node = node}>
+				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
@@ -69,10 +73,12 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			case 'init': 
 				this.init(); 
 				break;
+			case 'register':
+				this.add();
+				break;	
 			case 'select': 
 				this.select();
 				break;
-
 			case 'share': 
 				this.share();
 				break;
@@ -128,7 +134,50 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			});
 		});
 	};
-	
+
+	add () {
+		const { match } = this.props;
+		const { walletPath, accountPath, name, icon, code } = authStore;
+
+		commonStore.defaultTypeSet(Constant.typeId.note);
+
+		C.WalletCreate(walletPath, (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
+			} else {
+				authStore.phraseSet(message.mnemonic);
+
+				DataUtil.createSession((message: any) => {
+					C.AccountCreate(name, icon, accountPath, code, Util.rand(1, Constant.iconCnt), (message: any) => {
+						if (message.error.code) {
+							const error = Errors.AccountCreate[message.error.code] || message.error.description;
+							this.setError(error);
+						} else
+						if (message.account) {
+							if (message.config) {
+								commonStore.configSet(message.config, false);
+							};
+
+							const accountId = message.account.id;
+
+							authStore.accountSet(message.account);
+							authStore.previewSet('');
+
+							Storage.set('timeRegister', Util.time());
+
+							Renderer.send('keytarSet', accountId, authStore.phrase);
+							analytics.event('CreateAccount');
+
+							if (match.params.id == 'register') {
+								Util.route('/auth/success');
+							};
+						};
+					});
+				});
+			};
+		});
+	};
+
 	select () {
 		const { account, walletPath } = authStore;
 		

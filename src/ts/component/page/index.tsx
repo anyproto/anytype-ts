@@ -8,7 +8,6 @@ import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store
 import Constant from 'json/constant.json';
 
 import PageAuthInvite from './auth/invite';
-import PageAuthOnboard from './auth/onboard';
 import PageAuthNotice from './auth/notice';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -16,6 +15,7 @@ import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/accountSelect';
 import PageAuthRegister from './auth/register';
+import PageAuthOnboard from './auth/onboard';
 import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
 
@@ -43,9 +43,10 @@ const Components: { [key: string]: any } = {
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,
+	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
-	'auth/deleted':			 PageAuthDeleted,
 	'auth/share':			 PageAuthShare,
+	'auth/deleted':			 PageAuthDeleted,
 
 	'object/share':			 PageAuthShare,
 
