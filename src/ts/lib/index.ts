@@ -33,16 +33,24 @@ import Animation from './animation';
 import Constant from 'json/constant.json';
 import Text from 'json/text.json';
 
-const translate = (key: string): string => {
+
+/**
+ * 
+ * @param key the key of the text as found in the json/text.json file
+ * @returns a piece of display text in the language of the user
+ * Defaults to the default lang set in constant.json (english)
+ */
+const translate = (key: keyof typeof Text | Omit<string, keyof typeof Text>): string => {
 	const lang = Storage.get('lang') || Constant.default.lang;
 
-	if (undefined === Text[key]) {
+	if (undefined === Text[key as string]) {
 		return `*No key: ${key}*`;
 	};
-	if (undefined === Text[key][lang]) {
+
+	if (undefined === Text[key as string][lang]) {
 		return `*No ${lang}: ${key}*`;
 	};
-	return Text[key][lang];
+	return Text[key as string][lang];
 };
 
 export {
