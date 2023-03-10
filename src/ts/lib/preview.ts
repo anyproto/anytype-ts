@@ -7,10 +7,10 @@ import Constant from 'json/constant.json';
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
 
-
 /**
  * Preview class for handling tooltips, previews, and toasts.
  */
+
 class Preview {
 
 	timeout = {

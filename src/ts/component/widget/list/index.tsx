@@ -267,7 +267,7 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			
 			if (!length) {
 				css.paddingTop = 8;
-				css.paddingBottom = isPreview ? 12 : 0;
+				css.paddingBottom = isPreview ? 12 : 8;
 				css.height = 36 + css.paddingTop + css.paddingBottom;
 			};
 

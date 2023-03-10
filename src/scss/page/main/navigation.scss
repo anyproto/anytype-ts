@@ -59,10 +59,9 @@
 		.descr { @include text-small; color: $colorDarkGrey; @include text-overflow; max-height: 54px; }
 		.cover { position: relative; height: 156px; margin-top: 11px; border-radius: 2px; }
 
-		.buttons { margin-top: 16px; display: flex; }
+		.buttons { margin-top: 16px; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 		.buttons {
-			.button { width: 100%; height: 32px; line-height: 28px; }
-			.button:first-child { margin-right: 8px; }
+			.button { width: 100%; }
 			.button {
 				.icon.expand { background-image: url('~img/icon/expand.svg'); width: 20px; height: 20px; position: absolute; left: 8px; top: 6px; }
 			}

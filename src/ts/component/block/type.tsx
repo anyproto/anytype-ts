@@ -191,7 +191,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			},
 			data: {
 				filter: '',
-				smartblockTypes: [ I.SmartBlockType.Page ],
+				smartblockTypes: [ I.SmartBlockType.Page, I.SmartBlockType.Set ],
 				onClick: (item: any) => {
 					this.onClick(e, item);
 				}
@@ -211,7 +211,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		const objectToItems = [ Constant.typeId.set, Constant.typeId.collection ];
 
-		if (objectToItems.indexOf(item.id) >= 0) {
+		if (objectToItems.includes(item.id)) {
 			this.onObjectTo(e, item.id);
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
@@ -241,12 +241,12 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				historyPopup.clear();
 			};
 
-			ObjectUtil.openEvent(e, { id: message.objectId, layout: layout });
+			ObjectUtil.openEvent(e, { id: message.objectId, layout });
 
 			analytics.event('CreateObject', {
 				route: 'SelectType',
 				objectType: type,
-				layout: layout,
+				layout,
 			});
 		};
 

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, ObjectName, Icon } from 'Component';
 import { I, C, Storage, Util, analytics, Action, keyboard } from 'Lib';
-import { popupStore, detailStore, commonStore, blockStore } from 'Store';
+import { popupStore, detailStore, commonStore, blockStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PageAccount from './page/settings/account';
@@ -202,33 +202,43 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	getSections () {
-		return [
-			{ 
-				name: 'Space', isHidden: true, children: [
-					{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
-				]
-			},
-			{ 
-				name: 'Account & data', children: [
-					{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
-					{ id: 'phrase', name: 'Recovery phrase' },
-					{ id: 'pinIndex', name: 'Pin code', icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-					//{ id: 'cloud', name: 'Cloud storage' },
-				] 
-			},
+		const { account } = authStore;
+
+		let sections: any[] = [
 			{ 
 				name: 'Customization', children: [
 					{ id: 'personal', name: 'Personalization' },
 					{ id: 'appearance', name: 'Appearance' },
 				] 
-			},
-			{ 
+			}
+		];
+
+		if (account) {
+			sections = [
+				{ 
+					name: 'Space', isHidden: true, children: [
+						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
+					]
+				},
+				{ 
+					name: 'Account & data', children: [
+						{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
+						{ id: 'phrase', name: 'Recovery phrase' },
+						{ id: 'pinIndex', name: 'Pin code', icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+						//{ id: 'cloud', name: 'Cloud storage' },
+					] 
+				}
+			].concat(sections);
+
+			sections.push({ 
 				name: 'Integrations', children: [
 					{ id: 'importIndex', name: 'Import', icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
 					{ id: 'exportMarkdown', name: 'Export', icon: 'export' },
 				] 
-			},
-		];
+			});
+		};
+
+		return sections;
 	};
 
 	getItems () {

@@ -68,7 +68,10 @@ class Drag extends React.Component<Props> {
 	};
 	
 	setValue (v: number) {
-		this.move(this.checkValue(v) * this.maxWidth());
+		v = this.checkValue(v);
+		if (this.value !== v) {
+			this.move(v * this.maxWidth());
+		};
 	};
 	
 	getValue () {

@@ -331,24 +331,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		items.on('mouseenter.link', e => {
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
-			let url = String(element.attr('href') || '');
+			const url = String(element.attr('href') || '');
 			const scheme = Util.getScheme(url);
 			const isInside = scheme == Constant.protocol;
+
 			let route = '';
 			let target;
 			let type;
 
 			if (isInside) {
 				route = '/' + url.split('://')[1];
+
 				const routeParam = Util.getRoute(route);
 				const object = detailStore.get(rootId, routeParam.id, []);
-				target =  object.id;
-				type = I.MarkType.Object;
 
+				target = object.id;
+				type = I.PreviewType.Object;
 			} else {
-				url = Util.urlFix(url);
-				target =  Util.urlFix(url);
-				type = I.MarkType.Link;
+				target = Util.urlFix(url);
+				type = I.PreviewType.Link;
 			};
 
 			Preview.previewShow({
@@ -368,7 +369,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				if (isInside) {
 					Util.route(route);
 				} else {
-					Renderer.send('urlOpen', url);
+					Renderer.send('urlOpen', target);
 				};
 			});
 		});
@@ -437,7 +438,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
-				type: I.MarkType.Object,
+				type: I.PreviewType.Object,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,
@@ -522,7 +523,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
-				type: I.MarkType.Object,
+				type: I.PreviewType.Object,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,

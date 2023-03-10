@@ -156,8 +156,9 @@
 
 		.additional { position: absolute; top: 9px; left: 0px; z-index: 1; display: block; padding: 0px 16px; width: 100%; }
 		.additional {
-			.select { border: 0px; color: $colorMediumGrey; @include text-common; border-radius: 0px; padding: 0px 20px 0px 0px; }
+			.select { border: 0px; color: $colorMediumGrey; border-radius: 0px; padding: 0px 20px 0px 0px; }
 			.select {
+				.item { @include text-common; }
 				.name { overflow: visible; }
 			}
 			.select:hover, .select.active { background: none; }

@@ -124,6 +124,10 @@ class Sidebar {
 		};
 	};
 
+	toggle () {
+		commonStore.isSidebarFixed ? this.collapse() : this.expand();
+	};
+
 	collapse (): void {
 		if (!this.obj || !this.obj.length) {
 			return;
@@ -340,23 +344,6 @@ class Sidebar {
 		footer.css(css);
 	};
 
-	private resizeHead (): void {
-		if (!this.obj || !this.obj.length) {
-			return;
-		};
-
-		const { isSidebarFixed } = commonStore;
-		const head = this.obj.find('#head');
-		const platform = Util.getPlatform();
-
-		let height = 12;
-		if (isSidebarFixed) {
-			height = platform == I.Platform.Windows ? Constant.size.headerWindows : Util.sizeHeader();
-		};
-
-		head.css({ height });
-	};
-
 	private save (): void {
 		Storage.set('sidebar', this.data);
 	};
@@ -417,15 +404,13 @@ class Sidebar {
 
 		this.obj.removeClass('left right fixed');
 		this.obj.css(css).addClass(cn.join(' '));
-
-		this.resizeHead();
 	};
 
 	private setFixed (v: boolean): void {
 		commonStore.isSidebarFixedSet(v);
+
 		this.data.snap = this.getSnap(this.data.x, this.data.width);
 
-		this.resizeHead();
 		this.resizePage();
 		this.save();
 
