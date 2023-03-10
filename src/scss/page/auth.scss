@@ -44,6 +44,11 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.input:last-child { margin: 0px; }
 }
 
+.pageAuthSetup {
+	.title { margin: 0px; }
+	.label { margin: 15px 0px 0px 0px; display: none; }
+}
+
 .pageAuthAccountSelect {
 	.frame { padding-bottom: 48px; }
 	.title { margin-bottom: 21px; }

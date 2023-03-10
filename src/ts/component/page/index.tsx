@@ -7,14 +7,15 @@ import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import PageAuthSelect from './auth/select';
 import PageAuthInvite from './auth/invite';
 import PageAuthOnboard from './auth/onboard';
-
 import PageAuthNotice from './auth/notice';
+import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pinCheck';
+import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/accountSelect';
+import PageAuthRegister from './auth/register';
 import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
 
@@ -36,15 +37,13 @@ import PageMainBlock from './main/block';
 
 const Components: { [key: string]: any } = {
 	'/':					 PageAuthSelect,
-	'auth/select':			 PageAuthSelect,
-	
 	'auth/invite':			 PageAuthInvite,
+	'auth/select':			 PageAuthSelect,
+	'auth/register':		 PageAuthRegister,
 	'auth/onboard':			 PageAuthOnboard,
-
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,
 	'auth/account-select':	 PageAuthAccountSelect,
-	
 	'auth/deleted':			 PageAuthDeleted,
 	'auth/share':			 PageAuthShare,
 
