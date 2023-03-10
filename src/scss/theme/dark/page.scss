@@ -211,3 +211,16 @@
         .row { border-color: $colorLinePrimary; }
     }
 }
+
+/* PageMainArchive */
+
+.pageMainArchive {
+	.wrapper {
+		.controls { border-color: $colorLinePrimary; }
+		.controls {
+			.side.left {
+				.element:hover { background-color: $colorHover; }
+			}
+		}
+	}
+}
