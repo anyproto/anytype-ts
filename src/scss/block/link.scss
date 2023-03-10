@@ -21,7 +21,7 @@
         }
 
         .linkCard {
-            .sides { display: flex; flex-direction: row; min-height: 80px; }
+            .sides { display: flex; flex-direction: row; }
 			.side { transition: border-color 0.2s ease-in-out; }
 			.side.left { width: 100%; position: relative; display: flex; }
 			.side.right { display: none; overflow: hidden; }
@@ -92,6 +92,7 @@
 
 		.linkCard.card { margin: 8px 0px; }
 		.linkCard.card {
+			.sides { min-height: 80px; }
 			.side.left { padding: 16px; border: 1px solid $colorHover; border-radius: 16px; flex-direction: column; justify-content: center; }
 			.side.right { border-radius: 0px 16px 16px 0px; }
 
