@@ -1,9 +1,11 @@
 import * as React from 'react';
+import {DataUtil, I, keyboard, Util} from 'Lib';
 import { observer } from 'mobx-react';
+import { dbStore } from 'Store';
 import { DropTarget, Icon } from 'Component';
-import { I, Util } from 'Lib';
-
 import Cell from './cell';
+import $ from 'jquery';
+import arrayMove from "array-move";
 
 interface Props extends I.ViewComponent {
 	index: number;

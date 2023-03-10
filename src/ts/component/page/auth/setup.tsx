@@ -73,12 +73,15 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			case 'init': 
 				this.init(); 
 				break;
+
 			case 'register':
 				this.add();
-				break;	
+				break;
+
 			case 'select': 
 				this.select();
 				break;
+
 			case 'share': 
 				this.share();
 				break;
@@ -169,6 +172,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 							analytics.event('CreateAccount');
 
 							if (match.params.id == 'register') {
+								// TODO page does not exist anymore
 								Util.route('/auth/success');
 							};
 						};

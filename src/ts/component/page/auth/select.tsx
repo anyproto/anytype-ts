@@ -39,7 +39,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 		Animation.to();
 	};
 	
-	onLogin () {
+	onLogin (e: any) {
 		Animation.from(() => { Util.route('/auth/login'); });
 	};
 	

@@ -40,11 +40,11 @@ const Components: { [key: string]: any } = {
 	'auth/invite':			 PageAuthInvite,
 	'auth/select':			 PageAuthSelect,
 	'auth/register':		 PageAuthRegister,
-	'auth/onboard':			 PageAuthOnboard,
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
+	'auth/onboard':			 PageAuthOnboard,
 	'auth/share':			 PageAuthShare,
 	'auth/deleted':			 PageAuthDeleted,
 

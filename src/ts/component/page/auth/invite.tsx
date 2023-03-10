@@ -20,7 +20,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 		super(props);
 
 		this.onSubmit = this.onSubmit.bind(this);
-		this.onBack = this.onBack.bind(this);
+		this.onCancel = this.onCancel.bind(this);
 	};
 	
 	render () {
@@ -28,7 +28,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 		
         return (
 			<div>
-				<Icon className="back" onClick={this.onBack} />
+				<Icon className="back" onClick={this.onCancel} />
 				<Frame>
 
 					<Title className="animation" text={translate('authInviteTitle')} />
@@ -56,7 +56,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 		Animation.to();
 	};
 
-	onSubmit (e) {
+	onSubmit (e: any) {
 		e.preventDefault();
 		
 		const value = this.ref.getValue().trim();
@@ -70,7 +70,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 		Util.route('/auth/onboard');	
 	};
 
-	onBack () {
+	onCancel (e: any) {
 		Util.route('/auth/select');
 	};
 	
