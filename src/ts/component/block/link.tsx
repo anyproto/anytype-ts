@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, DataUtil, ObjectUtil, Util, translate, keyboard, focus, Preview } from 'Lib';
+import { I, Util, DataUtil, ObjectUtil, translate, keyboard, focus, Preview } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {

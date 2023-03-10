@@ -146,5 +146,5 @@ export {
 	MenuItemVertical,
 
 	MediaAudio,
-	MediaVideo,
+	MediaVideo
 };

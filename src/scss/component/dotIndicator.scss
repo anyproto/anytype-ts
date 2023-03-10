@@ -4,7 +4,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  
+
     span {
       display: inline-block;
       width: 5px;
@@ -13,7 +13,7 @@
       margin: 0 5px;
       background-color: $colorDarkGrey;
     }
-  
+
     span.active {
       background-color: $colorWhite;
     }
