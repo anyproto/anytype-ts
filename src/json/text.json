@@ -239,7 +239,7 @@
 	"popupSettingsAccountDeleteTitle": { "en": "Delete account" },
 	"popupSettingsAccountMoveTitle": { "en": "Account data location" },
 	"popupSettingsSpaceTitle": { "en": "Space" },
-	"popupSettingsPersonalTitle": { "en": "Personalization" },
+	"popupSettingsPersonalTitle": { "en": "Preferences" },
 	"popupSettingsAppearanceTitle": { "en": "Appearance" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
 	"popupSettingsWallpaperText": { "en": "Choose or upload the wallpaper. For best results upload high resolution images." },
