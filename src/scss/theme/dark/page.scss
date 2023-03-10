@@ -216,6 +216,10 @@
 
 .pageMainArchive {
 	.wrapper {
+		.titleWrapper {
+			.icon.archive { background-image: url('#{$themePath}/icon/archive/logo.svg'); }
+		}
+
 		.controls { border-color: $colorLinePrimary; }
 		.controls {
 			.side.left {
