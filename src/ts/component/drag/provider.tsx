@@ -277,6 +277,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		this.refLayer.hide();
 		this.clearState();
+		this.clearStyle();
 		this.unbind();
 
 		keyboard.setDragging(false);

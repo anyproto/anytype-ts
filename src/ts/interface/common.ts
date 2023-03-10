@@ -70,14 +70,6 @@ export interface HistoryVersion {
 	time: number;
 };
 
-export interface PreviewLink {
-	type: string;
-	title: string;
-	description: string;
-	faviconUrl: string;
-	imageUrl: string;
-};
-
 export enum ImportMode {
 	AllOrNothing = 0,
 	IgnoreErrors = 1,
@@ -196,6 +188,7 @@ export enum SliceOperation {
 
 export interface Dataset {
 	selection: {
+		isSelecting: boolean;
 		checkSelected: (type: I.SelectType) => boolean;
 		renderSelection: () => void;
 		scrollToElement: (id: string, dir: number) => void;
@@ -203,7 +196,7 @@ export interface Dataset {
 		get: (type: I.SelectType, withChildren?: boolean) => string[];
 		clear: () => void;
 		hide: () => void;
-		isSelecting: boolean;
+		setIsSelecting: (v: boolean) => void;
 	};
 	dragProvider: {
 		onScroll: () => void;

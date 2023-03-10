@@ -789,10 +789,8 @@ class Dispatcher {
 
 					// Subscriptions
 					if (subIds.length) {
-						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
-						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-							detailStore.update(subId, { id, details }, true);
-						});
+						uniqueSubIds = subIds.map(it => it.split('/')[0]);
+						Util.arrayUnique(uniqueSubIds).forEach(subId => detailStore.update(subId, { id, details }, true));
 					} else {
 						detailStore.update(rootId, { id, details }, true);
 
@@ -816,10 +814,8 @@ class Dispatcher {
 					// Subscriptions
 
 					if (subIds.length) {
-						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
-						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-							detailStore.update(subId, { id, details }, false);
-						});
+						uniqueSubIds = subIds.map(it => it.split('/')[0]);
+						Util.arrayUnique(uniqueSubIds).forEach(subId => detailStore.update(subId, { id, details }, false));
 					} else {
 						detailStore.update(rootId, { id, details }, false);
 
@@ -842,10 +838,8 @@ class Dispatcher {
 					// Subscriptions
 
 					if (subIds.length) {
-						uniqueSubIds = subIds.map((it: string) => { return it.split('/')[0]; });
-						Util.arrayUnique(uniqueSubIds).forEach((subId: string) => {
-							detailStore.delete(subId, id, keys);
-						});
+						uniqueSubIds = subIds.map(it => it.split('/')[0]);
+						Util.arrayUnique(uniqueSubIds).forEach(subId => detailStore.delete(subId, id, keys));
 					} else {
 						detailStore.delete(rootId, id, keys);
 						blockStore.checkTypeSelect(rootId);

@@ -175,7 +175,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { objectIds, onLinkTo } = data;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 
@@ -195,6 +195,7 @@ class MenuContext extends React.Component<I.Menu> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			classNameWrap,
 			data: {
 				rebind: this.rebind,
 			}

@@ -80,6 +80,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	_isMounted = false;
 	refChild: any = null;
 	refSidebar: any = null;
+	frame = 0;
 
 	render () {
 		const { isPopup } = this.props;
@@ -347,7 +348,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 	
 	resize () {
-		raf(() => {
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
 			if (!this._isMounted) {
 				return;
 			};

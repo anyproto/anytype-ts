@@ -277,6 +277,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				element,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				data: {
+					details,
+				},
 			});
 			return;
 		};

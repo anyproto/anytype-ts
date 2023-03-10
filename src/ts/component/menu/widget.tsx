@@ -187,14 +187,18 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		];
 
 		if (this.target) {
+			const treeSkipTypes = [ Constant.typeId.set, Constant.typeId.space ].concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
+			const isCollection = [ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set, Constant.widgetId.collection ].includes(this.target.id);
+
 			// Favorites and Recents and Sets can only become List and Tree layouts
-			if ([ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set ].includes(this.target.id)) {
+			if (isCollection) {
 				options = options.filter(it => it != I.WidgetLayout.Link);
 			} else {
 				// Sets can only become Link and List layouts, non-sets can't become List
-				if (this.target.type == Constant.typeId.set) {
+				if (treeSkipTypes.includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
-				} else {
+				};
+				if (![ Constant.typeId.set ].includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.List);
 				};
 			};
@@ -242,7 +246,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		switch (item.itemId) {
 			case 'source':
-				let filters: I.Filter[] = [];
+				let filters: I.Filter[] = [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes().concat(DataUtil.getFileTypes()) },
+				];
 
 				switch (this.layout) {
 					case I.WidgetLayout.List: {
@@ -259,7 +265,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 								operator: I.FilterOperator.And, 
 								relationKey: 'type', 
 								condition: I.FilterCondition.NotIn, 
-								value: [ Constant.typeId.set, Constant.typeId.space ].concat(DataUtil.getSystemTypes()),
+								value: [ Constant.typeId.set, Constant.typeId.space ],
 							},
 						]);
 					};

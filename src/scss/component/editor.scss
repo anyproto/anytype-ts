@@ -19,7 +19,7 @@
 	.editor {
 		.icon.buttonAdd { 
 			width: 20px; height: 20px; position: absolute; z-index: 5; cursor: pointer; user-select: none; 
-			background-image: url('~img/icon/block/add.svg'); transition: none; display: none;
+			background-image: url('~img/icon/block/add.svg'); transition: opacity 0.075s ease-in-out, transform 0.075s ease-in-out; display: none;
 		}
 		.icon.buttonAdd.show { display: block; }
 		

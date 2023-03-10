@@ -106,7 +106,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 				<div id="body" className="flex">
 					<div id="sideLeft" className="wrapper">
-						<div className={cn.join(' ')}>
+						<div id="editorWrapper" className={cn.join(' ')}>
 							<div className="editor">
 								<div className="blocks">
 									{check.withCover ? <Block {...this.props} rootId={rootId} key={cover.id} block={cover} readonly={true} /> : ''}
@@ -389,6 +389,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const node = $(this.node);
 		const sideLeft = node.find('#body > #sideLeft');
 		const sideRight = node.find('#body > #sideRight');
+		const editorWrapper = sideLeft.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
 		const container = Util.getPageContainer(isPopup);
 		const header = container.find('#header');
@@ -406,10 +407,39 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		if (isPopup) {
 			wrapper.css({ paddingTop: hh });
 		};
+
+		editorWrapper.css({ width: this.getWrapperWidth() });
 	};
 
 	getWrapperWidth (): number {
-		return Constant.size.editor;
+		const { rootId } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		return this.getWidth(root?.fields?.width);
+	};
+
+	getWidth (w: number) {
+		w = Number(w) || 0;
+
+		const { isPopup, rootId } = this.props;
+		const container = Util.getPageContainer(isPopup);
+		const sideLeft = container.find('#body > #sideLeft');
+		const root = blockStore.getLeaf(rootId, rootId);
+
+		let mw = sideLeft.width();
+		let width = 0;
+
+		if (root && root.isObjectSet()) {
+			width = mw - 192;
+		} else {
+			const size = mw * 0.6;
+
+			mw -= 96;
+			w = (mw - size) * w;
+			width = Math.max(size, Math.min(mw, size + w));
+		};
+
+		return Math.max(300, width);
 	};
 
 	getRootId () {

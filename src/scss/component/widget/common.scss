@@ -18,18 +18,18 @@
 		.iconWrap:hover { background-color: $colorHover; }
 		.iconWrap.active { opacity: 1; background-color: $colorHover; }
 
-		.icon { width: 20px; height: 20px; }
+		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
 		.icon.options { background-image: url('~img/icon/widget/options.svg'); }
 		.icon.collapse { background-image: url('~img/icon/widget/collapse.svg'); }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
 
-		.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; visibility: hidden; }
-		.buttons.active { visibility: visible; } 
+		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
+		.buttons.active { display: flex; } 
 	}
 	.head:hover {
-		.flex > .clickable { width: calc(100% - 60px); }
-		.buttons { visibility: visible; }
+		.clickable { width: calc(100% - 60px); }
+		.buttons { display: flex; }
 	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
@@ -39,9 +39,17 @@
 
 	.icon.remove {
 		position: absolute; top: -5px; right: -5px; height: 20px; width: 20px; border-radius: 50%; background-color: $colorWhite; cursor: pointer !important;
-		background-image: url('~img/icon/sidebar/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); display: none; z-index: 1;
+		background-image: url('~img/icon/sidebar/remove.svg'); background-size: 12px; box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2); display: none; z-index: 2;
 	}
 	.icon.remove:hover { background-color: $colorVeryLightGrey; }
+}
+
+.widget.active {
+	.head {
+		.clickable { width: calc(100% - 60px); }
+		.buttons { display: flex; }
+		.iconWrap.options { background-color: $colorHover; }
+	}
 }
 
 .widget.isPreview {

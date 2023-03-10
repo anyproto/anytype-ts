@@ -217,7 +217,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const object = this.getObject();
 		const node = $(this.node);
 		const element = `#widget-${block.id} #button-options`;
-		const buttons = node.find('.head .buttons');
 
 		if (object._empty_) {
 			return;
@@ -230,14 +229,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			subIds: Constant.menuIds.widget,
 			vertical: I.MenuDirection.Center,
 			offsetX: 32,
-			onOpen: () => {
-				buttons.addClass('active');
-				$(element).addClass('active');
-			},
-			onClose: () => {
-				buttons.removeClass('active');
-				$(element).removeClass('active');
-			},
+			onOpen: () => { node.addClass('active'); },
+			onClose: () => { node.removeClass('active'); },
 			data: {
 				layout: block.content.layout,
 				target: object,

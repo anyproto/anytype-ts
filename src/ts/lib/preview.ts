@@ -7,9 +7,13 @@ import Constant from 'json/constant.json';
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
 
+/**
+ * Preview class for handling tooltips, previews, and toasts.
+ */
+
 class Preview {
 
-	timeout: any = {
+	timeout = {
 		toast: 0,
 		tooltip: 0,
 		preview: 0,
@@ -17,7 +21,14 @@ class Preview {
 	};
 	delayTooltip = DELAY_TOOLTIP;
 
-	tooltipShow (text: string, element: any, typeX: I.MenuDirection, typeY: I.MenuDirection) {
+  /**
+   * Displays a tooltip with the given text and position relative to the specified element.
+   * @param text - The text to be displayed in the tooltip.
+   * @param element - The element relative to which the tooltip should be positioned.
+   * @param typeX - The horizontal direction in which the tooltip should be positioned.
+   * @param typeY - The vertical direction in which the tooltip should be positioned.
+   */
+	tooltipShow (text: string, element: JQuery<HTMLElement>, typeX: I.MenuDirection, typeY: I.MenuDirection) {
 		if (!element.length || keyboard.isResizing) {
 			return;
 		};
@@ -37,8 +48,8 @@ class Preview {
 			node.find('.txt').html(Util.lbBr(text));
 			obj.html('').append(node);
 			
-			let ow = node.outerWidth();
-			let oh = node.outerHeight();
+			const ow = node.outerWidth();
+			const oh = node.outerHeight();
 			let x = left;
 			let y = top;
 
@@ -79,6 +90,10 @@ class Preview {
 		}, this.delayTooltip);
 	};
 
+	/**
+	 * Hides the tooltip, if any is being shown.
+	 * @param force - hides the tooltip immediately by also removing the animation class.
+	 */
 	tooltipHide (force: boolean) {
 		const obj = $('.tooltip');
 
@@ -91,22 +106,31 @@ class Preview {
 		window.clearTimeout(this.timeout.delay);
 	};
 
-	previewShow (element: any, param: any) {
+	/**
+	 * Display a preview
+	 */
+	previewShow (param: I.Preview) {
+		const { element } = param;
+	
 		if (!element.length || keyboard.isPreviewDisabled) {
 			return;
 		};
 		
 		const obj = $('#preview');
 		
-		element.off('mouseleave.link').on('mouseleave.link', () => { window.clearTimeout(this.timeout.preview); });
-		obj.off('mouseleave.link').on('mouseleave.link', () => { this.previewHide(false); });
+		element.off('mouseleave.link').on('mouseleave.link', () => window.clearTimeout(this.timeout.preview) );
+		obj.off('mouseleave.link').on('mouseleave.link', () => this.previewHide(false) );
 		
 		this.previewHide(false);
 		
 		window.clearTimeout(this.timeout.preview);
-		this.timeout.preview = window.setTimeout(() => { commonStore.previewSet({ ...param, element }); }, 500);
+		this.timeout.preview = window.setTimeout(() => commonStore.previewSet({ ...param, element }), 500);
 	};
 
+	/**
+	 * Hides preview, if any is being shown.
+	 * @param force - hide the preview immediately, without 250ms delay
+	 */
 	previewHide (force: boolean) {
 		const obj = $('#preview');
 
@@ -121,6 +145,10 @@ class Preview {
 		}, force ? 0 : 250);
 	};
 
+	/**
+	 * Show a toast (an on-screen short lived notification)
+	 * @param param 
+	 */
 	toastShow (param: I.Toast) {
 		const setTimeout = () => {
 			window.clearTimeout(this.timeout.toast);
@@ -137,6 +165,10 @@ class Preview {
 		obj.on('mouseleave', () => { setTimeout(); });
 	};
 
+	/**
+	 * show hide any toast being shown
+	 * @param force - hide the preview immediately, without 250ms delay
+	 */
 	toastHide (force: boolean) {
 		const obj = $('#toast');
 
@@ -149,6 +181,10 @@ class Preview {
 		}, force ? 0 : 250);
 	};
 
+
+	/**
+	 * This method is used by toast to position itself on the screen
+	 */
 	toastPosition () {
 		const win = $(window);
 		const obj = $('#toast');
@@ -164,6 +200,9 @@ class Preview {
 		});
 	};
 
+	/**
+	 * Force hides all tooltips, previews, and toasts.
+	 */
 	hideAll () {
 		this.tooltipHide(true);
 		this.previewHide(true);

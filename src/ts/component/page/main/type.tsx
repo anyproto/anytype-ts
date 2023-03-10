@@ -65,7 +65,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
-		const showTemplates = object.isInstalled && !NO_TEMPLATES.includes(rootId);
+		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
 		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);

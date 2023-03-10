@@ -56,9 +56,11 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 				onKeyUp={this.onKeyUpBlock} 
 				onFocus={this.onFocusBlock}
 			>
-				<div id="select" className="select" onClick={this.onTemplate}>
-					<div className="name">Template formula</div>
-					<Icon className="arrow light" />
+				<div className="selectWrap">
+					<div id="select" className="select" onClick={this.onTemplate}>
+						<div className="name">Template formula</div>
+						<Icon className="arrow light" />
+					</div>
 				</div>
 
 				<div id="value" onClick={this.onEdit} />
@@ -98,8 +100,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 		this.setRange({ start: length, end: length });
 		this.setValue(this.text);
-
-		node.off('resize').on('resize', (e: any) => { this.resize(); });
 	};
 
 	componentDidUpdate () {
@@ -367,12 +367,13 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 		};
 
 		this.text = String(text || '');
-		this.value.html(katex.renderToString(this.text, { 
+
+		this.value.html(this.text ? katex.renderToString(this.text, { 
 			displayMode: true, 
 			throwOnError: false,
 			output: 'html',
 			trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-		}));
+		}) : '');
 
 		this.value.find('a').each((i: number, item: any) => {
 			item = $(item);
@@ -385,7 +386,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 		this.placeholderCheck(this.text);
 		this.updateRect();
-		this.resize();
 	};
 
 	placeholderCheck (value: string) {
@@ -394,6 +394,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 	onEdit (e: any) {
 		const { readonly } = this.props;
+		
 		if (readonly) {
 			return;
 		};
@@ -409,6 +410,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 	save (callBack?: (message: any) => void) {
 		const { rootId, block, readonly } = this.props;
+		
 		if (readonly) {
 			return;
 		};
@@ -416,7 +418,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 		const value = this.getValue();
 
 		blockStore.updateContent(rootId, block.id, { text: value });
-
 		C.BlockLatexSetText(rootId, block.id, value, callBack);
 	};
 
@@ -424,7 +425,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 		this.range = range || { start: 0, end: 0 };
 	};
 
-	onSelect (e: any) {
+	onSelect () {
 		if (!this._isMounted) {
 			return;
 		};
@@ -436,15 +437,6 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 			keyboard.disableSelection(false);
 			this.win.off('mouseup.latex');
 		});
-	};
-
-	resize () {
-		if (!this._isMounted) {
-			return;
-		};
-
-		this.value.css({ height: 'auto' });
-		this.value.css({ height: this.value.height() + 20 });
 	};
 
 });

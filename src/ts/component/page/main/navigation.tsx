@@ -146,8 +146,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				
 					{withButtons ? (
 						<div className="buttons">
-							<Button text={translate('popupNavigationOpen')} onClick={(e: any) => { this.onConfirm(e, item); }} />
-							{isPopup ? <Button text={translate('popupNavigationCancel')} color="blank" onClick={(e: any) => { popupStore.close('page'); }} /> : ''}
+							<Button text={translate('popupNavigationOpen')} className="c36" onClick={(e: any) => { this.onConfirm(e, item); }} />
+							{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={(e: any) => { popupStore.close('page'); }} /> : ''}
 						</div>
 					) : ''}
 				</div>
