@@ -6,6 +6,10 @@ import { PreviewLink, PreviewObject, PreviewGraph } from 'Component';
 import { I, Util, DataUtil, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
+interface State {
+	object: any;
+};
+
 const OFFSET_Y = 8;
 const BORDER = 12;
 
