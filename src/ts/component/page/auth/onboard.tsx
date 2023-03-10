@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, SimplePhrase, Error, Icon, IconObject } from 'Component';
 import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview, keyboard } from 'Lib';
-import { authStore, commonStore } from 'Store';
+import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
@@ -254,7 +254,18 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	}
 
 	onMoreInfoPopup = () => {
-		// popupStore.open('', {});
+		popupStore.open('confirm', {
+            data: {
+                title: translate("authOnboardKeyPhraeMoreInfoPopupTitle"),
+                text: translate("authOnboardKeyPhraeMoreInfoPopupContent"),
+                textConfirm: 'Okay',
+				canConfirm: true,
+				canCancel: false,
+                onConfirm: () => {
+					popupStore.close("confirm");
+				},
+            },
+        });
 	}
 
 	onAccountDataLocation = () => {

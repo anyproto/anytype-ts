@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Frame, Title, Label, Error, Input, Button, Header, Footer, Icon } from 'Component';
+import { Frame, Title, Label, Error, Input, Button, Icon } from 'Component';
 import { I, Util, Animation, translate } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -28,7 +28,6 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 		
         return (
 			<div>
-				<Header {...this.props} component="authIndex" />
 				<Icon className="back" onClick={this.onBack} />
 				<Frame>
 
