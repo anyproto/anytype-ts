@@ -60,7 +60,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	
 	render () {
 		const { isPopup } = this.props;
-		const { info, pagesIn, pagesOut, loading, n } = this.state;
+		const { info, pagesIn, pagesOut, loading } = this.state;
 		const { root } = blockStore;
 		const rootId = this.getRootId();
 		const isRoot = rootId == root;

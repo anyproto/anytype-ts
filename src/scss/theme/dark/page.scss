@@ -167,6 +167,7 @@
 /* PageMainNavigation */
 
 .pageMainNavigation {
+	.wrapper > #loader { background: $colorBlack; }
     .selected { border-color: $colorLinePrimary; }
     .selected {
         .descr { color: $colorSecondary; }
