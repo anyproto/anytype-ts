@@ -20,9 +20,8 @@
             .icon.ghost { width: 24px; height: 24px; }
         }
 
-		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
-            .sides { display: flex; flex-direction: row; }
+            .sides { display: flex; flex-direction: row; min-height: 80px; }
 			.side { transition: border-color 0.2s ease-in-out; }
 			.side.left { width: 100%; position: relative; display: flex; }
 			.side.right { display: none; overflow: hidden; }
