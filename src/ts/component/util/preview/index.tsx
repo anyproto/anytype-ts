@@ -28,6 +28,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		this.onEdit = this.onEdit.bind(this);
 		this.onUnlink = this.onUnlink.bind(this);
 		this.position = this.position.bind(this);
+		this.setObject = this.setObject.bind(this);
 	};
 	
 	render () {
