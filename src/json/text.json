@@ -135,8 +135,8 @@
 	"authOnboardKeyPhraseTitle": { "en": "Your Void is encrypted by your Key" },
 	"authOnboardKeyPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. if you lose it there is no way to recover it. Keep it in safe place <span class='questionMark'>?</span>" },
 	"authOnboardKeyPhraseTooltip": { "en": "How to secure your phrase: <ul><li>In system password storage. We will do it for you</li><li>On a piece of paper stored in a secure place</li><li>Inside a password manager if you use one</li></ul>" },
-	"authOnboardKeyPhraeMoreInfoPopupTitle": { "en": "Recovery phrase" },
-	"authOnboardKeyPhraeMoreInfoPopupContent": { "en": "<strong>Anytype uses recovery phrase instead of login and password to encrypt your data</strong><ul><li>Phrase is randomly generated on your device and stored locally</li><li>No one can access your data without recovery phrase</li><li>Phrase ensures only you own your data, but if you lose it there is no way to recover it.</li></ul><strong>If you lose recovery phrase there is no way to recover it</strong><ul><li>Anytype cannot recover it for you</li><li>There is technically no possible way access it, as it’s not stored on anytype side</li><li>Anytype will never reach out to ask for it</li><li>Sharing the phase equals sharing the ownership of account- The ordering of the words in a recovery phrase matters</li></ul><strong>Store recovery phrase in secure place In system password storage</strong><ul><li>In system password storage. We will do it for you</li><li>Inside password manager if you use one</li><li>On a piece of paper in safe and secure place</li></ul>" },
+	"authOnboardKeyPhraseMoreInfoPopupTitle": { "en": "Recovery phrase" },
+	"authOnboardKeyPhraseMoreInfoPopupContent": { "en": "<strong>Anytype uses recovery phrase instead of login and password to encrypt your data</strong><ul><li>Phrase is randomly generated on your device and stored locally</li><li>No one can access your data without recovery phrase</li><li>Phrase ensures only you own your data, but if you lose it there is no way to recover it.</li></ul><strong>If you lose recovery phrase there is no way to recover it</strong><ul><li>Anytype cannot recover it for you</li><li>There is technically no possible way access it, as it’s not stored on anytype side</li><li>Anytype will never reach out to ask for it</li><li>Sharing the phase equals sharing the ownership of account- The ordering of the words in a recovery phrase matters</li></ul><strong>Store recovery phrase in secure place In system password storage</strong><ul><li>In system password storage. We will do it for you</li><li>Inside password manager if you use one</li><li>On a piece of paper in safe and secure place</li></ul>" },
 	"authOnboardKeyPhraseSubmit": { "en": "Show and copy" },
 
 	"authOnboardOfflineTitle": { "en": "Anytype is an offline-first application" },
@@ -453,6 +453,8 @@
 	"tooltip2": { "en": "Downloading or uploading data to some node" },
 	"tooltip3": { "en": "Backed up on one node at least" },
 	"tooltip4": { "en": "Failed to sync, trying again..." },
+
+	"toastRecoveryCopiedClipboard": { "en": "Recovery phrase copied to clipboard"  },
 
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },

@@ -92,7 +92,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	onCopy () {
 		this.refPhrase.focus();
 		Util.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
+		Preview.toastShow({ text:  translate('toastRecoveryCopiedClipboard') });
 
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};
