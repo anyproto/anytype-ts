@@ -190,6 +190,10 @@ class DetailStore {
 			case Constant.typeId.set:
 				object = this.mapSet(object);
 				break;
+
+			case Constant.typeId.space:
+				object = this.mapSpace(object);
+				break;
 		};
 
 		return {
@@ -254,6 +258,14 @@ class DetailStore {
 
 	private mapSet (object: any) {
 		object.setOf = Relation.getArrayValue(object.setOf);
+		return object;
+	};
+
+	private mapSpace (object: any) {
+		object.spaceType = Number(object.spaceAccessibility) || I.SpaceType.Personal;
+
+		delete(object.spaceAccessibility);
+
 		return object;
 	};
 

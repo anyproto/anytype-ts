@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, ObjectName, Icon } from 'Component';
-import { I, C, Storage, Util, analytics, Action, keyboard } from 'Lib';
+import { I, C, Storage, Util, analytics, Action, keyboard, translate } from 'Lib';
 import { popupStore, detailStore, commonStore, blockStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -140,6 +140,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			</div>
 		);
 
+		console.log(space);
+
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -151,7 +153,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 						<IconObject object={space} forceLetter={true} size={40} />
 						<div className="txt">
 							<ObjectName object={space} />
-							<div className="type">Personal space</div>
+							<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
 						</div>
 					</div>
 

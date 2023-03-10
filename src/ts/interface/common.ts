@@ -186,6 +186,10 @@ export enum SliceOperation {
     Replace	 = 4,
 };
 
+export enum SpaceType {
+	Personal	 = 0,
+};
+
 export interface Dataset {
 	selection: {
 		isSelecting: boolean;
