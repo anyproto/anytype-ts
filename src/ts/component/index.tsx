@@ -36,6 +36,7 @@ import Loader from './util/loader';
 import Deleted from './util/deleted';
 import Progress from './util/progress';
 import DotIndicator from './util/dotIndicator';
+import SimplePhrase from './util/simplePhrase';
 import EmptySearch from './util/emptySearch';
 
 import Pager from './util/pager';
@@ -75,8 +76,6 @@ import ObjectDescription from './util/object/description';
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
 
-import KeyPhrase from './util/keyPhrase';
-
 export {
 	Page,
 	EditorPage,
@@ -115,6 +114,7 @@ export {
 	Deleted,
 	Progress,
 	DotIndicator,
+	SimplePhrase,
 	EmptySearch,
 	SelectionProvider,
 	Popup,
@@ -147,6 +147,4 @@ export {
 
 	MediaAudio,
 	MediaVideo,
-
-	KeyPhrase
 };
