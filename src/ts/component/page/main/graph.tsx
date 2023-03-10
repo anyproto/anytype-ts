@@ -87,7 +87,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	unbind () {
-		$(window).off(`keydown.graphPage updateGraphRoot.graphPage`);
+		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage`);
 	};
 
 	rebind () {
@@ -98,6 +98,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		win.on('updateGraphRoot.graphPage', (e: any, data: any) => { 
 			this.rootId = data.id; 
 			this.refHeader.refChild.setRootId(data.id);
+		});
+		win.on('removeGraphNode.graphPage', (e: any, data: any) => { 
+			this.refGraph.send('onRemoveNode', { ids: Util.objectCopy(data.ids) });
 		});
 	};
 

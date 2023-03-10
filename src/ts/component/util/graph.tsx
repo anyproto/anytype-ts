@@ -412,7 +412,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	send (id: string, param: any, transfer?: any[]) {
 		if (this.worker) {
-			this.worker.postMessage({ id: id, ...param }, transfer);
+			this.worker.postMessage({ id, ...param }, transfer);
 		};
 	};
 
