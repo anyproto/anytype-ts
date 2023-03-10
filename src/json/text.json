@@ -545,6 +545,8 @@
 	"widgetFavorite": { "en": "Favorites" },
 	"widgetRecent": { "en": "Recent" },
 	"widgetSet": { "en": "Sets" },
-	"widgetCollection": { "en": "Collections" }
+	"widgetCollection": { "en": "Collections" },
+
+	"spaceType0": { "en": "Personal space" }
 
 }

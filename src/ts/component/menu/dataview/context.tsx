@@ -263,6 +263,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { subId, objectIds, onSelect, targetId } = data;
+		const win = $(window);
 		const length = objectIds.length;
 		const cb = () => {
 			if (onSelect) {
@@ -294,6 +295,8 @@ class MenuContext extends React.Component<I.Menu> {
 					cb();
 					analytics.event('MoveToBin', { count: length });
 				});
+
+				win.trigger('removeGraphNode', { ids: objectIds });
 				break;
 
 			case 'unarchive':

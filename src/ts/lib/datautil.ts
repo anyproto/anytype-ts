@@ -303,7 +303,7 @@ class DataUtil {
 			},
 			{
 				subId: Constant.subId.space,
-				keys: Constant.defaultRelationKeys.concat([ 'spaceDashboardId' ]),
+				keys: Constant.defaultRelationKeys.concat([ 'spaceDashboardId', 'spaceAccessibility' ]),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space },
 				],

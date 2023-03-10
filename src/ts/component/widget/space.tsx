@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, DataUtil, ObjectUtil, analytics } from 'Lib';
+import { I, ObjectUtil, analytics, translate } from 'Lib';
 import { commonStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 	
@@ -23,7 +23,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					<IconObject object={{ ...space, layout: I.ObjectLayout.Space }} forceLetter={true} size={48} />
 					<div className="txt">
 						<ObjectName object={space} />
-						<div className="type">Personal space</div>
+						<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
 					</div>
 				</div>
 
