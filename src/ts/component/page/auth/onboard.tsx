@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, Header, DotIndicator, SimplePhrase, Error, Icon, IconObject } from 'Component';
+import { Frame, Title, Label, Button, DotIndicator, SimplePhrase, Error, Icon, IconObject } from 'Component';
 import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview, keyboard } from 'Lib';
 import { authStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -105,7 +105,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
         return (
 			<div>
-				<Header {...this.props} component="authIndex" />
 				{backButton}
 				<Frame>
 					{dotIndicator}
