@@ -116,11 +116,9 @@ export {
 	Popup,
 
 	Preview,
-<<<<<<< HEAD
-=======
+
 	PreviewLink,
 	PreviewType,
->>>>>>> master
 
 	MenuTab,
 	MenuType,
