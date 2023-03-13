@@ -26,7 +26,9 @@ const ANIMATION_CN = 'animation';
 const STORAGE_INFO_CN = 'storageInfo';
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
+
 	soulContentRef: any = null;
+
 	state: State = {
 		stage: OnboardStage.Void,
 		keyPhraseCopied: false,
@@ -66,7 +68,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		);
 	};
 
-	renderContent (): JSX.Element {
+	renderContent = (): JSX.Element => {
 		const { stage, keyPhraseCopied, iconOption } = this.state;
 
 		if (stage === OnboardStage.KeyPhrase) {
@@ -126,7 +128,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		return null;
 	};
 
-	renderLabel (): JSX.Element {
+	renderLabel = (): JSX.Element => {
 		const { stage } = this.state;
 
 		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
@@ -142,11 +144,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		);
 	}
 
-	renderTitle (): JSX.Element {
+	renderTitle = (): JSX.Element => {
 		return <Title className={ANIMATION_CN} text={this.getText('Title')} />;
 	}
 
-	renderProgressIndicator (): JSX.Element {
+	renderProgressIndicator = (): JSX.Element => {
 		const { stage } = this.state;
 
 		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
@@ -156,7 +158,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		return  <div className={ANIMATION_CN}><DotIndicator activeIndex={this.state.stage} count={4} /></div>;
 	}
 
-	renderBackButton (): JSX.Element {
+	renderBackButton = (): JSX.Element => {
 		if (this.canMoveBackward()) {
 			return <Icon className="back" onClick={this.onBack} />;
 		}
@@ -164,13 +166,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		return null;
 	}
 
-	renderError (): JSX.Element {
+	renderError = (): JSX.Element => {
 		const { error } = this.state;
 
 		return  <Error className={ANIMATION_CN} text={error} />;;
 	}
 
-	renderButtons (): JSX.Element {
+	renderButtons = (): JSX.Element => {
 		const { stage, keyPhraseCopied } = this.state;
 
 		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
@@ -200,7 +202,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		);
 	}
 
-	renderFooter () {
+	renderFooter = (): JSX.Element => {
 		const { stage } = this.state;
 
 		if (stage === OnboardStage.KeyPhrase || stage === OnboardStage.Offline) {
@@ -217,7 +219,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		return null;
 	}
 
-	getText(name: string) {
+	getText =(name: string) => {
 		const { stage } = this.state;
 
 		const stageNameMap = {
