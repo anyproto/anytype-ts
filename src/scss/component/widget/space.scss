@@ -7,7 +7,7 @@
 
 	.body { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; }
 
-	.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 16px; flex-grow: 1; }
+	.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 16px; flex-grow: 1; width: 100%; }
 	.side.left {
 		.iconObject { flex-shrink: 0; }
 		.txt { width: calc(100% - 64px); }

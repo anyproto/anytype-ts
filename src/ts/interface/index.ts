@@ -15,7 +15,6 @@ import {
 	ExportFormat, 
 	Source, 
 	EdgeType, 
-	GraphView, 
 	TabIndex,
 	HeaderComponent,
 	PageComponent,
@@ -24,6 +23,7 @@ import {
 	SliceOperation,
 	Dataset,
 	ButtonComponent,
+	SpaceType,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -87,7 +87,6 @@ export {
 	HistoryVersion,
 	Source,
 	EdgeType,
-	GraphView,
 	TabIndex,
 	HeaderComponent,
 	PageComponent,
@@ -118,6 +117,8 @@ export {
 	Preview,
 	PreviewLink,
 	PreviewType,
+
+	SpaceType,
 
 	MenuTab,
 	MenuType,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, ObjectName, Icon } from 'Component';
-import { I, C, Storage, Util, analytics, Action, keyboard } from 'Lib';
+import { I, C, Storage, Util, analytics, Action, keyboard, translate } from 'Lib';
 import { popupStore, detailStore, commonStore, blockStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -151,7 +151,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 						<IconObject object={space} forceLetter={true} size={40} />
 						<div className="txt">
 							<ObjectName object={space} />
-							<div className="type">Personal space</div>
+							<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
 						</div>
 					</div>
 
@@ -207,8 +207,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		let sections: any[] = [
 			{ 
 				name: 'Customization', children: [
-					{ id: 'personal', name: 'Personalization' },
-					{ id: 'appearance', name: 'Appearance' },
+					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
+					{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
 				] 
 			}
 		];
@@ -223,8 +223,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ 
 					name: 'Account & data', children: [
 						{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
-						{ id: 'phrase', name: 'Recovery phrase' },
-						{ id: 'pinIndex', name: 'Pin code', icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 						//{ id: 'cloud', name: 'Cloud storage' },
 					] 
 				}
@@ -232,8 +232,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 			sections.push({ 
 				name: 'Integrations', children: [
-					{ id: 'importIndex', name: 'Import', icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
-					{ id: 'exportMarkdown', name: 'Export', icon: 'export' },
+					{ id: 'importIndex', name: translate('popupSettingsImportTitle'), icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
+					{ id: 'exportMarkdown', name: translate('popupSettingsExportTitle'), icon: 'export' },
 				] 
 			});
 		};

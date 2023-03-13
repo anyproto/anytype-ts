@@ -20,7 +20,6 @@
             .icon.ghost { width: 24px; height: 24px; }
         }
 
-		.linkCard { display: inline-block; vertical-align: top; width: 100%; }
         .linkCard {
             .sides { display: flex; flex-direction: row; }
 			.side { transition: border-color 0.2s ease-in-out; }
@@ -93,6 +92,7 @@
 
 		.linkCard.card { margin: 8px 0px; }
 		.linkCard.card {
+			.sides { min-height: 80px; }
 			.side.left { padding: 16px; border: 1px solid $colorHover; border-radius: 16px; flex-direction: column; justify-content: center; }
 			.side.right { border-radius: 0px 16px 16px 0px; }
 
