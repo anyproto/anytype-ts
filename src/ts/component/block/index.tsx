@@ -451,11 +451,15 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	onContextMenu (e: any) {
-		/*
+		const { focused } = focus.state;
+		const { block } = this.props;
+
+		if (!block.isSelectable() || (block.isText() && (focused == block.id))) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
-
-		const { block } = this.props;
 
 		focus.clear(true);
 		menuStore.closeAll([], () => {
@@ -464,7 +468,6 @@ const Block = observer(class Block extends React.Component<Props> {
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
 			});
 		});
-		*/
 	};
 
 	menuOpen (param?: any) {
