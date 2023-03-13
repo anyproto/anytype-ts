@@ -106,6 +106,8 @@
 					}
 					.iconObject:hover:after { opacity: 1; }
 				}
+
+				.icon.logo { width: 54px; height: 54px; margin: 0px 0px 16px 0px; }
 			}
 		}
 
@@ -197,7 +199,7 @@
 		}
 
 		.side.right.tabImportNotion, .side.right.tabImportNotionHelp {
-			.icon.notion { width: 54px; height: 54px; background-image: url('~img/icon/popup/settings/import/notion.svg'); margin: 0px 0px 16px 0px; }
+			.icon.logo { background-image: url('~img/icon/popup/settings/import/notion.svg'); }
 		}
 
 		.side.right.tabImportNotion { padding-top: 22px; }
@@ -247,6 +249,20 @@
 				li:last-child { margin: 0px; }
 				img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; border: 1px solid $colorVeryLightGrey; border-radius: 6px; }
 			}
+		}
+
+		.side.right.tabImportMarkdown {
+			.icon.logo { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
+
+			b { font-weight: 600; }
+
+			.path { margin: 8px 0px; }
+			.path {
+				b { display: block; }
+			}
+
+			.buttons { margin: 24px 0px 8px 0px; }
+			.label.last { @include text-small; }
 		}
 
 		.side.right.tabExportMarkdown {
