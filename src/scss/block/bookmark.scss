@@ -36,8 +36,8 @@
 
 		.inner.withImage {
 			.sides { align-items: stretch; }
-			.side.left { width: calc(100% - 200px); padding: 16px 12px 16px 16px; }
-			.side.right { width: 200px; min-height: 90px; display: block; position: relative; overflow: hidden; }
+			.side.left { width: calc(100% - 28%); padding: 16px 12px 16px 16px; }
+			.side.right { width: 28%; min-height: 90px; display: block; position: relative; overflow: hidden; }
 		}
 
 		.inner.withImage.vertical {

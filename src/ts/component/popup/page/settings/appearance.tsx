@@ -48,7 +48,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 					<div className="rows">
 						<div className="row">
 							<div className="side left">
-								<Label text="Automatically hide and show Sidebar" />
+								<Label text="Automatically show and hide sidebar" />
 							</div>
 							<div className="side right">
 								<Switch value={autoSidebar} className="big" onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>

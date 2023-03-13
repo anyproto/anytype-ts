@@ -128,8 +128,8 @@
 
 		.linkCard.withCover {
 			.sides { align-items: stretch; }
-			.side.left { width: calc(100% - 200px); border-radius: 16px 0px 0px 16px; border-right-width: 0px; }
-			.side.right { width: 200px; display: block; border: 1px solid $colorHover; border-left: 0px; }
+			.side.left { width: calc(100% - 28%); border-radius: 16px 0px 0px 16px; border-right-width: 0px; }
+			.side.right { width: 28%; display: block; border: 1px solid $colorHover; border-left: 0px; }
 		}
 
 		.linkCard.vertical { display: block; }
