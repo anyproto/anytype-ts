@@ -30,7 +30,7 @@
 				.space {
 					.iconObject { flex-shrink: 0; }
 					.txt { width: calc(100% - 40px); }
-					.name { @include text-common; font-weight: 500; }
+					.name { @include text-common; font-weight: 600; }
 					.type { @include text-small; color: $colorDarkGrey; }
 				}
 
@@ -136,13 +136,14 @@
 				b { margin: 0px 0px 8px 0px; display: block; }
 			}
 
-			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; }
+			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; cursor: pointer; }
 		}
 
 		.side.right.tabAppearance {
 			.buttons { display: flex; gap: 0px 34px; margin: 0px 0px 32px 0px; }
+			.label.section { margin-bottom: 8px; }
 
-			.btn { text-align: center; @include text-small; cursor: pointer; }
+			.btn { text-align: center; @include text-small; color: $colorDarkGrey; cursor: pointer; }
 			.btn {
 				.bg { 
 					width: 120px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; 
@@ -167,6 +168,7 @@
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
+			.btn.active { color: $colorBlack; }
 			.btn.active {
 				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
 			}
@@ -185,13 +187,17 @@
 
 			.item {
 				.icon { width: 28px; margin: 0px 0px 8px 0px; height: 28px; background-size: contain; background-position: top center; }
-				.name { @include text-small; }
+				.name { @include text-small; line-height: 1em; }
 			}
 
 			.item.notion .icon { background-image: url('~img/icon/popup/settings/import/notion.svg'); }
 			.item.markdown .icon { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
 			.item.html .icon { background-image: url('~img/icon/popup/settings/import/html.svg'); }
 			.item.text .icon { background-image: url('~img/icon/popup/settings/import/text.svg'); }
+		}
+
+		.side.right.tabImportNotion, .side.right.tabImportNotionHelp {
+			.icon.notion { width: 54px; height: 54px; background-image: url('~img/icon/popup/settings/import/notion.svg'); margin: 0px 0px 16px 0px; }
 		}
 
 		.side.right.tabImportNotion { padding-top: 22px; }
@@ -231,7 +237,6 @@
 
 		.side.right.tabImportNotionHelp { padding-top: 22px; }
 		.side.right.tabImportNotionHelp {
-			.icon.notion { width: 28px; height: 28px; background-image: url('~img/icon/popup/settings/import/notion.svg'); margin: 0px 0px 16px 0px; }
 			.title { margin: 0px 0px 44px 0px !important; }
 			.label.step { @include text-paragraph; font-weight: 700; margin: 0px 0px 16px 0px; }
 

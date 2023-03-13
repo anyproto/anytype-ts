@@ -68,9 +68,9 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 	onCheck () {
 		const node = $(this.node);
 		const button = node.find('#button');
-		const value = this.refCheckbox.getValue();
+		const value = !this.refCheckbox.getValue();
 
-		this.refCheckbox.setValue(!value);
+		this.refCheckbox.setValue(value);
 		value ? button.removeClass('disabled') : button.addClass('disabled');
 	};
 

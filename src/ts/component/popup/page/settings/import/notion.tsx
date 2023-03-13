@@ -35,6 +35,7 @@ class PopupSettingsPageImportNotion extends React.Component<Props, State> {
 			<React.Fragment>
 				<Head {...this.props} returnTo="importIndex" name={translate('commonBack')} />
 
+				<Icon className="notion" />
 				<Title text="Notion" />
 				<Label className="description" text="Import your Notion files through the Notion API with 2 simple steps" />
 

@@ -32,16 +32,19 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		return (
 			<React.Fragment>
-				<IconObject
-					id="spaceIcon"
-					size={112}
-					object={space}
-					forceLetter={true}
-					canEdit={true}
-					menuParam={{ horizontal: I.MenuDirection.Center }}
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload} 
-				/>
+
+				<div className="iconWrapper">
+					<IconObject
+						id="spaceIcon"
+						size={112}
+						object={space}
+						forceLetter={true}
+						canEdit={true}
+						menuParam={{ horizontal: I.MenuDirection.Center }}
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload} 
+					/>
+				</div>
 	
 				<div className="rows">
 					<div className="row">

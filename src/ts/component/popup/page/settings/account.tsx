@@ -51,8 +51,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 		return (
 			<React.Fragment>
-				<Title text={translate('popupSettingsAccountTitle')} />
-
 				{error ? <div className="message">{error}</div> : ''}
 
 				<div className="iconWrapper">

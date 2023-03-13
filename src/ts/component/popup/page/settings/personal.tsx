@@ -30,7 +30,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 				<div className="rows">
 					<div className="row">
 						<div className="side left">
-							<Label text="Default Object type" />
+							<Label text="Default object type" />
 						</div>
 						<div className="side right">
 							<div id="defaultType" className="select" onClick={this.onType}>
