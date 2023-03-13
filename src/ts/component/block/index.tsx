@@ -451,6 +451,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	onContextMenu (e: any) {
+		/*
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -463,6 +464,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
 			});
 		});
+		*/
 	};
 
 	menuOpen (param?: any) {
