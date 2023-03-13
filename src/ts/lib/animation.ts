@@ -7,13 +7,15 @@ const Duration = {
 	Word: 0.1,
 };
 
+const DELAY = 700;
+
 const WORD_DELAY_COEF = 0.75;
 
 class Animation {
 
 	to (callBack?: () => void) {
 		const css = { opacity: 0, transform: 'translate3d(0px,10%,0px)' };
-		
+
 		this.initNodes(css, I.AnimDirection.To);
 
 		raf(() => {
@@ -136,11 +138,11 @@ class Animation {
 			});
 		});
 
-		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * 1000);
+		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * DELAY);
 	};
 
 	getDuration () {
-		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * 1000;
+		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * DELAY;
 	};
 
 };
