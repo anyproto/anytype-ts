@@ -131,7 +131,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			cnc.push('c' + n);
 
 			element = (
-				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
+				<div className={cnc.join(' ')} onClick={this.onClick}>
 					<div id="sides" className={cns.join(' ')}>
 						<div key="sideLeft" className={cnl.join(' ')}>
 							<div className="relationItem cardName">
@@ -246,6 +246,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 	
 	onClick (e: any) {
+		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) {
+			return;
+		};
+
 		const { rootId, block, dataset } = this.props;
 		const { selection } = dataset || {};
 		const { targetBlockId } = block.content;

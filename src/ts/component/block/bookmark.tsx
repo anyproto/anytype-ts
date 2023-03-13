@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
-import { I, C, focus, Util, translate, analytics, Renderer } from 'Lib';
+import { I, C, focus, Util, translate, analytics, Renderer, keyboard } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<I.BlockComponent> {
@@ -172,19 +172,21 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	};
 	
 	onClick (e: any) {
-		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) {
-			return;
-		};
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+		const ids = selection ? selection.get(I.SelectType.Block) : [];
 
-		this.open();
+		if (!(keyboard.withCommand(e) && ids.length)) {
+			this.open();
+		};
 	};
 
 	onMouseDown (e: any) {
-		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) {
+		e.persist();
+
+		if (keyboard.withCommand(e)) {
 			return;
 		};
-
-		e.persist();
 
 		// middle mouse click
 		if (e.button == 1) {
