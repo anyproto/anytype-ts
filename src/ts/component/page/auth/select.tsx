@@ -11,7 +11,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 		this.onLogin = this.onLogin.bind(this);
 		this.onRegister = this.onRegister.bind(this);
 	};
-	
+
 	render () {
         return (
 			<div>
@@ -21,7 +21,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 				<Frame>
 					<Title className="animation" text={translate('authSelectTitle')} />
 					<Label className="animation" text={translate('authSelectLabel')} />
-								
+
 					<div className="buttons">
 						<div className="animation">
 							<Button text={translate('authSelectSignup')} onClick={this.onRegister} />
@@ -38,15 +38,19 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	componentDidMount(): void {
 		Animation.to();
 	};
-	
+
+	componentDidUpdate(): void {
+		Animation.to();
+	};
+
 	onLogin (e: any) {
 		Animation.from(() => { Util.route('/auth/login'); });
 	};
-	
+
 	onRegister (e: any) {
 		Animation.from(() => { Util.route('/auth/invite'); });
 	};
-	
+
 });
 
 export default PageAuthSelect;

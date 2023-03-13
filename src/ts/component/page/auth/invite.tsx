@@ -15,17 +15,17 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 	state = {
 		error: ''
 	};
-	
+
 	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 	};
-	
+
 	render () {
 		const { error } = this.state;
-		
+
         return (
 			<div>
 				<Icon className="back" onClick={this.onCancel} />
@@ -34,7 +34,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 					<Title className="animation" text={translate('authInviteTitle')} />
 					<Label className="animation" text={translate('authInviteLabel')} />
 					<Error className="animation" text={error} />
-							
+
 					<form className="animation form" onSubmit={this.onSubmit}>
 						<Input ref={ref => this.ref = ref} placeholder={translate('authInvitePlaceholder')} />
 						<div className="animation  buttons">
@@ -50,7 +50,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 		this.ref.focus();
 		Animation.to();
 	};
-	
+
 	componentDidUpdate () {
 		this.ref.focus();
 		Animation.to();
@@ -58,22 +58,22 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 
 	onSubmit (e: any) {
 		e.preventDefault();
-		
+
 		const value = this.ref.getValue().trim();
 
 		if (!value) {
 			this.setState({ error: translate('authInviteEmpty') });
 			return;
 		};
-		
+
 		authStore.codeSet(value);
-		Util.route('/auth/onboard');	
+		Animation.from(() => { Util.route('/auth/onboard'); });
 	};
 
 	onCancel (e: any) {
-		Util.route('/auth/select');
+		Animation.from(() => { Util.route('/auth/select'); });
 	};
-	
+
 });
 
 export default PageAuthInvite;
