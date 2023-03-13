@@ -319,8 +319,8 @@ html.themeDark {
     }
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
     .sidebar {
-		.foot {
-			.item:hover { background-color: $colorHover; }
+		> .head {
+			.icon:hover { background-color: $colorHover; }
 		}
     }
 

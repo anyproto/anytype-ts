@@ -167,6 +167,7 @@
 /* PageMainNavigation */
 
 .pageMainNavigation {
+	.wrapper > #loader { background: $colorBlack; }
     .selected { border-color: $colorLinePrimary; }
     .selected {
         .descr { color: $colorSecondary; }
@@ -209,4 +210,21 @@
     .wrapper {
         .row { border-color: $colorLinePrimary; }
     }
+}
+
+/* PageMainArchive */
+
+.pageMainArchive {
+	.wrapper {
+		.titleWrapper {
+			.icon.archive { background-image: url('#{$themePath}/icon/archive/logo.svg'); }
+		}
+
+		.controls { border-color: $colorLinePrimary; }
+		.controls {
+			.side.left {
+				.element:hover { background-color: $colorHover; }
+			}
+		}
+	}
 }
