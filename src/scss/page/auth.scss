@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-html.bodyIndex, html.bodyAuth, html.bodyObject { 
+html.bodyIndex, html.bodyAuth, html.bodyObject {
 	body { background: #060606 !important; color: $colorSecondary; }
 }
 
@@ -11,7 +11,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.header { width: 100% !important; }
 	.footer { width: 100% !important; }
 
-	.icon.arrow.back { 
+	.icon.arrow.back {
 		position: fixed; top: 50%; left: 46px; width: 16px; height: 44px; cursor: pointer; margin-top: -22px; background: url('~img/arrow/auth0.svg');
 		z-index: 1;
 	}
@@ -19,7 +19,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
-	
+
 	.button { width: 226px; }
 	.button.orange { background: $colorBlack; color: $colorSecondary; }
 	.button.grey { box-shadow: 0px 0px 0px 1px $colorSecondary inset !important; color: $colorSecondary !important; background: none !important; }
@@ -53,19 +53,19 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.frame { padding-bottom: 48px; }
 	.title { margin-bottom: 21px; }
 	.list { border-radius: 8px; border: 1px solid #e0ded2; }
-	
+
 	.list {
 		.item { border-bottom: 1px solid #e0ded2; padding: 12px; cursor: pointer; }
 		.item:last-child { border: 0px; }
-		
+
 		.item {
 			.icon.user { width: 48px; height: 48px; line-height: 50px; font-size: 21px; letter-spacing: -0.16px; margin-right: 12px; }
-			.name { 
-				font-size: 18px; line-height: 26px; display: inline-block; vertical-align: middle; width: calc(100% - 60px); height: 26px; 
-				font-weight: 700; margin-top: 2px; @include text-overflow-nw;   
+			.name {
+				font-size: 18px; line-height: 26px; display: inline-block; vertical-align: middle; width: calc(100% - 60px); height: 26px;
+				font-weight: 700; margin-top: 2px; @include text-overflow-nw;
 			}
 		}
-		
+
 		.item.add {
 			.icon.plus { width: 48px; height: 48px; margin-right: 12px; background-size: 16px 16px; background-image: url('~img/icon/plus/account0.svg'); }
 		}
@@ -105,7 +105,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 .pageAuthInvite {
 	.frame { width: 415px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; }
-	.label { color: #5C5A54; }
+	.label { color: #5C5A54; min-width: 415px; }
 	.icon.back { height: 40px; width: 40px; position: fixed; left: 20px; top: 0; bottom: 0; margin: auto 0; z-index: 1; }
 }
 
@@ -146,7 +146,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 		position: fixed;
 		bottom: 24px;
 		left: 0;
-		right: 0;	
+		right: 0;
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
@@ -226,7 +226,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 		.lineRight {
 			left: 50%;
 		}
-		
+
 		.iconObject { margin: 0; }
 		.spaceIcon {
 			border-radius: 8px;
@@ -236,7 +236,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-		} 
+		}
 
 		.accountName,
 		.spaceName {
@@ -251,18 +251,18 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 			box-shadow: 0 0 0 0 white;
 			animation: pulse 2s infinite;
 		  }
-		  
+
 		  @keyframes pulse {
 			0% {
 			  transform: scale(0.95);
 			  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
 			}
-			
+
 			70% {
 			  transform: scale(1);
 			  box-shadow: 0 0 0 12px rgba(255, 121, 63, 0);
 			}
-			
+
 			100% {
 			  transform: scale(0.95);
 			  box-shadow: 0 0 0 0 rgba(255, 121, 63, 0);
@@ -294,8 +294,8 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 		.inner { display: inline-block; padding: 8px; border: 1.5px solid $colorBorderDark; border-radius: 100%; width: 64px; height: 64px; }
 	}
 
-	.row { 
-		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
+	.row {
+		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative;
 		@include text-paragraph; line-height: 28px;
 	}
 	.row.red { color: $colorRed; }
