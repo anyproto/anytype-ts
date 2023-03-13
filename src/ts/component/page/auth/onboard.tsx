@@ -7,12 +7,12 @@ import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 enum OnboardStage {
-	VOID = 0,
-	KEY_PHRASE = 1,
-	OFFLINE = 2,
-	SOUL = 3,
-	SOUL_CREATING = 4,
-	SPACE_CREATING = 5,
+	Void = 0,
+	KeyPhrase = 1,
+	Offline = 2,
+	Soul = 3,
+	SoulCreating = 4,
+	SpaceCreating = 5,
 
 }
 
@@ -29,7 +29,7 @@ const STORAGE_INFO_CN = 'storageInfo';
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 	soulContentRef: any = null;
 	state: State = {
-		stage: OnboardStage.VOID,
+		stage: OnboardStage.Void,
 		keyPhraseCopied: false,
 		iconOption: Util.rand(1, Constant.iconCnt)
 	}
@@ -70,7 +70,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	renderContent (): JSX.Element {
 		const { stage, keyPhraseCopied, iconOption } = this.state;
 
-		if (stage === OnboardStage.KEY_PHRASE) {
+		if (stage === OnboardStage.KeyPhrase) {
 			return (
 				<div
 					className={ANIMATION_CN}
@@ -84,7 +84,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			);
 		}
 
-		if (stage === OnboardStage.SOUL) {
+		if (stage === OnboardStage.Soul) {
 			return (
 				<div className={ANIMATION_CN}>
 					<input
@@ -98,12 +98,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		}
 
 
-		if (stage === OnboardStage.SOUL_CREATING || stage === OnboardStage.SPACE_CREATING) {
+		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
 			const cn = ["soulContent", ANIMATION_CN];
-			if (stage === OnboardStage.SOUL_CREATING) {
+			if (stage === OnboardStage.SoulCreating) {
 				cn.push("soulCreating");
 			}
-			if (stage === OnboardStage.SPACE_CREATING) {
+			if (stage === OnboardStage.SpaceCreating) {
 				cn.push("spaceCreating");
 			}
 			return (
@@ -130,7 +130,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	renderLabel (): JSX.Element {
 		const { stage } = this.state;
 
-		if (stage === OnboardStage.SOUL_CREATING || stage === OnboardStage.SPACE_CREATING) {
+		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
 			return null;
 		}
 
@@ -138,7 +138,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			<Label
 				className={ANIMATION_CN}
 				text={this.getText("Label")}
-				onClick={stage === OnboardStage.KEY_PHRASE ? this.showKeyPhraseTooltip : null }
+				onClick={stage === OnboardStage.KeyPhrase ? this.showKeyPhraseTooltip : null }
 			/>
 		);
 	}
@@ -150,7 +150,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	renderProgressIndicator (): JSX.Element {
 		const { stage } = this.state;
 
-		if (stage === OnboardStage.SOUL_CREATING || stage === OnboardStage.SPACE_CREATING) {
+		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
 			return null;
 		}
 
@@ -174,11 +174,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	renderButtons (): JSX.Element {
 		const { stage, keyPhraseCopied } = this.state;
 
-		if (stage === OnboardStage.SOUL_CREATING || stage === OnboardStage.SPACE_CREATING) {
+		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
 			return null;
 		}
 
-		const submitText = stage === OnboardStage.VOID || (stage === OnboardStage.KEY_PHRASE && keyPhraseCopied) ? translate(`authOnboardSubmit`) : this.getText("Submit");
+		const submitText = stage === OnboardStage.Void || (stage === OnboardStage.KeyPhrase && keyPhraseCopied) ? translate(`authOnboardSubmit`) : this.getText("Submit");
 
 		const submit = <Button
 			className={[ANIMATION_CN, this.canMoveForward() ? "" : "disabled"].join(" ")}
@@ -186,7 +186,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			onClick={this.guardedOnNext}
 		/>
 
-		const moreInfo = stage === OnboardStage.KEY_PHRASE ?
+		const moreInfo = stage === OnboardStage.KeyPhrase ?
 			(<span
 				className={[ANIMATION_CN, "moreInfo"].join(" ")}
 				onClick={this.showKeyPhraseInfoPopup}
@@ -204,7 +204,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	renderFooter () {
 		const { stage } = this.state;
 
-		if (stage === OnboardStage.KEY_PHRASE || stage === OnboardStage.OFFLINE) {
+		if (stage === OnboardStage.KeyPhrase || stage === OnboardStage.Offline) {
 			return (
 				<span
 					className={[ANIMATION_CN, STORAGE_INFO_CN, "bottom"].join(" ")}
@@ -222,12 +222,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage } = this.state;
 
 		const stageNameMap = {
-			[OnboardStage.VOID]: 'Void',
-			[OnboardStage.KEY_PHRASE]: 'KeyPhrase',
-			[OnboardStage.OFFLINE]: 'Offline',
-			[OnboardStage.SOUL]: 'Soul',
-			[OnboardStage.SOUL_CREATING]: 'SoulCreating',
-			[OnboardStage.SPACE_CREATING]: 'SpaceCreating',
+			[OnboardStage.Void]: 'Void',
+			[OnboardStage.KeyPhrase]: 'KeyPhrase',
+			[OnboardStage.Offline]: 'Offline',
+			[OnboardStage.Soul]: 'Soul',
+			[OnboardStage.SoulCreating]: 'SoulCreating',
+			[OnboardStage.SpaceCreating]: 'SpaceCreating',
 		};
 
 		return translate(`authOnboard${stageNameMap[stage]}${name}`);
@@ -249,10 +249,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage } = this.state;
 		const nameNotEmpty = authStore.name && authStore.name.length > 0;
 		return (
-			   stage === OnboardStage.VOID
-			|| stage === OnboardStage.KEY_PHRASE
-			|| stage === OnboardStage.OFFLINE
-			|| (stage === OnboardStage.SOUL && nameNotEmpty)
+			   stage === OnboardStage.Void
+			|| stage === OnboardStage.KeyPhrase
+			|| stage === OnboardStage.Offline
+			|| (stage === OnboardStage.Soul && nameNotEmpty)
 		)
 	}
 
@@ -264,21 +264,21 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	onNext = () => {
 		const { stage, keyPhraseCopied } = this.state;
 
-		if (stage === OnboardStage.KEY_PHRASE && !keyPhraseCopied) {
+		if (stage === OnboardStage.KeyPhrase && !keyPhraseCopied) {
 			this.copyAndUnblurKeyPhrase();
 			return;
 		}
 
-		if (stage === OnboardStage.SOUL) {
+		if (stage === OnboardStage.Soul) {
 			this.createAccount();
 			setTimeout(() => this.onNext(), 5000);
 		}
 
-		if (stage === OnboardStage.SOUL_CREATING) {
+		if (stage === OnboardStage.SoulCreating) {
 			setTimeout(() => this.onNext(), 5000);
 		}
 
-		if (stage === OnboardStage.SPACE_CREATING) {
+		if (stage === OnboardStage.SpaceCreating) {
 			// TODO navigate to Usecases Screen
 			Util.route('/');
 			return;
@@ -290,7 +290,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Guard to prevent illegal state change */
 	canMoveBackward = (): boolean => {
 		const { stage } = this.state;
-		return stage <= OnboardStage.SOUL;
+		return stage <= OnboardStage.Soul;
 	}
 
 	/** Moves the Onboarding Flow one stage backward, or exits it entirely */
@@ -298,7 +298,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (!this.canMoveBackward()) {
 			return;
 		}
-		if (this.state.stage === OnboardStage.VOID) {
+		if (this.state.stage === OnboardStage.Void) {
 			Util.route('/auth/invite');
 		} else {
 			Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage - 1 })) });
