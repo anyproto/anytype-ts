@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
-import { I, C, keyboard, DataUtil, ObjectUtil, MenuUtil, focus, Action, translate, analytics } from 'Lib';
+import { I, C, keyboard, DataUtil, ObjectUtil, MenuUtil, focus, Action, translate, analytics, Dataview } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -200,7 +200,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			const align = { id: 'align', icon: '', name: 'Align', children: [] };
 			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: MenuUtil.getBgColors() };
 			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: MenuUtil.getTextColors() };
-			const dataview = { id: 'dataview', icon: '', name: 'Dataview', children: MenuUtil.getDataviewActions() };
+			const dataview = { id: 'dataview', icon: '', name: 'Dataview', children: MenuUtil.getDataviewActions(rootId, blockId) };
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -324,7 +324,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasDataview) {
-				section2.children = section2.children.concat(MenuUtil.getDataviewActions());
+				section2.children = section2.children.concat(MenuUtil.getDataviewActions(rootId, blockId));
 			};
 
 			if (hasLink) {
@@ -436,9 +436,9 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			offsetY: node.offset().top - el.offset().top - 36,
 			isSub: true,
 			data: {
-				rootId: rootId,
-				blockId: blockId,
-				blockIds: blockIds,
+				rootId,
+				blockId,
+				blockIds,
 				rebind: this.rebind,
 			},
 		};
@@ -589,15 +589,32 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-				];
+				const isCollection = Dataview.isCollection(rootId, blockId);
+
+				let addParam: any = {};
+				if (isCollection) {
+					addParam.name = 'Create new collection';
+					addParam.onClick = () => {
+						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', () => { onCreate(); });
+					};
+
+					filters = filters.concat([
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+					]);
+				} else {
+					addParam.name = 'Create new set';
+					addParam.onClick = () => {
+						C.ObjectCreateSet([], {}, '', () => { onCreate(); });
+					};
+
+					filters = filters.concat([
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+					]);
+				};
 
 				const onCreate = () => {
-					window.setTimeout(() => {
-						$(window).trigger(`updateDataviewData.${block.id}`);
-					}, 50);
+					window.setTimeout(() => { $(window).trigger(`updateDataviewData.${block.id}`); }, 50);
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -607,17 +624,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					blockIds: [ block.id ],
 					filters,
 					canAdd: true,
-					addParam: { 
-						name: 'Create new set',
-						onClick: () => {
-							C.ObjectCreateSet([], {}, '', (message: any) => {
-								C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
-									$(`#block-${block.id} #head-source-select`).trigger('click');
-									onCreate();
-								});
-							});
-						},
-					},
+					addParam,
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
 					}

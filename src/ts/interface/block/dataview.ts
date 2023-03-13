@@ -204,6 +204,7 @@ export interface ContentDataview {
 	groupOrder: any[];
 	objectOrder: any[];
 	targetObjectId: string;
+	isCollection: boolean;
 };
 
 export interface BlockDataview extends I.Block {

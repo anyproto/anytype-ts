@@ -213,6 +213,23 @@ class Dataview {
 		return dbStore.getView(rootId, blockId, viewId) || views[0];
 	};
 
+	isCollection (rootId: string, blockId: string): boolean {
+		const object = detailStore.get(rootId, rootId);
+		const isInline = ![ Constant.typeId.set, Constant.typeId.collection ].includes(object.type);
+		const block = blockStore.getLeaf(rootId, blockId);
+		const { targetObjectId } = block.content;
+		const target = targetObjectId ? detailStore.get(rootId, targetObjectId) : null;
+
+		let isCollection = false;
+		if (isInline) {
+			isCollection = targetObjectId ? target.type == Constant.typeId.collection : block.content.isCollection;
+		} else {
+			isCollection = object.type == Constant.typeId.collection;
+		};
+
+		return isCollection;
+	};
+
 };
 
 export default new Dataview();
