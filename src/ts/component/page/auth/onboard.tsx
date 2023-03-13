@@ -23,7 +23,7 @@ type State = {
 	iconOption: number;
 }
 
-const AMINATION_CN = 'animation';
+const ANIMATION_CN = 'animation';
 const STORAGE_INFO_CN = 'storageInfo';
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
@@ -43,7 +43,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	componentWillUnmount(): void {
 		$(window).off('keydown.navigation');
 	}
-	
+
 	componentDidUpdate (prevProps, prevState): void {
 		if (prevState.stage !== this.state.stage) {
 			Animation.to();
@@ -57,7 +57,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				<Frame>
 					{this.renderProgressIndicator()}
 					{this.renderTitle()}
-					{this.renderLabel()}	
+					{this.renderLabel()}
 					{this.renderError()}
 					{this.renderContent()}
 					{this.renderButtons()}
@@ -73,7 +73,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (stage === OnboardStage.KEY_PHRASE) {
 			return (
 				<div
-					className={AMINATION_CN}
+					className={ANIMATION_CN}
 					onClick={this.copyAndUnblurKeyPhrase}
 				>
 						<SimplePhrase
@@ -86,7 +86,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage === OnboardStage.SOUL) {
 			return (
-				<div className={AMINATION_CN}>
+				<div className={ANIMATION_CN}>
 					<input
 						type="text"
 						placeholder="Enter your name"
@@ -99,7 +99,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 
 		if (stage === OnboardStage.SOUL_CREATING || stage === OnboardStage.SPACE_CREATING) {
-			const cn = ["soulContent", AMINATION_CN];
+			const cn = ["soulContent", ANIMATION_CN];
 			if (stage === OnboardStage.SOUL_CREATING) {
 				cn.push("soulCreating");
 			}
@@ -112,8 +112,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						<IconObject object={{iconOption, layout: I.ObjectLayout.Human}} size={48} />
 						<span className="accountName">{authStore.name}</span>
 					</div>
-					<div className="lineLeft"/> 
-					<div className="lineRight"/> 
+					<div className="lineLeft"/>
+					<div className="lineRight"/>
 					<div className="space">
 						<div className="spaceIcon">
 							<IconObject object={{iconOption, layout: I.ObjectLayout.Human}} size={42} />
@@ -136,7 +136,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		return (
 			<Label
-				className={AMINATION_CN}
+				className={ANIMATION_CN}
 				text={this.getText("Label")}
 				onClick={stage === OnboardStage.KEY_PHRASE ? this.showKeyPhraseTooltip : null }
 			/>
@@ -144,7 +144,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	}
 
 	renderTitle (): JSX.Element {
-		return <Title className={AMINATION_CN} text={this.getText("Title")} />;
+		return <Title className={ANIMATION_CN} text={this.getText("Title")} />;
 	}
 
 	renderProgressIndicator (): JSX.Element {
@@ -154,7 +154,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return null;
 		}
 
-		return  <div className={AMINATION_CN}><DotIndicator activeIndex={this.state.stage} count={4} /></div>;	
+		return  <div className={ANIMATION_CN}><DotIndicator activeIndex={this.state.stage} count={4} /></div>;
 	}
 
 	renderBackButton (): JSX.Element {
@@ -168,7 +168,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	renderError (): JSX.Element {
 		const { error } = this.state;
 
-		return  <Error className={AMINATION_CN} text={error} />;;
+		return  <Error className={ANIMATION_CN} text={error} />;;
 	}
 
 	renderButtons (): JSX.Element {
@@ -180,15 +180,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		const submitText = stage === OnboardStage.VOID || (stage === OnboardStage.KEY_PHRASE && keyPhraseCopied) ? translate(`authOnboardSubmit`) : this.getText("Submit");
 
-		const submit = <Button		
-			className={[AMINATION_CN, this.canMoveForward() ? "" : "disabled"].join(" ")}
+		const submit = <Button
+			className={[ANIMATION_CN, this.canMoveForward() ? "" : "disabled"].join(" ")}
 			text={submitText}
 			onClick={this.guardedOnNext}
 		/>
-		
-		const moreInfo = stage === OnboardStage.KEY_PHRASE ? 
+
+		const moreInfo = stage === OnboardStage.KEY_PHRASE ?
 			(<span
-				className={[AMINATION_CN, "moreInfo"].join(" ")}
+				className={[ANIMATION_CN, "moreInfo"].join(" ")}
 				onClick={this.showKeyPhraseInfoPopup}
 			>More info
 			</span>) : null;
@@ -207,7 +207,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (stage === OnboardStage.KEY_PHRASE || stage === OnboardStage.OFFLINE) {
 			return (
 				<span
-					className={[AMINATION_CN, STORAGE_INFO_CN, "bottom"].join(" ")}
+					className={[ANIMATION_CN, STORAGE_INFO_CN, "bottom"].join(" ")}
 					onClick={this.showAccountDataTooltip}>
 						<Icon className="dataLocation" />
 						Account data location
@@ -236,11 +236,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	onKeyDown = (e) => {
 		keyboard.shortcut('enter', e, this.guardedOnNext);
 	};
-	
+
 	/** Like onNext, but only moves forward if it is a legal state change  */
 	guardedOnNext = () => {
 		if (this.canMoveForward()) {
-			this.onNext()	
+			this.onNext()
 		}
 	}
 
@@ -259,7 +259,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Moves the Onboarding Flow one stage forward
 	 * Should not be triggered directly by UI without checking
 	 * if state change is allowed.
-	 * 
+	 *
 	*/
 	onNext = () => {
 		const { stage, keyPhraseCopied } = this.state;
