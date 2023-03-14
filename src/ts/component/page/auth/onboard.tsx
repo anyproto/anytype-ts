@@ -52,17 +52,51 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	render () {
+		const { error, stage } = this.state;
+
+		// Back button
+		const backButton = this.canMoveBackward() ? <Icon className="back" onClick={this.onBack} /> : null;
+
+		// Progress Indicator
+		let indicator = <div className={ANIMATION_CN}><DotIndicator activeIndex={this.state.stage} count={4} /></div>;
+		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
+			indicator = null;
+		}
+
+		// Footer
+		let footer = null;
+		if (stage === OnboardStage.KeyPhrase || stage === OnboardStage.Offline) {
+			footer = (
+				<span
+					className={[ANIMATION_CN, STORAGE_INFO_CN, 'bottom'].join(' ')}
+					onClick={this.showAccountDataTooltip}>
+						<Icon className="dataLocation" />
+						Account data location
+				</span>
+			);
+		}
+
+		// Label
+		let label = (<Label
+			className={ANIMATION_CN}
+			text={this.getText('Label')}
+			onClick={stage === OnboardStage.KeyPhrase ? this.showKeyPhraseTooltip : null }
+		/>);
+		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
+			label = null;
+		}
+
         return (
 			<div>
-				{this.renderBackButton()}
+				{backButton}
 				<Frame>
-					{this.renderProgressIndicator()}
-					{this.renderTitle()}
-					{this.renderLabel()}
-					{this.renderError()}
+					{indicator}
+					{<Title className={ANIMATION_CN} text={this.getText('Title')} />}
+					{label}
+					{<Error className={ANIMATION_CN} text={error} />}
 					{this.renderContent()}
 					{this.renderButtons()}
-					{this.renderFooter()}
+					{footer}
 				</Frame>
 			</div>
 		);
@@ -128,50 +162,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		return null;
 	};
 
-	renderLabel = (): JSX.Element => {
-		const { stage } = this.state;
-
-		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
-			return null;
-		}
-
-		return (
-			<Label
-				className={ANIMATION_CN}
-				text={this.getText('Label')}
-				onClick={stage === OnboardStage.KeyPhrase ? this.showKeyPhraseTooltip : null }
-			/>
-		);
-	}
-
-	renderTitle = (): JSX.Element => {
-		return <Title className={ANIMATION_CN} text={this.getText('Title')} />;
-	}
-
-	renderProgressIndicator = (): JSX.Element => {
-		const { stage } = this.state;
-
-		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
-			return null;
-		}
-
-		return  <div className={ANIMATION_CN}><DotIndicator activeIndex={this.state.stage} count={4} /></div>;
-	}
-
-	renderBackButton = (): JSX.Element => {
-		if (this.canMoveBackward()) {
-			return <Icon className="back" onClick={this.onBack} />;
-		}
-
-		return null;
-	}
-
-	renderError = (): JSX.Element => {
-		const { error } = this.state;
-
-		return  <Error className={ANIMATION_CN} text={error} />;;
-	}
-
 	renderButtons = (): JSX.Element => {
 		const { stage, keyPhraseCopied } = this.state;
 
@@ -200,23 +190,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				{moreInfo}
 			</div>
 		);
-	}
-
-	renderFooter = (): JSX.Element => {
-		const { stage } = this.state;
-
-		if (stage === OnboardStage.KeyPhrase || stage === OnboardStage.Offline) {
-			return (
-				<span
-					className={[ANIMATION_CN, STORAGE_INFO_CN, 'bottom'].join(' ')}
-					onClick={this.showAccountDataTooltip}>
-						<Icon className="dataLocation" />
-						Account data location
-				</span>
-			);
-		}
-
-		return null;
 	}
 
 	getText =(name: string) => {
