@@ -112,7 +112,6 @@
 	"authAccountSelectAdd": { "en": "Add profile" },
 
 	"authSetupLogin": { "en": "Logging in..." },
-	"authSetupRegister": { "en": "Creating profile..." },
 	"authSetupSelect": { "en": "Selecting profile..." },
 	"authSetupShare": { "en": "Adding space" },
 
