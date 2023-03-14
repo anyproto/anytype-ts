@@ -3,11 +3,11 @@ import $ from 'jquery';
 import { I } from 'Lib';
 
 const Duration = {
-	Normal: 0.3,
-	Word: 0.1,
+	Normal: 0.2,
+	Word: 0.07,
 };
 
-const DELAY = 700;
+const MS_SECOND = 1000;
 
 const WORD_DELAY_COEF = 0.75;
 
@@ -138,11 +138,11 @@ class Animation {
 			});
 		});
 
-		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * DELAY);
+		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * MS_SECOND);
 	};
 
 	getDuration () {
-		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * DELAY;
+		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * MS_SECOND;
 	};
 
 };
