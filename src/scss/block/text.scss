@@ -3,10 +3,7 @@
 .blocks {
 	.block.blockText { @include text-paragraph; word-wrap: break-word; }
 	.block.blockText {
-		#value { 
-			-webkit-user-modify: read-write-plaintext-only; width: 100%; overflow: hidden; position: relative; z-index: 1; user-select: text;
-			padding: 1px 0px;
-		}
+		#value { -webkit-user-modify: read-write-plaintext-only; width: 100%; position: relative; z-index: 1; user-select: text; padding: 1px 0px; }
 		#value * { user-select: text !important; }
 		#value.focusable.isFocused { background: none; }
 
