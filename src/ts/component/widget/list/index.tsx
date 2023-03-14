@@ -262,12 +262,11 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			const inner = viewSelect.find('.inner');
 			const viewItem = viewSelect.find('.viewItem');
 			const maxHeight = $('#listWidget').height() - head.outerHeight(true) - viewSelect.outerHeight(true);
-			const offset = isPreview ? 20 : 0;
-			const css: any = { height: Math.min(maxHeight, HEIGHT * length + offset), paddingTop: '', paddingBottom: '' };
+			const offset = isPreview ? 20 : 8;
+			const css: any = { height: Math.min(maxHeight, HEIGHT * length + offset), paddingTop: '', paddingBottom: 8 };
 			
 			if (!length) {
 				css.paddingTop = 8;
-				css.paddingBottom = isPreview ? 12 : 0;
 				css.height = 36 + css.paddingTop + css.paddingBottom;
 			};
 

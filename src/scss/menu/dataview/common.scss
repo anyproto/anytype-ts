@@ -30,8 +30,8 @@
             .icon.dnd { vertical-align: top; height: 40px; background-size: 20px; margin: 0px; }
             .icon.relation { margin-right: 4px; }
 
-			.select { @include text-common; line-height: 20px; }
 			.select {
+				.item { @include text-common; line-height: 20px; }
 				.name { line-height: inherit; }
 			}
 		}

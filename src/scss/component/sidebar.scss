@@ -20,6 +20,7 @@
 	> .head { height: 52px; cursor: default; }
 	> .head {
 		.icon { display: block; }
+		.icon:hover { background-color: $colorHover; }
 	}
 }
 .sidebar.anim { transition-property: left, top, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease-in-out; }

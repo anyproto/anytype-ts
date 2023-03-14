@@ -45,7 +45,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readonly, className } = this.props;
+		const { rootId, block, readonly, className, isCollection } = this.props;
 		const { isEditing } = this.state;
 		const { targetObjectId } = block.content;
 		const object = detailStore.get(rootId, targetObjectId);
@@ -89,7 +89,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						onCompositionStart={this.onCompositionStart}
 					/>
 
-					{targetObjectId ? (
+					{targetObjectId && !isCollection ? (
 						<div id="head-source-select" className="iconWrap" onClick={this.onSource}>
 							<Icon className="set" />
 						</div>
@@ -129,11 +129,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	onTitle () {
-		const { rootId, block, onSourceSelect } = this.props;
+		const { rootId, block, onSourceSelect, isCollection } = this.props;
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
 		const element = `#block-${block.id} #head-title-wrapper`;
 		const object = detailStore.get(rootId, targetObjectId);
+		const sourceName = isCollection ? 'collection' : 'set';
 
 		if (isEditing) {
 			return;
@@ -146,8 +147,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		let options: any[] = [
 			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
-			{ id: 'sourceChange', icon: 'source', name: 'Change source set', arrow: true },
-			{ id: 'sourceOpen', icon: 'expand', name: 'Open source set' },
+			{ id: 'sourceChange', icon: 'source', name: `Change source ${sourceName}`, arrow: true },
+			{ id: 'sourceOpen', icon: 'expand', name: `Open source ${sourceName}` },
 		];
 
 		if (object.isArchived || object.isDeleted) {
@@ -157,6 +158,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		menuStore.open('select', {
 			element,
 			offsetY: 4,
+			width: 240,
 			onOpen: (context: any) => {
 				this.menuContext = context;
 			},
@@ -169,12 +171,48 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	onTitleOver (e: any, item: any) {
-		const { rootId, block, loadData } = this.props;
+		const { rootId, block, loadData, isCollection } = this.props;
 		const { targetObjectId } = block.content;
 
 		if (!item.arrow) {
 			menuStore.closeAll([ 'searchObject' ]);
 			return;
+		};
+
+		console.log(isCollection);
+
+		let filters: I.Filter[] = [];
+		let addParam: any = {};
+
+		if (isCollection) {
+			addParam.name = 'Create new collection';
+			addParam.onClick = () => {
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
+					analytics.event('InlineSetSetSource', { type: 'newObject' });
+				});
+			};
+
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+			]);
+		} else {
+			addParam.name = 'Create new set';
+			addParam.onClick = () => {
+				C.ObjectCreateSet([], {}, '', (message: any) => {
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
+						$(this.node).find('#head-source-select').trigger('click');
+						onCreate(message);
+					});
+
+					analytics.event('InlineSetSetSource', { type: 'newObject' });
+				});
+			};
+
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+			]);
 		};
 
 		let menuId = '';
@@ -201,26 +239,11 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					rootId,
 					blockId: block.id,
 					blockIds: [ block.id ],
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-					],
+					filters,
 					canAdd: true,
 					rebind: this.menuContext.ref.rebind,
 					value: [ targetObjectId ],
-					addParam: { 
-						name: 'Create new set',
-						onClick: () => {
-							C.ObjectCreateSet([], {}, '', (message: any) => {
-								C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
-									$(this.node).find('#head-source-select').trigger('click');
-									onCreate(message);
-								});
-
-								analytics.event('InlineSetSetSource', { type: 'newObject' });
-							});
-						},
-					},
+					addParam,
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
 						analytics.event('InlineSetSetSource');

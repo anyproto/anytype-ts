@@ -464,10 +464,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getSources (): string[] {
-		const target = this.getTarget();
-		const setOf = target._empty_ || this.isCollection() ? [] : target.setOf;
+		if (this.isCollection()) {
+			return [];
+		};
 
-		return Relation.getArrayValue(setOf);
+		const { rootId } = this.props;
+		const target = this.getTarget();
+		const types = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.type).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.relation).map(it => it.id);
+
+		return [].concat(types).concat(relations);
 	};
 
 	getTarget () {
@@ -728,12 +734,39 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onSourceSelect (element: any, param: Partial<I.MenuParam>) {
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { targetObjectId } = block.content;
+		const isCollection = this.isCollection();
+
+		let filters: I.Filter[] = [];
+		let addParam: any = {};
+
+		if (isCollection) {
+			addParam.name = 'Create new collection';
+			addParam.onClick = () => {
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
+					onSelect(message.details, true); 
+				});
+			};
+
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+			]);
+		} else {
+			addParam.name = 'Create new set';
+			addParam.onClick = () => {
+				C.ObjectCreateSet([], {}, '', (message: any) => { onSelect(message.details, true); });
+			};
+
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+			]);
+		};
 
 		const onSelect = (item: any, isNew: boolean) => {
 			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 				const button = $(this.node).find('#head-source-select');
 
-				if (isNew && button.length) {
+				if (!isCollection && isNew && button.length) {
 					button.trigger('click');
 				};
 
@@ -762,17 +795,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				blockId: block.id,
 				blockIds: [ block.id ],
 				value: [ targetObjectId ],
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-				],
 				canAdd: true,
-				addParam: { 
-					name: 'Create new set',
-					onClick: () => {
-						C.ObjectCreateSet([], {}, '', (message: any) => { onSelect(message.details, true); });
-					},
-				},
+				filters,
+				addParam,
 				onSelect,
 			}
 		}, param || {});
@@ -943,12 +968,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return allowed;
 	};
 
-	isCollection () {
-		const { rootId } = this.props;
-		const targetId = this.getObjectId();
-		const object = detailStore.get(rootId, targetId);
-
-		return object.type === Constant.typeId.collection;
+	isCollection (): boolean {
+		const { rootId, block } = this.props;
+		return Dataview.isCollection(rootId, block.id);
 	};
 
 	objectOrderUpdate (orders: any[], records: any[], callBack?: (message0: any) => void) {

@@ -80,8 +80,8 @@ export enum ImportType {
 	Markdown	 = 1,
 	External	 = 2,
 	Migration	 = 3,
-	Html		 = 5,
-	Text		 = 6,
+	Html		 = 4,
+	Text		 = 5,
 };
 
 export enum ExportFormat {
@@ -103,12 +103,6 @@ export enum Source {
 export enum EdgeType {
 	Link		 = 0,
 	Relation	 = 1,
-};
-
-export enum GraphView {
-    Controls = 1,
-    Preview	 = 2,
-    Filter	 = 3,
 };
 
 export enum TabIndex {
@@ -186,8 +180,13 @@ export enum SliceOperation {
     Replace	 = 4,
 };
 
+export enum SpaceType {
+	Personal	 = 0,
+};
+
 export interface Dataset {
 	selection: {
+		isSelecting: boolean;
 		checkSelected: (type: I.SelectType) => boolean;
 		renderSelection: () => void;
 		scrollToElement: (id: string, dir: number) => void;
@@ -195,7 +194,7 @@ export interface Dataset {
 		get: (type: I.SelectType, withChildren?: boolean) => string[];
 		clear: () => void;
 		hide: () => void;
-		isSelecting: boolean;
+		setIsSelecting: (v: boolean) => void;
 	};
 	dragProvider: {
 		onScroll: () => void;

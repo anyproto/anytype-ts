@@ -112,7 +112,7 @@ class Keyboard {
 
 		this.shortcut(`${cmd}+\\`, e, () => {
 			e.preventDefault();
-			commonStore.isSidebarFixed ? sidebar.collapse() : sidebar.expand();
+			sidebar.toggle();
 		});
 
 		// Navigation

@@ -70,7 +70,12 @@
 
 .header.mainHistory { height: 38px; width: calc(100% - 254px); background: $colorWhite; }
 .header.mainHistory {
-	.side.center { white-space: nowrap; }
+	.side.left, .side.right { width: unset; }
+
+	.side.center { overflow: hidden; }
+	.side.center {
+		.txt { @include text-overflow-nw; }
+	}
 
 	.item { 
 		color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; 

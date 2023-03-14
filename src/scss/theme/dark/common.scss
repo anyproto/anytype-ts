@@ -319,8 +319,8 @@ html.themeDark {
     }
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
     .sidebar {
-		.foot {
-			.item:hover { background-color: $colorHover; }
+		> .head {
+			.icon:hover { background-color: $colorHover; }
 		}
     }
 
@@ -342,6 +342,12 @@ html.themeDark {
 		.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
 
 		.head::before { background-color: $colorHover; }
+	}
+
+	.widget.active {
+		.head {
+			.iconWrap.options { background-color: $colorHover; }
+		}
 	}
 
 	.widget.widgetSpace {

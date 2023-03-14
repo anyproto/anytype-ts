@@ -83,7 +83,10 @@
 		"links", 
 		"internalFlags", 
 		"restrictions",
+		"oldAnytypeID",
+
 		"spaceDashboardId",
+		"spaceAccessibility",
 
 		"source",
 		"sourceObject", 

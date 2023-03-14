@@ -302,9 +302,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const { rootId, block, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
-		const type = detailStore.get(rootId, object.type, []);
+		const type = detailStore.get(rootId, object.type, [ 'smartblockTypes' ]);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
-		const allowedObject = (type.smartblockTypes || []).indexOf(I.SmartBlockType.Page) >= 0;
+		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page);
 		const options: any[] = [];
 
 		if (!type.isArchived && !type.isDeleted) {

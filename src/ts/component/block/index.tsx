@@ -408,7 +408,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { dataset, block } = this.props;
 		const { selection, onDragStart } = dataset || {};
 		
-		if (!selection || !onDragStart) {
+		if (!onDragStart) {
 			return;
 		};
 		
@@ -418,6 +418,9 @@ const Block = observer(class Block extends React.Component<Props> {
 		};
 		
 		keyboard.disableSelection(true);
+		if (selection && selection.isSelecting) {
+			selection.setIsSelecting(false);
+		};
 
 		this.ids = DataUtil.selectionGet(block.id, false, true, this.props);
 		onDragStart(e, I.DropType.Block, this.ids, this);
@@ -448,10 +451,15 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	onContextMenu (e: any) {
+		const { focused } = focus.state;
+		const { block } = this.props;
+
+		if (!block.isSelectable() || (block.isText() && (focused == block.id))) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
-
-		const { block } = this.props;
 
 		focus.clear(true);
 		menuStore.closeAll([], () => {

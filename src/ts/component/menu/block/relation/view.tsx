@@ -214,18 +214,24 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId } = data;
+		const items = this.getItems();
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ], true);
 		const featured = Util.objectCopy(object.featuredRelations || []);
-		const idx = featured.findIndex((it: string) => { return it == relationKey; });
+		const idx = featured.findIndex(it => it == relationKey);
 
 		if (idx < 0) {
-			C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => {
-				analytics.event('FeatureRelation');
-			});
+			const item = items.find(it => it.relationKey == relationKey);
+			const cb = () => {
+				C.ObjectRelationAddFeatured(rootId, [ relationKey ], () => { analytics.event('FeatureRelation'); });
+			};
+
+			if (item.scope == I.RelationScope.Type) {
+				C.ObjectRelationAdd(rootId, [ relationKey ], cb);
+			} else {
+				cb();
+			};
 		} else {
-			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => {
-				analytics.event('UnfeatureRelation');
-			});
+			C.ObjectRelationRemoveFeatured(rootId, [ relationKey ], () => { analytics.event('UnfeatureRelation'); });
 		};
 	};
 

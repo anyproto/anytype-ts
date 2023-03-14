@@ -175,7 +175,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
-		const { data } = param;
+		const { data, classNameWrap } = param;
 		const { objectIds, onLinkTo } = data;
 		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 
@@ -195,6 +195,7 @@ class MenuContext extends React.Component<I.Menu> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			classNameWrap,
 			data: {
 				rebind: this.rebind,
 			}
@@ -262,6 +263,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { subId, objectIds, onSelect, targetId } = data;
+		const win = $(window);
 		const length = objectIds.length;
 		const cb = () => {
 			if (onSelect) {
@@ -293,6 +295,8 @@ class MenuContext extends React.Component<I.Menu> {
 					cb();
 					analytics.event('MoveToBin', { count: length });
 				});
+
+				win.trigger('removeGraphNode', { ids: objectIds });
 				break;
 
 			case 'unarchive':
