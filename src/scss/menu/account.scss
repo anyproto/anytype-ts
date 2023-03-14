@@ -25,13 +25,4 @@
 			.icon.plus { background-image: url('~img/icon/plus/account1.svg'); }
 		}
 	}
-
-	.menu.menuAccountPath { width: 320px; padding: 11px 16px 16px 16px; }
-	.menu.menuAccountPath {
-		.content { padding: 0; overflow: visible; }
-		.content {
-			.label.bold { margin-bottom: 6px; font-weight: 700; }
-			.label { margin-bottom: 11px; word-break: break-word; }
-		}
-	}
 }

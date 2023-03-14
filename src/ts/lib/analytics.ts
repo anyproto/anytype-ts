@@ -304,7 +304,7 @@ class Analytics {
 
 			'auth/notice':		 'ScreenDisclaimer',
 			'auth/login':		 'ScreenLogin',
-			'auth/register':	 'ScreenAuthRegistration',
+			'auth/onboard':	 	 'ScreenAuthRegistration',
 			'auth/invite':		 'ScreenAuthInvitation',
 
 			'main/index':		 'ScreenHome',
