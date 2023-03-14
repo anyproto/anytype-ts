@@ -351,12 +351,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			type: rootId,
 		};
 
-		if (rootId == Constant.typeId.collection) {
-			details.layout = I.ObjectLayout.Collection;
-		};
-
 		if (rootId == Constant.typeId.set) {
 			details.layout = I.ObjectLayout.Set;
+		} else
+		if (rootId == Constant.typeId.collection) {
+			details.layout = I.ObjectLayout.Collection;
 		};
 
 		const create = (template: any) => {

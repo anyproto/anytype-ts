@@ -12,6 +12,7 @@ import Constant from 'json/constant.json';
 
 import Head from './dataview/head';
 import Controls from './dataview/controls';
+import Selection from './dataview/selection';
 
 import ViewGrid from './dataview/view/grid';
 import ViewBoard from './dataview/view/board';
@@ -37,10 +38,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	refHead: any = null;
 	refControls: any = null;
 	refCells: Map<string, any> = new Map();
+
 	menuContext: any = null;
 	viewId = '';
 	creating = false;
 	frame = 0;
+	isMultiSelecting = false;
+	selected: string[];
 
 	constructor (props: Props) {
 		super(props);
@@ -68,13 +72,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.isCollection = this.isCollection.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
+		this.setMultiSelect = this.setMultiSelect.bind(this);
+		this.onMultiSelect = this.onMultiSelect.bind(this);
+		this.multiSelectAction = this.multiSelectAction.bind(this);
 	};
 
 	render () {
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { loading } = this.state;
-
 		const views = dbStore.getViews(rootId, block.id);
+
 		if (!views.length) {
 			return null;
 		};
@@ -121,6 +128,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			loadData: this.loadData,
 			getView: this.getView,
 			getTarget: this.getTarget,
+			getObjectId: this.getObjectId(),
 			getSources: this.getSources,
 			getRecord: this.getRecord,
 			getRecords: this.getRecords,
@@ -157,9 +165,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
 		} else {
-			controls = (
+			controls = this.isMultiSelecting ? (
+				<Selection
+					{...this.props}
+					{...dataviewProps}
+					multiSelectAction={this.multiSelectAction}
+				/>
+			) : (
 				<Controls 
-					ref={(ref: any) => { this.refControls = ref; }} 
+					ref={ref => this.refControls = ref} 
 					{...this.props}
 					{...dataviewProps}
 					className={className}
@@ -170,7 +184,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				<div className={[ 'content', isCollection ? 'isCollection': '' ].join(' ')}>
 					<ViewComponent 
 						key={'view' + view.id}
-						ref={(ref: any) => { this.refView = ref; }} 
+						ref={ref => this.refView = ref} 
 						onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
 						{...this.props}
 						{...dataviewProps}
@@ -182,6 +196,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						objectOrderUpdate={this.objectOrderUpdate}
 						applyObjectOrder={this.applyObjectOrder}
 						onDragRecordStart={this.onDragRecordStart}
+						onMultiSelect={this.onMultiSelect}
 					/>
 				</div>
 			);
@@ -239,7 +254,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection`);
+
+		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} selectionEnd.${block.id}  selectionClear.${I.SelectType.Record}`);
 	};
 
 	rebind () {
@@ -252,6 +268,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`updateDataviewData.${block.id}`, () => { this.loadData(this.getView().id, 0, true);});
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
+		});
+		win.on(`selectionEnd`, () => { this.onMultiSelect(); });
+		win.on(`selectionClear.${I.SelectType.Record}`, () => {
+			if (this.isMultiSelecting) {
+				this.setMultiSelect(false);
+			};
 		});
 	};
 
@@ -712,12 +734,39 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onSourceSelect (element: any, param: Partial<I.MenuParam>) {
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { targetObjectId } = block.content;
+		const isCollection = this.isCollection();
+
+		let filters: I.Filter[] = [];
+		let addParam: any = {};
+
+		if (isCollection) {
+			addParam.name = 'Create new collection';
+			addParam.onClick = () => {
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
+					onSelect(message.details, true); 
+				});
+			};
+
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+			]);
+		} else {
+			addParam.name = 'Create new set';
+			addParam.onClick = () => {
+				C.ObjectCreateSet([], {}, '', (message: any) => { onSelect(message.details, true); });
+			};
+
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+			]);
+		};
 
 		const onSelect = (item: any, isNew: boolean) => {
 			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
 				const button = $(this.node).find('#head-source-select');
 
-				if (isNew && button.length) {
+				if (!isCollection && isNew && button.length) {
 					button.trigger('click');
 				};
 
@@ -746,17 +795,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				blockId: block.id,
 				blockIds: [ block.id ],
 				value: [ targetObjectId ],
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-					{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-				],
 				canAdd: true,
-				addParam: { 
-					name: 'Create new set',
-					onClick: () => {
-						C.ObjectCreateSet([], {}, '', (message: any) => { onSelect(message.details, true); });
-					},
-				},
+				filters,
+				addParam,
 				onSelect,
 			}
 		}, param || {});
@@ -800,6 +841,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			ids = [ record.id ];
 		};
 
+		keyboard.setSelectionClearDisabled(false);
+
 		if (!selection || !onDragStart) {
 			return;
 		};
@@ -820,30 +863,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = dbStore.getSubId(rootId, block.id);
 		const view = this.getView();
 
-		let records = this.getRecords();
-		let oldIndex = records.indexOf(ids[0]);
-		let targetIndex = records.indexOf(targetId);
-
-		records = arrayMove(records, oldIndex, targetIndex);
+		if (!ids.length) {
+			return;
+		};
 
 		if (selection) {
 			selection.clear();
+			this.setMultiSelect(false);
 		};
 
+		let records = this.getRecords();
 		if (records.indexOf(targetId) > records.indexOf(ids[0])) {
 			ids = ids.reverse();
 		};
 
-		ids.forEach((id, index) => {
+		ids.forEach(id => {
 			const oldIndex = records.indexOf(id);
 			const targetIndex = records.indexOf(targetId);
 
 			records = arrayMove(records, oldIndex, targetIndex);
 		});
 
-		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records, (message) => {
-			dbStore.recordsSet(subId, '', records);
-		});
+		dbStore.recordsSet(subId, '', records);
+		this.objectOrderUpdate([ { viewId: view.id, groupId: '', objectIds: records } ], records);
 	};
 
 	getIdPrefix () {
@@ -926,12 +968,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return allowed;
 	};
 
-	isCollection () {
-		const { rootId } = this.props;
-		const targetId = this.getObjectId();
-		const object = detailStore.get(rootId, targetId);
-
-		return object.type === Constant.typeId.collection;
+	isCollection (): boolean {
+		const { rootId, block } = this.props;
+		return Dataview.isCollection(rootId, block.id);
 	};
 
 	objectOrderUpdate (orders: any[], records: any[], callBack?: (message0: any) => void) {
@@ -976,6 +1015,64 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 
 		return records;
+	};
+
+	onMultiSelect (id?: string) {
+		const { dataset } = this.props;
+		const { selection } = dataset || {};
+
+		if (!selection) {
+			return;
+		};
+		
+		let ids = [];
+		if (this.isMultiSelecting && id && !ids.length) {
+			ids = this.selected || [];
+		} else {
+			ids = selection.get(I.SelectType.Record);
+		};
+
+		if (id) {
+			ids = ids.includes(id) ? ids.filter(it => it != id) : ids.concat([ id ]);
+			selection.set(I.SelectType.Record, ids);
+		};
+
+		this.selected = ids;
+		this.setMultiSelect(!!ids.length);
+
+		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
+	};
+
+	setMultiSelect (v: boolean) {
+		if (!v) {
+			this.selected = [];
+		};
+
+		this.isMultiSelecting = v;
+		this.forceUpdate();
+	};
+
+	multiSelectAction (e: any, action: string) {
+		const objectId = this.getObjectId();
+		const count = this.selected.length;
+
+		switch (action) {
+			case 'archive': {
+				C.ObjectListSetIsArchived(this.selected, true, () => {
+					analytics.event('MoveToBin', { count });
+				});
+				break;
+			};
+
+			case 'unlink': {
+				C.ObjectCollectionRemove(objectId, this.selected, () => {
+					analytics.event('UnlinkFromCollection', { count });
+				});
+				break;
+			};
+		};
+
+		this.setMultiSelect(false);
 	};
 
 	resize () {

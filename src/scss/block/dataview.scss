@@ -79,9 +79,8 @@
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
+		.dataviewControls::after { content: ''; display: block; height: 1px; width: 100%; background: $colorBorderLight; }
 		.dataviewControls {
-			.line { height: 1px; width: calc(100% - 14px); background: $colorBorderLight; margin-left: 14px; }
-
 			.sides { gap: 0px 16px; }
 			.side { padding: 23px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
@@ -133,8 +132,23 @@
 			.button { padding: 0px 8px; @include text-common; }
 			.button.addRecord { margin-left: 4px; }
 		}
-		.dataviewControls.viewGrid {
+		.dataviewControls.viewGrid,
+		.dataviewControls.dataviewSelection {
 			.line { width: 100%; margin: 0px; }
+		}
+
+		.dataviewSelection { height: 76px; }
+		.dataviewSelection {
+			.side.left { @include text-paragraph; font-weight: 600; color: $colorBlack;  }
+
+			.side.right {
+				.element {
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; font-weight: 400; line-height: 28px; cursor: pointer;
+					transition: $transitionFast;
+				}
+				.element.orange { color: $colorOrange; }
+				.element:hover { background-color: $colorHover; }
+			}
 		}
 
 		.content {
@@ -171,7 +185,7 @@
 		.dataviewHead { padding-left: 0px; padding-right: 0px; }
 
 		.dataviewControls {
-			.side { padding-top: 9px; padding-bottom: 0px; }
+			.side { padding-top: 9px; padding-bottom: 9px; }
 			.side.left { padding-left: 0px; }
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }

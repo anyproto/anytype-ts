@@ -245,8 +245,11 @@
 	"blockNameTableOfContents": { "en": "Table of contents" },
 	"blockTextTableOfContents": { "en": "" },
 
-	"blockNameDataview": { "en": "Inline set" },
-	"blockTextDataview": { "en": "Add existing or create new inline set to this object" },
+	"blockNameSet": { "en": "Inline set" },
+	"blockTextSet": { "en": "Add existing or create new inline set to this object" },
+
+	"blockNameCollection": { "en": "Inline collection" },
+	"blockTextCollection": { "en": "Add inline collection of objects with different properties" },
 
 	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
 

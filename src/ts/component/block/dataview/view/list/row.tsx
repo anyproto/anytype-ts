@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
-import { I, Relation, Util } from 'Lib';
-import {Cell, DropTarget, Icon} from 'Component';
+import { observer } from 'mobx-react';
+import { I, keyboard, Relation, Util } from 'Lib';
+import { Cell, DropTarget, Icon } from 'Component';
 import { dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
@@ -16,7 +16,7 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart } = this.props;
+		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiSelect } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -68,8 +68,10 @@ const Row = observer(class Row extends React.Component<Props> {
 					<Icon
 						className="dnd"
 						draggable={true}
-						onClick={(e: any) => { onContext(e, record.id); }}
-						onDragStart={(e: any) => { onDragRecordStart(e, index) }}
+						onClick={(e: any) => { onMultiSelect(record.id); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
+						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
+						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
 					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}

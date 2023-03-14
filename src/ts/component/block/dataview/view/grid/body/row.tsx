@@ -18,7 +18,7 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, index, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection } = this.props;
+		const { rootId, index, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
 		const relations = getVisibleRelations();
 		const record = getRecord(index);
 		const widths = getColumnWidths('', 0);
@@ -39,7 +39,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			<React.Fragment>
 				{relations.map((relation: any, i: number) => (
 					<Cell
-						key={'grid-cell-' + relation.relationKey + record.id}
+						key={[ 'grid', block.id, relation.relationKey, record.id ].join(' ')}
 						{...this.props}
 						width={relation.width}
 						index={index}
@@ -76,8 +76,10 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 					<Icon
 						className="dnd"
 						draggable={true}
-						onClick={(e: any) => { onContext(e, record.id); }}
-						onDragStart={(e: any) => { onDragRecordStart(e, index) }}
+						onClick={() => { onMultiSelect(record.id); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
+						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
+						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
 					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}

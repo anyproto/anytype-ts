@@ -1,4 +1,4 @@
-import { I, keyboard, translate, Util, DataUtil, Relation } from 'Lib';
+import { I, keyboard, translate, Util, DataUtil, Relation, Dataview } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -81,7 +81,8 @@ class MenuUtil {
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc' ] },
 			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable' },
-			{ type: I.BlockType.Dataview, id: I.BlockType.Dataview, icon: 'dataview', lang: 'Dataview', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
+			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
+			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
 		].map(this.mapperBlock);
 	};
 
@@ -159,10 +160,13 @@ class MenuUtil {
 		return items.map(it => ({ ...it, isAction: true }));
 	};
 
-	getDataviewActions () {
+	getDataviewActions (rootId: string, blockId: string) {
+		const isCollection = Dataview.isCollection(rootId, blockId);
+		const sourceName = isCollection ? 'collection' : 'set';
+
 		return [
-			{ id: 'dataviewSource', icon: 'source', name: 'Change source set', arrow: true },
-			{ id: 'openDataviewObject', icon: 'expand', name: 'Open source set' },
+			{ id: 'dataviewSource', icon: 'source', name: `Change source ${sourceName}`, arrow: true },
+			{ id: 'openDataviewObject', icon: 'expand', name: `Open source ${sourceName}` },
 			//{ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' }
 		].map(it => ({ ...it, isAction: true }));
 	};

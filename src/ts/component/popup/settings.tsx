@@ -88,6 +88,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { page } = data;
 		const { loading } = this.state;
+		const { account } = authStore;
 		const sections = this.getSections().filter(it => !it.isHidden);
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
@@ -147,13 +148,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			>
 				<div id="sideLeft" className="side left">
 
-					<div className="space" onClick={() => this.onPage('spaceIndex')}>
-						<IconObject object={space} forceLetter={true} size={40} />
-						<div className="txt">
-							<ObjectName object={space} />
-							<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
+					{account ? (
+						<div className="space" onClick={() => this.onPage('spaceIndex')}>
+							<IconObject object={space} forceLetter={true} size={40} />
+							<div className="txt">
+								<ObjectName object={space} />
+								<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
+							</div>
 						</div>
-					</div>
+					) : ''}
 
 					{sections.map((item: any, i: number) => (
 						<Section key={i} {...item} />
