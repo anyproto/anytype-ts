@@ -131,7 +131,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	loadGroupList () {
-		const { rootId, block, getView, getTarget } = this.props;
+		const { rootId, block, getView, getTarget, isCollection } = this.props;
 		const object = getTarget();
 		const view = getView();
 		const subId = dbStore.getGroupSubId(rootId, block.id, 'groups');
@@ -158,7 +158,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		this.setState({ loading: true });
 
-		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, object.setOf || [], (message: any) => {
+		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
 			if (message.error.code) {
 				return;
 			};

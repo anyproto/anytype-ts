@@ -11,6 +11,7 @@ class BlockContentDataview implements I.ContentDataview {
 	groupOrder: any[] = [];
 	objectOrder: any[] = [];
 	targetObjectId = '';
+	isCollection = false;
 	
 	constructor (props: I.ContentDataview) {
 		this.sources = props.sources || [];
@@ -19,6 +20,7 @@ class BlockContentDataview implements I.ContentDataview {
 		this.groupOrder = props.groupOrder || [];
 		this.objectOrder = props.objectOrder || [];
 		this.targetObjectId = String(props.targetObjectId || '');
+		this.isCollection = Boolean(props.isCollection);
 		
 		makeObservable(this, {
 			sources: observable,
@@ -27,6 +29,7 @@ class BlockContentDataview implements I.ContentDataview {
 			objectOrder: observable,
 			relationLinks: observable,
 			targetObjectId: observable,
+			isCollection: observable,
 		});
 
 		intercept(this as any, (change: any) => { return Util.intercept(this, change); });

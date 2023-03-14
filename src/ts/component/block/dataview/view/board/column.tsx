@@ -145,7 +145,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	};
 
 	load (clear: boolean) {
-		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget } = this.props;
+		const { id, block, getView, getKeys, getSubId, applyObjectOrder, getLimit, getTarget, isCollection } = this.props;
 		const object = getTarget();
 		const view = getView();
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
@@ -202,6 +202,7 @@ const Column = observer(class Column extends React.Component<Props, State> {
 			limit,
 			ignoreHidden: true,
 			ignoreDeleted: true,
+			collectionId: isCollection ? object.id : '',
 		}, () => {
 			dbStore.recordsSet(subId, '', applyObjectOrder(dbStore.getRecords(subId, ''), id));
 

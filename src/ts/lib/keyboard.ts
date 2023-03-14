@@ -32,6 +32,7 @@ class Keyboard {
 	isContextOpenDisabled = false;
 	isPasteDisabled = false;
 	isSelectionDisabled = false;
+	isSelectionClearDisabled = false;
 	
 	init () {
 		this.unbind();
@@ -627,6 +628,10 @@ class Keyboard {
 
 	setSelection (v: any) {
 		this.selection = v;
+	};
+
+	setSelectionClearDisabled (v: boolean) {
+		this.isSelectionClearDisabled = v;
 	};
 
 	initPinCheck () {

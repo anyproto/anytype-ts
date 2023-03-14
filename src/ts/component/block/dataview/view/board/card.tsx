@@ -2,7 +2,7 @@ import * as React from 'react';
 import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
-import { Cell, DropTarget } from 'Component';
+import { Cell, DropTarget, Icon } from 'Component';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -17,7 +17,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, isCollection } = this.props;
+		const { rootId, block, groupId, id, getView, onContext, onRef, onDragStartCard, getIdPrefix, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -27,28 +27,36 @@ const Card = observer(class Card extends React.Component<Props> {
 		const { done } = record;
 
 		let content = (
-			<div className="cardContent">
-				{relations.map((relation: any, i: number) => {
-					const id = Relation.cellId(idPrefix, relation.relationKey, 0);
-					return (
-						<Cell
-							key={'board-cell-' + view.id + relation.relationKey}
-							{...this.props}
-							getRecord={() => { return record; }}
-							subId={subId}
-							ref={ref => { onRef(ref, id); }}
-							relationKey={relation.relationKey}
-							index={0}
-							viewType={view.type}
-							idPrefix={idPrefix}
-							arrayLimit={2}
-							showTooltip={true}
-							tooltipX={I.MenuDirection.Left}
-							iconSize={18}
-						/>
-					);
-				})}
-			</div>
+			<React.Fragment>
+				<Icon
+					className="checkbox"
+					onClick={(e: any) => { onMultiSelect(record.id); }}
+					onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
+					onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
+				/>
+				<div className="cardContent">
+					{relations.map((relation: any, i: number) => {
+						const id = Relation.cellId(idPrefix, relation.relationKey, 0);
+						return (
+							<Cell
+								key={'board-cell-' + view.id + relation.relationKey}
+								{...this.props}
+								getRecord={() => { return record; }}
+								subId={subId}
+								ref={ref => { onRef(ref, id); }}
+								relationKey={relation.relationKey}
+								index={0}
+								viewType={view.type}
+								idPrefix={idPrefix}
+								arrayLimit={2}
+								showTooltip={true}
+								tooltipX={I.MenuDirection.Left}
+								iconSize={18}
+							/>
+						);
+					})}
+				</div>
+			</React.Fragment>
 		);
 
 		if (!isInline) {
@@ -115,7 +123,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
-		if (keyboard.withCommand(e) && ids.length) {
+		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
 			return;
 		};
 
