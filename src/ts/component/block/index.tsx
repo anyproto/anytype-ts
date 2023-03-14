@@ -451,10 +451,15 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	onContextMenu (e: any) {
+		const { focused } = focus.state;
+		const { block } = this.props;
+
+		if (!block.isSelectable() || (block.isText() && (focused == block.id))) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
-
-		const { block } = this.props;
 
 		focus.clear(true);
 		menuStore.closeAll([], () => {

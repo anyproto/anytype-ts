@@ -91,15 +91,14 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 		};
 
 		obj.off('mouseenter').on('mouseenter', () => { clear(); });
-
 		obj.off('mouseleave').on('mouseleave', () => {
 			const status = $('#menuThreadStatus');
+
 			if (status.length) {
-				status.off('mouseenter').on('mouseenter', () => { 
-					clear();
-				});
+				status.off('mouseenter').on('mouseenter', () => { clear(); });
 				status.off('mouseleave').on('mouseleave', leave);
 			};
+
 			leave();
 		});
 	};
@@ -107,6 +106,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 	componentWillUnmount () {
 		window.clearTimeout(this.timeoutClose);
 		window.clearTimeout(this.timeoutMenu);
+
 		menuStore.close(MENU_ID);
 	};
 
@@ -115,7 +115,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 			return;
 		};
 
-		const { param, getId } = this.props;
+		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 		const node = $(this.node);
 		const item = node.find('#item-' + id);
@@ -137,14 +137,14 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 					menuKey: id,
 					element: `#${getId()} #item-${id}`,
 					horizontal: I.MenuDirection.Right,
-					offsetX: 272,
+					offsetX: getSize().width,
 					fixedY: top,
 					classNameWrap: cnw.join(' '),
 					noDimmer: true,
 					data: {
 						...data,
 						accountId: id,
-						isCafe: isCafe,
+						isCafe,
 					},
 				});
 			});

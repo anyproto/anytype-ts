@@ -2,12 +2,11 @@
 
 .menus {
 	.menu.menuThreadList,
-	.menu.menuThreadStatus { width: 320px; }
-
-	.menu.menuThreadList,
 	.menu.menuThreadStatus {
-		.description { color: $colorMediumGrey; display: flex; }
+		.description { color: $colorMediumGrey; display: flex; flex-direction: row; align-items: center; }
+		
 		.item { line-height: 22px; }
+
 		.side { width: 50%; }
 		.side.right { text-align: right; white-space: nowrap; }
 
@@ -18,6 +17,7 @@
 		.green { color: $colorGreen; }
 	}
 
+	.menu.menuThreadStatus { width: 360px; }
 	.menu.menuThreadStatus {
 		.item { padding: 5px 16px; }
 	}

@@ -43,7 +43,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	render () {
 		const { onPage } = this.props;
 		const { error, loading } = this.state;
-		const { account } = authStore;
+		const { account, walletPath, accountPath } = authStore;
 		const { config } = commonStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
 		const canDelete = account.status.type == I.AccountStatusType.Active;
@@ -51,8 +51,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 		return (
 			<React.Fragment>
-				<Title text={translate('popupSettingsAccountTitle')} />
-
 				{error ? <div className="message">{error}</div> : ''}
 
 				<div className="iconWrapper">
@@ -90,7 +88,11 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 					{canMove ? (
 						<div id="row-location" className="row cp" onClick={this.onLocationMove}>
 							<Label text={translate('popupSettingsAccountMoveTitle')} />
-							<Icon className="arrow" />
+							<div className="select">
+								<div className="item">
+									<div className="name">{walletPath == accountPath ? 'Default' : 'Custom'}</div>
+								</div>
+							</div>
 						</div>
 					) : ''}
 

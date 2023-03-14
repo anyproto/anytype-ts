@@ -73,12 +73,17 @@
 			}
 		}
 
-		.side.right.tabImportNotionHelp {
+		.side.right.tabImportNotion, .side.right.tabImportNotionHelp {
 			.icon.notion { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
+		}
+
+		.side.right.tabImportNotionHelp {
 			.list img { border-color: $colorLinePrimary; }
 		}
 
 		.side.right.tabAppearance {
+			.btn { color: $colorSecondary; }
+
 			.btn.light { 
 				.bg { background-color: $colorWhite; }
 			}
@@ -96,6 +101,7 @@
 				.icon { background-image: url('~img/icon/popup/settings/theme/system.svg'); }
 			}
 
+			.btn.active { color: $colorPrimary; }
 			.btn.active {
 				.bg { box-shadow: 0px 0px 0px 2px #ffee94; }
 			}

@@ -17,7 +17,7 @@ class PopupSettingsPageImportNotionHelp extends React.Component<Props> {
 		return (
 			<div>
 				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
-				<Icon className="notion" />
+				<Icon className="logo" />
 				<Title text="How to import from Notion" />
 				
 				<Label className="step" text="Step 1" />
