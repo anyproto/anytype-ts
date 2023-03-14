@@ -14,7 +14,6 @@ import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/accountSelect';
-import PageAuthSuccess from './auth/success';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
@@ -43,7 +42,6 @@ const Components: { [key: string]: any } = {
 	'auth/pin-check':		 PageAuthPinCheck,
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
-	'auth/success':			 PageAuthSuccess,
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/share':			 PageAuthShare,
 	'auth/deleted':			 PageAuthDeleted,

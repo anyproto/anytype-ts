@@ -75,12 +75,6 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	}
 }
 
-.pageAuthSuccess {
-	.label { margin-bottom: 10px; }
-	.textareaWrap { color: $colorIce; }
-	.button { width: 210px; }
-}
-
 .pageAuthOnboard,
 .pageAuthInvite {
 	.frame { width: 415px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
