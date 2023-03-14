@@ -137,7 +137,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			});
 		});
 	};
-	
+
 	add () {
 		const { match } = this.props;
 		const { walletPath, accountPath, name, icon, code } = authStore;
@@ -170,7 +170,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 							Renderer.send('keytarSet', accountId, authStore.phrase);
 							analytics.event('CreateAccount');
-							
+
 							if (match.params.id == 'register') {
 								Util.route('/auth/success');
 							};
@@ -180,7 +180,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 		});
 	};
-	
+
 	select () {
 		const { account, walletPath } = authStore;
 		

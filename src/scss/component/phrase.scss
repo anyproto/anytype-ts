@@ -1,0 +1,18 @@
+.phrase {
+    border-radius: 26px; background: rgba(44, 43, 39, 0.3); height: 86px; display: flex;
+    flex-direction: row; align-items: center; justify-content: center; width: fit-content; padding: 20px;
+}
+
+.phrase {
+    span { padding: 0 10px; font-size: 18px; }
+    .yellow { color: #FFB522; }
+    .orange { color: #F55522; }
+    .magenta { color: #E51CA0; }
+    .green { color: #5DD400; }
+    .turquoise { color: #2AA7EE; }
+    .blue { color: #3E58EB; }
+    .lavender { color: #AB50CC; }
+}
+
+.phrase:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
+.phrase.isBlurred { filter: blur(7px); }

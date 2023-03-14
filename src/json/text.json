@@ -124,13 +124,6 @@
 	"authPinCheckTitle": { "en": "Enter pin code" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
-	"authPinSelectTitle": { "en": "Choose pin code" },
-	"authPinSelectLabel": { "en": "This is one password you need to remember. You will need this password to login on this device." },
-
-	"authPinConfirmTitle": { "en": "Confirm pin code" },
-	"authPinConfirmLabel": { "en": "This is one password you need to remember. You will need this password to login on this device." },
-	"authPinConfirmError": { "en": "Pin codes do not match" },
-
 	"authOnboardSubmit": { "en": "Next" },
 	"authOnboardMoreInfo": { "en": "More info" },
 	"authOnboardAccountDataLocation": { "en": "Account data location" },
@@ -142,6 +135,8 @@
 	"authOnboardKeyPhraseTitle": { "en": "Your Void is encrypted by your Key" },
 	"authOnboardKeyPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. if you lose it there is no way to recover it. Keep it in safe place <span class='questionMark'>?</span>" },
 	"authOnboardKeyPhraseTooltip": { "en": "How to secure your phrase: <ul><li>In system password storage. We will do it for you</li><li>On a piece of paper stored in a secure place</li><li>Inside a password manager if you use one</li></ul>" },
+	"authOnboardKeyPhraseMoreInfoPopupTitle": { "en": "Recovery phrase" },
+	"authOnboardKeyPhraseMoreInfoPopupContent": { "en": "<b>Anytype uses recovery phrase instead of login and password to encrypt your data</b><ul><li>Phrase is randomly generated on your device and stored locally</li><li>No one can access your data without recovery phrase</li><li>Phrase ensures only you own your data, but if you lose it there is no way to recover it.</li></ul><b>If you lose recovery phrase there is no way to recover it</b><ul><li>Anytype cannot recover it for you</li><li>There is technically no possible way access it, as it’s not stored on anytype side</li><li>Anytype will never reach out to ask for it</li><li>Sharing the phase equals sharing the ownership of account- The ordering of the words in a recovery phrase matters</li></ul><b>Store recovery phrase in secure place In system password storage</b><ul><li>In system password storage. We will do it for you</li><li>Inside password manager if you use one</li><li>On a piece of paper in safe and secure place</li></ul>" },
 	"authOnboardKeyPhraseSubmit": { "en": "Show and copy" },
 
 	"authOnboardOfflineTitle": { "en": "Anytype is an offline-first application" },
@@ -156,6 +151,9 @@
 
 	"authOnboardSpaceCreatingTitle": { "en": "Setting up your personal Space..." },
 
+	"authOnboardUseCaseTitle": { "en": "How would you like to start?" },
+	"authOnboardUseCaseLabel": { "en": "No need to decide now, it's just starting point" },
+
 	"indexHi": { "en": "Hi, %s" },
 
 	"editorControlIcon": { "en": "Icon" },
@@ -165,7 +163,7 @@
 
 	"setTitle": { "en": "New set" },
 	"setText": { "en": "Choose an object type for this set" },
-	
+
 	"blockNameParagraph": { "en": "Text" },
 	"blockTextParagraph": { "en": "Write a plain text" },
 
@@ -243,7 +241,7 @@
 
 	"blockNameSimpleTable": { "en": "Table 3x3" },
 	"blockTextSimpleTable": { "en": "Create a simple table" },
-	
+
 	"blockNameTableOfContents": { "en": "Table of contents" },
 	"blockTextTableOfContents": { "en": "" },
 
@@ -456,6 +454,8 @@
 	"tooltip3": { "en": "Backed up on one node at least" },
 	"tooltip4": { "en": "Failed to sync, trying again..." },
 
+	"toastRecoveryCopiedClipboard": { "en": "Recovery phrase copied to clipboard"  },
+
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },
 	"textColor-orange": { "en": "Amber" },
@@ -501,13 +501,13 @@
 	"placeholderFilter": { "en": "Type to filter" },
 	"placeholderCellCommon": { "en": "No value" },
 	"placeholderCell0": { "en": "Enter text" },
-	"placeholderCell1": { "en": "Enter name" },	
-	"placeholderCell2": { "en": "Enter number" },	
-	"placeholderCell3": { "en": "Select status" },	
-	"placeholderCell4": { "en": "Enter date" },	
-	"placeholderCell5": { "en": "Select files" },	
-	"placeholderCell7": { "en": "Enter URL" },	
-	"placeholderCell8": { "en": "Enter e-mail" },	
+	"placeholderCell1": { "en": "Enter name" },
+	"placeholderCell2": { "en": "Enter number" },
+	"placeholderCell3": { "en": "Select status" },
+	"placeholderCell4": { "en": "Enter date" },
+	"placeholderCell5": { "en": "Select files" },
+	"placeholderCell7": { "en": "Enter URL" },
+	"placeholderCell8": { "en": "Enter e-mail" },
 	"placeholderCell9": { "en": "Enter phone" },
 	"placeholderCell11": { "en": "Select tags" },
 	"placeholderCell100": { "en": "Select objects" },

@@ -6,21 +6,32 @@ interface DotIndicatorProps {
 }
 
 class DotIndicator extends Component<DotIndicatorProps> {
+
   render() {
     const { activeIndex, count } = this.props;
     const dots = [];
 
     for (let i = 0; i < count; i++) {
+
+      const isActive = i === activeIndex;
+      const cn = ['dot'];
+
+      if (isActive) {
+        cn.push('active');
+      }
+
       dots.push(
         <span
           key={i}
-          className={`dot${i === activeIndex ? " active" : ""}`}
+          className={cn.join(' ')}
         ></span>
       );
+
     }
 
     return <div className="dotIndicator">{dots}</div>;
-  }
+  };
+
 }
 
 export default DotIndicator;

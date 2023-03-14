@@ -11,11 +11,12 @@ import PageAuthInvite from './auth/invite';
 import PageAuthNotice from './auth/notice';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
-import PageAuthPinCheck from './auth/pin/check';
+import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
-import PageAuthAccountSelect from './auth/account/select';
+import PageAuthAccountSelect from './auth/accountSelect';
 import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
+import PageAuthOnboard from './auth/onboard';
 import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
 
@@ -35,7 +36,7 @@ import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
 
-const Components: any = {
+const Components: { [key: string]: any } = {
 	'/':					 PageAuthSelect,
 	'auth/invite':			 PageAuthInvite,
 	'auth/select':			 PageAuthSelect,
@@ -45,6 +46,7 @@ const Components: any = {
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/success':			 PageAuthSuccess,
+	'auth/onboard':			 PageAuthOnboard,
 	'auth/share':			 PageAuthShare,
 	'auth/deleted':			 PageAuthDeleted,
 
@@ -91,11 +93,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const path = [ page, action ].join('/');
 		const showNotice = !Storage.get('firstRun');
 		const showSidebar = page == 'main';
-
-		if (account) {
-			const { status } = account || {};
-			const { type } = status || {};
-		};
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;
@@ -273,15 +270,15 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 	
 	event () {
-		let match = this.getMatch();
-		let page = String(match.params.page || 'index');
-		let action = String(match.params.action || 'index');
-		let id = String(match.params.id || '');
-		let showNotice = !Storage.get('firstRun');
-		let params: any = { page, action };
-		let isMain = page == 'main';
-		let isMainType = isMain && (action == 'type');
-		let isMainRelation = isMain && (action == 'relation');
+		const match = this.getMatch();
+		const page = String(match.params.page || 'index');
+		const action = String(match.params.action || 'index');
+		const id = String(match.params.id || '');
+		const showNotice = !Storage.get('firstRun');
+		const params = { page, action, id: undefined };
+		const isMain = page == 'main';
+		const isMainType = isMain && (action == 'type');
+		const isMainRelation = isMain && (action == 'relation');
 
 		if (showNotice) {
 			params.page = 'auth';
@@ -343,7 +340,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		return Storage.get(this.getId('page')) || {};
 	};
 
-	storageSet (data: any) {
+	storageSet (data) {
 		Storage.set(this.getId('page'), data);
 	};
 	

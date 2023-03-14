@@ -28,11 +28,11 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 				<Cover {...cover} />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
-				
+
 				<Frame>
 					<Title text="Here's your Recovery Phrase" />
 					<Label text="Please save it somewhere safe - you will need it login to your account on other devices and to recover your data. You can also locate this phrase in your Account Settings.<br/><br/>Tap below to reveal:" />
-						
+
 					<div className="textareaWrap">
 						<Textarea 
 							ref={ref => this.refPhrase = ref} 
@@ -92,7 +92,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	onCopy () {
 		this.refPhrase.focus();
 		Util.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
+		Preview.toastShow({ text:  translate('toastRecoveryCopiedClipboard') });
 
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};

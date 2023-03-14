@@ -10,10 +10,11 @@ import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { 
-	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
-	focus, Preview, Mark, Encode, Animation 
+import {
+	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil,
+	focus, Preview, Mark, Encode, Animation
 } from 'Lib';
+// import AnimationCanvas from 'Component/util/animation';
 
 configure({ enforceActions: 'never' });
 
@@ -47,7 +48,7 @@ import 'scss/component/input.scss';
 import 'scss/component/inputWithFile.scss';
 import 'scss/component/list/previewObject.scss';
 import 'scss/component/list/widget.scss';
-import 'scss/component/simplePhrase.scss';
+import 'scss/component/phrase.scss';
 import 'scss/component/loader.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
@@ -193,7 +194,7 @@ interface RouteElement { path: string; };
 interface State {
 	loading: boolean;
 };
-	
+
 declare global {
 	interface Window {
 		Electron: any;
@@ -235,7 +236,7 @@ window.Lib = {
 	Animation,
 };
 
-/* 
+/*
 spy(event => {
 		if (event.type == 'action') {
 				console.log('[Mobx].event', event.name, event.arguments);
@@ -284,7 +285,7 @@ class RoutePage extends React.Component<RouteComponentProps> {
 };
 
 class App extends React.Component<object, State> {
-	
+
 	state = {
 		loading: true
 	};
@@ -311,11 +312,11 @@ class App extends React.Component<object, State> {
 		this.onMax = this.onMax.bind(this);
 		this.onClose = this.onClose.bind(this);
 	};
-	
+
 	render () {
 		const { loading } = this.state;
 		const isMaximized = window.Electron.isMaximized();
-		
+
 		return (
 			<Router history={history}>
 				<Provider {...rootStore}>
@@ -334,7 +335,7 @@ class App extends React.Component<object, State> {
 						<Toast />
 
 						<div id="tooltip" />
-						
+
 						<div id="drag">
 							<div className="sides">
 								<div className="side left">
@@ -355,6 +356,7 @@ class App extends React.Component<object, State> {
 								<Route path={item.path} exact={true} key={i} component={RoutePage} />
 							))}
 						</Switch>
+						{/* <AnimationCanvas /> */}
 					</div>
 				</Provider>
 			</Router>
@@ -367,14 +369,14 @@ class App extends React.Component<object, State> {
 
 	componentDidUpdate () {
 	};
-	
+
 	init () {
 		Util.init(history);
 
 		dispatcher.init(window.Electron.getGlobal('serverAddress'));
 		keyboard.init();
 		analytics.init();
-		
+
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
 
@@ -431,13 +433,13 @@ class App extends React.Component<object, State> {
 		Renderer.on('spellcheck', this.onSpellcheck);
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
 		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
-		Renderer.on('shutdownStart', () => { 
-			this.setState({ loading: true }); 
+		Renderer.on('shutdownStart', () => {
+			this.setState({ loading: true });
 
 			Storage.delete('menuSearchText');
 		});
 
-		Renderer.on('config', (e: any, config: any) => { 
+		Renderer.on('config', (e: any, config: any) => {
 			commonStore.configSet(config, true);
 		});
 
@@ -473,11 +475,11 @@ class App extends React.Component<object, State> {
 		raf(() => { anim.removeClass('from'); })
 
 		const cb = () => {
-			window.setTimeout(() => { 
+			window.setTimeout(() => {
 				anim.addClass('to');
 
-				window.setTimeout(() => { 
-					loader.css({ opacity: 0 }); 
+				window.setTimeout(() => {
+					loader.css({ opacity: 0 });
 					window.setTimeout(() => { loader.remove(); }, 500);
 				}, 750);
 			}, 2000);
@@ -551,7 +553,7 @@ class App extends React.Component<object, State> {
 		if (close) {
 			popupStore.closeAll();
 		};
-		
+
 		window.setTimeout(() => { popupStore.open(id, param); }, Constant.delay.popup);
 	};
 
@@ -560,16 +562,16 @@ class App extends React.Component<object, State> {
 			return;
 		};
 
-		commonStore.progressSet({ 
-			status: 'Checking for update...', 
-			current: 0, 
-			total: 1, 
-			isUnlocked: true 
+		commonStore.progressSet({
+			status: 'Checking for update...',
+			current: 0,
+			total: 1,
+			isUnlocked: true
 		});
 	};
 
 	onUpdateConfirm (e: any, auto: boolean) {
-		commonStore.progressClear(); 
+		commonStore.progressClear();
 		Storage.setHighlight('whatsNew', true);
 
 		if (auto) {
@@ -587,7 +589,7 @@ class App extends React.Component<object, State> {
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
-				}, 
+				},
 			},
 		});
 	};
@@ -610,13 +612,13 @@ class App extends React.Component<object, State> {
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
-				}, 
+				},
 			},
 		});
 	};
 
 	onUpdateUnavailable (e: any, auto: boolean) {
-		commonStore.progressClear(); 
+		commonStore.progressClear();
 
 		if (auto) {
 			return;
@@ -651,7 +653,7 @@ class App extends React.Component<object, State> {
 				},
 				onCancel: () => {
 					Renderer.send('updateCancel');
-				}, 
+				},
 			},
 		});
 	};
@@ -717,7 +719,7 @@ class App extends React.Component<object, State> {
 				Action.openFile([ 'zip' ], paths => {
 					C.AccountRecoverFromLegacyExport(paths[0], authStore.walletPath, (message: any) => {
 						C.ObjectImport({ path: paths[0], address: message.address }, [], false, I.ImportType.Migration, I.ImportMode.AllOrNothing, () => {
-							
+
 						});
 					});
 				});
@@ -745,9 +747,9 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateProgress (e: any, progress: any) {
-		commonStore.progressSet({ 
-			status: Util.sprintf('Downloading update... %s/%s', FileUtil.size(progress.transferred), FileUtil.size(progress.total)), 
-			current: progress.transferred, 
+		commonStore.progressSet({
+			status: Util.sprintf('Downloading update... %s/%s', FileUtil.size(progress.transferred), FileUtil.size(progress.total)),
+			current: progress.transferred,
 			total: progress.total,
 			isUnlocked: true,
 		});
@@ -799,17 +801,17 @@ class App extends React.Component<object, State> {
 		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
 
 		menuStore.open('select', {
-			recalcRect: () => { 
+			recalcRect: () => {
 				const rect = Util.selectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			onOpen: () => { menuStore.close('blockContext'); },
 			onClose: () => { keyboard.disableContextOpen(false); },
 			data: {
 				options,
 				onSelect: (e: any, item: any) => {
-					raf(() => { 
-						focus.apply(); 
+					raf(() => {
+						focus.apply();
 
 						switch (item.id) {
 							default: {

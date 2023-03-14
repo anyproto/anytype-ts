@@ -169,6 +169,7 @@
 		"sha1": "^1.1.1",
 		"source-map-loader": "^0.2.4",
 		"sprintf-kit": "^2.0.0",
+		"three": "^0.149.0",
 		"typescript": "^3.9.7",
 		"typescript-eslint": "^0.0.1-alpha.0",
 		"xhr2": "^0.2.0",

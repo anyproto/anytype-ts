@@ -3,9 +3,11 @@ import $ from 'jquery';
 import { I } from 'Lib';
 
 const Duration = {
-	Normal: 0.3,
-	Word: 0.1,
+	Normal: 0.2,
+	Word: 0.07,
 };
+
+const MS_SECOND = 1000;
 
 const WORD_DELAY_COEF = 0.75;
 
@@ -13,7 +15,7 @@ class Animation {
 
 	to (callBack?: () => void) {
 		const css = { opacity: 0, transform: 'translate3d(0px,10%,0px)' };
-		
+
 		this.initNodes(css, I.AnimDirection.To);
 
 		raf(() => {
@@ -45,7 +47,7 @@ class Animation {
 	};
 
 	getSortedNodes (dir: I.AnimDirection) {
-		const nodes = [];
+		const nodes: { el: JQuery<HTMLElement>, index: number, type: I.AnimType}[] = [];
 
 		$('.animation').each((i: number, el: any) => {
 			el = $(el);
@@ -77,14 +79,13 @@ class Animation {
 		return nodes;
 	};
 
-	initNodes (css: any, dir: I.AnimDirection) {
+	initNodes (css: object, dir: I.AnimDirection) {
 		const nodes = this.getSortedNodes(dir);
 
-		let n = 0;
 		let delay = 0;
 
-		for (let node of nodes) {
-			let { el, type } = node;
+		for (const node of nodes) {
+			const { el, type } = node;
 
 			switch (type) {
 				case I.AnimType.Normal: {
@@ -94,40 +95,38 @@ class Animation {
 				};
 
 				case I.AnimType.Text: {
-					el.html(el.attr('data-content'));
-
 					if (dir == I.AnimDirection.From) {
 						this.applyCss(el, css, Duration.Normal, delay);
 						delay += Duration.Normal;
 						break;
 					};
 
-					const html = el.html();
-					const words = html.split(' ');
-
 					el.html('');
 
-					words.forEach(word => {
-						const w = $('<span></span>').text(word).addClass('animationWord');
-
+					const processWord = (word) => {
+						const w = $('<span></span>').html(word).addClass('animationWord');
 						el.append(w);
 						el.append(' ');
-
 						this.applyCss(w, css, Duration.Word, delay);
 						delay += Duration.Word * WORD_DELAY_COEF;
-						n++;
+					}
+
+					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach(child => {
+						if (child.nodeType === 3) {
+							child.textContent.trim().split(' ').forEach(processWord);
+						} else {
+							processWord(child)
+						};
 					});
 					break;
 				};
 			};
-
-			n++;
 		};
 
 		return nodes;
 	};
 
-	applyCss (obj, css: any, duration: number, delay: number) {
+	applyCss (obj: JQuery<HTMLElement>, css: object, duration: number, delay: number) {
 		obj.css({ ...css, transition: '' });
 
 		raf(() => {
@@ -139,11 +138,11 @@ class Animation {
 			});
 		});
 
-		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * 1000);
+		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * MS_SECOND);
 	};
 
 	getDuration () {
-		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * 1000;
+		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * MS_SECOND;
 	};
 
 };
