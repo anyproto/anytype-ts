@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Error, Header, Footer, Loader } from 'Component';
-import { I, C, Util, DataUtil } from 'Lib';
+import { I, C, Util, DataUtil, Renderer } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -51,6 +51,18 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 				});
 			});
 		});
+	};
+
+	componentDidUpdate () {
+		const { accounts } = authStore;
+		
+		if (accounts && accounts.length) {
+			const { phrase } = authStore;
+			const account = accounts[0];
+			authStore.accountSet(account);
+			Renderer.send('keytarSet', account.id, phrase);
+			Util.route('/auth/setup/select');
+		};
 	};
 });
 
