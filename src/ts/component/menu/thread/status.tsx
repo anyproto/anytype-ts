@@ -22,23 +22,14 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 						return null;
 					};
 
-					let content = null;
-					let value = String(field.value || '');
-
-					if (value) {
-						content = (
-							<React.Fragment>
-								<div className="side left">{field.key}</div>
-								<div className="side right">{value}</div>
-							</React.Fragment>
-						);
-					} else {
-						content = field.key;
-					};
-
 					return (
 						<div key={i} className="description">
-							{content}
+							{field.collapse ? field.key : (
+								<React.Fragment>
+									<div className="side left">{field.key}</div>
+									<div className="side right">{field.value}</div>
+								</React.Fragment>
+							)}
 						</div>
 					);
 				})}
@@ -48,12 +39,12 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 		let cafeStatus = [];
 		if (cafe.lastPushSucceed) {
 			cafeStatus = [
-				{ key: 'This object is backed up', value: '' },
+				{ key: 'This object is backed up', collapse: true },
 				{ key: 'Updates requested', value: cafe.lastPulled ? Util.timeAgo(cafe.lastPulled) : 'No interaction' }
 			];
 		} else {
 			cafeStatus = [
-				{ key: 'Some changes are not backed up', value: '' },
+				{ key: 'Some changes are not backed up', collapse: true },
 				{ key: 'Updates requested', value: cafe.lastPulled ?  Util.timeAgo(cafe.lastPulled) : 'No interaction' }
 			];
 		};
