@@ -255,7 +255,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	unbind () {
 		const { block } = this.props;
 
-		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} turnToCollection selectionEnd selectionClear.${I.SelectType.Record}`);
+		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} selectionEnd.${block.id}  selectionClear.${I.SelectType.Record}`);
 	};
 
 	rebind () {
