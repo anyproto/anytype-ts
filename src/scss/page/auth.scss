@@ -109,178 +109,64 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.icon.back { height: 40px; width: 40px; position: fixed; left: 20px; top: 0; bottom: 0; margin: auto 0; z-index: 1; }
 }
 
+.bodyAuthOnboard #popupConfirm-innerWrap { background: #1A1A18; min-width: 700px; padding-top: 15px; }
 .bodyAuthOnboard #popupConfirm-innerWrap {
-	background: #1A1A18;
-	min-width: 700px;
-	padding-top: 15px;
-	ul {
-		list-style-position: inside;
-		margin-bottom: 10px;
-	}
-	.content {
-		padding: 0px 20px;
-		text-align: left;
-	}
-	.title {
-		font-size: 14px;
-		color: #929082;
-	}
-	.buttons {
-		width: 200px;
-	}
+	ul { list-style-position: inside; margin-bottom: 10px; }
+	.content { padding: 0px 20px; text-align: left; }
+	.title { font-size: 14px; color: #929082; }
+	.buttons { width: 200px; }
 }
 
 .pageAuthOnboard {
 	.icon.dataLocation { background-image: url('~img/icon/footer/data-location.svg'); height: 20px; width: 20px; margin-right: 6px; }
+
 	.storageInfo,
-	.moreInfo {
-		color: #5C5A54;
-	}
+	.moreInfo { color: #5C5A54; }
+
 	.storageInfo,
 	.moreInfo,
-	.questionMark:hover {
-		cursor: pointer;
-	}
+	.questionMark:hover { cursor: pointer; }
 
-	.bottom {
-		position: fixed;
-		bottom: 24px;
-		left: 0;
-		right: 0;
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-	}
-	.questionMark {
-		border-radius: 100%;
-		width: 16px;
-		height: 16px;
-		font-size: 13px;
-		line-height: 16px;
-		display: block;
-		background-color: #5C5A54;
-		color: black;
-	}
-	.buttons {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
-	input {
-		border-radius: 26px;
-		background: rgba(44, 43, 39, 0.3);
-		font-size: 18px;
-		padding: 20px;
-		margin: 20px;
-		color: white;
-	}
-	input:hover {
-		cursor: pointer;
-		background: rgba(44, 43, 39, 0.5);
-	}
-	input::placeholder {
-		color: #5C5A54;
-	}
+	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
+	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: block; background-color: #5C5A54; color: black; }
+	.buttons { display: flex; flex-direction: column; gap: 12px; }
+	input { border-radius: 26px; background: rgba(44, 43, 39, 0.3); font-size: 18px; padding: 20px; margin: 20px; color: white; }
+	input:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
+	input::placeholder { color: #5C5A54; }
+
+	.soulContent { width: 100px; }
 	.soulContent {
-		width: 100px;
-
 		.account,
 		.space,
 		.lineLeft,
-		.lineRight {
-			transition: all 600ms ease-in;
-			position: absolute;
-			display: flex;
-			flex-direction: column;
-		}
-
+		.lineRight { transition: all 600ms ease-in; position: absolute; display: flex; flex-direction: column; }
 		.account,
-		.space {
-			align-items: center;
-			gap: 12px;
-			width: 100px;
-			top: 0;
-			left: 0;
-		}
-
-		.account {
-			z-index: 2;
-		}
-		.space {
-			transition: all 600ms ease-in, opacity 200ms ease-in;
-			z-index: 1;
-			opacity: 0;
-		}
+		.space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
+		.account { z-index: 2; }
+		.space { transition: all 600ms ease-in, opacity 200ms ease-in; z-index: 1; opacity: 0; }
 		.lineLeft,
-		.lineRight {
-			z-index: 0;
-			height: 1px;
-			top: 25px;
-			width: 0;
-			background: white;
-		}
-		.lineLeft {
-			right: 50%;
-		}
-		.lineRight {
-			left: 50%;
-		}
-
+		.lineRight { z-index: 0; height: 1px; top: 25px; width: 0; background: white; }
+		.lineLeft { right: 50%; }
+		.lineRight { left: 50%; }
 		.iconObject { margin: 0; }
-		.spaceIcon {
-			border-radius: 8px;
-			width: 48px;
-			height: 48px;
-			background: white;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-
+		.spaceIcon { border-radius: 8px; width: 48px; height: 48px; background: white; display: flex; justify-content: center; align-items: center; }
 		.accountName,
-		.spaceName {
-			text-overflow: ellipsis;
-			overflow: hidden;
-			width: 100px;
-		}
+		.spaceName { text-overflow: ellipsis; overflow: hidden; width: 100px; }
 	}
 	.soulContent.soulCreating {
-		.iconObject {
-			background: white;
-			box-shadow: 0 0 0 0 white;
-			animation: pulse 2s infinite;
-		  }
+		.iconObject { background: white; box-shadow: 0 0 0 0 white; animation: pulse 2s infinite; }
 
 		  @keyframes pulse {
-			0% {
-			  transform: scale(0.95);
-			  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
-			}
-
-			70% {
-			  transform: scale(1);
-			  box-shadow: 0 0 0 12px rgba(255, 121, 63, 0);
-			}
-
-			100% {
-			  transform: scale(0.95);
-			  box-shadow: 0 0 0 0 rgba(255, 121, 63, 0);
-			}
+			0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+			70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(255, 121, 63, 0); }
+			100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 121, 63, 0); }
 		  }
 	}
 	.soulContent.spaceCreating {
-		.account {
-			transform: translateX(-100px);
-		}
-		.space {
-			transform: translateX(100px);
-			opacity: 1;
-		}
+		.account { transform: translateX(-100px); }
+		.space { transform: translateX(100px); opacity: 1; }
 		.lineLeft,
-		.lineRight {
-			width: 100px;
-		}
+		.lineRight { width: 100px; }
 	}
 }
 
