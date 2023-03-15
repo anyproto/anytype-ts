@@ -11,10 +11,11 @@ interface State {
 };
 
 const PageAccountSelect = observer(class PageAccountSelect extends React.Component<I.PageComponent, State> {
+	
 	state: State = {
 		loading: true,
 		error: ''
-	}
+	};
 	
 	render () {
 		const { cover } = commonStore;
@@ -54,15 +55,18 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 	};
 
 	componentDidUpdate () {
-		const { accounts } = authStore;
+		const { accounts, phrase } = authStore;
 		
-		if (accounts && accounts.length) {
-			const { phrase } = authStore;
-			const account = accounts[0];
-			authStore.accountSet(account);
-			Renderer.send('keytarSet', account.id, phrase);
-			Util.route('/auth/setup/select');
+		if (!accounts || !accounts.length) {
+			return;
 		};
+
+		const account = accounts[0];
+
+		authStore.accountSet(account);
+		Renderer.send('keytarSet', account.id, phrase);
+		Util.route('/auth/setup/select');
+
 	};
 });
 
