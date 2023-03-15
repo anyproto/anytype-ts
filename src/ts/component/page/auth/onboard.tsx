@@ -244,7 +244,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		}
 
 		if (stage === OnboardStage.Soul) {
-			this.createAccount();
 			setTimeout(() => this.onNext(), 5000);
 		}
 
@@ -253,8 +252,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		}
 
 		if (stage === OnboardStage.SpaceCreating) {
-			// TODO navigate to Usecases Screen
-			Util.route('/');
+			this.createAccount();
 			return;
 		}
 
@@ -315,6 +313,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				Storage.set('timeRegister', Util.time());
 				Renderer.send('keytarSet', message.account.id, authStore.phrase);
 				analytics.event('CreateAccount');
+				Util.route('/auth/setup/init', true);
 			});
 		})
 	};
