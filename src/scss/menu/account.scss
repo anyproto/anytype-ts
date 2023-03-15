@@ -1,31 +1,6 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuAccount { width: 288px; border-radius: 12px; padding: 0px; }
-	.menu.menuAccount {
-		.item { padding: 12px; }
-		.item:hover { background: $colorVeryLightGrey; }
-		 
-		.item {
-			.icon.user { vertical-align: top; margin-right: 8px; }
-			.info { display: inline-block; vertical-align: top; width: calc(100% - 48px); }
-			.name { @include text-common; font-weight: 500; }
-			.description { @include text-small; color: $colorMediumGrey; margin-top: -2px; }
-			.icon.check { margin: -2px 4px 0px 0px; display: none; width: 12px; height: 12px; background-image: url('~img/icon/menu/account/check.svg'); }
-		}
-		.item.active {
-			.icon.check { display: inline-block; }
-			.description { color: $colorBlack; }
-		}
-		
-		.item.add {
-			.icon.plus { width: 40px; height: 40px; margin-right: 8px; background-size: 16px 16px; background-image: url('~img/icon/plus/account0.svg'); }
-		}
-		.item.add:hover {
-			.icon.plus { background-image: url('~img/icon/plus/account1.svg'); }
-		}
-	}
-
 	.menu.menuAccountPath { width: 320px; padding: 11px 16px 16px 16px; }
 	.menu.menuAccountPath {
 		.content { padding: 0; overflow: visible; }

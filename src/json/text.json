@@ -108,9 +108,6 @@
 	"authRegisterSubmit": { "en": "Create" },
 	"authRegisterAdvanced": {"en": "Advanced"},
 
-	"authAccountSelectTitle": { "en": "Choose profile" },
-	"authAccountSelectAdd": { "en": "Add profile" },
-
 	"authSetupLogin": { "en": "Logging in..." },
 	"authSetupRegister": { "en": "Creating profile..." },
 	"authSetupSelect": { "en": "Selecting profile..." },
@@ -351,7 +348,6 @@
 	"popupConfirmUpdateErrorTitle": { "en": "Oops!" },
 	"popupConfirmUpdateErrorText": { "en": "Can't check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
 
-	"menuAccountAdd": { "en": "Add profile" },
 	"menuAccountPeer": { "en": "%d/%d peers" },
 
 	"menuSmileRandom": { "en": "Random emoji" },
