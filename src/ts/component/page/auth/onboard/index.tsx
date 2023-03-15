@@ -5,6 +5,7 @@ import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytic
 import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
+import OffscreenCanvas from "./OffscreenCanvas"
 
 enum OnboardStage {
 	Void = 0,
@@ -98,6 +99,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{this.renderButtons()}
 					{footer}
 				</Frame>
+				<OffscreenCanvas state={stage}/>
 			</div>
 		);
 	};
