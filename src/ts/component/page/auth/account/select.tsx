@@ -20,7 +20,9 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 	render () {
 		const { cover } = commonStore;
 		const { loading, error } = this.state;
-		
+		const { accounts } = authStore;
+		const length = accounts.length;
+
 		return (
 			<div>
 				<Cover {...cover} className="main" />
@@ -28,8 +30,8 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
-					{ loading ? <Loader />  : null }
-					{ error ? <Error text={error} /> : null }
+					{loading ? <Loader />  : null}
+					<Error text={error} />
 				</Frame>
 			</div>
 		);
@@ -64,6 +66,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		const account = accounts[0];
 
 		authStore.accountSet(account);
+
 		Renderer.send('keytarSet', account.id, phrase);
 		Util.route('/auth/setup/select');
 
