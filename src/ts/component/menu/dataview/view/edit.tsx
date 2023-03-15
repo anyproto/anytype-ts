@@ -82,7 +82,6 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		const { data } = param;
 
 		this.param = Util.objectCopy(data.view.get());
-		console.log('PARAM: ', this.param)
 		this.forceUpdate();
 		this.rebind();
 
