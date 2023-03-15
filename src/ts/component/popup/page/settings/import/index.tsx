@@ -57,7 +57,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
 			{ id: 'html', name: 'HTML', skipPage: true },
-			{ id: 'text', name: 'Text', skipPage: true },
+			{ id: 'text', name: 'TXT', skipPage: true },
 		];
 	};
 
