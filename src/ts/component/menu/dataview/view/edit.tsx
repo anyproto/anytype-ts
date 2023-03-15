@@ -59,7 +59,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 							ref={ref => this.ref = ref} 
 							value={name}
 							readonly={readonly}
-							placeholder={translate('menuDataviewViewEditName')}
+							placeholder={translate(`viewName${type}`)}
 							maxLength={32} 
 							onKeyUp={this.onKeyUp} 
 							onFocus={this.onNameFocus}
@@ -98,7 +98,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	componentWillUnmount () {
 		this.unbind();
 		if (!this.preventSaveOnClose) {
-			this.save();
+			this.save(true);
 		};
 
 		menuStore.closeAll(Constant.menuIds.viewEdit);
@@ -198,7 +198,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		};
 	};
 
-	save () {
+	save (withName?: boolean) {
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, onSave, readonly } = data;
@@ -211,7 +211,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		let current = data.view.get();
 		let clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
-		this.param.name = this.param.name || translate(`viewName${current.type}`);
+		if (withName) {
+			this.param.name = this.getViewName();
+		};
 
 		if ((this.param.type == I.ViewType.Board) && !this.param.groupRelationKey) {
 			this.param.groupRelationKey = Relation.getGroupOption(rootId, blockId, this.param.groupRelationKey)?.id;
@@ -229,6 +231,11 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		});
 
 		this.forceUpdate();
+	};
+
+	getViewName () {
+		const { name, type } = this.param;
+		return name || translate(`viewName${type}`);
 	};
 
 	getSections () {
