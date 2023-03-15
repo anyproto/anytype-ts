@@ -216,7 +216,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const object = getTarget();
 
 		const newView = {
-			name: ``,
+			name: '',
 			type: I.ViewType.Grid,
 			groupRelationKey: Relation.getGroupOption(rootId, block.id, '')?.id,
 		};

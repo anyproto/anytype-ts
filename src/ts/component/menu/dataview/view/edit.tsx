@@ -59,7 +59,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 							ref={ref => this.ref = ref} 
 							value={name}
 							readonly={readonly}
-							placeholder={translate(`viewName${this.param.type}`)}
+							placeholder={translate(`viewName${type}`)}
 							maxLength={32} 
 							onKeyUp={this.onKeyUp} 
 							onFocus={this.onNameFocus}
@@ -234,18 +234,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	};
 
 	getViewName () {
-		const viewDefaultNames = [];
-
-		for (let i=0;i<4;i++) {
-			viewDefaultNames.push(translate(`viewName${i}`));
-		};
-
-		if (!this.param.name || viewDefaultNames.indexOf(this.param.name) > -1) {
-			return translate(`viewName${this.param.type}`);
-		}
-
-		return this.param.name;
-	}
+		const { name, type } = this.param;
+		return name || translate(`viewName${type}`);
+	};
 
 	getSections () {
 		const { param } = this.props;
