@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget } from 'Component';
 import { C, I, M, keyboard, ObjectUtil } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { blockStore, menuStore, detailStore } from 'Store';
 import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
 
@@ -70,7 +70,34 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			};
 		} else {
 			const buttons: I.ButtonComponent[] = [];
-			const blocks = blockStore.getChildren(widgets, widgets);
+			const blocks = blockStore.getChildren(widgets, widgets, (block: I.Block) => {
+				const childrenIds = blockStore.getChildrenIds(widgets, block.id);
+
+				console.log(childrenIds);
+
+				if (!childrenIds.length) {
+					return;
+				};
+
+				const child = blockStore.getLeaf(widgets, childrenIds[0]);
+
+				console.log(child);
+
+				if (!child) {
+					return;
+				};
+
+				if (Object.values(Constant.widgetId).includes(child.content.targetBlockId)) {
+					return true;
+				};
+
+				const object = detailStore.get(widgets, child.content.targetBlockId);
+				if (object._empty_ || object.isArchived || object.isDeleted) {
+					return false;
+				};
+
+				return true;
+			});
 
 			if (isEditing) {
 				cn.push('isEditing');
