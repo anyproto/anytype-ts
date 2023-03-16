@@ -752,7 +752,7 @@ class App extends React.Component<object, State> {
 	};
 
 	onImport () {
-		popupStore.open('settings', {
+		popupStore.open('settings', { 
 			data: { page: 'importIndex' }
 		});
 	};

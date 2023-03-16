@@ -205,43 +205,33 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	getSections () {
-		const { account } = authStore;
-
-		let sections: any[] = [
+		return [
+			{ 
+				name: 'Space', isHidden: true, children: [
+					{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
+				]
+			},
+			{ 
+				name: 'Account & data', children: [
+					{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
+					{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+					//{ id: 'cloud', name: 'Cloud storage' },
+				] 
+			},
 			{ 
 				name: 'Customization', children: [
 					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 					{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
 				] 
-			}
-		];
-
-		if (account) {
-			sections = [
-				{ 
-					name: 'Space', isHidden: true, children: [
-						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
-					]
-				},
-				{ 
-					name: 'Account & data', children: [
-						{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
-						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
-						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-						//{ id: 'cloud', name: 'Cloud storage' },
-					] 
-				}
-			].concat(sections);
-
-			sections.push({ 
+			},
+			{ 
 				name: 'Integrations', children: [
 					{ id: 'importIndex', name: translate('popupSettingsImportTitle'), icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
 					{ id: 'exportMarkdown', name: translate('popupSettingsExportTitle'), icon: 'export' },
 				] 
-			});
-		};
-
-		return sections;
+			}
+		];
 	};
 
 	getItems () {
