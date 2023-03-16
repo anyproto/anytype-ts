@@ -1259,6 +1259,14 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			request.setTxtparams(params);
 			break;
 
+		case I.ImportType.Csv:
+			params = new Rpc.Object.Import.Request.CsvParams();
+			params.setPathList(options.paths);
+			params.setMode(options.mode);
+
+			request.setCsvparams(params);
+			break;
+
 	};
 
 	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
