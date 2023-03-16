@@ -12,6 +12,7 @@ import {
 	HistoryVersion, 
 	ImportType,
 	ImportMode,
+	CsvImportMode,
 	ExportFormat, 
 	Source, 
 	EdgeType, 
@@ -98,6 +99,7 @@ export {
 
 	ImportType,
 	ImportMode,
+	CsvImportMode,
 	ExportFormat,
 	
 	ThreadStatus,

@@ -75,6 +75,11 @@ export enum ImportMode {
 	IgnoreErrors = 1,
 };
 
+export enum CsvImportMode {
+	Collection = 0,
+	Table = 1,
+};
+
 export enum ImportType {
 	Notion		 = 0,
 	Markdown	 = 1,
@@ -82,6 +87,7 @@ export enum ImportType {
 	Migration	 = 3,
 	Html		 = 4,
 	Text		 = 5,
+	Csv			 = 6,
 };
 
 export enum ExportFormat {
