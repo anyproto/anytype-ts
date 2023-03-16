@@ -72,17 +72,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			const buttons: I.ButtonComponent[] = [];
 			const blocks = blockStore.getChildren(widgets, widgets, (block: I.Block) => {
 				const childrenIds = blockStore.getChildrenIds(widgets, block.id);
-
-				console.log(childrenIds);
-
 				if (!childrenIds.length) {
 					return;
 				};
 
 				const child = blockStore.getLeaf(widgets, childrenIds[0]);
-
-				console.log(child);
-
 				if (!child) {
 					return;
 				};
