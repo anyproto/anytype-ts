@@ -153,7 +153,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 					</div>
 				</div>
 			);
-			
+
 			content = (
 				<div className="items">
 					{loading ? <Loader id="loader" /> : (
