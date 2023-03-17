@@ -3,7 +3,6 @@ import { ObjectUtil, I, sidebar } from 'Lib';
 import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';
-import FooterMainIndex from './main';
 import FooterMainEdit from './main/edit';
 import FooterMainStore from './main/store';
 
@@ -13,7 +12,6 @@ interface Props extends I.FooterComponent {
 
 const Components = {
 	authIndex:			 FooterAuthIndex,
-	mainIndex:			 FooterMainIndex,
 	mainEdit:			 FooterMainEdit,
 	mainStore:			 FooterMainStore,
 };

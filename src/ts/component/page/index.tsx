@@ -20,7 +20,6 @@ import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
 
 import PageMainEmpty from './main/empty';
-import PageMainIndex from './main/index';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
 import PageMainSet from './main/set';
@@ -51,7 +50,6 @@ const Components: any = {
 	'object/share':			 PageAuthShare,
 
 	'main/empty':			 PageMainEmpty,		
-	'main/index':			 PageMainIndex,
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
 	'main/set':				 PageMainSet,

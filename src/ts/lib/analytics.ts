@@ -307,7 +307,6 @@ class Analytics {
 			'auth/register':	 'ScreenAuthRegistration',
 			'auth/invite':		 'ScreenAuthInvitation',
 
-			'main/index':		 'ScreenHome',
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',
 			'main/type':		 'ScreenType',

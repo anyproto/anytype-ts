@@ -3,7 +3,6 @@ import { I, ObjectUtil, Renderer, keyboard, sidebar, Preview } from 'Lib';
 import { menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
-import HeaderMainIndex from './main/index';
 import HeaderMainEdit from './main/edit';
 import HeaderMainHistory from './main/history';
 import HeaderMainGraph from './main/graph';
@@ -17,7 +16,6 @@ interface Props extends I.HeaderComponent {
 
 const Components = {
 	authIndex:			 HeaderAuthIndex,
-	mainIndex:			 HeaderMainIndex,
 	mainEdit:			 HeaderMainEdit,
 	mainHistory:		 HeaderMainHistory,
 	mainGraph:			 HeaderMainGraph,
