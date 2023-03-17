@@ -197,5 +197,7 @@
 				.element:hover { background-color: $colorHover; }
 			}
 		}
+
+		.archiveEmpty { border-color: $colorLinePrimary; }
 	}
 }
