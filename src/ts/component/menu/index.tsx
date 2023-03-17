@@ -8,7 +8,6 @@ import { menuStore, popupStore } from 'Store';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
-import MenuAccountSelect from './account/select';
 import MenuAccountPath from './account/path';
 import MenuSelect from './select';
 import MenuButton from './button';
@@ -85,7 +84,6 @@ const ARROW_HEIGHT = 8;
 const Components: any = {
 	help:					 MenuHelp,
 	onboarding:				 MenuOnboarding,
-	accountSelect:			 MenuAccountSelect,
 	accountPath:			 MenuAccountPath,
 	select:					 MenuSelect,
 	button:					 MenuButton,

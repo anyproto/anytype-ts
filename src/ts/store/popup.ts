@@ -1,8 +1,10 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import { I, Util, focus } from 'Lib';
-import { menuStore } from 'Store';
+import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
+
+const AUTH_IDS = [ 'settings' ];
 
 class PopupStore {
 
@@ -27,6 +29,14 @@ class PopupStore {
 	};
 
     open (id: string, param: I.PopupParam) {
+		if (AUTH_IDS.includes(id)) {
+			const { account } = authStore;
+
+			if (!account) {
+				return;
+			};
+		};
+
 		param.data = param.data || {};
 
 		menuStore.closeAll();

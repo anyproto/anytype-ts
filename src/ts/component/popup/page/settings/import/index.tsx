@@ -53,34 +53,41 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	};
 
 	getItems () {
-		return [
+		const { config } = commonStore;
+		const ret: any[] = [
 			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
 			{ id: 'html', name: 'HTML', skipPage: true },
-			{ id: 'text', name: 'Text', skipPage: true },
+			{ id: 'text', name: 'TXT', skipPage: true },
 		];
+
+		if (config.experimental) {
+			ret.push({ id: 'csv', name: 'CSV', skipPage: true });
+		};
+
+		return ret;
 	};
 
-	onImportCommon (type: I.ImportType, extensions: string[]) {
+	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
 		const { close, onImport } = this.props;
 		const platform = Util.getPlatform();
-		const options: any = { 
+		const fileOptions: any = { 
 			properties: [ 'openFile' ],
 			filters: [ { name: '', extensions } ]
 		};
 
 		if (platform == I.Platform.Mac) {
-			options.properties.push('openDirectory');
+			fileOptions.properties.push('openDirectory');
 		};
 
-		window.Electron.showOpenDialog(options).then((result: any) => {
+		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
 				return;
 			};
 
 			close();
-			onImport(type, { paths });
+			onImport(type, Object.assign(options || {}, { paths }));
 		});
 	};
 
@@ -90,6 +97,10 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	onImportText () {
 		this.onImportCommon(I.ImportType.Text, [ 'zip', 'txt' ]);
+	};
+
+	onImportCsv () {
+		this.onImportCommon(I.ImportType.Csv, [ 'zip', 'csv' ], { mode: I.CsvImportMode.Collection });
 	};
 
 });

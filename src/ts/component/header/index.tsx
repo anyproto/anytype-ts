@@ -36,7 +36,6 @@ class Header extends React.Component<Props> {
 		this.onSearch = this.onSearch.bind(this);
 		this.onNavigation = this.onNavigation.bind(this);
 		this.onGraph = this.onGraph.bind(this);
-		this.onStore = this.onStore.bind(this);
 		this.onTooltipShow = this.onTooltipShow.bind(this);
 		this.onTooltipHide = this.onTooltipHide.bind(this);
 		this.menuOpen = this.menuOpen.bind(this);
@@ -62,7 +61,6 @@ class Header extends React.Component<Props> {
 					onSearch={this.onSearch}
 					onNavigation={this.onNavigation}
 					onGraph={this.onGraph}
-					onStore={this.onStore}
 					onTooltipShow={this.onTooltipShow}
 					onTooltipHide={this.onTooltipHide}
 					menuOpen={this.menuOpen}
@@ -90,10 +88,6 @@ class Header extends React.Component<Props> {
 	
 	onGraph () {
 		ObjectUtil.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
-	};
-
-	onStore () {
-		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Store });
 	};
 
 	onTooltipShow (e: any, text: string) {
