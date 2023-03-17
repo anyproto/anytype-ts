@@ -157,17 +157,20 @@ export interface ButtonComponent {
 	id?: string;
 	icon?: string;
 	type?: string;
+	arrow?: boolean;
 	subType?: string;
 	text?: string;
 	className?: string;
 	color?: string;
 	menu?: string;
 	withTabs?: boolean;
+	dataset?: any;
 	tooltip?: string;
-	tooltipX?: I.MenuDirection;
-	tooltipY?: I.MenuDirection;
+	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
+	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	showDot?: boolean;
 	onClick?(e: any): void;
+	onMouseEnter?(e: any): void;
 };
 
 export enum SurveyType {

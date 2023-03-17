@@ -16,8 +16,8 @@ interface Props extends I.Cell {
 	menuClassName?: string;
 	menuClassNameWrap?: string;
 	showTooltip?: boolean;
-	tooltipX?: I.MenuDirection;
-	tooltipY?: I.MenuDirection;
+	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
+	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	maxWidth?: number;
 };
 
@@ -27,8 +27,6 @@ class Cell extends React.Component<Props> {
 	public static defaultProps = {
 		index: 0,
 		canOpen: true,
-		tooltipX: I.MenuDirection.Center,
-		tooltipY: I.MenuDirection.Top,
 	};
 
 	ref: any = null;
@@ -461,7 +459,7 @@ class Cell extends React.Component<Props> {
 		};
 
 		if (showTooltip) {
-			Preview.tooltipShow(relation.name, cell, tooltipX, tooltipY);
+			Preview.tooltipShow({ text: relation.name, element: cell, typeX: tooltipX, typeY: tooltipY, delay: 1000 });
 		};
 	};
 	

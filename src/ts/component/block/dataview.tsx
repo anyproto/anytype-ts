@@ -1044,6 +1044,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	setMultiSelect (v: boolean) {
+		if (v == this.isMultiSelecting) {
+			return;
+		};
+
 		if (!v) {
 			this.selected = [];
 		};

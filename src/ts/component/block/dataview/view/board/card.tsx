@@ -34,6 +34,7 @@ const Card = observer(class Card extends React.Component<Props> {
 					onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
 					onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
 				/>
+
 				<div className="cardContent">
 					{relations.map((relation: any, i: number) => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, 0);

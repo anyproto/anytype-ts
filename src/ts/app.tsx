@@ -83,7 +83,6 @@ import 'scss/page/auth.scss';
 import 'scss/page/main/edit.scss';
 import 'scss/page/main/graph.scss';
 import 'scss/page/main/history.scss';
-import 'scss/page/main/index.scss';
 import 'scss/page/main/media.scss';
 import 'scss/page/main/navigation.scss';
 import 'scss/page/main/relation.scss';

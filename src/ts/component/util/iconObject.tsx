@@ -20,7 +20,7 @@ interface Props {
 	offsetY?: number;
 	menuId?: string;
 	tooltip?: string;
-	tooltipY?: I.MenuDirection;
+	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	color?: string;
 	getObject?(): any;
 	forceLetter?: boolean;
@@ -520,7 +520,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const node = $(this.node);
 
 		if (tooltip) {
-			Preview.tooltipShow(tooltip, node, I.MenuDirection.Center, tooltipY);
+			Preview.tooltipShow({ text: tooltip, element: node, typeY: tooltipY });
 		};
 		
 		if (onMouseEnter) {

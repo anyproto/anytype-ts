@@ -111,8 +111,10 @@
 }
 
 .cell.isEditing.c-select {
-	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; cursor: grab; position: relative; vertical-align: top; max-width: 100%; }
+	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; position: relative; vertical-align: top; max-width: 100%; }
 	.itemWrap:last-child { margin-right: 0px !important; }
+	.itemWrap.isDraggable { cursor: grab; }
+
 	.itemWrap {
 		.tagItem { margin: 0px !important; }
 	}

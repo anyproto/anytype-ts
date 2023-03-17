@@ -60,7 +60,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		const { summary } = thread;
 
 		if (summary) {
-			Preview.tooltipShow(translate('tooltip' + summary.status), node, I.MenuDirection.Center, I.MenuDirection.Bottom);
+			Preview.tooltipShow({ text: translate('tooltip' + summary.status), element: node, typeY: I.MenuDirection.Bottom });
 		};
 	};
 	

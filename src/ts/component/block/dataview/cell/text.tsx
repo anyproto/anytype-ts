@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, Util, DataUtil, ObjectUtil, keyboard, translate, Relation } from 'Lib';
-import { Icon, Input, IconObject } from 'Component';
+import { Input, IconObject } from 'Component';
 import { commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -37,7 +37,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	render () {
 		const { isEditing } = this.state;
-		const { index, relation, viewType, getView, getRecord, textLimit, isInline, iconSize, placeholder } = this.props;
+		const { index, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
 		const record = getRecord(index);
 		
 		if (!record) {
@@ -158,6 +158,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					} else {
 						value = date;
 					};
+				} else {
+					value = '';
+				};
+			};
+
+			if ((relation.format == I.RelationType.Url) && shortUrl) {
+				if (value !== null) {
+					value = Util.shortUrl(value);
 				} else {
 					value = '';
 				};
