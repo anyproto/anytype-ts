@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { IconObject, Title, Label, Button, Icon } from 'Component';
+import { Title, Label, Button, Icon } from 'Component';
 import { I, Util, translate } from 'Lib';
 import Head from '../head';
 
