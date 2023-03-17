@@ -344,8 +344,6 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		items = items.filter(it => !value.includes(it.id));
 
-		console.log('ITEMS: ', items)
-
 		return items.concat(ret);
 	};
 
