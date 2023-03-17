@@ -11,7 +11,7 @@
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
-				cursor: default !important; color: $colorDarkGrey;
+				cursor: pointer !important; color: $colorDarkGrey;
 			}
 			.cellContent:last-child { margin: 0px; }
 			.cellContent:empty, .cellContent.isEmpty { display: none; }
