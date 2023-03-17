@@ -7,8 +7,8 @@
 			.galleryWrap { margin-left: 14px; }
 
 			.card { 
-				width: 260px; border: 1px solid $colorHover; transition: border-color 0.2s ease-in-out; border-radius: 16px; display: inline-block; cursor: pointer;
-				background: $colorWhite; overflow: hidden;
+				width: 260px; border: 1px solid $colorHover; transition: border-color 0.2s ease-in-out; border-radius: 12px; display: inline-block; 
+				cursor: pointer; background: $colorWhite; overflow: hidden;
 			}
 			.card {
 				.itemContent > .inner { padding: 16px; }
@@ -50,9 +50,10 @@
 					background-image: url('~img/icon/index/checkbox0.svg'); opacity: 0; transition: none; background-size: 20px;
 				}
 
-				.isSelectionSelected {
+				.selectable.isSelectionSelected {
 					.icon.checkbox { background-image: url('~img/icon/index/checkbox1.svg'); opacity: 1; }
 				}
+				.selectable.isSelectionSelected::after { display: none; }
 			}
 			.card:hover { border: 1px solid $colorBorderDark; }
 			.card:hover {
