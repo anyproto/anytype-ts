@@ -51,28 +51,6 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 
 .pageAuthAccountSelect {
 	.frame { padding-bottom: 48px; }
-	.title { margin-bottom: 21px; }
-	.list { border-radius: 8px; border: 1px solid #e0ded2; }
-
-	.list {
-		.item { border-bottom: 1px solid #e0ded2; padding: 12px; cursor: pointer; }
-		.item:last-child { border: 0px; }
-
-		.item {
-			.icon.user { width: 48px; height: 48px; line-height: 50px; font-size: 21px; letter-spacing: -0.16px; margin-right: 12px; }
-			.name {
-				font-size: 18px; line-height: 26px; display: inline-block; vertical-align: middle; width: calc(100% - 60px); height: 26px;
-				font-weight: 700; margin-top: 2px; @include text-overflow-nw;
-			}
-		}
-
-		.item.add {
-			.icon.plus { width: 48px; height: 48px; margin-right: 12px; background-size: 16px 16px; background-image: url('~img/icon/plus/account0.svg'); }
-		}
-		.item.add:hover {
-			.icon.plus { background-image: url('~img/icon/plus/account1.svg'); }
-		}
-	}
 }
 
 .pageAuthSuccess {

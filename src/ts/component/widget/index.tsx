@@ -341,12 +341,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	isCollection (blockId: string) {
-		return [ 
-			Constant.widgetId.favorite, 
-			Constant.widgetId.recent, 
-			Constant.widgetId.set, 
-			Constant.widgetId.collection,
-		].includes(blockId);
+		return Object.values(Constant.widgetId).includes(blockId);
 	};
 
 });
