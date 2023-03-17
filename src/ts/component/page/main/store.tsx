@@ -121,7 +121,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					<div 
 						key={item.id} 
 						className={[ 'tab', (item.id == this.view ? 'active' : '') ].join(' ')} 
-						onClick={(e: any) => { this.onView(item.id); }}
+						onClick={(e: any) => { this.onView(item.id, true); }}
 					>
 						{item.name}
 					</div>
@@ -212,7 +212,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className={[ 'wrapper', this.tab, this.view ].join(' ')}
 			>
-				<Header component="mainStore" {...this.props} tabs={Tabs} tab={this.tab} onTab={this.onTab} />
+				<Header component="mainStore" {...this.props} tabs={Tabs} tab={this.tab} onTab={id => this.onTab(id, true)} />
 
 				<div className="body">
 					<div className="items">
@@ -262,7 +262,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.resize();
 		this.rebind();
-		this.onTab(Storage.get('tabStore') || Tab.Type);
+		this.onTab(Storage.get('tabStore') || Tab.Type, false);
 	};
 
 	componentDidUpdate () {
@@ -295,8 +295,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onKeyDown (e: any) {
 		const cmd = keyboard.cmdKey();
 
-		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(Tab.Type); });
-		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(Tab.Relation); });
+		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(Tab.Type, true); });
+		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(Tab.Relation, true); });
 	};
 
 	getRowHeight (item: any) {
@@ -310,21 +310,19 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		return h;
 	};
 
-	onTab (id: Tab) {
+	onTab (id: any, isInner: boolean) {
 		this.tab = id;
-		this.onView(View.Library);
+		this.onView(View.Library, isInner);
 
 		Storage.set('tabStore', id);
-		analytics.event(Util.toUpperCamelCase([ 'ScreenLibrary', id ].join('-')));
 	};
 
-	onView (id: View) {
+	onView (id: View, isInner: boolean) {
 		this.view = id;
 		this.getData(true);
 
 		menuStore.closeAll(Constant.menuIds.store);
-
-		analytics.event('LibraryView', { view: id, type: this.tab });
+		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
 	};
 
 	onClick (e: any, item: any) {

@@ -31,7 +31,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		super(props);
 		
 		this.getList = this.getList.bind(this);
-		this.onAccount = this.onAccount.bind(this);
 		this.onProfile = this.onProfile.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onClick = this.onClick.bind(this);
@@ -147,7 +146,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 						</div>
 						
 						<div className="side right">
-							<Icon id="button-account" className="account" tooltip="Accounts" onClick={this.onAccount} />
 							<Icon id="button-add" className="add" tooltip="Add new object" onClick={this.onAdd} />
 							<Icon id="button-store" className="store" tooltip="Library" onClick={this.onStore} />
 							<IconObject 
@@ -421,13 +419,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		this.state.filter = v;
 		this.setState({ filter: v });
 		this.load();
-	};
-
-	onAccount () {
-		menuStore.open('account', {
-			element: '#button-account',
-			horizontal: I.MenuDirection.Right
-		});
 	};
 
 	onStore (e: any) {

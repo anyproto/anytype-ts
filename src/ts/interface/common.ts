@@ -75,6 +75,11 @@ export enum ImportMode {
 	IgnoreErrors = 1,
 };
 
+export enum CsvImportMode {
+	Collection = 0,
+	Table = 1,
+};
+
 export enum ImportType {
 	Notion		 = 0,
 	Markdown	 = 1,
@@ -82,6 +87,7 @@ export enum ImportType {
 	Migration	 = 3,
 	Html		 = 4,
 	Text		 = 5,
+	Csv			 = 6,
 };
 
 export enum ExportFormat {
@@ -127,7 +133,6 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	onSearch?: () => void;
 	onNavigation?: () => void;
 	onGraph?: () => void;
-	onStore?: () => void;
 	onTooltipShow?: (e: any, text: string) => void;
 	onTooltipHide?: () => void;
 	menuOpen?: (id: string, elementId: string, param: Partial<I.MenuParam>) => void;

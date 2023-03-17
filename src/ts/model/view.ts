@@ -20,7 +20,7 @@ class View implements I.View {
 	
 	constructor (props: I.View) {
 		this.id = String(props.id || '');
-		this.name = String(props.name || DataUtil.defaultName('view'));
+		this.name = String(props.name || '');
 		this.type = Number(props.type) || I.ViewType.Grid;
 		this.coverRelationKey = String(props.coverRelationKey || '');
 		this.coverFit = Boolean(props.coverFit);
