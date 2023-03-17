@@ -151,16 +151,12 @@
 .cellContent.c-email, 
 .cellContent.c-phone 
 {
-	.name { 
-		text-decoration: none; border-bottom: 0.05em solid $colorBorderDark; transition: $transitionFast; cursor: pointer; width: auto; 
-		@include text-overflow-nw; width: 100%;
-	}
-	.name:hover { border-color: $colorBlack; }
+	.name { text-decoration: none; transition: $transitionFast; cursor: pointer; width: auto; @include text-overflow-nw; width: 100%; }
 }
 
 .cellContent.canEdit.c-url, 
 .cellContent.canEdit.c-email, 
 .cellContent.canEdit.c-phone 
 {
-	.name { border: 0px; width: 100%; }
+	.name { width: 100%; }
 }
