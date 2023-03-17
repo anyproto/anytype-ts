@@ -89,7 +89,7 @@ class Header extends React.Component<Props> {
 	};
 
 	onTooltipShow (e: any, text: string) {
-		Preview.tooltipShow(text, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Bottom);
+		Preview.tooltipShow({ text, element: $(e.currentTarget) });
 	};
 
 	onTooltipHide () {
