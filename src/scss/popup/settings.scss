@@ -180,7 +180,7 @@
 		}
 
 		.side.right.tabImportIndex {
-			.items { display: flex; gap: 16px; }
+			.items { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 			.item { 
 				width: 132px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionFast; cursor: pointer; 
 				position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
@@ -196,6 +196,7 @@
 			.item.markdown .icon { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
 			.item.html .icon { background-image: url('~img/icon/popup/settings/import/html.svg'); }
 			.item.text .icon { background-image: url('~img/icon/popup/settings/import/text.svg'); }
+			.item.csv .icon { background-image: url('~img/icon/popup/settings/import/csv.svg'); }
 		}
 
 		.side.right.tabImportNotion, .side.right.tabImportNotionHelp {
