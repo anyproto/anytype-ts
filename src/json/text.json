@@ -121,6 +121,8 @@
 	"authPinCheckTitle": { "en": "Enter pin code" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
+	"archiveEmptyLabel": { "en":  "Your bin is empty"},
+
 	"indexHi": { "en": "Hi, %s" },
 
 	"editorControlIcon": { "en": "Icon" },

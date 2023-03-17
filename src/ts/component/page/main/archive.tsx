@@ -2,8 +2,20 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { Title, IconObject, Header, Footer, Loader, ObjectName, ObjectDescription, Checkbox, Icon, Filter } from 'Component';
-import { C, I, DataUtil, Util, analytics } from 'Lib';
+import {
+	Title,
+	IconObject,
+	Header,
+	Footer,
+	Loader,
+	ObjectName,
+	ObjectDescription,
+	Checkbox,
+	Icon,
+	Filter,
+	Label, Button
+} from 'Component';
+import { C, I, DataUtil, Util, analytics, translate } from 'Lib';
 import { menuStore, popupStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -107,6 +119,75 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			);
 		};
 
+		let content = (
+			<div className="items">
+				{loading ? <Loader id="loader" /> : (
+					<InfiniteLoader
+						rowCount={items.length}
+						loadMoreRows={() => {}}
+						isRowLoaded={({ index }) => true}
+					>
+						{({ onRowsRendered, registerChild }) => (
+							<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+								{({ height, isScrolling, registerChild, scrollTop }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={ref => { this.refList = ref; }}
+												width={width}
+												height={height}
+												deferredMeasurmentCache={this.cache}
+												rowCount={items.length}
+												rowHeight={64}
+												rowRenderer={rowRenderer}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												onScroll={this.onScroll}
+												scrollToAlignment="start"
+											/>
+										)}
+									</AutoSizer>
+								)}
+							</WindowScroller>
+						)}
+					</InfiniteLoader>
+				)}
+			</div>
+		);
+
+		let controls = (
+			<div className="controls">
+				<div className="side left">
+					{buttons.map((item: any, i: number) => (
+						<Button key={i} {...item} />
+					))}
+				</div>
+				<div className="side right">
+					<Icon className="search" onClick={this.onFilterShow} />
+
+					<div id="filterWrapper" className="filterWrapper">
+						<Filter
+							ref={ref => { this.refFilter = ref; }}
+							onChange={this.onFilterChange}
+							onClear={this.onFilterClear}
+							placeholder="Type to search..."
+						/>
+					</div>
+				</div>
+			</div>
+		);
+
+		if (!items.length) {
+			controls = null;
+			content = (
+				<div className="archiveEmpty">
+					<div className="inner">
+						<Label className="name" text={translate('archiveEmptyLabel')} />
+					</div>
+				</div>
+			);
+		};
+
 		return (
 			<div className="wrapper">
 				<Header component="mainEmpty" text="Bin" layout={I.ObjectLayout.Archive} {...this.props} />
@@ -117,59 +198,10 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 						<Title text="Bin" />
 					</div>
 
-					<div className="controls">
-						<div className="side left">
-							{buttons.map((item: any, i: number) => (
-								<Button key={i} {...item} />
-							))}
-						</div>
-						<div className="side right">
-							<Icon className="search" onClick={this.onFilterShow} />
+					{controls}
 
-							<div id="filterWrapper" className="filterWrapper">
-								<Filter 
-									ref={ref => { this.refFilter = ref; }} 
-									onChange={this.onFilterChange}
-									onClear={this.onFilterClear}
-									placeholder="Type to search..."
-								/>
-							</div>
-						</div>
-					</div>
+					{content}
 
-					<div className="items">
-						{loading ? <Loader id="loader" /> : (
-							<InfiniteLoader
-								rowCount={items.length}
-								loadMoreRows={() => {}}
-								isRowLoaded={({ index }) => true}
-							>
-								{({ onRowsRendered, registerChild }) => (
-									<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-										{({ height, isScrolling, registerChild, scrollTop }) => (
-											<AutoSizer className="scrollArea">
-												{({ width, height }) => (
-													<List
-														ref={ref => { this.refList = ref; }}
-														width={width}
-														height={height}
-														deferredMeasurmentCache={this.cache}
-														rowCount={items.length}
-														rowHeight={64}
-														rowRenderer={rowRenderer}
-														onRowsRendered={onRowsRendered}
-														overscanRowCount={10}
-														onScroll={this.onScroll}
-														scrollToAlignment="start"
-													/>
-												)}
-											</AutoSizer>
-										)}
-									</WindowScroller>
-								)}
-							</InfiniteLoader>
-						)}
-					</div>
 				</div>
 
 				<Footer component="mainStore" />
