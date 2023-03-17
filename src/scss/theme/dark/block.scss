@@ -113,7 +113,7 @@
         }
 		.dataviewControls::after { background-color: $colorLinePrimary; }
 
-        .cellHead .resize .line { background: $colorLineSecondary; }
+        .cellHead .resize::after { background: $colorLineSecondary; }
         .cellHead.isDragging { background: $colorHover; }
 		.cellHead.isDragging::after { background-color: $colorHover; }
 
