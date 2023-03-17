@@ -281,7 +281,7 @@
 	"popupSettingsImportWarning": { "en": "Please don't add entire Notion workspace content if it's too big. Anytype has different data structure and can't parse Notion databases at the moment." },
 	"popupSettingsExportTitle": { "en": "Export" },
 	"popupSettingsExportText": { "en": "Choose application or format of data source" },
-	"popupSettingsExportMarkdownTitle": { "en": "Export to markdown" },
+	"popupSettingsExportMarkdownTitle": { "en": "Markdown" },
 	"popupSettingsExportMarkdownText": { "en": "All your workspace data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications.<br/><br/>If you want to add all your data back in Anytype, use the <b>Import</b> section." },
 	"popupSettingsExportOk": { "en": "Export data" },
 	"popupSettingsOtherTitle": { "en": "Other settings" },
