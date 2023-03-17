@@ -58,8 +58,6 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 	};
 
 	onMouseEnter (): void {
-		console.log(`.cell-key-${this.props.relationKey}`, $(`.cell-key-${this.props.relationKey}`));
-
 		$(`.cell-key-${this.props.relationKey}`).addClass('cellKeyHover');
 	};
 
