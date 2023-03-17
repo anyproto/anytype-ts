@@ -82,7 +82,7 @@
 		.dataviewControls::after { content: ''; display: block; height: 1px; width: 100%; background: $colorBorderLight; }
 		.dataviewControls {
 			.sides { gap: 0px 16px; }
-			.side { padding: 23px 0px; white-space: nowrap; line-height: 28px; }
+			.side { padding: 10px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
 
 			.iconWrap { position: relative; }
