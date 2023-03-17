@@ -80,6 +80,8 @@
     /* BlockDataview */
 
     .block.blockDataview {
+		.icon.edit { background-image: url('#{$themePath}/icon/dataview/button/edit0.svg'); }
+		.icon.edit:hover { background-image: url('#{$themePath}/icon/dataview/button/edit1.svg'); }
         .icon.plus { background-image: url('#{$themePath}/icon/plus/menu0.svg'); }
         .icon.plus:hover { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
 
@@ -128,7 +130,6 @@
 			}
 		}
 
-        .viewItem.viewGrid { box-shadow: 0px -1px $colorLineSecondary inset; }
         .viewItem.viewGrid {
             .row { box-shadow: 0px 1px $colorLineSecondary inset; }
 			.cellHead .resize .line { background-color: $colorLineSecondary; }

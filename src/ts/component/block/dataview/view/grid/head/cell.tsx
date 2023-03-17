@@ -4,6 +4,7 @@ import { SortableElement } from 'react-sortable-hoc';
 import { menuStore, dbStore } from 'Store';
 import { observer } from 'mobx-react';
 import Handle from './handle';
+import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;
@@ -63,27 +64,29 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		const element = `#block-${block.id} #${Relation.cellId('head', relationKey, '')}`;
 		const obj = $(element);
 
-		menuStore.open('dataviewRelationEdit', { 
-			element,
-			horizontal: I.MenuDirection.Center,
-			noFlipY: true,
-			onOpen: () => { obj.addClass('active'); },
-			onClose: () => { obj.removeClass('active'); },
-			data: {
-				loadData,
-				getView,
-				rootId,
-				isInline,
-				isCollection,
-				blockId: block.id,
-				relationId: relation.id,
-				readonly,
-				extendedOptions: true,
-				addCommand: (rootId: string, blockId: string, relation: any) => {
-					Dataview.relationAdd(rootId, blockId, relation.relationKey, relation._index_, getView());
-				},
-			}
-		});
+		window.setTimeout(() => {
+			menuStore.open('dataviewRelationEdit', { 
+				element,
+				horizontal: I.MenuDirection.Center,
+				noFlipY: true,
+				onOpen: () => { obj.addClass('active'); },
+				onClose: () => { obj.removeClass('active'); },
+				data: {
+					loadData,
+					getView,
+					rootId,
+					isInline,
+					isCollection,
+					blockId: block.id,
+					relationId: relation.id,
+					readonly,
+					extendedOptions: true,
+					addCommand: (rootId: string, blockId: string, relation: any) => {
+						Dataview.relationAdd(rootId, blockId, relation.relationKey, relation._index_, getView());
+					},
+				}
+			});
+		}, Constant.delay.menu);
 	};
 
 });
