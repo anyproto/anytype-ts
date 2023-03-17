@@ -25,20 +25,22 @@ class PopupSettingsPageImportMarkdown extends React.Component<Props> {
 
 				<Icon className="logo" />
 				<Title text={translate('popupSettingsImportMarkdownTitle')} />
-				<Label text={translate('popupSettingsImportFirst')} />
 
 				<div className="path">
-					<b>{translate('popupSettingsImportPageTitle')}</b>
-					Three dots menu on the top-left corner → <IconObject object={{ iconEmoji: ':paperclip:' }} /> Export →  <br/> Export format : &quot;Markdown &amp; CSV&quot;.
+					<b>{translate('popupSettingsImportNotionExample')}</b>
+
+					<ul>
+						<li>{translate('popupSettingsImportNotionExampleStep1')}</li>
+						<li>{translate('popupSettingsImportNotionExampleStep2')}</li>
+						<li>{translate('popupSettingsImportNotionExampleStep3')}</li>
+					</ul>
 				</div>
 
-				<Label text={translate('popupSettingsImportZip')} />
+				<Label text={translate('popupSettingsImportNotionExampleComplete')} />
 				
 				<div className="buttons">
 					<Button className="c36" text={translate('popupSettingsImportOk')} onClick={this.onImport} />
 				</div>
-
-				<Label className="small" text={translate('popupSettingsImportWarning')} />
 			</div>
 		);
 	};
