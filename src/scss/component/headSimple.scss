@@ -13,7 +13,7 @@
 		}
 
 		.title { @include text-header1; }
-		.descr { @include text-paragraph; margin: 7px 0px; }
+		.descr { @include text-paragraph; }
 	}
 
 	.side.right { flex-shrink: 0; text-align: right; }
