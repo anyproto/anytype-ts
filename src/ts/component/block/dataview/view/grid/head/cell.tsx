@@ -35,9 +35,14 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 			const cn = [ 'cellHead', Relation.className(format) ];
 
 			return (
-				<div id={Relation.cellId('head', relationKey, '')} className={cn.join(' ')}>
+				<div 
+					id={Relation.cellId('head', relationKey, '')} 
+					className={cn.join(' ')}
+					onClick={this.onEdit}
+					onContextMenu={this.onEdit}
+				>
 					<div className="cellContent">
-						<Handle name={name} format={format} readonly={readonly} onClick={this.onEdit} />
+						<Handle name={name} format={format} readonly={readonly} />
 						<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, relationKey); }} />
 					</div>
 				</div>
