@@ -1,13 +1,12 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import $ from 'jquery';
 import { Icon, Button } from 'Component';
 import { C, I, Util, analytics, Relation, Dataview, keyboard } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
-import Constant from "json/constant.json";
 
 const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
 

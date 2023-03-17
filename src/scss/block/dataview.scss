@@ -78,8 +78,8 @@
 			#head-source-select { display: none; }
 		}
 
-		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
-		.dataviewControls::after { content: ''; display: block; height: 1px; width: 100%; background: $colorBorderLight; }
+		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; height: 49px; }
+		.dataviewControls::after { content: ''; display: block; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
 		.dataviewControls {
 			.sides { gap: 0px 16px; }
 			.side { padding: 10px 0px; white-space: nowrap; line-height: 28px; }
@@ -90,10 +90,7 @@
 				.dot { width: 4px; height: 4px; border-radius: 50%; background-color: $colorDarkGrey; position: absolute; right: 0px; top: 0px; }
 			}
 
-			.icon { 
-				cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; 
-				border-radius: 4px; transition: $transitionFast;
-			}
+			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionFast; }
 			.icon:hover, .icon.active { background-color: $colorHover; }
 
 			.icon.filter { background-image: url('~img/icon/dataview/button/filter.svg'); }
@@ -127,18 +124,13 @@
 			}
 
 			.button { padding: 0px 8px; @include text-common; }
-			.button.addRecord { margin-left: 4px; }
-		}
-		.dataviewControls.viewGrid,
-		.dataviewControls.dataviewSelection {
-			.line { width: 100%; margin: 0px; }
 		}
 
 		.dataviewSelection {
 			.side.left { @include text-paragraph; font-weight: 600; color: $colorBlack;  }
 			.side.right {
 				.element {
-					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; font-weight: 400; line-height: 28px; cursor: pointer;
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; cursor: pointer;
 					transition: $transitionFast;
 				}
 				.element.grey { color: $colorSecondary; }

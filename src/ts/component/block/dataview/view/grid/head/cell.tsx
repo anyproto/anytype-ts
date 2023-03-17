@@ -19,6 +19,8 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		super(props);
 
 		this.onEdit = this.onEdit.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
@@ -33,7 +35,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		const readonly = relation.isReadonlyValue;
 
 		const Cell = SortableElement((item: any) => {
-			const cn = [ 'cellHead', Relation.className(format) ];
+			const cn = [ 'cellHead', `cell-key-${this.props.relationKey}`, Relation.className(format) ];
 
 			return (
 				<div 
@@ -41,6 +43,8 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 					className={cn.join(' ')}
 					onClick={this.onEdit}
 					onContextMenu={this.onEdit}
+					onMouseEnter={this.onMouseEnter}
+					onMouseLeave={this.onMouseLeave}
 				>
 					<div className="cellContent">
 						<Handle name={name} format={format} readonly={readonly} />
@@ -53,7 +57,17 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		return <Cell index={index} />;
 	};
 
-	onEdit (e: any) {
+	onMouseEnter (): void {
+		console.log(`.cell-key-${this.props.relationKey}`, $(`.cell-key-${this.props.relationKey}`));
+
+		$(`.cell-key-${this.props.relationKey}`).addClass('cellKeyHover');
+	};
+
+	onMouseLeave () {
+		$('.cellKeyHover').removeClass('cellKeyHover');
+	};
+
+	onEdit () {
 		const { rootId, block, readonly, loadData, getView, relationKey, isInline, isCollection } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
 
