@@ -328,7 +328,6 @@ html.themeDark {
     /* ---------------------------------------------------------------- */
 
     .listWidget {
-		.icon.remove { background-color: $colorBgIcon; }
 		> .buttons {
 			.button, .button.edit { background-color: $colorBgIcon; color: $colorPrimary; }
 		}
@@ -342,6 +341,9 @@ html.themeDark {
 		.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
 
 		.head::before { background-color: $colorHover; }
+
+		.icon.remove .inner { background-color: $colorBgIcon; }
+		.icon.remove:hover .inner { background-color: $colorTertiary; }
 	}
 
 	.widget.active {

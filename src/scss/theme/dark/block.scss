@@ -111,6 +111,7 @@
 			.icon.manager:hover, .icon.manager.active { background-image: url('#{$themePath}/icon/dataview/button/manager1.svg'); }
 			.icon.plus:hover, .icon.plus.active { background-image: url('#{$themePath}/icon/dataview/button/plus1.svg'); }
         }
+		.dataviewControls::after { background-color: $colorLinePrimary; }
 
         .cellHead .resize .line { background: $colorLineSecondary; }
         .cellHead.isDragging { background: $colorHover; }
