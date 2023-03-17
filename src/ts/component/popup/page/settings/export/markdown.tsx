@@ -30,7 +30,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 
 		return (
 			<div>
-				<Head {...this.props} returnTo="index" name={translate('popupSettingsTitle')} />
+				<Head {...this.props} returnTo="exportIndex" name={translate('popupSettingsExportTitle')} />
 
 				<Title text={translate('popupSettingsExportMarkdownTitle')} />
 				<Label text={translate('popupSettingsExportMarkdownText')} />

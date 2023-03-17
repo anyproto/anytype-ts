@@ -57,7 +57,7 @@
 			.textareaWrap { background-color: $colorBgLight; }
         }
 
-        .tabImportIndex {
+        .tabImportIndex, .tabExportIndex {
             .item { border-color: $colorLineSecondary; }
             .item:hover, .item.active { border-color: $colorLinePrimary; }
             .item.notion .icon { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }

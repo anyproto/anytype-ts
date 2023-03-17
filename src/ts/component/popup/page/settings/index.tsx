@@ -22,7 +22,7 @@ const PopupSettingsPageIndex = observer(class PopupSettingsPageIndex extends Rea
 			{ id: 'personal', title: 'popupSettingsPersonalTitle', icon: 'personal' },
 			{ id: 'appearance', title: 'popupSettingsAppearanceTitle', icon: 'appearance' },
 			{ id: 'importIndex', title: 'popupSettingsImportTitle', icon: 'import' },
-			{ id: 'exportMarkdown', title: 'popupSettingsExportTitle', icon: 'export' }
+			{ id: 'exportIndex', title: 'popupSettingsExportTitle', icon: 'export' }
 		];
 
 		if (account) {
