@@ -72,24 +72,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		let button = null;
-		let size = null;
-		let iconSize = null;
 		let descr = null;
 		let featured = null;
 		let cn = [ 'headSimple', check.className ];
-		let buttonId = '';
 
-		if (isTypeOrRelation) {
-			size = 32;
-			iconSize = 28;
-		} else {
-			size = 96;
-
-			if (object.iconImage) {
-				size = 112;
-				cn.push('isBig');
-			};
-
+		if (!isTypeOrRelation) {
 			descr = <Editor className="descr" id="description" />;
 			featured = <Block {...this.props} key={blockFeatured.id} rootId={rootId} iconSize={20} block={blockFeatured} className="small" />;
 		};
@@ -122,27 +109,25 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		return (
 			<div ref={node => this.node = node} className={cn.join(' ')}>
-				{check.withIcon ? (
-					<div className="side left">
-						<IconObject 
-							id={'block-icon-' + rootId} 
-							size={size} 
-							iconSize={iconSize}
-							object={object} 
-							forceLetter={true}
-							canEdit={canEditIcon} 
-							onSelect={this.onSelect} 
-							onUpload={this.onUpload} 
-						/>
-					</div>
-				) : ''}
-
-				<div className="side center">
-					<div className="txt">
+				<div className="side left">
+					<div className="titleWrap">
+						{check.withIcon ? (
+							<IconObject 
+								id={'block-icon-' + rootId} 
+								size={32} 
+								iconSize={32}
+								object={object} 
+								forceLetter={true}
+								canEdit={canEditIcon} 
+								onSelect={this.onSelect} 
+								onUpload={this.onUpload} 
+							/>
+						) : ''}
 						<Editor className="title" id="title" />
-						{descr}
-						{featured}
 					</div>
+
+					{descr}
+					{featured}
 				</div>
 
 				{button ? (

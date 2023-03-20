@@ -1,9 +1,9 @@
-.phrase {
+.keyPhrase {
     border-radius: 26px; background: rgba(44, 43, 39, 0.3); height: 86px; display: flex;
     flex-direction: row; align-items: center; justify-content: center; width: fit-content; padding: 20px;
 }
 
-.phrase {
+.keyPhrase {
     span { padding: 0 10px; font-size: 18px; }
     .yellow { color: #FFB522; }
     .orange { color: #F55522; }
@@ -14,5 +14,5 @@
     .lavender { color: #AB50CC; }
 }
 
-.phrase:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
-.phrase.isBlurred { filter: blur(7px); }
+.keyPhrase:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
+.keyPhrase.isBlurred { filter: blur(7px); }

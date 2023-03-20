@@ -16,7 +16,7 @@ type Props = {
 	phrase: string
 }
 
-const Phrase = observer(class Phrase extends React.Component<Props> {
+const KeyPhrase = observer(class Phrase extends React.Component<Props> {
 
 	render () {
 		const { phrase, isBlurred } = this.props;
@@ -46,4 +46,4 @@ const Phrase = observer(class Phrase extends React.Component<Props> {
 
 });
 
-export default Phrase;
+export default KeyPhrase;

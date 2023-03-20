@@ -111,8 +111,10 @@
 }
 
 .cell.isEditing.c-select {
-	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; cursor: grab; position: relative; vertical-align: top; max-width: 100%; }
+	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 8px 0px; position: relative; vertical-align: top; max-width: 100%; }
 	.itemWrap:last-child { margin-right: 0px !important; }
+	.itemWrap.isDraggable { cursor: grab; }
+
 	.itemWrap {
 		.tagItem { margin: 0px !important; }
 	}
@@ -149,16 +151,12 @@
 .cellContent.c-email, 
 .cellContent.c-phone 
 {
-	.name { 
-		text-decoration: none; border-bottom: 0.05em solid $colorBorderDark; transition: $transitionFast; cursor: pointer; width: auto; 
-		@include text-overflow-nw; width: 100%;
-	}
-	.name:hover { border-color: $colorBlack; }
+	.name { text-decoration: none; transition: $transitionFast; cursor: pointer; width: auto; @include text-overflow-nw; width: 100%; }
 }
 
 .cellContent.canEdit.c-url, 
 .cellContent.canEdit.c-email, 
 .cellContent.canEdit.c-phone 
 {
-	.name { border: 0px; width: 100%; }
+	.name { width: 100%; }
 }

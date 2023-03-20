@@ -344,7 +344,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		items = items.filter(it => !value.includes(it.id));
 
-		return ret.concat(items);
+		return items.concat(ret);
 	};
 
 	resize () {

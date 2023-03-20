@@ -145,6 +145,8 @@
 	"authOnboardUseCaseTitle": { "en": "How would you like to start?" },
 	"authOnboardUseCaseLabel": { "en": "No need to decide now, it's just starting point" },
 
+	"archiveEmptyLabel": { "en":  "Your bin is empty"},
+
 	"indexHi": { "en": "Hi, %s" },
 
 	"editorControlIcon": { "en": "Icon" },
@@ -249,7 +251,7 @@
 	"blockLinkSyncing": { "en": "Syncing..." },
 	"blockLinkArchived": { "en": "Deleted" },
 
-	"blockDataviewNew": { "en": "Create new object" },
+	"blockDataviewNew": { "en": "New object" },
 
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
@@ -290,13 +292,14 @@
 	"popupSettingsPinError": { "en": "Incorrect pin" },
 	"popupSettingsImportTitle": { "en": "Import" },
 	"popupSettingsImportText": { "en": "Choose application or format of data source" },
-	"popupSettingsImportMarkdownTitle": { "en": "How to import from Notion / Markdown" },
-	"popupSettingsImportFirst": { "en": "First you need to export data." },
-	"popupSettingsImportGetTitle": { "en": "Get all data:" },
-	"popupSettingsImportPageTitle": { "en": "Get certain pages:" },
-	"popupSettingsImportZip": { "en": "After that you need to select <b>Zip archive or Markdown files</b> and Anytype will do the rest." },
+	"popupSettingsImportMarkdownTitle": { "en": "How to import Markdown" },
+	"popupSettingsImportNotionExample": { "en": "Notion example" },
+	"popupSettingsImportNotionExampleStep1": { "en": "Select the page you wish to import" },
+	"popupSettingsImportNotionExampleStep2": { "en": "Click the three dots menu in the top-left corner" },
+	"popupSettingsImportNotionExampleStep3": { "en": "Chose the export format: Markdown & CSV" },
+	"popupSettingsImportNotionExampleComplete": { "en": "Then, select either a <b>Zip archive or Markdown file</b> (.md) to complete the import" },
 	"popupSettingsImportOk": { "en": "Import data" },
-	"popupSettingsImportWarning": { "en": "Please don't add entire Notion workspace content if it's too big. Anytype has different data structure and can't parse Notion databases at the moment." },
+
 	"popupSettingsExportTitle": { "en": "Export" },
 	"popupSettingsExportMarkdownTitle": { "en": "Export to markdown" },
 	"popupSettingsExportMarkdownText1": { "en": "All your workspace data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications." },

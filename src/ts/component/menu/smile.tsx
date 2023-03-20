@@ -369,7 +369,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		Preview.tooltipShow(item.smile, $(e.currentTarget), I.MenuDirection.Center, I.MenuDirection.Top);
+		Preview.tooltipShow({ text: item.smile, element: $(e.currentTarget) });
 	};
 
 	onMouseLeave (e: any) {

@@ -423,7 +423,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			if (tt) {
-				Preview.tooltipShow(tt, element, I.MenuDirection.Center, I.MenuDirection.Top);
+				Preview.tooltipShow({ text: tt, element });
 				return;
 			};
 

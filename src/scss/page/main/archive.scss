@@ -62,6 +62,15 @@
 				.descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorDarkGrey; }
 			}
 		}
+
+		.archiveEmpty {
+			color: $colorDarkGrey; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid $colorBorderLight;
+			border-top: 1px solid $colorBorderLight; text-align: center; padding: 16px 0px; height: 300px;
+		}
+		.archiveEmpty {
+			.inner { width: 300px; }
+			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
+		}
 	}
 
 }
