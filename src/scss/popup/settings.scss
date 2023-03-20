@@ -200,17 +200,17 @@
 				.name { @include text-small; line-height: 1em; }
 			}
 
-			.item.notion .icon { background-image: url('~img/icon/popup/settings/import/notion.svg'); }
-			.item.markdown .icon { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
-			.item.html .icon { background-image: url('~img/icon/popup/settings/import/html.svg'); }
-			.item.text .icon { background-image: url('~img/icon/popup/settings/import/text.svg'); }
-			.item.csv .icon { background-image: url('~img/icon/popup/settings/import/csv.svg'); }
-			.item.protobuf .icon { background-image: url('~img/icon/popup/settings/import/protobuf.svg'); }
+			.item.notion .icon { background-image: url('~img/icon/import/notion.svg'); }
+			.item.markdown .icon { background-image: url('~img/icon/import/markdown.svg'); }
+			.item.html .icon { background-image: url('~img/icon/import/html.svg'); }
+			.item.text .icon { background-image: url('~img/icon/import/text.svg'); }
+			.item.csv .icon { background-image: url('~img/icon/import/csv.svg'); }
+			.item.protobuf .icon { background-image: url('~img/icon/import/protobuf.svg'); }
 		}
 
 		.side.right.tabImportNotion, 
 		.side.right.tabImportNotionHelp {
-			.icon.logo { background-image: url('~img/icon/popup/settings/import/notion.svg'); }
+			.icon.logo { background-image: url('~img/icon/import/notion.svg'); }
 		}
 
 		.side.right.tabImportNotion {
@@ -265,7 +265,7 @@
 		}
 
 		.side.right.tabImportMarkdown {
-			.icon.logo { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
+			.icon.logo { background-image: url('~img/icon/import/markdown.svg'); }
 
 			b { font-weight: 600; }
 

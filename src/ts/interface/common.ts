@@ -91,7 +91,7 @@ export enum ImportType {
 	Protobuf	 = 7,
 };
 
-export enum ExportFormat {
+export enum ExportType {
 	Markdown = 0,
 	Protobuf = 1,
 	Json	 = 2,

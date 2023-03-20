@@ -7,7 +7,7 @@ interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 	onImport: (type: I.ImportType, param: any) => void;
-	onExport: (type: I.ImportType, param: any) => void;
+	onExport: (type: I.ExportType, param: any) => void;
 };
 
 const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex extends React.Component<Props> {
@@ -58,7 +58,7 @@ const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex
 		];
 	};
 
-	onExportCommon (type: I.ImportType, extensions: string[], options?: any) {
+	onExportCommon (type: I.ExportType, extensions: string[], options?: any) {
 		const { close, onExport } = this.props;
 		const platform = Util.getPlatform();
 		const fileOptions: any = { 
@@ -82,7 +82,7 @@ const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex
 	};
 
 	onExportProtobuf () {
-		this.onExportCommon(I.ImportType.Protobuf, [ 'zip', 'pb' ]);
+		this.onExportCommon(I.ExportType.Protobuf, [ 'zip', 'pb' ]);
 	};
 
 });

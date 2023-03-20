@@ -685,7 +685,7 @@ class App extends React.Component<object, State> {
 				break;
 
 			case 'save':
-				Action.export([ rootId ], I.ExportFormat.Protobuf, true, true, true);
+				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true);
 				break;
 
 			case 'exportTemplates':

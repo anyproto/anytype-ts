@@ -295,7 +295,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		});
 	};
 
-	onExport (format: I.ExportFormat, param: any) {
+	onExport (format: I.ExportType, param: any) {
 		const { zip, nested, files } = param;
 
 		Action.export([], format, zip, nested, files, () => { this.props.close(); });
