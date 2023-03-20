@@ -611,7 +611,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		return Mark.fromHtml(value, restricted);
 	};
 
-	onInput (e: any) {
+	onInput () {
 		const { onUpdate } = this.props;
 
 		if (onUpdate) {

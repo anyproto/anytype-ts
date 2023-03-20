@@ -1684,6 +1684,12 @@ const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message:
 	dispatcher.request(DebugExportLocalstore.name, request, callBack);
 };
 
+const DebugSpaceSummary = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.SpaceSummary.Request();
+
+	dispatcher.request(DebugSpaceSummary.name, request, callBack);
+};
+
 export {
 	MetricsSetParameters,
 	LinkPreview,
@@ -1715,6 +1721,7 @@ export {
 	DebugSync,
 	DebugTree,
 	DebugExportLocalstore,
+	DebugSpaceSummary,
 
 	FileUpload,
 	FileDownload,
