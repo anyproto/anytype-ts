@@ -327,12 +327,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	showKeyPhraseTooltip = () => {
-		Preview.tooltipShow(
-			translate('authOnboardKeyPhraseTooltip'),
-			$('.label'),
-			I.MenuDirection.Bottom,
-			I.MenuDirection.None
-		);
+		Preview.tooltipShow({
+			text: translate('authOnboardKeyPhraseTooltip'),
+			element: $('.label'),
+			typeY: I.MenuDirection.Bottom,
+			typeX: I.MenuDirection.Center
+		});
 	};
 
 	/** Shows a simple popup that educates the user about their account keyphrase */
@@ -353,12 +353,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	showAccountDataTooltip = () => {
 		const { accountPath } = authStore;
 		const text = `${translate('authOnboardAccountDataLocationTooltip')}:<br/>${accountPath}`;
-		Preview.tooltipShow(
+		Preview.tooltipShow({
 			text,
-			$('.' + STORAGE_INFO_CN),
-			I.MenuDirection.Top,
-			I.MenuDirection.None
-		);
+			element: $('.' + STORAGE_INFO_CN),
+			typeY: I.MenuDirection.Top,
+			typeX: I.MenuDirection.Center
+		});
 	};
 });
 
