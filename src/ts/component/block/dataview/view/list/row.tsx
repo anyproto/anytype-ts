@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, keyboard, Relation, Util } from 'Lib';
+import { I, keyboard, Relation, Util, ObjectUtil } from 'Lib';
 import { Cell, DropTarget, Icon } from 'Component';
 import { dbStore } from 'Store';
 
@@ -16,13 +16,16 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, index, getView, onCellClick, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiSelect } = this.props;
+		const { rootId, block, index, getView, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiSelect } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
-		const { hideIcon } = view;
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(index);
+
+		// Subscriptions
+		const { hideIcon } = view;
+		const { done } = record;
 
 		let content = (
 			<React.Fragment>
@@ -38,12 +41,12 @@ const Row = observer(class Row extends React.Component<Props> {
 							relationKey={relation.relationKey}
 							viewType={I.ViewType.List}
 							idPrefix={idPrefix}
-							onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }}
+							onClick={(e: any) => { this.onCellClick(e, relation); }}
 							index={index}
 							isInline={true}
 							showTooltip={true}
 							arrayLimit={2}
-							iconSize={24}
+							iconSize={relation.relationKey == 'name' ? 24 : 20}
 						/>
 					);
 				})}
@@ -85,6 +88,7 @@ const Row = observer(class Row extends React.Component<Props> {
 				ref={node => this.node = node} 
 				className="row" 
 				style={style}
+				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
 			>
 				{content}
@@ -103,6 +107,39 @@ const Row = observer(class Row extends React.Component<Props> {
 
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	onClick (e: any) {
+		e.preventDefault();
+
+		const { onContext, dataset, getRecord, index } = this.props;
+		const { selection } = dataset || {};
+		const record = getRecord(index);
+		const cb = {
+			0: () => {
+				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
+			},
+			2: () => { onContext(e, record.id); }
+		};
+
+		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		if ((keyboard.withCommand(e) && ids.length) || keyboard.isSelectionClearDisabled) {
+			return;
+		};
+
+		if (cb[e.button]) {
+			cb[e.button]();
+		};
+	};
+
+	onCellClick (e: React.MouseEvent, relation) {
+		const { onCellClick, index } = this.props;
+
+		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+			return;
+		};
+
+		onCellClick(e, relation.relationKey, index);
 	};
 
 	resize () {

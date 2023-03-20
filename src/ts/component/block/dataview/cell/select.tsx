@@ -39,7 +39,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		const { relation, getRecord, index, elementMapper, arrayLimit } = this.props;
 		const { isEditing } = this.state;
 		const record = getRecord(index);
-		const canClear = relation.format == I.RelationType.Status;
+		const isStatus = relation.format == I.RelationType.Status;
 		const cn = [ 'wrap' ];
 
 		if (!relation || !record) {
@@ -63,6 +63,12 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		};
 
 		if (isEditing) {
+			const cni = [ 'itemWrap' ];
+
+			if (!isStatus) {
+				cni.push('isDraggable');
+			};
+
 			content = (
 				<div id="value" onClick={this.focus}>
 					<div id="placeholder" className="placeholder">{placeholder}</div>
@@ -73,17 +79,17 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 								<span 
 									key={i}
 									id={`item-${item.id}`}
-									className="itemWrap isDraggable"
-									draggable={true}
+									className={cni.join(' ')}
+									draggable={!isStatus}
 									{...Util.dataProps({ id: item.id, index: i })}
 								>
 									<Tag 
 										key={item.id}
 										text={item.name}
 										color={item.color}
-										canEdit={true} 
+										canEdit={!isStatus} 
 										className={Relation.selectClassName(relation.format)}
-										onRemove={(e: any) => { this.onValueRemove(item.id); }}
+										onRemove={() => { this.onValueRemove(item.id); }}
 									/>
 								</span>
 							))}
@@ -104,7 +110,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 						{'\n'}
 					</span>
 
-					{canClear ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
+					{isStatus ? <Icon className="clear" onMouseDown={this.onClear} /> : ''}
 				</div>
 			);
 		} else {

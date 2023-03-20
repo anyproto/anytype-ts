@@ -197,10 +197,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	resize () {
-		const { rootId, block, getView, isPopup, isInline, getVisibleRelations } = this.props;
+		const { rootId, block, isPopup, isInline, getVisibleRelations } = this.props;
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parent = blockStore.getLeaf(rootId, element.parentId);
-		const view = getView();
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const wrap = node.find('#scrollWrap');
@@ -266,10 +265,9 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		
 		relations.forEach(it => {
 			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};
-			if (relationKey && (it.relationKey == relationKey)) {
-				it.width = width;
-			};
-			columns[it.relationKey] = Relation.width(it.width, relation.format);
+			const w = relationKey && (it.relationKey == relationKey) ? width : it.width;
+
+			columns[it.relationKey] = Relation.width(w, relation.format);
 		});
 
 		return columns;
@@ -318,7 +316,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		win.on('mousemove.cell', (e: any) => { this.onResizeMove(e, relationKey); });
 		win.on('mouseup.cell', (e: any) => { this.onResizeEnd(e, relationKey); });
 
+		el.addClass('isResizing');
 		keyboard.setResize(true);
+
+		console.log(el);
 	};
 
 	onResizeMove (e: any, relationKey: string) {
@@ -329,11 +330,22 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	onResizeEnd (e: any, relationKey: string) {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, getVisibleRelations } = this.props;
 		const view = getView();
+		const node = $(this.node);
+		const relations = getVisibleRelations();
+		const width = this.checkWidth(e.pageX - this.ox);
 
 		$(window).off('mousemove.cell mouseup.cell').trigger('resize');
 		$('body').removeClass('colResize');
+		node.find('.cellHead.isResizing').removeClass('isResizing');
+
+		relations.forEach(it => {
+			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};
+			if (it.relationKey == relationKey) {
+				it.width = Relation.width(width, relation.format);
+			};
+		});
 
 		C.BlockDataviewViewRelationReplace(rootId, block.id, view.id, relationKey, { 
 			...view.getRelation(relationKey), 

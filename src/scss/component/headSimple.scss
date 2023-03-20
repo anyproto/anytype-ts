@@ -1,33 +1,28 @@
 @import "~scss/_vars";
 
-.headSimple { width: 704px; margin: 0px auto 40px auto; display: flex; align-items: flex-start; gap: 0px 32px; }
+.headSimple { width: 100%; margin: 0px auto 24px auto; display: flex; align-items: flex-start; gap: 0px 32px; }
 .headSimple {
-	.side.left { flex-shrink: 0; }
-	.side.center { width: 100%; line-height: 96px; flex-grow: 1; }
 
-	.side.center {
-		.txt { width: 100%; }
-		.editable { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; cursor: text; }
-		.editableWrap { position: relative; }
+	.side.left { width: 100%; flex-grow: 1; display: flex; flex-direction: column; gap: 6px 0px; }
+	.side.left {
+		.titleWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: stretch; }
+		.titleWrap {
+			.iconObject { flex-shrink: 0; }
+			.editableWrap { flex-grow: 1; position: relative; }
+			.editable { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; cursor: text; }
+		}
 
 		.title { @include text-header1; }
-		.descr { @include text-paragraph; margin: 7px 0px; }
+		.descr { @include text-paragraph; }
 	}
 
-	.side.right { flex-shrink: 0; margin-left: 32px; text-align: right; }
+	.side.right { flex-shrink: 0; text-align: right; }
 	.side.right {
 		.button { white-space: nowrap; }
 	}
 }
 
-.headSimple.isBig {
-	.side.center { line-height: 112px; }
-}
-
-.headSimple.withIcon {
-	.side.left { width: 96px; }
-	.side.center { width: calc(100% - 128px); }
-}
+.headSimple.isSet, .headSimple.isCollection { padding: 0px 14px; }
 
 .headSimple.isType, .headSimple.isRelation { gap: 0px 10px; }
 .headSimple.isType, .headSimple.isRelation {

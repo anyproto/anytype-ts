@@ -226,6 +226,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Featured: {
+				canSelect = false;
 				canDrop = false;
 				blockComponent = <BlockFeatured key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
@@ -452,9 +453,14 @@ const Block = observer(class Block extends React.Component<Props> {
 
 	onContextMenu (e: any) {
 		const { focused } = focus.state;
-		const { block } = this.props;
+		const { rootId, block } = this.props;
+		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!block.isSelectable() || (block.isText() && (focused == block.id))) {
+			return;
+		};
+
+		if (root.isObjectSet() || root.isObjectCollection()) {
 			return;
 		};
 

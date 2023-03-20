@@ -9,8 +9,8 @@ interface Props {
 	arrow?: boolean;
 	tooltip?: string;
 	tooltipCaption?: string;
-	tooltipX?: I.MenuDirection;
-	tooltipY?: I.MenuDirection;
+	tooltipX?: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
+	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	inner?: any;
 	draggable?: boolean;
 	style?: any;
@@ -25,7 +25,6 @@ interface Props {
 class Icon extends React.Component<Props> {
 	
 	public static defaultProps = {
-		tooltipX: I.MenuDirection.Center,
 		tooltipY: I.MenuDirection.Bottom,
 	};
 
@@ -88,7 +87,7 @@ class Icon extends React.Component<Props> {
 				t.push(`<span class="caption">${tooltipCaption}</span>`);
 			};
 
-			Preview.tooltipShow(t.join(' '), node, tooltipX, tooltipY);
+			Preview.tooltipShow({ text: t.join(' '), element: node, typeX: tooltipX, typeY: tooltipY });
 		};
 		
 		if (onMouseEnter) {

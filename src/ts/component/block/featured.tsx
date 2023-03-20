@@ -279,8 +279,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onMouseEnter (e: any, relationKey: string, text?: string) {
 		const cell = $(`#${Relation.cellId(PREFIX, relationKey, 0)}`);
 		const relation = dbStore.getRelationByKey(relationKey);
-		const show = (t: string) => {
-			Preview.tooltipShow(t, cell, I.MenuDirection.Center, I.MenuDirection.Top);
+		const show = (text: string) => {
+			Preview.tooltipShow({ text, element: cell });
 		};
 
 		if (text) {

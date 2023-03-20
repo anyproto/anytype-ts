@@ -2,24 +2,7 @@ import * as React from 'react';
 import { I, Util, Preview } from 'Lib';
 import { Icon } from 'Component';
 
-interface Props {
-	id?: string;
-	icon?: string;
-	arrow?: boolean;
-	type?: string;
-	subType?: string;
-	text?: string;
-	className?: string;
-	color?: string;
-	tooltip?: string;
-	tooltipX?: I.MenuDirection;
-	tooltipY?: I.MenuDirection;
-	dataset?: any;
-	onClick?(e: any): void;
-	onMouseEnter?(e: any): void;
-};
-
-class Button extends React.Component<Props> {
+class Button extends React.Component<I.ButtonComponent> {
 
 	node: any = null;
 
@@ -27,11 +10,10 @@ class Button extends React.Component<Props> {
 		subType: 'submit',
 		color: 'black',
 		className: '',
-		tooltipX: I.MenuDirection.Center,
 		tooltipY: I.MenuDirection.Bottom,
     };
 
-	constructor (props: Props) {
+	constructor (props: I.ButtonComponent) {
 		super(props);
 
 		this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -89,7 +71,7 @@ class Button extends React.Component<Props> {
 		const node = $(this.node);
 		
 		if (tooltip) {
-			Preview.tooltipShow(tooltip, node, tooltipX, tooltipY);
+			Preview.tooltipShow({ text: tooltip, element: node, typeX: tooltipX, typeY: tooltipY });
 		};
 
 		if (onMouseEnter) {

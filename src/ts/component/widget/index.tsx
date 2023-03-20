@@ -139,7 +139,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
 			>
-				<Icon className="remove" onClick={this.onRemove} />
+				<Icon className="remove" inner={<div className="inner" />} onClick={this.onRemove} />
 
 				{head}
 

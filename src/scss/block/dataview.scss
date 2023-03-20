@@ -78,11 +78,11 @@
 			#head-source-select { display: none; }
 		}
 
-		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
-		.dataviewControls::after { content: ''; display: block; height: 1px; width: 100%; background: $colorBorderLight; }
+		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; height: 49px; }
+		.dataviewControls::after { content: ''; display: block; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
 		.dataviewControls {
 			.sides { gap: 0px 16px; }
-			.side { padding: 23px 0px; white-space: nowrap; line-height: 28px; }
+			.side { padding: 10px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
 
 			.iconWrap { position: relative; }
@@ -90,24 +90,18 @@
 				.dot { width: 4px; height: 4px; border-radius: 50%; background-color: $colorDarkGrey; position: absolute; right: 0px; top: 0px; }
 			}
 
-			.icon { 
-				cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; 
-				border-radius: 4px; transition: $transitionFast;
-			}
+			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionFast; }
 			.icon:hover, .icon.active { background-color: $colorHover; }
 
 			.icon.filter { background-image: url('~img/icon/dataview/button/filter.svg'); }
 			.icon.sort { background-image: url('~img/icon/dataview/button/sort.svg'); }
 			.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 
-			.views { 
-				white-space: nowrap; display: flex; line-height: 28px; gap: 0px 18px; flex-direction: row; align-items: center; justify-content: flex-start;
-			}
+			.views { display: flex; gap: 0px 16px; flex-direction: row; align-items: center; justify-content: flex-start; }
 			.views {
 				.viewItem { 
-					display: inline-block; vertical-align: top; transition: color 0.2s ease-in-out; cursor: pointer; white-space: nowrap; 
-					@include text-paragraph; font-weight: 700; @include text-overflow-nw; max-width: 300px; color: $colorMediumGrey; 
-					line-height: 28px; 
+					transition: color 0.2s ease-in-out; cursor: pointer; @include text-paragraph; font-weight: 700; @include text-overflow-nw; 
+					max-width: 300px; color: $colorMediumGrey;
 				}
 				.viewItem { 
 					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
@@ -130,23 +124,17 @@
 			}
 
 			.button { padding: 0px 8px; @include text-common; }
-			.button.addRecord { margin-left: 4px; }
-		}
-		.dataviewControls.viewGrid,
-		.dataviewControls.dataviewSelection {
-			.line { width: 100%; margin: 0px; }
 		}
 
-		.dataviewSelection { height: 76px; }
 		.dataviewSelection {
 			.side.left { @include text-paragraph; font-weight: 600; color: $colorBlack;  }
-
 			.side.right {
 				.element {
-					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; font-weight: 400; line-height: 28px; cursor: pointer;
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; cursor: pointer;
 					transition: $transitionFast;
 				}
-				.element.orange { color: $colorOrange; }
+				.element.grey { color: $colorSecondary; }
+				.element.orange { color: #f09c0e; }
 				.element:hover { background-color: $colorHover; }
 			}
 		}
