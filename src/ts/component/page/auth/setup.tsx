@@ -171,37 +171,37 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		commonStore.defaultTypeSet(Constant.typeId.note);
 
 		C.WalletCreate(walletPath, (message: any) => {
-			if (message.error.code) {
-				this.setError(message.error);
-			} else {
-				authStore.phraseSet(message.mnemonic);
-
-				DataUtil.createSession(() => {
-					C.AccountCreate(name, icon, accountPath, code, Util.rand(1, Constant.iconCnt), (message: any) => {
-						const description = Errors.AccountCreate[message.error.code] || message.error.description;
-
-						if (this.setError({ code: message.error, description }) || !message.account) {
-							return;
-						};
-
-						if (message.config) {
-							commonStore.configSet(message.config, false);
-						};
-
-						authStore.accountSet(message.account);
-						authStore.previewSet('');
-
-						Storage.set('timeRegister', Util.time());
-
-						Renderer.send('keytarSet', message.account.id, authStore.phrase);
-						analytics.event('CreateAccount');
-						
-						if (match.params.id == 'register') {
-							Util.route('/auth/success');
-						};
-					});
-				});
+			if (this.setError(message.error)) {
+				return;
 			};
+
+			authStore.phraseSet(message.mnemonic);
+
+			DataUtil.createSession(() => {
+				C.AccountCreate(name, icon, accountPath, code, Util.rand(1, Constant.iconCnt), (message: any) => {
+					const description = Errors.AccountCreate[message.error.code] || message.error.description;
+
+					if (this.setError({ ...message.error, description }) || !message.account) {
+						return;
+					};
+
+					if (message.config) {
+						commonStore.configSet(message.config, false);
+					};
+
+					authStore.accountSet(message.account);
+					authStore.previewSet('');
+
+					Storage.set('timeRegister', Util.time());
+
+					Renderer.send('keytarSet', message.account.id, authStore.phrase);
+					analytics.event('CreateAccount');
+					
+					if (match.params.id == 'register') {
+						Util.route('/auth/success');
+					};
+				});
+			});
 		});
 	};
 	
