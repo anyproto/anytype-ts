@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Frame, Cover, Title, Label, Error, Button, Header, Footer } from 'Component';
+import { Frame, Cover, Title, Label, Error, Button, Header, Footer, Icon } from 'Component';
 import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer, ObjectUtil, Action } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -25,6 +25,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	constructor (props: I.PageComponent) {
 		super(props);
 
+		this.onCancel = this.onCancel.bind(this);
 		this.onBackup = this.onBackup.bind(this);
 	};
 
@@ -36,6 +37,12 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		
 		let title = '';
 		let content = null;
+		let back = (
+			<div className="authBackWrap" onClick={this.onCancel}>
+				<Icon className="back" />
+				<div className="name">{translate('commonBack')}</div>
+			</div>
+		);
 
 		if (error.code) {
 			tcn.push('withError');
@@ -260,6 +267,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				});
 			});
 		});
+	};
+
+	onCancel () {
+		Util.route('/auth/select');
 	};
 	
 	clear () {

@@ -25,6 +25,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		this.onNameChange = this.onNameChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onAdvanced = this.onAdvanced.bind(this);
+		this.onCancel = this.onCancel.bind(this);
 	};
 	
 	render () {
@@ -117,7 +118,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		};
 	};
 
-	onAdvanced (e: any) {
+	onAdvanced () {
 		menuStore.open('accountPath', {
 			element: '#button-advanced',
 			offsetY: 7,
@@ -126,7 +127,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		});
 	}
 
-	onCancel (e: any) {
+	onCancel () {
 		Util.route('/auth/select');
 	};
 	
