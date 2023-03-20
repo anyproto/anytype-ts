@@ -3,6 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, Switch } from 'Component';
 import { I, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
+import Head from '../head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
@@ -28,6 +29,8 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 
 		return (
 			<React.Fragment>
+				<Head {...this.props} returnTo="exportIndex" name={translate('commonBack')} />
+
 				<Title text={translate('popupSettingsExportMarkdownTitle')} />
 
 				<div className="labels">

@@ -88,6 +88,7 @@ export enum ImportType {
 	Html		 = 4,
 	Text		 = 5,
 	Csv			 = 6,
+	Protobuf	 = 7,
 };
 
 export enum ExportFormat {
