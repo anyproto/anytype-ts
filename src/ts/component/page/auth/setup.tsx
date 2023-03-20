@@ -35,7 +35,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const error = this.state.error || {};
 		const tcn = [];
 		
-		let title = '';
 		let content = null;
 		let back = (
 			<div className="authBackWrap" onClick={this.onCancel}>
@@ -45,13 +44,12 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		);
 
 		if (error.code) {
-			tcn.push('withError');
-
 			if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
-				title = 'Account not found';
-
 				content = (
 					<React.Fragment>
+						{back}
+
+						<Title className="withError" text="Account not found" />
 						<Label text="If you are migrating from Anytype Legacy version you can restore your account from backup" />
 
 						<div className="buttons">
@@ -60,10 +58,11 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					</React.Fragment>
 				);
 			} else {
-				title = 'Error';
-
 				content = (
 					<React.Fragment>
+						{back}
+
+						<Title className="withError" text="Error" />
 						<Error text={error.description} />
 						<div className="buttons">
 							<Button text={translate('commonBack')} onClick={() => Util.route('/')} />
@@ -72,23 +71,31 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				);
 			};
 		} else {
+			let title = '';
+
 			switch (match.params.id) {
-				case 'init':
+				case 'init': {
 					title = translate('authSetupLogin'); 
 					break;
+				};
 
-				case 'register':
+				case 'register': {
 					title = translate('authSetupRegister');
 					break;
+				};
 
-				case 'select': 
+				case 'select': {
 					title = translate('authSetupSelect');
 					break;
+				};
 
-				case 'share': 
+				case 'share': {
 					title = translate('authSetupShare');
 					break;
+				};
 			};
+
+			content = <Title text={title} />;
 		};
 		
 		return (
@@ -98,7 +105,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
-					<Title className={tcn.join(' ')} text={title} />
 					{content}
 				</Frame>
 			</div>
