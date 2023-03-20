@@ -252,6 +252,11 @@
 			}
 		}
 
+		.side.right.tabImportNotionWarning { padding-top: 22px; }
+		.side.right.tabImportNotionWarning {
+			.list { padding-left: 1.35em; margin: 0px 0px 24px 0px; }
+		}
+
 		.side.right.tabImportMarkdown { padding-top: 22px; }
 		.side.right.tabImportMarkdown {
 			.icon.logo { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
