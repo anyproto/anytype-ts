@@ -7,6 +7,14 @@ import Constant from 'json/constant.json';
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
 
+interface TooltipParam {
+	text: string;
+	element: JQuery<HTMLElement>;
+	typeX: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
+	typeY: I.MenuDirection.Top | I.MenuDirection.Bottom;
+	delay: number;
+};
+
 /**
  * Preview class for handling tooltips, previews, and toasts.
  */
@@ -19,7 +27,7 @@ class Preview {
 		preview: 0,
 		delay: 0,
 	};
-	delayTooltip = DELAY_TOOLTIP;
+	delayTooltip = 0;
 
   /**
    * Displays a tooltip with the given text and position relative to the specified element.
@@ -28,12 +36,19 @@ class Preview {
    * @param typeX - The horizontal direction in which the tooltip should be positioned.
    * @param typeY - The vertical direction in which the tooltip should be positioned.
    */
-	tooltipShow (text: string, element: JQuery<HTMLElement>, typeX: I.MenuDirection, typeY: I.MenuDirection) {
+	tooltipShow (param: Partial<TooltipParam>) {
+		const { element } = param;
+		const typeX = Number(param.typeX) || I.MenuDirection.Center;
+		const typeY = Number(param.typeY) || I.MenuDirection.Top;
+		const delay = Number(param.delay) || DELAY_TOOLTIP;
+
 		if (!element.length || keyboard.isResizing) {
 			return;
 		};
 
-		text = text.toString().replace(/\\n/, '\n');
+		const text = String(param.text || '').replace(/\\n/, '\n');
+
+		this.delayTooltip = delay;
 
 		window.clearTimeout(this.timeout.tooltip);
 		this.timeout.tooltip = window.setTimeout(() => {
@@ -84,7 +99,7 @@ class Preview {
 
 			window.clearTimeout(this.timeout.delay);
 
-			this.timeout.delay = window.setTimeout(() => { this.delayTooltip = DELAY_TOOLTIP; }, 500);
+			this.timeout.delay = window.setTimeout(() => { this.delayTooltip = delay; }, 500);
 			this.delayTooltip = 100;
 		}, this.delayTooltip);
 	};

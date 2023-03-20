@@ -36,7 +36,7 @@ import Loader from './util/loader';
 import Deleted from './util/deleted';
 import Progress from './util/progress';
 import DotIndicator from './util/dotIndicator';
-import Phrase from './util/phrase';
+import KeyPhrase from './util/keyPhrase';
 import EmptySearch from './util/emptySearch';
 
 import Pager from './util/pager';
@@ -114,7 +114,7 @@ export {
 	Deleted,
 	Progress,
 	DotIndicator,
-	Phrase,
+	KeyPhrase,
 	EmptySearch,
 	SelectionProvider,
 	Popup,

@@ -88,12 +88,10 @@ const Card = observer(class Card extends React.Component<Props> {
 									index={index}
 									arrayLimit={2}
 									showTooltip={true}
-									onClick={(e: any) => {
-										e.stopPropagation();
-										onCellClick(e, relation.relationKey, index);
-									}}
+									onClick={(e: any) => { this.onCellClick(e, relation); }}
 									tooltipX={I.MenuDirection.Left}
 									iconSize={18}
+									shortUrl={true}
 								/>
 							);
 						})}
@@ -194,6 +192,16 @@ const Card = observer(class Card extends React.Component<Props> {
 		if (cb[e.button]) {
 			cb[e.button]();
 		};
+	};
+
+	onCellClick (e: React.MouseEvent, relation) {
+		const { onCellClick, index } = this.props;
+
+		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+			return;
+		};
+
+		onCellClick(e, relation.relationKey, index);
 	};
 
 	getCover (): any {

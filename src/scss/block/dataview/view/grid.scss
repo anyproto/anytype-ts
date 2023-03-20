@@ -16,8 +16,10 @@
 				display: inline-block; line-height: 20px; height: 20px; vertical-align: top; width: 100%; 
 				@include text-overflow-nw;
 			}
-			.resize { width: 20px; height: 20px; position: absolute; right: 0px; top: 50%; margin-top: -10px; cursor: col-resize; z-index: 10; }
-			.resize::after { content: ''; width: 1px; height: 100%; background: #e0ded2; position: absolute; top: 0px; left: 19px; }
+
+			.resize { width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; cursor: col-resize; z-index: 10; }
+			.resize::after { content: ''; width: 2px; height: 100%; background: $colorOrange; position: absolute; top: 0px; left: 19px; opacity: 0; }
+			.resize:hover::after { opacity: 1; }
 		}
 		.cellHead.small { text-align: center; }
 		.cellHead.small {
@@ -31,6 +33,10 @@
 			.icon.plus { margin: 0px; }
 		}
 
+		.cellHead.isResizing {
+			.resize::after { opacity: 1; }
+		}
+
 		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
 		.cellHead.isDragging::after {
 			content: ""; display: block; width: 100%; height: calc(100% - 1px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
@@ -40,9 +46,9 @@
 			.resize { display: none; }
 		}
 
-		.cellHead:hover::after, .cellHead.active::after { 
+		.cellHead.cellKeyHover::after, .cellHead.active::after { 
 			content: ""; display: block; width: 100%; height: calc(100% - 1px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
-			background-color: $colorHover; 
+			background-color: rgba(79,79,79,0.04);
 		}
 
 		.cellHead.last::after, .cellHead.active::after { background: none; }
@@ -50,7 +56,7 @@
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
-        .viewItem.viewGrid { width: 100%; position: relative; box-shadow: 0px -1px $colorBorderLight inset; }
+        .viewItem.viewGrid { width: 100%; position: relative; }
 		.viewItem.viewGrid {
 			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 46px; }
 			.loadMore { padding: 10px 2px; box-shadow: 0px 1px $colorBorderLight inset; }
@@ -59,15 +65,8 @@
 			.icon.edit { width: 36px; height: 48px; position: absolute; right: 0px; top: 0px; }
 
 			.row { white-space: nowrap; box-shadow: 0px 1px $colorBorderLight inset; left: 2px !important; width: 100%; height: 48px; }
-			.row.add { border: 0px; }
+			.row.add { margin-top: -2px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }
-
-			.row:hover {
-				.cellContent.isName.canEdit {
-					.name { width: calc(100% - 40px) !important; }
-				}
-				.icon.edit { display: block; }
-			}
 
 			.row > .selectable,
 			.row > .dropTarget > .selectable { display: grid; }
@@ -80,12 +79,18 @@
 
 			.cell.isName, .cellContent.isName { cursor: pointer; }
 
+			.cell.isName.canEdit:hover {
+				.name { width: calc(100% - 40px) !important; }
+				.icon.edit { display: block; }
+			}
+			
 			.cell.c-object, .cell.c-file { padding-right: 0px; }
 			.cellContent.c-object, .cellContent.c-select, .cellContent.c-file {
 				.wrap { height: 100%; overflow: hidden; white-space: nowrap; }
 			}
 				
 			.cell { display: inline-block; height: 48px; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
+			.cell.cellKeyHover { background-color: rgba(79,79,79,0.04); }
 
 			.cell.canEdit.c-checkbox,
 			.cell.canEdit.c-select { cursor: pointer; }
@@ -158,7 +163,6 @@
 			}
 
 			.icon.edit { height: 40px; }
-
 			.loadMore { padding-top: 11px; margin-top: 0px; }
 		}
 	}

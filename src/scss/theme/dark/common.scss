@@ -283,10 +283,6 @@ html.themeDark {
 		.path { background-color: $colorHover; color: $colorPrimary; }
 	}
 
-    .header.mainIndex {
-        .path { border: 0px; color: $colorSecondary; background: $colorBlack30; }
-    }
-
     .header.mainHistory { background: $colorBlack; }
     .header.mainHistory {
         .side {
@@ -328,7 +324,6 @@ html.themeDark {
     /* ---------------------------------------------------------------- */
 
     .listWidget {
-		.icon.remove { background-color: $colorBgIcon; }
 		> .buttons {
 			.button, .button.edit { background-color: $colorBgIcon; color: $colorPrimary; }
 		}
@@ -342,6 +337,9 @@ html.themeDark {
 		.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
 
 		.head::before { background-color: $colorHover; }
+
+		.icon.remove .inner { background-color: $colorBgIcon; }
+		.icon.remove:hover .inner { background-color: $colorTertiary; }
 	}
 
 	.widget.active {

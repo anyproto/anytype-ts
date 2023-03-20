@@ -965,6 +965,12 @@ class Util {
 		return ret;
 	};
 
+	shortUrl (url: string) {
+		let a: any = {};
+		try { a = new URL(url); } catch (e) {};
+		return a.hostname || url;
+	};
+
 };
 
 export default new Util();

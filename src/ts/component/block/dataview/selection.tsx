@@ -18,8 +18,8 @@ const Selection = observer(class Selection extends React.Component<Props> {
 			cn.push('isInline');
 		};
 
-		const buttons = [
-			{ id: 'archive', text: 'Move to bin' },
+		const buttons: any[] = [
+			{ id: 'archive', text: 'Move to bin', className: [ 'grey' ] },
 			{ id: 'done', text: 'Done', className: [ 'orange' ] },
 		];
 

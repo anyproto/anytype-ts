@@ -182,6 +182,7 @@ export interface Cell {
 	withLabel?: boolean;
 	textLimit?: number;
 	arrayLimit?: number;
+	shortUrl?: boolean;
 	getView?(): View;
 	getRecord(index: number): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;
