@@ -186,7 +186,8 @@
 			}
 		}
 
-		.side.right.tabImportIndex, .side.right.tabExportIndex {
+		.side.right.tabImportIndex, 
+		.side.right.tabExportIndex {
 			.items { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 			.item { 
 				width: 132px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionFast; cursor: pointer; 
@@ -207,7 +208,8 @@
 			.item.protobuf .icon { background-image: url('~img/icon/popup/settings/import/protobuf.svg'); }
 		}
 
-		.side.right.tabImportNotion, .side.right.tabImportNotionHelp {
+		.side.right.tabImportNotion, 
+		.side.right.tabImportNotionHelp {
 			.icon.logo { background-image: url('~img/icon/popup/settings/import/notion.svg'); }
 		}
 

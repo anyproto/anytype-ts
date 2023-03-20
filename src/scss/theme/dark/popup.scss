@@ -55,7 +55,8 @@
 			.textareaWrap { background-color: $colorBgLight; }
         }
 
-        .side.right.tabImportIndex {
+        .side.right.tabImportIndex, 
+		.side.right.tabExportIndex {
             .item { border-color: $colorLineSecondary; }
             .item:hover, .item.active { border-color: $colorLinePrimary; }
             .item.notion .icon { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
@@ -73,7 +74,8 @@
 			}
 		}
 
-		.side.right.tabImportNotion, .side.right.tabImportNotionHelp {
+		.side.right.tabImportNotion, 
+		.side.right.tabImportNotionHelp {
 			.icon.logo { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
 		}
 
