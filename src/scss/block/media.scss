@@ -20,26 +20,6 @@
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
 		.media { width: 100%; display: block; cursor: pointer; }
-
-		.wrap.broken { 
-			@include text-common; position: relative; width: 100% !important; line-height: 20px; padding: 11px 13px; border-radius: 6px; border: solid 1px $colorBorderLight; 
-			color: $colorMediumGrey; height: 44px;
-		}
-		.wrap.broken {
-			img:before { 
-				content: " "; display: block; position: absolute; left: 0px; top: 0px; height: 100%; width: 100%;
-				background: $colorWhite; border-radius: inherit;
-			}
-
-			img:after { 
-				content: "🔗" " Image is broken"; display: block; text-align: center; position: absolute; left: 0px; top: 0px; 
-				@include text-overflow-nw; padding: 11px 13px; width: calc(100% - 26px); height: calc(100% - 22px);
-			}
-			
-			.icon.resize { display: none; }
-			.icon.download { display: none; }
-		}
-
 		video { height: 100%; }
 
 		.pdfWrapper { 

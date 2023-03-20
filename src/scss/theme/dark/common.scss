@@ -59,6 +59,11 @@ html.themeDark {
 	.block.isSelectionSelected > .wrapContent > .selectable::after 
 	{ background-color: rgba(24, 163, 241, 0.15); }
 
+	.brokenMedia { border-color: $colorLinePrimary; }
+	.brokenMedia {
+		img:before { background: $colorBgLight; }
+	}
+
     /* Components */
     /* ---------------------------------------------------------------- */
 
