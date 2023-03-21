@@ -1,4 +1,4 @@
-export const DOM_EVENTS: { [key: string]: [string, boolean]} = {
+export const DOM_EVENTS: { [key: string]: [string, boolean] } = {
   onClick: ['click', false],
   onContextMenu: ['contextmenu', false],
   onDoubleClick: ['dblclick', false],
@@ -9,4 +9,13 @@ export const DOM_EVENTS: { [key: string]: [string, boolean]} = {
   onPointerMove: ['pointermove', true],
   onPointerCancel: ['pointercancel', true],
   onLostPointerCapture: ['lostpointercapture', true],
+};
+
+export enum OnboardStage {
+	Void = 0,
+	KeyPhrase = 1,
+	Offline = 2,
+	Soul = 3,
+	SoulCreating = 4,
+	SpaceCreating = 5,
 };
