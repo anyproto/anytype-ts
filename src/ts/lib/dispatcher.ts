@@ -982,6 +982,8 @@ class Dispatcher {
 
 		if (root && root.fields.analyticsContext) {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
+		} else {
+			analytics.removeContext();
 		};
 
 		dbStore.relationsSet(contextId, rootId, relationLinks);
