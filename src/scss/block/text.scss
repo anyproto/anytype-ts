@@ -82,7 +82,7 @@
 
 	.block.blockText > .wrapContent > .selectable.isSelectionSelected::after { z-index: 0; }
 
-	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { flex: auto; position: relative; padding: 0px; width: 100%; }	
+	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { flex: auto; padding: 0px; width: 100%; }	
 	.block.blockText > .wrapContent > .selectable > .dropTarget #value.isFocused { background: none; }
 
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
