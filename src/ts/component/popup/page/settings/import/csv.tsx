@@ -54,7 +54,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 					</div>
 
 					<div className="row">
-						<Label text="Use first column as relation names" />
+						<Label text="Columns are divided by" />
 						<Input value={this.delimiter} className="short" onKeyUp={(e: any, v: string) => { this.delimiter = v; }} maxLength={10} />
 					</div>
 				</div>
