@@ -203,7 +203,7 @@ class Action {
 		});
 	};
 
-	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		this.openDir(paths => {
 			if (onSelectPath) {
 				onSelectPath();
@@ -215,7 +215,7 @@ class Action {
 				};
 
 				Renderer.send('pathOpen', paths[0]);
-				analytics.event('Export' + I.ExportFormat[format], { middleTime: message.middleTime });
+				analytics.event('Export' + I.ExportType[format], { middleTime: message.middleTime });
 
 				if (callBack) {
 					callBack(message);

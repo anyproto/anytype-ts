@@ -42,10 +42,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const limit = getLimit();
 		const length = records.length;
 
-		if (!length) {
-			return getEmpty('view');
-		};
-
 		// Subscriptions on dependent objects
 		for (let id of records) {
 			const item = detailStore.get(subId, id, getKeys(view.id));

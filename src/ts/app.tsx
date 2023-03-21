@@ -687,7 +687,7 @@ class App extends React.Component<object, State> {
 				break;
 
 			case 'save':
-				Action.export([ rootId ], I.ExportFormat.Protobuf, true, true, true);
+				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true);
 				break;
 
 			case 'exportTemplates':
@@ -726,6 +726,16 @@ class App extends React.Component<object, State> {
 				C.DebugSync(100, (message: any) => {
 					if (!message.error.code) {
 						window.Electron.fileWrite('debug-sync.json', JSON.stringify(message, null, 5), 'utf8');
+
+						Renderer.send('pathOpen', tmpPath);
+					};
+				});
+				break;
+
+			case 'debugSpace':
+				C.DebugSpaceSummary((message: any) => {
+					if (!message.error.code) {
+						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
 
 						Renderer.send('pathOpen', tmpPath);
 					};

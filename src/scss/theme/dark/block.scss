@@ -65,14 +65,7 @@
 
     .block.blockMedia {
         .focusable.isFocused::before { background: $colorHover; }
-
         .loaderWrapper { border: 0px; }
-
-        .wrap.broken { border-color: $colorLinePrimary; }
-        .wrap.broken {
-            img:before { background: $colorBgLight; }
-        }
-
         .pdfWrapper { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
     }
     .block.blockMedia.isAudio.withFile > .wrapContent { background-color: $colorHover; }

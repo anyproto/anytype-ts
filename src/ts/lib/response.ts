@@ -4,6 +4,10 @@ const DebugSync = (response: any) => {
 	return response.toObject();
 };
 
+const DebugSpaceSummary = (response: any) => {
+	return response.toObject();
+};
+
 const Export = (response: any) => {
 	return {
 		path: response.getPath(),
@@ -367,6 +371,7 @@ const UnsplashDownload = (response: any) => {
 
 export {
 	DebugSync,
+	DebugSpaceSummary,
 
 	Export,
 	FileUpload,

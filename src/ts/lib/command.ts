@@ -1267,6 +1267,13 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			request.setCsvparams(params);
 			break;
 
+		case I.ImportType.Protobuf:
+			params = new Rpc.Object.Import.Request.PbParams();
+			params.setPath(options.path);
+
+			request.setPbparams(params);
+			break;
+
 	};
 
 	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
@@ -1583,7 +1590,7 @@ const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
 };
 
-const ObjectListExport = (path: string, objectIds: string[], format: I.ExportFormat, zip: boolean, includeNested: boolean, includeFiles: boolean, callBack?: (message: any) => void) => {
+const ObjectListExport = (path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListExport.Request();
 
 	request.setPath(path);
@@ -1677,6 +1684,12 @@ const DebugExportLocalstore = (path: string, ids: string[], callBack?: (message:
 	dispatcher.request(DebugExportLocalstore.name, request, callBack);
 };
 
+const DebugSpaceSummary = (callBack?: (message: any) => void) => {
+	const request = new Rpc.Debug.SpaceSummary.Request();
+
+	dispatcher.request(DebugSpaceSummary.name, request, callBack);
+};
+
 export {
 	MetricsSetParameters,
 	LinkPreview,
@@ -1708,6 +1721,7 @@ export {
 	DebugSync,
 	DebugTree,
 	DebugExportLocalstore,
+	DebugSpaceSummary,
 
 	FileUpload,
 	FileDownload,
