@@ -14,7 +14,7 @@
 				cursor: pointer !important; color: $colorDarkGrey;
 			}
 			.cellContent:last-child { margin: 0px; }
-			.cellContent:empty, .cellContent.isEmpty { display: none; }
+			.cellContent:empty::before, .cellContent.isEmpty::before { display: none; }
 
 			.cellContent::before { 
 				content: ""; width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; 
