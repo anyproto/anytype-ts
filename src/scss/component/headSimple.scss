@@ -8,9 +8,10 @@
 		.titleWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: stretch; }
 		.titleWrap {
 			.iconObject { flex-shrink: 0; }
-			.editableWrap { flex-grow: 1; }
-			.editable { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; cursor: text; }
 		}
+
+		.editableWrap { flex-grow: 1; }
+		.editable { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; cursor: text; }
 
 		.title { @include text-header1; }
 		.descr { @include text-paragraph; }
