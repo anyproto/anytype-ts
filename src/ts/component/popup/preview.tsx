@@ -91,6 +91,11 @@ class PopupPreview extends React.Component<I.Popup> {
 					loader.remove();
 				};
 
+				img.onerror = function () {
+					wrap.addClass('brokenMedia');
+					loader.remove();
+				};
+
 				img.src = commonStore.imageUrl(hash, Constant.size.image);
 				break;
 			};

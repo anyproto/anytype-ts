@@ -46,7 +46,8 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 
 .pageAuthSetup {
 	.title { margin: 0px; }
-	.label { margin: 15px 0px 0px 0px; display: none; }
+	.title.withLabel { margin-bottom: 22px; }
+	.button { width: auto; }
 }
 
 .pageAuthAccountSelect {

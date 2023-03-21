@@ -111,7 +111,16 @@
 			}
 		}
 
-		.tabSpaceIndex {
+		.side.right.tabLogout,
+		.side.right.tabDelete,
+		.side.right.tabImportNotion,
+		.side.right.tabImportNotionHelp,
+		.side.right.tabImportNotionWarning,
+		.side.right.tabImportMarkdown,
+		.side.right.tabExportMarkdown
+		{ padding-top: 22px; }
+
+		.side.right.tabSpaceIndex {
 			> .iconObject { margin: 0px 0px 12px 0px; }
 		}
 
@@ -125,13 +134,11 @@
 			}
 		}
 
-		.side.right.tabLogout { padding-top: 22px; }
 		.side.right.tabLogout {
 			.inputs { margin: 0px 0px 24px 0px; }
 			.buttons { display: flex; gap: 0px 16px; }
 		}
 
-		.side.right.tabDelete { padding-top: 22px; }
 		.side.right.tabDelete {
 			.text { margin: 0px 0px 32px 0px; }
 			.text {
@@ -179,7 +186,8 @@
 			}
 		}
 
-		.side.right.tabImportIndex {
+		.side.right.tabImportIndex, 
+		.side.right.tabExportIndex {
 			.items { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 			.item { 
 				width: 132px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionFast; cursor: pointer; 
@@ -192,18 +200,19 @@
 				.name { @include text-small; line-height: 1em; }
 			}
 
-			.item.notion .icon { background-image: url('~img/icon/popup/settings/import/notion.svg'); }
-			.item.markdown .icon { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
-			.item.html .icon { background-image: url('~img/icon/popup/settings/import/html.svg'); }
-			.item.text .icon { background-image: url('~img/icon/popup/settings/import/text.svg'); }
-			.item.csv .icon { background-image: url('~img/icon/popup/settings/import/csv.svg'); }
+			.item.notion .icon { background-image: url('~img/icon/import/notion.svg'); }
+			.item.markdown .icon { background-image: url('~img/icon/import/markdown.svg'); }
+			.item.html .icon { background-image: url('~img/icon/import/html.svg'); }
+			.item.text .icon { background-image: url('~img/icon/import/text.svg'); }
+			.item.csv .icon { background-image: url('~img/icon/import/csv.svg'); }
+			.item.protobuf .icon { background-image: url('~img/icon/import/protobuf.svg'); }
 		}
 
-		.side.right.tabImportNotion, .side.right.tabImportNotionHelp {
-			.icon.logo { background-image: url('~img/icon/popup/settings/import/notion.svg'); }
+		.side.right.tabImportNotion, 
+		.side.right.tabImportNotionHelp {
+			.icon.logo { background-image: url('~img/icon/import/notion.svg'); }
 		}
 
-		.side.right.tabImportNotion { padding-top: 22px; }
 		.side.right.tabImportNotion {
 			.inputWrapper { flex-direction: row; align-items: flex-start; gap: 0px 8px; margin: 0px 0px 58px 0px; }
 			.inputWrapper { 
@@ -238,7 +247,6 @@
 			}
 		}
 
-		.side.right.tabImportNotionHelp { padding-top: 22px; }
 		.side.right.tabImportNotionHelp {
 			.title { margin: 0px 0px 44px 0px !important; }
 			.label.step { @include text-paragraph; font-weight: 700; margin: 0px 0px 16px 0px; }
@@ -252,9 +260,12 @@
 			}
 		}
 
-		.side.right.tabImportMarkdown { padding-top: 22px; }
+		.side.right.tabImportNotionWarning {
+			.list { padding-left: 1.35em; margin: 0px 0px 24px 0px; }
+		}
+
 		.side.right.tabImportMarkdown {
-			.icon.logo { background-image: url('~img/icon/popup/settings/import/markdown.svg'); }
+			.icon.logo { background-image: url('~img/icon/import/markdown.svg'); }
 
 			b { font-weight: 600; }
 

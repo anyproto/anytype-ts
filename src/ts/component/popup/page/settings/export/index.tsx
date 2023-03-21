@@ -2,16 +2,15 @@ import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
 import { I, Util, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore } from 'Store';
-import Head from '../head';
 
 interface Props extends I.Popup {
 	prevPage: string;
 	onPage: (id: string) => void;
 	onImport: (type: I.ImportType, param: any) => void;
+	onExport: (type: I.ExportType, param: any) => void;
 };
 
-const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex extends React.Component<Props> {
+const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex extends React.Component<Props> {
 
 	render () {
 		const items = this.getItems();
@@ -27,8 +26,8 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 		return (
 			<React.Fragment>
-				<Title text={translate('popupSettingsImportTitle')} />
-				<Label className="description" text={translate('popupSettingsImportText')} />
+				<Title text={translate('popupSettingsExportTitle')} />
+				<Label className="description" text={translate('popupSettingsExportText')} />
 
 				<div className="items">
 					{items.map((item: any, i: number) => (
@@ -43,34 +42,24 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const { onPage } = this.props;
 		const items = this.getItems();
 		const item = items.find(it => it.id == id);
-		const fn = Util.toCamelCase('onImport-' + item.id);
+		const fn = Util.toCamelCase('onExport-' + item.id);
 
 		if (item.skipPage && this[fn]) {
 			this[fn]();
 		} else {
-			onPage(Util.toCamelCase('import-' + item.id));
+			onPage(Util.toCamelCase('export-' + item.id));
 		};
 	};
 
 	getItems () {
-		const { config } = commonStore;
-		const ret: any[] = [
-			{ id: 'notion', name: 'Notion' },
+		return [
 			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'html', name: 'HTML', skipPage: true },
-			{ id: 'text', name: 'TXT', skipPage: true },
 			{ id: 'protobuf', name: 'Protobuf', skipPage: true },
 		];
-
-		if (config.experimental) {
-			ret.push({ id: 'csv', name: 'CSV', skipPage: true });
-		};
-
-		return ret;
 	};
 
-	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
-		const { close, onImport } = this.props;
+	onExportCommon (type: I.ExportType, extensions: string[], options?: any) {
+		const { close, onExport } = this.props;
 		const platform = Util.getPlatform();
 		const fileOptions: any = { 
 			properties: [ 'openFile' ],
@@ -88,26 +77,14 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 			};
 
 			close();
-			onImport(type, Object.assign(options || {}, { paths }));
+			onExport(type, Object.assign(options || {}, { paths }));
 		});
 	};
 
-	onImportHtml () {
-		this.onImportCommon(I.ImportType.Html, [ 'zip', 'html', 'htm', 'mhtml' ]);
-	};
-
-	onImportText () {
-		this.onImportCommon(I.ImportType.Text, [ 'zip', 'txt' ]);
-	};
-
-	onImportCsv () {
-		this.onImportCommon(I.ImportType.Csv, [ 'zip', 'csv' ], { mode: I.CsvImportMode.Collection });
-	};
-
-	onImportProtobuf () {
-		this.onImportCommon(I.ImportType.Protobuf, [ 'zip', 'pb' ]);
+	onExportProtobuf () {
+		this.onExportCommon(I.ExportType.Protobuf, [ 'zip', 'pb' ]);
 	};
 
 });
 
-export default PopupSettingsPageImportIndex;
+export default PopupSettingsPageExportIndex;

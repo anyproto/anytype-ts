@@ -74,7 +74,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Account debug', click: () => { Util.send(this.win, 'command', 'debugSync'); } },
+					{ label: 'Space debug', click: () => { Util.send(this.win, 'command', 'debugSpace'); } },
 					{ label: 'Current object debug', click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
 
 					Separator,
@@ -329,7 +329,7 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: 'Object diagnostics', click: () => { show(); Util.send(this.win, 'command', 'debugSync'); } },
+			{ label: 'Space debug', click: () => { show(); Util.send(this.win, 'command', 'debugSync'); } },
 			{ label: 'Tree diagnostics', click: () => { show(); Util.send(this.win, 'command', 'debugTree'); } },
 
 			Separator,

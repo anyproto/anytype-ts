@@ -55,11 +55,12 @@
 			.textareaWrap { background-color: $colorBgLight; }
         }
 
-        .side.right.tabImportIndex {
+        .side.right.tabImportIndex, 
+		.side.right.tabExportIndex {
             .item { border-color: $colorLineSecondary; }
             .item:hover, .item.active { border-color: $colorLinePrimary; }
-            .item.notion .icon { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
-            .item.roam .icon { background-image: url('#{$themePath}/icon/popup/settings/import/roam.svg'); }
+            .item.notion .icon { background-image: url('#{$themePath}/icon/import/notion.svg'); }
+            .item.roam .icon { background-image: url('#{$themePath}/icon/import/roam.svg'); }
         }
 
 		.side.right.tabImportNotion {
@@ -73,8 +74,9 @@
 			}
 		}
 
-		.side.right.tabImportNotion, .side.right.tabImportNotionHelp {
-			.icon.logo { background-image: url('#{$themePath}/icon/popup/settings/import/notion.svg'); }
+		.side.right.tabImportNotion, 
+		.side.right.tabImportNotionHelp {
+			.icon.logo { background-image: url('#{$themePath}/icon/import/notion.svg'); }
 		}
 
 		.side.right.tabImportNotionHelp {

@@ -1,13 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Frame, Title, Error, Button, Header, Footer } from 'Component';
-import { I, Storage, translate, C, DataUtil, Util, ObjectUtil } from 'Lib';
+import { Frame, Title, Label, Error, Button, Header, Footer, Icon } from 'Component';
+import { I, Storage, translate, C, DataUtil, Util, ObjectUtil, Action } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
+import Errors from 'json/error.json';
 
 interface State {
 	index: number;
-	error: string;
+	error: { description: string, code: number };
 };
 
 const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.PageComponent, State> {
@@ -17,38 +18,90 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	t = 0;
 	state = {
 		index: 0,
-		error: '',
+		error: null,
+	};
+
+	constructor (props: I.PageComponent) {
+		super(props);
+
+		this.onCancel = this.onCancel.bind(this);
+		this.onBackup = this.onBackup.bind(this);
 	};
 
 	render () {
 		const { match } = this.props;
-		const { error } = this.state;
+		const error = this.state.error || {};
 		
-		let title = '';
-		switch (match.params.id) {
-			case 'init':
-				title = translate('authSetupLogin'); 
-				break;
+		let content = null;
+		const back = (
+			<div className="authBackWrap" onClick={this.onCancel}>
+				<Icon className="back" />
+				<div className="name">{translate('commonBack')}</div>
+			</div>
+		);
 
-			case 'select': 
-				title = translate('authSetupSelect');
-				break;
+		if (error.code) {
+			if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
+				content = (
+					<React.Fragment>
+						{back}
 
-			case 'share': 
-				title = translate('authSetupShare');
-				break;
+						<Title className="withError" text="Account not found" />
+						<Label text="If you are migrating from Anytype Legacy version you can restore your account from backup" />
+
+						<div className="buttons">
+							<Button text="Restore from backup" onClick={this.onBackup} />
+						</div>
+					</React.Fragment>
+				);
+			} else {
+				content = (
+					<React.Fragment>
+						{back}
+
+						<Title className="withError" text="Error" />
+						<Error text={error.description} />
+						<div className="buttons">
+							<Button text={translate('commonBack')} onClick={() => Util.route('/')} />
+						</div>
+					</React.Fragment>
+				);
+			};
+		} else {
+			let title = '';
+
+			switch (match.params.id) {
+				case 'init': {
+					title = translate('authSetupLogin'); 
+					break;
+				};
+
+				case 'register': {
+					title = translate('authSetupRegister');
+					break;
+				};
+
+				case 'select': {
+					title = translate('authSetupSelect');
+					break;
+				};
+
+				case 'share': {
+					title = translate('authSetupShare');
+					break;
+				};
+			};
+
+			content = <Title text={title} />;
 		};
 		
 		return (
 			<div ref={node => this.node = node}>
-				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
-					<Title text={title} />
-					<Error text={error} />
-					{error ? <Button text={translate('commonBack')} onClick={() => { Util.route('/'); }} /> : ''}
+					{content}
 				</Frame>
 			</div>
 		);
@@ -89,22 +142,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			return;
 		};
 
-		const setError = (message: any) => {
-			if (message.error.code) {
-				Util.checkError(message.error.code);
-				this.setError(message.error.description);
-				return true;
-			};
-			return false;
-		};
-
 		C.WalletRecover(walletPath, phrase, (message: any) => {
-			if (setError(message)) {
+			if (this.setError(message.error)) {
 				return;
 			};
 
 			DataUtil.createSession((message: any) => {
-				if (setError(message)) {
+				if (this.setError(message.error)) {
 					return;
 				};
 
@@ -112,13 +156,11 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					authStore.phraseSet(phrase);
 					
 					C.AccountSelect(accountId, walletPath, (message: any) => {
-						if (setError(message)) {
+						if (this.setError(message.error) || !message.account) {
 							return;
 						};
 
-						if (message.account) {
-							DataUtil.onAuth(message.account);
-						};
+						DataUtil.onAuth(message.account);
 					});
 				} else {
 					Util.route('/auth/account-select');
@@ -131,14 +173,14 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const { account, walletPath } = authStore;
 		
 		C.AccountSelect(account.id, walletPath, (message: any) => {
-			if (message.error.code) {
-				Util.checkError(message.error.code);
-				this.setError(message.error.description);
-			} else
+			if (this.setError(message.error)) {
+				return;
+			};
+
 			if (message.account) {
 				DataUtil.onAuth(message.account);
 			};
-		}); 
+		});
 	};
 
 	share () {
@@ -146,22 +188,46 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		const param = Util.searchParam(location.search);
 
 		C.ObjectAddWithObjectId(param.id, param.payload, (message: any) => {
-			if (message.error.code) {
-				this.setError(message.error.description);
-			} else {
-				Storage.set('shareSuccess', 1);
-				ObjectUtil.openHome('route');
+			if (this.setError(message.error)) {
+				return;
 			};
+
+			Storage.set('shareSuccess', 1);
+			ObjectUtil.openHome('route');
 		});
 	};
 	
-	setError (v: string) {
-		if (!v) {
-			return;
+	setError (error: { description: string, code: number}) {
+		if (!error.code) {
+			return false;
 		};
-		
+
 		this.clear();
-		this.setState({ error: v });
+		this.setState({ error });
+
+		Util.checkError(error.code);
+
+		return true;
+	};
+
+	onBackup () {
+		Action.openFile([ 'zip' ], paths => {
+			C.AccountRecoverFromLegacyExport(paths[0], authStore.walletPath, (message: any) => {
+				if (this.setError(message.error)) {
+					return;
+				};
+
+				C.ObjectImport({ path: paths[0], address: message.address }, [], false, I.ImportType.Migration, I.ImportMode.AllOrNothing, (message: any) => {
+					if (this.setError(message.error)) {
+						return;
+					};
+				});
+			});
+		});
+	};
+
+	onCancel () {
+		Util.route('/auth/select');
 	};
 	
 	clear () {

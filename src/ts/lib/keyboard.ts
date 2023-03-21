@@ -73,6 +73,7 @@ class Keyboard {
 
 	onMouseDown (e: any) {
 		const { focused } = focus.state;
+		const target = $(e.target);
 
 		// Mouse back
 		if ((e.buttons & 8) && !this.isNavigationDisabled) {
@@ -87,7 +88,7 @@ class Keyboard {
 		};
 
 		// Remove isFocusable from focused block
-		if ($(e.target).parents(`#block-${focused}`).length <= 0) {
+		if (target.parents(`#block-${focused}`).length <= 0) {
 			$('.focusable.c' + focused).removeClass('isFocused');
 		};
 	};

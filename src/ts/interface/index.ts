@@ -13,7 +13,7 @@ import {
 	ImportType,
 	ImportMode,
 	CsvImportMode,
-	ExportFormat, 
+	ExportType, 
 	Source, 
 	EdgeType, 
 	TabIndex,
@@ -100,7 +100,7 @@ export {
 	ImportType,
 	ImportMode,
 	CsvImportMode,
-	ExportFormat,
+	ExportType,
 	
 	ThreadStatus,
 	ThreadSummary,

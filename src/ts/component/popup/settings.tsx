@@ -23,6 +23,7 @@ import PageImportNotionHelp from './page/settings/import/notion/help';
 import PageImportNotionWarning from './page/settings/import/notion/warning';
 import PageImportMarkdown from './page/settings/import/markdown';
 
+import PageExportIndex from './page/settings/export/index';
 import PageExportMarkdown from './page/settings/export/markdown';
 
 import PageSpaceIndex from './page/settings/space/index';
@@ -53,6 +54,7 @@ const Components: any = {
 	importNotionWarning: PageImportNotionWarning,
 	importMarkdown:		 PageImportMarkdown,
 
+	exportIndex:		 PageExportIndex,
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
@@ -228,7 +230,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			{ 
 				name: 'Integrations', children: [
 					{ id: 'importIndex', name: translate('popupSettingsImportTitle'), icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
-					{ id: 'exportMarkdown', name: translate('popupSettingsExportTitle'), icon: 'export' },
+					{ id: 'exportIndex', name: translate('popupSettingsExportTitle'), icon: 'export', subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
 				] 
 			}
 		];
@@ -293,7 +295,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		});
 	};
 
-	onExport (format: I.ExportFormat, param: any) {
+	onExport (format: I.ExportType, param: any) {
 		const { zip, nested, files } = param;
 
 		Action.export([], format, zip, nested, files, () => { this.props.close(); });

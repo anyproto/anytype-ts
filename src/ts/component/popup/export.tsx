@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 
 const PopupExport = observer(class PopupExport extends React.Component<I.Popup> {
 
-	format: I.ExportFormat = I.ExportFormat.Markdown;
+	format: I.ExportType = I.ExportType.Markdown;
 	zip = false;
 	nested = false;
 	files = true;
@@ -24,12 +24,12 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	render() {
 		const { config } = commonStore;
 		const formats = [
-			{ id: I.ExportFormat.Markdown, name: 'Markdown' },
-			{ id: I.ExportFormat.Pdf, name: 'PDF' },
+			{ id: I.ExportType.Markdown, name: 'Markdown' },
+			{ id: I.ExportType.Pdf, name: 'PDF' },
 		];
 
 		if (config.experimental) {
-			formats.push({ id: I.ExportFormat.Html, name: 'HTML' });
+			formats.push({ id: I.ExportType.Html, name: 'HTML' });
 		};
 
 		const pageSize = [
@@ -91,7 +91,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		let items: any[] = [];
 
 		switch (this.format) {
-			case I.ExportFormat.Markdown:
+			case I.ExportType.Markdown:
 				items = [
 					{ id: 'zip', name: 'Zip archive', control: 'switch' },
 					{ id: 'nested', name: 'Include linked objects', control: 'switch' },
@@ -99,7 +99,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				];
 				break;
 
-			case I.ExportFormat.Pdf:
+			case I.ExportType.Pdf:
 				items = [
 					{ id: 'pageSize', name: 'Page size', control: 'select', options: pageSize },
 					{ id: 'landscape', name: 'Landscape', control: 'switch' },
@@ -148,7 +148,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		const { storageGet } = this.props;
 		const options = storageGet();
 
-		this.format = Number(options.format) || I.ExportFormat.Markdown;
+		this.format = Number(options.format) || I.ExportType.Markdown;
 		this.zip = Boolean(options.zip);
 		this.nested = Boolean(options.nested);
 		this.files = Boolean(options.files);
@@ -170,11 +170,11 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				Action.export([ rootId ], this.format, this.zip, this.nested, this.files);
 				break;
 
-			case I.ExportFormat.Html:
+			case I.ExportType.Html:
 				keyboard.onSaveAsHTML();
 				break;
 
-			case I.ExportFormat.Pdf:
+			case I.ExportType.Pdf:
 				keyboard.onPrintToPDF({
 					landscape: this.landscape,
 					printBackground: this.printBackground,

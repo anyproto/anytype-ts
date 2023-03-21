@@ -18,7 +18,7 @@
 			.side.left {
 				.element { 
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; line-height: 28px; cursor: pointer;
-					transition: $transitionFast;
+					transition: $transitionFast; white-space: nowrap;
 				}
 				.element:first-child { margin-left: -4px; }
 				.element:hover { background-color: $colorHover; }
