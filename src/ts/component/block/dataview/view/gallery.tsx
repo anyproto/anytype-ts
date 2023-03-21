@@ -101,18 +101,16 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 												cellCount={records.length}
 												cellMeasurerCache={this.cache}
 												cellPositioner={this.cellPositioner}
-												cellRenderer={({ key, index, parent, style }) => {
-													return (
-														<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
-															<Card 
-																key={'gallery-card-' + view.id + index} 
-																{...this.props} 
-																index={index} 
-																style={{ ...style, width: this.columnWidth }}
-															/>
-														</CellMeasurer>
-													);
-												}}
+												cellRenderer={({ key, index, parent, style }) => (
+													<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
+														<Card 
+															key={'gallery-card-' + view.id + index} 
+															{...this.props} 
+															index={index} 
+															style={{ ...style, width: this.columnWidth }}
+														/>
+													</CellMeasurer>
+												)}
 												scrollTop={scrollTop}
 											/>
 										</div>
