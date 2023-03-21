@@ -120,7 +120,7 @@ html.platformWindows, html.platformLinux {
 .noAnimation { transition: none !important; }
 .over, .overMenu, .overPopup { overflow: hidden !important; }
 .empty, .emptyText { color: $colorSecondary; }
-.isDone { color: $colorMediumGrey; }
+.isDone { color: $colorDarkGrey; }
 .placeholder { 
 	pointer-events: none; color: $colorSecondary; position: absolute; left: 0px; top: 0px; z-index: 0; width: 100%; height: 100%; cursor: text; 
 	overflow: hidden; white-space: nowrap; text-overflow: ellipsis;

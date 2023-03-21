@@ -9,9 +9,12 @@ interface Props extends I.ViewComponent {
 
 const Selection = observer(class Selection extends React.Component<Props> {
 	render () {
-		const { isInline, isCollection, dataset, multiSelectAction, ids } = this.props;
-		const { selection } = dataset;
+		const { className, isInline, isCollection, multiSelectAction, ids } = this.props;
 		const cn = [ 'dataviewControls', 'dataviewSelection' ];
+
+		if (className) {
+			cn.push(className);
+		};
 
 		if (isInline) {
 			cn.push('isInline');
@@ -25,6 +28,8 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		if (isCollection) {
 			buttons.unshift({ id: 'unlink', text: 'Unlink', className: [ 'black' ] });
 		};
+
+		console.log(this.props);
 
 		return (
 			<div className={cn.join(' ')}>

@@ -135,7 +135,10 @@
 			.loadMore { box-shadow: 0px 1px $colorLineSecondary inset; border-color: $colorLineSecondary; }
 
 			.cellHead .resize .line { background-color: $colorLineSecondary; }
-			.cellHead.cellKeyHover::after, .cellHead.active::after { background-color: rgba(223, 221, 208, 0.04); }
+			.cellHead.cellKeyHover::after, 
+			.cellHead.active::after,
+			.cellHead.isDragging::after { background-color: rgba(223, 221, 208, 0.04); }
+
 			.cellHead.last::after, .cellHead.active::after { background: none; }
 			.cellHead.last:hover, .cellHead.last.active {
 				.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
