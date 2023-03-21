@@ -220,7 +220,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		const node = $(this.node);
 		const wrap = node.find('#wrap');
 
-		wrap.addClass('broken');
+		wrap.addClass('brokenMedia');
 	};
 	
 	onClick (e: any) {

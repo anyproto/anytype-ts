@@ -82,7 +82,7 @@ class Api {
 	};
 
 	keytarGet (win, key) {
-		keytar.getPassword(KEYTAR_SERVICE, key).then((value) => { 
+		keytar.getPassword(KEYTAR_SERVICE, key).then(value => { 
 			this.phrase = value;
 			Util.send(win, 'keytarGet', key, value); 
 		});

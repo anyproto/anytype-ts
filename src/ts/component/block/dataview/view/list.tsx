@@ -29,10 +29,6 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
 
-		if (!length) {
-			return getEmpty('view');
-		};
-
 		let content = null;
 
 		if (isInline) {

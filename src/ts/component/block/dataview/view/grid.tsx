@@ -45,10 +45,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
 
-		if (!length) {
-			return getEmpty('view');
-		};
-
 		let content = null;
 
 		if (isInline) {
@@ -339,6 +335,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		$(window).off('mousemove.cell mouseup.cell').trigger('resize');
 		$('body').removeClass('colResize');
 		node.find('.cellHead.isResizing').removeClass('isResizing');
+		node.find('.cellKeyHover').removeClass('cellKeyHover');
 
 		relations.forEach(it => {
 			const relation: any = dbStore.getRelationByKey(it.relationKey) || {};

@@ -164,6 +164,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
+		} else 
+		if ((view.type != I.ViewType.Board) && !records.length) {	
+			controls = (
+				<Controls 
+					ref={ref => this.refControls = ref} 
+					{...this.props}
+					{...dataviewProps}
+					className={className}
+				/>
+			);
+			body = this.getEmpty('view');
 		} else {
 			controls = this.isMultiSelecting ? (
 				<Selection
@@ -902,12 +913,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getEmpty (type: string) {
 		const { isInline, block } = this.props;
+		const cn = [];
 
 		let emptyProps = { 
 			title: '', 
 			description: '', 
 			button: '', 
 			onClick: e => {},
+		};
+
+		if (isInline) {
+			cn.push('withHead');
 		};
 
 		switch (type) {
@@ -932,6 +948,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			case 'view': {
+				cn.push('withHead');
+
 				emptyProps = {
 					title: 'No objects',
 					description: 'Create your first one to begin',
@@ -946,7 +964,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			<Empty
 				{...this.props}
 				{...emptyProps}
-				className={isInline ? 'withHead' : ''}
+				className={cn.join(' ')}
 				withButton={true}
 			/>
 		);

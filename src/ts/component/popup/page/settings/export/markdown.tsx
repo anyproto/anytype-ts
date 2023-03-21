@@ -3,11 +3,12 @@ import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, Switch } from 'Component';
 import { I, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
+import Head from '../head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;
-	onExport: (format: I.ExportFormat, param: any) => void;
+	onExport: (format: I.ExportType, param: any) => void;
 };
 
 const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMarkdown extends React.Component<Props> {
@@ -28,6 +29,8 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 
 		return (
 			<React.Fragment>
+				<Head {...this.props} returnTo="exportIndex" name={translate('commonBack')} />
+
 				<Title text={translate('popupSettingsExportMarkdownTitle')} />
 
 				<div className="labels">
@@ -59,7 +62,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 					<Button 
 						text={translate('popupSettingsExportOk')} 
 						className="c36"
-						onClick={() => { onExport(I.ExportFormat.Markdown, { zip: this.zip, nested: this.nested, files: this.files }); }} 
+						onClick={() => { onExport(I.ExportType.Markdown, { zip: this.zip, nested: this.nested, files: this.files }); }} 
 					/>
 				</div>
 			</React.Fragment>

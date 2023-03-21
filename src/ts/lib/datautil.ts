@@ -239,6 +239,8 @@ class DataUtil {
 		const pin = Storage.get('pin');
 		const { root, profile, widgets } = blockStore;
 		const { redirect } = commonStore;
+		const color = Storage.get('color');
+		const bgColor = Storage.get('bgColor');
 
 		if (!root) {
 			console.error('[onAuth] No root defined');
@@ -333,6 +335,13 @@ class DataUtil {
 					};
 
 					commonStore.redirectSet('');
+				};
+
+				if (!color) {
+					Storage.set('color', 'orange');
+				};
+				if (!bgColor) {
+					Storage.set('bgColor', 'orange');
 				};
 
 				if (callBack) {
