@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewItem.viewList { padding: 12px 0px 0px 14px; }
+		.viewItem.viewList { padding: 0px 0px 0px 14px; }
 		.viewItem.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
 
@@ -80,7 +80,7 @@
 			.viewItem.viewList { padding-left: 2px; }
 			.viewItem.viewList {
 				.row.add { padding-left: 20px; }
-				.row .icon.dnd { left: 1px; height: 24px; top: 0px; z-index: 1; }
+				.row .icon.dnd { left: 1px; height: 22px; top: 1px; z-index: 1; }
 
 				.cellContent:first-child { padding-left: 20px; }
 			}

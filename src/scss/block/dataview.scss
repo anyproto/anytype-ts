@@ -79,7 +79,10 @@
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; height: 49px; }
-		.dataviewControls::after { content: ''; display: block; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
+		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
+
+		.dataviewControls.viewGrid::after { display: block; }
+
 		.dataviewControls {
 			.sides { gap: 0px 16px; }
 			.side { padding: 10px 0px; white-space: nowrap; line-height: 28px; }
