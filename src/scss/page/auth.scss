@@ -97,6 +97,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 }
 
 .pageAuthOnboard {
+	canvas { height: 100vh; width: 100vw; }
 	.icon.dataLocation { background-image: url('~img/icon/footer/data-location.svg'); height: 20px; width: 20px; margin-right: 6px; }
 
 	.storageInfo,
