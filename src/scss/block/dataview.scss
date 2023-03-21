@@ -129,8 +129,9 @@
 			.button { padding: 0px 8px; @include text-common; }
 		}
 
+		.dataviewSelection { font-weight: 400; }
 		.dataviewSelection {
-			.side.left { @include text-paragraph; font-weight: 600; color: $colorBlack;  }
+			.side.left { @include text-paragraph; color: $colorBlack;  }
 			.side.right {
 				.element {
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; cursor: pointer;
