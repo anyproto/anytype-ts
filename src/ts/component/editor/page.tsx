@@ -194,6 +194,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 		blockStore.updateNumbers(rootId);
 		this.resizePage();
+
 		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};
 	
