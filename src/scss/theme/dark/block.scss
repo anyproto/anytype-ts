@@ -111,7 +111,7 @@
 		.dataviewSelection {
 			.side.left { color: $colorPrimary; }
 			.side.right {
-				.element.grey { color: $colorSecondary; }
+				.element.black { color: $colorPrimary; }
 				.element:hover { background-color: $colorHover; }
 			}
 		}
