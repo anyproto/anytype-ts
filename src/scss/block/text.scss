@@ -60,7 +60,7 @@
 		strike { text-decoration: line-through; }
 		underline { border-bottom: 0.05em solid; }
 		
-		.markers { display: flex; }
+		.markers { display: flex; padding: 1px 0px; }
 		.markers {
 			.marker { 
 				text-align: center; display: inline-block; vertical-align: top; position: relative; width: 24px; height: 24px; 

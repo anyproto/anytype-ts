@@ -181,7 +181,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	};
 
 	componentDidUpdate () {
-		const { isPopup } = this.props;
+		const { rootId, isPopup } = this.props;
 		const node = $(this.node);
 		const resizable = node.find('.resizable');
 		
@@ -192,6 +192,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			resizable.trigger('resizeInit');
 		};
 
+		blockStore.updateNumbers(rootId);
 		this.resizePage();
 		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};
