@@ -3,16 +3,15 @@ import { observer } from 'mobx-react';
 import { I, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
+	ids: string[];
 	multiSelectAction?: (e: any, action: string) => void;
 };
 
 const Selection = observer(class Selection extends React.Component<Props> {
-
 	render () {
-		const { isInline, isCollection, dataset, multiSelectAction } = this.props;
+		const { isInline, isCollection, dataset, multiSelectAction, ids } = this.props;
 		const { selection } = dataset;
 		const cn = [ 'dataviewControls', 'dataviewSelection' ];
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
 
 		if (isInline) {
 			cn.push('isInline');
