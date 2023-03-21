@@ -276,7 +276,7 @@
 	"popupSettingsImportNotionExampleComplete": { "en": "Then, select either a <b>Zip archive or Markdown file</b> (.md) to complete the import" },
 	"popupSettingsImportOk": { "en": "Import data" },
 	"popupSettingsImportCsvTitle": { "en": "CSV Import" },
-	"popupSettingsImportCsvText": { "en": "Select either a <b>Zip archive or CSV file</b> (.csv) to complete the import" },
+	"popupSettingsImportCsvText": { "en": "Select a <b>CSV file</b> (.csv) to complete the import" },
 
 	"popupSettingsExportTitle": { "en": "Export" },
 	"popupSettingsExportText": { "en": "Choose application or format of data source" },

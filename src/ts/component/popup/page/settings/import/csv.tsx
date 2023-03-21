@@ -26,7 +26,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 		const modeOptions = [ 
 			{ id: I.CsvImportMode.Table, name: 'Table' },
 			{ id: I.CsvImportMode.Collection, name: 'Collection' },
-		];
+		].map(it => ({ ...it, id: String(it.id) }));
 
 		return (
 			<div>
@@ -40,10 +40,10 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 					<div className="row">
 						<Label text="Mode" />
 						<Select 
-							id="csv-immport-mode" 
+							id="csv-import-mode" 
 							value={this.mode} 
 							options={modeOptions} 
-							onChange={v => this.mode = v}
+							onChange={v => this.mode = Number(v)}
 							arrowClassName="light"
 						/>
 					</div>
@@ -72,7 +72,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 		const options: any = { 
 			properties: [ 'openFile' ],
 			filters: [
-				{ name: '', extensions: [ 'zip', 'csv' ] }
+				{ name: '', extensions: [ 'csv' ] }
 			]
 		};
 
