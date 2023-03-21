@@ -18,12 +18,12 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		};
 
 		const buttons: any[] = [
-			{ id: 'archive', text: 'Move to bin', className: [ 'grey' ] },
+			{ id: 'archive', text: 'Move to bin', className: [ 'black' ] },
 			{ id: 'done', text: 'Done', className: [ 'orange' ] },
 		];
 
 		if (isCollection) {
-			buttons.unshift({ id: 'unlink', text: 'Unlink' });
+			buttons.unshift({ id: 'unlink', text: 'Unlink', className: [ 'black' ] });
 		};
 
 		return (
