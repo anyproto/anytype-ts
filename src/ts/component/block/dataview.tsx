@@ -1036,10 +1036,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onMultiSelect (id?: string) {
-		const { dataset } = this.props;
+		const { dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 
-		if (!selection) {
+		if (!selection || isInline) {
 			return;
 		};
 		
