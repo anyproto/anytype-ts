@@ -23,15 +23,25 @@ class MenuContext extends React.Component<I.Menu> {
 			<div id={'section-' + item.id} className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
-					{item.children.map((action: any, i: number) => (
-						<MenuItemVertical 
-							key={i} 
-							{...action} 
-							icon={action.icon || action.id}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }} 
-							onClick={(e: any) => { this.onClick(e, action); }} 
-						/>
-					))}
+					{item.children.map((action: any, i: number) => {
+						if (action.isDiv) {
+							return (
+								<div key={i} className="separator">
+									<div className="inner" />
+								</div>
+							);
+						};
+
+						return (
+							<MenuItemVertical
+								key={i}
+								{...action}
+								icon={action.icon || action.id}
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
+								onClick={(e: any) => { this.onClick(e, action); }}
+							/>
+						);
+					})}
 				</div>
 			</div>
 		);
@@ -79,6 +89,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let open = { id: 'open', icon: 'expand', name: 'Open as object' };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let addToCollection = { id: 'addToCollection', icon: 'linkTo', name: 'Add to collection', arrow: true };
+		let div = null;
 		let unlink = null;
 		let archive = null;
 		let archiveCnt = 0;
@@ -91,6 +102,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (isCollection) {
 			addToCollection = null;
+			div = { isDiv: true };
 			unlink = { id: 'unlink', icon: 'unlink', name: 'Unlink from collection' };
 		};
 
@@ -147,7 +159,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, linkTo, addToCollection, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, linkTo, div, addToCollection, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
