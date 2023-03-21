@@ -1,3 +1,9 @@
+/* 
+
+NOTE: this file is copy pasted from the JS-Onboard-Animation Repository
+
+*/
+
 export const DOM_EVENTS: { [key: string]: [string, boolean] } = {
   onClick: ['click', false],
   onContextMenu: ['contextmenu', false],

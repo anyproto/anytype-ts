@@ -1,3 +1,9 @@
+/* 
+
+NOTE: this file is copy pasted from the JS-Onboard-Animation Repository
+
+*/
+
 import * as React from 'react';
 import { DOM_EVENTS, OnboardStage } from './constants';
 
