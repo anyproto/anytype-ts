@@ -138,7 +138,7 @@
 					transition: $transitionFast;
 				}
 				.element.black { color: $colorBlack; }
-				.element.orange { color: #f09c0e; }
+				.element.orange { color: #f09c0e; font-weight: 500; }
 				.element:hover { background-color: $colorHover; }
 			}
 		}

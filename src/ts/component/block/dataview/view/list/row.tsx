@@ -65,8 +65,6 @@ const Row = observer(class Row extends React.Component<Props> {
 			)
 		};
 
-		console.log('IS INLINE', isInline)
-
 		if (isCollection && !isInline) {
 			content = (
 				<React.Fragment>

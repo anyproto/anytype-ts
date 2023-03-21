@@ -179,8 +179,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			return;
 		};
 
-		console.log(isCollection);
-
 		let filters: I.Filter[] = [];
 		let addParam: any = {};
 

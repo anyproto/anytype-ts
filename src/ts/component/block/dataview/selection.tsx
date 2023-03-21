@@ -8,6 +8,7 @@ interface Props extends I.ViewComponent {
 };
 
 const Selection = observer(class Selection extends React.Component<Props> {
+
 	render () {
 		const { className, isInline, isCollection, multiSelectAction, ids } = this.props;
 		const cn = [ 'dataviewControls', 'dataviewSelection' ];
@@ -28,8 +29,6 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		if (isCollection) {
 			buttons.unshift({ id: 'unlink', text: 'Unlink', className: [ 'black' ] });
 		};
-
-		console.log(this.props);
 
 		return (
 			<div className={cn.join(' ')}>

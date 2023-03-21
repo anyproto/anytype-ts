@@ -172,8 +172,6 @@ class Select extends React.Component<Props, State> {
 						value = [];
 					};
 
-					console.log(value);
-
 					this.setValue(value);
 
 					if (onChange) {
