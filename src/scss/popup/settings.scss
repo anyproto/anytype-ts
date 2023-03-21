@@ -79,6 +79,10 @@
 					align-items: center; @include text-paragraph;
 				}
 				.row.red { color: $colorRed; }
+				.row {
+					> .input { width: 50%; border: 1px solid $colorBorderLight; border-radius: 6px; }
+					> .input.short { width: 30px; padding: 0px 4px; }
+				}
 
 				.error { margin: 8px 0px 0px 0px; }
 
@@ -117,6 +121,7 @@
 		.side.right.tabImportNotionHelp,
 		.side.right.tabImportNotionWarning,
 		.side.right.tabImportMarkdown,
+		.side.right.tabImportCsv,
 		.side.right.tabExportMarkdown
 		{ padding-top: 22px; }
 
@@ -276,6 +281,17 @@
 
 			.buttons { margin: 24px 0px 8px 0px; }
 			.label.last { @include text-small; }
+		}
+
+		.side.right.tabImportCsv {
+			.icon.logo { background-image: url('~img/icon/import/csv.svg'); }
+
+			.labels {
+				.label { margin: 0px 0px 12px 0px; }
+				.label:last-child { margin: 0px; }
+			}
+
+			.rows { margin: 24px 0px; }
 		}
 
 		.side.right.tabExportMarkdown {

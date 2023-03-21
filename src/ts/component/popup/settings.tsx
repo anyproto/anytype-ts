@@ -22,6 +22,7 @@ import PageImportNotion from './page/settings/import/notion';
 import PageImportNotionHelp from './page/settings/import/notion/help';
 import PageImportNotionWarning from './page/settings/import/notion/warning';
 import PageImportMarkdown from './page/settings/import/markdown';
+import PageImportCsv from './page/settings/import/csv';
 
 import PageExportIndex from './page/settings/export/index';
 import PageExportMarkdown from './page/settings/export/markdown';
@@ -53,6 +54,7 @@ const Components: any = {
 	importNotionHelp:	 PageImportNotionHelp,
 	importNotionWarning: PageImportNotionWarning,
 	importMarkdown:		 PageImportMarkdown,
+	importCsv:			 PageImportCsv,
 
 	exportIndex:		 PageExportIndex,
 	exportMarkdown:		 PageExportMarkdown,
