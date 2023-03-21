@@ -44,7 +44,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	creating = false;
 	frame = 0;
 	isMultiSelecting = false;
-	selected: string[];
+	selected: string[] = [];
 
 	constructor (props: Props) {
 		super(props);
@@ -180,6 +180,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				<Selection
 					{...this.props}
 					{...dataviewProps}
+					ids={this.selected}
 					multiSelectAction={this.multiSelectAction}
 				/>
 			) : (
@@ -1036,10 +1037,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onMultiSelect (id?: string) {
-		const { dataset } = this.props;
+		const { dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 
-		if (!selection) {
+		let updateRequired = false;
+
+		if (!selection || isInline) {
 			return;
 		};
 		
@@ -1055,8 +1058,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			selection.set(I.SelectType.Record, ids);
 		};
 
+		if (this.selected.length !== ids.length) {
+			updateRequired = true;
+		};
+
 		this.selected = ids;
 		this.setMultiSelect(!!ids.length);
+
+		if (updateRequired) {
+			this.forceUpdate();
+		};
 
 		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
 	};
