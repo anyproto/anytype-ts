@@ -94,14 +94,14 @@
 
 	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
 
-	.block.blockText.textTitle { padding: 22px 0px 6px 0px !important; @include text-title; }
+	.block.blockText.textTitle { padding: 6px 0px 4px 0px !important; @include text-title; }
 	.block.blockText.textTitle {
 		.placeholder { color: $colorMediumGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; width: 100%; height: 100%; cursor: text; }
 		#value { -webkit-user-modify: read-write-plaintext-only; }
 	}
 	.block.blockText.textTitle > .wrapContent > .selectable > .dropTarget { padding: 3px 0px 1px 0px; }
 
-	.block.blockText.textDescription { padding: 0px 0px 6px 0px; @include text-description; }
+	.block.blockText.textDescription { padding: 0px 0px 4px 0px; @include text-description; }
 
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget { @include text-header1; line-height: 35px; padding: 3px 0px 1px 0px; }
