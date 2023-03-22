@@ -36,7 +36,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 .pageAuthLogin,
 .pageAuthInvite {
 	.frame { padding: 64px; }
-	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
+	.keyPhrase { width: 100%; }
 }
 
 .pageAuthPinCheck {
@@ -106,6 +106,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.storageInfo,
 	.moreInfo,
 	.questionMark:hover { cursor: pointer; }
+	.keyPhrase { width: fit-content }
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
 	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: block; background-color: #5C5A54; color: black; }

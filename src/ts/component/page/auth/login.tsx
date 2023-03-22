@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Frame, Title, Input, Error, Button, Header, Footer, Icon, KeyPhrase } from 'Component';
+import { Frame, Title, Error, Button, Header, Footer, Icon, KeyPhrase } from 'Component';
 import { I, Util, translate, C, keyboard, Animation } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
 	error: string;
+	phrase: string,
 };
 
 const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.PageComponent, State> {
@@ -13,7 +14,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	phraseRef: any;
 
 	state = {
-		error: ''
+		error: '',
+		phrase: 'duck duck goose'
 	};
 	
 	constructor (props: I.PageComponent) {
@@ -25,7 +27,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	render () {
-		const { error } = this.state;
+		const { error, phrase } = this.state;
 		
         return (
 			<div>
@@ -39,13 +41,13 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 					<Error text={error} className="animation" />
 							
 					<form onSubmit={this.onSubmit}>
-						<Input 
-							ref={ref => this.phraseRef = ref} 
-							className="animation" 
-							placeholder={translate('authLoginLabel')} 
-							onKeyDown={this.onKeyDown} 
+						<KeyPhrase
+							ref={ref => this.phraseRef = ref}
+							phrase={phrase}
+							isEditable
+							onChange={phrase => { this.setState({ phrase }); console.log(this.state.phrase); }}
+							/* placeholder={translate('authLoginLabel')}  */
 						/>
-						<KeyPhrase phrase='duck duck goose' isBlurred/>
 
 						<div className="buttons animation">
 							<Button type="input" text={translate('authLoginLogin')} />
@@ -58,24 +60,20 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 	componentDidMount () {
 		Animation.to();
-		this.phraseRef.focus();
+		/* this.phraseRef.focus(); */
 	};
 	
 	componentDidUpdate () {
-		this.phraseRef.focus();
+		/* this.phraseRef.focus(); */
 	};
-
 	onSubmit (e: any) {
 		e.preventDefault();
 		
 		const { walletPath } = authStore;
-		const phrase = this.phraseRef.getValue().trim();
-		
-		this.phraseRef.setError(false);
+		const { phrase } = this.state;
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
-				this.phraseRef.setError(true);
 				this.setState({ error: message.error.description });	
 				return;
 			};
