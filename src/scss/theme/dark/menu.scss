@@ -119,11 +119,17 @@
     .menu.menuBlockRelationView {
         .section > .name { color: $colorPrimary; }
 
-        .info { color: $colorSecondary; }
-        .info.canEdit:hover { background: $colorHover; }
-        .cell.canEdit:hover { background: $colorHover; }
+		.item {
+			.info { color: $colorSecondary; }
+        	.info.canEdit:hover { background: $colorHover; }
+
+        	.cell.canEdit:hover { background: $colorHover; }
+
+			.icon.fav:hover { background-color: $colorHover; }
+		}
+
         .item.add:hover { 
-            .info { background: $colorHover; } 
+            .info { background: $colorHover; }
         }
     }
 

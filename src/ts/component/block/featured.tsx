@@ -49,6 +49,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const type = detailStore.get(rootId, object.type);
 		const bullet = <div className="bullet" />;
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
+
+		if (!featuredRelations.length) {
+			return null;
+		};
 
 		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.type).map(it => it.name);
 		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.relation).map(it => it.name);
@@ -75,23 +80,25 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
-				<span className="cell canEdit first">
-					<div
-						id={Relation.cellId(PREFIX, 'type', 0)}
-						className="cellContent type"
-						onClick={this.onType}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
-						onMouseLeave={this.onMouseLeave}
-					>
-						<div className="name">
-							{type && !type.isDeleted && !type._empty_ ? Util.shorten(type.name, 32) : (
-								<span className="textColor-red">
-									{translate('commonDeletedType')}
-								</span>
-							)}
+				{featuredRelations.includes('type') ? (
+					<span className="cell canEdit first">
+						<div
+							id={Relation.cellId(PREFIX, 'type', 0)}
+							className="cellContent type"
+							onClick={this.onType}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
+							onMouseLeave={this.onMouseLeave}
+						>
+							<div className="name">
+								{type && !type.isDeleted && !type._empty_ ? Util.shorten(type.name, 32) : (
+									<span className="textColor-red">
+										{translate('commonDeletedType')}
+									</span>
+								)}
+							</div>
 						</div>
-					</div>
-				</span>
+					</span>
+				) : ''}
 
 				{object.layout == I.ObjectLayout.Set ? (
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
