@@ -347,12 +347,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const node = $(this.node);
 		const button = node.find('#button-block-add');
 
+		const clear = () => {
+			node.find('.block.showMenu').removeClass('showMenu');
+			node.find('.block.isAdding').removeClass('isAdding top bottom');
+		};
+
 		const out = () => {
 			window.clearTimeout(this.timeoutMove);
 			this.timeoutMove = window.setTimeout(() => {
 				button.removeClass('show');
-				node.find('.block.showMenu').removeClass('showMenu');
-				node.find('.block.isAdding').removeClass('isAdding top bottom');
+				clear();
 			}, 30);
 		};
 
@@ -452,9 +456,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			let buttonX = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
 			let buttonY = pageY - rectContainer.y - BUTTON_OFFSET - st;
 			
+			clear();
 			button.addClass('show').css({ transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
-			node.find('.block').addClass('showMenu').removeClass('isAdding top bottom');
-			
+			hovered.addClass('showMenu');
+
 			if (pageX <= x + 20) {
 				hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 			};
