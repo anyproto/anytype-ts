@@ -98,12 +98,12 @@
 
 	/* Title */
 
-	.block.blockText.textTitle { padding: 6px 0px 4px 0px !important; @include text-title; }
+	.block.blockText.textTitle { padding: 6px 0px 0px 0px !important; @include text-title; }
 	.block.blockText.textTitle {
 		.placeholder { color: $colorMediumGrey; position: absolute; z-index: 0; left: 0px; top: 0px; display: none; width: 100%; height: 100%; cursor: text; }
 		#value { -webkit-user-modify: read-write-plaintext-only; }
 	}
-	.block.blockText.textTitle > .wrapContent > .selectable > .dropTarget { padding: 3px 0px 1px 0px; }
+	.block.blockText.textTitle > .wrapContent > .selectable > .dropTarget { padding: 0px; }
 
 	.block.blockText.textDescription { padding: 0px 0px 4px 0px; @include text-description; }
 
@@ -147,7 +147,7 @@
 	
 	.block.blockText.textQuote { padding: 6px 0px 6px 0px; }
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget { @include text-quote; padding: 1px 0px 2px 0px; }
-	.block.blockText.textQuote > .wrapContent > .additional > .line { width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 2px solid $colorOrange; }
+	.block.blockText.textQuote > .wrapContent > .additional > .line { width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 1.5px solid $colorBlack; }
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { padding-left: 28px; }
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap > .placeholder { left: 28px; }
 
@@ -158,7 +158,7 @@
 	/* Callout */
 	
 	.block.blockText.textCallout { min-width: 130px; }
-	.block.blockText.textCallout > .wrapContent { background: $colorVeryLightGrey; border-radius: 6px; margin: 6px 0px; }
+	.block.blockText.textCallout > .wrapContent { background: $colorVeryLightGrey; border-radius: 2px; margin: 6px 0px; }
 	.block.blockText.textCallout > .wrapContent > .selectable { position: static; }
 	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget { padding: 16px 16px 0px 16px; }
 	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget > .flex { gap: 0px 14px; }
@@ -176,7 +176,9 @@
 	/* Code */
 
 	.block.blockText.textCode { padding: 6px 0px; }
-	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 24px 0px 0px 0px; background: rgba(247,245,240,0.5); }
+	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { 
+		padding: 24px 0px 0px 0px; background: rgba(247,245,240,0.5); border-radius: 6px;
+	}
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget .placeholder { display: none !important; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 

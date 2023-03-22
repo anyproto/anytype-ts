@@ -319,14 +319,11 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 		if (cardStyle != I.LinkCardStyle.Text) {
 			switch (iconSize) {
-				default:
-					size = 18;
-					break;
-
-				case I.LinkIconSize.Medium:
+				case I.LinkIconSize.Medium: {
 					size = 48;
 					is = 28;
 					break;
+				};
 			};
 		};
 

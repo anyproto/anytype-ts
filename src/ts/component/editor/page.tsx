@@ -76,7 +76,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
+		const children = blockStore.getChildren(rootId, rootId, it => !it.isLayoutHeader());
 		const length = childrenIds.length;
 		const width = root.fields?.width;
 		const readonly = this.isReadonly();

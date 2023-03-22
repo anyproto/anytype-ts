@@ -97,7 +97,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 								<ObjectDescription object={object} />
 								<div className="link">
 									{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
-									{url}
+									{Util.shortUrl(url)}
 								</div>
 
 								{archive}

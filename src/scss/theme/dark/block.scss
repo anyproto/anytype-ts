@@ -208,6 +208,7 @@
 
     .block.blockText.textCallout > .wrapContent { background: $colorHover; }
     .block.blockText.textCode > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
+	.block.blockText.textQuote > .wrapContent > .additional > .line { border-color: $colorPrimary; }
 
     /* BlockLink */
 
