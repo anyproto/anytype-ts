@@ -263,12 +263,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const rootId = this.getRootId();
 		const { pagesIn, pagesOut } = this.state;
 
-		if (this.id != rootId) {
-			this.id = rootId;
-			this.loadPage(rootId);
-			return;
-		};
-
+		this.loadPage(rootId);
 		this.resize();
 		this.setActive();
 
@@ -446,6 +441,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	loadPage (id: string) {
+		const { loading } = this.state;
+
+		if ((this.id == id) || loading) {
+			return;
+		};
+
+		this.id = id;
 		this.setState({ loading: true });
 
 		C.NavigationGetObjectInfoWithLinks(id, (message: any) => {

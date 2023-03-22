@@ -1239,7 +1239,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 
 		case I.ImportType.Migration:
 			params = new Rpc.Object.Import.Request.MigrationParams();
-			params.setAddress(options.address);
+			params.setAccountid(options.accountId);
 			params.setPath(options.path);
 
 			request.setMigrationparams(params);

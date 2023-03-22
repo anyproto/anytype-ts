@@ -268,9 +268,9 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					return;
 				};
 
-				const accountId = message.address;
+				const { accountId } = message;
 
-				C.ObjectImport({ path: paths[0], address: accountId }, [], false, I.ImportType.Migration, I.ImportMode.AllOrNothing, (message: any) => {
+				C.ObjectImport({ path: paths[0], accountId }, [], false, I.ImportType.Migration, I.ImportMode.AllOrNothing, (message: any) => {
 					if (this.setError(message.error)) {
 						return;
 					};
