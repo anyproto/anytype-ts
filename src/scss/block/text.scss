@@ -124,7 +124,7 @@
 	.block.blockText.textHeader2 { padding: 14px 0px 0px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget mention {
-		.space { width: 3px; }
+		.space { width: 4px; }
 		name { font-weight: inherit; }
 	}
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget {
