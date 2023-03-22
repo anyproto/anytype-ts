@@ -73,6 +73,16 @@
     /* BlockDataview */
 
     .block.blockDataview {
+		.loadMore { border-color: $colorLinePrimary; }
+		.loadMore {
+			.icon { background-image: url('#{$themePath}/arrow/loadMore0.svg'); }
+		}
+
+		.loadMore:hover { color: $colorPrimary; }
+		.loadMore:hover {
+			.icon { background-image: url('#{$themePath}/arrow/loadMore1.svg'); }
+		}
+
 		.icon.edit { background-image: url('#{$themePath}/icon/dataview/button/edit0.svg'); }
 		.icon.edit:hover { background-image: url('#{$themePath}/icon/dataview/button/edit1.svg'); }
         .icon.plus { background-image: url('#{$themePath}/icon/plus/menu0.svg'); }

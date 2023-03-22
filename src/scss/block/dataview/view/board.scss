@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewItem.viewBoard { padding: 0px 0px 0px 8px; }
+		.viewItem.viewBoard { padding: 0px 0px 0px 5px; }
         .viewItem.viewBoard {
 
             .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
@@ -144,10 +144,4 @@
 
 html.platformLinux {
 	.blocks .block.blockDataview .viewItem.viewBoard .column .body { overflow-y: auto; }
-}
-
-.blocks {
-	.block.blockDataview.isInline {
-		.viewItem.viewBoard { padding: 16px 0px 0px 0px; }
-	}
 }
