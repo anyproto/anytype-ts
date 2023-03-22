@@ -5,8 +5,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { throttle } from 'lodash';
-import { Loader } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -63,6 +62,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 		this.onSourceSelect = this.onSourceSelect.bind(this);
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
@@ -96,6 +98,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const object = detailStore.get(rootId, targetId);
 		const isCollection = this.isCollection();
 		const records = this.getRecords();
+		const cn = [ 'focusable', 'c' + block.id ];
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
@@ -197,7 +200,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		return (
-			<div ref={node => this.node = node}>
+			<div 
+				ref={node => this.node = node}
+				tabIndex={0} 
+				className={cn.join(' ')}
+				onKeyDown={this.onKeyDown} 
+				onKeyUp={this.onKeyUp} 
+				onFocus={this.onFocus}
+			>
 				<div className="hoverArea">
 					{head}
 					{controls}
@@ -249,7 +259,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	unbind () {
 		const { block } = this.props;
 
-		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} selectionEnd.${block.id}  selectionClear.${I.SelectType.Record}`);
+		$(window).off(`resize.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} selectionEnd.${block.id}  selectionClear.${I.SelectType.Record}`);
 	};
 
 	rebind () {
@@ -258,7 +268,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.unbind();
 		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
-		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
 		win.on(`updateDataviewData.${block.id}`, () => { this.loadData(this.getView().id, 0, true);});
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
@@ -272,35 +281,56 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		const { rootId, dataset, isInline } = this.props;
+		const { dataset, isInline, onKeyDown } = this.props;
 		const { selection } = dataset || {};
-		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
-		const length = ids.length;
+		const count = ids.length;
 
-		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
-			return;
+		let ret = false;
+
+		if (!isInline) {
+			if (!this.creating) {
+				keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { 
+					this.onRecordAdd(e, -1, true); 
+					ret = true;
+				});
+			};
+
+			if (!isInline && !keyboard.isFocused) {
+				keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+					selection.set(I.SelectType.Record, this.getRecords());
+					ret = true;
+				});
+			};
+
+			if (count) {
+				keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+					C.ObjectListSetIsArchived(ids, true);
+					
+					selection.clear();
+					analytics.event('MoveToBin', { count });
+					ret = true;
+				});
+			};
 		};
 
-		if (!this.creating) {
-			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRecordAdd(e, -1, true); });
+		if (!ret && onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
+	};
 
-		if (!isInline && !keyboard.isFocused) {
-			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-				selection.set(I.SelectType.Record, this.getRecords());
-			});
-		};
+	onKeyUp (e: any) {
+		const { onKeyUp } = this.props;
 
-		if (length) {
-			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-				C.ObjectListSetIsArchived(ids, true);
-				
-				selection.clear();
-				analytics.event('MoveToBin', { count: length });
-			});
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
 		};
+	};
+
+	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 
 	getObjectId () {
