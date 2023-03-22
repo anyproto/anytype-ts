@@ -40,7 +40,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 							<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
 								<div className="item">
 									<div className="name">
-										{home ? 'Select' : home.name}
+										{home ? home.name : 'Select'}
 									</div>
 								</div>
 								<Icon className="arrow light" />
