@@ -217,6 +217,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			];
 		} else
 		if (block.isPage()) {
+			console.log('pageRemove', pageRemove, allowedDelete);
+
 			sections = [
 				{ children: [ undo, redo, history, archive, pageRemove ] },
 				{ children: [ fav, pageLink, linkTo, pageCopy, template, pageLock ] },
@@ -392,6 +394,19 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			onSelect(item);
 		};
 
+		const returnToDashboard = () => {
+			if (!block.isPage()) {
+				return;
+			};
+
+			const home = ObjectUtil.getSpaceDashboard();
+			if (home && (object.id == home.id)) {
+				ObjectUtil.openRoute({ layout: I.ObjectLayout.Empty });
+			} else {
+				ObjectUtil.openHome('route');
+			};
+		};
+
 		focus.clear(false);
 		
 		switch (item.id) {
@@ -433,18 +448,18 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 				
 			case 'pageArchive':
-				C.ObjectSetIsArchived(rootId, true, (message: any) => {
+				C.ObjectSetIsArchived(object.id, true, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
 
-					keyboard.onBack();
+					returnToDashboard();
 					analytics.event('MoveToBin', { count: 1 });
 				});
 				break;
 
 			case 'pageUnarchive':
-				C.ObjectSetIsArchived(rootId, false, (message: any) => {
+				C.ObjectSetIsArchived(object.id, false, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
@@ -475,11 +490,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'pageRemove':
-				C.ObjectListDelete([ object.id ], (message: any) => {
-					if (block.isPage()) {
-						ObjectUtil.openHome('route');
-					};
-
+				C.ObjectListDelete([ object.id ], () => {
+					returnToDashboard();
 					analytics.event('RemoveCompletely', { count: 1 });
 				});
 				break;
@@ -523,9 +535,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'pageUninstall':
-				Action.uninstall(object, (message: any) => {
-					ObjectUtil.openHome('route');
-				});
+				Action.uninstall(object, () => { returnToDashboard(); });
 				break;
 
 			case 'fav':
@@ -543,9 +553,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'blockRemove':
 				C.BlockListDelete(rootId, [ blockId ], (message: any) => {
 					if (!isPopup) {
-						if (block.isPage()) {
-							ObjectUtil.openHome('route');
-						};
+						returnToDashboard();
 					} else {
 						popupStore.close('page');
 					};
