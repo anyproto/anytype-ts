@@ -1,6 +1,6 @@
 .keyPhrase {
     border-radius: 26px; background: rgba(44, 43, 39, 0.3); font-size: 18px; display: flex;
-    flex-direction: row; align-items: center; justify-content: center; width: fit-content; padding: 30px;
+    flex-direction: row; align-items: center; justify-content: center; width: fit-content; padding: 20px;
 }
 
 .keyPhrase {
@@ -16,3 +16,4 @@
 
 .keyPhrase:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
 .keyPhrase.isBlurred { filter: blur(7px); }
+.keyPhrase.isInvalid { background: #240E07 }

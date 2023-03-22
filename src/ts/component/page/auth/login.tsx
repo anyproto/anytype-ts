@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { Frame, Title, Error, Button, Header, Footer, Icon, KeyPhrase } from 'Component';
+import { Frame, Title, Error, Button, Header, Icon, KeyPhrase } from 'Component';
 import { I, Util, translate, C, keyboard, Animation } from 'Lib';
-import { authStore } from 'Store';
+import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
 	error: string;
-	phrase: string,
+	phrase: string;
+	showPhrase: boolean;
 };
+
+const ANIMATION_CN = 'animation';
 
 const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.PageComponent, State> {
 
@@ -15,7 +18,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 	state = {
 		error: '',
-		phrase: 'duck duck goose'
+		phrase: '',
+		showPhrase: false,
 	};
 	
 	constructor (props: I.PageComponent) {
@@ -24,36 +28,53 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onChangePhrase = this.onChangePhrase.bind(this);
+		this.canSubmit = this.canSubmit.bind(this);
+		this.togglePhraseVisibility = this.togglePhraseVisibility.bind(this);
+		this.onSelfHost = this.onSelfHost.bind(this);
+		this.showLostPhrasePopup = this.showLostPhrasePopup.bind(this);
 	};
 	
 	render () {
-		const { error, phrase } = this.state;
+		const { error, phrase, showPhrase } = this.state;
 		
         return (
 			<div>
 				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
-
-				<Icon className="arrow back animation" onClick={this.onCancel} />
+				<Icon className={['arrow', 'back', ANIMATION_CN].join(' ')} onClick={this.onCancel} />
 				
 				<Frame>
-					<Title text={translate('authLoginTitle')} className="animation" />
-					<Error text={error} className="animation" />
-							
+					<Title text={translate('authLoginTitle')} className={ANIMATION_CN} />							
 					<form onSubmit={this.onSubmit}>
-						<KeyPhrase
-							ref={ref => this.phraseRef = ref}
-							phrase={phrase}
-							isEditable
-							onChange={phrase => { this.setState({ phrase }); console.log(this.state.phrase); }}
-							/* placeholder={translate('authLoginLabel')}  */
-						/>
-
-						<div className="buttons animation">
-							<Button type="input" text={translate('authLoginLogin')} />
+						<Error text={error} className={ANIMATION_CN} />
+						<div className={['keyPhraseContainer', ANIMATION_CN].join(' ')}>
+							<KeyPhrase
+								ref={ref => this.phraseRef = ref}
+								phrase={phrase}
+								isEditable
+								isBlurred={!showPhrase}
+								isInvalid={error.length > 0}
+								onChange={this.onChangePhrase}
+							/>
+							<Icon className={showPhrase ? 'see' : 'hide' } onClick={this.togglePhraseVisibility} />
+						</div>
+						<div className={['buttons', ANIMATION_CN].join(' ')}>
+							<Button className={this.canSubmit() ? '' : 'disabled'} type="input" text={translate('authLoginSubmit')} />
+							<span
+								className="lostPhrase"
+								onClick={this.showLostPhrasePopup}
+							>{translate('authLoginLostPhrase')}
+							</span>
 						</div>
 					</form>
 				</Frame>
+				<span
+					className={[ANIMATION_CN, 'selfHost', 'bottom'].join(' ')}
+					onClick={this.onSelfHost}
+				>
+						<Icon className="selfHost" />
+						{translate('authLoginSelfHost')}
+				</span>
 			</div>
 		);
 	};
@@ -66,7 +87,17 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	componentDidUpdate () {
 		/* this.phraseRef.focus(); */
 	};
+
+	canSubmit () {
+		const { phrase } = this.state;
+		return phrase.length > 0;
+	}
+
 	onSubmit (e: any) {
+		if (!this.canSubmit()) {
+			return;
+		}
+		
 		e.preventDefault();
 		
 		const { walletPath } = authStore;
@@ -90,7 +121,32 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	onCancel (e: any) {
 		Animation.from(() => { Util.route('/auth/select'); });
 	};
-	
+
+	onSelfHost () {
+		alert("feature not implemented");
+	}
+
+	onChangePhrase (phrase: string) {
+		this.setState({ phrase, error: '' });
+	}
+
+	togglePhraseVisibility () {
+		this.setState({ showPhrase: !this.state.showPhrase })
+	}
+
+	/** Shows a Popup that explains to the user that the phrase cannot be recovered */
+	showLostPhrasePopup = () => {
+		popupStore.open('confirm', {
+            data: {
+                title: translate('authLoginLostPhrasePopupTitle'),
+                text: translate('authLoginLostPhrasePopupContent'),
+                textConfirm: 'Okay',
+				canConfirm: true,
+				canCancel: false,
+                onConfirm: () => { popupStore.close('confirm'); },
+            },
+        });
+	};
 });
 
 export default PageAuthLogin;

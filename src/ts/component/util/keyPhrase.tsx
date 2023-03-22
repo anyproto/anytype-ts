@@ -14,6 +14,7 @@ type Props = {
 	phrase: string
 	isBlurred?: boolean,
 	isEditable?: boolean
+	isInvalid?: boolean
 	onChange?: (phrase: string) => void
 }
 
@@ -26,11 +27,14 @@ class KeyPhrase extends React.Component<Props> {
 	}
 
 	render () {
-		const { phrase, isBlurred, isEditable } = this.props;
+		const { phrase, isBlurred, isEditable, isInvalid } = this.props;
 
 		const cn = ['keyPhrase'];
 		if (isBlurred) {
 			cn.push('isBlurred');
+		}
+		if (isInvalid) {
+			cn.push('isInvalid');
 		}
 
 		const content = this.getHTML(phrase);
@@ -56,19 +60,13 @@ class KeyPhrase extends React.Component<Props> {
 	};
 
 	getHTML (phrase: string) {
-		const html = phrase.split(' ').map((word, index) => {
+		return phrase.split(' ').map((word, index) => {
 			// rotate through the colors
 			const color = COLORS[index % COLORS.length];
 			// capitalize each word
 			word = word.charAt(0).toUpperCase() + word.slice(1);
 			return `<span class="${color}">${word}</span>`
 		}).join('');
-
-		if (html === '') {
-			return `<span class="${COLORS[0]}"></span>`;
-		}
-		
-		return html;
 	};
 
 	onInput (e: any) {
