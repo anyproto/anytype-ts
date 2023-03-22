@@ -21,7 +21,7 @@ const KeyPhrase = observer(class Phrase extends React.Component<Props> {
 	render () {
 		const { phrase, isBlurred } = this.props;
 
-		const cn = ['phrase'];
+		const cn = ['keyPhrase'];
 		if (isBlurred) {
 			cn.push('isBlurred');
 		}
