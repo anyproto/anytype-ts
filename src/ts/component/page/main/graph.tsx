@@ -68,6 +68,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.rebind();
 		this.resize();
 		this.load();
+		this.initRootId(this.getRootId());
 
 		window.Graph = this;
 	};
@@ -96,12 +97,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.unbind();
 		win.on(`keydown.graphPage`, (e: any) => { this.onKeyDown(e); });
 		win.on('updateGraphRoot.graphPage', (e: any, data: any) => { 
-			this.rootId = data.id; 
-			this.refHeader.refChild.setRootId(data.id);
+			this.initRootId(data.id);
 		});
 		win.on('removeGraphNode.graphPage', (e: any, data: any) => { 
 			this.refGraph.send('onRemoveNode', { ids: Util.objectCopy(data.ids) });
 		});
+	};
+
+	initRootId (id: string) {
+		this.rootId = id; 
+		this.refHeader.refChild.setRootId(id);
 	};
 
 	onKeyDown (e: any) {
