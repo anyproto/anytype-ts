@@ -255,7 +255,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 			window.clearTimeout(this.timeoutUi);
 			window.setTimeout(() => { 
-				this.uiShow(); 
 				this.resizePage();
 			}, 15);
 		});
@@ -333,36 +332,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const a = events.split(' ').map(it => it + namespace);
 
 		$(window).off(a.join(' '));
-	};
-	
-	uiHide () {
-		if (this.uiHidden) {
-			return;
-		};
-
-		const obj = this.getContainer();
-
-		obj.find('#footer').css({ opacity: 0 });
-		
-		this.uiHidden = true;
-		
-		window.clearTimeout(this.timeoutUi);
-		this.timeoutUi = window.setTimeout(() => {
-			$(window).off('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
-		}, 100);
-	};
-
-	uiShow () {
-		if (!this.uiHidden) {
-			return;
-		};
-
-		const obj = this.getContainer();
-		
-		obj.find('#footer').css({ opacity: 1 });
-		
-		this.uiHidden = false;
-		$(window).off('mousemove.ui');
 	};
 	
 	onMouseMove (e: any) {
@@ -713,7 +682,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		Preview.previewHide(true);
-		this.uiHide();
 		
 		if (platform == I.Platform.Mac) {
 			// Print or prev string
