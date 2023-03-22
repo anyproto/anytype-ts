@@ -484,9 +484,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		if (!config.debug.ho) {
 			ret = ret && !it.isHidden;
 		};
-		if (!config.experimental) {
-			ret = ret && ![ Constant.typeId.space ].includes(it.type);
-		};
 		return ret;
 	};
 

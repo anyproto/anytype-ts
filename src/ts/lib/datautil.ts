@@ -911,7 +911,7 @@ class DataUtil {
 	graphFilters () {
 		const { workspace } = commonStore;
 		const { profile } = blockStore;
-		const skipTypes = [ Constant.typeId.space ].concat(this.getFileTypes()).concat(this.getSystemTypes());
+		const skipTypes = this.getFileTypes().concat(this.getSystemTypes());
 		const skipIds = [ '_anytype_profile', profile ];
 
 		return [

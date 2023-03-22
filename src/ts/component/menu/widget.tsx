@@ -250,27 +250,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes().concat(DataUtil.getFileTypes()) },
 				];
 
-				switch (this.layout) {
-					case I.WidgetLayout.List: {
-						filters = filters.concat([
-							{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-							{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-						]);
-						break;
-					};
-
-					case I.WidgetLayout.Tree: {
-						filters = filters.concat([
-							{ 
-								operator: I.FilterOperator.And, 
-								relationKey: 'type', 
-								condition: I.FilterCondition.NotIn, 
-								value: [ Constant.typeId.set, Constant.typeId.space ],
-							},
-						]);
-					};
-				};
-
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters,
