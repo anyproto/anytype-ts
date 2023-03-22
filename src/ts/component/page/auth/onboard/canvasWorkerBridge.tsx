@@ -9,9 +9,10 @@ type Props = {
   state: OnboardStage;
 };
 
+// NOTE: Change this next line to new Worker(`workers/onboard.js`) when copying over to JS-anytype
+const worker = new Worker('workers/onboard.js');
+
 const CanvasWorkerBridge = (props: Props) => {
-  // NOTE: Change this next line to new Worker(`workers/onboard.js`) when copying over to JS-anytype
-  const worker = new Worker('workers/onboard.js');
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   React.useEffect(() => {
