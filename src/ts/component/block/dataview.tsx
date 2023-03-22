@@ -44,7 +44,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	creating = false;
 	frame = 0;
 	isMultiSelecting = false;
-	selected: string[];
+	selected: string[] = [];
 
 	constructor (props: Props) {
 		super(props);
@@ -101,7 +101,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let ViewComponent: any = null;
 		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]), (object.isDeleted ? 'isDeleted' : '') ].join(' ');
 		let head = null;
-		let controls = null;
 		let body = null;
 
 		switch (view.type) {
@@ -143,6 +142,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isInline
 		};
 
+		let controls = null;
+		if (this.isMultiSelecting) {
+			controls = <Selection {...this.props} {...dataviewProps} ids={this.selected} multiSelectAction={this.multiSelectAction} className={className} />
+		} else {
+			controls = <Controls ref={ref => this.refControls = ref} {...this.props} {...dataviewProps} className={className} />;
+		};
+
 		if (isInline) {
 			head = (
 				<Head 
@@ -157,7 +163,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		if (loading) {
-			body = <Loader id="set-loader" />
+			body = null;
 		} else
 		if (isInline && !targetId) {
 			body = this.getEmpty('target');
@@ -166,31 +172,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			body = this.getEmpty('source');
 		} else 
 		if ((view.type != I.ViewType.Board) && !records.length) {	
-			controls = (
-				<Controls 
-					ref={ref => this.refControls = ref} 
-					{...this.props}
-					{...dataviewProps}
-					className={className}
-				/>
-			);
 			body = this.getEmpty('view');
 		} else {
-			controls = this.isMultiSelecting ? (
-				<Selection
-					{...this.props}
-					{...dataviewProps}
-					multiSelectAction={this.multiSelectAction}
-				/>
-			) : (
-				<Controls 
-					ref={ref => this.refControls = ref} 
-					{...this.props}
-					{...dataviewProps}
-					className={className}
-				/>
-			);
-
 			body = (
 				<div className={[ 'content', isCollection ? 'isCollection': '' ].join(' ')}>
 					<ViewComponent 
@@ -1036,10 +1019,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onMultiSelect (id?: string) {
-		const { dataset } = this.props;
+		const { dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 
-		if (!selection) {
+		let updateRequired = false;
+
+		if (!selection || isInline) {
 			return;
 		};
 		
@@ -1055,8 +1040,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			selection.set(I.SelectType.Record, ids);
 		};
 
+		if (this.selected.length !== ids.length) {
+			updateRequired = true;
+		};
+
 		this.selected = ids;
 		this.setMultiSelect(!!ids.length);
+
+		if (updateRequired) {
+			this.forceUpdate();
+		};
 
 		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
 	};

@@ -18,8 +18,6 @@
 			}
 
 			.resize { width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; cursor: col-resize; z-index: 10; }
-			.resize::after { content: ''; width: 2px; height: 100%; background: $colorOrange; position: absolute; top: 0px; left: 19px; opacity: 0; }
-			.resize:hover::after { opacity: 1; }
 		}
 		.cellHead.small { text-align: center; }
 		.cellHead.small {
@@ -33,14 +31,10 @@
 			.icon.plus { margin: 0px; }
 		}
 
-		.cellHead.isResizing {
-			.resize::after { opacity: 1; }
-		}
-
-		.cellHead.isDragging { border: 0px; background: rgba(255,255,255,0.75); }
+		.cellHead.isDragging { border: 0px; }
 		.cellHead.isDragging::after {
 			content: ""; display: block; width: 100%; height: calc(100% - 1px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
-			background-color: rgba(255,255,255,0.75);
+			background-color: rgba(79,79,79,0.04);
 		}
 		.cellHead.isDragging {
 			.resize { display: none; }

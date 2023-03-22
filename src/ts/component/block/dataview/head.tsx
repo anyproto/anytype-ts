@@ -179,8 +179,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			return;
 		};
 
-		console.log(isCollection);
-
 		let filters: I.Filter[] = [];
 		let addParam: any = {};
 
@@ -246,7 +244,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					addParam,
 					onSelect: (item: any) => {
 						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
-						analytics.event('InlineSetSetSource');
+						analytics.event('InlineSetSetSource', { type: 'externalObject' });
 						this.menuContext.close();
 					}
 				});

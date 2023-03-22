@@ -5,20 +5,15 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { Loader } from 'Component';
 import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
 import Constant from 'json/constant.json';
 
-interface State {
-	loading: boolean;
-};
-
 const PADDING = 46;
 
-const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewComponent, State> {
+const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewComponent> {
 
 	node: any = null;
 	cache: any = {};
@@ -26,9 +21,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	groupRelationKey = '';
 	newIndex = -1;
 	newGroupId = '';
-	state = {
-		loading: false,
-	};
 	columnRefs: any = {};
 	isDraggingColumn = false;
 	isDraggingCard = false;
@@ -44,7 +36,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	render () {
-		const { loading } = this.state;
 		const { rootId, block, getView } = this.props;
 		const view = getView();
 		const groups = this.getGroups(false);
@@ -71,22 +62,20 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			>
 				<div id="scroll" className="scroll">
 					<div className="viewItem viewBoard">
-						{loading ? <Loader /> : (
-							<div id="columns" className="columns">
-								{groups.map((group: any, i: number) => (
-									<Column 
-										key={`board-column-${group.id}`} 
-										ref={ref => this.columnRefs[group.id] = ref}
-										{...this.props} 
-										{...group}
-										onRecordAdd={this.onRecordAdd}
-										onDragStartColumn={this.onDragStartColumn}
-										onDragStartCard={this.onDragStartCard}
-										getSubId={() => { return dbStore.getGroupSubId(rootId, block.id, group.id); }}
-									/>
-								))}
-							</div>
-						)}
+						<div id="columns" className="columns">
+							{groups.map((group: any, i: number) => (
+								<Column 
+									key={`board-column-${group.id}`} 
+									ref={ref => this.columnRefs[group.id] = ref}
+									{...this.props} 
+									{...group}
+									onRecordAdd={this.onRecordAdd}
+									onDragStartColumn={this.onDragStartColumn}
+									onDragStartCard={this.onDragStartCard}
+									getSubId={() => { return dbStore.getGroupSubId(rootId, block.id, group.id); }}
+								/>
+							))}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -156,8 +145,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
 		};
 
-		this.setState({ loading: true });
-
 		C.ObjectGroupsSubscribe(subId, view.groupRelationKey, view.filters, object.setOf || [], isCollection ? object.id : '', (message: any) => {
 			if (message.error.code) {
 				return;
@@ -189,7 +176,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			});
 
 			dbStore.groupsSet(rootId, block.id, this.applyGroupOrder(groups));
-			this.setState({ loading: false });
 		});
 	};
 

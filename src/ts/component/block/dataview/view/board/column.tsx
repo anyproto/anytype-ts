@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Loader, LoadMore } from 'Component';
+import { Icon, LoadMore } from 'Component';
 import { I, translate, Relation, DataUtil, Util } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Card from './card';
@@ -16,11 +16,7 @@ interface Props extends I.ViewComponent {
 	getSubId?: () => string;
 };
 
-interface State {
-	loading: boolean;
-};
-
-const Column = observer(class Column extends React.Component<Props, State> {
+const Column = observer(class Column extends React.Component<Props> {
 
 	node: any = null;
 	cache: any = {};
@@ -28,9 +24,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 	columnWidth = 0;
 	columnCount = 0;
 	offset = 0;
-	state = {
-		loading: false,
-	};
 
 	constructor (props: Props) {
 		super(props);
@@ -41,7 +34,6 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 	render () {
 		const { rootId, block, id, getSubId, getView, getLimit, onRecordAdd, value, onDragStartColumn } = this.props;
-		const { loading } = this.state;
 		const view = getView();
 		const subId = getSubId();
 		const items = this.getItems();
@@ -107,28 +99,24 @@ const Column = observer(class Column extends React.Component<Props, State> {
 
 				<div className="body">
 					<div className="bg">
-						{loading ? <Loader /> : (
-							<React.Fragment>
-								{items.map((item: any, i: number) => (
-									<Card
-										key={[ 'board', view.id, id, item.id ].join('-')}
-										{...this.props}
-										id={item.id}
-										groupId={id}
-										index={i}
-									/>
-								))}
+						{items.map((item: any, i: number) => (
+							<Card
+								key={[ 'board', view.id, id, item.id ].join('-')}
+								{...this.props}
+								id={item.id}
+								groupId={id}
+								index={i}
+							/>
+						))}
 
-								{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
+						{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
-								{isAllowedObject ? (
-									<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
-										<Icon className="plus" />
-									</div>
-								) : ''}
+						{isAllowedObject ? (
+							<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
+								<Icon className="plus" />
+							</div>
+						) : ''}
 
-							</React.Fragment>
-						)}
 						<div className={cnbg.join(' ')} />
 					</div>
 				</div>
