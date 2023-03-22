@@ -1,3 +1,5 @@
+import { Util } from 'Lib';
+
 class Storage {
 	
 	storage: any = null;
@@ -42,15 +44,20 @@ class Storage {
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {
-		const obj = this.get('toggle') || {};
-		
-		obj[rootId] = obj[rootId] || [];
-		if (value) {
-			obj[rootId].push(id);
-		} else {
-			obj[rootId] = obj[rootId].filter(it => it != id);
+		let obj = this.get('toggle');
+		if (!obj || !Util.objectLength(obj)) {
+			obj = {};
 		};
-		obj[rootId] = [ ...new Set(obj[rootId]) ];
+		
+		let list = obj[rootId] || [];
+		if (value) {
+			list = list.concat([ id ]);
+		} else {
+			list = list.filter(it => it != id);
+		};
+		list = [ ...new Set(list) ];
+
+		obj[rootId] = list;
 
 		this.set('toggle', obj, true);
 		return obj;
