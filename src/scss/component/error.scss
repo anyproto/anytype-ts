@@ -1,4 +1,4 @@
 @import "~scss/_vars";
 
-.error { color: $colorRed; margin: 1em 0px; font-size: 14px; line-height: 22px; letter-spacing: 0.2px; }
+.error { color: $colorRed; margin: 1em 0px; font-size: 14px; line-height: 22px; letter-spacing: 0.2px; word-break: break-word; }
 .error:empty { display: none; }
