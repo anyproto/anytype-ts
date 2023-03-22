@@ -1,5 +1,5 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, Renderer, Action, Dataview } from 'Lib';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, Renderer, Action, Dataview, Preview } from 'Lib';
 import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
@@ -921,6 +921,16 @@ class Dispatcher {
 						case I.ProgressState.Done:
 						case I.ProgressState.Canceled:
 							commonStore.progressClear();
+
+							let toast = '';
+							switch (pt) {
+								case I.ProgressType.Import: { toast = 'Import finished'; break; };
+								case I.ProgressType.Export: { toast = 'Export finished'; break; };
+							};
+
+							if (toast) {
+								Preview.toastShow({ text: toast });
+							};
 							break;
 					};
 					break;
