@@ -33,7 +33,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	refHeader: any = null;
 	dir = 0;
 
-	timeoutUi = 0;
 	timeoutMove = 0;
 	timeoutScreen = 0;
 
@@ -253,10 +252,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				onOpen();
 			};
 
-			window.clearTimeout(this.timeoutUi);
-			window.setTimeout(() => { 
-				this.resizePage();
-			}, 15);
+			window.setTimeout(() => { this.resizePage(); }, 15);
 		});
 	};
 

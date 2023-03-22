@@ -14,6 +14,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 
 	mode: I.CsvImportMode = I.CsvImportMode.Table;
 	header = false;
+	transpose = false;
 	delimiter = ',';
 
 	constructor (props: Props) {
@@ -49,8 +50,13 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 					</div>
 
 					<div className="row">
-						<Label text="Use first column as relation names" />
+						<Label text="Use the first row as column names" />
 						<Switch value={this.header} className="big" onChange={(e: any, v: boolean) => { this.header = v; }}/>
+					</div>
+
+					<div className="row">
+						<Label text="Transpose rows and columns" />
+						<Switch value={this.transpose} className="big" onChange={(e: any, v: boolean) => { this.transpose = v; }}/>
 					</div>
 
 					<div className="row">
@@ -91,6 +97,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 				paths, 
 				mode: this.mode, 
 				useFirstColumnForRelations: this.header,
+				transpose: this.transpose,
 				delimiter: this.delimiter,
 			});
 		});
