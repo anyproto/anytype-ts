@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Frame, Title, Input, Error, Button, Header, Footer, Icon } from 'Component';
+import { Frame, Title, Input, Error, Button, Header, Footer, Icon, KeyPhrase } from 'Component';
 import { I, Util, translate, C, keyboard, Animation } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -45,6 +45,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 							placeholder={translate('authLoginLabel')} 
 							onKeyDown={this.onKeyDown} 
 						/>
+						<KeyPhrase phrase='duck duck goose' isBlurred/>
 
 						<div className="buttons animation">
 							<Button type="input" text={translate('authLoginLogin')} />
