@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockDataview { @include text-common; }
+	.block.blockDataview { @include text-common; padding: 6px 0px; }
 	.block.blockDataview {
 		.wrapContent { z-index: 1; }
 
