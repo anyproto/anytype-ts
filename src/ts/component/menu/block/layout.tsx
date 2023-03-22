@@ -56,7 +56,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	componentWillUnmount (): void {
-		menuStore.clearTimeout();
+		menuStore.closeAll(Constant.menuIds.layout);
 	};
 	
 	rebind () {
