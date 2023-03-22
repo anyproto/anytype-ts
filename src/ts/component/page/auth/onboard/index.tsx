@@ -18,14 +18,6 @@ type State = {
 const ANIMATION_CN = 'animation';
 const STORAGE_INFO_CN = 'storageInfo';
 
-/* 
-
-NOTE: this file is located in the dist/workers folder
-it is copied from the JS-Onboard-Animation Repository
-
-*/
-const worker = new Worker('workers/onboard.js');
-
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 
 	soulContentRef: any = null;
@@ -99,7 +91,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{this.renderButtons()}
 					{footer}
 				</Frame>
-				<CanvasWorkerBridge state={stage} worker={worker} />
+				<CanvasWorkerBridge state={stage} />
 			</div>
 		);
 	};

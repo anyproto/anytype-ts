@@ -1,7 +1,5 @@
 /* 
-
 NOTE: this file is copy pasted from the JS-Onboard-Animation Repository
-
 */
 
 import * as React from 'react';
@@ -9,11 +7,11 @@ import { DOM_EVENTS, OnboardStage } from './constants';
 
 type Props = {
   state: OnboardStage;
-  worker: Worker;
 };
 
 const CanvasWorkerBridge = (props: Props) => {
-  const { worker } = props;
+  // NOTE: Change this next line to new Worker(`workers/onboard.js`) when copying over to JS-anytype
+  const worker = new Worker('workers/onboard.js');
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   React.useEffect(() => {
