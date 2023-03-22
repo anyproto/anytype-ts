@@ -325,91 +325,11 @@ html.themeDark {
 		}
     }
 
-    /* Widgets */
-    /* ---------------------------------------------------------------- */
-
-    .listWidget {
-		> .buttons {
-			.button, .button.edit { background-color: $colorBgIcon; color: $colorPrimary; }
-		}
-	}
-
-    .widget { background-color: $colorHover; color: $colorPrimary; border-color: $colorLineSecondary !important;  }
-	.widget {
-		.iconWrap:hover, .iconWrap.active { background-color: $colorHover; }
-		.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
-		.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse.svg'); }
-		.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
-
-		.head::before { background-color: $colorHover; }
-
-		.icon.remove .inner { background-color: $colorBgIcon; }
-		.icon.remove:hover .inner { background-color: $colorTertiary; }
-	}
-
-	.widget.active {
-		.head {
-			.iconWrap.options { background-color: $colorHover; }
-		}
-	}
-
-	.widget.widgetSpace {
-		.icon:hover { background-color: $colorHover; }
-	}
-
-	.widget.isPreview {
-		.head { border-color: $colorLineSecondary; }
-	}
-
-    .widget.widgetTree {
-        .icon.set { background-image: url('#{$themePath}/icon/sidebar/set.svg'); }
-        .icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
-        .icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
-
-        .item {
-			.inner:hover::before { background: $colorHover; }
-
-			.buttons {
-				.icon:hover { background-color: $colorHover; }
-			}
-		}
-    }
-
-	.widget.widgetList {
-		#viewSelect { border-color: $colorLineSecondary; }
-		#viewSelect {
-			.viewList {
-				.viewItem { color: $colorSecondary; }
-				.viewItem:hover, .viewItem.active { color: $colorPrimary; }
-			}
-
-			.select {
-				.icon.arrow { background-image: url('#{$themePath}/arrow/widget.svg') !important; }
-			}
-		}
-
-		.body {
-			.item:hover { background: $colorHover; }
-			.item {
-				.iconObject { background: $colorBgIcon; }
-				.iconObject.isTask, .iconObject.isBookmark { background: none; }
-
-				.buttons {
-					.icon:hover { background-color: $colorHover; }
-				}
-			}
-		}
-	}
-
-	.button.widget {
-		.icon.library { background-image: url('#{$themePath}/icon/sidebar/library.svg'); }
-		.icon.bin { background-image: url('#{$themePath}/icon/sidebar/bin.svg'); }
-	}
-
     @import "./menu.scss";
     @import "./popup.scss";
     @import "./page.scss";
     @import "./block.scss";
+	@import "./widget.scss";
 
     /* Cells */
     /* ---------------------------------------------------------------- */

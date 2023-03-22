@@ -310,7 +310,6 @@ class DataUtil {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space },
 				],
 				ignoreWorkspace: true,
-				ignoreDeleted: true,
 			}
 		];
 

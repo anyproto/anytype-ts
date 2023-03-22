@@ -63,7 +63,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		];
 
 		if (config.experimental) {
-			ret.push({ id: 'csv', name: 'CSV', skipPage: true });
+			ret.push({ id: 'csv', name: 'CSV' });
 		};
 
 		return ret;
@@ -98,10 +98,6 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	onImportText () {
 		this.onImportCommon(I.ImportType.Text, [ 'zip', 'txt' ]);
-	};
-
-	onImportCsv () {
-		this.onImportCommon(I.ImportType.Csv, [ 'zip', 'csv' ], { mode: I.CsvImportMode.Collection });
 	};
 
 	onImportProtobuf () {

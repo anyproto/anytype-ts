@@ -39,11 +39,14 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const paddingLeft = (depth - 1) * 12;
 
 		let arrow = null;
-		if (numChildren > 0) {
-			arrow = <Icon className="arrow" onClick={this.onToggle} />;
-		} else 
+		if (object.type == Constant.typeId.collection) {
+			arrow = <Icon className="collection" />;
+		} else
 		if (object.type == Constant.typeId.set) {
 			arrow = <Icon className="set" />;
+		} else
+		if (numChildren > 0) {
+			arrow = <Icon className="arrow" onClick={this.onToggle} />;
 		} else {
 			arrow = <Icon className="blank" />;
 		};

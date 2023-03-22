@@ -149,6 +149,7 @@ class Select extends React.Component<Props, State> {
 			className: menuClassName,
 			classNameWrap: menuClassNameWrap,
 			width: menuWidth,
+			noFlipX: true,
 			onOpen: () => {
 				window.setTimeout(() => { $(element).addClass('active'); });
 			},

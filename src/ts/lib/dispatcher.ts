@@ -69,8 +69,8 @@ class Dispatcher {
 			console.error('[Dispatcher.stream] end, restarting');
 
 			let t = 1000;
-			if (this.reconnects == 10) {
-				t = 30000;
+			if (this.reconnects == 20) {
+				t = 5000;
 				this.reconnects = 0;
 			};
 
@@ -982,6 +982,8 @@ class Dispatcher {
 
 		if (root && root.fields.analyticsContext) {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
+		} else {
+			analytics.removeContext();
 		};
 
 		dbStore.relationsSet(contextId, rootId, relationLinks);

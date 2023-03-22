@@ -11,7 +11,7 @@
 			.wrapContent { width: 100%; }
 		}
 
-		.editorControls { height: 44px; width: 100%; margin-bottom: 6px; padding: 0px 14px; }
+		.editorControls { height: 32px; width: 100%; margin-bottom: 8px; padding: 0px 14px; }
 
 		.headSimple {
 			.side.right { display: none; }
@@ -27,7 +27,7 @@
 	}
 
 	.setWrapper.withCover, .setWrapper.withIconAndCover {
-		.wrapper { padding-top: 328px; }
+		.wrapper { padding-top: 356px; }
 		.editorControls { display: none; }
 	}
 

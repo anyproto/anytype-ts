@@ -6,6 +6,9 @@ module.exports = (env, argv) => {
 	const port = process.env.SERVER_PORT;
 
 	return {
+		mode: 'development',
+		devtool: false,
+
 		optimization: {
 			minimize: false,
 			removeAvailableModules: true,
@@ -36,7 +39,6 @@ module.exports = (env, argv) => {
 		
 		devServer: {
 			hot: true,
-			static: path.join(__dirname, 'dist'),
 			static: {
 				directory: path.join(__dirname, 'dist'),
 				watch: {
@@ -49,7 +51,10 @@ module.exports = (env, argv) => {
 			},
 			historyApiFallback: true,
 			host: 'localhost',
-			port: port,
+			port,
+			client: {
+				progress: false,
+    		},
 		},
 	
 		module: {

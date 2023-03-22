@@ -70,7 +70,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			);
 		};
 
-		if (isCollection) {
+		if (isCollection && !isInline) {
 			content = (
 				<React.Fragment>
 					<Icon

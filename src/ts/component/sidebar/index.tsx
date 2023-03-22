@@ -99,8 +99,6 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	// Event Handlers
 
 	onDragStart (e: React.MouseEvent) {
-		console.log('onDragStart');
-
 		e.preventDefault();
 		e.stopPropagation();
 
