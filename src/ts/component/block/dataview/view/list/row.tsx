@@ -65,7 +65,7 @@ const Row = observer(class Row extends React.Component<Props> {
 			)
 		};
 
-		if (isCollection) {
+		if (isCollection && !isInline) {
 			content = (
 				<React.Fragment>
 					<Icon

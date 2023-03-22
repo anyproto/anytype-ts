@@ -85,6 +85,11 @@ class Analytics {
 		};
 	};
 
+	removeContext () {
+		Storage.delete(KEY_CONTEXT);
+		Storage.delete(KEY_ORIGINAL_ID);
+	};
+
 	event (code: string, data?: any) {
 		data = data || {};
 

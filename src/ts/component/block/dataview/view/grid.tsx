@@ -378,6 +378,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	onSortStart () {
+		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
 	};
 
@@ -390,6 +391,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		view.relations = arrayMove(relations, oldIndex, newIndex);
 		C.BlockDataviewViewRelationSort(rootId, block.id, view.id, view.relations.map(it => it.relationKey));
 
+		keyboard.setDragging(false);
 		keyboard.disableSelection(false);
 	};
 

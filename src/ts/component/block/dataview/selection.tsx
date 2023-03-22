@@ -3,28 +3,31 @@ import { observer } from 'mobx-react';
 import { I, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
+	ids: string[];
 	multiSelectAction?: (e: any, action: string) => void;
 };
 
 const Selection = observer(class Selection extends React.Component<Props> {
 
 	render () {
-		const { isInline, isCollection, dataset, multiSelectAction } = this.props;
-		const { selection } = dataset;
+		const { className, isInline, isCollection, multiSelectAction, ids } = this.props;
 		const cn = [ 'dataviewControls', 'dataviewSelection' ];
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
+
+		if (className) {
+			cn.push(className);
+		};
 
 		if (isInline) {
 			cn.push('isInline');
 		};
 
 		const buttons: any[] = [
-			{ id: 'archive', text: 'Move to bin', className: [ 'grey' ] },
+			{ id: 'archive', text: 'Move to bin', className: [ 'black' ] },
 			{ id: 'done', text: 'Done', className: [ 'orange' ] },
 		];
 
 		if (isCollection) {
-			buttons.unshift({ id: 'unlink', text: 'Unlink' });
+			buttons.unshift({ id: 'unlink', text: 'Unlink', className: [ 'black' ] });
 		};
 
 		return (

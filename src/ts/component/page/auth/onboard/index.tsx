@@ -5,15 +5,8 @@ import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytic
 import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-
-enum OnboardStage {
-	Void = 0,
-	KeyPhrase = 1,
-	Offline = 2,
-	Soul = 3,
-	SoulCreating = 4,
-	SpaceCreating = 5,
-};
+import CanvasWorkerBridge from "./canvasWorkerBridge"
+import { OnboardStage } from './constants';
 
 type State = {
 	stage: OnboardStage;
@@ -24,6 +17,14 @@ type State = {
 
 const ANIMATION_CN = 'animation';
 const STORAGE_INFO_CN = 'storageInfo';
+
+/* 
+
+NOTE: this file is located in the dist/workers folder
+it is copied from the JS-Onboard-Animation Repository
+
+*/
+const worker = new Worker('workers/onboard.js');
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 
@@ -98,6 +99,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{this.renderButtons()}
 					{footer}
 				</Frame>
+				<CanvasWorkerBridge state={stage} worker={worker} />
 			</div>
 		);
 	};

@@ -20,6 +20,7 @@
 		.iconObject { flex-shrink: 0; flex-basis: 20px; }
 		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: none; }
 		.icon.set { background-image: url('~img/icon/sidebar/set.svg'); }
+		.icon.collection { background-image: url('~img/icon/sidebar/collection.svg'); }
 		.icon.blank { background-image: url('~img/icon/sidebar/blank.svg'); }
 		.icon.arrow { background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); cursor: pointer; }
 
