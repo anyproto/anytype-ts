@@ -35,7 +35,7 @@
 		mention * { user-select: text !important; }
 		mention {
 			smile { display: none; position: relative; z-index: 1; }
-			.space { width: 4px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
+			.space { width: 2px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
 			name { display: inline; white-space: normal; vertical-align: top; position: relative; font-weight: 500; }
 		}
@@ -81,18 +81,22 @@
 	}
 
 	.block.blockText > .wrapContent > .selectable.isSelectionSelected::after { z-index: 0; }
-
+	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
 	.block.blockText > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { flex: auto; padding: 0px; width: 100%; }	
 	.block.blockText > .wrapContent > .selectable > .dropTarget #value.isFocused { background: none; }
+
+	/* Readonly */
 
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget .marker.check { cursor: default; }
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget #value { min-height: 1em; cursor: text !important; user-select: text !important; }
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget #placeholder { display: none; }
 	.block.blockText.isReadonly.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
 
+	/* IsChecked */
+
 	.block.blockText.isChecked > .wrapContent > .selectable > .dropTarget * { color: $colorMediumGrey !important; }
 
-	.block.blockText > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
+	/* Title */
 
 	.block.blockText.textTitle { padding: 6px 0px 4px 0px !important; @include text-title; }
 	.block.blockText.textTitle {
@@ -103,21 +107,46 @@
 
 	.block.blockText.textDescription { padding: 0px 0px 4px 0px; @include text-description; }
 
+	/* Header1 */
+
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget { @include text-header1; line-height: 35px; padding: 3px 0px 1px 0px; }
-	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget mention .space { width: 6px; height: 32px; }
+	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget mention {
+		.space { width: 4px; }
+		name { font-weight: inherit; }
+	}
+	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget {
+		lnk, obj { font-weight: inherit; }
+	}
+
+	/* Header2 */
 	
 	.block.blockText.textHeader2 { padding: 14px 0px 0px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
-	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 28px; }
+	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget mention {
+		.space { width: 3px; }
+		name { font-weight: inherit; }
+	}
+	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget {
+		lnk, obj { font-weight: inherit; }
+	}
+
+	/* Header3 */
 	
 	.block.blockText.textHeader3 { padding: 14px 0px 0px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
-	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 26px; }
+	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget mention {
+		.space { width: 3px; }
+		name { font-weight: inherit; }
+	}
+	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget {
+		lnk, obj { font-weight: inherit; }
+	}
+
+	/* Quote */
 	
 	.block.blockText.textQuote { padding: 6px 0px 6px 0px; }
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget { @include text-quote; padding: 1px 0px 2px 0px; }
-	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget mention .space { width: 5px; height: 26px; }
 	.block.blockText.textQuote > .wrapContent > .additional > .line { width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 2px solid $colorOrange; }
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { padding-left: 28px; }
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap > .placeholder { left: 28px; }
@@ -125,6 +154,8 @@
 	.block.blockText.textQuote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { padding-right: 28px; }
 	.block.blockText.textQuote.align2 > .wrapContent > .additional > .line { left: auto; right: 11px; }
 	.block.blockText.textQuote.align2 > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap > .placeholder { left: auto; right: 28px; }
+
+	/* Callout */
 	
 	.block.blockText.textCallout { min-width: 130px; }
 	.block.blockText.textCallout > .wrapContent { background: $colorVeryLightGrey; border-radius: 6px; margin: 6px 0px; }
@@ -141,6 +172,8 @@
 	.block.blockText.textCallout > .wrapContent > .dropTarget.targetBot { display: block; height: 16px; position: static; }
 	.block.blockText.textCallout > .wrapContent > .dropTarget.targetBot.isOver.bottom { box-shadow: 0px -2px 0px $colorOrange inset; }
 	.block.blockText.textCallout.last > .wrapContent { margin-bottom: 0px; }
+
+	/* Code */
 
 	.block.blockText.textCode { padding: 6px 0px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 24px 0px 0px 0px; background: rgba(247,245,240,0.5); }
@@ -186,6 +219,8 @@
 		.additional .buttons { display: none; }
 	}
 	.block.blockText.textCode.isUnwrapped > .wrapContent > .selectable > .dropTarget #value { white-space: nowrap; overflow-x: auto; }
+
+	/* DropTarget */
 
 	.block.blockText.textParagraph > .wrapContent > .dropTarget.targetBot.isOver.bottom,
 	.block.blockText.textQuote > .wrapContent > .dropTarget.targetBot.isOver.bottom,
