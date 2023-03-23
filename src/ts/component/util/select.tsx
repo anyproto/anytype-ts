@@ -10,15 +10,12 @@ interface Props {
 	className?: string;
 	arrowClassName?: string;
 	element?: string;
-	menuClassName?: string;
-	menuClassNameWrap?: string;
-	menuWidth?: number;
 	value: any;
 	options: I.Option[];
 	noFilter: boolean;
-	horizontal?: I.MenuDirection;
 	isMultiple?: boolean;
 	readonly?: boolean;
+	menuParam?: Partial<I.MenuParam>;
 	onChange? (id: any): void;
 };
 
@@ -31,7 +28,6 @@ class Select extends React.Component<Props, State> {
 	
 	public static defaultProps = {
 		initial: '',
-		horizontal: I.MenuDirection.Left,
 		noFilter: true,
 	};
 	
@@ -92,18 +88,9 @@ class Select extends React.Component<Props, State> {
 	componentDidMount () {
 		this._isMounted = true;
 
-		const { initial } = this.props;
-		const options = [];
+		const options = this.getOptions();
 		
 		let value = Relation.getArrayValue(this.props.value);
-		
-		if (initial) {
-			options.push({ id: '', name: initial, isInitial: true });			
-		};
-		for (const option of this.props.options) {
-			options.push(option);
-		};
-		
 		if (!value.length && options.length) {
 			value = [ options[0].id ];
 		};
@@ -113,6 +100,23 @@ class Select extends React.Component<Props, State> {
 
 	componentWillUnmount () {
 		this._isMounted = false;
+	};
+
+	getOptions () {
+		const { initial } = this.props;
+		const options = [];
+		
+		if (initial) {
+			options.push({ id: '', name: initial, isInitial: true });			
+		};
+		for (const option of this.props.options) {
+			options.push(option);
+		};
+		return options;
+	};
+
+	setOptions (options: any[]) {
+		this.setState({ options });
 	};
 
 	getValue (): any {
@@ -134,7 +138,7 @@ class Select extends React.Component<Props, State> {
 	show (e: React.MouseEvent) {
 		e.stopPropagation();
 
-		const { id, horizontal, menuClassName, menuClassNameWrap, onChange, menuWidth, noFilter, isMultiple, readonly } = this.props;
+		const { id, onChange, noFilter, isMultiple, readonly } = this.props;
 		const { value, options } = this.state;
 		const elementId = `#select-${id}`;
 		const element = this.props.element || elementId;
@@ -142,49 +146,51 @@ class Select extends React.Component<Props, State> {
 		if (readonly) {
 			return;
 		};
-		
-		menuStore.open('select', { 
+
+		const mp = this.props.menuParam || {};
+		const menuParam = Object.assign({ 
 			element,
-			horizontal,
-			className: menuClassName,
-			classNameWrap: menuClassNameWrap,
-			width: menuWidth,
 			noFlipX: true,
 			onOpen: () => {
 				window.setTimeout(() => { $(element).addClass('active'); });
 			},
 			onClose: () => { $(element).removeClass('active'); },
-			data: {
-				noFilter,
-				noClose: true,
-				value,
-				options,
-				onSelect: (e: any, item: any) => {
-					let { value } = this.state;
-					
-					if (item.id !== '') {
-						if (isMultiple) {
-							value = value.includes(item.id) ? value.filter(it => it != item.id) : [ ...value, item.id ];
-						} else {
-							value = [ item.id ];
-						};
+		}, mp);
+
+		menuParam.data = Object.assign({
+			noFilter,
+			noClose: true,
+			value,
+			options,
+			onSelect: (e: any, item: any) => {
+				let { value } = this.state;
+				
+				if (item.id !== '') {
+					if (isMultiple) {
+						value = value.includes(item.id) ? value.filter(it => it != item.id) : [ ...value, item.id ];
 					} else {
-						value = [];
+						value = [ item.id ];
 					};
+				} else {
+					value = [];
+				};
 
-					this.setValue(value);
+				this.setValue(value);
 
-					if (onChange) {
-						onChange(this.getValue());
-					};
+				if (onChange) {
+					onChange(this.getValue());
+				};
 
-					if (!isMultiple) {
-						this.hide();
-					} else {
-						menuStore.updateData('select', { value });
-					};
-				},
+				if (!isMultiple) {
+					this.hide();
+				} else {
+					menuStore.updateData('select', { value });
+				};
 			},
+		}, mp.data || {});
+
+		menuStore.closeAll(null, () => {
+			menuStore.open('select', menuParam);
 		});
 	};
 	

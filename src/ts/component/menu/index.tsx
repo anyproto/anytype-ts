@@ -646,7 +646,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		keyboard.disableMouse(true);
 
 		const { param } = this.props;
-		const { commonFilter } = param;
+		const { commonFilter, data } = param;
+		const { preventFilter } = data;
 		const refInput = this.ref.refFilter || this.ref.refName;
 		const shortcutClose = [ 'escape' ];
 		const shortcutSelect = [ 'tab', 'enter' ];
@@ -655,20 +656,19 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		if (refInput) {
 			if (refInput.isFocused && (this.ref.n < 0)) {
-				keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
-					ret = true;
-				});
+				keyboard.shortcut('arrowleft, arrowright', e, () => { ret = true; });
 
-				keyboard.shortcut('arrowdown', e, (pressed: string) => {
-					this.ref.n = 0;
+				keyboard.shortcut('arrowdown', e, () => {
 					refInput.blur();
+
+					this.ref.n = 0;
 					this.setActive(null, true);
 
 					ret = true;
 				});
 
-				if (this.ref && this.ref.onClick) {	
-					keyboard.shortcut(shortcutSelect.join(', '), e, (pressed: string) => {
+				if (this.ref && this.ref.onClick && !preventFilter) {	
+					keyboard.shortcut(shortcutSelect.join(', '), e, () => {
 						e.preventDefault();
 
 						const items = this.ref.getItems();
@@ -680,7 +680,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					});
 				};
 
-				keyboard.shortcut('arrowup', e, (pressed: string) => {
+				keyboard.shortcut('arrowup', e, () => {
 					if (!this.ref.getItems) {
 						return;
 					};
@@ -692,7 +692,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					ret = true;
 				});
 			} else {
-				keyboard.shortcut('arrowup', e, (pressed: string) => {
+				keyboard.shortcut('arrowup', e, () => {
 					if (!this.ref.n) {
 						this.ref.n = -1;
 						refInput.focus();
@@ -713,7 +713,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			shortcutSelect.push('arrowright');
 		};
 
-		keyboard.shortcut(shortcutClose.join(', '), e, (pressed: string) => {
+		keyboard.shortcut(shortcutClose.join(', '), e, () => {
 			e.preventDefault();
 			this.close();
 		});
@@ -777,18 +777,18 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			};
 		};
 
-		keyboard.shortcut('arrowup', e, (pressed: string) => {
+		keyboard.shortcut('arrowup', e, () => {
 			e.preventDefault();
 			onArrowUp();
 		});
 
-		keyboard.shortcut('arrowdown', e, (pressed: string) => {
+		keyboard.shortcut('arrowdown', e, () => {
 			e.preventDefault();
 			onArrowDown();
 		});
 
 		if (this.ref && this.ref.onClick) {	
-			keyboard.shortcut(shortcutSelect.join(', '), e, (pressed: string) => {
+			keyboard.shortcut(shortcutSelect.join(', '), e, () => {
 				e.preventDefault();
 				if (item) {
 					item.arrow && this.ref.onOver ? this.ref.onOver(e, item) : this.ref.onClick(e, item);
@@ -805,7 +805,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 		if (!refInput || (refInput && !refInput.isFocused)) {
 			if (this.ref && this.ref.onRemove) {
-				keyboard.shortcut('backspace', e, (pressed: string) => {
+				keyboard.shortcut('backspace', e, () => {
 					e.preventDefault();
 
 					this.ref.n--;
@@ -816,7 +816,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			};
 
 			if (this.ref && this.ref.onSwitch) {
-				keyboard.shortcut('space', e, (pressed: string) => {
+				keyboard.shortcut('space', e, () => {
 					e.preventDefault();
 
 					this.ref.onSwitch(e, item);

@@ -217,8 +217,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			];
 		} else
 		if (block.isPage()) {
-			console.log('pageRemove', pageRemove, allowedDelete);
-
 			sections = [
 				{ children: [ undo, redo, history, archive, pageRemove ] },
 				{ children: [ fav, pageLink, linkTo, pageCopy, template, pageLock ] },
@@ -394,7 +392,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			onSelect(item);
 		};
 
-		const returnToDashboard = () => {
+		const onBack = () => {
 			if (!block.isPage()) {
 				return;
 			};
@@ -403,7 +401,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			if (home && (object.id == home.id)) {
 				ObjectUtil.openRoute({ layout: I.ObjectLayout.Empty });
 			} else {
-				ObjectUtil.openHome('route');
+				keyboard.onBack();
 			};
 		};
 
@@ -453,7 +451,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 						return;
 					};
 
-					returnToDashboard();
+					onBack();
 					analytics.event('MoveToBin', { count: 1 });
 				});
 				break;
@@ -491,7 +489,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'pageRemove':
 				C.ObjectListDelete([ object.id ], () => {
-					returnToDashboard();
+					onBack();
 					analytics.event('RemoveCompletely', { count: 1 });
 				});
 				break;
@@ -535,7 +533,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'pageUninstall':
-				Action.uninstall(object, () => { returnToDashboard(); });
+				Action.uninstall(object, () => { onBack(); });
 				break;
 
 			case 'fav':
@@ -551,12 +549,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'blockRemove':
-				C.BlockListDelete(rootId, [ blockId ], (message: any) => {
-					if (!isPopup) {
-						returnToDashboard();
-					} else {
-						popupStore.close('page');
-					};
+				C.BlockListDelete(rootId, [ blockId ], () => {
+					isPopup ? popupStore.close('page') : onBack();
 				});
 				break;
 

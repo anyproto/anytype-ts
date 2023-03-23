@@ -19,6 +19,7 @@
 	.item {
 		.icon, .iconObject { transition: none; margin-right: 6px; flex-shrink: 0; }
 		.name { width: 100%; @include text-overflow-nw; }
+		.caption { display: none; }
 	}
 	.item::before { display: none; }
 }

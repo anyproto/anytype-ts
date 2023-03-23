@@ -63,7 +63,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 						value={'reader'}
 						options={memberOptions}
 						arrowClassName="light"
-						horizontal={I.MenuDirection.Right}
+						menuParam={{ horizontal: I.MenuDirection.Right }}
 						onChange={(v: any) => {
 						}}
 					/>
