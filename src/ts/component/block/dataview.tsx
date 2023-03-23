@@ -142,7 +142,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onRecordAdd: this.onRecordAdd,
 			isAllowedObject: this.isAllowedObject,
 			isCollection,
-			isInline
+			isInline,
 		};
 
 		let controls = null;

@@ -108,13 +108,14 @@
             .viewItem.isDragging { background: $colorHover; }
 
 			.icon:hover, .icon.active { background-color: $colorHover; }
+			/*
             .icon.search { background-image: url('#{$themePath}/icon/dataview/button/search0.svg'); }
 			.icon.manager { background-image: url('#{$themePath}/icon/dataview/button/manager0.svg'); }
 			.icon.plus { background-image: url('#{$themePath}/icon/dataview/button/plus0.svg'); }
+			*/
 
-			.icon.search:hover, .icon.search.active { background-image: url('#{$themePath}/icon/dataview/button/search1.svg'); }
-			.icon.manager:hover, .icon.manager.active { background-image: url('#{$themePath}/icon/dataview/button/manager1.svg'); }
-			.icon.plus:hover, .icon.plus.active { background-image: url('#{$themePath}/icon/dataview/button/plus1.svg'); }
+			.icon.filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
+			.icon.sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
 		.dataviewControls::after { background-color: $colorLinePrimary; }
 
