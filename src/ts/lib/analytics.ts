@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
 import { I, C, Util, Storage } from 'Lib';
-import { commonStore } from 'Store';
+import { commonStore, detailStore } from 'Store';
 
 import Constant from 'json/constant.json';
 
@@ -276,12 +276,14 @@ class Analytics {
 			};
 		};
 
-		if (converted.objectType && !converted.objectType.match(/^ot-|_ot/)) {
-			converted.objectType = 'custom';
+		if (converted.objectType) {
+			const object = detailStore.get(Constant.subId.type, converted.objectType);
+			converted.objectType = object.sourceObject ? object.sourceObject : 'custom';
 		};
 
-		if (converted.relationKey && !converted.relationKey.match(/^rel-|_br/)) {
-			converted.relationKey = 'custom';
+		if (converted.relationKey) {
+			const object = detailStore.get(Constant.subId.relation, converted.relationKey);
+			converted.relationKey = object.sourceObject ? object.sourceObject : 'custom';
 		};
 
 		if (undefined !== converted.layout) {
