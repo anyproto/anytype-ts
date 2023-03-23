@@ -14,6 +14,7 @@
 
 	"coverCnt": 13,
 	"iconCnt": 16,
+	"fontCode": "plex",
 
 	"limit": {
 		"menuRecords": 100,

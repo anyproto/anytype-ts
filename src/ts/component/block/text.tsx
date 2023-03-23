@@ -834,6 +834,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const parsed = this.getMarksFromHtml();
+		const marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
 
 		this.preventMenu = false;
 		this.marks = parsed.marks;
@@ -937,15 +938,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.placeholderCheck();
 
-		let text = value;
-		if (block.canHaveMarks()) {
-			text = parsed.text;
-		} else 
+		let text = block.canHaveMarks() ? parsed.text : value;
+		
 		if (!block.isTextCode()) {
-			text = Mark.fromUnicode(value);
+			text = Mark.fromUnicode(text);
 		};
 
-		if (value != text) {
+		if (marksChanged || (value != text)) {
 			this.setValue(text);
 
 			const diff = value.length - text.length;
