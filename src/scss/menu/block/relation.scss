@@ -63,7 +63,7 @@
 			.icon.plus { margin: 0px; }
 			.icon.lock { margin: 0px; }
 			.icon.dnd { 
-				width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; left: 12px; top: 0px;
+				width: 12px; height: calc(100% - 2px); background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; left: 12px; top: 1px;
 				background-image: url('~img/icon/block/menu1.svg'); border: 1px solid $colorBorderLight; border-radius: 12px; 
 			}
 			.icon.dnd:hover { 
