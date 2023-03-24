@@ -688,11 +688,12 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		if (!cell) {
 			C.BlockTableRowListFill(rootId, [ rowId ], () => {
 				cb();
-
-				focus.set(cellId, { from: 0, to: 0 });
-				focus.apply();
-
 				selection.clear();
+
+				window.setTimeout(() => {
+					focus.set(cellId, { from: 0, to: 0 });
+					focus.apply();
+				}, 15);
 			});
 		} else {
 			cb();

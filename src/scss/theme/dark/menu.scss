@@ -120,6 +120,8 @@
         .section > .name { color: $colorPrimary; }
 
 		.item {
+			 .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
+
 			.info { color: $colorSecondary; }
         	.info.canEdit:hover { background: $colorHover; }
 
