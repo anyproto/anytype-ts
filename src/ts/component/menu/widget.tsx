@@ -264,6 +264,15 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters,
 					value: this.target ? this.target.id : '',
+					dataChange: (items: any[]) => {
+						return [
+							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
+							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
+							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':books:' },
+							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':open_file_folder:' },
+							{ isDiv: true },
+						].concat(items);
+					},
 					onSelect: (target) => {
 						this.target = target;
 						this.checkState();
@@ -274,18 +283,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						};
 					},
 				});
-
-				if (this.layout != I.WidgetLayout.Link) {
-					menuParam.data.dataChange = (items: any[]) => {
-						return [
-							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
-							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
-							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':books:' },
-							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':open_file_folder:' },
-							{ isDiv: true },
-						].concat(items);
-					};
-				};
 				break;
 
 			case 'layout':
