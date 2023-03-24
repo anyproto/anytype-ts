@@ -168,11 +168,14 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	checkState () {
 		const options = this.getLayoutOptions().map(it => it.id);
 		
-		this.layout = options.includes(this.layout) ? this.layout : null;
-
 		if (this.target && (this.layout == I.WidgetLayout.Tree) && (this.target.type == Constant.typeId.set)) {
 			this.target = null;
 		};
+		if (this.target && (this.layout == I.WidgetLayout.List) && (this.target.type != Constant.typeId.set) && !this.isCollection()) {
+			this.layout = I.WidgetLayout.Link;
+		};
+
+		this.layout = options.includes(this.layout) ? this.layout : null;
 	};
 
     getItems () {
@@ -188,7 +191,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (this.target) {
 			const treeSkipTypes = [ Constant.typeId.set, Constant.typeId.space ].concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
-			const isCollection = [ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set, Constant.widgetId.collection ].includes(this.target.id);
+			const isCollection = this.isCollection();
 
 			// Favorites and Recents and Sets can only become List and Tree layouts
 			if (isCollection) {
@@ -211,6 +214,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			icon: `widget-${id}`,
 			withDescription: true,
 		}));
+	};
+
+	isCollection () {
+		return this.target && [ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set, Constant.widgetId.collection ].includes(this.target.id);
 	};
 
     onMouseEnter (e: React.MouseEvent, item): void {
@@ -256,11 +263,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					value: this.target ? this.target.id : '',
 					onSelect: (target) => {
 						this.target = target;
+						this.checkState();
+						this.forceUpdate();
 						
 						if (isEditing) {
 							this.save();
-						} else {
-							this.forceUpdate();
 						};
 					},
 				});
@@ -286,11 +293,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					value: this.layout,
 					onSelect: (e, option) => {
 						this.layout = option.id;
+						this.checkState();
+						this.forceUpdate();
 						
 						if (isEditing) {
 							this.save();
-						} else {
-							this.forceUpdate();
 						};
 					},
 				});
