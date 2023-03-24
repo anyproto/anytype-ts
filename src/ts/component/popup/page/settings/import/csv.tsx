@@ -21,10 +21,10 @@ const Delimiters: any[] = [
 
 class PopupSettingsPageImportCsv extends React.Component<Props> {
 
-	mode: I.CsvImportMode = I.CsvImportMode.Table;
+	mode: I.CsvImportMode = I.CsvImportMode.Collection;
 	header = false;
 	transpose = false;
-	delimiter = ',';
+	delimiter = '';
 	refDelimiter = null;
 
 	constructor (props: Props) {
@@ -32,6 +32,14 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 
 		this.onImport = this.onImport.bind(this);
 		this.onFilterKeyUp = this.onFilterKeyUp.bind(this);
+
+		const { storageGet } = props;
+		const options = storageGet().csv || {};
+
+		this.mode = Number(options.mode) || I.CsvImportMode.Collection;
+		this.header = Boolean(options.header);
+		this.transpose = Boolean(options.transpose);
+		this.delimiter = String(options.delimiter || ',');
 	};
 
 	render () {
@@ -56,7 +64,10 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 							id="csv-import-mode" 
 							value={this.mode} 
 							options={modeOptions} 
-							onChange={v => this.mode = Number(v)}
+							onChange={v => {
+								this.mode = Number(v) || 0;
+								this.save();
+							}}
 							arrowClassName="light"
 							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>
@@ -64,12 +75,26 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 
 					<div className="row">
 						<Label text="Use the first row as column names" />
-						<Switch value={this.header} className="big" onChange={(e: any, v: boolean) => { this.header = v; }}/>
+						<Switch 
+							value={this.header} 
+							className="big" 
+							onChange={(e: any, v: boolean) => { 
+								this.header = v; 
+								this.save();
+							}}
+						/>
 					</div>
 
 					<div className="row">
 						<Label text="Transpose rows and columns" />
-						<Switch value={this.transpose} className="big" onChange={(e: any, v: boolean) => { this.transpose = v; }}/>
+						<Switch 
+							value={this.transpose} 
+							className="big" 
+							onChange={(e: any, v: boolean) => { 
+								this.transpose = v; 
+								this.save();
+							}}
+						/>
 					</div>
 
 					<div className="row">
@@ -135,6 +160,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 		if (v) {
 			this.delimiter = v.substring(0, 10);
 		};
+
+		this.save();
 	};
 
 	delimiterOptions () {
@@ -178,6 +205,12 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 				delimiter: this.delimiter,
 			});
 		});
+	};
+
+	save () {
+		const { storageSet } = this.props;
+
+		storageSet({ csv: { mode: this.mode, header: this.header, transpose: this.transpose, delimiter: this.delimiter } });
 	};
 
 };

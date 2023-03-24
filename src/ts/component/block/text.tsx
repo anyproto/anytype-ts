@@ -1227,6 +1227,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		menuStore.closeAll([ 'blockAdd', 'blockMention' ]);
 
 		this.timeoutContext = window.setTimeout(() => {
+			const onChange = (marks: I.Mark[]) => {
+				this.marks = marks;
+				this.setMarks(marks);
+
+				raf(() => {
+					focus.set(block.id, { from: currentFrom, to: currentTo });
+					focus.apply();
+				});
+			};
+
+			if (menuStore.isOpen('blockContext')) {
+				menuStore.updateData('blockContext', { 
+					range: { from: currentFrom, to: currentTo },
+					marks: this.marks,
+					onChange,
+				});
+				return;
+			};
+
 			if (keyboard.isContextOpenDisabled) {
 				return;
 			};
@@ -1256,20 +1275,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					data: {
 						blockId: block.id,
 						blockIds: [ block.id ],
-						rootId: rootId,
-						dataset: dataset,
+						rootId,
+						dataset,
 						range: { from: currentFrom, to: currentTo },
 						marks: this.marks,
 						isInsideTable,
-						onChange: (marks: I.Mark[]) => {
-							this.marks = marks;
-							this.setMarks(marks);
-
-							raf(() => {
-								focus.set(block.id, { from: currentFrom, to: currentTo });
-								focus.apply();
-							});
-						},
+						onChange,
 					},
 				});
 			});
