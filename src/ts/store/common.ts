@@ -376,8 +376,6 @@ class CommonStore {
 	};
 
 	configSet (config: any, force: boolean) {
-		console.log('[commonStore.configSet]', config, force);
-
 		const html = $('html');
 		
 		let newConfig: any = {};
