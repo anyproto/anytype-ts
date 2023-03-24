@@ -388,7 +388,7 @@ export default {
 			},
 			{
 				description: `
-					Let's export and back up your files on your computer so you don't miss anything. It will be a zip archive that you'll need later (do not forget the directory!).
+					Let's export and back up your files on your computer so you don't miss anything. It will be a zip archive that you'll need later (do not forget the directory!).<br/><br/>
 					Please wait until the process is finished. Once done, we can proceed.
 
 					<div class="buttons">
@@ -427,6 +427,9 @@ export default {
 					<div class="buttons">
 						<div id="download" class="button orange c28">
 							<div class="txt">Download new app</div>
+						</div>
+						<div id="copy-phrase" class="button blank c28">
+							<div class="txt">Copy recovery phrase</div>
 						</div>
 					</div>
 				`,

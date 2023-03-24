@@ -2,8 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Icon } from 'Component';
 import { I, Onboarding, Util, analytics, keyboard, Action, C, Renderer } from 'Lib';
-import { menuStore } from 'Store';
+import { menuStore, authStore } from 'Store';
 import * as Docs from 'Docs';
+import Url from 'json/url.json';
 
 class MenuOnboarding extends React.Component<I.Menu> {
 
@@ -100,7 +101,6 @@ class MenuOnboarding extends React.Component<I.Menu> {
 				C.AccountExport(paths[0], (message: any) => {
 					if (!message.error.code) {
 						Renderer.send('pathOpen', paths[0]);
-
 						Onboarding.start('exportFinish', isPopup, true);
 					};
 				});
@@ -108,8 +108,12 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		});
 
 		node.find('#download').off('click').on('click', () => {
-			Renderer.send('urlOpen', 'https://download.anytype.io/?ref=migration');
-			Renderer.send('exit');
+			Renderer.send('urlOpen', Url.migration);
+			//Renderer.send('exit');
+		});
+
+		node.find('#copy-phrase').off('click').on('click', () => {
+			Util.clipboardCopy({ text: authStore.phrase });
 		});
 	};
 	

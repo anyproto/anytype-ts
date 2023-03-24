@@ -21,7 +21,10 @@
 		}
 		.icon.close:hover { background-image: url('~img/icon/menu/onboarding/close1.svg'); }
 
-		.buttons { margin-top: 24px; display: flex; flex-direction: row; gap: 0px 8px; justify-content: center; }
+		.buttons { margin-top: 24px; text-align: center; display: flex; flex-direction: column; gap: 8px 0px; }
+		.buttons {
+			.button { width: 100%; }
+		}
 
 		ol, ul { padding-left: 1.35em; margin: 8px 0px; }
 		
