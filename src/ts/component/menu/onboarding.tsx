@@ -109,7 +109,7 @@ class MenuOnboarding extends React.Component<I.Menu> {
 
 		node.find('#download').off('click').on('click', () => {
 			Renderer.send('urlOpen', Url.migration);
-			//Renderer.send('exit');
+			Renderer.send('exit');
 		});
 
 		node.find('#copy-phrase').off('click').on('click', () => {
