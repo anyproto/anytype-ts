@@ -1,5 +1,5 @@
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action, Dataview } from 'Lib';
+import { Util, I, M, Decode, translate, analytics, Response, Mapper, crumbs, Renderer, Action, Dataview, Onboarding, keyboard } from 'Lib';
 import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';

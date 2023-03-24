@@ -358,4 +358,92 @@ export default {
 		],
 	},
 
+	export: {
+		items: [
+			{
+				name: 'Hey Anytyper!',
+				description: `
+					We're excited to let you know that a fast, reliable infrastructure is ready for you to use.<br/><br/>
+					To ensure you don't miss anything important, we'd like you to migrate your work.<br/>
+					It will only take a few minutes and involve three simple steps:
+					<ul>
+						<li>Export files</li>
+						<li>Download the new app</li>
+						<li>Import files</li>
+					</ul>
+					We will be happy to guide you!
+				`,
+				param: {
+                    common: {
+                        container: true,
+                        containerVertical: I.MenuDirection.Center,
+                        classNameWrap: 'fixed',
+                        horizontal: I.MenuDirection.Center,
+                        vertical: I.MenuDirection.Center,
+                    },
+                    popup: {
+                        classNameWrap: 'fixed fromPopup',
+                    }
+                }
+			},
+			{
+				description: `
+					Let's export and back up your files on your computer so you don't miss anything. It will be a zip archive that you'll need later (do not forget the directory!).
+					Please wait until the process is finished. Once done, we can proceed.
+
+					<div class="buttons">
+						<div id="export" class="button orange c28">
+							<div class="txt">Export</div>
+						</div>
+					</div>
+				`,
+				param: {
+                    common: {
+                        container: true,
+                        containerVertical: I.MenuDirection.Center,
+                        classNameWrap: 'fixed',
+                        horizontal: I.MenuDirection.Center,
+                        vertical: I.MenuDirection.Center,
+                    },
+                    popup: {
+                        classNameWrap: 'fixed fromPopup',
+                    }
+                }
+			}
+		],
+	},
+
+	exportFinish: {
+		items: [
+			{
+				description: `
+					We have just backed up your files and are now ready to download the new app.<br/><br/>
+					Click the button to close the current application and be redirected to the website to download the new version.<br/><br/>
+					The current application will still be accessible.<br/><br/><br/>
+
+					<b>Important</b>.<br/>
+					To login to the new app, please prepare your recovery phrase in advance.
+
+					<div class="buttons">
+						<div id="download" class="button orange c28">
+							<div class="txt">Download new app</div>
+						</div>
+					</div>
+				`,
+				param: {
+					common: {
+						container: true,
+						containerVertical: I.MenuDirection.Center,
+						classNameWrap: 'fixed',
+						horizontal: I.MenuDirection.Center,
+						vertical: I.MenuDirection.Center,
+					},
+					popup: {
+						classNameWrap: 'fixed fromPopup',
+					}
+				}
+			},
+		]
+	},
+
 }

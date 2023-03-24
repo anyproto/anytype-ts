@@ -20,6 +20,10 @@
 			cursor: pointer;
 		}
 		.icon.close:hover { background-image: url('~img/icon/menu/onboarding/close1.svg'); }
+
+		.buttons { margin-top: 24px; display: flex; flex-direction: row; gap: 0px 8px; justify-content: center; }
+
+		ol, ul { padding-left: 1.35em; margin: 8px 0px; }
 		
 		.bottom { display: flex; flex-direction: row; align-items: stretch; justify-content: space-between; margin-top: 20px; }
 		.bottom {

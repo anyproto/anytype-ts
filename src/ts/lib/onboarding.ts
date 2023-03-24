@@ -51,6 +51,8 @@ class Onboarding {
 	};
 
 	getParam (item: any, isPopup: boolean): any {
+		item.param = item.param || {};
+
 		let param: any = {};
 		if (item.param.common) {
 			param = Object.assign(param, item.param.common);

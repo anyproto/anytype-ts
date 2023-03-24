@@ -124,6 +124,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				const object = detailStore.get(rootId, rootId, []);
 				const match = keyboard.getMatch();
 				const { page, action } = match.params;
+				const isIndex = (page == 'main') && (action == 'index');
 				const isEditor = (page == 'main') && (action == 'edit');
 
 				let key = '';
@@ -136,6 +137,9 @@ class MenuHelp extends React.Component<I.Menu> {
 				} else
 				if (isEditor) {
 					key = blockStore.checkBlockTypeExists(rootId) ? 'typeSelect' : 'editor';
+				} else
+				if (isIndex) {
+					key = 'export';
 				} else {
 					key = Util.toCamelCase([ page, action ].join('-'));
 				};

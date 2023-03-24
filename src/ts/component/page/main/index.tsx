@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ListIndex, Cover, Header, Footer, Filter, EmptySearch } from 'Component';
-import { commonStore, blockStore, detailStore, menuStore, dbStore, popupStore, authStore } from 'Store';
-import { I, C, Util, DataUtil, ObjectUtil, translate, crumbs, Storage, analytics, keyboard, Action } from 'Lib';
+import { commonStore, blockStore, detailStore, menuStore, dbStore, authStore } from 'Store';
+import { I, C, Util, DataUtil, ObjectUtil, translate, crumbs, Storage, analytics, keyboard, Action, Onboarding } from 'Lib';
 import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
 
@@ -219,6 +219,7 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		this.resize();
 		
 		analytics.setContext('', '');
+		Onboarding.start('export', this.props.isPopup, true);
 	};
 	
 	componentDidUpdate () {

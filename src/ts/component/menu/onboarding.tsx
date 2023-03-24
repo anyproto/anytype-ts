@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
+import { I, Onboarding, Util, analytics, keyboard, Action, C, Renderer } from 'Lib';
 import { menuStore } from 'Store';
 import * as Docs from 'Docs';
 
@@ -87,8 +87,30 @@ class MenuOnboarding extends React.Component<I.Menu> {
 	};
 
 	rebind () {
+		const node = $(this.node);
+		const { param } = this.props;
+		const { data } = param;
+		const { isPopup } = data;
+
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+
+		node.find('#export').off('click').on('click', () => { 
+			Action.openDir(paths => {
+				C.AccountExport(paths[0], (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('pathOpen', paths[0]);
+
+						Onboarding.start('exportFinish', isPopup, true);
+					};
+				});
+			});
+		});
+
+		node.find('#download').off('click').on('click', () => {
+			Renderer.send('urlOpen', 'https://download.anytype.io/?ref=migration');
+			Renderer.send('exit');
+		});
 	};
 	
 	unbind () {
