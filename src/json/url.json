@@ -9,5 +9,5 @@
 		"utm": "?utm_source=Anytype&utm_medium=referral"
 	},
 	"protocol": "anytype://",
-	"migration": "https://download.anytype.io/?ref=migration"
+	"migration": "https://download.anytype.io/?ref=migration&platform=desktop"
 }
