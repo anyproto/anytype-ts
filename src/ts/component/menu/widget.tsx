@@ -171,6 +171,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		if (this.target && (this.layout == I.WidgetLayout.Tree) && (this.target.type == Constant.typeId.set)) {
 			this.target = null;
 		};
+		if (this.isCollection() && (this.layout == I.WidgetLayout.Link)) {
+			this.target = null;
+		};
 		if (this.target && (this.layout == I.WidgetLayout.List) && (this.target.type != Constant.typeId.set) && !this.isCollection()) {
 			this.layout = I.WidgetLayout.Link;
 		};
