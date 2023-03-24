@@ -62,7 +62,13 @@
 		.item {
 			.icon.plus { margin: 0px; }
 			.icon.lock { margin: 0px; }
-			.icon.dnd { display: none; }
+			.icon.dnd { 
+				width: 12px; height: 100%; background-size: 8px 16px; opacity: 0; cursor: grab; position: absolute; left: 12px; top: 0px;
+				background-image: url('~img/icon/block/menu1.svg'); border: 1px solid $colorBorderLight; border-radius: 12px; 
+			}
+			.icon.dnd:hover { 
+				background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;
+			}
 
 			.icon.fav {
 				width: 32px; height: 32px; background-size: 20px; background-image: url('~img/icon/fav0.svg'); cursor: pointer; flex-shrink: 0; border-radius: 4px; 
@@ -73,10 +79,7 @@
 
 			.info { 
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
-				flex-shrink: 0; padding: 6px; color: $colorDarkGrey; display: flex; gap: 0px 6px; align-items: center;
-			}
-			.info:hover {
-				.icon.dnd { display: block; }
+				flex-shrink: 0; padding: 6px; color: $colorDarkGrey; display: flex; gap: 0px 6px; align-items: center; position: relative;
 			}
 			.info.canEdit { cursor: pointer; }
 			.info.canEdit:hover { background: $colorHover; }
@@ -156,6 +159,9 @@
 			.cell.isEditing.c-longText, .cell.isEditing.c-file { 
 				.cellContent { padding: 5px 8px; }
 			}
+		}
+		.item:hover {
+			.icon.dnd { opacity: 1; }
 		}
 
 		.item.add { padding: 7px 26px 8px 26px; cursor: pointer; background: none; }

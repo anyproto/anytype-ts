@@ -76,11 +76,11 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 
 		return (
 			<div id={`item-${id}`} className={cn.join(' ')}>
+				{canDrag ? <Icon className="dnd" draggable={true} onDragStart={this.onDragStart} /> : ''}
 				<div 
 					className={icn.join(' ')} 
 					onClick={(e: any) => { onEdit(e, id); }}
 				>
-					{canDrag ? <Icon className="dnd" draggable={true} onDragStart={this.onDragStart} /> : ''}
 					{readonly ? <Icon className="lock" /> : ''}
 					{name}
 				</div>
