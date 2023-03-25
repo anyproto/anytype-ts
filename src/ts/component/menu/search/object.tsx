@@ -377,8 +377,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			close();
 		};
 
-		let newBlock: any = {};
-
 		const process = (target: any, isNew: boolean) => {
 			if (onSelect) {
 				onSelect(target, isNew);
@@ -409,25 +407,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Link:
-					switch (item.type) {
-						case Constant.typeId.bookmark:
-							newBlock.type = I.BlockType.Bookmark;
-							newBlock.content = {
-								state: I.BookmarkState.Done,
-								targetObjectId: target.id,
-							};
-							break;
-
-						default:
-							newBlock.type = I.BlockType.Link;
-							newBlock.content = {
-								...DataUtil.defaultLinkSettings(),
-								targetBlockId: target.id,
-							};
-							break;
-					};
-
-					C.BlockCreate(rootId, blockId, position, newBlock, (message: any) => {
+					C.BlockCreate(rootId, blockId, position, this.getBlockParam(target.id, item.type), (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -454,25 +434,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					if (target.type == Constant.typeId.collection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
-						switch (object.type) {
-							case Constant.typeId.bookmark:
-								newBlock.type = I.BlockType.Bookmark;
-								newBlock.content = {
-									state: I.BookmarkState.Done,
-									targetObjectId: blockId,
-								};
-								break;
-
-							default:
-								newBlock.type = I.BlockType.Link;
-								newBlock.content = {
-									...DataUtil.defaultLinkSettings(),
-									targetBlockId: blockId,
-								};
-								break;
-						};
-
-						C.BlockCreate(target.id, '', position, newBlock, cb);
+						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.type), cb);
 					};
 					break;
 			};
@@ -491,6 +453,32 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		} else {
 			process(item, false);
 		};
+	};
+
+	getBlockParam (id: string, type: string) {
+		const param: Partial<I.Block> = {};
+
+		switch (type) {
+			case Constant.typeId.bookmark: {
+				param.type = I.BlockType.Bookmark;
+				param.content = {
+					state: I.BookmarkState.Done,
+					targetObjectId: id,
+				};
+				break;
+			};
+
+			default: {
+				param.type = I.BlockType.Link;
+				param.content = {
+					...DataUtil.defaultLinkSettings(),
+					targetBlockId: id,
+				};
+				break;
+			};
+		};
+
+		return param;
 	};
 
 	onFilterChange (v: string) {
