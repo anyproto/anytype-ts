@@ -234,27 +234,6 @@ class MenuContext extends React.Component<I.Menu> {
 					}
 				});
 				break;
-
-			case 'addToCollection':
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
-						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false }
-					],
-					rootId: itemId,
-					blockId: itemId,
-					blockIds: [ itemId ],
-					skipIds: [ itemId ],
-					position: I.BlockPosition.Bottom,
-					canAdd: true,
-					onSelect: (el: any) => {
-						C.ObjectCollectionAdd(el.id, objectIds);
-
-						close();
-					}
-				});
-				break;
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
