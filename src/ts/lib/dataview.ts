@@ -179,7 +179,7 @@ class Dataview {
 
 		const tabs: I.MenuTab[] = [
 			{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-			(view.type == I.ViewType.Board) ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
+			view.isBoard() ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
 			{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
 		];
 		return tabs.filter(it => it);

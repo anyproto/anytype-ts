@@ -53,6 +53,22 @@ class View implements I.View {
 		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
 	};
 
+	isGrid () {
+		return this.type == I.ViewType.Grid;
+	};
+
+	isList () {
+		return this.type == I.ViewType.List;
+	};
+
+	isGallery () {
+		return this.type == I.ViewType.Gallery;
+	};
+
+	isBoard () {
+		return this.type == I.ViewType.Board;
+	};
+
 	getVisibleRelations () {
 		return this.relations.filter(it => it && it.isVisible && dbStore.getRelationByKey(it.relationKey));
 	};

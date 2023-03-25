@@ -174,7 +174,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
 		} else 
-		if ((view.type != I.ViewType.Board) && !records.length) {	
+		if (!view.isBoard() && !records.length) {	
 			body = this.getEmpty('view');
 		} else {
 			body = (
@@ -592,7 +592,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', newIndex);
 				const ref = this.refCells.get(id);
 
-				if (ref && (view.type == I.ViewType.Grid) && (commonStore.type != Constant.typeId.note)) {
+				if (ref && view.isGrid() && (commonStore.type != Constant.typeId.note)) {
 					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 

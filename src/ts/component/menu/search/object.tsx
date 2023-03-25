@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, keyboard, Util, DataUtil, ObjectUtil, Preview, analytics, Action, focus, translate } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -371,6 +371,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 		const addParam: any = data.addParam || {};
+		const object = detailStore.get(rootId, blockId);
 
 		if (!noClose) {
 			close();
@@ -453,12 +454,22 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					if (target.type == Constant.typeId.collection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
-						newBlock = {
-							type: I.BlockType.Link,
-							content: {
-								...DataUtil.defaultLinkSettings(),
-								targetBlockId: blockId,
-							}
+						switch (object.type) {
+							case Constant.typeId.bookmark:
+								newBlock.type = I.BlockType.Bookmark;
+								newBlock.content = {
+									state: I.BookmarkState.Done,
+									targetObjectId: blockId,
+								};
+								break;
+
+							default:
+								newBlock.type = I.BlockType.Link;
+								newBlock.content = {
+									...DataUtil.defaultLinkSettings(),
+									targetBlockId: blockId,
+								};
+								break;
 						};
 
 						C.BlockCreate(target.id, '', position, newBlock, cb);

@@ -85,6 +85,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 						archive = <div className="tagItem isTag archive">{translate('blockLinkArchived')}</div>;
 					};
 
+					console.log(object);
+
 					element = (
 						<div 
 							className={cn.join(' ')} 
