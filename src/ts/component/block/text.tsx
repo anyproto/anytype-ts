@@ -908,7 +908,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					continue;
 				};
 
-				value = value.replace(reg, (s: string, p: string) => { return s.replace(p, ''); });
+				value = value.replace(reg, (s: string, p: string) => s.replace(p, ''));
 
 				this.marks = newStyle == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + 1));
 				this.setValue(value);

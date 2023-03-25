@@ -135,7 +135,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={ref => { this.refListPreview = ref; }}
-										getItems={() => { return templates; }}
+										getItems={() => templates}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onClick={(e: any, item: any) => { ObjectUtil.openPopup(item); }} 

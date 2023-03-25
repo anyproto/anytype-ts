@@ -86,7 +86,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								subId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => { return record; }}
+								getRecord={() => record}
 								viewType={I.ViewType.Grid}
 								index={0}
 								idPrefix={idPrefix}
@@ -181,7 +181,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={({ index }) => { return this.getRowHeight(items[index], index); }}
+											rowHeight={({ index }) => this.getRowHeight(items[index], index)}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={20}
@@ -209,7 +209,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_ITEM,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 		
 		$(`#${getId()}`).off('mouseleave').on('mouseleave', () => { window.clearTimeout(this.timeout); });
@@ -232,7 +232,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_ITEM,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		if (this.filter != filter.text) {
@@ -705,10 +705,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 	recalcIndex () {
 		const itemsWithSection = this.getItems(true);
-		const itemsWithoutSection = itemsWithSection.filter((it: any) => { return !it.isSection; });
+		const itemsWithoutSection = itemsWithSection.filter(it => !it.isSection);
 		const active: any = itemsWithoutSection[this.n] || {};
 
-		return itemsWithSection.findIndex((it: any) => { return it.id == active.id; });
+		return itemsWithSection.findIndex(it => it.id == active.id);
 	};
 
 });

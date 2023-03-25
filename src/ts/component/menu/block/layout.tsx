@@ -100,7 +100,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		});
 
 		sections = sections.filter((section: any) => {
-			section.children = section.children.filter((child: any) => { return child; });
+			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
 		});
 

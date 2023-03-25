@@ -224,7 +224,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				{ children: [ print, pageExport, pageReload ] },
 				{ children: [ highlight ] },
 			];
-			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
+			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		} else {
 			sections.push({ children: [
 				turn,
@@ -235,7 +235,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		};
 
 		sections = sections.filter((section: any) => {
-			section.children = section.children.filter((child: any) => { return child; });
+			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
 		});
 

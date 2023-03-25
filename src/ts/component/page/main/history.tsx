@@ -220,21 +220,21 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		const groups = this.groupData(this.state.versions);
 		const versions = this.ungroupData(groups);
-		const version = versions.find((it: any) => { return it.id == id; });
+		const version = versions.find(it => it.id == id);
 
 		if (!version) {
 			return;
 		};
 
-		const month = groups.find((it: any) => { return it.groupId == this.monthId(version.time); });
+		const month = groups.find(it => it.groupId == this.monthId(version.time));
 		if (!month) {
 			return;
 		};
 
-		const group = month.list.find((it: any) => { return it.groupId == version.groupId; });
+		const group = month.list.find(it => it.groupId == version.groupId);
 		const node = $(this.node);
 		const sideRight = node.find('#sideRight');
-		const item = sideRight.find('#item-' + version.id);
+		const item = sideRight.find(`#item-${version.id}`);
 
 		sideRight.find('.active').removeClass('active');
 		item.addClass('active');
@@ -338,7 +338,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				groupId++;
 			};
 
-			let group = groups.find((it: any) => { return it.groupId == groupId; });
+			let group = groups.find(it => it.groupId == groupId);
 			if (!group) {
 				group = { ...version, groupId: groupId, list: [] };
 				groups.push(group);
@@ -354,7 +354,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			};
 
 			let groupId = this.monthId(group.time);
-			let month = months.find((it: any) => { return it.groupId == groupId; });
+			let month = months.find(it => it.groupId == groupId);
       
 			if (!month) {
 				month = { groupId: groupId, list: [] };

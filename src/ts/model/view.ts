@@ -50,7 +50,7 @@ class View implements I.View {
 			relations: observable,
 		});
 
-		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		intercept(this as any, change => Util.intercept(this, change));
 	};
 
 	isGrid () {

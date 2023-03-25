@@ -123,7 +123,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={({ index }) => { return this.getRowHeight(items[index]); }}
+										rowHeight={({ index }) => this.getRowHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										onScroll={this.onScroll}
@@ -154,7 +154,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_ITEM,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 		
 		let active = value ? items.find(it => it.id == value) : null;

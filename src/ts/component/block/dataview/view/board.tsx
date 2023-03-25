@@ -72,7 +72,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 									onRecordAdd={this.onRecordAdd}
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
-									getSubId={() => { return dbStore.getGroupSubId(rootId, block.id, group.id); }}
+									getSubId={() => dbStore.getGroupSubId(rootId, block.id, group.id)}
 								/>
 							))}
 						</div>

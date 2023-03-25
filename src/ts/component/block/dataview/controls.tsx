@@ -114,7 +114,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 							onSortStart={this.onSortStart}
 							onSortEnd={this.onSortEnd}
 							helperClass="isDragging"
-							helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
+							helperContainer={() => $(`#block-${block.id} .views`).get(0)}
 						/>
 					</div>
 
@@ -297,10 +297,9 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const { oldIndex, newIndex } = result;
 		const { rootId, block, isInline, getTarget } = this.props;
 		const object = getTarget();
-
-		let views = dbStore.getViews(rootId, block.id);
-		let view = views[oldIndex];
-		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
+		const views = dbStore.getViews(rootId, block.id);
+		const view = views[oldIndex];
+		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, block.id, ids);
 

@@ -270,13 +270,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		this.cacheIn = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (pagesIn[i] || {}).id; },
+			keyMapper: i => (pagesIn[i] || {}).id,
 		});
 
 		this.cacheOut = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (pagesOut[i] || {}).id; },
+			keyMapper: i => (pagesOut[i] || {}).id,
 		});
 	};
 	

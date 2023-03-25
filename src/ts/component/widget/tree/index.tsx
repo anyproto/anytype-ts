@@ -138,7 +138,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
 				defaultHeight: HEIGHT,
-				keyMapper: (i: number) => { return (nodes[i] || {}).id; },
+				keyMapper: i => (nodes[i] || {}).id,
 			});
 
 			this.forceUpdate();

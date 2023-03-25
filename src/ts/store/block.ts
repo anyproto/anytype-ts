@@ -275,7 +275,7 @@ class BlockStore {
 	};
 
 	updateNumbersTree (tree: any[]) {
-		tree = (tree || []).filter((it: any) => { return it; });
+		tree = (tree || []).filter(it => it);
 
 		const unwrap = (list: any) => {
 			list = list || [];
@@ -340,7 +340,7 @@ class BlockStore {
 	};
 
     unwrapTree (tree: any[]): any[] {
-		tree = (tree || []).filter((it: any) => { return it; });
+		tree = (tree || []).filter(it => it);
 
 		let ret = [] as I.Block[];
 		for (const item of tree) {

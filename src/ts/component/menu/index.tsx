@@ -207,7 +207,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const cd = [];
 
 		if (tab) {
-			const item = tabs.find((it: I.MenuTab) => { return it.id == tab; });
+			const item = tabs.find(it => it.id == tab);
 			if (item) {
 				Component = Components[item.component];
 			};

@@ -2028,7 +2028,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			return;
 		};
 
-		let last = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.canCreateBlock(); });
+		let last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
 		let create = false;
 		let length = 0;
 

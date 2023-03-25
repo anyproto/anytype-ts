@@ -91,7 +91,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						subId={rootId}
 						block={block}
 						relationKey={relationKey}
-						getRecord={() => { return object; }}
+						getRecord={() => object}
 						viewType={I.ViewType.Grid}
 						index={0}
 						idPrefix={PREFIX}

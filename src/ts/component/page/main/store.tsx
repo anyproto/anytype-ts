@@ -230,7 +230,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={({ index }) => { return this.getRowHeight(items[index]); }}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
@@ -257,7 +257,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: 64,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		this.resize();

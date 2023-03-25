@@ -184,7 +184,7 @@ class Dispatcher {
 		let afterId = '';
 		let content: any = {};
 
-		messages.sort((c1: any, c2: any) => { return this.sort(c1, c2); });
+		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
 			const type = this.eventType(message.getValueCase());

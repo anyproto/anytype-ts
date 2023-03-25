@@ -72,7 +72,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 							subId={rootId}
 							block={block}
 							relationKey={relation.relationKey}
-							getRecord={() => { return detailStore.get(rootId, rootId, [ relation.relationKey ], true); }}
+							getRecord={detailStore.get(rootId, rootId, [ relation.relationKey ], true)}
 							viewType={I.ViewType.Grid}
 							readonly={readonly || !allowedValue}
 							index={0}

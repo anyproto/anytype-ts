@@ -670,7 +670,7 @@ class Util {
 	};
 
 	coverSrc (id: string, preview?: boolean): string {
-		const item = Cover.find((it: any) => { return it.id == id; });
+		const item = Cover.find(it => it.id == id);
 		if (item) {
 			return commonStore.imageUrl(item.hash, preview ? 200 : Constant.size.image);
 		};
@@ -840,7 +840,7 @@ class Util {
 	addBodyClass (prefix: string, v: string) {
 		const obj = $('html');
 		const reg = new RegExp(`^${prefix}`);
-		const c = String(obj.attr('class') || '').split(' ').filter((it: string) => { return !it.match(reg); });
+		const c = String(obj.attr('class') || '').split(' ').filter(it => !it.match(reg));
 
 		if (v) {
 			c.push(this.toCamelCase(`${prefix}-${v}`));

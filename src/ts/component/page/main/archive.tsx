@@ -211,7 +211,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
 				defaultHeight: 64,
-				keyMapper: (i: number) => { return (items[i] || {}).id; },
+				keyMapper: i => (items[i] || {}).id,
 			});
 			this.forceUpdate();
 		};

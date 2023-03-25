@@ -90,7 +90,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		let languages: any[] = [];
 
 		languages = languages.concat(commonStore.languages || []);
-		languages = languages.map(id => { return { id, name: Constant.spellingLang[id] }; });
+		languages = languages.map(id => ({ id, name: Constant.spellingLang[id] }));
 		languages.unshift({ id: '', name: 'Disabled' });
 
 		return languages;

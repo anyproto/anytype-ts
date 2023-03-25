@@ -65,7 +65,7 @@ class MenuStore {
 	};
 
     get (id: string): I.Menu {
-		return this.menuList.find((item: I.Menu) => { return item.id == id; });
+		return this.menuList.find(it => it.id == id);
 	};
 
     isOpen (id?: string, key?: string): boolean {
@@ -116,7 +116,7 @@ class MenuStore {
 		};
 
 		const onTimeout = () => {
-			this.menuList = this.menuList.filter((it: I.Menu) => { return it.id != id; });
+			this.menuList = this.menuList.filter(it => it.id != id);
 				
 			if (onClose) {
 				onClose();

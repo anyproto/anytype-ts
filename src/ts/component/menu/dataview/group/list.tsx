@@ -73,7 +73,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 							block={block}
 							relationKey={view.groupRelationKey} 
 							viewType={I.ViewType.Board}
-							getRecord={() => { return head; }}
+							getRecord={() => head}
 							readonly={true} 
 							arrayLimit={4}
 							withLabel={true}
@@ -150,7 +150,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(this.node).find('.items').get(0); }}
+					helperContainer={() => $(this.node).find('.items').get(0)}
 				/>
 			</div>
 		);
@@ -165,7 +165,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 	};
 	

@@ -148,7 +148,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
 				defaultHeight: HEIGHT,
-				keyMapper: (i: number) => { return (this.team[i] || {}).id; },
+				keyMapper: i => (this.team[i] || {}).id,
 			});
 			this.forceUpdate();
 		};

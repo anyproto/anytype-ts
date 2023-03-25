@@ -155,7 +155,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									subId={rootId}
 									block={block}
 									relationKey={relationKey}
-									getRecord={() => { return object; }}
+									getRecord={() => object}
 									viewType={I.ViewType.Grid}
 									index={0}
 									bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}

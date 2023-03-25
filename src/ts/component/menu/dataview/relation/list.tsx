@@ -141,8 +141,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(this.node).find('.items').get(0); }}
+					helperContainer={() => $(this.node).find('.items').get(0)}
 				/>
+
 				{!readonly && allowedView ? (
 					<div className="bottom">
 						<div className="line" />
@@ -171,7 +172,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 	};
 	

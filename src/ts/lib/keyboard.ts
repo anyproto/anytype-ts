@@ -258,7 +258,7 @@ class Keyboard {
 			const fb = blockStore.getLeaf(rootId, focused);
 			if (fb) {
 				if (fb.isTextTitle()) {
-					const first = blockStore.getFirstBlock(rootId, 1, (it: I.Block) => { return it.isFocusable() && !it.isTextTitle(); });
+					const first = blockStore.getFirstBlock(rootId, 1, it => it.isFocusable() && !it.isTextTitle());
 					if (first) {
 						targetId = first.id;
 						position = I.BlockPosition.Top;
@@ -748,7 +748,7 @@ class Keyboard {
 			return;
 		};
 
-		const a = s.split(',').map((it: string) => { return it.trim(); });
+		const a = s.split(',').map(it => it.trim());
 		const key = this.eventKey(e);
 		const which = e.which;
 

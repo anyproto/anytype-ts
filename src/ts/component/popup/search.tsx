@@ -192,7 +192,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		if (this.refFilter && (this.n == -1)) {

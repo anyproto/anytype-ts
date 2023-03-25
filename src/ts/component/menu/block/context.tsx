@@ -53,7 +53,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		// You can't make headers bold, since they are already bold
 		if (block.isTextHeader()) {
-			markActions = markActions.filter((it: any) => { return ![ I.MarkType.Bold ].includes(it.type); });
+			markActions = markActions.filter(it => ![ I.MarkType.Bold ].includes(it.type));
 		};
 
 		return (
