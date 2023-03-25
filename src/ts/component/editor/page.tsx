@@ -2113,12 +2113,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	focus (id: string, from: number, to: number, scroll: boolean) {
 		const { isPopup } = this.props;
 
-		focus.set(id, { from: from, to: to });
-		focus.apply();
+		window.setTimeout(() => {
+			focus.set(id, { from: from, to: to });
+			focus.apply();
 
-		if (scroll) {
-			focus.scroll(isPopup, id);
-		};
+			if (scroll) {
+				focus.scroll(isPopup, id);
+			};
+		}, 15);
 	};
 
 	focusNextBlock (next: I.Block, dir: number) {
