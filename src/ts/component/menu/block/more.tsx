@@ -358,7 +358,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types.concat([ Constant.typeId.collection ]) }
 					],
 					onSelect: close,
 					skipIds: [ rootId ],

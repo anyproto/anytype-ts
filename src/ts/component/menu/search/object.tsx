@@ -439,20 +439,30 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.LinkTo:
-					newBlock = {
-						type: I.BlockType.Link,
-						content: {
-							...DataUtil.defaultLinkSettings(),
-							targetBlockId: blockId,
-						}
+					const cb = (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						const action = target.type == Constant.typeId.collection ? I.ToastAction.Collection : I.ToastAction.Link;
+
+						Preview.toastShow({ action, objectId: blockId, targetId: target.id });
+						analytics.event('LinkToObject', { objectType: target.type });
 					};
 
-					C.BlockCreate(target.id, '', position, newBlock, (message: any) => {
-						if (!message.error.code) {
-							Preview.toastShow({ action: I.ToastAction.Link, objectId: blockId, targetId: target.id });
-							analytics.event('LinkToObject');
+					if (target.type == Constant.typeId.collection) {
+						C.ObjectCollectionAdd(rootId, [ target.id ], cb);
+					} else {
+						newBlock = {
+							type: I.BlockType.Link,
+							content: {
+								...DataUtil.defaultLinkSettings(),
+								targetBlockId: blockId,
+							}
 						};
-					});
+
+						C.BlockCreate(target.id, '', position, newBlock, cb);
+					};
 					break;
 			};
 		};
