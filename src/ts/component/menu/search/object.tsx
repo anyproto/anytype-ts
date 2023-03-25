@@ -451,7 +451,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					};
 
 					if (target.type == Constant.typeId.collection) {
-						C.ObjectCollectionAdd(rootId, [ target.id ], cb);
+						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
 						newBlock = {
 							type: I.BlockType.Link,

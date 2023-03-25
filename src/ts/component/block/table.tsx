@@ -1519,9 +1519,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		let maxWidth = 0;
 		let wrapperWidth = 0;
 
-		String(row.css('grid-template-columns') || '').split(' ').forEach((it: string) => {
-			width += parseInt(it);
-		});
+		String(row.css('grid-template-columns') || '').split(' ').forEach(it => width += parseInt(it));
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
 			const obj = $(`#block-${block.id}`);
