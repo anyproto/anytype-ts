@@ -427,9 +427,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const header = container.find('#header');
 		const ww = win.width();
 		const element = header.find('#path');
+		const sidebar = $('#sidebar');
+		const height = HEIGHT * LIMIT_HEIGHT;
 
 		let width = ww * 0.4;
-		let height = Math.max(80, Math.min(HEIGHT * LIMIT_HEIGHT, items.length * HEIGHT + 16));
 		let x = ww / 2 - width / 2;
 		let y = Util.sizeHeader();
 
@@ -439,10 +440,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			width = element.outerWidth();
 			x = left;
 			y = top - win.scrollTop() + 40;
-		};
-
-		if (!items.length) {
-			height = 110;
+		} else {
+			x += sidebar.width() / 2;
+			y -= 1;
 		};
 
 		obj.css({ width, left: x, top: y });
