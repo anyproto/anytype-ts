@@ -12,7 +12,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as Prev
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
 	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
-	focus, Preview, Mark, Encode, Animation 
+	focus, Preview, Mark, Encode, Animation
 } from 'Lib';
 
 configure({ enforceActions: 'never' });
@@ -139,6 +139,7 @@ import 'scss/menu/button.scss';
 import 'scss/menu/common.scss';
 import 'scss/menu/help.scss';
 import 'scss/menu/onboarding.scss';
+import 'scss/menu/wizard.scss';
 import 'scss/menu/relation.scss';
 import 'scss/menu/select.scss';
 import 'scss/menu/smile.scss';

@@ -25,6 +25,7 @@ import { analytics } from './analytics';
 import { history } from './history';
 import Action from './action';
 import Onboarding from './onboarding';
+import Wizard from './wizard';
 import Survey from './survey';
 import Preview from './preview';
 import Highlight from './highlight';
@@ -82,6 +83,7 @@ export {
 	Mapper,
 	Action,
 	Onboarding,
+	Wizard,
 	Renderer,
 	Survey,
 	Preview,

@@ -1,0 +1,65 @@
+@import "~scss/_vars";
+
+.menus {
+    .menu.menuWizard { width: 280px; min-height: 458px; background: #fff; color: $colorBlack; }
+    .menu.menuWizard {
+        .content { padding: 16px 16px 44px 16px; height: 100%; }
+        .wrap { display: flex; flex-direction: column; }
+
+        .category { @include text-extra-small; color: $colorDarkGrey; }
+        .descr { line-height: 18px; margin-top: 8px; }
+        .descr:last-child { margin-bottom: 12px; }
+        .descr {
+            .icon { width: 16px; height: 16px; margin: -2px 0px 0px 0px; }
+        }
+
+        .highlight { background: $colorBorderLight; white-space: nowrap; border-radius: 2px; padding: 2px 6px; color: $colorMediumGrey; }
+        a { color: #fff; text-decoration: underline; }
+
+        .icon.close {
+            width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; background-image: url('~img/icon/menu/onboarding/close0.svg');
+            cursor: pointer;
+        }
+        .icon.close:hover { background-image: url('~img/icon/menu/onboarding/close1.svg'); }
+
+        .bottom {
+            position: absolute; bottom: 16px; width: calc(100% - 32px);
+            display: flex; flex-direction: row; align-items: stretch; justify-content: space-between;
+        }
+        .bottom {
+            .round {
+                display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; cursor: pointer;
+                background: $colorOrange; transition: $transitionFast;
+            }
+            .round:hover { background: #F09C0E; }
+            .round {
+                .icon.arrow {
+                    width: 20px; height: 20px; background-image: url('~img/arrow/onboarding.svg');
+                    background-size: 20px 20px; background-position: center center;
+                }
+                .icon.tick {
+                    width: 14px; height: 14px; background-image: url('~img/icon/menu/onboarding/tick.svg');
+                    background-size: 14px 14px; background-position: center center;
+                }
+            }
+
+            .buttons { display: flex; gap: 8px; }
+
+            .steps { display: flex; flex-wrap: nowrap; padding-top: 10px; }
+            .steps {
+                .step {
+                    width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; cursor: pointer;
+                    background: $colorVeryLightGrey; transition: $transitionFast;
+                }
+                .step:hover { background: $colorBorderDark; }
+                .step.active,
+                .step.active:hover { background: $colorOrange; cursor: default; }
+                .step:last-of-type { margin-right: 0px; }
+            }
+
+            .number { @include text-small; flex-grow: 1; text-align: center; color: $colorMediumGrey;  }
+
+            b { font-weight: 500; }
+        }
+    }
+}
