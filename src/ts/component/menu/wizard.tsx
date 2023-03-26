@@ -5,14 +5,17 @@ import { I, Util, analytics, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import * as Docs from 'Docs';
 
+import ReactCanvasConfetti from "react-canvas-confetti";
+
 class MenuWizard extends React.Component<I.Menu> {
 
 	node: any = null;
+	confetti: any = null;
 
 	constructor (props: I.Menu) {
 		super(props);
 
-		this.onClose = this.onClose.bind(this)
+		this.onClose = this.onClose.bind(this);
 	};
 
 	render () {
@@ -74,6 +77,8 @@ class MenuWizard extends React.Component<I.Menu> {
 						}
 					</div>
 				</div>
+
+				<ReactCanvasConfetti refConfetti={ins => this.confetti = ins} className="confettiCanvas" />
 			</div>
 		);
 	};
@@ -86,6 +91,9 @@ class MenuWizard extends React.Component<I.Menu> {
 	componentDidUpdate () {
 		const { param, position } = this.props;
 		const { data } = param;
+		const { key, current } = data;
+		const { items } = Docs.Help.Wizard[key] || {};
+		const l = items.length;
 		const node = $(this.node);
 		
 		if (data.onShow) {
@@ -96,7 +104,22 @@ class MenuWizard extends React.Component<I.Menu> {
 		this.rebind();
 
 		Util.renderLinks(node);
+
+		if (current == l-1) {
+			this.fire();
+		};
 		// analytics.event('ScreenOnboarding');
+	};
+
+	fire () {
+		this.confetti({
+			particleCount: 150,
+			spread: 60,
+			origin: {
+				x: .5,
+				y: 1
+			}
+		});
 	};
 
 	onClose () {

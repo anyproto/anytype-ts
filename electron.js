@@ -37,7 +37,7 @@ let deeplinkingUrl = '';
 let waitLibraryPromise = null;
 let mainWindow = null;
 let csp = [
-	"default-src 'self' 'unsafe-eval'",
+	"default-src 'self' 'unsafe-eval' blob:",
 	"img-src 'self' http://*:* https://*:* data: blob: file://*",
 	"media-src 'self' http://*:* https://*:* data: blob: file://*",
 	"style-src 'unsafe-inline' http://localhost:* file://*",
