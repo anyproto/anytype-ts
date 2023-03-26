@@ -55,6 +55,8 @@ class MenuWizard extends React.Component<I.Menu> {
 					))
 				}
 
+				{item.video ? <video src={item.video} autoPlay={true} loop={true} /> : ''}
+
 				<div className="bottom">
 					{l > 1 ? (
 						<Steps />

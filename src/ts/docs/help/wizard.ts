@@ -6,7 +6,8 @@ export default {
                 text: [
                     '<b>Welcome to your Dashboard.</b> This is your personalized page, which you can customize to your liking.<br />We\'ve included some materials to help you get started, but feel free to make adjustments as needed.',
                     'Let\'s take a few minutes to explore the features together.'
-                ]
+                ],
+                video: './img/help/31/1-inline-set.mp4'
             },
             {
                 text: [

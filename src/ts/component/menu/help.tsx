@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight } from 'Lib';
+import { I, Util, Onboarding, Wizard, keyboard, analytics, Renderer, Highlight } from 'Lib';
 import { popupStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -74,6 +74,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			{ isDiv: true },
 			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' },
 			{ id: 'hints', name: 'Show Hints' },
+			{ id: 'wizard', name: 'Show Wizard' },
 			{ id: 'tutorial', name: 'Help & Tutorials' },
 		];
 	};
@@ -143,6 +144,11 @@ class MenuHelp extends React.Component<I.Menu> {
 				if (key) {
 					Onboarding.start(key, isPopup, true);
 				};
+				break;
+			};
+
+			case 'wizard': {
+				Wizard.start('Dashboard', true);
 				break;
 			};
 
