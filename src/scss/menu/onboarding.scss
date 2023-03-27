@@ -6,10 +6,11 @@
 		.content { padding: 12px 16px; }
 		.wrap { display: flex; flex-direction: column; }
 
+		.category { @include text-extra-small; color: $colorDarkGrey; }
 		.name { @include text-paragraph; letter-spacing: -0.2px; font-weight: 700; margin-bottom: 2px; width: calc(100% - 20px); }
-		.descr { line-height: 18px; }
 		.descr {
 			.icon { width: 16px; height: 16px; margin: -2px 0px 0px 0px; }
+			.paragraph { margin-top: 8px; }
 		}
 
 		.highlight { background: $colorBorderLight; white-space: nowrap; border-radius: 2px; padding: 2px 6px; color: $colorMediumGrey; }
@@ -39,7 +40,9 @@
 				}
 			}
 
-			.steps { display: flex; flex-wrap: nowrap; margin-bottom: 4px; }
+			.buttons { display: flex; gap: 8px; }
+
+			.steps { display: flex; flex-wrap: nowrap; padding-top: 10px; }
 			.steps {
 				.step {
 					width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; cursor: pointer;
@@ -51,10 +54,24 @@
 				.step:last-of-type { margin-right: 0px; }
 			}
 
-			.category { @include text-extra-small; }
 			.number { @include text-small; flex-grow: 1; text-align: center; color: $colorMediumGrey;  }
 
 			b { font-weight: 500; }
+		}
+	}
+
+	.menu.menuOnboarding.wizard { width: 280px; min-height: 458px; }
+	.menu.menuOnboarding.wizard {
+		.content { padding: 16px 16px 44px 16px; height: 100%; }
+		.icon.close { right: 16px; top: 17px; }
+
+		video { margin-top: 12px; }
+
+		.confettiCanvas { position: absolute; pointer-events: none; width: 100%;  height: 100%; left: 0; top: 0; }
+
+		.bottom {
+			position: absolute; bottom: 16px; width: calc(100% - 32px);
+			display: flex; flex-direction: row; align-items: stretch; justify-content: space-between;
 		}
 	}
 }

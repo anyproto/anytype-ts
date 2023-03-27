@@ -1,13 +1,15 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon } from 'Component';
+import {Button, Icon} from 'Component';
 import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import * as Docs from 'Docs';
+import ReactCanvasConfetti from "react-canvas-confetti";
 
 class MenuOnboarding extends React.Component<I.Menu> {
 
 	node: any = null;
+	confetti: any = null;
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -19,9 +21,16 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const { items, category } = Docs.Help.Onboarding[key] || {};
+		const section = Docs.Help.Onboarding[key] || {};
+		const { items, category, isWizard } = section;
 		const item = items[current];
 		const l = items.length;
+
+		let buttons = [{ text: current == l - 1 ? 'Finish' : 'Next', action: 'next' }];
+
+		if (item.buttons) {
+			buttons = buttons.concat(item.buttons);
+		};
 
 		const Steps = () => (
 			<div className="steps">
@@ -40,27 +49,35 @@ class MenuOnboarding extends React.Component<I.Menu> {
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
-				<div className="descr" dangerouslySetInnerHTML={{ __html: item.description }} />
 				<Icon className="close" onClick={this.onClose} />
 
-				{l > 1 ? (
-					<div className="bottom">
-						<div>
-							<Steps />
+				{category ? <div className="category">{category}</div> : ''}
 
-							{category ? (
-								<div className="category">
-									<b>Onboarding:</b> {category}
-								</div>
-							) : ''}
-						</div>
+				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
+				<div className="descr" dangerouslySetInnerHTML={{ __html: item.description }} />
 
-						<div className="round" onClick={(e: any) => { this.onArrow(e, 1); }}>
-							<Icon className={current == l - 1 ? 'tick' : 'arrow'} />
-						</div>
+				{item.video ? <video src={item.video} autoPlay={true} loop={true} /> : ''}
+
+				<div className="bottom">
+					<div>
+						{l > 1 ? <Steps /> : ''}
 					</div>
-				) : ''}
+
+					<div className="buttons">
+						{
+							buttons.map((button, i) => (
+								<Button
+									key={i}
+									text={button.text}
+									className={['c28', i == buttons.length-1 ? 'black' : 'outlined'].join(' ')}
+									onClick={(e: any) => { this.onButton(e, button.action); }}
+								/>
+							))
+						}
+					</div>
+				</div>
+
+				{isWizard ? <ReactCanvasConfetti refConfetti={ins => this.confetti = ins} className="confettiCanvas" /> : ''}
 			</div>
 		);
 	};
@@ -73,6 +90,10 @@ class MenuOnboarding extends React.Component<I.Menu> {
 	componentDidUpdate () {
 		const { param, position } = this.props;
 		const { data } = param;
+		const { key, current } = data;
+		const section = Docs.Help.Onboarding[key] || {}
+		const { items, isWizard } = section;
+		const l = items.length;
 		const node = $(this.node);
 		
 		if (data.onShow) {
@@ -85,6 +106,10 @@ class MenuOnboarding extends React.Component<I.Menu> {
 
 		Util.renderLinks(node);
 		analytics.event('ScreenOnboarding');
+
+		if (isWizard && current == l-1) {
+			this.fire();
+		};
 	};
 
 	onClose () {
@@ -136,6 +161,20 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		keyboard.shortcut('arrowright', e, () => { this.onArrow(e, 1); });
 	};
 
+	onButton (e: any, action: string) {
+		switch (action) {
+			case 'next': {
+				this.onArrow(e, 1);
+				break;
+			};
+
+			case 'import': {
+				// process import button click
+				break;
+			};
+		};
+	};
+
 	onArrow (e: any, dir: number) {
 		const { data } = this.props.param;
 		const { key, current } = data;
@@ -156,7 +195,8 @@ class MenuOnboarding extends React.Component<I.Menu> {
 	onClick (e: any, next: number) {
 		const { data, onOpen, onClose } = this.props.param;
 		const { key, isPopup, options } = data;
-		const items = Docs.Help.Onboarding[key].items;
+		const section = Docs.Help.Onboarding[key];
+		const { items, isWizard } = section;
 		const item = items[next];
 
 		if (!item) {
@@ -166,6 +206,17 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		let param = Onboarding.getParam(item, isPopup);
 		if (options.parseParam) {
 			param = options.parseParam(param);
+		};
+
+		if (isWizard) {
+			param = {
+				element: '#button-help',
+				classNameWrap: 'fixed',
+				className: 'wizard',
+				vertical: I.MenuDirection.Top,
+				horizontal: I.MenuDirection.Right,
+				offsetY: -4,
+			};
 		};
 
 		menuStore.open('onboarding', {
@@ -194,6 +245,16 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		});
 	};
 
+	fire () {
+		this.confetti({
+			particleCount: 150,
+			spread: 60,
+			origin: {
+				x: .5,
+				y: 1
+			}
+		});
+	};
 };
 
 export default MenuOnboarding;

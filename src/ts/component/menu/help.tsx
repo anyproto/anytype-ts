@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, Util, Onboarding, Wizard, keyboard, analytics, Renderer, Highlight } from 'Lib';
+import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight } from 'Lib';
 import { popupStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -148,7 +148,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			};
 
 			case 'wizard': {
-				Wizard.start('Dashboard', true);
+				Onboarding.start('wizardDashboard', false, true);
 				break;
 			};
 

@@ -14,7 +14,7 @@ class Onboarding {
 			return;
 		};
 
-		const items = section.items;
+		const { items, isWizard } = section;
 		const t = isPopup ? Constant.delay.popup : 0;
 
 		menuStore.close('onboarding', () => {
@@ -22,6 +22,17 @@ class Onboarding {
 				let param = this.getParam(items[0], isPopup);
 				if (options.parseParam) {
 					param = options.parseParam(param);
+				};
+
+				if (isWizard) {
+					param = {
+						element: '#button-help',
+						classNameWrap: 'fixed',
+						className: 'wizard',
+						vertical: I.MenuDirection.Top,
+						horizontal: I.MenuDirection.Right,
+						offsetY: -4,
+					};
 				};
 
 				menuStore.open('onboarding', {
@@ -51,6 +62,10 @@ class Onboarding {
 	};
 
 	getParam (item: any, isPopup: boolean): any {
+		if (!item.param) {
+			return {};
+		};
+
 		let param: any = {};
 		if (item.param.common) {
 			param = Object.assign(param, item.param.common);
