@@ -5,7 +5,6 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { observer, } from 'mobx-react';
-import { getRange } from 'selection-ranges';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
@@ -948,7 +947,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.setValue(text);
 
 			const diff = value.length - text.length;
-			focus.set(focus.state.focused, { from: focus.state.range.from - diff, to: focus.state.range.to - diff });
+			const { focused, range } = focus.state;
+
+			focus.set(focused, { from: range.from - diff, to: range.to - diff });
 			focus.apply();
 		};
 
@@ -1069,7 +1070,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		DataUtil.blockSetText(rootId, block.id, value, marks, update, (message: any) => {
+		DataUtil.blockSetText(rootId, block.id, value, marks, update, () => {
 			if (callBack) {
 				callBack();
 			};
@@ -1257,7 +1258,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				menuStore.close('blockContext'); 
 			});
 
-			this.setText (this.marks, true, () => {
+			this.setText(this.marks, true, () => {
 				menuStore.open('blockContext', {
 					element: el,
 					recalcRect: () => { 

@@ -113,10 +113,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	componentDidUpdate () {
 		this.setValue();
 
-		if (!this.state.isEditing) {
-			this.ref.setRange({ from: 0, to: 0 });
-		} else 
-		if (this.ref) {
+		if (this.state.isEditing && this.ref) {
 			const l = this.getValue().length;
 			this.ref.setRange(this.range || { from: l, to: l });
 		};
@@ -299,7 +296,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		window.clearTimeout(this.timeout);
 
 		this.save();
-		this.ref.setRange({ from: 0, to: 0 });
 		window.setTimeout(() => { this.setState({ isEditing: false }); }, 40);
 	};
 

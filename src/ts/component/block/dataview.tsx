@@ -248,8 +248,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.resize();
 		this.rebind();
-
-		$(window).trigger('resize.editor');
 	};
 
 	componentWillUnmount () {
