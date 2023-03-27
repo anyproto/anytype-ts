@@ -233,7 +233,7 @@ window.Lib = {
 	Animation,
 };
 
-/* 
+/*
 spy(event => {
 		if (event.type == 'action') {
 				console.log('[Mobx].event', event.name, event.arguments);
@@ -304,15 +304,10 @@ class App extends React.Component<object, State> {
 		this.onUpdateError = this.onUpdateError.bind(this);
 		this.onCommand = this.onCommand.bind(this);
 		this.onSpellcheck = this.onSpellcheck.bind(this);
-		this.onMenu = this.onMenu.bind(this);
-		this.onMin = this.onMin.bind(this);
-		this.onMax = this.onMax.bind(this);
-		this.onClose = this.onClose.bind(this);
 	};
 	
 	render () {
 		const { loading } = this.state;
-		const isMaximized = window.Electron.isMaximized();
 		
 		return (
 			<Router history={history}>
@@ -332,21 +327,7 @@ class App extends React.Component<object, State> {
 						<Toast />
 
 						<div id="tooltip" />
-						
-						<div id="drag">
-							<div className="sides">
-								<div className="side left">
-									<Icon className="menu" onClick={this.onMenu} />
-									<div className="name">{translate('commonTitle')}</div>
-								</div>
-
-								<div className="side right">
-									<Icon className="min" onClick={this.onMin} />
-									<Icon id="minmax" className={isMaximized ? 'window' : 'max'} onClick={this.onMax} />
-									<Icon className="close" onClick={this.onClose} />
-								</div>
-							</div>
-						</div>
+						<div id="drag" />
 
 						<Switch>
 							{Routes.map((item: RouteElement, i: number) => (
@@ -378,8 +359,6 @@ class App extends React.Component<object, State> {
 
 		console.log('[Process] os version:', window.Electron.version.system, 'arch:', window.Electron.arch);
 		console.log('[App] version:', window.Electron.version.app, 'isPackaged', window.Electron.isPackaged);
-
-		$(window).off('resize.app').on('resize.app', () => { this.checkMaximized(); });
 	};
 
 	initStorage () {
@@ -391,24 +370,6 @@ class App extends React.Component<object, State> {
 
 		Storage.delete('lastSurveyCanceled');
 		commonStore.coverSetDefault();
-	};
-
-	checkMaximized () {
-		const platform = Util.getPlatform();
-
-		if (platform != I.Platform.Windows) {
-			return;
-		};
-
-		window.clearTimeout(this.timeoutMaximize);
-		this.timeoutMaximize = window.setTimeout(() => {
-			const node = $(this.node);
-			const icon = node.find('#minmax');
-			const isMaximized = window.Electron.isMaximized();
-
-			icon.removeClass('max window');
-			isMaximized ? icon.addClass('window') : icon.addClass('max');
-		}, 50);
 	};
 
 	registerIpcEvents () {
@@ -761,23 +722,6 @@ class App extends React.Component<object, State> {
 		popupStore.open('settings', {
 			data: { page: 'exportMarkdown' }
 		});
-	};
-
-	onMenu () {
-		Renderer.send('winCommand', 'menu');
-	};
-
-	onMin () {
-		Renderer.send('winCommand', 'minimize');
-	};
-
-	onMax () {
-		this.checkMaximized();
-		Renderer.send('winCommand', 'maximize');
-	};
-
-	onClose () {
-		Renderer.send('winCommand', 'close');
 	};
 
 	onSpellcheck (e: any, param: any) {

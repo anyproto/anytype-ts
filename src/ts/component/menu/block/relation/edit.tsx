@@ -438,7 +438,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, addCommand, onChange, ref } = data;
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
 		C.ObjectCreateRelation(item, [], (message: any) => {
 			if (message.error.code) {

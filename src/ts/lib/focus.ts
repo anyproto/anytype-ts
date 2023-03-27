@@ -35,7 +35,6 @@ class Focus {
 		};
 
 		this.backup = Util.objectCopy(this.state);
-
 		return this;
 	};
 

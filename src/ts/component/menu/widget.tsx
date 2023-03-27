@@ -186,6 +186,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	getLayoutOptions () {
+		const setTypes = [ Constant.typeId.set, Constant.typeId.collection ];
+
 		let options = [
 			I.WidgetLayout.Tree,
 			I.WidgetLayout.List,
@@ -193,7 +195,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		];
 
 		if (this.target) {
-			const treeSkipTypes = [ Constant.typeId.set, Constant.typeId.space ].concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
+			const treeSkipTypes = setTypes.concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
 			const isCollection = this.isCollection();
 
 			// Favorites and Recents and Sets can only become List and Tree layouts
@@ -204,7 +206,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				if (treeSkipTypes.includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
-				if (![ Constant.typeId.set ].includes(this.target.type)) {
+				if (!setTypes.includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.List);
 				};
 			};

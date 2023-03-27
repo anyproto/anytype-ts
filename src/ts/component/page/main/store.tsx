@@ -612,14 +612,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = Util.sizeHeader();
-		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
 		const limit = this.getLimit();
-		
-		let wh = isPopup ? container.height() : win.height();
-		if (platform == I.Platform.Windows) {
-			wh -= Constant.size.headerWindows;
-		};
+		const wh = isPopup ? container.height() : win.height();
 
 		node.css({ height: wh });
 		

@@ -228,7 +228,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
-		const object = detailStore.get(rootId, rootId);
 
 		const onAdd = () => {
 			if (data.onAdd) {
@@ -248,7 +247,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				menuIdEdit: 'dataviewRelationEdit',
 				filter: '',
 				ref: 'dataview',
-				object,
 				skipKeys: relations.map(it => it.relationKey),
 				onAdd,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

@@ -415,8 +415,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
-		const relations = (object.recommendedRelations || []).map(it => dbStore.getRelationById(it)).filter(it => it);
+		const object = detailStore.get(rootId, rootId, [ 'recommendedRelations' ], true);
+		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 
 		menuStore.open('relationSuggest', { 
 			element: '#page .section.relation #item-add',
@@ -425,9 +425,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				filter: '',
 				rootId,
 				ref: 'type',
-				object,
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: relations.map(it => it.relationKey).concat(Constant.systemRelationKeys),
+				skipKeys: recommendedRelations.concat(Constant.systemRelationKeys),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
 						menuStore.close('relationSuggest'); 

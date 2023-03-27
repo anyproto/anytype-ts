@@ -95,14 +95,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const sources = this.getSources();
 		const targetId = this.getObjectId();
-		const object = detailStore.get(rootId, targetId);
 		const isCollection = this.isCollection();
 		const records = this.getRecords();
 		const cn = [ 'focusable', 'c' + block.id ];
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
-		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]), (object.isDeleted ? 'isDeleted' : '') ].join(' ');
+		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]) ].join(' ');
 		let head = null;
 		let body = null;
 
@@ -231,6 +230,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			Onboarding.start('set', isPopup);
 		};
 
+		this.init();
 		this.resize();
 		this.rebind();
 
@@ -246,14 +246,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.loadData(viewId, 0, true);
 		};
 
+		this.init();
 		this.resize();
 		this.rebind();
-
-		$(window).trigger('resize.editor');
 	};
 
 	componentWillUnmount () {
 		this.unbind();
+	};
+
+	init () {
+		const { block } = this.props;
+		const node = $(this.node);
+		const head = node.find(`#block-head-${block.id}`);
+		const object = this.getTarget();
+
+		object.isDeleted ? head.addClass('isDeleted') : head.removeClass('isDeleted');
 	};
 
 	unbind () {
@@ -333,30 +341,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 
-	getObjectId () {
-		const { rootId, block, isInline } = this.props;
-		return isInline ? block.content.targetObjectId : rootId;
-	};
-
-	getKeys (id: string): string[] {
-		let view = this.getView(id);
-		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
-
-		if (view) {
-			keys = keys.concat((view.relations || []).map(it => it.relationKey));
-
-			if (view.coverRelationKey) {
-				keys.push(view.coverRelationKey);
-			};
-
-			if (view.groupRelationKey) {
-				keys.push(view.groupRelationKey);
-			};
-		};
-
-		return Util.arrayUnique(keys);
-	};
-
 	loadData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
 		if (!viewId) {
 			console.log('[BlockDataview.loadData] No view id');
@@ -421,6 +405,30 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
+	getObjectId () {
+		const { rootId, block, isInline } = this.props;
+		return isInline ? block.content.targetObjectId : rootId;
+	};
+
+	getKeys (id: string): string[] {
+		let view = this.getView(id);
+		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
+
+		if (view) {
+			keys = keys.concat((view.relations || []).map(it => it.relationKey));
+
+			if (view.coverRelationKey) {
+				keys.push(view.coverRelationKey);
+			};
+
+			if (view.groupRelationKey) {
+				keys.push(view.groupRelationKey);
+			};
+		};
+
+		return Util.arrayUnique(keys);
+	};
+
 	getLimit (type: I.ViewType): number {
 		const { isInline } = this.props;
 		const view = this.getView();
@@ -452,14 +460,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getRecord (index: number) {
 		const { rootId, block } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const view = this.getView();
+		const keys = this.getKeys(view.id);
+		const subId = dbStore.getSubId(rootId, block.id,);
 		const records = this.getRecords();
 
 		if (index > records.length - 1) {
 			return {};
 		};
 
-		const item = detailStore.get(subId, records[index]);
+		const item = detailStore.get(subId, records[index], keys);
 
 		let name = String(item.name || '');
 		let isReadonly = Boolean(item.isReadonly);
