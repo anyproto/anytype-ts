@@ -14,25 +14,15 @@ class Onboarding {
 			return;
 		};
 
-		const { items, isWizard } = section;
+		const { items } = section;
 		const t = isPopup ? Constant.delay.popup : 0;
 
 		menuStore.close('onboarding', () => {
 			window.setTimeout(() => {
-				let param = this.getParam(items[0], isPopup);
+				let param = this.getParam(section, items[0], isPopup);
+
 				if (options.parseParam) {
 					param = options.parseParam(param);
-				};
-
-				if (isWizard) {
-					param = {
-						element: '#button-help',
-						classNameWrap: 'fixed',
-						className: 'wizard',
-						vertical: I.MenuDirection.Top,
-						horizontal: I.MenuDirection.Right,
-						offsetY: -4,
-					};
 				};
 
 				menuStore.open('onboarding', {
@@ -50,7 +40,7 @@ class Onboarding {
 						options,
 						key,
 						current: 0,
-						isPopup: isPopup,
+						isPopup,
 					},
 				});
 			}, t);
@@ -61,12 +51,14 @@ class Onboarding {
 		return Util.toCamelCase([ key, 'reminder' ].join('-'));
 	};
 
-	getParam (item: any, isPopup: boolean): any {
-		if (!item.param) {
-			return {};
-		};
+	getParam (section: any, item: any, isPopup: boolean): any {
+		section.param = section.param || {};
+		item.param = item.param || {};
 
 		let param: any = {};
+
+		param = Object.assign(param, section.param);
+
 		if (item.param.common) {
 			param = Object.assign(param, item.param.common);
 			if (item.param.page) {
@@ -76,7 +68,7 @@ class Onboarding {
 				param = Object.assign(param, item.param.popup);
 			};
 		} else {
-			param = item.param;
+			param = Object.assign(param, item.param);
 		};
 
 		param.element = String(param.element || '');
