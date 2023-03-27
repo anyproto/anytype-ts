@@ -49,7 +49,7 @@ class PageMainEdit extends React.Component<Props> {
 	onOpen () {
 		const { isPopup, refSidebar } = this.props;
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
 		if (this.refHeader) {
 			this.refHeader.forceUpdate();

@@ -45,10 +45,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readonly, className, isCollection } = this.props;
+		const { block, readonly, className, isCollection, getTarget } = this.props;
 		const { isEditing } = this.state;
 		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId);
+		const object = getTarget();
 		const cn = [ 'dataviewHead' ];
 
 		if (className) {
@@ -61,6 +61,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		return (
 			<div 
+				id={`block-head-${block.id}`}
 				ref={node => this.node = node}
 				className={cn.join(' ')}
 			>

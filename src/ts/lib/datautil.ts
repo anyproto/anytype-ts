@@ -355,7 +355,7 @@ class DataUtil {
 				return;
 			};
 
-			const object = detailStore.get(root, root);
+			const object = detailStore.get(root, root, Constant.coverRelationKeys, true);
 			if (object._empty_) {
 				console.error('Dashboard is empty');
 				return;
@@ -896,7 +896,7 @@ class DataUtil {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace, []);
 		const title = [ Util.shorten(name, 60) ];
 
 		if (!space._empty_) {
