@@ -201,17 +201,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		const obj = Util.getPageContainer(this.props.isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
-		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
 		const oh = obj.height();
 		const header = node.find('#header');
 		const hh = header.height();
-		
-		let wh = isPopup ? oh - hh : win.height();
-
-		if (platform == I.Platform.Windows) {
-			wh -= Constant.size.headerWindows;
-		};
+		const wh = isPopup ? oh - hh : win.height();
 
 		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
 		
