@@ -263,9 +263,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block } = this.props;
-		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId);
+		const { getTarget } = this.props;
+		const object = getTarget();
 		const length = this.getValue().length;
 
 		switch (item.id) {
@@ -329,17 +328,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	setValue () {
-		if (!this._isMounted) {
+		if (!this._isMounted || !this.ref) {
 			return;
 		};
 
-		const { rootId, block } = this.props;
-		const { targetObjectId } = block.content;
-		const object = targetObjectId ? detailStore.get(rootId, targetObjectId) : {};
-
-		if (!this.ref) {
-			return;
-		};
+		const { getTarget } = this.props;
+		const object = getTarget();
 
 		let name = String(object.name || '');
 		if ((name == DataUtil.defaultName('page')) || (name == DataUtil.defaultName('set'))) {
@@ -365,10 +359,15 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	save () {
-		const { block } = this.props;
+		const { block, getTarget } = this.props;
 		const { targetObjectId } = block.content;
+		const object = getTarget();
 		
 		let value = this.getValue();
+
+		if (value == object.name) {
+			return;
+		};
 
 		if ((value == DataUtil.defaultName('page')) || (value == DataUtil.defaultName('set'))) {
 			value = '';
