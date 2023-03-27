@@ -375,6 +375,7 @@ export default {
 				`,
 				param: {
                     common: {
+						noClose: true,
                         container: true,
                         containerVertical: I.MenuDirection.Center,
                         classNameWrap: 'fixed',
@@ -399,6 +400,7 @@ export default {
 				`,
 				param: {
                     common: {
+						noClose: true,
                         container: true,
                         containerVertical: I.MenuDirection.Center,
                         classNameWrap: 'fixed',
@@ -417,11 +419,11 @@ export default {
 		items: [
 			{
 				description: `
-					We have just backed up your files and are now ready to download the new app.<br/><br/>
+					We have just backed up your files and<br/>are now ready to download the new app.<br/><br/>
 					Click the button to close the current application and be redirected to the website to download the new version.<br/><br/>
-					The current application will still be accessible.<br/><br/><br/>
+					The current application will still be accessible.<br/><br/>
 
-					<b>Important</b>.<br/>
+					<b>Important</b><br/>
 					To login to the new app, please prepare your recovery phrase in advance.
 
 					<div class="buttons">
@@ -435,6 +437,7 @@ export default {
 				`,
 				param: {
 					common: {
+						noClose: true,
 						container: true,
 						containerVertical: I.MenuDirection.Center,
 						classNameWrap: 'fixed',

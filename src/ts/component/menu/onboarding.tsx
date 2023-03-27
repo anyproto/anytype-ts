@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard, Action, C, Renderer } from 'Lib';
+import { I, Onboarding, Util, analytics, keyboard, Action, C, Renderer, Preview } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import * as Docs from 'Docs';
 import Url from 'json/url.json';
@@ -44,7 +44,7 @@ class MenuOnboarding extends React.Component<I.Menu> {
 
 				{l > 1 ? (
 					<div className="bottom">
-						<div>
+						<div className="flex">
 							<Steps />
 							{category ? (
 								<div className="category">
@@ -92,6 +92,7 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
+		const copy = node.find('#copy-phrase');
 
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
@@ -112,8 +113,10 @@ class MenuOnboarding extends React.Component<I.Menu> {
 			Renderer.send('exit');
 		});
 
-		node.find('#copy-phrase').off('click').on('click', () => {
+		copy.off('click').on('click', () => {
 			Util.clipboardCopy({ text: authStore.phrase });
+			Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
+			copy.find('.txt').text('Copied!');
 		});
 	};
 	

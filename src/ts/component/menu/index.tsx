@@ -177,8 +177,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	render () {
 		const { id, param } = this.props;
-		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs } = param;
-		const { data } = param;
+		const { element, data, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs, noClose } = param;
 		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
 		
 		let tab = '';
@@ -269,7 +268,14 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					</div>
 				</div>
 				{!noDimmer ? (
-					<Dimmer onClick={() => { menuStore.close(id); }} className={cd.join(' ')} />
+					<Dimmer 
+						onClick={() => { 
+							if (!noClose) {
+								menuStore.close(id);
+							};
+						}} 
+						className={cd.join(' ')} 
+					/>
 				) : ''}
 			</div>
 		);
@@ -312,7 +318,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	componentDidUpdate () {
 		const { param } = this.props;
-		const { noAnimation, element } = param;
+		const { noAnimation } = param;
 		const node = $(this.node); 
 		const menu = node.find('.menu');
 

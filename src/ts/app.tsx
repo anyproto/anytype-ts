@@ -10,7 +10,7 @@ import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
-import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview, Mark, Encode } from 'Lib';
+import { I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, focus, Preview, Mark, Encode, Onboarding } from 'Lib';
 
 configure({ enforceActions: 'never' });
 
@@ -214,6 +214,7 @@ window.Lib = {
 	DataUtil,
 	Preview,
 	Storage,
+	Onboarding,
 	Encode,
 };
 
