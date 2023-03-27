@@ -20,6 +20,8 @@
 		.section { margin-bottom: 32px; }
 		.section:last-child { margin: 0px; }
 
+		.editorControls { margin-bottom: 8px; }
+
 		.section {
 			.title { @include text-header3; margin-bottom: 14px; position: relative; }
 		}
