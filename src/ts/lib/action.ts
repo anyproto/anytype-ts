@@ -149,7 +149,7 @@ class Action {
 			properties: [ 'openFile' ], 
 		};
 
-		if (extensions.length) {
+		if (extensions && extensions.length) {
 			options.filters = [ { name: '', extensions } ];
 		};
 		
