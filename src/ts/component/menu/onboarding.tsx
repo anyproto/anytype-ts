@@ -44,6 +44,21 @@ class MenuOnboarding extends React.Component<I.Menu> {
 			</div>
 		);
 
+		const Buttons = () => (
+			<div className="buttons">
+				{
+					buttons.map((button, i) => (
+						<Button
+							key={i}
+							text={button.text}
+							className={['c28', i == buttons.length-1 ? 'black' : 'outlined'].join(' ')}
+							onClick={(e: any) => { this.onButton(e, button.action); }}
+						/>
+					))
+				}
+			</div>
+		);
+
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -63,18 +78,7 @@ class MenuOnboarding extends React.Component<I.Menu> {
 						{l > 1 ? <Steps /> : ''}
 					</div>
 
-					<div className="buttons">
-						{
-							buttons.map((button, i) => (
-								<Button
-									key={i}
-									text={button.text}
-									className={['c28', i == buttons.length-1 ? 'black' : 'outlined'].join(' ')}
-									onClick={(e: any) => { this.onButton(e, button.action); }}
-								/>
-							))
-						}
-					</div>
+					<Buttons />
 				</div>
 
 				{isWizard ? <ReactCanvasConfetti refConfetti={ins => this.confetti = ins} className="confettiCanvas" /> : ''}
