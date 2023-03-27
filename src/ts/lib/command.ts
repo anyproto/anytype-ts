@@ -1313,7 +1313,6 @@ const ObjectSetSource = (contextId: string, sources: string[], callBack?: (messa
 };
 
 const ObjectSetDetails = (contextId: string, details: any[], callBack?: (message: any) => void) => {
-console.trace();
 	details = details.map(Mapper.To.Details);
 
 	const request = new Rpc.Object.SetDetails.Request();

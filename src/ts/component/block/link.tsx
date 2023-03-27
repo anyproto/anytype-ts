@@ -25,7 +25,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	render() {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId);
+		const object = detailStore.get(rootId, block.content.targetBlockId, []);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
 		const content = DataUtil.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
@@ -310,7 +310,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	getIconSize () {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId);
+		const object = detailStore.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
 		const content = DataUtil.checkLinkSettings(block.content, object.layout);
 		const { iconSize, cardStyle } = content;
 

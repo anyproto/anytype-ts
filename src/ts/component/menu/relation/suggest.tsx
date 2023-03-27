@@ -417,7 +417,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, ref, object } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, ref } = data;
+		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
 		e.preventDefault();
 		e.stopPropagation();
