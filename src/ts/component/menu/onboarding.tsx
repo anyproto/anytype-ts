@@ -1,10 +1,10 @@
 import * as React from 'react';
 import $ from 'jquery';
-import {Button, Icon} from 'Component';
+import { Button, Icon } from 'Component';
 import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import * as Docs from 'Docs';
-import ReactCanvasConfetti from "react-canvas-confetti";
+import ReactCanvasConfetti from 'react-canvas-confetti';
 
 class MenuOnboarding extends React.Component<I.Menu> {
 
