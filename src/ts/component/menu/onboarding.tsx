@@ -1,15 +1,22 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
-import { menuStore } from 'Store';
+import { I, Onboarding, Util, analytics, keyboard, Action, C, DataUtil } from 'Lib';
+import { authStore, menuStore } from 'Store';
 import * as Docs from 'Docs';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
-class MenuOnboarding extends React.Component<I.Menu> {
+interface State {
+	error: { description: string, code: number };
+};
+
+class MenuOnboarding extends React.Component<I.Menu, State> {
 
 	node: any = null;
 	confetti: any = null;
+	state = {
+		error: null,
+	};
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -109,7 +116,7 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		analytics.event('ScreenOnboarding');
 
 		if (showConfetti && (current == l - 1)) {
-			this.fire();
+			this.confettiShot();
 		};
 	};
 
@@ -170,7 +177,7 @@ class MenuOnboarding extends React.Component<I.Menu> {
 			};
 
 			case 'import': {
-				// process import button click
+				this.onImport();
 				break;
 			};
 		};
@@ -236,7 +243,47 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		});
 	};
 
-	fire () {
+	onImport () {
+		const { walletPath } = authStore;
+
+		Action.openFile([ 'zip' ], paths => {
+			C.AccountRecoverFromLegacyExport(paths[0], walletPath, (message: any) => {
+				if (this.setError(message.error)) {
+					return;
+				};
+
+				const { accountId } = message;
+
+				C.ObjectImport({ path: paths[0], accountId }, [], false, I.ImportType.Migration, I.ImportMode.AllOrNothing, (message: any) => {
+					if (this.setError(message.error)) {
+						return;
+					};
+
+					C.AccountSelect(accountId, walletPath, (message: any) => {
+						if (this.setError(message.error) || !message.account) {
+							return;
+						};
+
+						DataUtil.onAuth(message.account);
+					});
+				});
+			});
+		});
+	};
+
+	setError (error: { description: string, code: number}) {
+		if (!error.code) {
+			return false;
+		};
+
+		this.setState({ error });
+
+		Util.checkError(error.code);
+
+		return true;
+	};
+
+	confettiShot () {
 		this.confetti({
 			particleCount: 150,
 			spread: 60,
