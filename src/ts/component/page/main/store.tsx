@@ -312,7 +312,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	onTab (id: any, isInner: boolean) {
 		this.tab = id;
-		this.onView(View.Library, isInner);
+		this.onView(Storage.get('viewStore') || View.Library, isInner);
 
 		Storage.set('tabStore', id);
 	};
@@ -323,6 +323,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		menuStore.closeAll(Constant.menuIds.store);
 		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
+
+		Storage.set('viewStore', id);
 	};
 
 	onClick (e: any, item: any) {
