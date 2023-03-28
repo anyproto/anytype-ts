@@ -1265,7 +1265,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 		case I.ImportType.Protobuf:
 			params = new Rpc.Object.Import.Request.PbParams();
 			params.setPathList(options.paths);
-			params.setNotcreateobjectscollection(options.noCollection);
+			params.setNocollection(options.noCollection);
 
 			request.setPbparams(params);
 			break;
