@@ -368,6 +368,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			data: {
 				filter: this.refFilter.getValue(),
 				noFilter: true,
+				noInstall: true,
 			}
 		};
 
