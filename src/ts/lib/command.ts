@@ -1256,6 +1256,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			params.setPathList(options.paths);
 			params.setMode(options.mode);
 			params.setUsefirstcolumnforrelations(options.useFirstColumnForRelations);
+			params.setTransposerowsandcolumns(options.transposeRowsAndColumns);
 			params.setDelimiter(options.delimiter);
 
 			request.setCsvparams(params);
@@ -1263,7 +1264,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 
 		case I.ImportType.Protobuf:
 			params = new Rpc.Object.Import.Request.PbParams();
-			params.setPath(options.path);
+			params.setPathList(options.paths);
 			params.setNotcreateobjectscollection(options.noCollection);
 
 			request.setPbparams(params);

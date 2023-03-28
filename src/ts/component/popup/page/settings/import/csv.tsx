@@ -201,7 +201,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 				paths, 
 				mode: this.mode, 
 				useFirstColumnForRelations: this.header,
-				transpose: this.transpose,
+				transposeRowsAndColumns: this.transpose,
 				delimiter: this.delimiter,
 			});
 		});
