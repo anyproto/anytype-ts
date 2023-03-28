@@ -85,11 +85,10 @@ export enum ImportType {
 	Notion		 = 0,
 	Markdown	 = 1,
 	External	 = 2,
-	Migration	 = 3,
+	Protobuf	 = 3,
 	Html		 = 4,
 	Text		 = 5,
 	Csv			 = 6,
-	Protobuf	 = 7,
 };
 
 export enum ExportType {

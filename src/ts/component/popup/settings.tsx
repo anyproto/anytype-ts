@@ -286,7 +286,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	onImport (type: I.ImportType, param: any, callBack?: (message: any) => void) {
-		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, (message: any) => {
+		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, false, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
