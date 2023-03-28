@@ -1004,9 +1004,9 @@ class Dispatcher {
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
 
-		const object = detailStore.get(contextId, rootId, []);
-
 		if (root) {
+			const object = detailStore.get(contextId, rootId, [ 'layout' ], true);
+
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
 		};

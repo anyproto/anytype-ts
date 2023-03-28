@@ -85,7 +85,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 					return true;
 				};
 
-				const object = detailStore.get(widgets, child.content.targetBlockId);
+				const object = detailStore.get(widgets, child.content.targetBlockId, [ 'isArchived', 'isDeleted' ], true);
 				if (object._empty_ || object.isArchived || object.isDeleted) {
 					return false;
 				};

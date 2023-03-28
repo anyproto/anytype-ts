@@ -152,7 +152,7 @@ class AuthStore {
 	threadSet (rootId: string, obj: any) {
 		const thread = this.threadMap.get(rootId);
 		if (thread) {
-			set(thread, observable(obj));
+			set(thread, obj);
 		} else {
 			this.threadMap.set(rootId, observable(obj));
 		};

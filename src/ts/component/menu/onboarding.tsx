@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Button, Icon } from 'Component';
+import { Button, Icon, Label } from 'Component';
 import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import * as Docs from 'Docs';
@@ -22,7 +22,7 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		const { data } = param;
 		const { key, current } = data;
 		const section = Docs.Help.Onboarding[key] || {};
-		const { items, category, isWizard } = section;
+		const { items, category, showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
 
@@ -34,28 +34,30 @@ class MenuOnboarding extends React.Component<I.Menu> {
 
 		const Steps = () => (
 			<div className="steps">
-				{[ ...Array(l) ].map((e: number, i: number) => (
-					<div 
-						key={i}
-						className={[ 'step', (i == current ? 'active' : 'step') ].join(' ')} 
-						onClick={e => this.onClick(e, i)} 
-					/>
-				))}
+				{l > 1 ? (
+					<React.Fragment>
+						{[ ...Array(l) ].map((e: number, i: number) => (
+							<div 
+								key={i}
+								className={[ 'step', (i == current ? 'active' : 'step') ].join(' ')} 
+								onClick={e => this.onClick(e, i)} 
+							/>
+						))}
+					</React.Fragment>
+				) : ''}
 			</div>
 		);
 
 		const Buttons = () => (
 			<div className="buttons">
-				{
-					buttons.map((button, i) => (
-						<Button
-							key={i}
-							text={button.text}
-							className={['c28', i == buttons.length-1 ? 'black' : 'outlined'].join(' ')}
-							onClick={(e: any) => { this.onButton(e, button.action); }}
-						/>
-					))
-				}
+				{buttons.map((button, i) => (
+					<Button
+						key={i}
+						text={button.text}
+						className={['c28', i == buttons.length-1 ? 'black' : 'outlined'].join(' ')}
+						onClick={(e: any) => { this.onButton(e, button.action); }}
+					/>
+				))}
 			</div>
 		);
 
@@ -66,22 +68,17 @@ class MenuOnboarding extends React.Component<I.Menu> {
 			>
 				<Icon className="close" onClick={this.onClose} />
 
-				{category ? <div className="category">{category}</div> : ''}
-
-				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
-				<div className="descr" dangerouslySetInnerHTML={{ __html: item.description }} />
-
+				{category ? <Label className="category" text={category} /> : ''}
+				{item.name ? <Label className="name" text={item.name} /> : ''}
+				{item.description ? <Label className="descr" text={item.description} /> : ''}
 				{item.video ? <video src={item.video} autoPlay={true} loop={true} /> : ''}
 
 				<div className="bottom">
-					<div>
-						{l > 1 ? <Steps /> : ''}
-					</div>
-
+					<Steps />
 					<Buttons />
 				</div>
 
-				{isWizard ? <ReactCanvasConfetti refConfetti={ins => this.confetti = ins} className="confettiCanvas" /> : ''}
+				{showConfetti ? <ReactCanvasConfetti refConfetti={ins => this.confetti = ins} className="confettiCanvas" /> : ''}
 			</div>
 		);
 	};
@@ -95,8 +92,8 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		const { param, position } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const section = Docs.Help.Onboarding[key] || {}
-		const { items, isWizard } = section;
+		const section = Docs.Help.Onboarding[key] || {};
+		const { items, showConfetti } = section;
 		const l = items.length;
 		const node = $(this.node);
 		
@@ -111,7 +108,7 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		Util.renderLinks(node);
 		analytics.event('ScreenOnboarding');
 
-		if (isWizard && current == l-1) {
+		if (showConfetti && (current == l - 1)) {
 			this.fire();
 		};
 	};
@@ -200,27 +197,17 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		const { data, onOpen, onClose } = this.props.param;
 		const { key, isPopup, options } = data;
 		const section = Docs.Help.Onboarding[key];
-		const { items, isWizard } = section;
+		const { items } = section;
 		const item = items[next];
 
 		if (!item) {
 			return;
 		};
 
-		let param = Onboarding.getParam(item, isPopup);
+		let param = Onboarding.getParam(section, item, isPopup);
+
 		if (options.parseParam) {
 			param = options.parseParam(param);
-		};
-
-		if (isWizard) {
-			param = {
-				element: '#button-help',
-				classNameWrap: 'fixed',
-				className: 'wizard',
-				vertical: I.MenuDirection.Top,
-				horizontal: I.MenuDirection.Right,
-				offsetY: -4,
-			};
 		};
 
 		menuStore.open('onboarding', {

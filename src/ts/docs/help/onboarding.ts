@@ -3,72 +3,59 @@ import { I } from 'Lib';
 export default {
     wizardDashboard: {
         category: 'Dashboard',
-        isWizard: true,
+        showConfetti: true,
         items: [
             {
                 description: `
-					<div class="paragraph">
-					<b>Welcome to your Dashboard.</b> This is your personalized page, which you can customize to your liking.
-					<br />
-					We've included some materials to help you get started, but feel free to make adjustments as needed.
-					</div>
-					<div class="paragraph">
-					Let's take a few minutes to explore the features together.
-					</div>
+					<p>
+						<b>Welcome to your Dashboard.</b> This is your personalized page, which you can customize to your liking.<br />
+						We've included some materials to help you get started, but feel free to make adjustments as needed.
+					</p>
+					<p>Let's take a few minutes to explore the features together.</p>
 				`,
                 video: './img/help/31/1-inline-set.mp4'
             },
             {
                 description: `
-					<div class="paragraph">
-                    On the Dashboard page, you'll find <b>Sets, which act as filters for your objects</b> with various viewing options.
-                    </div>
-					<div class="paragraph">
-                    Sets make it easy to navigate and collect specific objects, such as notes, links, tasks, ideas, and more.
-                    </div>
-					<div class="paragraph">
-                    To access different Set views, simply select them.
-                    </div>
+					<p>On the Dashboard page, you'll find <b>Sets, which act as filters for your objects</b> with various viewing options.</p>
+					<p>Sets make it easy to navigate and collect specific objects, such as notes, links, tasks, ideas, and more.</p>
+					<p>To access different Set views, simply select them.</p>
                 `
             },
             {
                 description: `
-					<div class="paragraph">
-                    <b>Objects in Anytype</b> have specific types depending on their purpose. You can use system types or define custom ones. Structure objects with relations and links.
-                    </div>
-					<div class="paragraph">
-                    To add an object to a set, click the <span class="highlight">New</span> button and view its relation as properties in columns.
-                    </div>
+					<p><b>Objects in Anytype</b> have specific types depending on their purpose. You can use system types or define custom ones. Structure objects with relations and links.</p>
+					<p>To add an object to a set, click the <span class="highlight">New</span> button and view its relation as properties in columns.</p>
                 `
             },
             {
                 description: `
-					<div class="paragraph">
-                    <b>You'll find the Sidebar on the left.</b> It's a navigation tool that you can customize with multiple widget types.
-                    </div>
-					<div class="paragraph">
-                    Change the widget appearance and see what looks best. Make your Favorites as a Tree Widget.
-                    </div>
+					<p><b>You'll find the Sidebar on the left.</b> It's a navigation tool that you can customize with multiple widget types.</p>
+					<p>Change the widget appearance and see what looks best. Make your Favorites as a Tree Widget.</p>
                 `
             },
             {
                 description: `
-					<div class="paragraph">
-                    <b>Great job!</b> You have completed this section. Feel free to explore other menus in the interface, such as Library and Sets.
-                    </div>
-					<div class="paragraph">
-                    If you have any questions, don't hesitate to press the <span class="highlight">?</span> button.
-                    </div>
-					<div class="paragraph">
-                    To continue working on your project where you left off, you can import your data and make it your own.
-                    </div>
+					<p><b>Great job!</b> You have completed this section. Feel free to explore other menus in the interface, such as Library and Sets.</p>
+					<p>If you have any questions, don't hesitate to press the <span class="highlight">?</span> button.</p>
+					<p>To continue working on your project where you left off, you can import your data and make it your own.</p>
                 `,
                 buttons: [
                     { text: 'Import', action: 'import' }
                 ]
             }
-        ]
+        ],
+
+		param: {
+			element: '#footer #button-help',
+			classNameWrap: 'fixed',
+			className: 'wizard',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Right,
+			offsetY: -14,
+		},
     },
+
     mainIndex: {
         category: 'Dashboard',
         items: [

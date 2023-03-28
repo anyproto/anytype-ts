@@ -44,16 +44,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	render () {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId);
-		const items = this.getItems();
-		const type = detailStore.get(rootId, object.type);
-		const bullet = <div className="bullet" />;
-		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
-		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
+		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
 
 		if (!featuredRelations.length) {
 			return null;
 		};
+
+		const object = detailStore.get(rootId, storeId, featuredRelations);
+		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
+		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const items = this.getItems();
+		const bullet = <div className="bullet" />;
 
 		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.type).map(it => it.name);
 		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.relation).map(it => it.name);
@@ -199,10 +201,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	checkType () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId);
-		const type = detailStore.get(rootId, object.type);
+		const object = detailStore.get(rootId, storeId, [ 'type' ], true);
+		const type = detailStore.get(rootId, object.type, [ 'isDeleted' ], true);
 
-		if (!type || type.isDeleted) {
+		if (type._empty_ || type.isDeleted) {
 			Onboarding.start('typeDeleted', isPopup);
 		};
 	};
@@ -210,7 +212,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	checkSource () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId);
+		const object = detailStore.get(rootId, storeId, [ 'layout', 'setOf' ]);
 
 		if (!object || object._empty_ || (object.layout != I.ObjectLayout.Set)) {
 			return;
@@ -231,20 +233,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems () {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId);
+		const object = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const skipIds = [
 			'type',
 			'description',
 			'setOf',
 		];
 
-		return (object.featuredRelations || []).filter((it: any) => {
-			const relation = dbStore.getRelationByKey(it);
-			if (!relation || skipIds.includes(it)) {
-				return false;
-			};
-			return true;
-		});
+		return (object.featuredRelations || []).filter(it => dbStore.getRelationByKey(it) && !skipIds.includes(it));
 	};
 
 	onFocus () {
