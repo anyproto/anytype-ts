@@ -52,7 +52,8 @@ export default {
 			className: 'wizard',
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
-			offsetY: -14,
+            noArrow: true,
+			offsetY: -4,
 		},
     },
 
