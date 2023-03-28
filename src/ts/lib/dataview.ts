@@ -209,17 +209,21 @@ class Dataview {
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 		const { type } = object;
-		const isInline = ![ Constant.typeId.set, Constant.typeId.collection ].includes(type);
+		const isInline = !DataUtil.getSetTypes().includes(type);
 
 		if (!isInline) {
 			return type == Constant.typeId.collection;
 		};
 
 		const block = blockStore.getLeaf(rootId, blockId);
-		const { targetObjectId } = block.content;
+		if (!block) {
+			return false;
+		};
+
+		const { targetObjectId, isCollection } = block.content;
 		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'type' ], true) : null;
 
-		return targetObjectId ? target.type == Constant.typeId.collection : block.content.isCollection;
+		return targetObjectId ? target.type == Constant.typeId.collection : isCollection;
 	};
 
 };

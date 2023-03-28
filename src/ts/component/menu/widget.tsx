@@ -6,8 +6,6 @@ import { C, I, keyboard, MenuUtil, translate, Action, DataUtil, analytics } from
 import { blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const SET_TYPES = [ Constant.typeId.set, Constant.typeId.collection ];
-
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
     _isMounted = false;
@@ -168,6 +166,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	checkState () {
+		const setTypes = DataUtil.getSetTypes();
 		const options = this.getLayoutOptions().map(it => it.id);
 		
 		if (this.target && (this.layout == I.WidgetLayout.Tree) && (this.target.type == Constant.typeId.set)) {
@@ -176,7 +175,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		if (this.isCollection() && (this.layout == I.WidgetLayout.Link)) {
 			this.target = null;
 		};
-		if (this.target && (this.layout == I.WidgetLayout.List) && !SET_TYPES.includes(this.target.type) && !this.isCollection()) {
+		if (this.target && (this.layout == I.WidgetLayout.List) && !setTypes.includes(this.target.type) && !this.isCollection()) {
 			this.layout = I.WidgetLayout.Link;
 		};
 
@@ -195,7 +194,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		];
 
 		if (this.target) {
-			const treeSkipTypes = SET_TYPES.concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
+			const setTypes = DataUtil.getSetTypes();
+			const treeSkipTypes = setTypes.concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
 			const isCollection = this.isCollection();
 
 			// Favorites and Recents and Sets can only become List and Tree layouts
@@ -206,7 +206,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				if (treeSkipTypes.includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
-				if (!SET_TYPES.includes(this.target.type)) {
+				if (!setTypes.includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.List);
 				};
 			};
