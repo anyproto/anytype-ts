@@ -45,7 +45,7 @@ class Storage {
 
 	setToggle (rootId: string, id: string, value: boolean) {
 		let obj = this.get('toggle');
-		if (!obj || !Util.objectLength(obj)) {
+		if (!obj || Util.hasProperty(obj, 'length')) {
 			obj = {};
 		};
 		
