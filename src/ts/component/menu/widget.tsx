@@ -164,16 +164,19 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	checkState () {
 		const setTypes = DataUtil.getSetTypes();
 		const options = this.getLayoutOptions().map(it => it.id);
-		
-		if (this.isCollection() && (this.layout == I.WidgetLayout.Link)) {
-			this.layout = I.WidgetLayout.List;
-		};
-		if (
-			this.target && 
-			[ I.WidgetLayout.List, I.WidgetLayout.Tree ].includes(this.layout) && 
-			!setTypes.includes(this.target.type) && !this.isCollection()
-		) {
-			this.layout = I.WidgetLayout.Link;
+
+		if (this.isCollection()) {
+			if (this.layout == I.WidgetLayout.Link) {
+				this.layout = I.WidgetLayout.List;
+			};
+		} else 
+		if (this.target) {
+			if ((this.layout == I.WidgetLayout.List) && !setTypes.includes(this.target.type)) {
+				this.layout = I.WidgetLayout.Link;
+			};
+			if ((this.layout == I.WidgetLayout.Tree) && setTypes.includes(this.target.type)) {
+				this.layout = I.WidgetLayout.Link;
+			};
 		};
 
 		this.layout = options.includes(this.layout) ? this.layout : null;
