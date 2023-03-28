@@ -128,11 +128,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		let layoutIcon = '';
 
 		if (this.target) {
-			if (this.target.layout == I.ObjectLayout.Note) {
-				sourceName = this.target.snippet || translate('commonEmpty');
-			} else {
-				sourceName = DataUtil.getObjectName(this.target);
-			};
+			sourceName = DataUtil.getObjectName(this.target);
 		};
 
 		if (this.layout !== null) {
@@ -169,13 +165,14 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const setTypes = DataUtil.getSetTypes();
 		const options = this.getLayoutOptions().map(it => it.id);
 		
-		if (this.target && (this.layout == I.WidgetLayout.Tree) && (this.target.type == Constant.typeId.set)) {
-			this.target = null;
-		};
 		if (this.isCollection() && (this.layout == I.WidgetLayout.Link)) {
-			this.target = null;
+			this.layout = I.WidgetLayout.List;
 		};
-		if (this.target && (this.layout == I.WidgetLayout.List) && !setTypes.includes(this.target.type) && !this.isCollection()) {
+		if (
+			this.target && 
+			[ I.WidgetLayout.List, I.WidgetLayout.Tree ].includes(this.layout) && 
+			!setTypes.includes(this.target.type) && !this.isCollection()
+		) {
 			this.layout = I.WidgetLayout.Link;
 		};
 
