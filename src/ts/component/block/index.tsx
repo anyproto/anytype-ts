@@ -67,7 +67,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isInsideTable } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable, index } = this.props;
 		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
@@ -80,7 +80,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let canSelect = !isInsideTable;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = false;
-		let cn: string[] = [ 'block', DataUtil.blockClass(block), 'align' + hAlign ];
+		let cn: string[] = [ 'block', DataUtil.blockClass(block), 'align' + hAlign, 'index' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
