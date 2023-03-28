@@ -225,12 +225,14 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 		const { widgets } = blockStore;
 		const { block, isPreview } = this.props;
 		const { targetBlockId } = block.content;
-		const object = detailStore.get(widgets, targetBlockId);
 		const dataview = blockStore.getLeaf(this.getRootId(), BLOCK_ID);
 		
 		if (!dataview) {
 			return;
 		};
+
+		const object = detailStore.get(widgets, targetBlockId);
+		const isCollection = Dataview.isCollection(targetBlockId, BLOCK_ID);
 
 		Dataview.getData({
 			rootId: this.getRootId(),
@@ -238,6 +240,7 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			newViewId: viewId,
 			sources: object.setOf,
 			limit: isPreview ? 0 : Constant.limit.widgetRecords.list,
+			collectionId: (isCollection ? targetBlockId : ''),
 		}, () => {
 			this.resize();
 		});

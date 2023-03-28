@@ -618,7 +618,6 @@ class App extends React.Component<object, State> {
 		const rootId = keyboard.getRootId();
 		const logPath = window.Electron.logPath;
 		const tmpPath = window.Electron.tmpPath;
-		const options: any = {};
 
 		switch (key) {
 			case 'undo':

@@ -190,7 +190,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			limit,
 			ignoreHidden: true,
 			ignoreDeleted: true,
-			collectionId: isCollection ? object.id : '',
+			collectionId: (isCollection ? object.id : ''),
 		}, () => {
 			dbStore.recordsSet(subId, '', applyObjectOrder(dbStore.getRecords(subId, ''), id));
 
