@@ -2,7 +2,6 @@ import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
 import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight } from 'Lib';
 import { popupStore, blockStore, detailStore } from 'Store';
-import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
 class MenuHelp extends React.Component<I.Menu> {
@@ -31,10 +30,10 @@ class MenuHelp extends React.Component<I.Menu> {
 						);
 					} else {
 						content = (
-							<MenuItemVertical 
-								key={i} 
-								{...item} 
-								onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+							<MenuItemVertical
+								key={i}
+								{...item}
+								onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
 								onClick={(e: any) => { this.onClick(e, item); }}
 							/>
 						);
@@ -66,17 +65,34 @@ class MenuHelp extends React.Component<I.Menu> {
 	};
 
 	getItems () {
+		const rootId = keyboard.getRootId();
 		const btn = <Button className="c16" text={window.Electron.version.app} />;
+		const match = keyboard.getMatch();
+		const { page, action } = match.params;
+		const isEditor = (page == 'main') && (action == 'edit');
 
-		return [
+		let items: any[] = [
 			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn },
 			{ id: 'community', name: 'Anytype Community' },
 			{ isDiv: true },
-			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' },
-			{ id: 'hints', name: 'Show Hints' },
+			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' }
+		];
+
+		let key = '';
+		if (isEditor && !blockStore.checkBlockTypeExists(rootId)) {
+			key = 'editor';
+		};
+
+		if (key) {
+			items.push({ id: 'hints', name: 'Show Hints', key: key });
+		};
+
+		items = items.concat([
 			{ id: 'wizard', name: 'Show Wizard' },
 			{ id: 'tutorial', name: 'Help & Tutorials' },
-		];
+		]);
+
+		return items;
 	};
 
 	onMouseEnter (e: any, item: any) {
@@ -121,29 +137,7 @@ class MenuHelp extends React.Component<I.Menu> {
 
 			case 'hints': {
 				const isPopup = keyboard.isPopup();
-				const rootId = keyboard.getRootId();
-				const object = detailStore.get(rootId, rootId, []);
-				const match = keyboard.getMatch();
-				const { page, action } = match.params;
-				const isEditor = (page == 'main') && (action == 'edit');
-
-				let key = '';
-
-				if (object.type == Constant.typeId.set) {
-					key = 'set';
-				} else 
-				if (object.type == Constant.typeId.template) {
-					key = 'template';
-				} else
-				if (isEditor) {
-					key = blockStore.checkBlockTypeExists(rootId) ? 'typeSelect' : 'editor';
-				} else {
-					key = Util.toCamelCase([ page, action ].join('-'));
-				};
-
-				if (key) {
-					Onboarding.start(key, isPopup, true);
-				};
+				Onboarding.start(item.key, isPopup, true);
 				break;
 			};
 
