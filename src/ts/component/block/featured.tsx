@@ -307,9 +307,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const type = detailStore.get(rootId, object.type, [ 'smartblockTypes' ]);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
+		const typeIsDeleted = type._empty_ || type.isDeleted
 		const options: any[] = [];
 
-		if (!type.isArchived && !type.isDeleted) {
+		if (!type.isArchived && !typeIsDeleted) {
 			options.push({ id: 'open', name: 'Open type' });
 		};
 
@@ -317,7 +318,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			options.push({ id: 'change', name: 'Change type', arrow: true });
 		};
 
-		if (object.type === Constant.typeId.set) {
+		if (!typeIsDeleted && (object.type === Constant.typeId.set)) {
 			options.push({ id: 'turnToCollection', name: 'Turn into collection' });
 		};
 
@@ -340,20 +341,24 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			});
 		};
 
-		DataUtil.checkSetCnt([ object.type ], (message: any) => {
-			if (message.records.length == 1) {
-				this.setId = message.records[0].id;
-				options.push({ id: 'setOpen', name: 'Open set' });
-			} else
-			if (message.records.length == 2) {
-				options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
-			} else
-			if (type && !type.isDeleted) {
-				options.push({ id: 'setCreate', name: 'Create set' });
-			};
-
+		if (typeIsDeleted) {
 			showMenu();
-		});
+		} else {
+			DataUtil.checkSetCnt([ object.type ], (message: any) => {
+				if (message.records.length == 1) {
+					this.setId = message.records[0].id;
+					options.push({ id: 'setOpen', name: 'Open set' });
+				} else
+				if (message.records.length == 2) {
+					options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
+				} else
+				if (type && !type.isDeleted) {
+					options.push({ id: 'setCreate', name: 'Create set' });
+				};
+
+				showMenu();
+			});
+		};
 	};
 
 	onTypeOver (e: any, item: any) {
