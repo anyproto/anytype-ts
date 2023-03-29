@@ -60,25 +60,9 @@ const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex
 
 	onExportCommon (type: I.ExportType, extensions: string[], options?: any) {
 		const { close, onExport } = this.props;
-		const platform = Util.getPlatform();
-		const fileOptions: any = { 
-			properties: [ 'openFile' ],
-			filters: [ { name: '', extensions } ]
-		};
 
-		if (platform == I.Platform.Mac) {
-			fileOptions.properties.push('openDirectory');
-		};
-
-		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
-			const paths = result.filePaths;
-			if ((paths == undefined) || !paths.length) {
-				return;
-			};
-
-			close();
-			onExport(type, Object.assign(options || {}, { paths }));
-		});
+		onExport(type, options);
+		close();
 	};
 
 	onExportProtobuf () {
