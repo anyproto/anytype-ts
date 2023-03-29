@@ -27,13 +27,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 		this.onCancel = this.onCancel.bind(this);
 		this.onBackup = this.onBackup.bind(this);
+		this.setError = this.setError.bind(this);
 	};
 
 	render () {
 		const { cover } = commonStore;
 		const { match } = this.props;
 		const error = this.state.error || {};
-		const tcn = [];
 		
 		let content = null;
 		let back = (
@@ -260,31 +260,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onBackup () {
-		const { walletPath } = authStore;
-
-		Action.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], walletPath, (message: any) => {
-				if (this.setError(message.error)) {
-					return;
-				};
-
-				const { accountId } = message;
-
-				C.ObjectImport({ paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, (message: any) => {
-					if (this.setError(message.error)) {
-						return;
-					};
-
-					C.AccountSelect(accountId, walletPath, (message: any) => {
-						if (this.setError(message.error) || !message.account) {
-							return;
-						};
-
-						DataUtil.onAuth(message.account);
-					});
-				});
-			});
-		});
+		Action.restoreFromBackup(this.setError);
 	};
 
 	onCancel () {
