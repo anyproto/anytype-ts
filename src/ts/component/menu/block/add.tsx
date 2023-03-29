@@ -274,26 +274,26 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
-		const relations = dbStore.getObjectRelations(rootId, rootId).filter((it: any) => {
+		const object = detailStore.get(rootId, rootId, []);
+		const isTemplate = object.type == Constant.typeId.template;
+		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
+
+		const relations = dbStore.getObjectRelations(rootId, rootId);
+		const relationKeys = relations.map(it => it.relationKey);
+		const typeRelations = (type ? type.recommendedRelations || [] : []).
+			map(it => dbStore.getRelationById(it)).
+			filter(it => it.relationKey && !relationKeys.includes(it.relationKey));
+
+		const ret = relations.concat(typeRelations).filter(it => {
 			if (!config.debug.ho && it.isHidden) {
 				return false;
 			};
 			return it.isInstalled;
-		}).sort(DataUtil.sortByName).map((it: any) => {
-			it.type = I.BlockType.Relation;
-			it.isRelation = true;
-			it.isBlock = true;
-			return it;
-		});
+		}).sort(DataUtil.sortByName);
 
 		relations.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
 
-		return relations.map((it: any) => {
-			it.type = I.BlockType.Relation;
-			it.isRelation = true;
-			it.isBlock = true;
-			return it;
-		});
+		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true }));
 	};
 	
 	getSections () {
