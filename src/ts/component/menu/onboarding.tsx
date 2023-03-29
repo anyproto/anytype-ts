@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard, Action, C, DataUtil } from 'Lib';
-import { authStore, menuStore } from 'Store';
 import * as Docs from 'Docs';
+import { Button, Icon, Label } from 'Component';
+import { I, Onboarding, Util, analytics, keyboard, Action } from 'Lib';
+import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
 interface State {
@@ -21,7 +21,8 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 	constructor (props: I.Menu) {
 		super(props);
 
-		this.onClose = this.onClose.bind(this)
+		this.onClose = this.onClose.bind(this);
+		this.setError = this.setError.bind(this);
 	};
 
 	render () {
@@ -43,13 +44,14 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 			<div className="steps">
 				{l > 1 ? (
 					<React.Fragment>
-						{[ ...Array(l) ].map((e: number, i: number) => (
-							<div 
-								key={i}
-								className={[ 'step', (i == current ? 'active' : 'step') ].join(' ')} 
-								onClick={e => this.onClick(e, i)} 
-							/>
-						))}
+						{[ ...Array(l) ].map((e: number, i: number) => {
+							const cn = [ 'step' ];
+							if (i == current) {
+								cn.push('active');
+							};
+
+							return <div key={i} className={cn.join(' ')} onClick={e => this.onClick(e, i)} />;
+						})}
 					</React.Fragment>
 				) : ''}
 			</div>
@@ -244,31 +246,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 	};
 
 	onImport () {
-		const { walletPath } = authStore;
-
-		Action.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], walletPath, (message: any) => {
-				if (this.setError(message.error)) {
-					return;
-				};
-
-				const { accountId } = message;
-
-				C.ObjectImport({ path: paths[0], accountId }, [], false, I.ImportType.Migration, I.ImportMode.AllOrNothing, (message: any) => {
-					if (this.setError(message.error)) {
-						return;
-					};
-
-					C.AccountSelect(accountId, walletPath, (message: any) => {
-						if (this.setError(message.error) || !message.account) {
-							return;
-						};
-
-						DataUtil.onAuth(message.account);
-					});
-				});
-			});
-		});
+		Action.restoreFromBackup(this.setError);
 	};
 
 	setError (error: { description: string, code: number}) {
@@ -276,23 +254,22 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 			return false;
 		};
 
-		this.setState({ error });
-
-		Util.checkError(error.code);
+		popupStore.open('confirm', {
+			data: {
+				title: 'Error',
+				text: error.description,
+				textConfirm: 'Ok',
+				canCancel: false,
+			},
+		});
 
 		return true;
 	};
 
 	confettiShot () {
-		this.confetti({
-			particleCount: 150,
-			spread: 60,
-			origin: {
-				x: .5,
-				y: 1
-			}
-		});
+		this.confetti({ particleCount: 150, spread: 60, origin: { x: 0.5, y: 1 } });
 	};
+
 };
 
 export default MenuOnboarding;
