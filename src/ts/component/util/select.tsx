@@ -189,7 +189,7 @@ class Select extends React.Component<Props, State> {
 			},
 		}, mp.data || {});
 
-		menuStore.closeAll(null, () => {
+		menuStore.closeAll([ 'select' ], () => {
 			menuStore.open('select', menuParam);
 		});
 	};

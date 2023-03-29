@@ -1217,7 +1217,7 @@ const ObjectImportList = (callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectImportList.name, request, callBack);
 };
 
-const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, callBack?: (message: any) => void) => {
+const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
 
 	let params = null;
@@ -1235,14 +1235,6 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			params.setPath(options.path);
 
 			request.setMarkdownparams(params);
-			break;
-
-		case I.ImportType.Migration:
-			params = new Rpc.Object.Import.Request.MigrationParams();
-			params.setAccountid(options.accountId);
-			params.setPath(options.path);
-
-			request.setMigrationparams(params);
 			break;
 
 		case I.ImportType.Html:
@@ -1263,7 +1255,8 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			params = new Rpc.Object.Import.Request.CsvParams();
 			params.setPathList(options.paths);
 			params.setMode(options.mode);
-			params.setUsefirstcolumnforrelations(options.useFirstColumnForRelations);
+			params.setUsefirstrowforrelations(options.firstRow);
+			params.setTransposerowsandcolumns(options.transpose);
 			params.setDelimiter(options.delimiter);
 
 			request.setCsvparams(params);
@@ -1271,7 +1264,8 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 
 		case I.ImportType.Protobuf:
 			params = new Rpc.Object.Import.Request.PbParams();
-			params.setPath(options.path);
+			params.setPathList(options.paths);
+			params.setNocollection(options.noCollection);
 
 			request.setPbparams(params);
 			break;
@@ -1282,6 +1276,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 	request.setUpdateexistingobjects(existing);
 	request.setType(type);
 	request.setMode(mode);
+	request.setNoprogress(noProgress);
 	
 	dispatcher.request(ObjectImport.name, request, callBack);
 };

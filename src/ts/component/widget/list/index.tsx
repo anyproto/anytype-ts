@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, Util } from 'Lib';
+import { Dataview, I, C, Util, Relation } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -225,10 +225,17 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 		const { widgets } = blockStore;
 		const { block, isPreview } = this.props;
 		const { targetBlockId } = block.content;
-		const object = detailStore.get(widgets, targetBlockId);
 		const dataview = blockStore.getLeaf(this.getRootId(), BLOCK_ID);
 		
 		if (!dataview) {
+			return;
+		};
+
+		const object = detailStore.get(widgets, targetBlockId);
+		const setOf = Relation.getArrayValue(object.setOf);
+		const isCollection = Dataview.isCollection(targetBlockId, BLOCK_ID);
+
+		if (!setOf.length && !isCollection) {
 			return;
 		};
 
@@ -236,8 +243,9 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			rootId: this.getRootId(),
 			blockId: BLOCK_ID,
 			newViewId: viewId,
-			sources: object.setOf,
+			sources: setOf,
 			limit: isPreview ? 0 : Constant.limit.widgetRecords.list,
+			collectionId: (isCollection ? targetBlockId : ''),
 		}, () => {
 			this.resize();
 		});

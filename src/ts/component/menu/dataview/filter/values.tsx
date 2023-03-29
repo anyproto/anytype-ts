@@ -1,13 +1,13 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { I, Util, translate, keyboard, analytics, Relation } from 'Lib';
 import { Select, Tag, Icon, IconObject, Input, MenuItemVertical } from 'Component';
 import { menuStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const TIMEOUT = 500;
+const TIMEOUT = 1000;
 
 const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends React.Component<I.Menu> {
 

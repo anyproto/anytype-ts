@@ -367,7 +367,18 @@ class Keyboard {
 		let ret = true;
 		if (!isPopup) {
 			ret = history.index - 1 >= 0;
+
+			if (history.index === 0) {
+				const entry = history.entries[history.index];
+				const route = Util.getRoute(entry.pathname);
+				const home = ObjectUtil.getSpaceDashboard();
+
+				if (home && (route.id != home.id)) {
+					ret = true;
+				};
+			};
 		};
+
 		return ret;
 	};
 

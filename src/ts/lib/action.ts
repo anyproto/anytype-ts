@@ -328,7 +328,7 @@ class Action {
 
 				const { accountId } = message;
 
-				C.ObjectImport({ path: paths[0], accountId }, [], false, I.ImportType.Migration, I.ImportMode.AllOrNothing, (message: any) => {
+				C.ObjectImport({ paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, (message: any) => {
 					if (onError(message.error)) {
 						return;
 					};

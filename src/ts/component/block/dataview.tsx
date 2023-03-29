@@ -392,7 +392,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				limit: offset + this.getLimit(view.type), 
 				clear,
 				sources,
-				collectionId: isCollection ? this.getObjectId() : '',
+				collectionId: (isCollection ? this.getObjectId() : ''),
 			}, (message: any) => {
 				if (clear) {
 					this.setState({ loading: false });

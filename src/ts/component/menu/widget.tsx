@@ -128,11 +128,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		let layoutIcon = '';
 
 		if (this.target) {
-			if (this.target.layout == I.ObjectLayout.Note) {
-				sourceName = this.target.snippet || translate('commonEmpty');
-			} else {
-				sourceName = DataUtil.getObjectName(this.target);
-			};
+			sourceName = DataUtil.getObjectName(this.target);
 		};
 
 		if (this.layout !== null) {
@@ -166,16 +162,21 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	checkState () {
+		const setTypes = DataUtil.getSetTypes();
 		const options = this.getLayoutOptions().map(it => it.id);
-		
-		if (this.target && (this.layout == I.WidgetLayout.Tree) && (this.target.type == Constant.typeId.set)) {
-			this.target = null;
-		};
-		if (this.isCollection() && (this.layout == I.WidgetLayout.Link)) {
-			this.target = null;
-		};
-		if (this.target && (this.layout == I.WidgetLayout.List) && (this.target.type != Constant.typeId.set) && !this.isCollection()) {
-			this.layout = I.WidgetLayout.Link;
+
+		if (this.isCollection()) {
+			if (this.layout == I.WidgetLayout.Link) {
+				this.layout = I.WidgetLayout.List;
+			};
+		} else 
+		if (this.target) {
+			if ((this.layout == I.WidgetLayout.List) && !setTypes.includes(this.target.type)) {
+				this.layout = I.WidgetLayout.Link;
+			};
+			if ((this.layout == I.WidgetLayout.Tree) && setTypes.includes(this.target.type)) {
+				this.layout = I.WidgetLayout.Link;
+			};
 		};
 
 		this.layout = options.includes(this.layout) ? this.layout : null;
@@ -186,8 +187,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	getLayoutOptions () {
-		const setTypes = [ Constant.typeId.set, Constant.typeId.collection ];
-
 		let options = [
 			I.WidgetLayout.Tree,
 			I.WidgetLayout.List,
@@ -195,6 +194,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		];
 
 		if (this.target) {
+			const setTypes = DataUtil.getSetTypes();
 			const treeSkipTypes = setTypes.concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
 			const isCollection = this.isCollection();
 
@@ -222,7 +222,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	isCollection () {
-		return this.target && [ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set, Constant.widgetId.collection ].includes(this.target.id);
+		return this.target && Object.values(Constant.widgetId).includes(this.target.id);
 	};
 
     onMouseEnter (e: React.MouseEvent, item): void {

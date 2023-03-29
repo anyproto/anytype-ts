@@ -1510,6 +1510,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const { isPopup, rootId, block, getWrapperWidth } = this.props;
 		const element = blockStore.getMapElement(rootId, block.id);
+		if (!element) {
+			return;
+		};
+
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const node = $(this.node);
 		const wrap = node.find('#scrollWrap');

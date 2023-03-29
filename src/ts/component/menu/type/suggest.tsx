@@ -424,7 +424,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	onClick (e: any, item: any) {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { filter, onClick } = data;
+		const { filter, onClick, noInstall } = data;
 
 		if (item.arrow) {
 			return;
@@ -449,7 +449,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				};
 			});
 		} else {
-			if (item.isInstalled) {
+			if (item.isInstalled || noInstall) {
 				cb(item);
 			} else {
 				Action.install(item, (message: any) => { cb(message.details); });

@@ -679,6 +679,13 @@ class DataUtil {
 		];
 	};
 
+	getSetTypes () {
+		return [ 
+			Constant.typeId.set, 
+			Constant.typeId.collection,
+		];
+	};
+
 	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
 		if (message.error.code) {
 			return;
