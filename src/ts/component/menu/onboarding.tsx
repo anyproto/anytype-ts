@@ -1,35 +1,70 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard } from 'Lib';
-import { menuStore } from 'Store';
 import * as Docs from 'Docs';
+import { Button, Icon, Label } from 'Component';
+import { I, Onboarding, Util, analytics, keyboard, Action } from 'Lib';
+import { menuStore, popupStore } from 'Store';
+import ReactCanvasConfetti from 'react-canvas-confetti';
 
-class MenuOnboarding extends React.Component<I.Menu> {
+interface State {
+	error: { description: string, code: number };
+};
+
+class MenuOnboarding extends React.Component<I.Menu, State> {
 
 	node: any = null;
+	confetti: any = null;
+	state = {
+		error: null,
+	};
 
 	constructor (props: I.Menu) {
 		super(props);
 
-		this.onClose = this.onClose.bind(this)
+		this.onClose = this.onClose.bind(this);
+		this.setError = this.setError.bind(this);
 	};
 
 	render () {
 		const { param } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const { items, category } = Docs.Help.Onboarding[key] || {};
+		const section = Docs.Help.Onboarding[key] || {};
+		const { items, category, showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
 
+		let buttons = [{ text: current == l - 1 ? 'Finish' : 'Next', action: 'next' }];
+
+		if (item.buttons) {
+			buttons = buttons.concat(item.buttons);
+		};
+
 		const Steps = () => (
 			<div className="steps">
-				{[ ...Array(l) ].map((e: number, i: number) => (
-					<div 
+				{l > 1 ? (
+					<React.Fragment>
+						{[ ...Array(l) ].map((e: number, i: number) => {
+							const cn = [ 'step' ];
+							if (i == current) {
+								cn.push('active');
+							};
+
+							return <div key={i} className={cn.join(' ')} onClick={e => this.onClick(e, i)} />;
+						})}
+					</React.Fragment>
+				) : ''}
+			</div>
+		);
+
+		const Buttons = () => (
+			<div className="buttons">
+				{buttons.map((button, i) => (
+					<Button
 						key={i}
-						className={[ 'step', (i == current ? 'active' : 'step') ].join(' ')} 
-						onClick={e => this.onClick(e, i)} 
+						text={button.text}
+						className={['c28', i == buttons.length-1 ? 'black' : 'outlined'].join(' ')}
+						onClick={(e: any) => { this.onButton(e, button.action); }}
 					/>
 				))}
 			</div>
@@ -40,27 +75,19 @@ class MenuOnboarding extends React.Component<I.Menu> {
 				ref={node => this.node = node}
 				className="wrap"
 			>
-				<div className="name" dangerouslySetInnerHTML={{ __html: item.name }} />
-				<div className="descr" dangerouslySetInnerHTML={{ __html: item.description }} />
 				<Icon className="close" onClick={this.onClose} />
 
-				{l > 1 ? (
-					<div className="bottom">
-						<div>
-							<Steps />
+				{category ? <Label className="category" text={category} /> : ''}
+				{item.name ? <Label className="name" text={item.name} /> : ''}
+				{item.description ? <Label className="descr" text={item.description} /> : ''}
+				{item.video ? <video src={item.video} controls={true} autoPlay={true} loop={true} /> : ''}
 
-							{category ? (
-								<div className="category">
-									<b>Onboarding:</b> {category}
-								</div>
-							) : ''}
-						</div>
+				<div className="bottom">
+					<Steps />
+					<Buttons />
+				</div>
 
-						<div className="round" onClick={(e: any) => { this.onArrow(e, 1); }}>
-							<Icon className={current == l - 1 ? 'tick' : 'arrow'} />
-						</div>
-					</div>
-				) : ''}
+				{showConfetti ? <ReactCanvasConfetti refConfetti={ins => this.confetti = ins} className="confettiCanvas" /> : ''}
 			</div>
 		);
 	};
@@ -73,6 +100,10 @@ class MenuOnboarding extends React.Component<I.Menu> {
 	componentDidUpdate () {
 		const { param, position } = this.props;
 		const { data } = param;
+		const { key, current } = data;
+		const section = Docs.Help.Onboarding[key] || {};
+		const { items, showConfetti } = section;
+		const l = items.length;
 		const node = $(this.node);
 		
 		if (data.onShow) {
@@ -85,6 +116,10 @@ class MenuOnboarding extends React.Component<I.Menu> {
 
 		Util.renderLinks(node);
 		analytics.event('ScreenOnboarding');
+
+		if (showConfetti && (current == l - 1)) {
+			this.confettiShot();
+		};
 	};
 
 	onClose () {
@@ -136,6 +171,20 @@ class MenuOnboarding extends React.Component<I.Menu> {
 		keyboard.shortcut('arrowright', e, () => { this.onArrow(e, 1); });
 	};
 
+	onButton (e: any, action: string) {
+		switch (action) {
+			case 'next': {
+				this.onArrow(e, 1);
+				break;
+			};
+
+			case 'import': {
+				this.onImport();
+				break;
+			};
+		};
+	};
+
 	onArrow (e: any, dir: number) {
 		const { data } = this.props.param;
 		const { key, current } = data;
@@ -156,14 +205,16 @@ class MenuOnboarding extends React.Component<I.Menu> {
 	onClick (e: any, next: number) {
 		const { data, onOpen, onClose } = this.props.param;
 		const { key, isPopup, options } = data;
-		const items = Docs.Help.Onboarding[key].items;
+		const section = Docs.Help.Onboarding[key];
+		const { items } = section;
 		const item = items[next];
 
 		if (!item) {
 			return;
 		};
 
-		let param = Onboarding.getParam(item, isPopup);
+		let param = Onboarding.getParam(section, item, isPopup);
+
 		if (options.parseParam) {
 			param = options.parseParam(param);
 		};
@@ -192,6 +243,31 @@ class MenuOnboarding extends React.Component<I.Menu> {
 				current: next,
 			},
 		});
+	};
+
+	onImport () {
+		Action.restoreFromBackup(this.setError);
+	};
+
+	setError (error: { description: string, code: number}) {
+		if (!error.code) {
+			return false;
+		};
+
+		popupStore.open('confirm', {
+			data: {
+				title: 'Error',
+				text: error.description,
+				textConfirm: 'Ok',
+				canCancel: false,
+			},
+		});
+
+		return true;
+	};
+
+	confettiShot () {
+		this.confetti({ particleCount: 150, spread: 60, origin: { x: 0.5, y: 1 } });
 	};
 
 };
