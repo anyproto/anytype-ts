@@ -65,34 +65,16 @@ class MenuHelp extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const rootId = keyboard.getRootId();
 		const btn = <Button className="c16" text={window.Electron.version.app} />;
-		const match = keyboard.getMatch();
-		const { page, action } = match.params;
-		const isEditor = (page == 'main') && (action == 'edit');
 
-		let items: any[] = [
+		return [
 			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn },
 			{ id: 'community', name: 'Anytype Community' },
 			{ isDiv: true },
-			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' }
+			{ id: 'hints', name: 'Show Hints' },
+			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' },
+			{ id: 'tutorial', name: 'Help & Tutorials' }
 		];
-
-		let key = '';
-		if (isEditor && !blockStore.checkBlockTypeExists(rootId)) {
-			key = 'editor';
-		};
-
-		if (key) {
-			items.push({ id: 'hints', name: 'Show Hints', key: key });
-		};
-
-		items = items.concat([
-			{ id: 'wizard', name: 'Show Wizard' },
-			{ id: 'tutorial', name: 'Help & Tutorials' },
-		]);
-
-		return items;
 	};
 
 	onMouseEnter (e: any, item: any) {
@@ -103,6 +85,10 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
+		const rootId = keyboard.getRootId();
+		const match = keyboard.getMatch();
+		const { page, action } = match.params;
+		const isEditor = (page == 'main') && (action == 'edit');
 
 		close();
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
@@ -137,12 +123,9 @@ class MenuHelp extends React.Component<I.Menu> {
 
 			case 'hints': {
 				const isPopup = keyboard.isPopup();
-				Onboarding.start(item.key, isPopup, true);
-				break;
-			};
+				const key = isEditor && !blockStore.checkBlockTypeExists(rootId) ? 'editor' : 'wizardDashboard';
 
-			case 'wizard': {
-				Onboarding.start('wizardDashboard', false, true);
+				Onboarding.start(key, isPopup, true);
 				break;
 			};
 
