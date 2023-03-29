@@ -18,6 +18,7 @@ import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
 import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
+import PageAuthUsecase from './auth/usecase';
 
 import PageMainEmpty from './main/empty';
 import PageMainEdit from './main/edit';
@@ -45,6 +46,7 @@ const Components: any = {
 	'auth/success':			 PageAuthSuccess,
 	'auth/share':			 PageAuthShare,
 	'auth/deleted':			 PageAuthDeleted,
+	'auth/usecase':			 PageAuthUsecase,
 
 	'object/share':			 PageAuthShare,
 
