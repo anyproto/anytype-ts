@@ -1255,8 +1255,8 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			params = new Rpc.Object.Import.Request.CsvParams();
 			params.setPathList(options.paths);
 			params.setMode(options.mode);
-			params.setUsefirstcolumnforrelations(options.useFirstColumnForRelations);
-			params.setTransposerowsandcolumns(options.transposeRowsAndColumns);
+			params.setUsefirstrowforrelations(options.firstRow);
+			params.setTransposerowsandcolumns(options.transpose);
 			params.setDelimiter(options.delimiter);
 
 			request.setCsvparams(params);
