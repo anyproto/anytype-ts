@@ -124,7 +124,8 @@
 		.side.right.tabImportNotionWarning,
 		.side.right.tabImportMarkdown,
 		.side.right.tabImportCsv,
-		.side.right.tabExportMarkdown
+		.side.right.tabExportMarkdown,
+		.side.right.tabExportProtobuf
 		{ padding-top: 22px; }
 
 		.side.right.tabSpaceIndex {
@@ -296,7 +297,8 @@
 			.rows { margin: 24px 0px; }
 		}
 
-		.side.right.tabExportMarkdown {
+		.side.right.tabExportMarkdown,
+		.side.right.tabExportProtobuf {
 			.labels {
 				.label { margin: 0px 0px 12px 0px; }
 				.label:last-child { margin: 0px; }
