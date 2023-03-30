@@ -273,7 +273,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (!home || !id || (home.id != id) || isPopup) {
 			return;
 		};
-		
+
 		Onboarding.start('wizardDashboard', false);
 	};
 
