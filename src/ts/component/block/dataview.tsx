@@ -614,7 +614,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', newIndex);
 				const ref = this.refCells.get(id);
 
-				if (ref && view.isGrid() && (commonStore.type != Constant.typeId.note)) {
+				if (ref && view.isGrid() && (object.type != Constant.typeId.note)) {
 					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 
