@@ -425,10 +425,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							return;
 						};
 
-						const action = target.type == Constant.typeId.collection ? I.ToastAction.Collection : I.ToastAction.Link;
+						const isCollection = target.type == Constant.typeId.collection;
+						const action = isCollection ? I.ToastAction.Collection : I.ToastAction.Link;
+						const linkType = isCollection ? 'Collection' : 'Object';
 
 						Preview.toastShow({ action, objectId: blockId, targetId: target.id });
-						analytics.event('LinkToObject', { objectType: target.type });
+						analytics.event('LinkToObject', { objectType: target.type, linkType });
 					};
 
 					if (target.type == Constant.typeId.collection) {
