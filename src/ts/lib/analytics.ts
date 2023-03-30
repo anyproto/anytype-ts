@@ -1,7 +1,6 @@
 import * as amplitude from 'amplitude-js';
 import { I, C, Util, Storage } from 'Lib';
 import { commonStore, detailStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 const KEYS = [ 

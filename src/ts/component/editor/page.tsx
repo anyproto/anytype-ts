@@ -90,7 +90,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={(layout: I.ObjectLayout) => { this.focusTitle(); }} 
+					onLayoutSelect={() => { this.focusTitle(); }} 
 				/>
 				
 				<div id={'editor-' + rootId} className="editor">
