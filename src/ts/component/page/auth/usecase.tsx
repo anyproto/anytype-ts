@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Button } from 'Component';
-import { I, translate } from 'Lib';
+import { C, I, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I.PageComponent, object> {
@@ -50,7 +50,9 @@ const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I
     onClick (e: any, id: number) {
         e.preventDefault();
 
-        console.log('USE CASE ' + id);
+        C.ObjectUsecaseImport(id, (message) => {
+            console.log(message)
+        });
     };
 
 });

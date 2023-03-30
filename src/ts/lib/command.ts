@@ -1,4 +1,5 @@
 import { I, Util, Mark, dispatcher, Encode, Mapper } from 'Lib';
+import {number} from "is";
 
 const Commands = require('lib/pb/protos/commands_pb');
 const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
@@ -1289,6 +1290,14 @@ const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any
 	dispatcher.request(ObjectImportNotionValidateToken.name, request, callBack);
 };
 
+const ObjectUsecaseImport = (usecase: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.Usecase.Import.Request();
+
+	request.setUsecase(usecase);
+
+	dispatcher.request(ObjectUsecaseImport.name, request, callBack);
+};
+
 const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetObjectType.Request();
 	
@@ -1849,6 +1858,8 @@ export {
 	ObjectImportList,
 	ObjectImport,
 	ObjectImportNotionValidateToken,
+
+	ObjectUsecaseImport,
 
 	ObjectCreate,
 	ObjectCreateSet,
