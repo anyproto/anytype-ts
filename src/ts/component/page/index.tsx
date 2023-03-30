@@ -218,7 +218,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		this.dashboardWizardCheck(match);
+		this.dashboardWizardCheck();
 		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
@@ -264,18 +264,17 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		});
 	};
 
-	dashboardWizardCheck (match) {
+	dashboardWizardCheck () {
+		const match = this.getMatch();
 		const home = ObjectUtil.getSpaceDashboard();
 		const { id } = match.params;
 		const isPopup = keyboard.isPopup();
 
-		if (!home || !id) {
+		if (!home || !id || (home.id != id) || isPopup) {
 			return;
 		};
-
-		if (id === home.id && !isPopup) {
-			Onboarding.start('wizardDashboard', false);
-		};
+		
+		Onboarding.start('wizardDashboard', false);
 	};
 
 	unbind () {
