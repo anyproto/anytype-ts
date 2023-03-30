@@ -31,6 +31,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	};
 	
 	render () {
+		const { getId } = this.props;
 		const items = this.getItems();
 
 		const Handle = SortableHandle(() => (
@@ -131,7 +132,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 				onSortStart={this.onSortStart}
 				onSortEnd={this.onSortEnd}
 				helperClass="isDragging"
-				helperContainer={() => $(this.node).get(0)}
+				helperContainer={() => $(`#${getId()} .content`).get(0)}
 			/>
 		);
 	};
