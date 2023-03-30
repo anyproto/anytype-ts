@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, DataUtil } from 'Lib';
+import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, DataUtil, ObjectUtil } from 'Lib';
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -218,6 +218,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
+		this.dashboardWizardCheck();
 		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
@@ -261,6 +262,19 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				onConfirm: () => {}
 			},
 		});
+	};
+
+	dashboardWizardCheck () {
+		const match = this.getMatch();
+		const home = ObjectUtil.getSpaceDashboard();
+		const { id } = match.params;
+		const isPopup = keyboard.isPopup();
+
+		if (!home || !id || (home.id != id) || isPopup) {
+			return;
+		};
+
+		Onboarding.start('wizardDashboard', false);
 	};
 
 	unbind () {

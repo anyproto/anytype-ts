@@ -123,9 +123,8 @@ class MenuHelp extends React.Component<I.Menu> {
 
 			case 'hints': {
 				const isPopup = keyboard.isPopup();
-				const key = isEditor && !blockStore.checkBlockTypeExists(rootId) ? 'editor' : 'wizardDashboard';
 
-				Onboarding.start(key, isPopup, true);
+				Onboarding.start('wizardDashboard', isPopup, true);
 				break;
 			};
 
