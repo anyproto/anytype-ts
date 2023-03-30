@@ -91,6 +91,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		return (
 			<div
 				ref={node => this.node = node}
+				 id="dataviewControls"
 				className={cn.join(' ')}
 			>
 				<div className="sides">

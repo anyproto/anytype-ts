@@ -126,7 +126,7 @@
 			.button { padding: 0px 8px; @include text-common; }
 		}
 
-		.dataviewSelection { font-weight: 400; }
+		.dataviewSelection { font-weight: 400; display: none; }
 		.dataviewSelection {
 			.side.left { @include text-paragraph; color: $colorBlack;  }
 			.side.right {

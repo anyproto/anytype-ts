@@ -32,10 +32,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	state = {
 		loading: false,
 	};
-	node: any = null;
-	refView: any = null;
-	refHead: any = null;
-	refControls: any = null;
+	node = null;
+	refView = null;
+	refHead = null;
+	refControls = null;
+	refSelect = null;
 	refCells: Map<string, any> = new Map();
 
 	menuContext: any = null;
@@ -144,12 +145,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isInline,
 		};
 
-		let controls = null;
-		if (this.isMultiSelecting) {
-			controls = <Selection {...this.props} {...dataviewProps} ids={this.selected} multiSelectAction={this.multiSelectAction} className={className} />
-		} else {
-			controls = <Controls ref={ref => this.refControls = ref} {...this.props} {...dataviewProps} className={className} />;
-		};
+		const controls = (
+			<React.Fragment>
+				<Controls 
+					ref={ref => this.refControls = ref} 
+					{...this.props} 
+					{...dataviewProps} 
+					className={className} 
+				/>
+				<Selection 
+					ref={ref => this.refSelect = ref} 
+					{...this.props} 
+					{...dataviewProps} 
+					multiSelectAction={this.multiSelectAction} 
+					className={className} 
+				/>
+			</React.Fragment>
+		);
 
 		if (isInline) {
 			head = (
@@ -1062,8 +1074,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 
-		let updateRequired = false;
-
 		if (!selection || isInline) {
 			return;
 		};
@@ -1080,16 +1090,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			selection.set(I.SelectType.Record, ids);
 		};
 
-		if (this.selected.length !== ids.length) {
-			updateRequired = true;
-		};
-
 		this.selected = ids;
 		this.setMultiSelect(!!ids.length);
-
-		if (updateRequired) {
-			this.forceUpdate();
-		};
 
 		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
 	};
@@ -1104,14 +1106,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.isMultiSelecting = v;
-		this.forceUpdate();
+		this.refSelect.setIds(this.selected);
+
+		const node = $(this.node);
+		const con = node.find('#dataviewControls');
+		const sel = node.find('#dataviewSelection');
+
+		v ? con.hide() : con.show();
+		v ? sel.show() : sel.hide();
 	};
 
-	multiSelectAction (e: any, action: string) {
+	multiSelectAction (id: string) {
 		const objectId = this.getObjectId();
 		const count = this.selected.length;
 
-		switch (action) {
+		switch (id) {
 			case 'archive': {
 				C.ObjectListSetIsArchived(this.selected, true, () => {
 					analytics.event('MoveToBin', { count });
