@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { I, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
-	multiSelectAction?: (e: any, action: string) => void;
+	multiSelectAction?: (id: string) => void;
 };
 
 const Selection = observer(class Selection extends React.Component<Props> {
@@ -41,9 +41,9 @@ const Selection = observer(class Selection extends React.Component<Props> {
 							<div
 								key={i}
 								className={[ 'element' ].concat(item.className || []).join(' ')}
-								onClick={(e: any) => { multiSelectAction(e, item.id); }}
-								onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
-								onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
+								onClick={() => multiSelectAction(item.id)}
+								onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
+								onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 							>
 								{item.text}
 							</div>

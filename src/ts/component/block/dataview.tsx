@@ -1106,7 +1106,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.isMultiSelecting = v;
-		this.refSelect.setIds(this.selected);
+
+		if (this.refSelect) {
+			this.refSelect.setIds(this.selected);
+		};
 
 		const node = $(this.node);
 		const con = node.find('#dataviewControls');
