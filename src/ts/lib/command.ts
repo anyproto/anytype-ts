@@ -1291,7 +1291,7 @@ const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any
 };
 
 const ObjectImportUseCase = (usecase: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.Import.UseCase.Request();
+	const request = new Rpc.Object.ImportUseCase.Request();
 
 	request.setUsecase(usecase);
 

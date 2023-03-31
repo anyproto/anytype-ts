@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Frame, Title, Label, Button } from 'Component';
-import { C, I, translate } from 'Lib';
+import { Frame, Title, Label, Button, Loader } from 'Component';
+import { C, I, ObjectUtil, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import {ObjectImportUseCase} from "Lib/command";
 
 const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I.PageComponent, object> {
+    loading: boolean = false;
 
     constructor (props: I.PageComponent) {
         super(props);
@@ -43,6 +43,9 @@ const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I
                     <div className="buttons">
                         <Button className="c28 outlined" text={translate('authUsecaseSkip')} onClick={(e) => this.onClick(e, 0)} />
                     </div>
+                    {!this.loading ? (
+                        <div className="loaderWrapper"><Loader /></div>
+                    ) : ''}
                 </Frame>
             </div>
         );
@@ -51,8 +54,15 @@ const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I
     onClick (e: any, id: number) {
         e.preventDefault();
 
+        if (this.loading) {
+            return;
+        };
+
+        this.loading = true;
+
         C.ObjectImportUseCase(id, (message) => {
-            console.log(message)
+            console.log('[UseCase] ', message);
+            ObjectUtil.openHome('route');
         });
     };
 
