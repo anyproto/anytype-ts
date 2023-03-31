@@ -35,7 +35,7 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 
 	onClick () {
 		Action.openDir(paths => {
-			C.AccountExport(paths[0], (message: any) => {
+			C.ObjectListExport(paths[0], [], I.ExportFormat.Protobuf, true, true, true, true, true, true, (message: any) => {
 				if (!message.error.code) {
 					Renderer.send('pathOpen', paths[0]);
 				};

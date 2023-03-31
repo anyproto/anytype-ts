@@ -1510,7 +1510,7 @@ const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
 };
 
-const ObjectListExport = (path: string, objectIds: string[], format: I.ExportFormat, zip: boolean, includeNested: boolean, includeFiles: boolean, callBack?: (message: any) => void) => {
+const ObjectListExport = (path: string, objectIds: string[], format: I.ExportFormat, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, includeDeleted: boolean, includeConfig: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListExport.Request();
 
 	request.setPath(path);
@@ -1519,6 +1519,9 @@ const ObjectListExport = (path: string, objectIds: string[], format: I.ExportFor
 	request.setZip(zip);
 	request.setIncludenested(includeNested);
 	request.setIncludefiles(includeFiles);
+	request.setIncludearchived(includeArchived);
+	request.setIncludedeleted(includeDeleted);
+	request.setIncludeconfig(includeConfig);
 
 	dispatcher.request(ObjectListExport.name, request, callBack);
 };

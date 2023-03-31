@@ -718,16 +718,6 @@ class App extends React.Component<object, State> {
 				});
 				break;
 
-			case 'exportAccount':
-				Action.openDir(paths => {
-					C.AccountExport(paths[0], (message: any) => {
-						if (!message.error.code) {
-							Renderer.send('pathOpen', paths[0]);
-						};
-					});
-				});
-				break;
-
 			case 'debugSync':
 				C.DebugSync(100, (message: any) => {
 					if (!message.error.code) {
