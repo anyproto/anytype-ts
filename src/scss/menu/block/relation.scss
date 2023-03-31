@@ -89,7 +89,7 @@
 				.name { line-height: 22px; }
 			}
 
-			.cellContent.isName { display: flex; }
+			.cellContent.isName { display: flex; align-items: center; }
 
 			.cell { 
 				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background 0.2s ease-in-out; 
