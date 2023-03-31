@@ -341,7 +341,7 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
-		// window.setTimeout(() => Util.route('/auth/usecase'), 500)
+		window.setTimeout(() => Util.route('/auth/usecase'), 500)
 	};
 
 	componentDidUpdate () {
