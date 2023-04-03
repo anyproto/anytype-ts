@@ -5,7 +5,8 @@
 	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
 }
 .previewGraph {
-	.name { @include text-paragraph; text-overflow: unset; @include clamp2; white-space: normal; font-weight: 700; }
+	.previewHeader { display: flex; gap: 0px 2px; }
+	.name { @include text-common; text-overflow: unset; @include clamp2; white-space: normal; font-weight: 500; }
 	.descr { @include text-small; text-overflow: unset; @include clamp2; white-space: normal; }
 	.featured { @include text-very-small; color: $colorMediumGrey; }
 }
