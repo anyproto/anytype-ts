@@ -98,7 +98,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	getSections () {
-		const colors = MenuUtil.getBgColors().filter((it: any) => { return it.id != 'bgColor-default'; });
+		const colors = MenuUtil.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
 			{ children: colors },

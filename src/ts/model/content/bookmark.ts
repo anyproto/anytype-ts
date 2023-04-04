@@ -18,7 +18,7 @@ class BlockContentBookmark implements I.ContentBookmark {
 			url: observable,
 		});
 
-		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		intercept(this as any, change => Util.intercept(this, change));
 	};
 
 };

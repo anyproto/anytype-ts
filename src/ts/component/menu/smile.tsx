@@ -188,7 +188,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
 				defaultHeight: HEIGHT_SECTION,
-				keyMapper: (i: number) => { return (items[i] || {}).id; },
+				keyMapper: i => (items[i] || {}).id,
 			});
 			this.forceUpdate();
 		};
@@ -230,7 +230,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	getGroups () {
-		return this.checkRecent(EmojiData.categories.map(it => { return { id: it.id, name: it.name }}));
+		return this.checkRecent(EmojiData.categories.map(it => ({ id: it.id, name: it.name })));
 	};
 	
 	getSections () {
@@ -243,7 +243,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			sections.push({
 				id: it.id,
 				name: it.name,
-				children: it.emojis.map(id => { return { smile: id, skin: this.skin }}),
+				children: it.emojis.map(id => ({ smile: id, skin: this.skin })),
 			});
 		});
 

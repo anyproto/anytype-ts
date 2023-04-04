@@ -61,7 +61,7 @@ class CommonStore {
 
 	public graphObj: Graph = { 
 		icon: true,
-		orphan: true,
+		orphan: false,
 		marker: true,
 		label: true,
 		relation: true,
@@ -376,8 +376,6 @@ class CommonStore {
 	};
 
 	configSet (config: any, force: boolean) {
-		console.log('[commonStore.configSet]', config, force);
-
 		const html = $('html');
 		
 		let newConfig: any = {};

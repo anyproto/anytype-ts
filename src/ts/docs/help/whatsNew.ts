@@ -2,14 +2,14 @@ import { I, keyboard } from 'Lib';
 
 const cmd = keyboard.cmdSymbol();
 const hl = (t: string) => `<span class="highlight">${t}</span>`;
-const block = (style: I.TextStyle, text: string) => { return { style, text }; };
+const block = (style: I.TextStyle, text: string) => ({ style, text });
 const title = (t: string) => block(I.TextStyle.Title, t);
 const h1 = (t: string) => block(I.TextStyle.Header1, t);
 const h2 = (t: string) => block(I.TextStyle.Header1, t);
 const h3 = (t: string) => block(I.TextStyle.Header1, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
-const div = () => { return { type: I.BlockType.Div, style: I.DivStyle.Dot }; };
+const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
 const video = (src: string) => text(`<video src="${src}" controls autoplay loop class="full" />`);
 const img = (src: string, c: string) => text(`<img src="${src}" class="${c}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;

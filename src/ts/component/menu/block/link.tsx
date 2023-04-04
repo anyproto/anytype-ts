@@ -183,7 +183,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_ITEM,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		if (this.refList && this.top) {

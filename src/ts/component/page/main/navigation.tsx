@@ -263,25 +263,20 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const rootId = this.getRootId();
 		const { pagesIn, pagesOut } = this.state;
 
-		if (this.id != rootId) {
-			this.id = rootId;
-			this.loadPage(rootId);
-			return;
-		};
-
+		this.loadPage(rootId);
 		this.resize();
 		this.setActive();
 
 		this.cacheIn = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (pagesIn[i] || {}).id; },
+			keyMapper: i => (pagesIn[i] || {}).id,
 		});
 
 		this.cacheOut = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (pagesOut[i] || {}).id; },
+			keyMapper: i => (pagesOut[i] || {}).id,
 		});
 	};
 	
@@ -446,6 +441,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	loadPage (id: string) {
+		const { loading } = this.state;
+
+		if ((this.id == id) || loading) {
+			return;
+		};
+
+		this.id = id;
 		this.setState({ loading: true });
 
 		C.NavigationGetObjectInfoWithLinks(id, (message: any) => {
@@ -481,9 +483,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		let ret = !it.isArchived && !it.isDeleted;
 		if (!config.debug.ho) {
 			ret = ret && !it.isHidden;
-		};
-		if (!config.experimental) {
-			ret = ret && ![ Constant.typeId.space ].includes(it.type);
 		};
 		return ret;
 	};

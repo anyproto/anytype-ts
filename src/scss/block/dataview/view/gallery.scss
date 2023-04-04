@@ -86,7 +86,6 @@
 
 .blocks {
 	.block.blockDataview.isInline {
-		.viewItem.viewGallery { padding: 14px 0px 0px 0px; }
 		.viewItem.viewGallery {
 			.galleryWrap { margin: 0px; display: grid; gap: 16px; }
 			.galleryWrap.small { grid-template-columns: repeat(4, minmax(0, 1fr)); }

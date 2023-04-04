@@ -139,7 +139,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: (isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL),
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		this.forceUpdate();
@@ -245,7 +245,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { isTemplate } = data;
 
 		let sections = MenuUtil.sectionsMap(Sections);
-		sections = sections.filter((it: any) => { return (it.id == 'templates') == isTemplate; });
+		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
 
 		sections = sections.map((it: any) => {
 			it.children = it.children.map((c: any) => {
@@ -313,10 +313,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 	recalcIndex () {
 		const itemsWithSection = this.getItems(true);
-		const itemsWithoutSection = itemsWithSection.filter((it: any) => { return !it.isSection; });
+		const itemsWithoutSection = itemsWithSection.filter(it => !it.isSection);
 		const active: any = itemsWithoutSection[this.n] || {};
 
-		return itemsWithSection.findIndex((it: any) => { return it.id == active.id; });
+		return itemsWithSection.findIndex(it => it.id == active.id);
 	};
 
 	resize () {

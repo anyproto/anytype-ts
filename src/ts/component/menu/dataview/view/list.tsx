@@ -135,7 +135,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 					onSortStart={this.onSortStart}
 					onSortEnd={this.onSortEnd}
 					helperClass="isDragging"
-					helperContainer={() => { return $(this.node).find('.items').get(0); }}
+					helperContainer={() => $(this.node).find('.items').get(0)}
 				/>
 
 				{allowed ? (
@@ -166,7 +166,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		this.resize();

@@ -26,13 +26,14 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		
 		this.rebind = this.rebind.bind(this);
 		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterKeyUp = this.onFilterKeyUp.bind(this);
 		this.onScroll = this.onScroll.bind(this);
 	};
 	
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, disabled } = data;
+		const { filter, value, disabled, placeholder } = data;
 		const items = this.getItems(true);
 		const withFilter = this.isWithFilter();
 
@@ -97,7 +98,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 					<Filter 
 						ref={ref => { this.refFilter = ref; }} 
 						value={filter}
-						onChange={this.onFilterChange} 
+						placeholder={placeholder}
+						onChange={this.onFilterChange}
+						onKeyUp={this.onFilterKeyUp}
 					/>
 				) : ''}
 				
@@ -120,7 +123,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={({ index }) => { return this.getRowHeight(items[index]); }}
+										rowHeight={({ index }) => this.getRowHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										onScroll={this.onScroll}
@@ -151,7 +154,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_ITEM,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 		
 		let active = value ? items.find(it => it.id == value) : null;
@@ -215,7 +218,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 
-		return (data.options || []).filter((it: any) => { return it; });
+		return (data.options || []).filter(it => it);
 	};
 
 	getSections () {
@@ -228,7 +231,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	getItems (withSections: boolean) {
 		const { param } = this.props;
 		const { data } = param;
-		const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+		const { preventFilter } = data;
 		const sections = this.getSections();
 
 		let items: any[] = [];
@@ -244,7 +247,9 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			items = this.getItemsWithoutFilter();
 		};
 
-		if (data.filter) {
+		if (data.filter && !preventFilter) {
+			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+
 			items = items.filter(it => String(it.name || '').match(filter));
 		};
 		return items || [];
@@ -303,6 +308,16 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		this.props.param.data.filter = v;
 	};
 
+	onFilterKeyUp (e: React.KeyboardEvent, v: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { onFilterKeyUp } = data;
+
+		if (onFilterKeyUp) {
+			onFilterKeyUp(e, v);
+		};
+	};
+
 	getRowHeight (item: any) {
 		if (item.isDiv) return HEIGHT_DIV;
 		if (item.isSection) return HEIGHT_SECTION;
@@ -319,9 +334,13 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	isWithFilter () {
 		const { param } = this.props;
 		const { data } = param;
-		const { noFilter } = data;
-		const options = this.getItemsWithoutFilter().filter(it => !it.isDiv);
+		const { noFilter, withFilter } = data;
 
+		if (withFilter) {
+			return true;
+		};
+
+		const options = this.getItemsWithoutFilter().filter(it => !it.isDiv);
 		return !noFilter && (options.length > LIMIT);
 	};
 
@@ -354,9 +373,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			height += 16;
 		};
 
-		items.forEach((item: any) => {
-			height += this.getRowHeight(item);
-		});
+		if (!items.length) {
+			height += HEIGHT_ITEM;
+		} else {
+			items.forEach(it => { height += this.getRowHeight(it); });
+		};
 
 		if (!noScroll) {
 			height = Math.min(370, height);

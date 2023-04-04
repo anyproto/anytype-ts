@@ -199,7 +199,7 @@ class MenuUtil {
 		];
 
 		if (hasQuote) {
-			ret = ret.filter((it: any) => { return it.id != I.BlockHAlign.Center; });
+			ret = ret.filter(it => it.id != I.BlockHAlign.Center);
 		};
 
 		return ret;
@@ -331,7 +331,7 @@ class MenuUtil {
 	
 	sectionsMap (sections: any[]) {
 		sections = Util.objectCopy(sections);
-		sections = sections.filter((it: any) => { return it.children.length > 0; });
+		sections = sections.filter(it => it.children.length > 0);
 		sections = sections.map((s: any, i: number) => {
 			s.id = (undefined !== s.id) ? s.id : i;
 

@@ -154,7 +154,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		if (this.refList && this.top) {
@@ -199,9 +199,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		let ret = Util.objectCopy(this.items);
-		ret = ret.filter((it: any) => { return value.indexOf(it.id) < 0; });
-		return ret;
+		return Util.objectCopy(this.items).filter(it => !value.includes(it.id));
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {

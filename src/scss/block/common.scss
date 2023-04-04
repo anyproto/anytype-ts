@@ -8,6 +8,7 @@
 	.block {
 		.wrapMenu { width: 48px; text-align: right; position: relative; flex-shrink: 0; z-index: 1; flex-basis: 48px; }
 		.wrapContent { width: calc(100% - 48px); position: relative; flex-grow: 1; }
+		.wrapContent.bgColor { border-radius: 2px; }
 
 		.wrapContent > .dropTarget.targetTop, .wrapContent > .dropTarget.targetBot { 
 			padding: 0px; width: 100%; position: absolute; left: 0px; border-radius: 0px !important; pointer-events: none;
@@ -46,7 +47,10 @@
 		.emptyToggle:hover { color: $colorBlack; }
 	}
 
+	.block.index0 { padding-top: 0px !important; }
+
 	.block > .wrapContent > .selectable { position: relative; }
+	.block > .wrapContent > .children > .block.first { padding-top: 0px; }
 	.block > .wrapContent > .children > .block.last { margin: 0px; }
 
 	.block.isReadonly {

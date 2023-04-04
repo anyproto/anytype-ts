@@ -68,6 +68,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.rebind();
 		this.resize();
 		this.load();
+		this.initRootId(this.getRootId());
 
 		window.Graph = this;
 	};
@@ -96,12 +97,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.unbind();
 		win.on(`keydown.graphPage`, (e: any) => { this.onKeyDown(e); });
 		win.on('updateGraphRoot.graphPage', (e: any, data: any) => { 
-			this.rootId = data.id; 
-			this.refHeader.refChild.setRootId(data.id);
+			this.initRootId(data.id);
 		});
 		win.on('removeGraphNode.graphPage', (e: any, data: any) => { 
 			this.refGraph.send('onRemoveNode', { ids: Util.objectCopy(data.ids) });
 		});
+	};
+
+	initRootId (id: string) {
+		this.rootId = id; 
+		this.refHeader.refChild.setRootId(id);
 	};
 
 	onKeyDown (e: any) {
@@ -196,17 +201,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		const obj = Util.getPageContainer(this.props.isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
-		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
 		const oh = obj.height();
 		const header = node.find('#header');
 		const hh = header.height();
-		
-		let wh = isPopup ? oh - hh : win.height();
-
-		if (platform == I.Platform.Windows) {
-			wh -= Constant.size.headerWindows;
-		};
+		const wh = isPopup ? oh - hh : win.height();
 
 		wrapper.css({ height: wh, paddingTop: isPopup ? 0 : hh });
 		

@@ -128,11 +128,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		let layoutIcon = '';
 
 		if (this.target) {
-			if (this.target.layout == I.ObjectLayout.Note) {
-				sourceName = this.target.snippet || translate('commonEmpty');
-			} else {
-				sourceName = DataUtil.getObjectName(this.target);
-			};
+			sourceName = DataUtil.getObjectName(this.target);
 		};
 
 		if (this.layout !== null) {
@@ -166,13 +162,24 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	checkState () {
+		const setTypes = DataUtil.getSetTypes();
 		const options = this.getLayoutOptions().map(it => it.id);
-		
-		this.layout = options.includes(this.layout) ? this.layout : null;
 
-		if (this.target && (this.layout == I.WidgetLayout.Tree) && (this.target.type == Constant.typeId.set)) {
-			this.target = null;
+		if (this.isCollection()) {
+			if (this.layout == I.WidgetLayout.Link) {
+				this.layout = I.WidgetLayout.List;
+			};
+		} else 
+		if (this.target) {
+			if ((this.layout == I.WidgetLayout.List) && !setTypes.includes(this.target.type)) {
+				this.layout = I.WidgetLayout.Link;
+			};
+			if ((this.layout == I.WidgetLayout.Tree) && setTypes.includes(this.target.type)) {
+				this.layout = I.WidgetLayout.Link;
+			};
 		};
+
+		this.layout = options.includes(this.layout) ? this.layout : null;
 	};
 
     getItems () {
@@ -187,8 +194,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		];
 
 		if (this.target) {
-			const treeSkipTypes = [ Constant.typeId.set, Constant.typeId.space ].concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
-			const isCollection = [ Constant.widgetId.favorite, Constant.widgetId.recent, Constant.widgetId.set, Constant.widgetId.collection ].includes(this.target.id);
+			const setTypes = DataUtil.getSetTypes();
+			const treeSkipTypes = setTypes.concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
+			const isCollection = this.isCollection();
 
 			// Favorites and Recents and Sets can only become List and Tree layouts
 			if (isCollection) {
@@ -198,7 +206,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				if (treeSkipTypes.includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
-				if (![ Constant.typeId.set ].includes(this.target.type)) {
+				if (!setTypes.includes(this.target.type)) {
 					options = options.filter(it => it != I.WidgetLayout.List);
 				};
 			};
@@ -211,6 +219,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			icon: `widget-${id}`,
 			withDescription: true,
 		}));
+	};
+
+	isCollection () {
+		return this.target && Object.values(Constant.widgetId).includes(this.target.id);
 	};
 
     onMouseEnter (e: React.MouseEvent, item): void {
@@ -250,53 +262,29 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes().concat(DataUtil.getFileTypes()) },
 				];
 
-				switch (this.layout) {
-					case I.WidgetLayout.List: {
-						filters = filters.concat([
-							{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-							{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-						]);
-						break;
-					};
-
-					case I.WidgetLayout.Tree: {
-						filters = filters.concat([
-							{ 
-								operator: I.FilterOperator.And, 
-								relationKey: 'type', 
-								condition: I.FilterCondition.NotIn, 
-								value: [ Constant.typeId.set, Constant.typeId.space ],
-							},
-						]);
-					};
-				};
-
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters,
 					value: this.target ? this.target.id : '',
-					onSelect: (target) => {
-						this.target = target;
-						
-						if (isEditing) {
-							this.save();
-						} else {
-							this.forceUpdate();
-						};
-					},
-				});
-
-				if (this.layout != I.WidgetLayout.Link) {
-					menuParam.data.dataChange = (items: any[]) => {
-						return [
+					dataChange: (items: any[]) => {
+						const fixed: any[] = [
 							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
 							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':books:' },
 							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':open_file_folder:' },
-							{ isDiv: true },
-						].concat(items);
-					};
-				};
+						];
+						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
+					},
+					onSelect: (target) => {
+						this.target = target;
+						this.checkState();
+						this.forceUpdate();
+						
+						if (isEditing) {
+							this.save();
+						};
+					},
+				});
 				break;
 
 			case 'layout':
@@ -307,11 +295,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					value: this.layout,
 					onSelect: (e, option) => {
 						this.layout = option.id;
+						this.checkState();
+						this.forceUpdate();
 						
 						if (isEditing) {
 							this.save();
-						} else {
-							this.forceUpdate();
 						};
 					},
 				});

@@ -3,8 +3,8 @@
 .blocks {
 	.block.blockBookmark { padding: 6px 0px; }
 	.block.blockBookmark {
-		.focusable { border-radius: 6px; }
-		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
+		.focusable { border-radius: 4px; }
+		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderLight; height: 48px; width: 100%; }
 
 		.deleted { display: flex; gap: 0px 6px; align-items: center; color: $colorMediumGrey; }
         .deleted {
@@ -13,8 +13,8 @@
         }
 
 		.inner { 
-			display: flex; border: 1px solid $colorHover; transition: border-color 0.2s ease-in-out;
-			cursor: pointer; position: relative; border-radius: 16px; overflow: hidden;
+			display: flex; border: 1px solid $colorBorderLight; transition: border-color 0.2s ease-in-out; cursor: pointer; 
+			position: relative; border-radius: 12px; overflow: hidden;
 		}
 		.inner:hover { border-color: $colorBorderDark; }
 		.inner.bgColor { border: 0px; }

@@ -7,7 +7,7 @@ module.exports = (env, argv) => {
 
 	return {
 		mode: 'development',
-		devtool: false,
+		devtool: 'source-map',
 
 		optimization: {
 			minimize: false,

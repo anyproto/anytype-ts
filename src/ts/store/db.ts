@@ -124,10 +124,7 @@ class DbStore {
 	};
 
     viewDelete (rootId: string, blockId: string, id: string) {
-		let views = this.getViews(rootId, blockId);
-		views = views.filter((it: I.View) => { return it.id != id; });
-
-		this.viewMap.set(this.getId(rootId, blockId), views);
+		this.viewMap.set(this.getId(rootId, blockId), this.getViews(rootId, blockId).filter(it => it.id != id));
 	};
 
     metaSet (rootId: string, blockId: string, meta: any) {

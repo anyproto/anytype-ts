@@ -33,7 +33,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	refHeader: any = null;
 	dir = 0;
 
-	timeoutUi = 0;
 	timeoutMove = 0;
 	timeoutScreen = 0;
 
@@ -76,7 +75,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 		
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
-		const children = blockStore.getChildren(rootId, rootId, (it: any) => { return !it.isLayoutHeader(); });
+		const children = blockStore.getChildren(rootId, rootId, it => !it.isLayoutHeader());
 		const length = childrenIds.length;
 		const width = root.fields?.width;
 		const readonly = this.isReadonly();
@@ -91,7 +90,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={(layout: I.ObjectLayout) => { this.focusTitle(); }} 
+					onLayoutSelect={() => { this.focusTitle(); }} 
 				/>
 				
 				<div id={'editor-' + rootId} className="editor">
@@ -253,11 +252,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				onOpen();
 			};
 
-			window.clearTimeout(this.timeoutUi);
-			window.setTimeout(() => { 
-				this.uiShow(); 
-				this.resizePage();
-			}, 15);
+			window.setTimeout(() => { this.resizePage(); }, 15);
 		});
 	};
 
@@ -335,36 +330,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		$(window).off(a.join(' '));
 	};
 	
-	uiHide () {
-		if (this.uiHidden) {
-			return;
-		};
-
-		const obj = this.getContainer();
-
-		obj.find('#footer').css({ opacity: 0 });
-		
-		this.uiHidden = true;
-		
-		window.clearTimeout(this.timeoutUi);
-		this.timeoutUi = window.setTimeout(() => {
-			$(window).off('mousemove.ui').on('mousemove.ui', (e: any) => { this.uiShow(); });
-		}, 100);
-	};
-
-	uiShow () {
-		if (!this.uiHidden) {
-			return;
-		};
-
-		const obj = this.getContainer();
-		
-		obj.find('#footer').css({ opacity: 1 });
-		
-		this.uiHidden = false;
-		$(window).off('mousemove.ui');
-	};
-	
 	onMouseMove (e: any) {
 		if (!this._isMounted) {
 			return;
@@ -378,12 +343,16 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const node = $(this.node);
 		const button = node.find('#button-block-add');
 
+		const clear = () => {
+			node.find('.block.showMenu').removeClass('showMenu');
+			node.find('.block.isAdding').removeClass('isAdding top bottom');
+		};
+
 		const out = () => {
 			window.clearTimeout(this.timeoutMove);
 			this.timeoutMove = window.setTimeout(() => {
 				button.removeClass('show');
-				node.find('.block.showMenu').removeClass('showMenu');
-				node.find('.block.isAdding').removeClass('isAdding top bottom');
+				clear();
 			}, 30);
 		};
 
@@ -483,9 +452,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			let buttonX = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
 			let buttonY = pageY - rectContainer.y - BUTTON_OFFSET - st;
 			
+			clear();
 			button.addClass('show').css({ transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
-			node.find('.block').addClass('showMenu').removeClass('isAdding top bottom');
-			
+			hovered.addClass('showMenu');
+
 			if (pageX <= x + 20) {
 				hovered.addClass('isAdding ' + (this.hoverPosition == I.BlockPosition.Top ? 'top' : 'bottom'));
 			};
@@ -713,7 +683,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		Preview.previewHide(true);
-		this.uiHide();
 		
 		if (platform == I.Platform.Mac) {
 			// Print or prev string
@@ -2059,7 +2028,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			return;
 		};
 
-		let last = blockStore.getFirstBlock(rootId, -1, (item: any) => { return item.canCreateBlock(); });
+		let last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
 		let create = false;
 		let length = 0;
 
@@ -2144,12 +2113,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	focus (id: string, from: number, to: number, scroll: boolean) {
 		const { isPopup } = this.props;
 
-		focus.set(id, { from: from, to: to });
-		focus.apply();
+		window.setTimeout(() => {
+			focus.set(id, { from: from, to: to });
+			focus.apply();
 
-		if (scroll) {
-			focus.scroll(isPopup, id);
-		};
+			if (scroll) {
+				focus.scroll(isPopup, id);
+			};
+		}, 15);
 	};
 
 	focusNextBlock (next: I.Block, dir: number) {

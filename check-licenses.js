@@ -8,7 +8,7 @@ function processLicenses(licenses, allowedLicenses) {
 	
 		// The hyphenation language patterns are licensed under the LGPL (unless otherwise noted) and copyrighted to their respective creators and maintainers.
 		// https://github.com/bramstein/hyphenation-patterns
-		if (pkgLicenses == "UNKNOWN") {
+		if (pkg.startsWith("hyphenation.")) {
 			pkgLicenses = "LGPL"
 		}
 

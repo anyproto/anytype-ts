@@ -44,11 +44,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	render () {
 		const { rootId, block, iconSize, isPopup, readonly } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId);
-		const items = this.getItems();
-		const type = detailStore.get(rootId, object.type);
-		const bullet = <div className="bullet" />;
+		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
+
+		if (!featuredRelations.length) {
+			return null;
+		};
+
+		const object = detailStore.get(rootId, storeId, featuredRelations);
+		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
+		const items = this.getItems();
+		const bullet = <div className="bullet" />;
 
 		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.type).map(it => it.name);
 		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.relation).map(it => it.name);
@@ -75,23 +82,25 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		return (
 			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
-				<span className="cell canEdit first">
-					<div
-						id={Relation.cellId(PREFIX, 'type', 0)}
-						className="cellContent type"
-						onClick={this.onType}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
-						onMouseLeave={this.onMouseLeave}
-					>
-						<div className="name">
-							{type && !type.isDeleted && !type._empty_ ? Util.shorten(type.name, 32) : (
-								<span className="textColor-red">
-									{translate('commonDeletedType')}
-								</span>
-							)}
+				{featuredRelations.includes('type') ? (
+					<span className="cell canEdit first">
+						<div
+							id={Relation.cellId(PREFIX, 'type', 0)}
+							className="cellContent type"
+							onClick={this.onType}
+							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
+							onMouseLeave={this.onMouseLeave}
+						>
+							<div className="name">
+								{type && !type.isDeleted && !type._empty_ ? Util.shorten(type.name, 32) : (
+									<span className="textColor-red">
+										{translate('commonDeletedType')}
+									</span>
+								)}
+							</div>
 						</div>
-					</div>
-				</span>
+					</span>
+				) : ''}
 
 				{object.layout == I.ObjectLayout.Set ? (
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
@@ -148,7 +157,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									subId={rootId}
 									block={block}
 									relationKey={relationKey}
-									getRecord={() => { return object; }}
+									getRecord={() => object}
 									viewType={I.ViewType.Grid}
 									index={0}
 									bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
@@ -192,10 +201,10 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	checkType () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId);
-		const type = detailStore.get(rootId, object.type);
+		const object = detailStore.get(rootId, storeId, [ 'type' ], true);
+		const type = detailStore.get(rootId, object.type, [ 'isDeleted' ], true);
 
-		if (!type || type.isDeleted) {
+		if (type._empty_ || type.isDeleted) {
 			Onboarding.start('typeDeleted', isPopup);
 		};
 	};
@@ -203,7 +212,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	checkSource () {
 		const { rootId, isPopup } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId);
+		const object = detailStore.get(rootId, storeId, [ 'layout', 'setOf' ]);
 
 		if (!object || object._empty_ || (object.layout != I.ObjectLayout.Set)) {
 			return;
@@ -224,20 +233,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	getItems () {
 		const { rootId } = this.props;
 		const storeId = this.getStoreId();
-		const object = detailStore.get(rootId, storeId);
+		const object = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const skipIds = [
 			'type',
 			'description',
 			'setOf',
 		];
 
-		return (object.featuredRelations || []).filter((it: any) => {
-			const relation = dbStore.getRelationByKey(it);
-			if (!relation || skipIds.includes(it)) {
-				return false;
-			};
-			return true;
-		});
+		return (object.featuredRelations || []).filter(it => dbStore.getRelationByKey(it) && !skipIds.includes(it));
 	};
 
 	onFocus () {
@@ -304,18 +307,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const type = detailStore.get(rootId, object.type, [ 'smartblockTypes' ]);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
-		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page);
+		const typeIsDeleted = type._empty_ || type.isDeleted
 		const options: any[] = [];
 
-		if (!type.isArchived && !type.isDeleted) {
+		if (!type.isArchived && !typeIsDeleted) {
 			options.push({ id: 'open', name: 'Open type' });
 		};
 
-		if (!readonly && allowed && allowedObject) {
+		if (!readonly && allowed) {
 			options.push({ id: 'change', name: 'Change type', arrow: true });
 		};
 
-		if (object.type === Constant.typeId.set) {
+		if (!typeIsDeleted && (object.type === Constant.typeId.set)) {
 			options.push({ id: 'turnToCollection', name: 'Turn into collection' });
 		};
 
@@ -338,20 +341,24 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			});
 		};
 
-		DataUtil.checkSetCnt([ object.type ], (message: any) => {
-			if (message.records.length == 1) {
-				this.setId = message.records[0].id;
-				options.push({ id: 'setOpen', name: 'Open set' });
-			} else
-			if (message.records.length == 2) {
-				options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
-			} else
-			if (type && !type.isDeleted) {
-				options.push({ id: 'setCreate', name: 'Create set' });
-			};
-
+		if (typeIsDeleted) {
 			showMenu();
-		});
+		} else {
+			DataUtil.checkSetCnt([ object.type ], (message: any) => {
+				if (message.records.length == 1) {
+					this.setId = message.records[0].id;
+					options.push({ id: 'setOpen', name: 'Open set' });
+				} else
+				if (message.records.length == 2) {
+					options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
+				} else
+				if (type && !type.isDeleted) {
+					options.push({ id: 'setCreate', name: 'Create set' });
+				};
+
+				showMenu();
+			});
+		};
 	};
 
 	onTypeOver (e: any, item: any) {
@@ -459,12 +466,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 			case 'turnToCollection':
 				C.ObjectToCollection(rootId, (message: any) => {
-					if (!message.error.code) {
-						ObjectUtil.openRoute({id: message.objectId, layout: I.ObjectLayout.Collection});
-						window.setTimeout(() => {
-							Preview.toastShow({ text: `${object.name} is collection now!`});
-						}, 200);
+					if (message.error.code) {
+						return;
 					};
+
+					ObjectUtil.openRoute({ id: message.objectId, layout: I.ObjectLayout.Collection });
+					window.setTimeout(() => { Preview.toastShow({ text: `${object.name} is collection now!`}); }, 200);
+
+					analytics.event('SetTurnIntoCollection');
 				});
 				break;
 		};

@@ -1,12 +1,11 @@
 import * as amplitude from 'amplitude-js';
 import { I, C, Util, Storage } from 'Lib';
-import { commonStore } from 'Store';
-
+import { commonStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
-	'type', 'objectType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
+	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view',
 ];
 const KEY_CONTEXT = 'analyticsContext';
@@ -18,7 +17,7 @@ class Analytics {
 	isInit = false;
 	instance: any = null;
 
-	debug() {
+	debug () {
 		const { config } = commonStore;
 		return config.debug.an;
 	};
@@ -49,8 +48,6 @@ class Analytics {
 			osVersion: window.Electron.version.os,
 		});
 
-		console.log('[Analytics].init', this.instance);
-
 		this.isInit = true;
 	};
 	
@@ -58,10 +55,9 @@ class Analytics {
 		if (!this.instance || (!window.Electron.isPackaged && !this.debug()) || !account) {
 			return;
 		};
-		if (this.debug()) {
-			console.log('[Analytics].profile', account.id);
-		};
+
 		this.instance.setUserId(account.id);
+		this.log(`[Analytics].profile: ${account.id}`);	
 	};
 
 	device (id: string) {
@@ -70,19 +66,14 @@ class Analytics {
 		};
 
 		this.instance.setUserProperties({ middlewareDeviceId: id });
-
-		if (this.debug()) {
-			console.log('[Analytics].device', id);
-		};
+		this.log(`[Analytics].device: ${id}`);	
 	};
 
 	setContext (context: string, id: string) {
 		Storage.set(KEY_CONTEXT, context);
 		Storage.set(KEY_ORIGINAL_ID, id);
 
-		if (this.debug()) {
-			console.log('[Analytics].setContext', context, id);
-		};
+		this.log(`[Analytics].setContext: ${context}`);
 	};
 
 	removeContext () {
@@ -276,12 +267,14 @@ class Analytics {
 			};
 		};
 
-		if (converted.objectType && !converted.objectType.match(/^ot-|_ot/)) {
-			converted.objectType = 'custom';
+		if (converted.objectType) {
+			const object = detailStore.get(Constant.subId.type, converted.objectType);
+			converted.objectType = object.sourceObject ? object.sourceObject : 'custom';
 		};
 
-		if (converted.relationKey && !converted.relationKey.match(/^rel-|_br/)) {
-			converted.relationKey = 'custom';
+		if (converted.relationKey) {
+			const object = detailStore.get(Constant.subId.relation, converted.relationKey);
+			converted.relationKey = object.sourceObject ? object.sourceObject : 'custom';
 		};
 
 		if (undefined !== converted.layout) {
@@ -293,12 +286,9 @@ class Analytics {
 		};
 
 		param = Object.assign(param, converted);
-
-		if (this.debug()) {
-			console.log('[Analytics].event', code, param);
-		};
 		
 		this.instance.logEvent(code, param);
+		this.log(`[Analytics].event: ${code}`, param);
 	};
 	
 	pageMapper (params: any): string {
@@ -364,6 +354,17 @@ class Analytics {
 
 	embedType (isInline: boolean): string {
 		return isInline ? 'inline' : 'object';
+	};
+
+	log (...args: any[]) {
+		if (!this.debug()) {
+			return;
+		};
+
+		args[0] = `%c${args[0]}`;
+		args.splice(1, 0, 'font-weight: bold; color: #cc4506;');
+
+		console.log.apply(this, args);
 	};
 
 };

@@ -17,7 +17,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	
 	render () {
 		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
-		const home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
+		const home = ObjectUtil.getSpaceDashboard();
 
 		return (
 			<div 
@@ -40,7 +40,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 							<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
 								<div className="item">
 									<div className="name">
-										{home._empty_ || home.isArchived ? 'Select' : home.name}
+										{home ? home.name : 'Select'}
 									</div>
 								</div>
 								<Icon className="arrow light" />

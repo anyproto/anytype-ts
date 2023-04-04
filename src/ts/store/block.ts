@@ -275,7 +275,7 @@ class BlockStore {
 	};
 
 	updateNumbersTree (tree: any[]) {
-		tree = (tree || []).filter((it: any) => { return it; });
+		tree = (tree || []).filter(it => it);
 
 		const unwrap = (list: any) => {
 			list = list || [];
@@ -340,7 +340,7 @@ class BlockStore {
 	};
 
     unwrapTree (tree: any[]): any[] {
-		tree = (tree || []).filter((it: any) => { return it; });
+		tree = (tree || []).filter(it => it);
 
 		let ret = [] as I.Block[];
 		for (const item of tree) {
@@ -417,7 +417,7 @@ class BlockStore {
 				};
 
 				const { from, to } = mark.range;
-				const object = detailStore.get(rootId, mark.param);
+				const object = detailStore.get(rootId, mark.param, [ 'name', 'layout' ], true);
 
 				if (object._empty_) {
 					continue;
@@ -429,8 +429,6 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
-				name = Mark.fromUnicode(name);
-
 				name = Mark.fromUnicode(name);
 
 				if (old != name) {
