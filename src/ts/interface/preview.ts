@@ -3,7 +3,7 @@ import { I } from 'Lib';
 export enum PreviewType {
 	Link	 = 0,
 	Object	 = 1,
-	Graph	 = 2,
+	Default	 = 2,
 };
 
 export interface PreviewLink {
