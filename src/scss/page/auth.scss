@@ -33,7 +33,22 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 }
 
-.pageAuthLogin,
+.pageAuthLogin {
+	.icon.selfHost { background-image: url('~img/icon/footer/data-location.svg'); height: 20px; width: 20px; margin-right: 6px; }
+	.icon.see { background-image: url('~img/icon/keyphrase/see.svg'); height: 20px; width: 20px; margin-right: 6px; }
+	.icon.hide { background-image: url('~img/icon/keyphrase/hide.svg'); height: 20px; width: 20px; margin-right: 6px; }
+	
+	.error { margin: 10px 0px -15px 0px; }
+	.keyPhraseContainer { display: flex; flex-direction: row; align-items: center; }
+	.keyPhrase { width: 100%; min-width: 800px; margin: 20px; }
+
+	.selfHost,
+	.lostPhrase { color: #5C5A54; cursor: pointer; }
+	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
+
+	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
+}
+
 .pageAuthInvite {
 	.frame { padding: 64px; }
 	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
@@ -81,15 +96,19 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 }
 
 .pageAuthOnboard,
-.pageAuthInvite {
+.pageAuthInvite,
+.pageAuthLogin {
 	.frame { width: 415px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; }
 	.label { color: #5C5A54; min-width: 415px; }
 	.icon.back { height: 40px; width: 40px; position: fixed; left: 20px; top: 0; bottom: 0; margin: auto 0; z-index: 1; }
 }
 
-.bodyAuthOnboard #popupConfirm-innerWrap { background: #1A1A18; min-width: 700px; padding-top: 15px; }
-.bodyAuthOnboard #popupConfirm-innerWrap {
+.bodyAuthOnboard #popupConfirm-innerWrap,
+.bodyAuthLogin #popupConfirm-innerWrap { background: #1A1A18; min-width: 700px; padding-top: 15px; }
+
+.bodyAuthOnboard #popupConfirm-innerWrap,
+.bodyAuthLogin #popupConfirm-innerWrap {
 	ul { list-style-position: inside; margin-bottom: 10px; }
 	.content { padding: 0px 20px; text-align: left; }
 	.title { font-size: 14px; color: #929082; }
@@ -106,6 +125,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.storageInfo,
 	.moreInfo,
 	.questionMark:hover { cursor: pointer; }
+	.keyPhrase { width: fit-content }
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
 	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: block; background-color: #5C5A54; color: black; }
