@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Title, Label, Button, Icon, Select, Switch, Input } from 'Component';
-import { I, Util, translate } from 'Lib';
+import { Title, Label, Button, Icon, Select, Switch } from 'Component';
+import { I, Util, translate, keyboard } from 'Lib';
+import { menuStore } from 'Store';
 import Head from '../head';
 
 interface Props extends I.Popup, RouteComponentProps<any> {
@@ -10,16 +11,35 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
 };
 
+const Delimiters: any[] = [
+	{ id: 'comma', name: 'Comma', caption: ',' },
+	{ id: 'semicolon', name: 'Semicolon', caption: ';' },
+	{ id: 'space', name: 'Space', caption: '_', value: ' ' },
+	{ id: 'tab', name: 'Tab', caption: '\\t', value: '\t' },
+	{ id: 'pipe', name: 'Pipe', caption: '|' },
+];
+
 class PopupSettingsPageImportCsv extends React.Component<Props> {
 
-	mode: I.CsvImportMode = I.CsvImportMode.Table;
+	mode: I.CsvImportMode = I.CsvImportMode.Collection;
 	header = false;
-	delimiter = ',';
+	transpose = false;
+	delimiter = '';
+	refDelimiter = null;
 
 	constructor (props: Props) {
 		super(props);
 
 		this.onImport = this.onImport.bind(this);
+		this.onFilterKeyUp = this.onFilterKeyUp.bind(this);
+
+		const { storageGet } = props;
+		const options = storageGet().csv || {};
+
+		this.mode = Number(options.mode) || I.CsvImportMode.Collection;
+		this.header = Boolean(options.header);
+		this.transpose = Boolean(options.transpose);
+		this.delimiter = String(options.delimiter || ',');
 	};
 
 	render () {
@@ -27,6 +47,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			{ id: I.CsvImportMode.Table, name: 'Table' },
 			{ id: I.CsvImportMode.Collection, name: 'Collection' },
 		].map(it => ({ ...it, id: String(it.id) }));
+		const { delimiter, delimiters } = this.delimiterOptions();
 
 		return (
 			<div>
@@ -43,19 +64,59 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 							id="csv-import-mode" 
 							value={this.mode} 
 							options={modeOptions} 
-							onChange={v => this.mode = Number(v)}
+							onChange={v => {
+								this.mode = Number(v) || 0;
+								this.save();
+							}}
 							arrowClassName="light"
+							menuParam={{ horizontal: I.MenuDirection.Right }}
 						/>
 					</div>
 
 					<div className="row">
-						<Label text="Use first column as relation names" />
-						<Switch value={this.header} className="big" onChange={(e: any, v: boolean) => { this.header = v; }}/>
+						<Label text="Use the first row as column names" />
+						<Switch 
+							value={this.header} 
+							className="big" 
+							onChange={(e: any, v: boolean) => { 
+								this.header = v; 
+								this.save();
+							}}
+						/>
+					</div>
+
+					<div className="row">
+						<Label text="Transpose rows and columns" />
+						<Switch 
+							value={this.transpose} 
+							className="big" 
+							onChange={(e: any, v: boolean) => { 
+								this.transpose = v; 
+								this.save();
+							}}
+						/>
 					</div>
 
 					<div className="row">
 						<Label text="Columns are divided by" />
-						<Input value={this.delimiter} className="short" onKeyUp={(e: any, v: string) => { this.delimiter = v; }} maxLength={10} />
+						<Select 
+							ref={ref => this.refDelimiter = ref}
+							id="csv-import-delimiter" 
+							value={delimiter?.id} 
+							options={delimiters} 
+							onChange={v => this.delimiterSet(v, '')}
+							arrowClassName="light"
+							menuParam={{ 
+								horizontal: I.MenuDirection.Right, 
+								data: { 
+									withFilter: true,
+									preventFilter: true,
+									placeholder: 'Custom symbol',
+									onFilterKeyUp: this.onFilterKeyUp,
+								},
+							}}
+						/>
+
 					</div>
 				</div>
 				
@@ -64,6 +125,55 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 				</div>
 			</div>
 		);
+	};
+
+	onFilterKeyUp (e: React.KeyboardEvent, v: string) {
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+
+			this.delimiterSet('', v);
+			this.forceUpdate();
+
+			const { delimiter, delimiters } = this.delimiterOptions();
+
+			this.refDelimiter.setOptions(delimiters);
+			this.refDelimiter.setValue(delimiter?.id);
+
+			menuStore.close('select');
+		});
+	};
+
+	delimiterSet (id: string, v: string) {
+		const option = Delimiters.find(it => {
+			if (id && (it.id == id)) {
+				return true;
+			};
+			if (v && ((it.value == v) || (it.caption == v))) {
+				return true;
+			};
+			return false;
+		});
+
+		if (option) {
+			this.delimiter = option.value || option.caption;
+		} else 
+		if (v) {
+			this.delimiter = v.substring(0, 10);
+		};
+
+		this.save();
+	};
+
+	delimiterOptions () {
+		const delimiters = Util.objectCopy(Delimiters);
+
+		let delimiter = delimiters.find(it => (it.value == this.delimiter) || (it.caption == this.delimiter));
+		if (!delimiter) {
+			delimiter = { id: 'custom', name: 'Custom', caption: this.delimiter };
+			delimiters.push(delimiter);
+		};
+
+		return { delimiter, delimiters };
 	};
 
 	onImport () {
@@ -90,10 +200,17 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			onImport(I.ImportType.Csv, { 
 				paths, 
 				mode: this.mode, 
-				useFirstColumnForRelations: this.header,
+				firstRow: this.header,
+				transpose: this.transpose,
 				delimiter: this.delimiter,
 			});
 		});
+	};
+
+	save () {
+		const { storageSet } = this.props;
+
+		storageSet({ csv: { mode: this.mode, header: this.header, transpose: this.transpose, delimiter: this.delimiter } });
 	};
 
 };

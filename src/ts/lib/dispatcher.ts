@@ -184,7 +184,7 @@ class Dispatcher {
 		let afterId = '';
 		let content: any = {};
 
-		messages.sort((c1: any, c2: any) => { return this.sort(c1, c2); });
+		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
 			const type = this.eventType(message.getValueCase());
@@ -907,7 +907,7 @@ class Dispatcher {
 					const pt = process.getType();
 
 					switch (state) {
-						case I.ProgressState.Running:
+						case I.ProgressState.Running: {
 							commonStore.progressSet({
 								id: process.getId(),
 								status: translate('progress' + pt),
@@ -917,21 +917,25 @@ class Dispatcher {
 								canCancel: pt != I.ProgressType.Recover,
 							});
 							break;
+						};
 
 						case I.ProgressState.Done:
-						case I.ProgressState.Canceled:
+						case I.ProgressState.Canceled: {
 							commonStore.progressClear();
 
-							let toast = '';
-							switch (pt) {
-								case I.ProgressType.Import: { toast = 'Import finished'; break; };
-								case I.ProgressType.Export: { toast = 'Export finished'; break; };
-							};
+							if (state == I.ProgressState.Done) {
+								let toast = '';
+								switch (pt) {
+									case I.ProgressType.Import: { toast = 'Import finished'; break; };
+									case I.ProgressType.Export: { toast = 'Export finished'; break; };
+								};
 
-							if (toast) {
-								Preview.toastShow({ text: toast });
+								if (toast) {
+									Preview.toastShow({ text: toast });
+								};
 							};
 							break;
+						};
 					};
 					break;
 				};
@@ -1000,9 +1004,9 @@ class Dispatcher {
 		detailStore.set(contextId, details);
 		blockStore.restrictionsSet(contextId, restrictions);
 
-		const object = detailStore.get(contextId, rootId, []);
-
 		if (root) {
+			const object = detailStore.get(contextId, rootId, [ 'layout' ], true);
+
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
 		};

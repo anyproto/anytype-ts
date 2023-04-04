@@ -209,9 +209,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const objectToItems = [ Constant.typeId.set, Constant.typeId.collection ];
-
-		if (objectToItems.includes(item.id)) {
+		if (DataUtil.getSetTypes().includes(item.id)) {
 			this.onObjectTo(e, item.id);
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {

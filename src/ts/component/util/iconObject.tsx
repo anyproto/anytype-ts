@@ -41,14 +41,13 @@ const IDS40 = [
 	I.ObjectLayout.File, 
 	I.ObjectLayout.Image, 
 	I.ObjectLayout.Type,
-	I.ObjectLayout.Space,
 ];
 
 const LAYOUT_EMOJI = [ 
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Set, 
-	I.ObjectLayout.Space, 
 	I.ObjectLayout.Type,
+	I.ObjectLayout.Space,
 ];
 
 const IconSize = {

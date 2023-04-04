@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { I, Util, analytics } from 'Lib';
+import Constant from 'json/constant.json';
 
 const Tags = [ 
 	'strike', 
@@ -390,9 +391,17 @@ class Mark {
 			item.html(item.find('name').html());
 		});
 
-		obj.find('font').removeAttr('face').each((i: number, item: any) => {
+		obj.find('font').each((i: number, item: any) => {
 			item = $(item);
-			item.html(item.find('span').html());
+
+			const html = item.find('span').html();
+			const face = String(item.attr('face') || '').toLowerCase();
+
+			if (face == Constant.fontCode) {
+				item.replaceWith(`<kbd>${html}</kbd>`);
+			} else {
+				item.html(html);
+			};
 		});
 
 		obj.find('emoji').removeAttr('class').html(' ');
@@ -412,7 +421,7 @@ class Mark {
 		let marks: any[] = [];
 
 		// TODO: find classes by color or background
-		html.replace(/<font color="([^"]+)">([^<]*)<\/font>/g, (s: string, p1: string, p2: string) => {
+		html.replace(/<font([^>]*?)>([^<]*)<\/font>/g, (s: string, p1: string, p2: string) => {
 			text = text.replace(s, p2);
 			return '';
 		});

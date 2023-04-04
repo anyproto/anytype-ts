@@ -158,18 +158,17 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { rootId } = data;
 		const { config } = commonStore;
-		const object = detailStore.get(rootId, rootId);
+		const object = detailStore.get(rootId, rootId, [ 'targetObjectType', 'featuredRelations' ]);
 		const isTemplate = object.type == Constant.typeId.template;
 		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
-
-		let featured = object.featuredRelations || [];
-		let relations = dbStore.getObjectRelations(rootId, rootId);
-		let relationKeys = relations.map(it => it.relationKey);
-		let items = relations.map(it => { return { ...it, scope: I.RelationScope.Object }; });
-		let typeRelations = (type ? type.recommendedRelations || [] : []).map(it => {
+		const featured = Relation.getArrayValue(object.featuredRelations);
+		const relations = dbStore.getObjectRelations(rootId, rootId);
+		const relationKeys = relations.map(it => it.relationKey);
+		const typeRelations = (type ? type.recommendedRelations || [] : []).map(it => {
 			return { ...dbStore.getRelationById(it), scope: I.RelationScope.Type };
 		}).filter(it => it.relationKey && !relationKeys.includes(it.relationKey));
 
+		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
 		items = items.sort(DataUtil.sortByHidden).filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
@@ -240,7 +239,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
 		const relations = dbStore.getObjectRelations(rootId, rootId);
-		const object = detailStore.get(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
@@ -251,7 +249,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				...data,
 				filter: '',
 				ref: 'menu',
-				object,
 				menuIdEdit: 'blockRelationEdit',
 				skipKeys: relations.map(it => it.relationKey),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

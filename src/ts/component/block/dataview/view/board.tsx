@@ -72,7 +72,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 									onRecordAdd={this.onRecordAdd}
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
-									getSubId={() => { return dbStore.getGroupSubId(rootId, block.id, group.id); }}
+									getSubId={() => dbStore.getGroupSubId(rootId, block.id, group.id)}
 								/>
 							))}
 						</div>
@@ -692,24 +692,22 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = groups.length * (size.card + size.margin);
+		const width = groups.length * size.card;
 
 		if (!isInline) {
 			const maxWidth = cw - PADDING * 2;
 			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
 
-			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 + size.margin });
-			viewItem.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 + size.margin });
+			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 });
+			viewItem.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 });
 		} else {
 			if (parent.isPage() || parent.isLayoutDiv()) {
 				const wrapper = $('#editorWrapper');
 				const ww = wrapper.width();
 				const margin = (cw - ww) / 2;
 
-				scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin + size.margin });
+				scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin });
 				viewItem.css({ width: width + margin });
-			} else {
-				scroll.css({ paddingLeft: size.margin });
 			};
 		};
 	};

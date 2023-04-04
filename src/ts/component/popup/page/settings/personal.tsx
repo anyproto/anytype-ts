@@ -53,9 +53,9 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 								options={languages} 
 								onChange={(v: any) => { Renderer.send('setLanguage', v); }}
 								arrowClassName="light"
-								menuWidth={300}
 								isMultiple={true}
 								noFilter={false}
+								menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
 							/>
 						</div>
 					</div>
@@ -69,6 +69,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 		menuStore.open('typeSuggest', {
 			element: `#${getId()} #defaultType`,
+			horizontal: I.MenuDirection.Right,
 			data: {
 				filter: '',
 				smartblockTypes: [ I.SmartBlockType.Page ],
@@ -89,7 +90,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		let languages: any[] = [];
 
 		languages = languages.concat(commonStore.languages || []);
-		languages = languages.map(id => { return { id, name: Constant.spellingLang[id] }; });
+		languages = languages.map(id => ({ id, name: Constant.spellingLang[id] }));
 		languages.unshift({ id: '', name: 'Disabled' });
 
 		return languages;

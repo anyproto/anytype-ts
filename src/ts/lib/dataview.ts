@@ -113,15 +113,8 @@ class Dataview {
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
 		const view = dbStore.getView(rootId, blockId, newViewId);
-		const block = blockStore.getLeaf(rootId, blockId);
-		if (!block) {
-			return;
-		};
-
-		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId);
-
-		if (!view || !block) {
+		
+		if (!view) {
 			return;
 		};
 
@@ -179,7 +172,7 @@ class Dataview {
 
 		const tabs: I.MenuTab[] = [
 			{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-			(view.type == I.ViewType.Board) ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
+			view.isBoard() ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
 			{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
 		];
 		return tabs.filter(it => it);
@@ -214,20 +207,23 @@ class Dataview {
 	};
 
 	isCollection (rootId: string, blockId: string): boolean {
-		const object = detailStore.get(rootId, rootId);
-		const isInline = ![ Constant.typeId.set, Constant.typeId.collection ].includes(object.type);
-		const block = blockStore.getLeaf(rootId, blockId);
-		const { targetObjectId } = block.content;
-		const target = targetObjectId ? detailStore.get(rootId, targetObjectId) : null;
+		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
+		const { type } = object;
+		const isInline = !DataUtil.getSetTypes().includes(type);
 
-		let isCollection = false;
-		if (isInline) {
-			isCollection = targetObjectId ? target.type == Constant.typeId.collection : block.content.isCollection;
-		} else {
-			isCollection = object.type == Constant.typeId.collection;
+		if (!isInline) {
+			return type == Constant.typeId.collection;
 		};
 
-		return isCollection;
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return false;
+		};
+
+		const { targetObjectId, isCollection } = block.content;
+		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'type' ], true) : null;
+
+		return targetObjectId ? target.type == Constant.typeId.collection : isCollection;
 	};
 
 };

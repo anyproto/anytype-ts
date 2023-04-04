@@ -141,8 +141,9 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(this.node).find('.items').get(0); }}
+					helperContainer={() => $(this.node).find('.items').get(0)}
 				/>
+
 				{!readonly && allowedView ? (
 					<div className="bottom">
 						<div className="line" />
@@ -171,7 +172,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 	};
 	
@@ -227,7 +228,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		const { rootId, blockId, getView } = data;
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
-		const object = detailStore.get(rootId, rootId);
 
 		const onAdd = () => {
 			if (data.onAdd) {
@@ -247,7 +247,6 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 				menuIdEdit: 'dataviewRelationEdit',
 				filter: '',
 				ref: 'dataview',
-				object,
 				skipKeys: relations.map(it => it.relationKey),
 				onAdd,
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {

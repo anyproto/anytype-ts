@@ -101,10 +101,10 @@
 	.editorControls { height: 120px; }
 	.blocks { margin-top: -78px; }
 	#button-icon { display: none; }
-	.controlButtons { left: 114px; text-align: left !important; } 
+	.controlButtons { left: 114px; bottom: 16px; text-align: left !important; } 
 }
 
-.editorWrapper.withCover { padding-top: 328px; }
+.editorWrapper.withCover { padding-top: 348px; }
 .editorWrapper.withCover {
 	.editorControls { display: none; }
 }
@@ -114,10 +114,6 @@
 	.editorControls { display: none; }
 	#button-icon { display: none; }
 	.controlButtons { left: 114px !important; text-align: left !important; } 
-}
-
-.editorWrapper.isNote {
-	.editorControls { margin-bottom: 16px; }
 }
 
 /* Human */ 
@@ -147,5 +143,5 @@
 
 /* Note */ 
 .editorWrapper.isNote {
-	.editorControls { height: 70px; }
+	.editorControls { height: 70px; margin-bottom: 8px; }
 }

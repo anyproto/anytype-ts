@@ -273,7 +273,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const relation = this.getRelation();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const idx = view.relations.findIndex(it => it.relationKey == relation.relationKey);
-		const object = detailStore.get(rootId, rootId);
 
 		if (!relation) {
 			return;
@@ -351,7 +350,6 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 						filter: '',
 						ref: 'dataview',
 						skipKeys: relations.map(it => it.relationKey),
-						object,
 						addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 							Dataview.relationAdd(rootId, blockId, relation.relationKey, Math.max(0, idx + item.dir), view, (message: any) => {
 								menuStore.closeAll([ this.props.id, 'relationSuggest' ]);

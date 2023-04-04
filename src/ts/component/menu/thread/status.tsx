@@ -12,7 +12,7 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 		const cafe = thread.cafe || {};
 		const status = cafe.status || {};
 		const files = cafe.files || {};
-		const account = (thread.accounts || []).find((it: I.ThreadAccount) => { return it.id == accountId; });
+		const account = (thread.accounts || []).find(it => it.id == accountId);
 
 		const Item = (item: any) => (
 			<div className="item">

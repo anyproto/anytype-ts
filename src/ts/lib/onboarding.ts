@@ -14,12 +14,13 @@ class Onboarding {
 			return;
 		};
 
-		const items = section.items;
+		const { items } = section;
 		const t = isPopup ? Constant.delay.popup : 0;
 
 		menuStore.close('onboarding', () => {
 			window.setTimeout(() => {
-				let param = this.getParam(items[0], isPopup);
+				let param = this.getParam(section, items[0], isPopup);
+
 				if (options.parseParam) {
 					param = options.parseParam(param);
 				};
@@ -39,7 +40,7 @@ class Onboarding {
 						options,
 						key,
 						current: 0,
-						isPopup: isPopup,
+						isPopup,
 					},
 				});
 			}, t);
@@ -50,8 +51,14 @@ class Onboarding {
 		return Util.toCamelCase([ key, 'reminder' ].join('-'));
 	};
 
-	getParam (item: any, isPopup: boolean): any {
+	getParam (section: any, item: any, isPopup: boolean): any {
+		section.param = section.param || {};
+		item.param = item.param || {};
+
 		let param: any = {};
+
+		param = Object.assign(param, section.param);
+
 		if (item.param.common) {
 			param = Object.assign(param, item.param.common);
 			if (item.param.page) {
@@ -61,7 +68,7 @@ class Onboarding {
 				param = Object.assign(param, item.param.popup);
 			};
 		} else {
-			param = item.param;
+			param = Object.assign(param, item.param);
 		};
 
 		param.element = String(param.element || '');
@@ -69,7 +76,7 @@ class Onboarding {
 		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
 		param.offsetY = Number(param.offsetY) || 0;
 		param.offsetX = Number(param.offsetX) || 0;
-		param.withArrow = param.element ? true : false;
+		param.withArrow = param.noArrow ? false : param.element ? true : false;
 		param.className = String(param.className || '');
 		param.classNameWrap = String(param.classNameWrap || '');
 		param.rect = null;

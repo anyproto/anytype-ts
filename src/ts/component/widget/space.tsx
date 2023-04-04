@@ -15,7 +15,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	render (): React.ReactNode {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace, []);
 
 		return (
 			<div className="body">

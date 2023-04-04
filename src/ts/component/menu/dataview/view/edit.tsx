@@ -456,8 +456,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 
 				case 'remove': {
 					const views = dbStore.getViews(rootId, blockId);
-					const idx = views.findIndex((it: I.View) => { return it.id == view.id; });
-					const filtered = views.filter((it: I.View) => { return it.id != view.id; });
+					const idx = views.findIndex(it => it.id == view.id);
+					const filtered = views.filter(it => it.id != view.id);
 					
 					let next = idx >= 0 ? filtered[idx] : filtered[0];
 					if (!next) {

@@ -97,7 +97,7 @@ class ListObjectPreview extends React.Component<Props> {
 		const { getItems } = this.props;
 		const items = getItems();
 
-		this.n = items.findIndex((it: any) => { return it.id == item.id; });
+		this.n = items.findIndex(it => it.id == item.id);
 		this.setActive();
 	};
 

@@ -138,7 +138,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
 				defaultHeight: HEIGHT,
-				keyMapper: (i: number) => { return (nodes[i] || {}).id; },
+				keyMapper: i => (nodes[i] || {}).id,
 			});
 
 			this.forceUpdate();
@@ -182,7 +182,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const { block, isCollection } = this.props;
 		const { targetBlockId } = block.content;
 		const { widgets } = blockStore;
-		const object = detailStore.get(widgets, targetBlockId);
+		const object = detailStore.get(widgets, targetBlockId, [ 'links' ]);
 
 		this.branches = [];
 
@@ -190,7 +190,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		if (isCollection(targetBlockId)) {
 			const subId = this.getSubId(targetBlockId);
 
-			childNodeList = dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id)));
+			childNodeList = dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, Constant.sidebarRelationKeys)));
 		} else {
 			const links = Relation.getArrayValue(object.links);
 

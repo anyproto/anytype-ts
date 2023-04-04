@@ -78,7 +78,7 @@ const AccountDelete = (response: any) => {
 
 const AccountRecoverFromLegacyExport = (response: any) => {
 	return {
-		address: response.getAddress(),
+		accountId: response.getAccountid(),
 	};
 };
 

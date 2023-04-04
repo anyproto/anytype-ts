@@ -5,8 +5,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { throttle } from 'lodash';
-import { Loader } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer } from 'Lib';
+import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -33,10 +32,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	state = {
 		loading: false,
 	};
-	node: any = null;
-	refView: any = null;
-	refHead: any = null;
-	refControls: any = null;
+	node = null;
+	refView = null;
+	refHead = null;
+	refControls = null;
+	refSelect = null;
 	refCells: Map<string, any> = new Map();
 
 	menuContext: any = null;
@@ -63,6 +63,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
 		this.onContext = this.onContext.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onFocus = this.onFocus.bind(this);
 		this.onSourceSelect = this.onSourceSelect.bind(this);
 		this.onSourceTypeSelect = this.onSourceTypeSelect.bind(this);
 		this.onEmpty = this.onEmpty.bind(this);
@@ -93,13 +96,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const sources = this.getSources();
 		const targetId = this.getObjectId();
-		const object = detailStore.get(rootId, targetId);
 		const isCollection = this.isCollection();
 		const records = this.getRecords();
+		const cn = [ 'focusable', 'c' + block.id ];
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
-		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]), (object.isDeleted ? 'isDeleted' : '') ].join(' ');
+		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]) ].join(' ');
 		let head = null;
 		let body = null;
 
@@ -139,15 +142,26 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onRecordAdd: this.onRecordAdd,
 			isAllowedObject: this.isAllowedObject,
 			isCollection,
-			isInline
+			isInline,
 		};
 
-		let controls = null;
-		if (this.isMultiSelecting) {
-			controls = <Selection {...this.props} {...dataviewProps} ids={this.selected} multiSelectAction={this.multiSelectAction} className={className} />
-		} else {
-			controls = <Controls ref={ref => this.refControls = ref} {...this.props} {...dataviewProps} className={className} />;
-		};
+		const controls = (
+			<React.Fragment>
+				<Controls 
+					ref={ref => this.refControls = ref} 
+					{...this.props} 
+					{...dataviewProps} 
+					className={className} 
+				/>
+				<Selection 
+					ref={ref => this.refSelect = ref} 
+					{...this.props} 
+					{...dataviewProps} 
+					multiSelectAction={this.multiSelectAction} 
+					className={className} 
+				/>
+			</React.Fragment>
+		);
 
 		if (isInline) {
 			head = (
@@ -171,7 +185,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
 		} else 
-		if ((view.type != I.ViewType.Board) && !records.length) {	
+		if (!view.isBoard() && !records.length) {	
 			body = this.getEmpty('view');
 		} else {
 			body = (
@@ -197,7 +211,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		return (
-			<div ref={node => this.node = node}>
+			<div 
+				ref={node => this.node = node}
+				tabIndex={0} 
+				className={cn.join(' ')}
+				onKeyDown={this.onKeyDown} 
+				onKeyUp={this.onKeyUp} 
+				onFocus={this.onFocus}
+			>
 				<div className="hoverArea">
 					{head}
 					{controls}
@@ -221,6 +242,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			Onboarding.start('set', isPopup);
 		};
 
+		this.init();
 		this.resize();
 		this.rebind();
 
@@ -236,20 +258,28 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.loadData(viewId, 0, true);
 		};
 
+		this.init();
 		this.resize();
 		this.rebind();
-
-		$(window).trigger('resize.editor');
 	};
 
 	componentWillUnmount () {
 		this.unbind();
 	};
 
+	init () {
+		const { block } = this.props;
+		const node = $(this.node);
+		const head = node.find(`#block-head-${block.id}`);
+		const object = this.getTarget();
+
+		object.isDeleted ? head.addClass('isDeleted') : head.removeClass('isDeleted');
+	};
+
 	unbind () {
 		const { block } = this.props;
 
-		$(window).off(`resize.${block.id} keydown.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} selectionEnd.${block.id}  selectionClear.${I.SelectType.Record}`);
+		$(window).off(`resize.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} selectionEnd.${block.id}  selectionClear.${I.SelectType.Record}`);
 	};
 
 	rebind () {
@@ -258,7 +288,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.unbind();
 		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
-		win.on(`keydown.${block.id}`, throttle((e: any) => { this.onKeyDown(e); }, 100));
 		win.on(`updateDataviewData.${block.id}`, () => { this.loadData(this.getView().id, 0, true);});
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
@@ -272,59 +301,56 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onKeyDown (e: any) {
-		const { rootId, dataset, isInline } = this.props;
+		const { dataset, isInline, onKeyDown } = this.props;
 		const { selection } = dataset || {};
-		const root = blockStore.getLeaf(rootId, rootId);
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
-		const length = ids.length;
+		const count = ids.length;
 
-		if (!root || (!root.isObjectSet() && !root.isObjectSpace())) {
-			return;
-		};
+		let ret = false;
 
-		if (!this.creating) {
-			keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { this.onRecordAdd(e, -1, true); });
-		};
-
-		if (!isInline && !keyboard.isFocused) {
-			keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
-				selection.set(I.SelectType.Record, this.getRecords());
-			});
-		};
-
-		if (length) {
-			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-				C.ObjectListSetIsArchived(ids, true);
-				
-				selection.clear();
-				analytics.event('MoveToBin', { count: length });
-			});
-		};
-	};
-
-	getObjectId () {
-		const { rootId, block, isInline } = this.props;
-		return isInline ? block.content.targetObjectId : rootId;
-	};
-
-	getKeys (id: string): string[] {
-		let view = this.getView(id);
-		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
-
-		if (view) {
-			keys = keys.concat((view.relations || []).map(it => it.relationKey));
-
-			if (view.coverRelationKey) {
-				keys.push(view.coverRelationKey);
+		if (!isInline) {
+			if (!this.creating) {
+				keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { 
+					this.onRecordAdd(e, -1, true); 
+					ret = true;
+				});
 			};
 
-			if (view.groupRelationKey) {
-				keys.push(view.groupRelationKey);
+			if (!isInline && !keyboard.isFocused) {
+				keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+					selection.set(I.SelectType.Record, this.getRecords());
+					ret = true;
+				});
+			};
+
+			if (count) {
+				keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+					C.ObjectListSetIsArchived(ids, true);
+					
+					selection.clear();
+					analytics.event('MoveToBin', { count });
+					ret = true;
+				});
 			};
 		};
 
-		return Util.arrayUnique(keys);
+		if (!ret && onKeyDown) {
+			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
+		};
+	};
+
+	onKeyUp (e: any) {
+		const { onKeyUp } = this.props;
+
+		if (onKeyUp) {
+			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
+		};
+	};
+
+	onFocus () {
+		const { block } = this.props;
+		focus.set(block.id, { from: 0, to: 0 });
 	};
 
 	loadData (viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void) {
@@ -378,7 +404,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				limit: offset + this.getLimit(view.type), 
 				clear,
 				sources,
-				collectionId: isCollection ? this.getObjectId() : '',
+				collectionId: (isCollection ? this.getObjectId() : ''),
 			}, (message: any) => {
 				if (clear) {
 					this.setState({ loading: false });
@@ -389,6 +415,30 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			});
 		};
+	};
+
+	getObjectId () {
+		const { rootId, block, isInline } = this.props;
+		return isInline ? block.content.targetObjectId : rootId;
+	};
+
+	getKeys (id: string): string[] {
+		let view = this.getView(id);
+		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
+
+		if (view) {
+			keys = keys.concat((view.relations || []).map(it => it.relationKey));
+
+			if (view.coverRelationKey) {
+				keys.push(view.coverRelationKey);
+			};
+
+			if (view.groupRelationKey) {
+				keys.push(view.groupRelationKey);
+			};
+		};
+
+		return Util.arrayUnique(keys);
 	};
 
 	getLimit (type: I.ViewType): number {
@@ -422,14 +472,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getRecord (index: number) {
 		const { rootId, block } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const view = this.getView();
+		const keys = this.getKeys(view.id);
+		const subId = dbStore.getSubId(rootId, block.id,);
 		const records = this.getRecords();
 
 		if (index > records.length - 1) {
 			return {};
 		};
 
-		const item = detailStore.get(subId, records[index]);
+		const item = detailStore.get(subId, records[index], keys);
 
 		let name = String(item.name || '');
 		let isReadonly = Boolean(item.isReadonly);
@@ -562,7 +614,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', newIndex);
 				const ref = this.refCells.get(id);
 
-				if (ref && (view.type == I.ViewType.Grid) && (commonStore.type != Constant.typeId.note)) {
+				if (ref && view.isGrid() && (object.type != Constant.typeId.note)) {
 					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 
@@ -1022,8 +1074,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { dataset, isInline } = this.props;
 		const { selection } = dataset || {};
 
-		let updateRequired = false;
-
 		if (!selection || isInline) {
 			return;
 		};
@@ -1040,16 +1090,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			selection.set(I.SelectType.Record, ids);
 		};
 
-		if (this.selected.length !== ids.length) {
-			updateRequired = true;
-		};
-
 		this.selected = ids;
 		this.setMultiSelect(!!ids.length);
-
-		if (updateRequired) {
-			this.forceUpdate();
-		};
 
 		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
 	};
@@ -1064,14 +1106,24 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		this.isMultiSelecting = v;
-		this.forceUpdate();
+
+		if (this.refSelect) {
+			this.refSelect.setIds(this.selected);
+		};
+
+		const node = $(this.node);
+		const con = node.find('#dataviewControls');
+		const sel = node.find('#dataviewSelection');
+
+		v ? con.hide() : con.show();
+		v ? sel.show() : sel.hide();
 	};
 
-	multiSelectAction (e: any, action: string) {
+	multiSelectAction (id: string) {
 		const objectId = this.getObjectId();
 		const count = this.selected.length;
 
-		switch (action) {
+		switch (id) {
 			case 'archive': {
 				C.ObjectListSetIsArchived(this.selected, true, () => {
 					analytics.event('MoveToBin', { count });

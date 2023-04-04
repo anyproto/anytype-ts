@@ -48,7 +48,13 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 								<Label text="PIN code check time-out" />
 							</div>
 							<div className="side right">
-								<Select id="pinTime" arrowClassName="light" options={times} value={String(pinTime || '')} onChange={(id: string) => { commonStore.pinTimeSet(id); }}/>
+								<Select 
+									id="pinTime" 
+									arrowClassName="light" 
+									options={times} value={String(pinTime || '')} 
+									onChange={(id: string) => { commonStore.pinTimeSet(id); }}
+									menuParam={{ horizontal: I.MenuDirection.Right }}
+								/>
 							</div>
 						</div>
 

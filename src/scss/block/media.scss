@@ -24,7 +24,7 @@
 
 		.pdfWrapper { 
 			width: 100%; overflow: hidden; position: relative; padding: 12px; box-shadow: 0px 0px 0px 1px $colorBorderDark;
-			border-radius: 6px; display: flex; flex-direction: column; gap: 6px 0px;
+			border-radius: 0px; display: flex; flex-direction: column; gap: 6px 0px;
 		}
 		.pdfWrapper {
 			.info { @include text-common; text-align: center; flex-shrink: 0; }

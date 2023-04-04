@@ -112,6 +112,8 @@
 				}
 
 				.icon.logo { width: 54px; height: 54px; margin: 0px 0px 16px 0px; }
+
+				ol, ul { padding-left: 1.35em; margin: 8px 0px; }
 			}
 		}
 
@@ -122,7 +124,8 @@
 		.side.right.tabImportNotionWarning,
 		.side.right.tabImportMarkdown,
 		.side.right.tabImportCsv,
-		.side.right.tabExportMarkdown
+		.side.right.tabExportMarkdown,
+		.side.right.tabExportProtobuf
 		{ padding-top: 22px; }
 
 		.side.right.tabSpaceIndex {
@@ -294,7 +297,8 @@
 			.rows { margin: 24px 0px; }
 		}
 
-		.side.right.tabExportMarkdown {
+		.side.right.tabExportMarkdown,
+		.side.right.tabExportProtobuf {
 			.labels {
 				.label { margin: 0px 0px 12px 0px; }
 				.label:last-child { margin: 0px; }

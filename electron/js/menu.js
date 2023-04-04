@@ -68,7 +68,7 @@ class MenuManager {
 					},
 					{
 						label: 'Export',
-						click: () => { Util.send(this.win, 'popup', 'settings', { data: { page: 'exportMarkdown' } }); }
+						click: () => { Util.send(this.win, 'popup', 'settings', { data: { page: 'exportIndex' } }); }
 					},
 					{ label: 'Save as file', click: () => { Util.send(this.win, 'command', 'save'); } },
 
@@ -261,10 +261,6 @@ class MenuManager {
 					label: 'Export localstore',
 					click: () => { Util.send(this.win, 'command', 'exportLocalstore'); }
 				},
-				{
-					label: 'Import account',
-					click: () => { Util.send(this.win, 'command', 'importAccount'); }
-				},
 
 				Separator,
 
@@ -320,7 +316,7 @@ class MenuManager {
 			Separator,
 
 			{ label: 'Import', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'importIndex' } }, true); } },
-			{ label: 'Export', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'exportMarkdown' } }, true); } },
+			{ label: 'Export', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'exportIndex' } }, true); } },
 			
 			Separator,
 

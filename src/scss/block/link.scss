@@ -2,6 +2,8 @@
 
 .blocks {
 	.block.blockLink {
+		.focusable { border-radius: 4px; }
+
 		.isArchived {
 			.cardName { color: $colorMediumGrey; }
             .cardName span::before { display: none; }
@@ -92,9 +94,8 @@
 
 		.linkCard.card { margin: 8px 0px; }
 		.linkCard.card {
-			.sides { min-height: 80px; }
-			.side.left { padding: 16px; border: 1px solid $colorHover; border-radius: 16px; flex-direction: column; justify-content: center; }
-			.side.right { border-radius: 0px 16px 16px 0px; }
+			.side.left { padding: 16px; border: 1px solid $colorBorderLight; border-radius: 12px; flex-direction: column; justify-content: center; }
+			.side.right { border-radius: 0px 12px 12px 0px; }
 
 			.sides.withBgColor {
 				.side { border: 0px; }
@@ -116,8 +117,8 @@
 
 		.linkCard.c48.withIcon {
 			.sides { min-height: 80px; }
-			.side.left { padding: 16px 16px 16px 80px; flex-grow: 1; }
-			.iconObject { position: absolute; left: 16px; top: 16px; background-color: $colorVeryLightGrey; border-radius: 10px; }
+			.side.left { padding: 16px 16px 16px 72px; flex-grow: 1; }
+			.iconObject { position: absolute; left: 16px; top: 15px; background-color: $colorVeryLightGrey; border-radius: 10px; }
 		}
 
 		.linkCard.c48.withIcon.withCover.vertical {
@@ -128,8 +129,8 @@
 
 		.linkCard.withCover {
 			.sides { align-items: stretch; }
-			.side.left { width: calc(100% - 28%); border-radius: 16px 0px 0px 16px; border-right-width: 0px; }
-			.side.right { width: 28%; display: block; border: 1px solid $colorHover; border-left: 0px; }
+			.side.left { width: calc(100% - 28%); border-radius: 12px 0px 0px 12px; border-right-width: 0px; }
+			.side.right { width: 28%; display: block; border: 1px solid $colorBorderLight; border-left: 0px; }
 		}
 
 		.linkCard.vertical { display: block; }
@@ -137,12 +138,12 @@
 			.sides { flex-direction: column-reverse; }
 			.side.left { width: 100%; border-right-width: 1px; }
 			.side.right { 
-				aspect-ratio: 7/3; width: 100%; border-radius: 16px 16px 0px 0px; border: 1px solid $colorBorderDark; border-bottom: 0px;
+				aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px; border: 1px solid $colorBorderLight; border-bottom: 0px;
 			}
 		}
 
 		.linkCard.withCover.vertical {
-			.side.left { border-radius: 0px 0px 16px 16px; }
+			.side.left { border-radius: 0px 0px 12px 12px; }
 		}
 
 		.linkCard.withCover.vertical.text { padding-top: 0px; }

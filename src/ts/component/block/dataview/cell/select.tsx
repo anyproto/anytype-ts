@@ -52,7 +52,7 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 		let content = null;
 
 		if (elementMapper) {
-			value = value.map((it: any) => { return elementMapper(relation, it); });
+			value = value.map(it => elementMapper(relation, it));
 		};
 
 		if (arrayLimit) {

@@ -175,7 +175,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_ITEM,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		this.resize();
@@ -273,7 +273,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = Util.objectCopy(this.items || []).map(it => { return { ...it, object: it }; });
+		const items = Util.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.workspaceId == workspace));
 		const librarySources = library.map(it => it.sourceObject);
 
@@ -417,7 +417,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { close, param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, blockId, menuIdEdit, addCommand, ref, object } = data;
+		const { rootId, blockId, menuIdEdit, addCommand, ref, noInstall } = data;
+		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -449,9 +450,12 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				addCommand(rootId, blockId, item);
 			};
 
-			if (item.isInstalled) {
+			if (item.isInstalled || noInstall) {
 				cb(item);
-				analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type });
+
+				if (!noInstall) {
+					analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type });
+				};
 			} else {
 				Action.install(item, (message: any) => { cb(message.details); });
 			};

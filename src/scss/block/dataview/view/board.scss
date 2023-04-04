@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewItem.viewBoard { padding: 0px 0px 0px 8px; }
+		.viewItem.viewBoard { padding: 0px 0px 0px 5px; }
         .viewItem.viewBoard {
 
             .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
@@ -60,7 +60,7 @@
 					.bgColor { border-radius: 0px 0px 4px 4px; }
 				}
 
-				.loadMore { margin-bottom: 8px; position: relative; z-index: 1; border-bottom: 0px; }
+				.loadMore { margin-bottom: 8px; position: relative; z-index: 1; }
             }
 			.column:hover, .column.active {
 				.head .side.right .icon { opacity: 1; }
@@ -79,6 +79,8 @@
 
             .card { width: 224px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
+				.selectable.isSelectionSelected::after { display: none; }
+
 				.cellContent.isName {
 					.name { @include clamp2; white-space: normal; }
 				}
@@ -142,10 +144,4 @@
 
 html.platformLinux {
 	.blocks .block.blockDataview .viewItem.viewBoard .column .body { overflow-y: auto; }
-}
-
-.blocks {
-	.block.blockDataview.isInline {
-		.viewItem.viewBoard { padding: 16px 0px 0px 0px; }
-	}
 }

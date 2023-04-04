@@ -69,8 +69,8 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 								this.save();
 							}}
 							arrowClassName="light"
-							menuWidth={300}
 							isMultiple={false}
+							menuParam={{ width: 300 }}
 						/>
 					);
 					break;
@@ -123,7 +123,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 								this.format = v;
 								this.save();
 								this.forceUpdate();
-							}} 
+							}}
 						/>
 					</div>
 				</div>

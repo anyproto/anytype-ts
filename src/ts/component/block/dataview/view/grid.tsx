@@ -314,8 +314,6 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 
 		el.addClass('isResizing');
 		keyboard.setResize(true);
-
-		console.log(el);
 	};
 
 	onResizeMove (e: any, relationKey: string) {

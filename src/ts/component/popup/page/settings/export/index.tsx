@@ -51,38 +51,22 @@ const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex
 		};
 	};
 
-	getItems () {
+	getItems (): any[] {
 		return [
 			{ id: 'markdown', name: 'Markdown' },
-			{ id: 'protobuf', name: 'Protobuf', skipPage: true },
+			{ id: 'protobuf', name: 'Protobuf' },
 		];
 	};
 
-	onExportCommon (type: I.ExportType, extensions: string[], options?: any) {
+	onExportCommon (type: I.ExportType, options?: any) {
 		const { close, onExport } = this.props;
-		const platform = Util.getPlatform();
-		const fileOptions: any = { 
-			properties: [ 'openFile' ],
-			filters: [ { name: '', extensions } ]
-		};
 
-		if (platform == I.Platform.Mac) {
-			fileOptions.properties.push('openDirectory');
-		};
-
-		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
-			const paths = result.filePaths;
-			if ((paths == undefined) || !paths.length) {
-				return;
-			};
-
-			close();
-			onExport(type, Object.assign(options || {}, { paths }));
-		});
+		onExport(type, options);
+		close();
 	};
 
 	onExportProtobuf () {
-		this.onExportCommon(I.ExportType.Protobuf, [ 'zip', 'pb' ]);
+		this.onExportCommon(I.ExportType.Protobuf);
 	};
 
 });

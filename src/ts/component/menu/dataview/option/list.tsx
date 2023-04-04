@@ -139,7 +139,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		this.forceUpdate();

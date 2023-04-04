@@ -159,6 +159,10 @@ export interface View {
 	relations: any[];
 	getVisibleRelations?: () => I.ViewRelation[];
 	getRelation?: (relationKey: string) => I.ViewRelation;
+	isGrid?: () => boolean;
+	isList?: () => boolean;
+	isGallery?: () => boolean;
+	isBoard?: () => boolean;
 };
 
 export interface Cell {

@@ -230,7 +230,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={({ index }) => { return this.getRowHeight(items[index]); }}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
@@ -257,7 +257,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: 64,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		this.resize();
@@ -312,7 +312,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	onTab (id: any, isInner: boolean) {
 		this.tab = id;
-		this.onView(View.Library, isInner);
+		this.onView(Storage.get('viewStore') || View.Library, isInner);
 
 		Storage.set('tabStore', id);
 	};
@@ -323,6 +323,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		menuStore.closeAll(Constant.menuIds.store);
 		analytics.event('LibraryView', { view: id, type: this.tab, route: (isInner ? 'inner' : 'outer') });
+
+		Storage.set('viewStore', id);
 	};
 
 	onClick (e: any, item: any) {
@@ -368,6 +370,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			data: {
 				filter: this.refFilter.getValue(),
 				noFilter: true,
+				noInstall: true,
 			}
 		};
 
@@ -612,14 +615,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = Util.sizeHeader();
-		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
 		const limit = this.getLimit();
-		
-		let wh = isPopup ? container.height() : win.height();
-		if (platform == I.Platform.Windows) {
-			wh -= Constant.size.headerWindows;
-		};
+		const wh = isPopup ? container.height() : win.height();
 
 		node.css({ height: wh });
 		

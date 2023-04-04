@@ -355,7 +355,7 @@ class DataUtil {
 				return;
 			};
 
-			const object = detailStore.get(root, root);
+			const object = detailStore.get(root, root, Constant.coverRelationKeys, true);
 			if (object._empty_) {
 				console.error('Dashboard is empty');
 				return;
@@ -679,6 +679,13 @@ class DataUtil {
 		];
 	};
 
+	getSetTypes () {
+		return [ 
+			Constant.typeId.set, 
+			Constant.typeId.collection,
+		];
+	};
+
 	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
 		if (message.error.code) {
 			return;
@@ -896,7 +903,7 @@ class DataUtil {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace, []);
 		const title = [ Util.shorten(name, 60) ];
 
 		if (!space._empty_) {
@@ -911,7 +918,7 @@ class DataUtil {
 	graphFilters () {
 		const { workspace } = commonStore;
 		const { profile } = blockStore;
-		const skipTypes = [ Constant.typeId.space ].concat(this.getFileTypes()).concat(this.getSystemTypes());
+		const skipTypes = this.getFileTypes().concat(this.getSystemTypes());
 		const skipIds = [ '_anytype_profile', profile ];
 
 		return [

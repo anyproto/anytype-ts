@@ -88,7 +88,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
 		let open = { id: 'open', icon: 'expand', name: 'Open as object' };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
-		let addToCollection = { id: 'addToCollection', icon: 'linkTo', name: 'Add to collection', arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -101,7 +100,6 @@ class MenuContext extends React.Component<I.Menu> {
 		let allowedCopy = true;
 
 		if (isCollection) {
-			addToCollection = null;
 			div = { isDiv: true };
 			unlink = { id: 'unlink', icon: 'unlink', name: 'Unlink from collection' };
 		};
@@ -148,7 +146,6 @@ class MenuContext extends React.Component<I.Menu> {
 			open = null;
 			linkTo = null;
 			unlink = null;
-			addToCollection = null;
 			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
@@ -159,7 +156,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, linkTo, div, addToCollection, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, linkTo, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -218,7 +215,7 @@ class MenuContext extends React.Component<I.Menu> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types.concat([ Constant.typeId.collection ]) },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false }
 					],
 					rootId: itemId,
@@ -232,27 +229,6 @@ class MenuContext extends React.Component<I.Menu> {
 						if (onLinkTo) {
 							onLinkTo(itemId, el.id);
 						};
-
-						close();
-					}
-				});
-				break;
-
-			case 'addToCollection':
-				menuId = 'searchObject';
-				menuParam.data = Object.assign(menuParam.data, {
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
-						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false }
-					],
-					rootId: itemId,
-					blockId: itemId,
-					blockIds: [ itemId ],
-					skipIds: [ itemId ],
-					position: I.BlockPosition.Bottom,
-					canAdd: true,
-					onSelect: (el: any) => {
-						C.ObjectCollectionAdd(el.id, objectIds);
 
 						close();
 					}
@@ -274,9 +250,9 @@ class MenuContext extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { subId, objectIds, onSelect, targetId } = data;
+		const { subId, objectIds, onSelect, targetId, isCollection } = data;
 		const win = $(window);
-		const length = objectIds.length;
+		const count = objectIds.length;
 		const cb = () => {
 			if (onSelect) {
 				onSelect(item.id);
@@ -293,19 +269,28 @@ class MenuContext extends React.Component<I.Menu> {
 
 			case 'copy':
 				C.ObjectListDuplicate(objectIds, (message: any) => {
-					if (length == 1) {
+					if (count == 1) {
 						ObjectUtil.openPopup(detailStore.get(subId, message.ids[0], []));
 					};
 
-					cb();
-					analytics.event('DuplicateObject', { count: length });
+					analytics.event('DuplicateObject', { count });
+
+					if (isCollection) {
+						C.ObjectCollectionAdd(targetId, message.ids, () => {
+							cb();
+
+							analytics.event('LinkToObject', { linkType: 'Collection' });
+						});
+					} else {
+						cb();
+					};
 				});
 				break;
 
 			case 'archive':
 				C.ObjectListSetIsArchived(objectIds, true, (message: any) => {
 					cb();
-					analytics.event('MoveToBin', { count: length });
+					analytics.event('MoveToBin', { count });
 				});
 
 				win.trigger('removeGraphNode', { ids: objectIds });
@@ -314,28 +299,28 @@ class MenuContext extends React.Component<I.Menu> {
 			case 'unarchive':
 				C.ObjectListSetIsArchived(objectIds, false, (message: any) => {
 					cb();
-					analytics.event('RestoreFromBin', { count: length });
+					analytics.event('RestoreFromBin', { count });
 				});
 				break;
 
 			case 'fav':
 				C.ObjectListSetIsFavorite(objectIds, true, () => {
 					cb();
-					analytics.event('AddToFavorites', { count: length });
+					analytics.event('AddToFavorites', { count });
 				});
 				break;
 
 			case 'unfav':
 				C.ObjectListSetIsFavorite(objectIds, false, () => {
 					cb();
-					analytics.event('RemoveFromFavorites', { count: length });
+					analytics.event('RemoveFromFavorites', { count });
 				});
 				break;
 
 			case 'unlink':
 				C.ObjectCollectionRemove(targetId, objectIds, () => {
 					cb();
-					analytics.event('UnlinkFromCollection', { count: length });
+					analytics.event('UnlinkFromCollection', { count });
 				});
 				break;
 
