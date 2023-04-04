@@ -34,20 +34,20 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 	
 	render () {
 		const { url } = this.props;
-		const { loading, title, description, faviconUrl, imageUrl } = this.state;
+		const { loading, title, description } = this.state;
+
+		const domain = url
+			.replace('http://', '')
+			.replace('https://', '');
 		
 		return (
 			<div ref={node => this.node = node} className="previewLink">
 				{loading ? <Loader /> : (
 					<React.Fragment>
-						{imageUrl ? <div className="img" style={{ backgroundImage: `url("${imageUrl}")` }} /> : ''}
 						<div className="info">
+							<div className="link">{domain}</div>
 							{title ? <div className="name">{title}</div> : ''}
 							{description ? <div className="descr">{description}</div> : ''}
-							<div className="link">
-								{faviconUrl ? <Icon icon={faviconUrl} className="fav" /> : ''}
-								{url}
-							</div> 
 						</div>
 					</React.Fragment>
 				)}
