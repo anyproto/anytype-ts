@@ -1,18 +1,22 @@
 import * as React from 'react';
-import {ObjectName, ObjectDescription, IconObject} from 'Component';
+import { ObjectName, ObjectDescription, IconObject } from 'Component';
 import { dbStore } from 'Store';
 import { translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props {
 	object: any;
+	className?: string;
 };
 
-const PreviewGraph = observer(class PreviewGraph extends React.Component<Props> {
+const PreviewDefault = observer(class PreviewDefault extends React.Component<Props> {
 	
 	render () {
-		const { object } = this.props;
+		const { object, className } = this.props;
 		const type = dbStore.getType(object.type);
+		const cn = [ 'previewDefault' ];
+
+		cn.push(className);
 
 		let typeObj = null;
 		if (type) {
@@ -24,7 +28,7 @@ const PreviewGraph = observer(class PreviewGraph extends React.Component<Props> 
 		};
 
 		return (
-			<div className="previewGraph">
+			<div className={cn.join(' ')}>
 				<div className="previewHeader">
 					<IconObject size={20} iconSize={18} object={object} />
 					<ObjectName object={object} />
@@ -37,4 +41,4 @@ const PreviewGraph = observer(class PreviewGraph extends React.Component<Props> 
 
 });
 
-export default PreviewGraph;
+export default PreviewDefault;

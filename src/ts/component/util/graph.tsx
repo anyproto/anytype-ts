@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
-import { PreviewGraph } from 'Component';
+import { PreviewDefault } from 'Component';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
@@ -257,7 +257,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (!el.length) {
 			el = $('<div id="graphPreview" />');
 			body.append(el);
-			ReactDOM.render(<PreviewGraph object={this.subject} />, el.get(0), position);
+			ReactDOM.render(<PreviewDefault object={this.subject} className="previewGraph" />, el.get(0), position);
 		} else {
 			position();
 		};

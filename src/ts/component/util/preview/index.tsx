@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { PreviewLink, PreviewObject, PreviewGraph } from 'Component';
+import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
 import { I, Util, DataUtil, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
@@ -72,7 +72,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					break;
 				};
 
-				content = <PreviewGraph ref={ref => this.ref = ref} object={object} />;
+				content = <PreviewDefault ref={ref => this.ref = ref} object={object} className="previewGraph" />;
 				break;
 			};
 		};
