@@ -12,7 +12,7 @@ class BlockContentLatex implements I.ContentLatex {
 			text: observable,
 		});
 
-		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		intercept(this as any, change => Util.intercept(this, change));
 	};
 
 };

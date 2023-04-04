@@ -67,8 +67,20 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					{allowedView ? <Handle /> : ''}
 					<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} />
 					<div className="txt">
-						<Select id={[ 'filter', 'relation', item.id ].join('-')} options={relationOptions} value={item.relationKey} onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} />
-						<Select id={[ 'filter', 'type', item.id ].join('-')} className="grey" options={typeOptions} value={item.type} onChange={(v: string) => { this.onChange(item.id, 'type', v); }} />
+						<Select 
+							id={[ 'filter', 'relation', item.id ].join('-')} 
+							options={relationOptions} 
+							value={item.relationKey} 
+							onChange={(v: string) => { this.onChange(item.id, 'relationKey', v); }} 
+						/>
+
+						<Select 
+							id={[ 'filter', 'type', item.id ].join('-')} 
+							className="grey" 
+							options={typeOptions} 
+							value={item.type} 
+							onChange={(v: string) => { this.onChange(item.id, 'type', v); }} 
+						/>
 					</div>
 					{allowedView ? (
 						<div className="buttons">
@@ -149,7 +161,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(this.node).find('.items').get(0); }}
+					helperContainer={() => $(this.node).find('.items').get(0)}
 				/>
 				{allowedView ? (
 					<div className="bottom">
@@ -179,7 +191,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 	};
 	

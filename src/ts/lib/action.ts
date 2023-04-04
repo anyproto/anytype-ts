@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, Util, Storage } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, Util, Storage, DataUtil } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -209,7 +209,7 @@ class Action {
 				onSelectPath();
 			};
 
-			C.ObjectListExport(paths[0], ids, format, zip, nested, files, (message: any) => {
+			C.ObjectListExport(paths[0], ids, format, zip, nested, files, false, false, false, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -314,6 +314,34 @@ class Action {
 				},
 				onCancel: () => { callBack(); }
 			},
+		});
+	};
+
+	restoreFromBackup (onError: (error: { code: number, description: string }) => boolean) {
+		const { walletPath } = authStore;
+
+		this.openFile([ 'zip' ], paths => {
+			C.AccountRecoverFromLegacyExport(paths[0], walletPath, (message: any) => {
+				if (onError(message.error)) {
+					return;
+				};
+
+				const { accountId } = message;
+
+				C.ObjectImport({ paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, (message: any) => {
+					if (onError(message.error)) {
+						return;
+					};
+
+					C.AccountSelect(accountId, walletPath, (message: any) => {
+						if (onError(message.error) || !message.account) {
+							return;
+						};
+
+						DataUtil.onAuth(message.account);
+					});
+				});
+			});
 		});
 	};
 

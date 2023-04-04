@@ -224,7 +224,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				{ children: [ print, pageExport, pageReload ] },
 				{ children: [ highlight ] },
 			];
-			sections = sections.map((it: any, i: number) => { return { ...it, id: 'page' + i }; });
+			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		} else {
 			sections.push({ children: [
 				turn,
@@ -235,7 +235,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		};
 
 		sections = sections.filter((section: any) => {
-			section.children = section.children.filter((child: any) => { return child; });
+			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
 		});
 
@@ -358,7 +358,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types.concat([ Constant.typeId.collection ]) }
 					],
 					onSelect: close,
 					skipIds: [ rootId ],
@@ -390,6 +390,19 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		
 		if (onSelect) {
 			onSelect(item);
+		};
+
+		const onBack = () => {
+			if (!block.isPage()) {
+				return;
+			};
+
+			const home = ObjectUtil.getSpaceDashboard();
+			if (home && (object.id == home.id)) {
+				ObjectUtil.openRoute({ layout: I.ObjectLayout.Empty });
+			} else {
+				keyboard.onBack();
+			};
 		};
 
 		focus.clear(false);
@@ -433,18 +446,18 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 				
 			case 'pageArchive':
-				C.ObjectSetIsArchived(rootId, true, (message: any) => {
+				C.ObjectSetIsArchived(object.id, true, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
 
-					keyboard.onBack();
+					onBack();
 					analytics.event('MoveToBin', { count: 1 });
 				});
 				break;
 
 			case 'pageUnarchive':
-				C.ObjectSetIsArchived(rootId, false, (message: any) => {
+				C.ObjectSetIsArchived(object.id, false, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
@@ -475,11 +488,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'pageRemove':
-				C.ObjectListDelete([ object.id ], (message: any) => {
-					if (block.isPage()) {
-						ObjectUtil.openHome('route');
-					};
-
+				C.ObjectListDelete([ object.id ], () => {
+					onBack();
 					analytics.event('RemoveCompletely', { count: 1 });
 				});
 				break;
@@ -523,9 +533,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'pageUninstall':
-				Action.uninstall(object, (message: any) => {
-					ObjectUtil.openHome('route');
-				});
+				Action.uninstall(object, () => { onBack(); });
 				break;
 
 			case 'fav':
@@ -541,14 +549,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'blockRemove':
-				C.BlockListDelete(rootId, [ blockId ], (message: any) => {
-					if (!isPopup) {
-						if (block.isPage()) {
-							ObjectUtil.openHome('route');
-						};
-					} else {
-						popupStore.close('page');
-					};
+				C.BlockListDelete(rootId, [ blockId ], () => {
+					isPopup ? popupStore.close('page') : onBack();
 				});
 				break;
 

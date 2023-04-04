@@ -65,7 +65,7 @@ class Block implements I.Block {
 			content: observable,
 		});
 
-		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		intercept(this as any, change => Util.intercept(this, change));
 		return this;
 	};
 

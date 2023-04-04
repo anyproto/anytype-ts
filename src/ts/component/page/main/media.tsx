@@ -46,8 +46,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 		const featured: any = new M.Block({ id: rootId + '-featured', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const blocks = blockStore.getBlocks(rootId);
-		const file = blocks.find((it: I.Block) => { return it.isFile(); });
-		const relations = blocks.filter((it: I.Block) => { return it.isRelation(); });
+		const file = blocks.find(it => it.isFile());
+		const relations = blocks.filter(it => it.isRelation());
 
 		const isVideo = file?.isFileVideo();
 		const isImage = file?.isFileImage();
@@ -228,7 +228,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 	onOpen (e: any) {
 		const rootId = this.getRootId();
 		const blocks = blockStore.getBlocks(rootId);
-		const block = blocks.find((it: I.Block) => { return it.isFile(); });
+		const block = blocks.find(it => it.isFile());
 		const { content } = block;
 
 		C.FileDownload(content.hash, window.Electron.tmpPath, (message: any) => {

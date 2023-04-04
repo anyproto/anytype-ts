@@ -211,7 +211,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
 				defaultHeight: 64,
-				keyMapper: (i: number) => { return (items[i] || {}).id; },
+				keyMapper: i => (items[i] || {}).id,
 			});
 			this.forceUpdate();
 		};
@@ -401,13 +401,8 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = Util.sizeHeader();
-		const platform = Util.getPlatform();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
-		
-		let wh = isPopup ? container.height() : win.height();
-		if (platform == I.Platform.Windows) {
-			wh -= Constant.size.headerWindows;
-		};
+		const wh = isPopup ? container.height() : win.height();
 
 		node.css({ height: wh });
 		

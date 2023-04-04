@@ -4,6 +4,8 @@
 .pageMainRelation {
 	.wrapper { width: 704px; margin: 0px auto; padding: 126px 0px 80px 0px; }
 	.wrapper {
+		.editorControls { margin-bottom: 8px; }
+
 		.headSimple {
 			.title { -webkit-user-modify: read-only; }
 			.descr { -webkit-user-modify: read-only; }

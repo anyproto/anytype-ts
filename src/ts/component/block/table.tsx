@@ -688,11 +688,12 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		if (!cell) {
 			C.BlockTableRowListFill(rootId, [ rowId ], () => {
 				cb();
-
-				focus.set(cellId, { from: 0, to: 0 });
-				focus.apply();
-
 				selection.clear();
+
+				window.setTimeout(() => {
+					focus.set(cellId, { from: 0, to: 0 });
+					focus.apply();
+				}, 15);
 			});
 		} else {
 			cb();
@@ -1509,6 +1510,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		const { isPopup, rootId, block, getWrapperWidth } = this.props;
 		const element = blockStore.getMapElement(rootId, block.id);
+		if (!element) {
+			return;
+		};
+
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const node = $(this.node);
 		const wrap = node.find('#scrollWrap');
@@ -1518,9 +1523,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		let maxWidth = 0;
 		let wrapperWidth = 0;
 
-		String(row.css('grid-template-columns') || '').split(' ').forEach((it: string) => {
-			width += parseInt(it);
-		});
+		String(row.css('grid-template-columns') || '').split(' ').forEach(it => width += parseInt(it));
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
 			const obj = $(`#block-${block.id}`);

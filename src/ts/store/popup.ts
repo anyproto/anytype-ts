@@ -51,7 +51,7 @@ class PopupStore {
 	};
 
     get (id: string): I.Popup {
-		return this.popupList.find((item: I.Popup) => { return item.id == id; });
+		return this.popupList.find(it => it.id == id);
 	};
 
     update (id: string, param: any) {
@@ -107,7 +107,7 @@ class PopupStore {
 		};
 		
 		window.setTimeout(() => {
-			this.popupList = this.popupList.filter((item: I.Popup) => { return item.id != id; });
+			this.popupList = this.popupList.filter(it => it.id != id);
 			
 			if (callBack) {
 				callBack();
@@ -116,7 +116,7 @@ class PopupStore {
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
-		const items = ids && ids.length ? this.popupList.filter((it: I.Popup) => { return ids.includes(it.id); }) : this.popupList;
+		const items = ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
 
 		items.forEach(it => { this.close(it.id); });
 

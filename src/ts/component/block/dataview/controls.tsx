@@ -41,24 +41,27 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			cn.push('isInline');
 		};
 
-		const buttons: I.ButtonComponent[] = [
-			{ id: 'filter', text: 'Filters', menu: 'dataviewFilterList', showDot: filterCnt > 0 },
-			{ id: 'sort', text: 'Sorts', menu: 'dataviewSort', showDot: sortCnt > 0 },
+		const buttons = [
+			{ id: 'filter', text: 'Filters', menu: 'dataviewFilterList', on: filterCnt > 0 },
+			{ id: 'sort', text: 'Sorts', menu: 'dataviewSort', on: sortCnt > 0 },
 			{ id: 'settings', text: 'Settings', menu: 'dataviewRelationList' },
 		];
 
 		const ButtonItem = (item: any) => {
 			const elementId = `button-${block.id}-${item.id}`;
+			const cn = [ item.id ];
+
+			if (item.on) {
+				cn.push('on');
+			};
+
 			return (
-				<div className="iconWrap">
-					<Icon 
-						id={elementId} 
-						className={item.id}
-						tooltip={item.text}
-						onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu); }}
-					/>
-					{item.showDot ? <div className="dot" /> : ''}
-				</div>
+				<Icon 
+					id={elementId} 
+					className={cn.join(' ')}
+					tooltip={item.text}
+					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu); }}
+				/>
 			);
 		};
 
@@ -88,6 +91,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		return (
 			<div
 				ref={node => this.node = node}
+				 id="dataviewControls"
 				className={cn.join(' ')}
 			>
 				<div className="sides">
@@ -111,7 +115,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 							onSortStart={this.onSortStart}
 							onSortEnd={this.onSortEnd}
 							helperClass="isDragging"
-							helperContainer={() => { return $(`#block-${block.id} .views`).get(0); }}
+							helperContainer={() => $(`#block-${block.id} .views`).get(0)}
 						/>
 					</div>
 
@@ -294,10 +298,9 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const { oldIndex, newIndex } = result;
 		const { rootId, block, isInline, getTarget } = this.props;
 		const object = getTarget();
-
-		let views = dbStore.getViews(rootId, block.id);
-		let view = views[oldIndex];
-		let ids = arrayMove(views.map((it: any) => { return it.id; }), oldIndex, newIndex);
+		const views = dbStore.getViews(rootId, block.id);
+		const view = views[oldIndex];
+		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, block.id, ids);
 

@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.31.11-alpha",
+	"version": "0.31.12-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -152,6 +152,7 @@
 		"react": "^16.14.0",
 		"react-addons-shallow-compare": "^15.6.2",
 		"react-beautiful-dnd": "^13.0.0",
+		"react-canvas-confetti": "^1.3.0",
 		"react-dom": "^16.14.0",
 		"react-draggable-tags": "^1.0.2",
 		"react-hot-loader": "^4.13.0",

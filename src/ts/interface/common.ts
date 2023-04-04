@@ -50,9 +50,10 @@ export interface Toast {
 };
 
 export enum ToastAction {
-	Move	 = 1,
-	Link	 = 2,
-	Lock 	 = 3,
+	Move		 = 1,
+	Link		 = 2,
+	Lock 		 = 3,
+	Collection	 = 4,
 };
 
 export interface Option {
@@ -84,11 +85,10 @@ export enum ImportType {
 	Notion		 = 0,
 	Markdown	 = 1,
 	External	 = 2,
-	Migration	 = 3,
+	Protobuf	 = 3,
 	Html		 = 4,
 	Text		 = 5,
 	Csv			 = 6,
-	Protobuf	 = 7,
 };
 
 export enum ExportType {

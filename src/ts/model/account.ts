@@ -30,7 +30,7 @@ class AccountInfo implements I.AccountInfo {
 			widgetsId: observable,
 		});
 
-		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		intercept(this as any, change => Util.intercept(this, change));
 		return this;
 	};
 
@@ -50,7 +50,7 @@ class AccountConfig implements I.AccountConfig {
 			allowBeta: observable,
 		});
 
-		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		intercept(this as any, change => Util.intercept(this, change));
 		return this;
 	};
 
@@ -70,7 +70,7 @@ class AccountStatus implements I.AccountStatus {
 			date: observable,
 		});
 
-		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		intercept(this as any, change => Util.intercept(this, change));
 		return this;
 	};
 
@@ -94,7 +94,7 @@ class Account implements I.Account {
 			status: observable,
 		});
 
-		intercept(this as any, (change: any) => { return Util.intercept(this, change); });
+		intercept(this as any, change => Util.intercept(this, change));
 		return this;
 	};
 

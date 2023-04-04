@@ -86,12 +86,13 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 break;
 			};
 
+			case I.ToastAction.Collection:
             case I.ToastAction.Link: {
                 if (!object || !target) {
 					break;
 				};
 
-				textAction = 'linked to';
+				textAction = action == I.ToastAction.Collection ? 'has been added to collection' : 'has been linked to';
 				textObject = <Element {...object} />;
 				textTarget = <Element {...target} />;
 

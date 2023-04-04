@@ -295,7 +295,6 @@ class App extends React.Component<object, State> {
 
 		this.onInit = this.onInit.bind(this);
 		this.onKeytarGet = this.onKeytarGet.bind(this);
-		this.onImport = this.onImport.bind(this);
 		this.onPopup = this.onPopup.bind(this);
 		this.onUpdateCheck = this.onUpdateCheck.bind(this);
 		this.onUpdateConfirm = this.onUpdateConfirm.bind(this);
@@ -305,16 +304,11 @@ class App extends React.Component<object, State> {
 		this.onUpdateError = this.onUpdateError.bind(this);
 		this.onCommand = this.onCommand.bind(this);
 		this.onSpellcheck = this.onSpellcheck.bind(this);
-		this.onMenu = this.onMenu.bind(this);
-		this.onMin = this.onMin.bind(this);
-		this.onMax = this.onMax.bind(this);
-		this.onClose = this.onClose.bind(this);
 	};
 
 	render () {
 		const { loading } = this.state;
-		const isMaximized = window.Electron.isMaximized();
-
+		
 		return (
 			<Router history={history}>
 				<Provider {...rootStore}>
@@ -333,21 +327,7 @@ class App extends React.Component<object, State> {
 						<Toast />
 
 						<div id="tooltip" />
-
-						<div id="drag">
-							<div className="sides">
-								<div className="side left">
-									<Icon className="menu" onClick={this.onMenu} />
-									<div className="name">{translate('commonTitle')}</div>
-								</div>
-
-								<div className="side right">
-									<Icon className="min" onClick={this.onMin} />
-									<Icon id="minmax" className={isMaximized ? 'window' : 'max'} onClick={this.onMax} />
-									<Icon className="close" onClick={this.onClose} />
-								</div>
-							</div>
-						</div>
+						<div id="drag" />
 
 						<Switch>
 							{Routes.map((item: RouteElement, i: number) => (
@@ -379,8 +359,6 @@ class App extends React.Component<object, State> {
 
 		console.log('[Process] os version:', window.Electron.version.system, 'arch:', window.Electron.arch);
 		console.log('[App] version:', window.Electron.version.app, 'isPackaged', window.Electron.isPackaged);
-
-		$(window).off('resize.app').on('resize.app', () => { this.checkMaximized(); });
 	};
 
 	initStorage () {
@@ -392,24 +370,6 @@ class App extends React.Component<object, State> {
 
 		Storage.delete('lastSurveyCanceled');
 		commonStore.coverSetDefault();
-	};
-
-	checkMaximized () {
-		const platform = Util.getPlatform();
-
-		if (platform != I.Platform.Windows) {
-			return;
-		};
-
-		window.clearTimeout(this.timeoutMaximize);
-		this.timeoutMaximize = window.setTimeout(() => {
-			const node = $(this.node);
-			const icon = node.find('#minmax');
-			const isMaximized = window.Electron.isMaximized();
-
-			icon.removeClass('max window');
-			isMaximized ? icon.addClass('window') : icon.addClass('max');
-		}, 50);
 	};
 
 	registerIpcEvents () {
@@ -424,8 +384,6 @@ class App extends React.Component<object, State> {
 		Renderer.on('update-downloaded', () => { commonStore.progressClear(); });
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
-		Renderer.on('import', this.onImport);
-		Renderer.on('export', this.onExport);
 		Renderer.on('command', this.onCommand);
 		Renderer.on('spellcheck', this.onSpellcheck);
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
@@ -659,7 +617,6 @@ class App extends React.Component<object, State> {
 		const rootId = keyboard.getRootId();
 		const logPath = window.Electron.logPath;
 		const tmpPath = window.Electron.tmpPath;
-		const options: any = {};
 
 		switch (key) {
 			case 'undo':
@@ -712,16 +669,6 @@ class App extends React.Component<object, State> {
 				});
 				break;
 
-			case 'importAccount':
-				Action.openFile([ 'zip' ], paths => {
-					C.AccountRecoverFromLegacyExport(paths[0], authStore.walletPath, (message: any) => {
-						C.ObjectImport({ path: paths[0], address: message.address }, [], false, I.ImportType.Migration, I.ImportMode.AllOrNothing, () => {
-
-						});
-					});
-				});
-				break;
-
 			case 'debugSync':
 				C.DebugSync(100, (message: any) => {
 					if (!message.error.code) {
@@ -760,35 +707,6 @@ class App extends React.Component<object, State> {
 			total: progress.total,
 			isUnlocked: true,
 		});
-	};
-
-	onImport () {
-		popupStore.open('settings', { 
-			data: { page: 'importIndex' }
-		});
-	};
-
-	onExport () {
-		popupStore.open('settings', {
-			data: { page: 'exportMarkdown' }
-		});
-	};
-
-	onMenu () {
-		Renderer.send('winCommand', 'menu');
-	};
-
-	onMin () {
-		Renderer.send('winCommand', 'minimize');
-	};
-
-	onMax () {
-		this.checkMaximized();
-		Renderer.send('winCommand', 'maximize');
-	};
-
-	onClose () {
-		Renderer.send('winCommand', 'close');
 	};
 
 	onSpellcheck (e: any, param: any) {

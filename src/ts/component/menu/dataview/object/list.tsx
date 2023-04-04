@@ -173,7 +173,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_ITEM,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		if (this.refList && this.top) {
@@ -232,10 +232,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { canAdd } = data;
 		const value = Relation.getArrayValue(data.value);
-		
-		let ret = Util.objectCopy(this.items);
-
-		ret = ret.filter((it: any) => { return value.indexOf(it.id) < 0; });
+		const ret = Util.objectCopy(this.items).filter(it => !value.includes(it.id));
 
 		if (data.filter && canAdd) {
 			if (ret.length) {

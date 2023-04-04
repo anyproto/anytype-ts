@@ -14,6 +14,7 @@
 
 	"coverCnt": 13,
 	"iconCnt": 16,
+	"fontCode": "plex",
 
 	"limit": {
 		"menuRecords": 100,
@@ -218,7 +219,6 @@
 		"editor": 704,
 		"blockMenu": 48,
 		"image": 1920,
-		"headerWindows": 30,
 		"iconPage": 256,
 
 		"lastBlock": 80,
@@ -242,8 +242,7 @@
 			},
 
 			"board": {
-				"card": 240,
-				"margin": 8
+				"card": 240
 			},
 
 			"cell": {

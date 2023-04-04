@@ -125,6 +125,7 @@
 
 				.cellHead:first-child { padding-left: 8px; }
 				.cell:first-child { padding-left: 20px; }
+				.cell.isEditing:first-child .cellContent.isName { padding-left: 20px !important; }
 			}
 		}
     }

@@ -25,13 +25,13 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	};
 
 	render () {
-		const { param, position } = this.props;
+		const { param, position, getId } = this.props;
 		const { data } = param;
 		const { subId } = data;
 		
-		let value = Relation.getArrayValue(data.value);
+		let value: any[] = Relation.getArrayValue(data.value);
 		value = value.map(it => detailStore.get(subId, it, []));
-		value = value.filter((it: any) => { return !it._empty_; });
+		value = value.filter(it => !it._empty_);
 
         const Handle = SortableHandle(() => (
 			<Icon className="dnd" />
@@ -112,7 +112,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							onSortEnd={this.onSortEnd}
 							useDragHandle={true}
 							helperClass="isDragging"
-							helperContainer={() => { return $(this.node).get(0); }}
+							helperContainer={() => $(`#${getId()} .items`).get(0)}
 						/>
 					</div>
 				) : ''}

@@ -1,9 +1,10 @@
 @import "~scss/_vars";
 
 .inputWithFile {
-	padding: 11px 13px; border-radius: 6px; border: solid 1px $colorBorderLight; color: $colorMediumGrey; @include text-common; 
-	transition: background 0.05s ease-in-out; white-space: nowrap; overflow: hidden; line-height: 20px; text-align: left;
+	padding: 11px 13px; border-radius: 4px; border: solid 1px $colorBorderLight; color: $colorMediumGrey; @include text-common; 
+	transition: background 0.05s ease-in-out, border 0.2s ease-in-out; white-space: nowrap; overflow: hidden; line-height: 20px; text-align: left;
 }
+.inputWithFile:hover { border-color: $colorBorderDark; }
 .inputWithFile {
 	.txt { line-height: 20px; height: 20px; overflow: hidden; width: calc(100% - 26px); vertical-align: top; }
 	.fileWrap { display: inline-block; vertical-align: top; }

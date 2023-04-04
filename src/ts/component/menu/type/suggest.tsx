@@ -175,7 +175,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_ITEM,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		this.resize();
@@ -283,7 +283,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = Util.objectCopy(this.items || []).map(it => { return { ...it, object: it }; });
+		const items = Util.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.workspaceId == workspace));
 		const librarySources = library.map(it => it.sourceObject);
 
@@ -424,7 +424,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	onClick (e: any, item: any) {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { filter, onClick } = data;
+		const { filter, onClick, noInstall } = data;
 
 		if (item.arrow) {
 			return;
@@ -449,7 +449,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				};
 			});
 		} else {
-			if (item.isInstalled) {
+			if (item.isInstalled || noInstall) {
 				cb(item);
 			} else {
 				Action.install(item, (message: any) => { cb(message.details); });

@@ -37,12 +37,9 @@ class Sidebar {
 		if (stored) {
 			this.set(stored);
 		} else {
-			const platform = Util.getPlatform();
-			const isWindows = platform == I.Platform.Windows;
-			const offset = isWindows ? 30 : 0;
 			const { wh } = this.getWindowDimensions();
 			const height = this.getMaxHeight();
-			const y = (wh - offset) / 2 - height / 2 + offset;
+			const y = wh / 2 - height / 2;
 
 			this.set({
 				height,

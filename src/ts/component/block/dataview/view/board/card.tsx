@@ -27,37 +27,28 @@ const Card = observer(class Card extends React.Component<Props> {
 		const { done } = record;
 
 		let content = (
-			<React.Fragment>
-				<Icon
-					className="checkbox"
-					onClick={(e: any) => { onMultiSelect(record.id); }}
-					onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
-					onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
-				/>
-
-				<div className="cardContent">
-					{relations.map((relation: any, i: number) => {
-						const id = Relation.cellId(idPrefix, relation.relationKey, 0);
-						return (
-							<Cell
-								key={'board-cell-' + view.id + relation.relationKey}
-								{...this.props}
-								getRecord={() => { return record; }}
-								subId={subId}
-								ref={ref => { onRef(ref, id); }}
-								relationKey={relation.relationKey}
-								index={0}
-								viewType={view.type}
-								idPrefix={idPrefix}
-								arrayLimit={2}
-								showTooltip={true}
-								tooltipX={I.MenuDirection.Left}
-								iconSize={18}
-							/>
-						);
-					})}
-				</div>
-			</React.Fragment>
+			<div className="cardContent">
+				{relations.map((relation: any, i: number) => {
+					const id = Relation.cellId(idPrefix, relation.relationKey, 0);
+					return (
+						<Cell
+							key={'board-cell-' + view.id + relation.relationKey}
+							{...this.props}
+							getRecord={() => record}
+							subId={subId}
+							ref={ref => { onRef(ref, id); }}
+							relationKey={relation.relationKey}
+							index={0}
+							viewType={view.type}
+							idPrefix={idPrefix}
+							arrayLimit={2}
+							showTooltip={true}
+							tooltipX={I.MenuDirection.Left}
+							iconSize={18}
+						/>
+					);
+				})}
+			</div>
 		);
 
 		if (!isInline) {
@@ -67,17 +58,23 @@ const Card = observer(class Card extends React.Component<Props> {
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
 					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
+					<Icon
+						className="checkbox"
+						onClick={(e: any) => { onMultiSelect(record.id); }}
+						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
+						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
+					/>
 					{content}
 				</div>
 			);
-		};
-
-		if (isCollection) {
-			content = (
-				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
-					{content}
-				</DropTarget>
-			);
+		
+			if (isCollection) {
+				content = (
+					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+						{content}
+					</DropTarget>
+				);
+			};
 		};
 
 		return (

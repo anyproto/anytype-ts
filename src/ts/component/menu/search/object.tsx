@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
 import { I, C, keyboard, Util, DataUtil, ObjectUtil, Preview, analytics, Action, focus, translate } from 'Lib';
-import { commonStore, dbStore } from 'Store';
+import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -202,7 +202,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT_ITEM,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 
 		this.resize();
@@ -371,12 +371,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { data } = param;
 		const { filter, rootId, type, blockId, blockIds, position, onSelect, noClose } = data;
 		const addParam: any = data.addParam || {};
+		const object = detailStore.get(rootId, blockId);
 
 		if (!noClose) {
 			close();
 		};
-
-		let newBlock: any = {};
 
 		const process = (target: any, isNew: boolean) => {
 			if (onSelect) {
@@ -408,25 +407,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Link:
-					switch (item.type) {
-						case Constant.typeId.bookmark:
-							newBlock.type = I.BlockType.Bookmark;
-							newBlock.content = {
-								state: I.BookmarkState.Done,
-								targetObjectId: target.id,
-							};
-							break;
-
-						default:
-							newBlock.type = I.BlockType.Link;
-							newBlock.content = {
-								...DataUtil.defaultLinkSettings(),
-								targetBlockId: target.id,
-							};
-							break;
-					};
-
-					C.BlockCreate(rootId, blockId, position, newBlock, (message: any) => {
+					C.BlockCreate(rootId, blockId, position, this.getBlockParam(target.id, item.type), (message: any) => {
 						if (message.error.code) {
 							return;
 						};
@@ -439,20 +420,24 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.LinkTo:
-					newBlock = {
-						type: I.BlockType.Link,
-						content: {
-							...DataUtil.defaultLinkSettings(),
-							targetBlockId: blockId,
-						}
+					const cb = (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						const isCollection = target.type == Constant.typeId.collection;
+						const action = isCollection ? I.ToastAction.Collection : I.ToastAction.Link;
+						const linkType = isCollection ? 'Collection' : 'Object';
+
+						Preview.toastShow({ action, objectId: blockId, targetId: target.id });
+						analytics.event('LinkToObject', { objectType: target.type, linkType });
 					};
 
-					C.BlockCreate(target.id, '', position, newBlock, (message: any) => {
-						if (!message.error.code) {
-							Preview.toastShow({ action: I.ToastAction.Link, objectId: blockId, targetId: target.id });
-							analytics.event('LinkToObject');
-						};
-					});
+					if (target.type == Constant.typeId.collection) {
+						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
+					} else {
+						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.type), cb);
+					};
 					break;
 			};
 		};
@@ -470,6 +455,32 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		} else {
 			process(item, false);
 		};
+	};
+
+	getBlockParam (id: string, type: string) {
+		const param: Partial<I.Block> = {};
+
+		switch (type) {
+			case Constant.typeId.bookmark: {
+				param.type = I.BlockType.Bookmark;
+				param.content = {
+					state: I.BookmarkState.Done,
+					targetObjectId: id,
+				};
+				break;
+			};
+
+			default: {
+				param.type = I.BlockType.Link;
+				param.content = {
+					...DataUtil.defaultLinkSettings(),
+					targetBlockId: id,
+				};
+				break;
+			};
+		};
+
+		return param;
 	};
 
 	onFilterChange (v: string) {

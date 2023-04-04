@@ -45,10 +45,10 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	render () {
-		const { rootId, block, readonly, className, isCollection } = this.props;
+		const { block, readonly, className, isCollection, getTarget } = this.props;
 		const { isEditing } = this.state;
 		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId);
+		const object = getTarget();
 		const cn = [ 'dataviewHead' ];
 
 		if (className) {
@@ -61,6 +61,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 
 		return (
 			<div 
+				id={`block-head-${block.id}`}
 				ref={node => this.node = node}
 				className={cn.join(' ')}
 			>
@@ -113,10 +114,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	componentDidUpdate () {
 		this.setValue();
 
-		if (!this.state.isEditing) {
-			this.ref.setRange({ from: 0, to: 0 });
-		} else 
-		if (this.ref) {
+		if (this.state.isEditing && this.ref) {
 			const l = this.getValue().length;
 			this.ref.setRange(this.range || { from: l, to: l });
 		};
@@ -263,9 +261,8 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			return;
 		};
 
-		const { rootId, block } = this.props;
-		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId);
+		const { getTarget } = this.props;
+		const object = getTarget();
 		const length = this.getValue().length;
 
 		switch (item.id) {
@@ -300,7 +297,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		window.clearTimeout(this.timeout);
 
 		this.save();
-		this.ref.setRange({ from: 0, to: 0 });
 		window.setTimeout(() => { this.setState({ isEditing: false }); }, 40);
 	};
 
@@ -329,17 +325,12 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	setValue () {
-		if (!this._isMounted) {
+		if (!this._isMounted || !this.ref) {
 			return;
 		};
 
-		const { rootId, block } = this.props;
-		const { targetObjectId } = block.content;
-		const object = targetObjectId ? detailStore.get(rootId, targetObjectId) : {};
-
-		if (!this.ref) {
-			return;
-		};
+		const { getTarget } = this.props;
+		const object = getTarget();
 
 		let name = String(object.name || '');
 		if ((name == DataUtil.defaultName('page')) || (name == DataUtil.defaultName('set'))) {
@@ -365,10 +356,15 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	};
 
 	save () {
-		const { block } = this.props;
+		const { block, getTarget } = this.props;
 		const { targetObjectId } = block.content;
+		const object = getTarget();
 		
 		let value = this.getValue();
+
+		if (value == object.name) {
+			return;
+		};
 
 		if ((value == DataUtil.defaultName('page')) || (value == DataUtil.defaultName('set'))) {
 			value = '';

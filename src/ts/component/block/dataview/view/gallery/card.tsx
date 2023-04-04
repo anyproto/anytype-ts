@@ -62,42 +62,34 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		let content = (
-			<React.Fragment>
-				<Icon
-					className="checkbox"
-					onClick={(e: any) => { onMultiSelect(record.id); }}
-					onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
-					onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
-				/>
-				<div className="itemContent">
-					{cover}
+			<div className="itemContent">
+				{cover}
 
-					<div className="inner">
-						{relations.map((relation: any, i: number) => {
-							const id = Relation.cellId(idPrefix, relation.relationKey, index);
-							return (
-								<Cell
-									elementId={id}
-									key={'list-cell-' + view.id + relation.relationKey}
-									{...this.props}
-									subId={subId}
-									ref={ref => { onRef(ref, id); }}
-									relationKey={relation.relationKey}
-									viewType={view.type}
-									idPrefix={idPrefix}
-									index={index}
-									arrayLimit={2}
-									showTooltip={true}
-									onClick={(e: any) => { this.onCellClick(e, relation); }}
-									tooltipX={I.MenuDirection.Left}
-									iconSize={18}
-									shortUrl={true}
-								/>
-							);
-						})}
-					</div>
+				<div className="inner">
+					{relations.map((relation: any, i: number) => {
+						const id = Relation.cellId(idPrefix, relation.relationKey, index);
+						return (
+							<Cell
+								elementId={id}
+								key={'list-cell-' + view.id + relation.relationKey}
+								{...this.props}
+								subId={subId}
+								ref={ref => { onRef(ref, id); }}
+								relationKey={relation.relationKey}
+								viewType={view.type}
+								idPrefix={idPrefix}
+								index={index}
+								arrayLimit={2}
+								showTooltip={true}
+								onClick={(e: any) => { this.onCellClick(e, relation); }}
+								tooltipX={I.MenuDirection.Left}
+								iconSize={18}
+								shortUrl={true}
+							/>
+						);
+					})}
 				</div>
-			</React.Fragment>
+			</div>
 		);
 
 		if (!isInline) {
@@ -107,17 +99,23 @@ const Card = observer(class Card extends React.Component<Props> {
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
 					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
+					<Icon
+						className="checkbox"
+						onClick={(e: any) => { onMultiSelect(record.id); }}
+						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
+						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
+					/>
 					{content}
 				</div>
 			);
-		};
 
-		if (isCollection) {
-			content = (
-				<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
-					{content}
-				</DropTarget>
-			);
+			if (isCollection) {
+				content = (
+					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
+						{content}
+					</DropTarget>
+				);
+			};
 		};
 
 		return (

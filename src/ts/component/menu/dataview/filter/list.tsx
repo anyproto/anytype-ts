@@ -129,7 +129,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => { return $(this.node).find('.items').get(0); }}
+					helperContainer={() => $(this.node).find('.items').get(0)}
 				/>
 
 				{allowedView ? (
@@ -160,7 +160,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
 			defaultHeight: HEIGHT,
-			keyMapper: (i: number) => { return (items[i] || {}).id; },
+			keyMapper: i => (items[i] || {}).id,
 		});
 	};
 

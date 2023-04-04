@@ -51,27 +51,31 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 					<div className="sides">
 						<div className="side left">
 							<Select 
-								ref={ref => { this.refMonth = ref; }}
+								ref={ref => this.refMonth = ref}
 								id="month"
 								value={String(m || '')} 
 								options={months} 
-								menuClassName="orange" 
-								menuClassNameWrap={classNameWrap}
-								menuWidth={192} 
 								onChange={(m: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
+								menuParam={{ 
+									classNameWrap, 
+									className: 'orange',
+									width: 192,
+								}}
 							/>
 						</div>
 						<div className="side right">
 							<Select 
-								ref={ref => { this.refYear = ref; }}
+								ref={ref => this.refYear = ref}
 								id="year" 
 								value={String(y || '')} 
 								options={years} 
-								menuClassName="orange center"
-								menuClassNameWrap={classNameWrap}
-								menuWidth={144} 
-								horizontal={I.MenuDirection.Right}
-								onChange={(y: any) => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
+								onChange={y => this.setValue(Util.timestamp(y, m, 1), false, false)} 
+								menuParam={{ 
+									classNameWrap, 
+									className: 'orange center',
+									horizontal: I.MenuDirection.Right, 
+									width: 144,
+								}}
 							/>
 						</div>
 					</div>

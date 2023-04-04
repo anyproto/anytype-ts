@@ -24,8 +24,6 @@
 
     .popup.popupSettings {
 		
-		.label.grey { color: $colorSecondary; }
-
 		.sides {
 			> .side.left { background: $colorBgLight; }
 			> .side.left {
@@ -39,7 +37,7 @@
 					.element:hover { background-color: $colorHover; }
 				}
 
-				.label.section, .label.small { color: $colorSecondary; }
+				.label.section, .label.small, .label.grey { color: $colorSecondary; }
 				.row { border-color: $colorLineSecondary; }
 
 				.input { border-color: $colorLinePrimary; }
@@ -110,6 +108,10 @@
 			.btn.system.active {
 				.bg::before { box-shadow: 0px 0px; }
 			}
+		}
+
+		.side.right.tabDelete {
+			.check { border-color: $colorLinePrimary; }
 		}
     }
     

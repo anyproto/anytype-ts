@@ -116,10 +116,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				],
 				canAdd: true,
 				dataChange: (items: any[]) => {
-					return [
-						ObjectUtil.graph(),
-						{ isDiv: true },
-					].concat(items);
+					const fixed: any[] = [ ObjectUtil.graph() ];
+					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 				},
 				onSelect: (el: any) => {
 					C.ObjectWorkspaceSetDashboard(workspace, el.id, (message: any) => {

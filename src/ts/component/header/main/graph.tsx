@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'Component';
 import { I, ObjectUtil, DataUtil, keyboard, sidebar } from 'Lib';
-import { detailStore, commonStore, menuStore } from 'Store';
+import { commonStore, menuStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 

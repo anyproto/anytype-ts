@@ -24,7 +24,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	render () {
 		const { rootId, block, readonly } = this.props;
 		const { state, targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId);
+		const object = detailStore.get(rootId, targetObjectId, [ 'picture' ]);
 		const { iconImage, picture, isArchived, isDeleted } = object;
 		const url = this.getUrl();
 
@@ -97,7 +97,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 								<ObjectDescription object={object} />
 								<div className="link">
 									{iconImage ? <img src={commonStore.imageUrl(iconImage, 16)} className="fav" /> : ''}
-									{url}
+									{Util.shortUrl(url)}
 								</div>
 
 								{archive}
@@ -166,7 +166,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	getUrl () {
 		const { rootId, block } = this.props;
 		const { url, targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId);
+		const object = detailStore.get(rootId, targetObjectId, [ 'source' ], true);
 
 		return object.source || url;
 	};

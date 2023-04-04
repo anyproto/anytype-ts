@@ -3,5 +3,5 @@ import Onboarding from './onboarding';
 
 export {
 	WhatsNew,
-	Onboarding,
+	Onboarding
 };
