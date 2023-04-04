@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Icon, Loader } from 'Component';
+import { Loader } from 'Component';
 import { C, Util } from 'Lib';
 import { observer } from 'mobx-react';
 
@@ -35,17 +35,13 @@ const PreviewLink = observer(class PreviewLink extends React.Component<Props, St
 	render () {
 		const { url } = this.props;
 		const { loading, title, description } = this.state;
-
-		const domain = url
-			.replace('http://', '')
-			.replace('https://', '');
 		
 		return (
 			<div ref={node => this.node = node} className="previewLink">
 				{loading ? <Loader /> : (
 					<React.Fragment>
 						<div className="info">
-							<div className="link">{domain}</div>
+							<div className="link">{Util.shortUrl(url)}</div>
 							{title ? <div className="name">{title}</div> : ''}
 							{description ? <div className="descr">{description}</div> : ''}
 						</div>
