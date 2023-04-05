@@ -2,7 +2,7 @@
 
 .previewDefault { padding: 8px 12px; }
 .previewDefault {
-    .previewHeader { display: flex; gap: 0px 2px; }
+    .previewHeader { display: flex; gap: 0px 2px; align-items: center; }
     .name { @include text-common; text-overflow: unset; @include clamp2; white-space: normal; font-weight: 500; }
     .descr { @include text-small; text-overflow: unset; @include clamp2; white-space: normal; }
     .featured { @include text-very-small; color: $colorMediumGrey; }
