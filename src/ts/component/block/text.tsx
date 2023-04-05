@@ -67,6 +67,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.onCopy = this.onCopy.bind(this);
 		this.onSelectIcon = this.onSelectIcon.bind(this);
 		this.onUploadIcon = this.onUploadIcon.bind(this);
+		this.setMarks = this.setMarks.bind(this);
 	};
 
 	render () {
@@ -345,7 +346,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				const object = detailStore.get(rootId, routeParam.id, []);
 
 				target = object.id;
-				type = I.PreviewType.Object;
+				type = I.PreviewType.Graph;
 			} else {
 				target = Util.urlFix(url);
 				type = I.PreviewType.Link;
@@ -437,7 +438,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
-				type: I.PreviewType.Object,
+				type: I.PreviewType.Graph,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,

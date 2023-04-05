@@ -72,6 +72,14 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					break;
 				};
 
+				if (!noUnlink) {
+					head = (
+						<div className="head">
+							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div>
+						</div>
+					);
+				};
+
 				content = <PreviewGraph ref={ref => this.ref = ref} object={object} />;
 				break;
 			};
