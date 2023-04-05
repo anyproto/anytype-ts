@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { PreviewLink, PreviewObject, PreviewGraph } from 'Component';
+import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
 import { I, Util, DataUtil, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
@@ -67,7 +67,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				break;
 			};
 
-			case I.PreviewType.Graph: {
+			case I.PreviewType.Default: {
 				if (!object) {
 					break;
 				};
@@ -80,7 +80,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					);
 				};
 
-				content = <PreviewGraph ref={ref => this.ref = ref} object={object} />;
+				content = <PreviewDefault ref={ref => this.ref = ref} object={object} />;
 				break;
 			};
 		};
@@ -108,11 +108,15 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const { type, target } = preview;
 		const { object } = this.state;
 
-		if ((type == I.PreviewType.Graph) && (!object || (object.id != target))) {
-			DataUtil.getObjectById(target, object => {
-				this.setObject(object);
+		if (type == I.PreviewType.Default) {
+			if (!object || (object.id != target)) {
+				DataUtil.getObjectById(target, object => {
+					this.setObject(object);
+					this.position();
+				});
+			} else {
 				this.position();
-			});
+			};
 		};
 	};
 	
@@ -127,7 +131,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				break;
 			};
 
-			case I.PreviewType.Graph:
+			case I.PreviewType.Default:
 			case I.PreviewType.Object: {
 				ObjectUtil.openEvent(e, object);
 				break;
@@ -184,7 +188,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				return I.MarkType.Link;
 			};
 
-			case I.PreviewType.Graph:
+			case I.PreviewType.Default:
 			case I.PreviewType.Object: {
 				return I.MarkType.Object;
 			};
