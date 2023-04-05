@@ -1596,7 +1596,7 @@ const ObjectListExport = (path: string, objectIds: string[], format: I.ExportTyp
 	request.setZip(zip);
 	request.setIncludenested(includeNested);
 	request.setIncludefiles(includeFiles);
-	request.setIncludeleted(includeDeleted);
+	request.setIncludedeleted(includeDeleted);
 	request.setIncludearchived(includeArchived);
 
 	dispatcher.request(ObjectListExport.name, request, callBack);

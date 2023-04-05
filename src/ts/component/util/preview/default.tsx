@@ -30,7 +30,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		return (
 			<div className={cn.join(' ')}>
 				<div className="previewHeader">
-					<IconObject size={20} iconSize={18} object={object} />
+					<IconObject object={object} />
 					<ObjectName object={object} />
 				</div>
 				<ObjectDescription object={object} />
