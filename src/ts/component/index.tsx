@@ -62,7 +62,7 @@ import IconObject from './util/iconObject';
 import Preview from './util/preview';
 import PreviewLink from './util/preview/link';
 import PreviewObject from './util/preview/object';
-import PreviewGraph from './util/preview/graph';
+import PreviewDefault from './util/preview/default';
 
 import Graph from './util/graph';
 
@@ -127,7 +127,7 @@ export {
 	Preview,
 	PreviewLink,
 	PreviewObject,
-	PreviewGraph,
+	PreviewDefault,
 
 	Graph,
 	Cell,
