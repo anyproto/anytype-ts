@@ -594,6 +594,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						details.layout = I.ObjectLayout.Set;
 					};
 
+					if (item.objectTypeId == Constant.typeId.collection) {
+						details.layout = I.ObjectLayout.Collection;
+					};
+
 					const create = (template: any) => {
 						ObjectUtil.create(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
 							if (message.error.code) {
