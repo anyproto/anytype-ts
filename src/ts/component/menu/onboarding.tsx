@@ -34,7 +34,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 		const item = items[current];
 		const l = items.length;
 
-		let buttons = [{ text: current == l - 1 ? 'Finish' : 'Next', action: 'next' }];
+		let buttons = [ { text: (current == l - 1 ? 'Finish' : 'Next'), action: 'next' } ];
 
 		if (item.buttons) {
 			buttons = buttons.concat(item.buttons);
@@ -246,7 +246,8 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 	};
 
 	onImport () {
-		Action.restoreFromBackup(this.setError);
+		popupStore.open('settings', { data: { page: 'importIndex' } });
+		this.props.close();
 	};
 
 	setError (error: { description: string, code: number}) {
