@@ -1588,7 +1588,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		blocks = blocks.map((it: I.Block) => {
 			const element = blockStore.getMapElement(rootId, it.id);
 
-			if (it.type == I.BlockType.Text) {
+			if (it.isText()) {
 				text.push(String(it.content.text || ''));
 			};
 

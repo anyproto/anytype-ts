@@ -284,6 +284,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			subId,
 			ids: childLinks,
 			keys: Constant.sidebarRelationKeys,
+			noDeps: true,
 		});
 	};
 

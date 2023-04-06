@@ -2,7 +2,7 @@ import { I } from 'Lib';
 
 export default {
     wizardDashboard: {
-        category: 'Dashboard',
+        category: 'Onboarding',
         showConfetti: true,
         items: [
             {

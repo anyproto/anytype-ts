@@ -167,7 +167,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 					};
 
 					switch (content.type) {
-						default: 
+						default:
 						case I.FileType.File: {
 							bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />
 							inner = (
@@ -183,10 +183,10 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 							};
 							break;
 						};
-							
+
 						case I.FileType.Image: {
 							const css: any = {};
-		
+
 							if (fields.width) {
 								css.width = (fields.width * 100) + '%';
 							};
@@ -194,7 +194,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />
 							break;
 						};
-							
+
 						case I.FileType.Video: {
 							break;
 						};

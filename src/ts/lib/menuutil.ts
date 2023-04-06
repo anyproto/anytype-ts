@@ -57,7 +57,7 @@ class MenuUtil {
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
 		let i = 0;
-		let items = DataUtil.getObjectTypesForNewObject({ withSet: true });
+		let items = DataUtil.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 
 		for (let type of items) {
 			ret.push({ 
