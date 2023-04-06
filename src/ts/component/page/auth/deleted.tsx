@@ -39,21 +39,15 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		// Time left until permanent deletion
 		const SECS_PER_DAY = 86400;
 		/*
-			account.status.date is the date of deletion as a UNIX timestamp in seconds
-			Util.time() is the current date as a UNIX timestamp in seconds
 			Math.max(0, ...) is to prevent negative numbers
-			Math.ceil(...) is to round up to the next day
-
-			TODO fix the implementation and document what account.status.date means 
+			Math.ceil(...) is to round up to the day
 		*/
-		console.log(account.status.date);
-		const daysUntilDeletion = Math.ceil(Math.max(0, account.status.date - Util.time()) / SECS_PER_DAY);
+		const daysUntilDeletion =  Math.ceil(Math.max(0, (account.status.date - Util.time()) / SECS_PER_DAY ));
 		const dt = `${daysUntilDeletion} ${Util.cntWord(daysUntilDeletion, 'day', 'days')}`;
-		const pieValue = Math.min(DAYS - 1, Math.max(1, DAYS - daysUntilDeletion));
 
 		// Deletion Status
 		let status: I.AccountStatusType = account.status.type;
-		if ((status == I.AccountStatusType.PendingDeletion) && daysUntilDeletion === 0) {
+		if ((status == I.AccountStatusType.PendingDeletion) && !daysUntilDeletion) {
 			status = I.AccountStatusType.Deleted;
 		};
 
@@ -92,7 +86,8 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 								<PieChart
 									totalValue={DAYS}
 									startAngle={270}
-									data={[ { title: '', value: pieValue, color: '#5C5A54' } ]}
+									lengthAngle={-360}
+									data={[ { title: '', value: daysUntilDeletion, color: '#5C5A54' } ]}
 								/>
 							</div>
 						</div>
