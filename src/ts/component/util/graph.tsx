@@ -13,7 +13,7 @@ interface Props {
 	data: any;
 	onClick?: (object: any) => void;
 	onContextMenu?: (id: string, param: any) => void;
-	onSelect?: (id: string) => void;
+	onSelect?: (id: string, related?: string[]) => void;
 };
 
 const Graph = observer(class Graph extends React.Component<Props> {
@@ -294,9 +294,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			case 'onSelect': {
 				const { related } = data;
 				if (data.node != root) {
-					const nodes = [data.node].concat(related);
-
-					nodes.forEach(onSelect)
+					onSelect(data.node, related);
 				};
 				break;
 			};

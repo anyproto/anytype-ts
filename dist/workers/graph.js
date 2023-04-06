@@ -567,10 +567,11 @@ onClick = ({ x, y }) => {
 onSelect = ({ x, y, selectRelated }) => {
   	const d = getNodeByCoords(x, y);
   	let related = [];
-	if (selectRelated) {
-		related = edgeMap.get(d.id);
-	};
 	if (d) {
+		if (selectRelated) {
+			related = edgeMap.get(d.id);
+		};
+
 		send('onSelect', { node: d.id, related });
 	};
 };
