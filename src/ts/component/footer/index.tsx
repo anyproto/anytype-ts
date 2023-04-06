@@ -4,7 +4,6 @@ import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';
 import FooterMainEdit from './main/edit';
-import FooterMainStore from './main/store';
 
 interface Props extends I.FooterComponent {
 	component: string;
@@ -13,7 +12,6 @@ interface Props extends I.FooterComponent {
 const Components = {
 	authIndex:			 FooterAuthIndex,
 	mainEdit:			 FooterMainEdit,
-	mainStore:			 FooterMainStore,
 };
 
 class Footer extends React.Component<Props> {

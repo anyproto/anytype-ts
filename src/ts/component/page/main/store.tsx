@@ -244,7 +244,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					</div>
 				</div>
 
-				<Footer component="mainStore" />
+				<Footer component="mainEdit" />
 			</div>
 		);
 	};
