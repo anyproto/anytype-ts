@@ -29,7 +29,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 				<Header {...this.props} component="authIndex" />
 				<Frame>
 					<Title text={translate('authPinCheckTitle')} />
-					<div className={error !== '' ? "isInvalid" : "" }>
+					<div className={error !== '' ? 'isInvalid' : '' }>
 						<Pin 
 							ref={ref => { this.ref = ref; }}
 							value={Storage.get('pin')} 
