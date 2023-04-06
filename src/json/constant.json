@@ -144,7 +144,7 @@
 
 	"sidebarRelationKeys": [
 		"id", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
-		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions"
+		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source"
 	],
 
 	"relationRelationKeys": [

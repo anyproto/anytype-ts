@@ -246,6 +246,7 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			sources: setOf,
 			limit: isPreview ? 0 : Constant.limit.widgetRecords.list,
 			collectionId: (isCollection ? targetBlockId : ''),
+			keys: Constant.sidebarRelationKeys,
 		}, () => {
 			this.resize();
 		});
