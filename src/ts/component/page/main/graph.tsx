@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, Util, analytics, DataUtil, ObjectUtil, keyboard } from 'Lib';
+import { I, C, Util, analytics, DataUtil, ObjectUtil, keyboard, Onboarding } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -65,10 +65,17 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	componentDidMount () {
+		const obj = Util.getPageContainer(this.props.isPopup);
+		const isPopup = this.props.isPopup && !obj.hasClass('full');
+
 		this.rebind();
 		this.resize();
 		this.load();
 		this.initRootId(this.getRootId());
+
+		if (!isPopup) {
+			Onboarding.start('wizardGraph', false);
+		};
 
 		window.Graph = this;
 	};

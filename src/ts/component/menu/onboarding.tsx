@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import * as Docs from 'Docs';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard, Action } from 'Lib';
+import {I, Onboarding, Util, analytics, keyboard, Action, ObjectUtil} from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -34,7 +34,11 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 		const item = items[current];
 		const l = items.length;
 
-		let buttons = [{ text: current == l - 1 ? 'Finish' : 'Next', action: 'next' }];
+		let buttons = [];
+
+		if (!item.noButton) {
+			buttons.push({ text: current == l - 1 ? 'Finish' : 'Next', action: 'next' });
+		};
 
 		if (item.buttons) {
 			buttons = buttons.concat(item.buttons);
@@ -180,6 +184,11 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 
 			case 'import': {
 				this.onImport();
+				break;
+			};
+
+			case 'dashboard': {
+				ObjectUtil.openHome('route');
 				break;
 			};
 		};

@@ -1,6 +1,36 @@
 import { I } from 'Lib';
 
 export default {
+    wizardGraph: {
+        category: 'Onboarding',
+        showConfetti: true,
+        items: [
+            {
+                description: `
+					<p>
+						<b>Welcome to your Anytype Space.</b> Space is essentially a graph, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.
+					</p>
+					<p>To access your Dashboard, click the icon in the center of your screen.</p>
+				`,
+                video: './img/help/31/1-inline-set.mp4',
+                noButton: true,
+                buttons: [
+                    { text: 'Next', action: 'dashboard' }
+                ]
+            }
+        ],
+
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            offsetY: -4,
+        },
+    },
+
     wizardDashboard: {
         category: 'Dashboard',
         showConfetti: true,
