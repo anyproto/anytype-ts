@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, Util, DataUtil, ObjectUtil, translate, keyboard, focus, Preview } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
+import Constant from 'json/constant.json';
 
 const BlockLink = observer(class BlockLink extends React.Component<I.BlockComponent> {
 	
@@ -25,7 +26,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 
 	render() {
 		const { rootId, block } = this.props;
-		const object = detailStore.get(rootId, block.content.targetBlockId, []);
+		const object = detailStore.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
 		const content = DataUtil.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);

@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, Util } from 'Lib';
+import { I, Util, Preview } from 'Lib';
 import Constant from 'json/constant.json';
 
 
@@ -47,6 +47,8 @@ class MenuStore {
 		} else {
 			this.menuList.push({ id: id, param: param });
 		};
+
+		Preview.previewHide(true);
 	};
 
     update (id: string, param: any) {
