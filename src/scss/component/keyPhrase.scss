@@ -1,10 +1,10 @@
 .keyPhrase {
-    border-radius: 26px; background: rgba(44, 43, 39, 0.3); height: 86px; display: flex;
+    border-radius: 26px; background: rgba(44, 43, 39, 0.3); font-size: 18px; display: flex;
     flex-direction: row; align-items: center; justify-content: center; width: fit-content; padding: 20px;
 }
 
 .keyPhrase {
-    span { padding: 0 10px; font-size: 18px; }
+    span { padding: 0 10px; font-size: 18px; min-height: 18px; }
     .yellow { color: #FFB522; }
     .orange { color: #F55522; }
     .magenta { color: #E51CA0; }
@@ -16,3 +16,4 @@
 
 .keyPhrase:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
 .keyPhrase.isBlurred { filter: blur(7px); }
+.keyPhrase.isInvalid { background: #240E07 }

@@ -151,9 +151,9 @@ class Preview {
 		obj.css({ opacity: 0 });
 
 		window.clearTimeout(this.timeout.preview);
-		this.timeout.preview = window.setTimeout(() => { 
+		this.timeout.preview = window.setTimeout(() => {
 			obj.hide();
-			obj.removeClass('top bottom withImage'); 
+			obj.removeClass('top bottom withImage');
 
 			commonStore.previewClear();
 		}, force ? 0 : 250);
