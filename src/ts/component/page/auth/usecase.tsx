@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
-import { C, I, ObjectUtil, translate } from 'Lib';
+import { C, I, ObjectUtil, Util, translate } from 'Lib';
 import { observer } from 'mobx-react';
+import $ from 'jquery';
+import Constant from 'json/constant.json';
 
 const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I.PageComponent, object> {
     loading: boolean = false;
@@ -28,7 +30,7 @@ const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I
         );
 
         return (
-            <div>
+            <div className="usecaseWrapper">
 
                 <Frame>
                     <Title className="frameTitle" text={translate('authUsecaseTitle')} />
@@ -43,9 +45,7 @@ const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I
                     <div className="buttons">
                         <Button className="c28 outlined" text={translate('authUsecaseSkip')} onClick={(e) => this.onClick(e, 0)} />
                     </div>
-                    {!this.loading ? (
-                        <div className="loaderWrapper"><Loader /></div>
-                    ) : ''}
+                    {this.loading ? <Loader /> : ''}
                 </Frame>
             </div>
         );
@@ -59,10 +59,15 @@ const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I
         };
 
         this.loading = true;
+        this.forceUpdate();
 
         C.ObjectImportUseCase(id, (message) => {
-            console.log('[UseCase] ', message);
-            ObjectUtil.openHome('route');
+            $('.usecaseWrapper').css({'opacity': 0});
+
+            window.setTimeout(() => {
+                this.loading = false;
+                Util.route('/main/graph');
+            }, 600);
         });
     };
 

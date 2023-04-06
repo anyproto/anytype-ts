@@ -100,6 +100,7 @@
 }
 
 .pageAuthUsecase {
+	.usecaseWrapper { transition: opacity 600ms; }
 	.frame { width: 836px; box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 44px 48px 36px; text-align: left; }
 
 	.frame {
