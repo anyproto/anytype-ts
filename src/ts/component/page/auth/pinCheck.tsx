@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Frame, Cover, Title, Error, Pin, Header, Footer } from 'Component';
+import { Frame, Title, Error, Pin, Header, Footer } from 'Component';
 import { I, Util, Storage, translate, keyboard, ObjectUtil } from 'Lib';
-import { authStore, commonStore } from 'Store';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -22,25 +22,22 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 	};
 	
 	render () {
-		const { cover } = commonStore;
 		const { error } = this.state;
 		
 		return (
 			<div>
-				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
-				
 				<Frame>
 					<Title text={translate('authPinCheckTitle')} />
+					<div className={error !== '' ? 'isInvalid' : '' }>
+						<Pin 
+							ref={ref => { this.ref = ref; }}
+							value={Storage.get('pin')} 
+							onSuccess={this.onSuccess} 
+							onError={() => { this.setState({ error: translate('authPinCheckError') }) }} 
+						/>
+					</div>
 					<Error text={error} />
-
-					<Pin 
-						ref={ref => { this.ref = ref; }}
-						value={Storage.get('pin')} 
-						onSuccess={this.onSuccess} 
-						onError={() => { this.setState({ error: translate('authPinCheckError') }) }} 
-					/>
 				</Frame>
 			</div>
 		);

@@ -121,7 +121,7 @@
 	"authSuccessSubmit": { "en": "Let's start!" },
 	"authSuccessCopy": { "en": "Show and copy phrase" },
 
-	"authPinCheckTitle": { "en": "Enter pin code" },
+	"authPinCheckTitle": { "en": "Enter pin" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
 	"authOnboardSubmit": { "en": "Next" },
