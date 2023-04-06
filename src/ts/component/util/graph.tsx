@@ -136,6 +136,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
 		})
+		.on('dblclick', (e: any) => {
+			if (e.shiftKey) {
+				const [ x, y ] = d3.pointer(e);
+				this.send('onSelect', { x, y, selectRelated: true });
+			};
+		})
 		.on('contextmenu', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send('onContextMenu', { x, y });
@@ -286,8 +292,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onSelect': {
+				const { related } = data;
 				if (data.node != root) {
-					onSelect(data.node);
+					const nodes = [data.node].concat(related);
+
+					nodes.forEach(onSelect)
 				};
 				break;
 			};
