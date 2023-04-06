@@ -29,9 +29,9 @@
 		.dimmer { display: block; }
 	}
 
-	.widget.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 4px; width: 100%; border-radius: 2px; left: 0px; } 
-	.widget.isOver.top::before { top: -8px; }
-	.widget.isOver.bottom::before { bottom: -8px; }
+	.widget.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 2px; width: 100%; border-radius: 2px; left: 0px; } 
+	.widget.isOver.top::before { top: -7px; }
+	.widget.isOver.bottom::before { bottom: -7px; }
 }
 
 .listWidget.isListPreview { overflow: hidden; height: 100%; }

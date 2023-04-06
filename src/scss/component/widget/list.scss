@@ -6,7 +6,7 @@
 	.innerWrap { height: 100%; }
 	.contentWrapper { flex-grow: 1; }
 
-	#viewSelect { padding: 0px 16px 6px 16px; }
+	#viewSelect { padding: 0px 16px; }
 	#viewSelect:empty { display: none; }
 	#viewSelect {
 		.viewList { width: 100%; overflow-x: auto; overflow-y: hidden; }
@@ -70,6 +70,10 @@
 		}
 	}
 };
+
+.widget.widgetList.withSelect {
+	.head { padding-bottom: 0px; }
+}
 
 .widget.widgetList.isPreview { padding: 0px; }
 .widget.widgetList.isPreview {

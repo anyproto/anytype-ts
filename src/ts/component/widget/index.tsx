@@ -49,6 +49,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget', Util.toCamelCase('widget-' + I.WidgetLayout[layout]) ];
 		const object = this.getObject();
+		const platform = Util.getPlatform();
+		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || (platform != I.Platform.Mac));
+		const key = `widget-${block.id}`;
 		const props = {
 			...this.props,
 			parent: block,
@@ -56,10 +59,13 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			isCollection: this.isCollection,
 			getData: this.getData,
 		};
-		const key = `widget-${block.id}`;
 
 		if (isPreview) {
 			cn.push('isPreview');
+		};
+
+		if (withSelect) {
+			cn.push('withSelect');
 		};
 
 		let icon = null;

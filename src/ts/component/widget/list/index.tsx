@@ -148,11 +148,13 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 				ref={node => this.node = node}
 				className="innerWrap"
 			>
-				<div id="viewSelect">
-					{viewSelect}
-				</div>
+				{viewSelect ? (
+					<div id="viewSelect">
+						{viewSelect}
+					</div>
+				) : ''}
 				<div id="body" className="body">
-					{loading ? <Loader /> : content}
+					{content}
 				</div>
 			</div>
 		);

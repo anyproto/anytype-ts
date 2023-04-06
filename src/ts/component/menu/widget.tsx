@@ -66,7 +66,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						<div className="buttons">
 							<Button 
 								id="button-save"
-								color={this.target ? 'blank' : 'blank'}
 								className="c28"
 								text="Add widget"
 								onClick={this.save} 
@@ -81,12 +80,12 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.checkButton();
 		this.rebind();
 	};
 
 	componentDidUpdate () {
 		this.checkButton();
-
 		this.props.setActive();
 		this.props.position();
 	};
@@ -112,8 +111,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const node = $(this.node);
 		const button = node.find('#button-save');
 
-		button.removeClass('black blank');
-		button.addClass((this.target !== null) && (this.layout !== null) ? 'black' : 'blank');
+		button.removeClass('black blank disabled');
+		button.addClass((this.target !== null) && (this.layout !== null) ? 'black' : 'blank disabled');
 	};
 
     getSections () {
