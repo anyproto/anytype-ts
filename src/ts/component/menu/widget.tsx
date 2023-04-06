@@ -277,6 +277,12 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					},
 					onSelect: (target) => {
 						this.target = target;
+						
+						const options = this.getLayoutOptions();
+						if (options.length) {
+							this.layout = options[0].id;
+						};
+
 						this.checkState();
 						this.forceUpdate();
 						
