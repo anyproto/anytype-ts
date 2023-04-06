@@ -5,8 +5,8 @@ import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytic
 import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-import CanvasWorkerBridge from "./canvasWorkerBridge"
-import { OnboardStage } from './constants';
+import CanvasWorkerBridge from "./animation/canvasWorkerBridge"
+import { OnboardStage } from './animation/constants';
 
 type State = {
 	stage: OnboardStage;
