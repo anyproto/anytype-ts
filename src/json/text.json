@@ -132,8 +132,7 @@
 	"authDeleteRemovePopupText": { "en": "These objects will be deleted irrevocably. You can't undo this action." },
 	"authDeleteRemovePopupConfirm": { "en": "Delete" },
 
-
-	"authPinCheckTitle": { "en": "Enter pin code" },
+	"authPinCheckTitle": { "en": "Enter pin" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
 	"authOnboardSubmit": { "en": "Next" },
