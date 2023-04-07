@@ -34,7 +34,7 @@
 	.widget.isEditable:nth-child(2n + 1) { animation: shake1 0.2s linear infinite alternate; }
 	.widget.isEditable:nth-child(2n + 2) { animation: shake2 0.2s linear infinite alternate; }
 
-	.widget:not(.isEditable) { opacity: 0.7; }
+	.widget:not(.isEditable) { opacity: 0.5; }
 
 	.widget {
 		.head { cursor: grab; }
