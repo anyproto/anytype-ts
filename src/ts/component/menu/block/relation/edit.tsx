@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, analytics, MenuUtil, ObjectUtil, Preview, translate, keyboard, Relation } from 'Lib';
+import { I, C, analytics, MenuUtil, ObjectUtil, DataUtil, Preview, translate, keyboard, Relation } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -39,7 +39,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const allowed = root ? !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) : true;
-		const canDelete = allowed && relation && !Constant.systemRelationKeys.includes(relation.relationKey);
+		const canDelete = allowed && relation && !DataUtil.getSystemRelationKeys().includes(relation.relationKey);
 		const isReadonly = this.isReadonly();
 
 		let opts: any = null;

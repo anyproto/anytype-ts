@@ -223,7 +223,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const filter = String(data.filter || '');
-		const skipKeys = (data.skipKeys || []).concat(Constant.systemRelationKeys);
+		const skipKeys = (data.skipKeys || []).concat(DataUtil.getSystemRelationKeys());
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
 			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
@@ -356,7 +356,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { getId, getSize, param, close } = this.props;
 		const { classNameWrap, data } = param;
-		const skipKeys = (data.skipKeys || []).concat(Constant.systemRelationKeys);
+		const skipKeys = (data.skipKeys || []).concat(DataUtil.getSystemRelationKeys());
 
 		let sources = this.getLibrarySources();
 		let menuId = '';
