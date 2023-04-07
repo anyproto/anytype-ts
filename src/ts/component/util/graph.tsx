@@ -13,7 +13,7 @@ interface Props {
 	data: any;
 	onClick?: (object: any) => void;
 	onContextMenu?: (id: string, param: any) => void;
-	onSelect?: (id: string) => void;
+	onSelect?: (id: string, related?: string[]) => void;
 };
 
 const Graph = observer(class Graph extends React.Component<Props> {
@@ -135,6 +135,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
+		})
+		.on('dblclick', (e: any) => {
+			if (e.shiftKey) {
+				const [ x, y ] = d3.pointer(e);
+				this.send('onSelect', { x, y, selectRelated: true });
+			};
 		})
 		.on('contextmenu', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
@@ -286,8 +292,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onSelect': {
+				const { related } = data;
 				if (data.node != root) {
-					onSelect(data.node);
+					onSelect(data.node, related);
 				};
 				break;
 			};
