@@ -224,7 +224,7 @@ class Action {
 		});
 	};
 
-	install (object: any, callBack?: (message: any) => void) {
+	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
 		C.WorkspaceObjectAdd(object.id, (message: any) => {
 			if (message.error.code) {
 				return;
@@ -249,12 +249,14 @@ class Action {
 					break;
 			};
 
-			Preview.toastShow({ text: toast });
+			if (showToast) {
+				Preview.toastShow({ text: toast });
+			};
 			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
 		});
 	};
 
-	uninstall (object: any, callBack?: (message: any) => void) {
+	uninstall (object: any, showToast: boolean, callBack?: (message: any) => void) {
 		let title = '';
 		let text = '';
 		let toast = '';
@@ -289,7 +291,9 @@ class Action {
 							callBack(message);
 						};
 
-						Preview.toastShow({ text: toast });
+						if (showToast) {
+							Preview.toastShow({ text: toast });
+						};
 						analytics.event('ObjectUninstall', { objectType: object.type, count: 1 });
 					});
 				},

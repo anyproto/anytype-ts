@@ -661,6 +661,10 @@ class DataUtil {
 		return this.getFileTypes().includes(type);
 	};
 
+	getSystemRelationKeys () {
+		return require('lib/relations/systemRelations.json');
+	};
+
 	getFileTypes () {
 		return [
 			Constant.typeId.file, 
