@@ -15,6 +15,7 @@ interface Props extends I.WidgetComponent {
 	icon?: string;
 	disableContextMenu?: boolean;
 	isPreview?: boolean;
+	className?: string;
 	onDragStart?: (e: React.MouseEvent, blockId: string) => void;
 	onDragOver?: (e: React.MouseEvent, blockId: string) => void;
 };
@@ -43,7 +44,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	render (): React.ReactNode {
 		const { loading } = this.state;
-		const { block, isPreview, isEditing, onDragStart, onDragOver, setPreview } = this.props;
+		const { block, isPreview, isEditing, className, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
 		const { layout } = block.content;
 		const { targetBlockId } = child?.content || {};
@@ -58,6 +59,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			block: child,
 			isCollection: this.isCollection,
 			getData: this.getData,
+		};
+
+		if (className) {
+			cn.push(className);
 		};
 
 		if (isPreview) {

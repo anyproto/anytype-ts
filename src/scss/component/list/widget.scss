@@ -1,8 +1,13 @@
 @import "~scss/_vars";
 
-@keyframes shake {
+@keyframes shake1 {
 	0% { transform: rotate(-0.5deg); }
 	100% { transform: rotate(0.5deg); }
+}
+
+@keyframes shake2 {
+	0% { transform: rotate(0.5deg); }
+	100% { transform: rotate(-0.5deg); }
 }
 
 .listWidget { display: flex; flex-direction: column; gap: 12px 0px; }
@@ -26,7 +31,11 @@
 .listWidget.isEditing {
 	> .buttons { position: fixed; bottom: 0px; left: 0px; padding: 16px; }
 	
-	.widget { animation: shake 0.2s linear infinite alternate; }
+	.widget.isEditable:nth-child(2n + 1) { animation: shake1 0.2s linear infinite alternate; }
+	.widget.isEditable:nth-child(2n + 2) { animation: shake2 0.2s linear infinite alternate; }
+
+	.widget:not(.isEditable) { opacity: 0.7; }
+
 	.widget {
 		.head { cursor: grab; }
 		.icon.remove { display: block; }
