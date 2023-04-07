@@ -1,5 +1,10 @@
 @import "~scss/_vars";
 
+@keyframes shake {
+	0% { transform: rotate(-0.5deg); }
+	100% { transform: rotate(0.5deg); }
+}
+
 .listWidget { display: flex; flex-direction: column; gap: 12px 0px; }
 .listWidget {
 	> .buttons { display: flex; justify-content: center; width: 100%; gap: 0px 8px; }
@@ -21,6 +26,7 @@
 .listWidget.isEditing {
 	> .buttons { position: fixed; bottom: 0px; left: 0px; padding: 16px; }
 	
+	.widget { animation: shake 0.2s linear infinite alternate; }
 	.widget {
 		.head { cursor: grab; }
 		.icon.remove { display: block; }
@@ -33,7 +39,7 @@
 	.widget.isOver.top::before { top: -7px; }
 	.widget.isOver.bottom::before { bottom: -7px; }
 
-	.widget.button { cursor: default; }
+	.widget.button { cursor: default; animation: none; }
 }
 
 .listWidget.isListPreview { overflow: hidden; height: 100%; }
