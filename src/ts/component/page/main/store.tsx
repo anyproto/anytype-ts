@@ -574,7 +574,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		e.preventDefault();
 		e.stopPropagation();
 
-		Action.install(item);
+		Action.install(item, true);
 	};
 
 	onRemove (e: any, item: any) {
@@ -582,7 +582,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		e.stopPropagation();
 
 		if (blockStore.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ])) {
-			Action.uninstall(item);
+			Action.uninstall(item, true);
 		};
 	};
 

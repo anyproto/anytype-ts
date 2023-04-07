@@ -457,7 +457,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 					analytics.event('AddExistingRelation', { format: item.format, type: ref, objectType: object.type });
 				};
 			} else {
-				Action.install(item, (message: any) => { cb(message.details); });
+				Action.install(item, true, (message: any) => { cb(message.details); });
 			};
 		};
 	};
