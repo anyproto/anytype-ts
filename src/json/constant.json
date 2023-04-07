@@ -124,7 +124,8 @@
 		"sizeInBytes",
 
 		"isHidden", 
-		"isArchived", 
+		"isArchived",
+		"isDeleted",
 		"isFavorite",
 		"isReadonly",
 
