@@ -236,8 +236,17 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		return this.rootId || (rootId ? rootId : match.params.id);
 	};
 
-	onSelect (id: string) {
-		this.ids = this.ids.includes(id) ? this.ids.filter(it => it != id) : this.ids.concat([ id ]);
+	onSelect (id: string, related?: string[]) {
+		let ids = [ id ];
+
+		if (related && related.length) {
+			this.ids = [];
+			ids = ids.concat(related);
+		};
+
+		ids.forEach((id) => {
+			this.ids = this.ids.includes(id) ? this.ids.filter(it => it != id) : this.ids.concat([ id ]);
+		});
 		this.refGraph.send('onSetSelected', { ids: this.ids });
 	};
 
