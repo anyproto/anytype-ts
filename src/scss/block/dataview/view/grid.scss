@@ -149,12 +149,20 @@
 
 			.cell.isEditing { padding: 0px; }
 			.cell.isEditing {
-				.cellContent { padding: 9px 14px; }
+				.cellContent { padding: 10px 14px; }
 
 				.cellContent.isName {
-					.iconObject { margin-top: 9px; margin-bottom: 9px; }
+					.iconObject { margin-top: 10px; margin-bottom: 10px; }
 					.input-text { height: 39px; }
 				}
+			}
+
+			.cell.isEditing.c-select, .cell.isEditing.c-object {
+				.placeholder { padding: 10px 14px; }
+			}
+
+			.cell.isEditing.c-select {
+				.itemWrap { margin-bottom: 0px; }
 			}
 
 			.icon.edit { height: 40px; }
