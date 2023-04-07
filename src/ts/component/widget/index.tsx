@@ -140,7 +140,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			<div
 				ref={node => this.node = node}
 				id={key}
-				data-id={block.id}
 				className={cn.join(' ')}
 				draggable={isEditing}
 				onDragStart={e => onDragStart(e, block.id)}

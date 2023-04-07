@@ -16,7 +16,7 @@ type State = {
 	previewId: string;
 };
 
-const WIDGET_COUNT_LIMIT = 10;
+const LIMIT = 10;
 
 const ListWidget = observer(class ListWidget extends React.Component<Props, State> {
 		
@@ -99,7 +99,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			};
 
 			if (isEditing) {
-				if (blocks.length <= WIDGET_COUNT_LIMIT) {
+				if (blocks.length <= LIMIT) {
 					buttons.push({ id: 'widget-list-add', text: 'Add', onClick: this.addWidget });
 				};
 
@@ -282,10 +282,14 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onContextMenu () {
 		const win = $(window);
-		const options = [
-			{ id: 'add', name: 'Add widget', arrow: true },
+		const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
+		const options: any[] = [
 			{ id: 'edit', name: 'Edit widgets' },
 		];
+
+		if (widgetIds.length < LIMIT) {
+			options.unshift({ id: 'add', name: 'Add widget', arrow: true });
+		};
 
 		let menuContext = null;
 

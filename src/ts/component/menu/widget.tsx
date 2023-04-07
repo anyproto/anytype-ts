@@ -82,6 +82,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this._isMounted = true;
 		this.checkButton();
 		this.rebind();
+
+		this.getTargetId();
 	};
 
 	componentDidUpdate () {
@@ -343,7 +345,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
     save (): void {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { isEditing, blockId, onSave, coords } = data;
+		const { isEditing, onSave } = data;
 		const { widgets } = blockStore;
 
         if (!this.target || (this.layout === null)) {
@@ -351,7 +353,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		const targetId = this.getTargetId();
-		const position = isEditing ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
+		const position = isEditing ? I.BlockPosition.Replace : I.BlockPosition.Top;
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 
@@ -381,16 +383,23 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			targetId = blockId;
 		} else  
 		if (coords) {
-			const widgets = $('#listWidget .widget');
+			const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
 
-			widgets.each((i: number, item: any) => {
-				const id = $(item).attr('data-id');
-				const rect = item.getBoundingClientRect();
+			if (widgetIds.length) {
+				let prevY = 0;
+				for (let id of widgetIds) {
+					const item = $(`#widget-${id}`);
+					const { top } = item.offset();
+					const height = item.outerHeight();
+					
+					if ((coords.y >= prevY) && (coords.y <= top + height + 12)) {
+						targetId = id;
+						break;
+					};
 
-				if (id && !targetId && (rect.y + rect.height + 12 >= coords.y)) {
-					targetId = id;
+					prevY = top;
 				};
-			});
+			};
 		};
 
 		return targetId;
