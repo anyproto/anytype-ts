@@ -93,7 +93,6 @@
 		"sourceObject", 
 
 		"setOf", 
-		"smartblockTypes",
 		"targetObjectType",
 		"recommendedRelations",
 		"recommendedLayout",
@@ -155,7 +154,7 @@
 
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
-	"typeRelationKeys":		 [ "smartblockTypes", "recommendedRelations", "sourceObject" ],
+	"typeRelationKeys":		 [ "recommendedRelations", "sourceObject" ],
 	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 
 	"subId": {
@@ -189,7 +188,8 @@
 		"bookmark": "ot-bookmark",
 		"option": "ot-relationOption",
 		"collection": "ot-collection",
-		"dashboard": "ot-dashboard"
+		"dashboard": "ot-dashboard",
+		"date": "ot-date"
 	},
 
 	"storeTypeId": {

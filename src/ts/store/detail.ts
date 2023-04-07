@@ -226,7 +226,6 @@ class DetailStore {
 	};
 
 	private mapObjectType (object: any) {
-		object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes).map(it => Number(it));
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		object.isInstalled = object.workspaceId != Constant.storeSpaceId;

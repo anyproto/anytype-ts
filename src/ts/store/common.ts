@@ -148,7 +148,7 @@ class CommonStore {
 
 		const type = dbStore.getType(typeId);
 
-		if (!type || !type.isInstalled || !type.smartblockTypes.includes(I.SmartBlockType.Page)) {
+		if (!type || !type.isInstalled || !DataUtil.getPageLayouts().includes(type.recommendedLayout)) {
 			return Constant.typeId.note;
 		};
 

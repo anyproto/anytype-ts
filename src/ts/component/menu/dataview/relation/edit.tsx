@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, ObjectUtil, MenuUtil, Relation, translate, Dataview, keyboard, analytics, Preview } from 'Lib';
+import { I, C, ObjectUtil, MenuUtil, Relation, translate, Dataview, keyboard, analytics, Preview, DataUtil } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -441,7 +441,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: [ I.SmartBlockType.Page ] },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => dbStore.getType(it.id),

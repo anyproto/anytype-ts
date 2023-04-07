@@ -67,7 +67,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
-		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
+		const allowedObject = object.isInstalled && DataUtil.getPageLayouts().includes(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
@@ -310,7 +310,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = dbStore.getType(rootId);
-		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page)
+		const allowedObject = DataUtil.getPageLayouts().includes(type.recommendedLayout)
 			|| [ Constant.typeId.collection, Constant.typeId.set ].includes(rootId);
 		const options = [];
 

@@ -191,7 +191,9 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			},
 			data: {
 				filter: '',
-				smartblockTypes: [ I.SmartBlockType.Page, I.SmartBlockType.Set ],
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
+				],
 				onClick: (item: any) => {
 					this.onClick(e, item);
 				}
