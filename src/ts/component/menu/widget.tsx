@@ -343,14 +343,14 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
     save (): void {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { isEditing, blockId } = data;
+		const { isEditing, blockId, onSave, coords } = data;
 		const { widgets } = blockStore;
 
         if (!this.target || (this.layout === null)) {
 			return;
 		};
 
-		const targetId = isEditing ? blockId : '';
+		const targetId = this.getTargetId();
 		const position = isEditing ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
 		const newBlock = { 
 			type: I.BlockType.Link,
@@ -360,10 +360,41 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		C.BlockCreateWidget(widgets, targetId, newBlock, position, this.layout, () => {
+			if (onSave) {
+				onSave();
+			};
+
 			analytics.event(isEditing ? 'EditWidget' : 'AddWidget', { type: this.layout });
 		});
+
 		close(); 
     };
+
+	getTargetId (): string {
+		const { param } = this.props;
+		const { data } = param;
+		const { isEditing, blockId, coords } = data;
+
+		let targetId = '';
+
+		if (isEditing) {
+			targetId = blockId;
+		} else  
+		if (coords) {
+			const widgets = $('#listWidget .widget');
+
+			widgets.each((i: number, item: any) => {
+				const id = $(item).attr('data-id');
+				const rect = item.getBoundingClientRect();
+
+				if (id && !targetId && (rect.y + rect.height + 12 >= coords.y)) {
+					targetId = id;
+				};
+			});
+		};
+
+		return targetId;
+	};
 
 });
 

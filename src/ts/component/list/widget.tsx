@@ -41,6 +41,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 	};
@@ -162,6 +163,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				className={cn.join(' ')}
 				onDrop={this.onDrop}
 				onScroll={this.onScroll}
+				onContextMenu={this.onContextMenu}
 			>
 				{content}
 			</div>
@@ -276,6 +278,65 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onScroll () {
 		this.top = $(this.node).scrollTop();
+	};
+
+	onContextMenu () {
+		const win = $(window);
+		const options = [
+			{ id: 'add', name: 'Add widget', arrow: true },
+			{ id: 'edit', name: 'Edit widgets' },
+		];
+
+		let menuContext = null;
+
+		menuStore.open('selectList', {
+			component: 'select',
+			onOpen: (context) => {
+				menuContext = context;
+			},
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { x, y: y + win.scrollTop(), width: 0, height: 0, }; 
+			},
+			subIds: [ 'widget', 'searchObject', 'select' ],
+			data: {
+				options,
+				onOver: (e: any, item: any) => {
+					if (!item.arrow) {
+						menuStore.close('widget');
+						return;
+					};
+
+					const { x, y } = keyboard.mouse.page;
+
+					menuStore.open('widget', {
+						element: `#${menuContext.getId()} #item-${item.id}`,
+						offsetX: menuContext.getSize().width,
+						isSub: true,
+						vertical: I.MenuDirection.Center,
+						data: {
+							coords: { x, y },
+							onSave: () => {
+								menuContext.close();
+							}
+						}
+					});
+				},
+				onSelect: (e: any, item: any) => {
+					if (item.arrow) {
+						return;
+					};
+
+					switch (item.id) {
+						case 'edit': {
+							this.setEditing(true);
+							menuContext.close();
+							break;
+						};
+					};
+				}
+			}
+		});
 	};
 
 	clear () {
