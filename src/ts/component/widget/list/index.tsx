@@ -229,15 +229,10 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 		const { widgets } = blockStore;
 		const { block, isPreview } = this.props;
 		const { targetBlockId } = block.content;
-		const dataview = blockStore.getLeaf(this.getRootId(), BLOCK_ID);
-		
-		if (!dataview) {
-			return;
-		};
-
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);
-		const isCollection = Dataview.isCollection(targetBlockId, BLOCK_ID);
+		const target = detailStore.get(widgets, targetBlockId);
+		const isCollection = target.type == Constant.typeId.collection;
 
 		if (!setOf.length && !isCollection) {
 			return;
