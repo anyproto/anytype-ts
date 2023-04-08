@@ -36,6 +36,7 @@
 	.icon.collection { background-image: url('#{$themePath}/icon/sidebar/collection.svg'); }
 	.icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
 	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
+	.icon.arrow:hover { background-color: $colorHover; }
 
 	.item {
 		.inner:hover::before { background: $colorHover; }

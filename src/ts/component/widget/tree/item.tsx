@@ -36,7 +36,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
 		const canDrop = !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
-		const paddingLeft = (depth - 1) * 12;
+		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 8;
 
 		let arrow = null;
 		if (object.type == Constant.typeId.collection) {
