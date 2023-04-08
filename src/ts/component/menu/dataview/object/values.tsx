@@ -216,17 +216,18 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 	onAdd () {
 		const { param, getId, getSize } = this.props;
 		const { data, className, classNameWrap } = param;
+		const { width, height } = getSize();
 
 		menuStore.open('dataviewObjectList', {
 			element: `#${getId()}`,
-			width: 0,
-			offsetX: param.width,
-			offsetY: () => -getSize().height,
+			width,
+			offsetX: width,
+			offsetY: () => -height,
 			passThrough: true,
 			noFlipY: true,
 			noAnimation: true,
-			className: className,
-			classNameWrap: classNameWrap,
+			className,
+			classNameWrap,
 			data: {
 				...data,
 				rebind: this.rebind,
@@ -285,7 +286,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const items = this.getItems();
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
-		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
+		const height = Math.max(HEIGHT + offset, Math.min(300, items.length * HEIGHT + offset));
 
 		obj.css({ height: height });
 		position();

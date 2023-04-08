@@ -262,7 +262,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param } = this.props;
+		const { param, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 
@@ -280,7 +280,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		this.menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
 			className: 'single',
-			width: 256,
+			width: getSize().width,
 			data: {
 				rootId,
 				blockId,

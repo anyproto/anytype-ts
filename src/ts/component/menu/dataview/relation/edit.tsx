@@ -414,7 +414,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param } = this.props;
+		const { param, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 
@@ -432,7 +432,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		this.menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
 			className: 'single',
-			width: 256,
+			width: getSize().width,
 			data: {
 				rootId,
 				blockId,
