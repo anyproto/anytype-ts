@@ -1,0 +1,20 @@
+{
+    "gradientIcons": [
+        { "colors": { "from": "#F6EB7D", "to":  "#CBD2FA" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#112156", "to":  "#CBD2FA" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#FFA15E", "to":  "#CBD2FA" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#BC3A54", "to":  "#CBD2FA" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#4D7AFF", "to":  "#CBD2FA" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#F6EB7D", "to":  "#BC3A54" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#112156", "to":  "#BC3A54" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#CBD2FA", "to":  "#BC3A54" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#FFA25E", "to":  "#BC3A54" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#4D7AFF", "to":  "#BC3A54" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#CBD2FA", "to":  "#FFA25E" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#4D7AFF", "to":  "#FFA25E" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#BC3A54", "to":  "#FFA25E" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#F6EB7D", "to":  "#FFA25E" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#BC3A54", "to":  "#F6EB7D" }, "steps": { "from": "22.92%", "to": "100%" } },
+        { "colors": { "from": "#4D7AFF", "to":  "#F6EB7D" }, "steps": { "from": "22.92%", "to": "100%" } }
+    ]
+}
