@@ -205,7 +205,14 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		};
 
 		let onOption = () => {
-			const { colors, steps} = Colors.gradientIcons[iconOption - 1];
+			const option: any = Colors.gradientIcons.options[iconOption - 1];
+			const { colors } = option;
+
+			let steps = Colors.gradientIcons.common.steps;
+			if (option.steps) {
+				steps = option.steps;
+			};
+
 			const style = {
 				'--color-from': colors.from,
 				'--color-to': colors.to,
