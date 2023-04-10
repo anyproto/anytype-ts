@@ -16,9 +16,9 @@ const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I
 
     render () {
         const cases: any[] = [
-            { img: 'img/usecase/plug.png', id: 1 },
-            { img: 'img/usecase/plug.png', id: 2 },
-            { img: 'img/usecase/plug.png', id: 3 }
+            { id: 1, img: 'img/usecase/plug.png' },
+            { id: 2, img: 'img/usecase/plug.png' },
+            { id: 3, img: 'img/usecase/plug.png' }
         ];
 
         const Case = (el) => (
@@ -37,7 +37,7 @@ const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I
                     <Label className="frameLabel" text={translate('authUsecaseLabel')} />
 
                     <div className="usecaseList">
-                        {cases.map((el, i) => (
+                        {cases.map((el, i: number) => (
                             <Case key={i} {...el} />
                         ))}
                     </div>
