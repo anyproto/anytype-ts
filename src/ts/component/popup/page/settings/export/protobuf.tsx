@@ -56,7 +56,7 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 					<Button 
 						text={translate('popupSettingsExportOk')} 
 						className="c36"
-						onClick={() => { onExport(I.ExportType.Markdown, this.data); }} 
+						onClick={() => { onExport(I.ExportType.Protobuf, this.data); }} 
 					/>
 				</div>
 			</React.Fragment>
