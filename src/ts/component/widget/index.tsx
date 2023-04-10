@@ -313,6 +313,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
 		];
+		const target = detailStore.get(blockStore.widgets, targetBlockId);
+
+		console.log(target);
 
 		let limit = layout == I.WidgetLayout.Tree ? Constant.limit.widgetRecords.tree : Constant.limit.widgetRecords.list;
 		if (isPreview) {
@@ -352,7 +355,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	isCollection (blockId: string) {
-		return Object.values(Constant.widgetId).includes(blockId);
+		const target = detailStore.get(blockStore.widgets, blockId);
+
+		return (target.type == Constant.typeId.collection) || Object.values(Constant.widgetId).includes(blockId);
 	};
 
 });
