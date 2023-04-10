@@ -31,7 +31,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 	
 	render () {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
@@ -161,7 +161,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => $(this.node).find('.items').get(0)}
+					helperContainer={() => $(`#${getId()} .items`).get(0)}
 				/>
 				{allowedView ? (
 					<div className="bottom">

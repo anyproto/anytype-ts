@@ -10,9 +10,10 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 	zip = false;
 	nested = false;
 	files = true;
+	archived = true;
 	landscape = false;
-	pageSize: any = { id: 'A4', name: 'A4'};
-	printBackground = true;
+	pageSize = '';
+	printBg = true;
 
 	constructor (props: I.Popup) {
 		super(props);
@@ -25,6 +26,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		const { config } = commonStore;
 		const formats = [
 			{ id: I.ExportType.Markdown, name: 'Markdown' },
+			{ id: I.ExportType.Protobuf, name: 'Protobuf' },
 			{ id: I.ExportType.Pdf, name: 'PDF' },
 		];
 
@@ -62,7 +64,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 					control = (
 						<Select
 							id={item.id}
-							value={this[item.id].id}
+							value={this[item.id]}
 							options={item.options}
 							onChange={(v: any) => {
 								this[item.id] = v;
@@ -92,10 +94,12 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 		switch (this.format) {
 			case I.ExportType.Markdown:
+			case I.ExportType.Protobuf:
 				items = [
 					{ id: 'zip', name: 'Zip archive', control: 'switch' },
 					{ id: 'nested', name: 'Include linked objects', control: 'switch' },
 					{ id: 'files', name: 'Include files', control: 'switch' },
+					{ id: 'archived', name: 'Include archived objects', control: 'switch' },
 				];
 				break;
 
@@ -103,7 +107,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				items = [
 					{ id: 'pageSize', name: 'Page size', control: 'select', options: pageSize },
 					{ id: 'landscape', name: 'Landscape', control: 'switch' },
-					{ id: 'printBackground', name: 'Print background', control: 'switch' },
+					{ id: 'printBg', name: 'Print background', control: 'switch' },
 				];
 				break;
 		};
@@ -152,12 +156,22 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		this.zip = Boolean(options.zip);
 		this.nested = Boolean(options.nested);
 		this.files = Boolean(options.files);
+		this.archived = Boolean(options.archived);
+		this.landscape = Boolean(options.landscape);
+		this.printBg = Boolean(options.printBg);
+		this.pageSize = String(options.pageSize || 'A4');
 	};
 
 	save () {
 		const { storageSet } = this.props;
+		const keys = [ 'format', 'zip', 'nested', 'files', 'archived', 'landscape', 'pageSize', 'printBg' ];
+		const obj: any = {};
 
-		storageSet({ format: this.format, zip: this.zip, nested: this.nested, files: this.files });
+		for (const key of keys) {
+			obj[key] = this[key];
+		};
+
+		storageSet(obj);
 	};
 
 	onConfirm (e: any) {
@@ -167,7 +181,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 		switch (this.format) {
 			default:
-				Action.export([ rootId ], this.format, this.zip, this.nested, this.files);
+				Action.export([ rootId ], this.format, this.zip, this.nested, this.files, this.archived);
 				break;
 
 			case I.ExportType.Html:
@@ -175,11 +189,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				break;
 
 			case I.ExportType.Pdf:
-				keyboard.onPrintToPDF({
-					landscape: this.landscape,
-					printBackground: this.printBackground,
-					pageSize: this.pageSize.id
-				});
+				keyboard.onPrintToPDF({ landscape: this.landscape, printBg: this.printBg, pageSize: this.pageSize });
 				break;
 		};
 		
