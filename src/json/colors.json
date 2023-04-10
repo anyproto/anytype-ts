@@ -4,22 +4,22 @@
             "steps": { "from": "22.92%", "to": "100%" }
         },
         "options": [
-            { "colors": { "from": "#F6EB7D", "to":  "#CBD2FA" } },
-            { "colors": { "from": "#112156", "to":  "#CBD2FA" } },
-            { "colors": { "from": "#FFA15E", "to":  "#CBD2FA" } },
-            { "colors": { "from": "#BC3A54", "to":  "#CBD2FA" } },
-            { "colors": { "from": "#4D7AFF", "to":  "#CBD2FA" } },
-            { "colors": { "from": "#F6EB7D", "to":  "#BC3A54" } },
-            { "colors": { "from": "#112156", "to":  "#BC3A54" } },
-            { "colors": { "from": "#CBD2FA", "to":  "#BC3A54" } },
-            { "colors": { "from": "#FFA25E", "to":  "#BC3A54" } },
-            { "colors": { "from": "#4D7AFF", "to":  "#BC3A54" } },
-            { "colors": { "from": "#CBD2FA", "to":  "#FFA25E" } },
-            { "colors": { "from": "#4D7AFF", "to":  "#FFA25E" } },
-            { "colors": { "from": "#BC3A54", "to":  "#FFA25E" } },
-            { "colors": { "from": "#F6EB7D", "to":  "#FFA25E" } },
-            { "colors": { "from": "#BC3A54", "to":  "#F6EB7D" } },
-            { "colors": { "from": "#4D7AFF", "to":  "#F6EB7D" } }
+            { "colors": { "from": "#f6eb7d", "to":  "#cbd2fa" } },
+            { "colors": { "from": "#112156", "to":  "#cbd2fa" } },
+            { "colors": { "from": "#ffa15e", "to":  "#cbd2fa" } },
+            { "colors": { "from": "#bc3a54", "to":  "#cbd2fa" } },
+            { "colors": { "from": "#4d7aff", "to":  "#cbd2fa" } },
+            { "colors": { "from": "#f6eb7d", "to":  "#bc3a54" } },
+            { "colors": { "from": "#112156", "to":  "#bc3a54" } },
+            { "colors": { "from": "#cbd2fa", "to":  "#bc3a54" } },
+            { "colors": { "from": "#ffa25e", "to":  "#bc3a54" } },
+            { "colors": { "from": "#4d7aff", "to":  "#bc3a54" } },
+            { "colors": { "from": "#cbd2fa", "to":  "#ffa25e" } },
+            { "colors": { "from": "#4d7aff", "to":  "#ffa25e" } },
+            { "colors": { "from": "#bc3a54", "to":  "#ffa25e" } },
+            { "colors": { "from": "#f6eb7d", "to":  "#ffa25e" } },
+            { "colors": { "from": "#bc3a54", "to":  "#f6eb7d" } },
+            { "colors": { "from": "#4d7aff", "to":  "#f6eb7d" } }
         ]
     }
 }

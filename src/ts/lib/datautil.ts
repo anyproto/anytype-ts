@@ -937,6 +937,10 @@ class DataUtil {
 		];
 	};
 
+	getPercentage (num: number, percent: number) {
+		return Number(((num / 100) * percent).toFixed(3));
+	};
+
 };
 
 export default new DataUtil();
