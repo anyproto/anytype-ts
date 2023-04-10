@@ -16,6 +16,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 	zip = false;
 	nested = false;
 	files = false;
+	archived = false;
 
 	render () {
 		const { onExport } = this.props;
@@ -23,6 +24,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 			{ id: 'zip', name: 'Zip archive', control: 'switch' },
 			{ id: 'nested', name: 'Include linked objects', control: 'switch' },
 			{ id: 'files', name: 'Include files', control: 'switch' },
+			{ id: 'archived', name: 'Include archived objects', control: 'switch' },
 		];
 
 		this.init();
@@ -62,7 +64,7 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 					<Button 
 						text={translate('popupSettingsExportOk')} 
 						className="c36"
-						onClick={() => { onExport(I.ExportType.Markdown, { zip: this.zip, nested: this.nested, files: this.files }); }} 
+						onClick={() => { onExport(I.ExportType.Markdown, { zip: this.zip, nested: this.nested, files: this.files, archived: this.archived }); }} 
 					/>
 				</div>
 			</React.Fragment>
@@ -79,10 +81,16 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 		this.zip = Boolean(options.zip);
 		this.nested = Boolean(options.nested);
 		this.files = Boolean(options.files);
+		this.archived = Boolean(options.archived);
 	};
 
 	save () {
-		Storage.set('popupExport', { zip: this.zip, nested: this.nested, files: this.files });
+		Storage.set('popupExport', { 
+			zip: this.zip, 
+			nested: this.nested, 
+			files: this.files,
+			archived: this.archived,
+		});
 	};
 
 });

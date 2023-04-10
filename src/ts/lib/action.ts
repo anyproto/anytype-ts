@@ -203,13 +203,13 @@ class Action {
 		});
 	};
 
-	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		this.openDir(paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};
 
-			C.ObjectListExport(paths[0], ids, format, zip, nested, files, false, false, (message: any) => {
+			C.ObjectListExport(paths[0], ids, format, zip, nested, files, archived, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
