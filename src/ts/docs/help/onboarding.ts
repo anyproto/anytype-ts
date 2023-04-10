@@ -32,7 +32,7 @@ export default {
     },
 
     wizardDashboard: {
-        category: 'Dashboard',
+        category: 'Onboarding',
         showConfetti: true,
         items: [
             {

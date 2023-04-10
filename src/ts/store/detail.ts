@@ -173,28 +173,42 @@ class DetailStore {
 
 		switch (object.type) {
 			case Constant.typeId.type:
-			case Constant.storeTypeId.type:
+			case Constant.storeTypeId.type: {
 				object = this.mapObjectType(object);
 				break;
+			};
 
 			case Constant.typeId.relation:
-			case Constant.storeTypeId.relation:
+			case Constant.storeTypeId.relation: {
 				object = this.mapRelation(object);
 				break;
+			};
 
-			case Constant.typeId.option:
+			case Constant.typeId.option: {
 				object = this.mapOption(object);
 				break;
+			};
 
-			case Constant.typeId.set:
+			case Constant.typeId.set: {
 				object = this.mapSet(object);
 				break;
+			};
 
-			case Constant.typeId.space:
+			case Constant.typeId.space: {
 				object = this.mapSpace(object);
 				break;
+			};
+
+			case Constant.typeId.template: {
+				object = this.mapTemplate(object);
+				break;
+			};
 		};
 
+		return this.mapCommon(object);
+	};
+
+	private mapCommon (object: any) {
 		return {
 			...object,
 			type: Relation.getStringValue(object.type),
@@ -268,10 +282,18 @@ class DetailStore {
 		return object;
 	};
 
+	private mapTemplate (object: any) {
+		object.targetObjectType = Relation.getStringValue(object.targetObjectType);
+		object.templateIsBundled = Boolean(object.templateIsBundled);
+
+		return object;
+	};
+
 	/** return detail list by rootId and id. returns empty if none found */
 	private getDetailList (rootId: string, id: string): Detail[] {
 		return this.map.get(rootId)?.get(id) || [];
 	};
+
 };
 
 export const detailStore: DetailStore = new DetailStore();

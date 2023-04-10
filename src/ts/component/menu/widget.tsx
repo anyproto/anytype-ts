@@ -66,7 +66,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						<div className="buttons">
 							<Button 
 								id="button-save"
-								color={this.target ? 'blank' : 'blank'}
 								className="c28"
 								text="Add widget"
 								onClick={this.save} 
@@ -81,12 +80,14 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.checkButton();
 		this.rebind();
+
+		this.getTargetId();
 	};
 
 	componentDidUpdate () {
 		this.checkButton();
-
 		this.props.setActive();
 		this.props.position();
 	};
@@ -112,8 +113,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const node = $(this.node);
 		const button = node.find('#button-save');
 
-		button.removeClass('black blank');
-		button.addClass((this.target !== null) && (this.layout !== null) ? 'black' : 'blank');
+		button.removeClass('black blank disabled');
+		button.addClass((this.target !== null) && (this.layout !== null) ? 'black' : 'blank disabled');
 	};
 
     getSections () {
@@ -267,16 +268,22 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					filters,
 					value: this.target ? this.target.id : '',
 					dataChange: (items: any[]) => {
-						return [
+						const fixed: any[] = [
 							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
 							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':books:' },
 							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':open_file_folder:' },
-							{ isDiv: true },
-						].concat(items);
+						];
+						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 					},
 					onSelect: (target) => {
 						this.target = target;
+						
+						const options = this.getLayoutOptions();
+						if (options.length) {
+							this.layout = options[0].id;
+						};
+
 						this.checkState();
 						this.forceUpdate();
 						
@@ -338,15 +345,15 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
     save (): void {
 		const { close, param } = this.props;
 		const { data } = param;
-		const { isEditing, blockId } = data;
+		const { isEditing, onSave } = data;
 		const { widgets } = blockStore;
 
         if (!this.target || (this.layout === null)) {
 			return;
 		};
 
-		const targetId = isEditing ? blockId : '';
-		const position = isEditing ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
+		const targetId = this.getTargetId();
+		const position = isEditing ? I.BlockPosition.Replace : I.BlockPosition.Top;
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 
@@ -355,10 +362,48 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		C.BlockCreateWidget(widgets, targetId, newBlock, position, this.layout, () => {
+			if (onSave) {
+				onSave();
+			};
+
 			analytics.event(isEditing ? 'EditWidget' : 'AddWidget', { type: this.layout });
 		});
+
 		close(); 
     };
+
+	getTargetId (): string {
+		const { param } = this.props;
+		const { data } = param;
+		const { isEditing, blockId, coords } = data;
+
+		let targetId = '';
+
+		if (isEditing) {
+			targetId = blockId;
+		} else  
+		if (coords) {
+			const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
+
+			if (widgetIds.length) {
+				let prevY = 0;
+				for (let id of widgetIds) {
+					const item = $(`#widget-${id}`);
+					const { top } = item.offset();
+					const height = item.outerHeight();
+					
+					if ((coords.y >= prevY) && (coords.y <= top + height + 12)) {
+						targetId = id;
+						break;
+					};
+
+					prevY = top;
+				};
+			};
+		};
+
+		return targetId;
+	};
 
 });
 

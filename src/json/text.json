@@ -290,12 +290,12 @@
 
 	"popupSettingsExportTitle": { "en": "Export" },
 	"popupSettingsExportText": { "en": "Choose application or format of data source" },
-	"popupSettingsExportMarkdownTitle": { "en": "Export to markdown" },
+	"popupSettingsExportMarkdownTitle": { "en": "Export to Markdown" },
 	"popupSettingsExportMarkdownText1": { "en": "All your workspace data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications." },
 	"popupSettingsExportMarkdownText2": { "en": "If you want to add all your data back in Anytype, use the <b>Import</b> section." },
-
+	"popupSettingsExportProtobufTitle": { "en": "Export to Protobuf" },
 	"popupSettingsExportOk": { "en": "Export data" },
-	"popupSettingsOtherTitle": { "en": "Other settings" },
+
 	"popupSettingsLogout": { "en": "Log out" },
 
 	"popupSettingsSpaceIndexTitle": { "en":  "Space settings" },

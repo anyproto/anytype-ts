@@ -89,6 +89,7 @@ class MenuHelp extends React.Component<I.Menu> {
 		const match = keyboard.getMatch();
 		const { page, action } = match.params;
 		const isEditor = (page == 'main') && (action == 'edit');
+		const isGraph = (page == 'main') && (action == 'graph');
 
 		close();
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
@@ -123,9 +124,8 @@ class MenuHelp extends React.Component<I.Menu> {
 
 			case 'hints': {
 				const isPopup = keyboard.isPopup();
-				const key = isEditor && !blockStore.checkBlockTypeExists(rootId) ? 'editor' : 'wizardDashboard';
 
-				Onboarding.start(key, isPopup, true);
+				Onboarding.start(isGraph ? 'wizardGraph' : 'wizardDashboard', isPopup, true);
 				break;
 			};
 

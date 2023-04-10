@@ -24,7 +24,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 		};
 
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled' ]);
-		const canSync = !object.templateIsBundled && !root.isObjectFileKind();
+		const canSync = !object.templateIsBundled;
 		const isLocked = root.isLocked();
 		const showGraph = !(root.isObjectType() || root.isObjectRelation());
 

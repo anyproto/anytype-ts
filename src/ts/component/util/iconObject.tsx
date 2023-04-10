@@ -38,6 +38,7 @@ interface Props {
 const IDS40 = [ 
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Set, 
+	I.ObjectLayout.Collection,
 	I.ObjectLayout.File, 
 	I.ObjectLayout.Image, 
 	I.ObjectLayout.Type,
@@ -46,7 +47,9 @@ const IDS40 = [
 const LAYOUT_EMOJI = [ 
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Set, 
+	I.ObjectLayout.Collection,
 	I.ObjectLayout.Type,
+	I.ObjectLayout.Space,
 ];
 
 const IconSize = {

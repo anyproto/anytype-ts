@@ -73,6 +73,7 @@ import 'scss/component/preview/common.scss';
 import 'scss/component/preview/link.scss';
 import 'scss/component/preview/object.scss';
 import 'scss/component/preview/graph.scss';
+import 'scss/component/preview/default.scss';
 
 import 'scss/component/media/audio.scss';
 import 'scss/component/media/video.scss';
@@ -293,7 +294,6 @@ class App extends React.Component<object, State> {
 
 		this.onInit = this.onInit.bind(this);
 		this.onKeytarGet = this.onKeytarGet.bind(this);
-		this.onImport = this.onImport.bind(this);
 		this.onPopup = this.onPopup.bind(this);
 		this.onUpdateCheck = this.onUpdateCheck.bind(this);
 		this.onUpdateConfirm = this.onUpdateConfirm.bind(this);
@@ -383,8 +383,6 @@ class App extends React.Component<object, State> {
 		Renderer.on('update-downloaded', () => { commonStore.progressClear(); });
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
-		Renderer.on('import', this.onImport);
-		Renderer.on('export', this.onExport);
 		Renderer.on('command', this.onCommand);
 		Renderer.on('spellcheck', this.onSpellcheck);
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
@@ -707,18 +705,6 @@ class App extends React.Component<object, State> {
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,
-		});
-	};
-
-	onImport () {
-		popupStore.open('settings', { 
-			data: { page: 'importIndex' }
-		});
-	};
-
-	onExport () {
-		popupStore.open('settings', {
-			data: { page: 'exportMarkdown' }
 		});
 	};
 

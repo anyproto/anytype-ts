@@ -161,11 +161,6 @@ class Dataview {
 
 	getMenuTabs (rootId: string, blockId: string, viewId: string): I.MenuTab[] {
 		const view = dbStore.getView(rootId, blockId, viewId);
-		const block = blockStore.getLeaf(rootId, blockId);
-		const { targetObjectId } = block.content;
-		const object = detailStore.get(rootId, targetObjectId ? targetObjectId : rootId);
-		const isCollection = object.type === Constant.typeId.collection;
-
 		if (!view) {
 			return [];
 		};

@@ -25,6 +25,7 @@ import PageImportMarkdown from './page/settings/import/markdown';
 import PageImportCsv from './page/settings/import/csv';
 
 import PageExportIndex from './page/settings/export/index';
+import PageExportProtobuf from './page/settings/export/protobuf';
 import PageExportMarkdown from './page/settings/export/markdown';
 
 import PageSpaceIndex from './page/settings/space/index';
@@ -57,6 +58,7 @@ const Components: any = {
 	importCsv:			 PageImportCsv,
 
 	exportIndex:		 PageExportIndex,
+	exportProtobuf:		 PageExportProtobuf,
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
@@ -299,8 +301,6 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 	onExport (format: I.ExportType, param: any) {
 		const { zip, nested, files } = param || {};
-
-		console.log(format, param);
 
 		Action.export([], format, zip, nested, files, () => { this.props.close(); });
 	};

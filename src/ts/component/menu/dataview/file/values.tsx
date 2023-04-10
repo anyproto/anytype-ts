@@ -25,7 +25,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 	};
 
 	render () {
-		const { param, position } = this.props;
+		const { param, position, getId } = this.props;
 		const { data } = param;
 		const { subId } = data;
 		
@@ -112,7 +112,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 							onSortEnd={this.onSortEnd}
 							useDragHandle={true}
 							helperClass="isDragging"
-							helperContainer={() => $(this.node).get(0)}
+							helperContainer={() => $(`#${getId()} .items`).get(0)}
 						/>
 					</div>
 				) : ''}

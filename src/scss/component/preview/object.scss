@@ -34,13 +34,13 @@
 				.icon.bullet { background-image: url('~img/icon/object/preview/bullet.svg'); }
 				.icon.toggle { background-image: url('~img/icon/object/preview/toggle.svg'); }
 
-				.number { 
-					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: $colorDarkGrey; margin-right: 4px; flex-shrink: 0; 
-					vertical-align: top; 
+				.number {
+					min-width: 16px; @include text-very-small; line-height: 16px; text-align: center; color: $colorDarkGrey; margin-right: 4px; flex-shrink: 0;
+					vertical-align: top;
 				}
 
 				.icon.color {
-					.bullet { 
+					.bullet {
 						width: 10px; height: 10px; position: absolute; left: 50%; top: 50%; margin: -5px 0px 0px -5px; border-radius: 3px;
 					}
 				}
@@ -70,7 +70,7 @@
 							.line { width: calc(100% - 20px); margin: 2px 0px 0px 0px; }
 						}
 					}
-					.side.right { 
+					.side.right {
 						width: 33.33%; background-repeat: no-repeat; background-size: cover; background-position: center center; border-radius: 0px 8px 8px 0px;
 					}
 				}
@@ -81,9 +81,9 @@
 			.children { width: 100%; }
 		}
 
-		.element.blockText.header1, 
-		.element.blockText.header2, 
-		.element.blockText.header3 
+		.element.blockText.header1,
+		.element.blockText.header2,
+		.element.blockText.header3
 		{ @include text-small; font-weight: bold; }
 
 		.element.blockText.toggle > .children,

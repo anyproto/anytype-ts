@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
-import { PreviewGraph } from 'Component';
+import { PreviewDefault } from 'Component';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 
@@ -13,7 +13,7 @@ interface Props {
 	data: any;
 	onClick?: (object: any) => void;
 	onContextMenu?: (id: string, param: any) => void;
-	onSelect?: (id: string) => void;
+	onSelect?: (id: string, related?: string[]) => void;
 };
 
 const Graph = observer(class Graph extends React.Component<Props> {
@@ -136,6 +136,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
 		})
+		.on('dblclick', (e: any) => {
+			if (e.shiftKey) {
+				const [ x, y ] = d3.pointer(e);
+				this.send('onSelect', { x, y, selectRelated: true });
+			};
+		})
 		.on('contextmenu', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send('onContextMenu', { x, y });
@@ -257,7 +263,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (!el.length) {
 			el = $('<div id="graphPreview" />');
 			body.append(el);
-			ReactDOM.render(<PreviewGraph object={this.subject} />, el.get(0), position);
+			ReactDOM.render(<PreviewDefault object={this.subject} className="previewGraph" />, el.get(0), position);
 		} else {
 			position();
 		};
@@ -286,8 +292,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onSelect': {
+				const { related } = data;
 				if (data.node != root) {
-					onSelect(data.node);
+					onSelect(data.node, related);
 				};
 				break;
 			};

@@ -68,7 +68,7 @@ class MenuManager {
 					},
 					{
 						label: 'Export',
-						click: () => { Util.send(this.win, 'popup', 'settings', { data: { page: 'exportMarkdown' } }); }
+						click: () => { Util.send(this.win, 'popup', 'settings', { data: { page: 'exportIndex' } }); }
 					},
 					{ label: 'Save as file', click: () => { Util.send(this.win, 'command', 'save'); } },
 
@@ -316,7 +316,7 @@ class MenuManager {
 			Separator,
 
 			{ label: 'Import', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'importIndex' } }, true); } },
-			{ label: 'Export', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'exportMarkdown' } }, true); } },
+			{ label: 'Export', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'exportIndex' } }, true); } },
 			
 			Separator,
 

@@ -11,10 +11,10 @@
 		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
 		.clickable {
 			.iconObject { flex-shrink: 0; }
-			.name { @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 700; flex-grow: 1; }
+			.name { @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 600; flex-grow: 1; }
 		}
 
-		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 		.iconWrap:hover { background-color: $colorHover; }
 		.iconWrap.active { opacity: 1; background-color: $colorHover; }
 
@@ -33,7 +33,7 @@
 	}
 
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
-	.label.empty { text-align: center; @include text-small; }
+	.label.empty { text-align: center; @include text-small; color: $colorDarkGrey; }
 
 	.contentWrapper { transition: height 0.3s ease-out; }
 
@@ -78,7 +78,7 @@
 }
 
 .button.widget { 
-	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; font-weight: 700; padding: 14px 16px;
+	height: unset; text-align: left; @include text-paragraph; @include text-overflow-nw; font-weight: 600; padding: 14px 16px;
 	display: flex; position: relative; gap: 0px 12px; justify-content: flex-start;
 }
 .button.widget {

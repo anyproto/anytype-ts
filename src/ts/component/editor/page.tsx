@@ -90,7 +90,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 					{...this.props} 
 					resize={this.resizePage} 
 					readonly={readonly}
-					onLayoutSelect={(layout: I.ObjectLayout) => { this.focusTitle(); }} 
+					onLayoutSelect={() => { this.focusTitle(); }} 
 				/>
 				
 				<div id={'editor-' + rootId} className="editor">
@@ -789,6 +789,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			};
 		};
 
+		if (range.from == range.to) {
+			keyboard.shortcut(`${cmd}+k`, e, () => {
+				keyboard.onSearchPopup();
+			});
+		};
+
 		if (!isInsideTable && block.isText()) {
 			for (const item of styleParam) {
 				let style = null;
@@ -1156,7 +1162,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		const mark = Mark.getInRange(marks, type, range);
-		const el = $(`#block-${block.id}`);
 		const win = $(window);
 
 		if (type == I.MarkType.Link) {
@@ -1172,7 +1177,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 						filter: mark ? mark.param : '',
 						type: mark ? mark.type : null,
 						onChange: (newType: I.MarkType, param: string) => {
-							marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
+							marks = Mark.toggleLink({ type: newType, param, range }, marks);
 							DataUtil.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
 						}
 					}

@@ -3,14 +3,15 @@ import { observer } from 'mobx-react';
 import { I, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
-	ids: string[];
-	multiSelectAction?: (e: any, action: string) => void;
+	multiSelectAction?: (id: string) => void;
 };
 
 const Selection = observer(class Selection extends React.Component<Props> {
 
+	ids: string[] = [];
+
 	render () {
-		const { className, isInline, isCollection, multiSelectAction, ids } = this.props;
+		const { className, isInline, isCollection, multiSelectAction } = this.props;
 		const cn = [ 'dataviewControls', 'dataviewSelection' ];
 
 		if (className) {
@@ -31,18 +32,18 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		};
 
 		return (
-			<div className={cn.join(' ')}>
+			<div id="dataviewSelection" className={cn.join(' ')}>
 				<div className="sides">
-					<div id="sideLeft" className="side left">{ids.length} selected</div>
+					<div id="sideLeft" className="side left">{this.ids.length} selected</div>
 
 					<div id="sideRight" className="side right">
 						{buttons.map((item: any, i: number) => (
 							<div
 								key={i}
 								className={[ 'element' ].concat(item.className || []).join(' ')}
-								onClick={(e: any) => { multiSelectAction(e, item.id); }}
-								onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
-								onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
+								onClick={() => multiSelectAction(item.id)}
+								onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
+								onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 							>
 								{item.text}
 							</div>
@@ -51,6 +52,11 @@ const Selection = observer(class Selection extends React.Component<Props> {
 				</div>
 			</div>
 		);
+	};
+
+	setIds (ids: string[]): void {
+		this.ids = ids || [];
+		this.forceUpdate();
 	};
 
 });

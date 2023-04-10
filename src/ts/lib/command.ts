@@ -1371,13 +1371,14 @@ const ObjectGroupsSubscribe = (subId: string, relationKey: string, filters: I.Fi
 	dispatcher.request(ObjectGroupsSubscribe.name, request, callBack);
 };
 
-const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, callBack?: (message: any) => void) => {
+const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignoreWorkspace: boolean, noDeps: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SubscribeIds.Request();
 
 	request.setSubid(subId);
 	request.setIdsList(ids);
 	request.setKeysList(keys);
 	request.setIgnoreworkspace(ignoreWorkspace);
+	request.setNodepsubscription(noDeps);
 
 	dispatcher.request(ObjectSubscribeIds.name, request, callBack);
 };
@@ -1596,7 +1597,7 @@ const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
 };
 
-const ObjectListExport = (path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, callBack?: (message: any) => void) => {
+const ObjectListExport = (path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeDeleted: boolean, includeArchived: boolean, includeConfig: boolean,callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListExport.Request();
 
 	request.setPath(path);
@@ -1605,6 +1606,8 @@ const ObjectListExport = (path: string, objectIds: string[], format: I.ExportTyp
 	request.setZip(zip);
 	request.setIncludenested(includeNested);
 	request.setIncludefiles(includeFiles);
+	request.setIncludedeleted(includeDeleted);
+	request.setIncludearchived(includeArchived);
 
 	dispatcher.request(ObjectListExport.name, request, callBack);
 };

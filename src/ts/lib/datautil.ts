@@ -374,6 +374,7 @@ class DataUtil {
 					this.subscribeIds({
 						subId: Constant.subId.profile, 
 						ids: [ profile ], 
+						noDeps: true,
 					});
 				};
 			});
@@ -660,6 +661,10 @@ class DataUtil {
 		return this.getFileTypes().includes(type);
 	};
 
+	getSystemRelationKeys () {
+		return require('lib/relations/systemRelations.json');
+	};
+
 	getFileTypes () {
 		return [
 			Constant.typeId.file, 
@@ -770,9 +775,10 @@ class DataUtil {
 			subId: '',
 			ids: [],
 			keys: Constant.defaultRelationKeys,
+			noDeps: false,
 		}, param);
 
-		let { subId, ids, keys } = param;
+		let { subId, ids, keys, noDeps } = param;
 
 		ids = Util.arrayUnique(ids.filter(it => it));
 
@@ -785,7 +791,7 @@ class DataUtil {
 			return;
 		};
 
-		C.ObjectSubscribeIds(subId, ids, keys, true, (message: any) => {
+		C.ObjectSubscribeIds(subId, ids, keys, true, noDeps, (message: any) => {
 			message.records.sort((c1: any, c2: any) => {
 				const i1 = ids.indexOf(c1.id);
 				const i2 = ids.indexOf(c2.id);

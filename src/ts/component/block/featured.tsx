@@ -466,12 +466,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 			case 'turnToCollection':
 				C.ObjectToCollection(rootId, (message: any) => {
-					if (!message.error.code) {
-						ObjectUtil.openRoute({id: message.objectId, layout: I.ObjectLayout.Collection});
-						window.setTimeout(() => {
-							Preview.toastShow({ text: `${object.name} is collection now!`});
-						}, 200);
+					if (message.error.code) {
+						return;
 					};
+
+					ObjectUtil.openRoute({ id: message.objectId, layout: I.ObjectLayout.Collection });
+					window.setTimeout(() => { Preview.toastShow({ text: `${object.name} is collection now!`}); }, 200);
+
+					analytics.event('SetTurnIntoCollection');
 				});
 				break;
 		};

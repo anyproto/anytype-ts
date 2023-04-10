@@ -26,7 +26,8 @@ class Sidebar {
 		snap: I.MenuDirection.Left,
 	};
 	obj: JQuery<HTMLElement> = null;
-	animating = false;
+	isAnimating = false;
+	isDragging = false;
 	timeoutHide = 0;
 	timeoutAnim = 0;
 
@@ -59,17 +60,17 @@ class Sidebar {
 	onMouseMove (): void {
 		window.clearTimeout(this.timeoutHide);
 
-		if (!this.obj || !this.obj.length) {
+		if (!this.obj || !this.obj.length || keyboard.isDragging) {
 			return;
 		};
 
-		if (keyboard.isDragging) {
+		if (this.isDragging) {
 			this.obj.removeClass('anim').addClass('active');
 			return;
 		};
 
 		if (
-			this.animating ||
+			this.isAnimating ||
 			commonStore.isSidebarFixed ||
 			!commonStore.autoSidebar
 		) {
@@ -130,7 +131,7 @@ class Sidebar {
 			return;
 		};
 
-		this.animating = true;
+		this.isAnimating = true;
 
 		const { autoSidebar } = commonStore;
 		const { x, y, width, height, snap } = this.data;
@@ -247,7 +248,7 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.obj.removeClass('anim');
-			this.animating = false;
+			this.isAnimating = false;
 
 			if (callBack) {
 				callBack();
@@ -371,6 +372,14 @@ class Sidebar {
 
 	setHeight (height: number): void {
 		this.set({ height });
+	};
+
+	public setAnimating (v: boolean) {
+		this.isAnimating = v;
+	};
+
+	public setDragging (v: boolean) {
+		this.isDragging = v;
 	};
 
 	private setStyle (): void {

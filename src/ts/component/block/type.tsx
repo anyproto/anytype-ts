@@ -209,9 +209,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const objectToItems = [ Constant.typeId.set, Constant.typeId.collection ];
-
-		if (objectToItems.includes(item.id)) {
+		if (DataUtil.getSetTypes().includes(item.id)) {
 			this.onObjectTo(e, item.id);
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
@@ -234,14 +232,14 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	onObjectTo (e: any, type: string) {
 		const { rootId, isPopup } = this.props;
 
-		let layout: I.ObjectLayout = I.ObjectLayout.Set;
+		let layout: I.ObjectLayout = null;
 
 		const cb = (message) => {
 			if (isPopup) {
 				historyPopup.clear();
 			};
 
-			ObjectUtil.openEvent(e, { id: message.objectId, layout });
+			ObjectUtil.openAuto({ id: message.objectId, layout });
 
 			analytics.event('CreateObject', {
 				route: 'SelectType',
@@ -251,14 +249,17 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		};
 
 		switch (type) {
-			case Constant.typeId.set:
+			case Constant.typeId.set: {
+				layout = I.ObjectLayout.Set;
 				C.ObjectToSet(rootId, [], cb);
 				break;
+			};
 
-			case Constant.typeId.collection:
+			case Constant.typeId.collection: {
 				layout = I.ObjectLayout.Collection;
 				C.ObjectToCollection(rootId, cb);
 				break;
+			};
 		};
 	};
 
