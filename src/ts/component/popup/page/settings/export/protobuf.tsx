@@ -13,10 +13,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 
 const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportProtobuf extends React.Component<Props> {
 
-	zip = false;
-	nested = false;
-	files = false;
-	archived = false;
+	data: any = {};
 
 	render () {
 		const { onExport } = this.props;
@@ -44,9 +41,9 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 							<div className="side right">
 								<Switch
 									className="big"
-									value={this[item.id]}
+									value={this.data[item.id]}
 									onChange={(e: any, v: boolean) => {
-										this[item.id] = v;
+										this.data[item.id] = v;
 										this.save();
 									}}
 								/>
@@ -59,7 +56,7 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 					<Button 
 						text={translate('popupSettingsExportOk')} 
 						className="c36"
-						onClick={() => { onExport(I.ExportType.Markdown, { zip: this.zip, nested: this.nested, files: this.files, archived: this.archived }); }} 
+						onClick={() => { onExport(I.ExportType.Markdown, this.data); }} 
 					/>
 				</div>
 			</React.Fragment>
@@ -71,21 +68,11 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 	};
 
 	init () {
-		const options = Storage.get('popupExport') || {};
-
-		this.zip = Boolean(options.zip);
-		this.nested = Boolean(options.nested);
-		this.files = Boolean(options.files);
-		this.archived = Boolean(options.archived);
+		this.data = Storage.get('popupExport') || {};
 	};
 
 	save () {
-		Storage.set('popupExport', { 
-			zip: this.zip, 
-			nested: this.nested, 
-			files: this.files,
-			archived: this.archived,
-		});
+		Storage.set('popupExport', this.data);
 	};
 
 });
