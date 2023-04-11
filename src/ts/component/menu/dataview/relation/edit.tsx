@@ -138,7 +138,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				{!isReadonly ? (
 					<div className="section" onMouseEnter={this.menuClose}>
 						<div className="inputWrap">
-							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="grey" className="filled c28" />
+							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="blank" className="filled c28" />
 						</div>
 					</div>
 				) : ''}

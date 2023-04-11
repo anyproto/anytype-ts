@@ -119,6 +119,7 @@ import 'scss/popup/confirm.scss';
 import 'scss/popup/page.scss';
 import 'scss/popup/template.scss';
 import 'scss/popup/export.scss';
+import 'scss/popup/migration.scss';
 
 import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';

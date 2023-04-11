@@ -15,6 +15,7 @@ import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupTemplate from './template';
 import PopupExport from './export';
+import PopupMigration from './migration';
 import Constant from 'json/constant.json';
 
 interface Props extends I.Popup, RouteComponentProps<any> {};
@@ -49,6 +50,7 @@ class Popup extends React.Component<Props> {
 			page:		 PopupPage,
 			template:	 PopupTemplate,
 			export:		 PopupExport,
+			migration:	 PopupMigration,
 		};
 		
 		const popupId = this.getId();
