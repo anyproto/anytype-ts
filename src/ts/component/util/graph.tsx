@@ -415,7 +415,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					src = src.replace(/^.\//, '');
 				} else
 				if (d.iconOption) {
-					src = this.gradientIcon(d.iconOption);
+					src = this.gradientIcon(d.iconOption, true);
 				};
 				break;
 		};
@@ -423,21 +423,24 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		return src;
 	};
 
-	gradientIcon (iconOption: number) {
+	gradientIcon (iconOption: number, small?: boolean) {
 		const option: any = Colors.gradientIcons.options[iconOption - 1];
 		const { from, to } = option.colors;
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
 		const w = 160;
 		const r = w / 2;
+		const fillW = small ? w * 0.7 : w;
+		const fillR = fillW / 2;
+		const fillStart = (w - fillW) / 2
 
 		let steps = Colors.gradientIcons.common.steps;
 		if (option.steps) {
 			steps = option.steps;
 		};
 
-		const step0 = DataUtil.getPercentage(r, Number(steps.from.replace('%', '')));
-		const step1 = DataUtil.getPercentage(r, Number(steps.to.replace('%', '')));
+		const step0 = DataUtil.getPercentage(fillR, Number(steps.from.replace('%', '')));
+		const step1 = DataUtil.getPercentage(fillR, Number(steps.to.replace('%', '')));
 		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
 
 		canvas.width = w;
@@ -445,8 +448,15 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		grd.addColorStop(0, from);
 		grd.addColorStop(1, to);
 
+		if (small) {
+			ctx.fillStyle = '#000000';
+			ctx.fillRect(0, 0, w, w);
+		};
+
 		ctx.fillStyle = grd;
-		ctx.fillRect(0, 0, w, w);
+		ctx.beginPath();
+		ctx.arc(r, r, fillR, 0, 2 * Math.PI);
+		ctx.fill();
 
 		return canvas.toDataURL();
 	};
