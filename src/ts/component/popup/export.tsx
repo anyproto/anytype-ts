@@ -187,13 +187,13 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 			case I.ExportType.Html:
 				keyboard.onSaveAsHTML();
 
-				analytics.event('Export' + I.ExportType[this.format]);
+				analytics.event('Export', { type: this.format });
 				break;
 
 			case I.ExportType.Pdf:
 				keyboard.onPrintToPDF({ landscape: this.landscape, printBg: this.printBg, pageSize: this.pageSize });
 
-				analytics.event('Export' + I.ExportType[this.format]);
+				analytics.event('Export', { type: this.format });
 				break;
 		};
 		

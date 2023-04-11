@@ -215,7 +215,7 @@ class Action {
 				};
 
 				Renderer.send('pathOpen', paths[0]);
-				analytics.event('Export' + I.ExportType[format], { middleTime: message.middleTime });
+				analytics.event('Export', { type: format, middleTime: message.middleTime });
 
 				if (callBack) {
 					callBack(message);
