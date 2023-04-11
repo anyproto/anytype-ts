@@ -432,7 +432,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const r = w / 2;
 		const fillW = small ? w * 0.7 : w;
 		const fillR = fillW / 2;
-		const fillStart = (w - fillW) / 2
 
 		let steps = Colors.gradientIcons.common.steps;
 		if (option.steps) {
