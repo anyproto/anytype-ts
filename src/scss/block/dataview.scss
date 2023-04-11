@@ -99,28 +99,28 @@
 
 			.views { display: flex; gap: 0px 16px; flex-direction: row; align-items: center; justify-content: flex-start; }
 			.views {
-				.viewItem { 
-					transition: color 0.2s ease-in-out; cursor: pointer; @include text-paragraph; font-weight: 700; @include text-overflow-nw; 
-					max-width: 300px; color: $colorMediumGrey;
-				}
-				.viewItem { 
-					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
-				}
-				.viewItem:last-child { margin: 0px; }
-				.viewItem:hover, .viewItem.active { color: $colorBlack; }
-				.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
-
 				.icon.plus { opacity: 0; }
 			}
 
-			.viewSelect { display: none; border: 0px; @include text-header3; }
+			.viewItem { 
+				transition: color 0.2s ease-in-out; cursor: pointer; @include text-paragraph; font-weight: 700; @include text-overflow-nw; 
+				max-width: 300px; color: $colorMediumGrey;
+			}
+			.viewItem { 
+				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
+			}
+			.viewItem:last-child { margin: 0px; }
+			.viewItem:hover, .viewItem.active { color: $colorBlack; }
+			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
+
+			.viewSelect { display: none; border: 0px; padding-left: 0px; }
 			.viewSelect {
 				.icon:hover, .icon.active { background-color: transparent !important; }
 			}
 
 			.side.left.small {
 				.views { display: none; }
-				.viewSelect { display: inline-block; line-height: 20px; }
+				.viewSelect { display: inline-block; }
 			}
 
 			.button { padding: 0px 8px; @include text-common; }
