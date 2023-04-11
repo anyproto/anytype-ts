@@ -236,22 +236,25 @@ class Action {
 
 			let { details } = message;
 			let toast = '';
+			let subId = '';
 
 			switch (object.type) {
 				case Constant.storeTypeId.type:
 					toast = `Object type <b>${object.name}</b> has been added to your library`;
+					subId = Constant.subId.type;
 					break;
 
 				case Constant.storeTypeId.relation:
 					toast = `Relation <b>${object.name}</b> has been added to your library`;
-
-					detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
+					subId = Constant.subId.relation;
 					break;
 			};
 
 			if (showToast) {
 				Preview.toastShow({ text: toast });
 			};
+
+			detailStore.update(subId, { id: details.id, details }, false);
 			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
 		});
 	};
