@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Action, keyboard } from 'Lib';
+import { I, Action, keyboard, analytics } from 'Lib';
 import { Title, Select, Button, Switch } from 'Component';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -186,10 +186,14 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 			case I.ExportType.Html:
 				keyboard.onSaveAsHTML();
+
+				analytics.event('Export' + I.ExportType[this.format]);
 				break;
 
 			case I.ExportType.Pdf:
 				keyboard.onPrintToPDF({ landscape: this.landscape, printBg: this.printBg, pageSize: this.pageSize });
+
+				analytics.event('Export' + I.ExportType[this.format]);
 				break;
 		};
 		
