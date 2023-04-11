@@ -17,6 +17,11 @@ interface Props {
 	onSelect?: (id: string, related?: string[]) => void;
 };
 
+const bgColor = {
+	'': '#000',
+	dark: '#fff',
+};
+
 const Graph = observer(class Graph extends React.Component<Props> {
 
 	node: any = null;
@@ -425,6 +430,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	gradientIcon (iconOption: number, small?: boolean) {
 		const option: any = Colors.gradientIcons.options[iconOption - 1];
+		if (!option) {
+			return;
+		};
+
+		const { theme } = commonStore;
 		const { from, to } = option.colors;
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
@@ -448,7 +458,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		grd.addColorStop(1, to);
 
 		if (small) {
-			ctx.fillStyle = '#000000';
+			ctx.fillStyle = bgColor[theme];
 			ctx.fillRect(0, 0, w, w);
 		};
 
