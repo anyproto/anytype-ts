@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { commonStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
 import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
@@ -1595,6 +1595,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 			if (it.type == I.BlockType.Text) {
 				text.push(String(it.content.text || ''));
+			};
+
+			if (it.type == I.BlockType.Dataview) {
+				it.content.views = dbStore.getViews(rootId, it.id);
 			};
 
 			it.childrenIds = element.childrenIds;
