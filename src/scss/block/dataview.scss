@@ -78,7 +78,7 @@
 			#head-source-select { display: none; }
 		}
 
-		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; height: 49px; }
+		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
 
 		.dataviewControls.viewGrid::after { display: block; }
@@ -174,7 +174,7 @@
 		.dataviewHead { padding-left: 0px; padding-right: 0px; }
 
 		.dataviewControls {
-			.side { padding-top: 9px; padding-bottom: 9px; }
+			.side { padding: 9px 0px; }
 			.side.left { padding-left: 0px; }
 			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
 			.line { display: none; }
