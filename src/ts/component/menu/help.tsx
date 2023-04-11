@@ -146,7 +146,7 @@ class MenuHelp extends React.Component<I.Menu> {
 					key = blockStore.checkBlockTypeExists(rootId) ? 'typeSelect' : 'editor';
 				} else
 				if (isIndex) {
-					key = 'export';
+					key = 'index';
 				} else {
 					key = Util.toCamelCase([ page, action ].join('-'));
 				};

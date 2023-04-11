@@ -1,7 +1,7 @@
 import { I } from 'Lib';
 
 export default {
-    mainIndex: {
+    index: {
         category: 'Dashboard',
         items: [
             {
