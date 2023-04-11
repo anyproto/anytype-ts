@@ -2,18 +2,12 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Title, Label, Button, Textarea } from 'Component';
 import { I, Util, Preview, Action, Renderer, C, translate, analytics } from 'Lib';
-import { authStore, commonStore } from 'Store';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-import QRCode from 'qrcode.react';
 import Url from 'json/url.json';
 
 interface State {
 	step: number;
-};
-
-const QRColor = {
-	'': '#f2f2f2',
-	dark: '#aca996',
 };
 
 const PopupMigration = observer(class PopupMigration extends React.Component<I.Popup, State> {
@@ -37,7 +31,6 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 	render () {
 		const { close } = this.props;
 		const { step } = this.state;
-		const { theme } = commonStore;
 
 		let content = null;
 		let buttons: any[] = [];
@@ -90,7 +83,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 				content = (
 					<React.Fragment>
 						<Label className="bold" text="Step 3: Download" />
-						<Label className="c12" text="Your files are all backed up and you're ready to download the new app!<br/><b>Please make sure you have your recovery phase handy.</b>" />
+						<Label className="c12" text="Your files are all backed up and you're ready to download the new app!<br/><b>Please make sure you have your recovery phrase handy.</b>" />
 
 						<div className="inputs">
 							<div className="textareaWrap">

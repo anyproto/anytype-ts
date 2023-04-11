@@ -66,10 +66,12 @@ class MenuHelp extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const btn = <Button color="orange" className="c16" text={window.Electron.version.app} />;
+		const btn1 = <Button color="black" className="c16" text={window.Electron.version.app} />;
+		const btn2 = <Button color="orange" className="c16" text="0.32.0" />;
 
 		return [
-			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn },
+			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn1 },
+			{ id: 'migration', name: 'Migration to New infrastructure', caption: btn2 },
 			{ id: 'community', name: 'Anytype Community' },
 			{ isDiv: true },
 			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' },
@@ -100,6 +102,11 @@ class MenuHelp extends React.Component<I.Menu> {
 
 			case 'shortcut': {
 				popupStore.open('shortcut', {});
+				break;
+			};
+
+			case 'migration': {
+				popupStore.open('migration', {});
 				break;
 			};
 
