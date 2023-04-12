@@ -10,22 +10,26 @@ const BORDER = 16;
 class PopupPreview extends React.Component<I.Popup> {
 	
 	render () {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
-		const { block } = data;
-		const { hash, type } = block.content;
+		const { src, fileType } = data;
 
 		let content = null;
 
-		switch (type) {
+		switch (fileType) {
 			case I.FileType.Image: {
-				content = <img className="media" src={commonStore.imageUrl(hash, Constant.size.image)} />
+				content = <img className="media" src={src} />
 				break;
+			};
+
+			case I.FileType.Video: {
+				content = <video id="videoElement" src={src} controls={true} autoPlay={true} loop={true} />;
+				break
 			};
 		};
 
 		return (
-			<div onClick={close}>
+			<div>
 				<Loader id="loader" />
 				<div id="wrap" className="wrap">
 					{content}
@@ -59,8 +63,7 @@ class PopupPreview extends React.Component<I.Popup> {
 	resize () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { block } = data;
-		const { hash, type } = block.content;
+		const { src, fileType } = data;
 		const obj = $(`#${getId()}-innerWrap`);
 		const win = $(window);
 		const wrap = obj.find('#wrap');
@@ -70,11 +73,16 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		wrap.css({ height: 450, width: 450 });
 
-		switch (type) {
+		const onError = () => {
+			wrap.addClass('brokenMedia');
+			loader.remove();
+		};
+
+		switch (fileType) {
 			case I.FileType.Image: {
 				const img = new Image();
-				
-				img.onload = function () {
+
+				img.onload = () => {
 					const cw = img.width;
 					const ch = img.height;
 
@@ -91,16 +99,28 @@ class PopupPreview extends React.Component<I.Popup> {
 					loader.remove();
 				};
 
-				img.onerror = function () {
-					wrap.addClass('brokenMedia');
+				img.onerror = onError;
+
+				img.src = src;
+				break;
+			};
+
+			case I.FileType.Video: {
+				const video = document.getElementById('videoElement');
+
+				video.oncanplay = () => {
+					const width = 672;
+					const height = 372;
+
+					wrap.css({ height, width });
+					$(video).css({ height, width });
 					loader.remove();
 				};
 
-				img.src = commonStore.imageUrl(hash, Constant.size.image);
-				break;
+				video.onerror = onError;
 			};
 		};
-		
+
 	};
 	
 };
