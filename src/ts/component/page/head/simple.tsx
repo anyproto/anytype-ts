@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, Action, DataUtil, ObjectUtil, focus, keyboard } from 'Lib';
+import { I, M, Action, DataUtil, ObjectUtil, focus, keyboard, Relation } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -35,7 +35,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	render (): any {
 		const { rootId, type, onCreate } = this.props;
 		const check = DataUtil.checkDetails(rootId);
-		const object = check.object;
+		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
+		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const placeholder = {
 			title: DataUtil.defaultName(type),
@@ -80,7 +81,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let cn = [ 'headSimple', check.className ];
 
 		if (!isTypeOrRelation) {
-			descr = <Editor className="descr" id="description" />;
+			if (featuredRelations.includes('description')) {
+				descr = <Editor className="descr" id="description" />;
+			};
 			featured = <Block {...this.props} key={blockFeatured.id} rootId={rootId} iconSize={20} block={blockFeatured} className="small" />;
 		};
 

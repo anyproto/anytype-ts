@@ -59,10 +59,12 @@ class MenuUtil {
 		let i = 0;
 		let items = DataUtil.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 
+		console.log(items);
+
 		for (let type of items) {
 			ret.push({ 
-				type: I.BlockType.Page, 
 				id: 'object' + i++, 
+				type: I.BlockType.Page, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
 				name: type.name || DataUtil.defaultName('page'), 

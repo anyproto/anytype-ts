@@ -434,6 +434,7 @@ class DataUtil {
 			Constant.typeId.note, 
 			Constant.typeId.page, 
 			Constant.typeId.set, 
+			Constant.typeId.collection,
 			Constant.typeId.task,
 			Constant.typeId.bookmark,
 		];

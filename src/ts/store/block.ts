@@ -370,6 +370,7 @@ class BlockStore {
 		if (!rootId || !blockId) {
 			return false;
 		};
+
 		return this.isAllowed(this.getRestrictions(rootId, blockId), flags);
 	};
 
