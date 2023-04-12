@@ -126,7 +126,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		
 		let sourceName = 'Choose a source';
 		let layoutName = 'Choose a layout';
-		let layoutIcon = '';
 
 		if (this.target) {
 			sourceName = DataUtil.getObjectName(this.target);
@@ -134,7 +133,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (this.layout !== null) {
 			layoutName = translate(`widget${this.layout}Name`);
-			layoutIcon = `widget-${this.layout}`;
 		};
 
 		const sections: any[] = [
@@ -145,7 +143,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			},
 			{ 
 				id: 'layout', name: 'Appearance', children: [
-					{ id: 'layout', name: layoutName, icon: layoutIcon, arrow: true }
+					{ id: 'layout', name: layoutName, arrow: true }
 				] 
 			},
 		];
