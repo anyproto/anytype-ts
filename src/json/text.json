@@ -115,7 +115,18 @@
 	"authSetupSelect": { "en": "Selecting profile..." },
 	"authSetupShare": { "en": "Adding space" },
 
-	"authPinCheckTitle": { "en": "Enter pin code" },
+	"authDeleteTitle": { "en": "Delete profile" },
+	"authDeleteTitleDeleted": { "en": "Account data removed from the backup node" },
+	"authDeleteDescription": { "en": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices." },
+	"authDeleteDescriptionDeleted": { "en": "All logged-in devices may have your data locally. However, you are not able to sign into Anytype on new devices using your keychain phrase." },
+	"authDeleteCancelButton": { "en": "Cancel deletion" },
+	"authDeleteExportButton": { "en": "Export data to markdown" },
+	"authDeleteRemoveButton": { "en": "Remove local data" },
+	"authDeleteRemovePopupTitle": { "en": "Are you sure you want to delete your local account data?" },
+	"authDeleteRemovePopupText": { "en": "These objects will be deleted irrevocably. You can't undo this action." },
+	"authDeleteRemovePopupConfirm": { "en": "Delete" },
+
+	"authPinCheckTitle": { "en": "Enter pin" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
 	"authOnboardSubmit": { "en": "Next" },

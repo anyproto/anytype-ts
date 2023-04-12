@@ -186,7 +186,7 @@ class Preview {
 	toastHide (force: boolean) {
 		const obj = $('#toast');
 
-		obj.css({ opacity: 0 });
+		obj.css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
 
 		window.clearTimeout(this.timeout.toast);
 		this.timeout.toast = window.setTimeout(() => {
@@ -203,13 +203,14 @@ class Preview {
 		const win = $(window);
 		const obj = $('#toast');
 
-		obj.show().css({ opacity: 0 });
+		obj.show().css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
 
 		raf(() => {
 			obj.css({ 
 				left: win.width() / 2 - obj.outerWidth() / 2, 
 				top: win.height() - obj.outerHeight() - BORDER * 2,
 				opacity: 1,
+				transform: 'scale3d(1,1,1)',
 			});
 		});
 	};

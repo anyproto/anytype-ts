@@ -36,9 +36,11 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
 		const canDrop = !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
-		const paddingLeft = (depth - 1) * 12;
+		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
 
 		let arrow = null;
+		let onArrowClick = null;
+
 		if (object.type == Constant.typeId.collection) {
 			arrow = <Icon className="collection" />;
 		} else
@@ -46,9 +48,16 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			arrow = <Icon className="set" />;
 		} else
 		if (numChildren > 0) {
-			arrow = <Icon className="arrow" onClick={this.onToggle} />;
+			onArrowClick = this.onToggle;
+			arrow = <Icon className="arrow" />;
 		} else {
 			arrow = <Icon className="blank" />;
+		};
+
+		if (arrow) {
+			arrow = (
+				<div className="arrowWrap" onClick={onArrowClick}>{arrow}</div>
+			);
 		};
 
 		let inner = (

@@ -32,7 +32,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 	};
 	
 	render () {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView } = data;
 		const view = getView();
@@ -129,7 +129,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => $(this.node).find('.items').get(0)}
+					helperContainer={() => $(`#${getId()} .items`).get(0)}
 				/>
 
 				{allowedView ? (

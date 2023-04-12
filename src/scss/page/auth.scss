@@ -55,8 +55,10 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 }
 
 .pageAuthPinCheck {
-	.input { width: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
+	.title { font-size: 22px; margin-bottom: 20px; }
+	.input { width: 86px; height: 86px; border: none; border-radius: 24px; background: rgba(44, 43, 39, 0.3); margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
 	.input:last-child { margin: 0px; }
+	.isInvalid .input { background: #240E07 }
 }
 
 .pageAuthSetup {
@@ -71,7 +73,8 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 
 .pageAuthOnboard,
 .pageAuthInvite,
-.pageAuthLogin {
+.pageAuthLogin,
+.pageAuthDeleted {
 	.frame { width: 415px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; }
 	.label { color: #5C5A54; min-width: 415px; }
@@ -79,14 +82,20 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 }
 
 .bodyAuthOnboard #popupConfirm-innerWrap,
-.bodyAuthLogin #popupConfirm-innerWrap { background: #1A1A18; min-width: 700px; padding-top: 15px; }
+.bodyAuthLogin #popupConfirm-innerWrap,
+.bodyAuthDeleted #popupConfirm-innerWrap { background: #1A1A18; min-width: 700px; padding-top: 15px; }
 
 .bodyAuthOnboard #popupConfirm-innerWrap,
-.bodyAuthLogin #popupConfirm-innerWrap {
+.bodyAuthLogin #popupConfirm-innerWrap,
+.bodyAuthDeleted #popupConfirm-innerWrap {
 	ul { list-style-position: inside; margin-bottom: 10px; }
 	.content { padding: 0px 20px; text-align: left; }
 	.title { font-size: 14px; color: #929082; }
 	.buttons { width: 200px; }
+}
+
+.bodyAuthDeleted #popupConfirm-innerWrap {
+	.buttons { flex-direction: row-reverse; justify-content: space-between; width: 100%;}
 }
 
 .pageAuthOnboard {
@@ -145,18 +154,16 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 }
 
 .pageAuthDeleted {
-	.frame { width: 672px; }
-	.title { text-align: center; @include text-header1; margin-bottom: 20px; }
-	.label { margin-bottom: 10px; }
-
-	.pie { text-align: center; margin-bottom: 20px; }
+	canvas { height: 100vh; width: 100vw; }
+	.title { color: #CBC9BD }
+	.frame { width: 500px; }
+	.label { font-size: 16px;}
 	.pie {
-		.inner { display: inline-block; padding: 8px; border: 1.5px solid $colorBorderDark; border-radius: 100%; width: 64px; height: 64px; }
+		.inner { display: inline-block; padding: 8px; border: 1px solid #5C5A54; border-radius: 100%; width: 64px; height: 64px; }
 	}
 
-	.row {
-		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative;
-		@include text-paragraph; line-height: 28px;
-	}
-	.row.red { color: $colorRed; }
+	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0; margin: 16px;}
+	.button { color: #CBC9BD }
+	.button.outlined { border: 1px solid #5C5A54; }
+	.remove { color: $colorRed; font-weight: 500; font-size: 16px; cursor: pointer; }
 }

@@ -3,9 +3,9 @@ const { is } = require('electron-util');
 const log = require('electron-log');
 const path = require('path');
 const fs = require('fs');
+const sanitize = require('sanitize-filename');
 const protocol = 'anytype';
 const userPath = app.getPath('userData');
-
 const ConfigManager = require('./config.js');
 
 log.transports.rendererConsole.level = 'error';
@@ -109,11 +109,9 @@ class Util {
 	};
 
 	printHtml (win, exportPath, name, options) {
-		name = String(name || 'untitled').replace(/[^\w -_]/gi, '-').toLowerCase();
-
 		const fn = `${name}_files`;
 		const filesPath = path.join(exportPath, fn);
-		const exportName = path.join(exportPath, name);
+		const exportName = path.join(exportPath, this.fileName(name));
 
 		win.webContents.savePage(exportName, 'HTMLComplete').then(() => {
 			let content = fs.readFileSync(exportName, 'utf8');
@@ -175,10 +173,8 @@ class Util {
 	};
 
 	printPdf (win, exportPath, name, options) {
-		name = String(name || 'untitled').replace(/[^\w -_]/gi, ' ').trim();
-
 		win.webContents.printToPDF(options).then(data => {
-			fs.writeFile(path.join(exportPath, name), data, (error) => {
+			fs.writeFile(path.join(exportPath, this.fileName(name)), data, (error) => {
 				if (error) throw error;
 
 				shell.openPath(exportPath).catch(err => {
@@ -192,6 +188,11 @@ class Util {
 			this.log('info', err);
 		});
 	};
+
+	fileName (name) {
+		return sanitize(String(name || 'untitled').trim());
+	};
+
 };
 
 module.exports = new Util();

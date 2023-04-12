@@ -98,7 +98,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					<div id="sideLeft" className="side left">
 						<div 
 							id="view-selector"
-							className="viewSelect select"
+							className="viewSelect viewItem select"
 							onClick={(e: any) => { this.onButton(e, `#block-${block.id} #view-selector`, 'dataviewViewList'); }}
 							onContextMenu={(e: any) => { this.onViewEdit(e, `#block-${block.id} #view-selector`, view); }}
 						>

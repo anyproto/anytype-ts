@@ -33,7 +33,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 		};
 
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && relation && !relation.isReadonlyValue;
-		const isDeleted = !relation || !relation.isInstalled;
+		const isDeleted = !relation;
 
 		if (isDeleted) {
 			cn.push('isDeleted');

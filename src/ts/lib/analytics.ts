@@ -205,6 +205,12 @@ class Analytics {
 				break;
 			};
 
+			case 'Export': {
+				data.type = Number(data.type) || 0;
+				data.type = I.ExportType[data.type];
+				break;
+			};
+
 			case 'Import': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ImportType[data.type];
