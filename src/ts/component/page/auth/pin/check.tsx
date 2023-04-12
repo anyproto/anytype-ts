@@ -10,7 +10,7 @@ interface State {
 
 const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component<I.PageComponent, State> {
 	
-	ref: any = null;
+	ref = null;
 	state = {
 		error: ''
 	};
@@ -37,7 +37,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 
 					<Pin 
 						ref={ref => { this.ref = ref; }}
-						value={Storage.get('pin')} 
+						expectedPin={Storage.get('pin')} 
 						onSuccess={this.onSuccess} 
 						onError={() => { this.setState({ error: translate('authPinCheckError') }) }} 
 					/>

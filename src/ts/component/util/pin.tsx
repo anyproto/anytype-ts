@@ -5,52 +5,62 @@ import { keyboard } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props {
-	size?: number;
-	value?: string;
-	focus?: boolean;
+	/** the length of the pin, defaults to Constant.pinLength */
+	pinLength: number;
+	/** the expected pin, encrypted in sha1. if none provided, this component does not make a comparison onPinEntry */
+	expectedPin: string | null;
+	/** if true, the input field will be focused on component mount */
+	focusOnMount: boolean;
+	/** callback when the pin is entered (and matches expectedPin if provided)*/
 	onSuccess?: (value: string) => void;
+	/** callback when the pin is entered (and does not match expectedPin if provided)*/
 	onError?: () => void;
 };
 
+type State = {
+	/** index of the current pin character in focus */
+	index: number;
+}
 
-class Pin extends React.Component<Props> {
+
+/**
+ * This component provides an input field for a pin code
+ */
+class Pin extends React.Component<Props, State> {
 
 	public static defaultProps = {
-		size: Constant.pinSize,
-		focus: true,
-		value: '',
+		pinLength: Constant.pinLength,
+		expectedPin: null,
+		focusOnMount: true,
 	};
 
-	n = 0;
-	refObj = {};
+	state = {
+		index: 0,
+	}
+
+	inputRefs = [];
+
+	// This timeout is used so that the input boxes first show the inputted value as text, then hides it as password showing (•)
 	timeout = 0;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onClick = this.onClick.bind(this);
-	};
+	TIMEOUT_DURATION = 150; // ms
 
 	render () {
-		const { size } = this.props;
-		const inputs = [];
-
-		for (let i = 1; i <= size; ++i) {
-			inputs.push({ id: i });
-		};
+		const { pinLength } = this.props;
+		const { index } = this.state;
 
 		return (
 			<div className="pin" onClick={this.onClick}>
-				{inputs.map((item, i) => (
+				{Array(pinLength).fill(null).map((_, i) => (
 					<Input 
-						ref={ref => this.refObj[item.id] = ref} 
+						className={i === index ? 'active' : ''}
+						ref={ref => this.inputRefs[i] = ref} 
 						maxLength={1} 
 						key={i} 
-						onFocus={e => this.onFocus(e, item.id)} 
-						onBlur={e => this.onBlur(e, item.id)} 
-						onKeyUp={this.onKeyUp} 
-						onKeyDown={e => this.onKeyDown(e, item.id)} 
-						onChange={(e, value) => this.onChange(e, item.id, value)} 
+						onFocus={() => this.onInputFocus(i)} 
+						onBlur={() => this.onInputBlur(i)} 
+						onKeyUp={this.onInputKeyUp} 
+						onKeyDown={e => this.onInputKeyDown(e, i)} 
+						onChange={(_, value) => this.onInputChange(i, value)} 
 					/>
 				))}
 			</div>
@@ -58,7 +68,9 @@ class Pin extends React.Component<Props> {
 	};
 
 	componentDidMount () {
-		this.init();
+		if (this.props.focusOnMount) {
+			this.focus();
+		};
 		this.rebind();
 	};
 
@@ -67,40 +79,63 @@ class Pin extends React.Component<Props> {
 		this.unbind();
 	};
 
-	init () {
-		if (this.props.focus) {
-			this.focus();
-		};
-	};
-
-	rebind () {
+	rebind = () => {
 		this.unbind();
 		$(window).on('mousedown.pin', e => { e.preventDefault(); });
 	};
 
-	unbind () {
+	unbind = () => {
 		$(window).off('mousedown.pin');
 	}; 
 
-	focus () {
-		this.refObj[(this.n || 1)].focus();
+	focus = () => {
+		this.inputRefs[this.state.index].focus();
 	};
 
-	onClick () {
+	onClick = () => {
 		this.focus();
 	};
 
-	onFocus (e, id: number) {
-		this.n = id;
-		this.refObj[id].addClass('active');
+	/** triggers when all the pin characters have been entered in, resetting state and calling callbacks */
+	onPinEntry = () => {
+		const { expectedPin, onSuccess, onError } = this.props;
+		const pin = this.getPin();
+
+		const success = !expectedPin || (expectedPin === sha1(pin));
+
+		// Reset State
+		this.setState({ index: 0 }, () => {
+			this.clearPin();
+			this.focus();	
+		})
+
+		success ? onSuccess(pin) : onError();
 	};
 
-	onBlur (e, id: number) {
-		this.refObj[id].removeClass('active');
+	/** returns the pin state stored in the input DOM */
+	getPin = () => {
+		return this.inputRefs.map((input) => input.getValue()).join('');
 	};
 
-	onKeyDown (e, id: number) {
-		const prev = this.refObj[id - 1];
+	/** sets all the input boxes to empty string */
+	clearPin = () => {
+		for (const i in this.inputRefs) {
+			this.inputRefs[i].setValue('');
+		};
+	};
+
+	// Input Subcomponent Methods Below
+
+	onInputFocus = (index: number) => {
+		this.setState({ index });
+	};
+
+	onInputBlur = (index: number) => {
+		this.inputRefs[index].removeClass('active');
+	};
+
+	onInputKeyDown = (e, index: number) => {
+		const prev = this.inputRefs[index - 1];
 
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
@@ -111,59 +146,30 @@ class Pin extends React.Component<Props> {
 		};
 	};
 
-	onKeyUp () {
-		const { size } = this.props;
-		const pin = this.get();
+	onInputKeyUp = () => {
+		const { pinLength: size } = this.props;
+		const pin = this.getPin();
 
 		if (pin.length === size) {
-			this.onFill();
+			this.onPinEntry();
 		};
 	};
 
-	onChange (e, id: number, value: string) {
-		const input = this.refObj[id];
-		const next = this.refObj[id + 1];
-		
-		if (value) {
-			if (next) {
-				next.focus();
-			};
-			this.timeout = window.setTimeout(() => { input.setType('password'); }, 150);
-		} else {
+	onInputChange = (index: number, value: string) => {
+		const input = this.inputRefs[index];
+		const next = this.inputRefs[index + 1];
+
+		if (!value) {
 			input.setType('text');
+			return;
+		}
+
+		if (next) {
+			next.focus();
 		};
-	};
 
-	onFill () {
-		const { value, onSuccess, onError } = this.props;
-		const pin = this.get();
-
-		if (!value || (value == sha1(pin))) {
-			onSuccess(pin);
-		} else {
-			this.n = 1;
-			this.clear();
-			this.init();
-			this.focus();
-
-			onError();
-		};
-	};
-
-	get () {
-		const c: string[] = [];
-		for (const i in this.refObj) {
-			c.push(this.refObj[i].getValue());
-		};
-		return c.join('');
-	};
-
-	clear () {
-		for (const i in this.refObj) {
-			this.refObj[i].setValue('');
-		};
-	};
-	
+		this.timeout = window.setTimeout(() => input.setType('password'), this.TIMEOUT_DURATION);
+	};	
 };
 
 export default Pin;
