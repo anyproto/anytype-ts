@@ -82,7 +82,9 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 					</div>
 
 					<div className="days">
-						{days.map((item, i) => <div key={i} className="day th">{item.name.substr(0, 2)}</div>)}
+						{days.map((item, i) => {
+							return <div key={i} className="day th">{item.name.substr(0, 2)}</div>;
+						})}
 					</div>
 				</div>
 				<div className="body">
