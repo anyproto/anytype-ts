@@ -7,7 +7,7 @@
 		.editorControls { margin-bottom: 8px; }
 
 		.headSimple {
-			.name { -webkit-user-modify: read-only; }
+			.title { -webkit-user-modify: read-only; }
 			.descr { -webkit-user-modify: read-only; }
 			.descr:empty { display: none; }
 		}

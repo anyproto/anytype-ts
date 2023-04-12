@@ -11,7 +11,10 @@ interface Props {
 	onCreate?: () => void;
 };
 
-const EDITOR_IDS = [ 'name', 'description' ];
+const EDITORS = [ 
+	{ relationKey: 'name', blockId: 'title' }, 
+	{ relationKey: 'description', blockId: 'description' },
+];
 
 const HeadSimple = observer(class Controls extends React.Component<Props> {
 	
@@ -110,7 +113,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		return (
 			<div ref={node => this.node = node} className={cn.join(' ')}>
 				<div className="side left">
-					<div className="nameWrap">
+					<div className="titleWrap">
 						{check.withIcon ? (
 							<IconObject 
 								id={'block-icon-' + rootId} 
@@ -123,7 +126,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								onUpload={this.onUpload} 
 							/>
 						) : ''}
-						<Editor className="name" id="name" />
+						<Editor className="title" id="title" />
 					</div>
 
 					{descr}
@@ -148,8 +151,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		this.setValue();
 
-		for (let id of EDITOR_IDS) {
-			this.placeholderCheck(id);
+		for (let item of EDITORS) {
+			this.placeholderCheck(item.blockId);
 		};
 
 		if (!focused && !object._empty_ && (object.name == DataUtil.defaultName('page'))) {
@@ -210,8 +213,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	save () {
 		const { rootId } = this.props;
-		for (let id of EDITOR_IDS) {
-			DataUtil.blockSetText(rootId, id, this.getValue(id), [], true);
+
+		for (const item of EDITORS) {
+			DataUtil.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
 		};
 	};
 
@@ -227,17 +231,17 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId);
 
-		for (let id of EDITOR_IDS) {
-			if (!this.refEditable[id]) {
+		for (const item of EDITORS) {
+			if (!this.refEditable[item.blockId]) {
 				continue;
 			};
 
-			let text = object[id];
+			let text = object[item.relationKey];
 			if (text == DataUtil.defaultName('page')) {
 				text = '';
 			};
 
-			this.refEditable[id].setValue(text);
+			this.refEditable[item.blockId].setValue(text);
 		};
 	};
 
