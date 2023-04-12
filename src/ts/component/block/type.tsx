@@ -241,6 +241,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				historyPopup.clear();
 			};
 
+			keyboard.disableClose(true);
 			ObjectUtil.openAuto({ id: rootId, layout });
 
 			analytics.event('CreateObject', {

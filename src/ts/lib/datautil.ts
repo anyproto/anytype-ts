@@ -682,6 +682,9 @@ class DataUtil {
 			Constant.typeId.option,
 			Constant.typeId.dashboard,
 			Constant.typeId.date,
+
+			Constant.storeTypeId.type,
+			Constant.storeTypeId.relation,
 		];
 	};
 

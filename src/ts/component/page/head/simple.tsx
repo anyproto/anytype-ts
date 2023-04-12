@@ -11,7 +11,7 @@ interface Props {
 	onCreate?: () => void;
 };
 
-const EDITOR_IDS = [ 'title', 'description' ];
+const EDITOR_IDS = [ 'name', 'description' ];
 
 const HeadSimple = observer(class Controls extends React.Component<Props> {
 	
@@ -50,6 +50,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		if (object.type == Constant.typeId.relation) {
 			canEditIcon = false;
 		};
+
+		console.log(object);
 
 		const Editor = (item: any) => {
 			return (
@@ -110,7 +112,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		return (
 			<div ref={node => this.node = node} className={cn.join(' ')}>
 				<div className="side left">
-					<div className="titleWrap">
+					<div className="nameWrap">
 						{check.withIcon ? (
 							<IconObject 
 								id={'block-icon-' + rootId} 
@@ -123,7 +125,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 								onUpload={this.onUpload} 
 							/>
 						) : ''}
-						<Editor className="title" id="title" />
+						<Editor className="name" id="name" />
 					</div>
 
 					{descr}
@@ -144,7 +146,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 	componentDidUpdate () {
 		const { focused } = focus.state;
 		const { rootId } = this.props;
-		const object = detailStore.get(rootId, rootId, []);
+		const object = detailStore.get(rootId, rootId);
 
 		this.setValue();
 
@@ -225,14 +227,14 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	setValue () {
 		const { rootId } = this.props;
+		const object = detailStore.get(rootId, rootId);
 
 		for (let id of EDITOR_IDS) {
-			const block = blockStore.getLeaf(rootId, id);
-			if (!block || !this.refEditable[id]) {
+			if (!this.refEditable[id]) {
 				continue;
 			};
 
-			let text = block.content.text;
+			let text = object[id];
 			if (text == DataUtil.defaultName('page')) {
 				text = '';
 			};

@@ -5,16 +5,16 @@
 
 	.side.left { width: 100%; flex-grow: 1; display: flex; flex-direction: column; gap: 6px 0px; }
 	.side.left {
-		.titleWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: stretch; }
-		.titleWrap {
-			.iconObject { flex-shrink: 0; }
+		.nameWrap { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: stretch; }
+		.nameWrap {
+			> .iconObject { flex-shrink: 0; }
+			> .name { @include text-header1; }
 		}
 
 		.editableWrap { flex-grow: 1; }
 		.editable { -webkit-user-modify: read-write-plaintext-only; z-index: 1; position: relative;  word-break: break-word; cursor: text; }
-
-		.title { @include text-header1; }
-		.descr { @include text-paragraph; }
+		
+		> .descr { @include text-paragraph; }
 	}
 
 	.side.right { flex-shrink: 0; text-align: right; }
