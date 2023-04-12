@@ -91,6 +91,7 @@
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget #value { min-height: 1em; cursor: text !important; user-select: text !important; }
 	.block.blockText.isReadonly > .wrapContent > .selectable > .dropTarget #placeholder { display: none; }
 	.block.blockText.isReadonly.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
+	.block.blockText.isReadonly.block.blockText.textDescription > .wrapContent > .selectable > .dropTarget #value { min-height: 26px; }
 
 	/* IsChecked */
 
