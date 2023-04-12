@@ -20,13 +20,6 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 		error: '',
 	};
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onCheckPin = this.onCheckPin.bind(this);
-		this.onError = this.onError.bind(this);
-	};
-
 	render () {
 		const { error } = this.state;
 		const pin = Storage.get('pin');
@@ -35,13 +28,13 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 			<React.Fragment>
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinVerify')} />
-				<Pin value={pin} onSuccess={this.onCheckPin} onError={this.onError} />
+				<Pin expectedPin={pin} onSuccess={this.onCheckPin} onError={this.onError} />
 				<Error text={error} />
 			</React.Fragment>
 		);
 	};
 
-	onCheckPin (pin: string) {
+	onCheckPin = () => {
 		const { onPage, setConfirmPin, onConfirmPin } = this.props;
 
 		onPage('pinSelect');
@@ -54,7 +47,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 		this.setState({ error: '' });
 	};
 
-	onError () {
+	onError = () => {
 		this.setState({ error: translate('popupSettingsPinError') });
 	};
 
