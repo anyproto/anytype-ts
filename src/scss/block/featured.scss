@@ -57,6 +57,7 @@
 
 	.block.blockFeatured.align0 {
 		.cell.first { margin-left: -6px; }
+		.cell.first .bullet { display: none; }
 	}
 
 	.block.blockFeatured.small { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }
