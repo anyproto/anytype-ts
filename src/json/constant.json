@@ -1,6 +1,6 @@
 {
 	"server": "http://127.0.0.1:31008",
-	"pinSize": 6,
+	"pinLength": 6,
 	"sentry": "https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3",
 	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
 	"protocol": "anytype",
@@ -72,71 +72,6 @@
 
 	"popupPinIds": [ "search" ],
 
-	"systemRelationKeys": [ 
-		"id", 
-		"name", 
-		"description", 
-		"snippet",
-		"type", 
-		"featuredRelations",
-		"workspaceId",
-		"done", 
-		"links", 
-		"internalFlags", 
-		"restrictions",
-		"oldAnytypeID",
-
-		"spaceDashboardId",
-		"spaceAccessibility",
-
-		"source",
-		"sourceObject", 
-
-		"setOf", 
-		"targetObjectType",
-		"recommendedRelations",
-		"recommendedLayout",
-		"templateIsBundled",
-
-		"layout",
-		"layoutAlign",
-
-		"creator",
-		"createdDate",
-		"lastOpenedDate", 
-		"lastModifiedBy",
-		"lastModifiedDate",
-		"addedDate",
-
-		"iconEmoji", 
-		"iconImage",
-		"iconOption",
-		
-		"coverId", 
-		"coverType", 
-		"coverScale", 
-		"coverX", 
-		"coverY", 
-
-		"fileExt", 
-		"fileMimeType", 
-		"sizeInBytes",
-
-		"isHidden", 
-		"isArchived",
-		"isDeleted",
-		"isFavorite",
-		"isReadonly",
-
-		"relationKey", 
-		"relationFormat",
-		"relationMaxCount", 
-		"relationReadonlyValue", 
-		"relationDefaultValue", 
-		"relationFormatObjectTypes",
-		"relationOptionColor"
-	],
-
 	"defaultRelationKeys": [ 
 		"id", "workspaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
 		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions"
@@ -155,7 +90,7 @@
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
 	"typeRelationKeys":		 [ "recommendedRelations", "sourceObject" ],
-	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
+	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 
 	"subId": {
 		"index": "index",

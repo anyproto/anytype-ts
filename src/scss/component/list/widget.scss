@@ -1,5 +1,15 @@
 @import "~scss/_vars";
 
+@keyframes shake1 {
+	0% { transform: rotate(-0.5deg); }
+	100% { transform: rotate(0.5deg); }
+}
+
+@keyframes shake2 {
+	0% { transform: rotate(0.5deg); }
+	100% { transform: rotate(-0.5deg); }
+}
+
 .listWidget { display: flex; flex-direction: column; gap: 12px 0px; }
 .listWidget {
 	> .buttons { display: flex; justify-content: center; width: 100%; gap: 0px 8px; }
@@ -21,19 +31,30 @@
 .listWidget.isEditing {
 	> .buttons { position: fixed; bottom: 0px; left: 0px; padding: 16px; }
 	
+	.widget:not(.isEditable) { opacity: 0.5; }
+	.widget:not(.isEditable) {
+		.dimmer { cursor: default; }
+	}
+
 	.widget {
-		.head { cursor: grab; }
 		.icon.remove { display: block; }
 	}
 	.widget {
 		.dimmer { display: block; }
 	}
 
-	.widget.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 2px; width: 100%; border-radius: 2px; left: 0px; } 
-	.widget.isOver.top::before { top: -7px; }
-	.widget.isOver.bottom::before { bottom: -7px; }
+	.widget.widgetSpace:hover {
+		.side.left { width: 100%; }
+		.side.right { display: none; }
+	}
 
-	.widget.button { cursor: default; }
+	.widget.isEditable:nth-child(2n + 1) { animation: shake1 0.2s linear infinite alternate; }
+	.widget.isEditable:nth-child(2n + 2) { animation: shake2 0.2s linear infinite alternate; }
+	.widget.isEditable.isOver::before { content: ""; position: absolute; background: $colorOrange; height: 2px; width: 100%; border-radius: 2px; left: 0px; } 
+	.widget.isEditable.isOver.top::before { top: -7px; }
+	.widget.isEditable.isOver.bottom::before { bottom: -7px; }
+
+	.widget.button { cursor: default; animation: none; }
 }
 
 .listWidget.isListPreview { overflow: hidden; height: 100%; }

@@ -215,7 +215,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const relation = this.getRelation();
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const allowed = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
-		const canDelete = allowed && Constant.systemRelationKeys.indexOf(relation.relationKey) < 0;
+		const canDelete = allowed && DataUtil.getSystemRelationKeys().indexOf(relation.relationKey) < 0;
 		const canFilter = !isFile;
 		const canSort = !isFile;
 		const canHide = relation && (relation.relationKey != 'name');
@@ -414,7 +414,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { param } = this.props;
+		const { param, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
 
@@ -432,7 +432,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		this.menuOpen('dataviewObjectValues', { 
 			element: `#${getId()} #item-object-type`,
 			className: 'single',
-			width: 256,
+			width: getSize().width,
 			data: {
 				rootId,
 				blockId,

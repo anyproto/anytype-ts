@@ -13,9 +13,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {
 
 const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportProtobuf extends React.Component<Props> {
 
-	zip = false;
-	nested = false;
-	files = false;
+	data: any = {};
 
 	render () {
 		const { onExport } = this.props;
@@ -23,6 +21,7 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 			{ id: 'zip', name: 'Zip archive', control: 'switch' },
 			{ id: 'nested', name: 'Include linked objects', control: 'switch' },
 			{ id: 'files', name: 'Include files', control: 'switch' },
+			{ id: 'archived', name: 'Include archived objects', control: 'switch' },
 		];
 
 		this.init();
@@ -42,9 +41,9 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 							<div className="side right">
 								<Switch
 									className="big"
-									value={this[item.id]}
+									value={this.data[item.id]}
 									onChange={(e: any, v: boolean) => {
-										this[item.id] = v;
+										this.data[item.id] = v;
 										this.save();
 									}}
 								/>
@@ -57,7 +56,7 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 					<Button 
 						text={translate('popupSettingsExportOk')} 
 						className="c36"
-						onClick={() => { onExport(I.ExportType.Protobuf, { zip: this.zip, nested: this.nested, files: this.files }); }} 
+						onClick={() => { onExport(I.ExportType.Protobuf, this.data); }} 
 					/>
 				</div>
 			</React.Fragment>
@@ -69,15 +68,11 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 	};
 
 	init () {
-		const options = Storage.get('popupExport') || {};
-
-		this.zip = Boolean(options.zip);
-		this.nested = Boolean(options.nested);
-		this.files = Boolean(options.files);
+		this.data = Storage.get('popupExport') || {};
 	};
 
 	save () {
-		Storage.set('popupExport', { zip: this.zip, nested: this.nested, files: this.files });
+		Storage.set('popupExport', this.data);
 	};
 
 });

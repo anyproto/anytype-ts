@@ -32,7 +32,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 	};
 	
 	render () {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { readonly, rootId, blockId } = data;
 		const items = this.getItems();
@@ -141,7 +141,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => $(this.node).find('.items').get(0)}
+					helperContainer={() => $(`#${getId()} .items`).get(0)}
 				/>
 
 				{!readonly && allowedView ? (

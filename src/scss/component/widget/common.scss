@@ -14,7 +14,7 @@
 			.name { @include text-paragraph; @include text-overflow-nw; line-height: 24px; font-weight: 600; flex-grow: 1; }
 		}
 
-		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 		.iconWrap:hover { background-color: $colorHover; }
 		.iconWrap.active { opacity: 1; background-color: $colorHover; }
 

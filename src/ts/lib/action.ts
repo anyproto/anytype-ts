@@ -203,19 +203,19 @@ class Action {
 		});
 	};
 
-	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		this.openDir(paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};
 
-			C.ObjectListExport(paths[0], ids, format, zip, nested, files, false, false, false, (message: any) => {
+			C.ObjectListExport(paths[0], ids, format, zip, nested, files, archived, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
 				Renderer.send('pathOpen', paths[0]);
-				analytics.event('Export' + I.ExportType[format], { middleTime: message.middleTime });
+				analytics.event('Export', { type: format, middleTime: message.middleTime });
 
 				if (callBack) {
 					callBack(message);
@@ -224,7 +224,7 @@ class Action {
 		});
 	};
 
-	install (object: any, callBack?: (message: any) => void) {
+	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
 		C.WorkspaceObjectAdd(object.id, (message: any) => {
 			if (message.error.code) {
 				return;
@@ -236,25 +236,30 @@ class Action {
 
 			let { details } = message;
 			let toast = '';
+			let subId = '';
 
 			switch (object.type) {
 				case Constant.storeTypeId.type:
 					toast = `Object type <b>${object.name}</b> has been added to your library`;
+					subId = Constant.subId.type;
 					break;
 
 				case Constant.storeTypeId.relation:
 					toast = `Relation <b>${object.name}</b> has been added to your library`;
-
-					detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
+					subId = Constant.subId.relation;
 					break;
 			};
 
-			Preview.toastShow({ text: toast });
+			if (showToast) {
+				Preview.toastShow({ text: toast });
+			};
+
+			detailStore.update(subId, { id: details.id, details }, false);
 			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
 		});
 	};
 
-	uninstall (object: any, callBack?: (message: any) => void) {
+	uninstall (object: any, showToast: boolean, callBack?: (message: any) => void) {
 		let title = '';
 		let text = '';
 		let toast = '';
@@ -289,7 +294,9 @@ class Action {
 							callBack(message);
 						};
 
-						Preview.toastShow({ text: toast });
+						if (showToast) {
+							Preview.toastShow({ text: toast });
+						};
 						analytics.event('ObjectUninstall', { objectType: object.type, count: 1 });
 					});
 				},

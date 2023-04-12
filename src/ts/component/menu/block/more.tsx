@@ -528,13 +528,13 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'pageInstall':
-				Action.install(object, (message: any) => {
+				Action.install(object, false, (message: any) => {
 					ObjectUtil.openAuto(message.details);
 				});
 				break;
 
 			case 'pageUninstall':
-				Action.uninstall(object, () => { onBack(); });
+				Action.uninstall(object, false, () => { onBack(); });
 				break;
 
 			case 'fav':

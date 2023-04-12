@@ -171,4 +171,11 @@
     .popup.popupExport {
         .row { border-color: $colorLinePrimary; }
     }
+
+	/* PopupMigration */
+
+	.popup.popupMigration {
+		.qrWrap { background-color: $colorBgLight; }
+	}
+
 }

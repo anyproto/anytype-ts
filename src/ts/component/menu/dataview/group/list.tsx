@@ -31,7 +31,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 	};
 	
 	render () {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { readonly, rootId, blockId, getView } = data;
 		const items = this.getItems();
@@ -105,38 +105,36 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 			);
 		};
 		
-		const List = SortableContainer((item: any) => {
-			return (
-				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => true}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<VList
-										ref={ref => { this.refList = ref; }}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										onScroll={this.onScroll}
-										scrollToAlignment="center"
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
-			);
-		});
+		const List = SortableContainer(() => (
+			<div className="items">
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={() => true}
+					threshold={LIMIT}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<VList
+									ref={ref => { this.refList = ref; }}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={HEIGHT}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={LIMIT}
+									onScroll={this.onScroll}
+									scrollToAlignment="center"
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			</div>
+		));
 		
 		return (
 			<div className="wrap">
@@ -150,7 +148,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => $(this.node).find('.items').get(0)}
+					helperContainer={() => $(`#${getId()} .items`).get(0)}
 				/>
 			</div>
 		);

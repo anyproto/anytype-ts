@@ -661,6 +661,10 @@ class DataUtil {
 		return this.getFileTypes().includes(type);
 	};
 
+	getSystemRelationKeys () {
+		return require('lib/json/systemRelations.json');
+	};
+
 	getFileTypes () {
 		return [
 			Constant.typeId.file, 
@@ -941,6 +945,10 @@ class DataUtil {
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
 			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
 		];
+	};
+
+	getPercentage (num: number, percent: number) {
+		return Number(((num / 100) * percent).toFixed(3));
 	};
 
 };

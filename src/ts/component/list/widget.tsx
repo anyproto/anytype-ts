@@ -124,6 +124,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 							key={`widget-${block.id}`}
 							block={block}
 							isEditing={isEditing}
+							className="isEditable"
 							onDragStart={this.onDragStart}
 							onDragOver={this.onDragOver}
 							setPreview={this.setPreview}

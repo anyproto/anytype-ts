@@ -321,7 +321,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 		this.setValue(value);
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
+		keyboard.shortcut('enter, escape', e, () => {
 			e.preventDefault();
 
 			if (onChange) {

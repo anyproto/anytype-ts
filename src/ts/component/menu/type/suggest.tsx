@@ -450,7 +450,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			if (item.isInstalled || noInstall) {
 				cb(item);
 			} else {
-				Action.install(item, (message: any) => { cb(message.details); });
+				Action.install(item, true, (message: any) => { cb(message.details); });
 			};
 		};
 	};
