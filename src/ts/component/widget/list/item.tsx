@@ -2,7 +2,8 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget } from 'Component';
 import { blockStore, menuStore, detailStore } from 'Store';
-import { I, ObjectUtil, keyboard, analytics } from 'Lib';
+import { I, Util, ObjectUtil, keyboard, analytics } from 'Lib';
+import Constant from 'json/constant.json';
 
 type Props = {
 	block: I.Block;
@@ -19,16 +20,27 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	render () {
 		const { subId, id, block, isEditing, style } = this.props;
 		const rootId = keyboard.getRootId();
-		const object = detailStore.get(subId, id);
+		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const iconSize = [ I.ObjectLayout.Task, I.ObjectLayout.Bookmark ].includes(object.layout) ? 20 : 28;
 		const canDrop = !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+
+		let descr = null;
+		if (object.type == Constant.typeId.bookmark) {
+			descr = (
+				<div className="descr">
+					{Util.shortUrl(object.source)}
+				</div>
+			);
+		} else {
+			descr = <ObjectDescription object={object} />;
+		};
 
 		let inner = (
 			<div className="inner">
 				<IconObject object={object} size={48} iconSize={iconSize} />
 				<div className="info">
 					<ObjectName object={object} />
-					<ObjectDescription object={object} />
+					{descr}
 				</div>
 				<div className="buttons">
 					<Icon className="more" tooltip="Options" onClick={(e) => this.onContext(e, true)} />

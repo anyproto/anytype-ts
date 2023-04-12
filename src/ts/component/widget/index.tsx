@@ -15,6 +15,7 @@ interface Props extends I.WidgetComponent {
 	icon?: string;
 	disableContextMenu?: boolean;
 	isPreview?: boolean;
+	className?: string;
 	onDragStart?: (e: React.MouseEvent, blockId: string) => void;
 	onDragOver?: (e: React.MouseEvent, blockId: string) => void;
 };
@@ -43,12 +44,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	render (): React.ReactNode {
 		const { loading } = this.state;
-		const { block, isPreview, isEditing, onDragStart, onDragOver, setPreview } = this.props;
+		const { block, isPreview, isEditing, className, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
 		const { layout } = block.content;
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget', Util.toCamelCase('widget-' + I.WidgetLayout[layout]) ];
 		const object = this.getObject();
+		const platform = Util.getPlatform();
+		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || (platform != I.Platform.Mac));
+		const key = `widget-${block.id}`;
 		const props = {
 			...this.props,
 			parent: block,
@@ -56,10 +60,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			isCollection: this.isCollection,
 			getData: this.getData,
 		};
-		const key = `widget-${block.id}`;
+
+		if (className) {
+			cn.push(className);
+		};
 
 		if (isPreview) {
 			cn.push('isPreview');
+		};
+
+		if (withSelect) {
+			cn.push('withSelect');
 		};
 
 		let icon = null;
@@ -341,7 +352,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	isCollection (blockId: string) {
-		return Object.values(Constant.widgetId).includes(blockId);
+		const target = detailStore.get(blockStore.widgets, blockId);
+
+		return (target.type == Constant.typeId.collection) || Object.values(Constant.widgetId).includes(blockId);
 	};
 
 });

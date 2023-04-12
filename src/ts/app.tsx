@@ -135,6 +135,7 @@ import 'scss/popup/search.scss';
 import 'scss/popup/settings.scss';
 import 'scss/popup/shortcut.scss';
 import 'scss/popup/template.scss';
+import 'scss/popup/migration.scss';
 
 import 'scss/menu/common.scss';
 import 'scss/menu/account.scss';
@@ -645,7 +646,7 @@ class App extends React.Component<object, State> {
 				break;
 
 			case 'save':
-				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true);
+				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true);
 				break;
 
 			case 'exportTemplates':

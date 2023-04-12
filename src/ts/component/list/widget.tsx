@@ -16,7 +16,7 @@ type State = {
 	previewId: string;
 };
 
-const WIDGET_COUNT_LIMIT = 10;
+const LIMIT = 10;
 
 const ListWidget = observer(class ListWidget extends React.Component<Props, State> {
 		
@@ -41,6 +41,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onContextMenu = this.onContextMenu.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 	};
@@ -98,7 +99,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			};
 
 			if (isEditing) {
-				if (blocks.length <= WIDGET_COUNT_LIMIT) {
+				if (blocks.length <= LIMIT) {
 					buttons.push({ id: 'widget-list-add', text: 'Add', onClick: this.addWidget });
 				};
 
@@ -123,6 +124,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 							key={`widget-${block.id}`}
 							block={block}
 							isEditing={isEditing}
+							className="isEditable"
 							onDragStart={this.onDragStart}
 							onDragOver={this.onDragOver}
 							setPreview={this.setPreview}
@@ -162,6 +164,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				className={cn.join(' ')}
 				onDrop={this.onDrop}
 				onScroll={this.onScroll}
+				onContextMenu={this.onContextMenu}
 			>
 				{content}
 			</div>
@@ -276,6 +279,69 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onScroll () {
 		this.top = $(this.node).scrollTop();
+	};
+
+	onContextMenu () {
+		const win = $(window);
+		const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
+		const options: any[] = [
+			{ id: 'edit', name: 'Edit widgets' },
+		];
+
+		if (widgetIds.length < LIMIT) {
+			options.unshift({ id: 'add', name: 'Add widget', arrow: true });
+		};
+
+		let menuContext = null;
+
+		menuStore.open('selectList', {
+			component: 'select',
+			onOpen: (context) => {
+				menuContext = context;
+			},
+			recalcRect: () => { 
+				const { x, y } = keyboard.mouse.page;
+				return { x, y: y + win.scrollTop(), width: 0, height: 0, }; 
+			},
+			subIds: [ 'widget', 'searchObject', 'select' ],
+			data: {
+				options,
+				onOver: (e: any, item: any) => {
+					if (!item.arrow) {
+						menuStore.close('widget');
+						return;
+					};
+
+					const { x, y } = keyboard.mouse.page;
+
+					menuStore.open('widget', {
+						element: `#${menuContext.getId()} #item-${item.id}`,
+						offsetX: menuContext.getSize().width,
+						isSub: true,
+						vertical: I.MenuDirection.Center,
+						data: {
+							coords: { x, y },
+							onSave: () => {
+								menuContext.close();
+							}
+						}
+					});
+				},
+				onSelect: (e: any, item: any) => {
+					if (item.arrow) {
+						return;
+					};
+
+					switch (item.id) {
+						case 'edit': {
+							this.setEditing(true);
+							menuContext.close();
+							break;
+						};
+					};
+				}
+			}
+		});
 	};
 
 	clear () {

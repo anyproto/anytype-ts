@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
+import Colors from 'json/colors.json';
 
 interface Props {
 	isPopup?: boolean;
@@ -13,7 +14,12 @@ interface Props {
 	data: any;
 	onClick?: (object: any) => void;
 	onContextMenu?: (id: string, param: any) => void;
-	onSelect?: (id: string) => void;
+	onSelect?: (id: string, related?: string[]) => void;
+};
+
+const bgColor = {
+	'': '#000',
+	dark: '#fff',
 };
 
 const Graph = observer(class Graph extends React.Component<Props> {
@@ -135,6 +141,12 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
 			this.send(e.shiftKey ? 'onSelect' : 'onClick', { x, y });
+		})
+		.on('dblclick', (e: any) => {
+			if (e.shiftKey) {
+				const [ x, y ] = d3.pointer(e);
+				this.send('onSelect', { x, y, selectRelated: true });
+			};
 		})
 		.on('contextmenu', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
@@ -286,8 +298,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case 'onSelect': {
+				const { related } = data;
 				if (data.node != root) {
-					onSelect(data.node);
+					onSelect(data.node, related);
 				};
 				break;
 			};
@@ -379,7 +392,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				break;
 				
 			case I.ObjectLayout.Human:
-				src = d.iconImage ? commonStore.imageUrl(d.iconImage, 160) : '';
+				if (d.iconImage) {
+					src = commonStore.imageUrl(d.iconImage, 160);
+				} else
+				if (d.iconOption) {
+					src = this.gradientIcon(d.iconOption);
+				};
+
 				break;
 
 			case I.ObjectLayout.Note:
@@ -399,11 +418,56 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						src = SmileUtil.srcFromColons(data.colons, data.skin);
 					};
 					src = src.replace(/^.\//, '');
+				} else
+				if (d.iconOption) {
+					src = this.gradientIcon(d.iconOption, true);
 				};
 				break;
 		};
 
 		return src;
+	};
+
+	gradientIcon (iconOption: number, small?: boolean) {
+		const option: any = Colors.gradientIcons.options[iconOption - 1];
+		if (!option) {
+			return;
+		};
+
+		const { theme } = commonStore;
+		const { from, to } = option.colors;
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+		const w = 160;
+		const r = w / 2;
+		const fillW = small ? w * 0.7 : w;
+		const fillR = fillW / 2;
+
+		let steps = Colors.gradientIcons.common.steps;
+		if (option.steps) {
+			steps = option.steps;
+		};
+
+		const step0 = DataUtil.getPercentage(fillR, Number(steps.from.replace('%', '')));
+		const step1 = DataUtil.getPercentage(fillR, Number(steps.to.replace('%', '')));
+		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
+
+		canvas.width = w;
+		canvas.height = w;
+		grd.addColorStop(0, from);
+		grd.addColorStop(1, to);
+
+		if (small) {
+			ctx.fillStyle = bgColor[theme];
+			ctx.fillRect(0, 0, w, w);
+		};
+
+		ctx.fillStyle = grd;
+		ctx.beginPath();
+		ctx.arc(r, r, fillR, 0, 2 * Math.PI);
+		ctx.fill();
+
+		return canvas.toDataURL();
 	};
 
 	setRootId (id: string) {

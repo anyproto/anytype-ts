@@ -110,8 +110,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		this.oy = e.pageY - offset.top;
 
 		sidebar.resizePage();
+		sidebar.setDragging(true);
 
-		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
 
 		win.off('mousemove.sidebar mouseup.sidebar');
@@ -130,7 +130,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 	onDragEnd (e: React.MouseEvent) {
 		$(window).off('mousemove.sidebar mouseup.sidebar');
-		keyboard.setDragging(false);
+		sidebar.setDragging(false);
 		keyboard.disableSelection(false);
 	};
 

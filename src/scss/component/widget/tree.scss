@@ -7,7 +7,7 @@
 	.item {
 		.inner {
 			display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; cursor: pointer; position: relative;
-			height: 28px; padding: 0px 8px 0px 0px;
+			height: 28px; padding: 0px 8px;
 		}
 		.inner::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorHover; z-index: 1; pointer-events: none;
@@ -17,22 +17,28 @@
 
 		.dropTarget { border-radius: 4px; }
 
-		.iconObject { flex-shrink: 0; flex-basis: 20px; }
-		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: none; }
+		.iconObject { flex-shrink: 0; flex-basis: 20px; margin-right: 6px; }
+
+		.arrowWrap { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: default; }
+		.arrowWrap:hover {
+			.icon.arrow { background-color: $colorHover; }
+		}
+
+		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background 0.2s ease-in-out; border-radius: 4px; cursor: default; }
 		.icon.set { background-image: url('~img/icon/sidebar/set.svg'); }
 		.icon.collection { background-image: url('~img/icon/sidebar/collection.svg'); }
 		.icon.blank { background-image: url('~img/icon/sidebar/blank.svg'); }
-		.icon.arrow { background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); cursor: pointer; }
-
+		.icon.arrow { background-image: url('~img/arrow/select/dark.svg'); transform: rotate(-90deg); }
+		
 		.clickable {
-			flex-grow: 1; display: flex; flex-direction: row; gap: 0px 6px; width: calc(100% - 30px); align-items: center; justify-content: space-between;
+			flex-grow: 1; display: flex; flex-direction: row; width: calc(100% - 30px); align-items: center; justify-content: space-between;
 			cursor: pointer; line-height: 20px;
 		}
 		.name { flex-grow: 1; @include text-overflow-nw; }
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 		.buttons {
-			.icon { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; flex-shrink: 0; background-size: 20px; }
+			.icon { margin: 0px; }
 			.icon:hover { background-color: $colorHover; }
 			.icon.active { opacity: 1; background-color: $colorHover; }
 			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }

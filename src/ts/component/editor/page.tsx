@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
+import { commonStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
 import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
@@ -789,6 +789,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			};
 		};
 
+		if (range.from == range.to) {
+			keyboard.shortcut(`${cmd}+k`, e, () => {
+				keyboard.onSearchPopup();
+			});
+		};
+
 		if (!isInsideTable && block.isText()) {
 			for (const item of styleParam) {
 				let style = null;
@@ -1156,7 +1162,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		const mark = Mark.getInRange(marks, type, range);
-		const el = $(`#block-${block.id}`);
 		const win = $(window);
 
 		if (type == I.MarkType.Link) {
@@ -1172,7 +1177,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 						filter: mark ? mark.param : '',
 						type: mark ? mark.type : null,
 						onChange: (newType: I.MarkType, param: string) => {
-							marks = Mark.toggleLink({ type: newType, param: param, range: range }, marks);
+							marks = Mark.toggleLink({ type: newType, param, range }, marks);
 							DataUtil.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
 						}
 					}
@@ -1588,8 +1593,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		blocks = blocks.map((it: I.Block) => {
 			const element = blockStore.getMapElement(rootId, it.id);
 
-			if (it.isText()) {
+			if (it.type == I.BlockType.Text) {
 				text.push(String(it.content.text || ''));
+			};
+
+			if (it.type == I.BlockType.Dataview) {
+				it.content.views = dbStore.getViews(rootId, it.id);
 			};
 
 			it.childrenIds = element.childrenIds;

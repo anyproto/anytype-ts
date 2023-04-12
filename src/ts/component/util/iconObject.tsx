@@ -4,6 +4,7 @@ import $ from 'jquery';
 import { IconEmoji } from 'Component';
 import { I, Preview, SmileUtil, DataUtil, FileUtil } from 'Lib';
 import { commonStore, menuStore } from 'Store';
+import Colors from 'json/colors.json';
 
 interface Props {
 	id?: string;
@@ -38,6 +39,7 @@ interface Props {
 const IDS40 = [ 
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Set, 
+	I.ObjectLayout.Collection,
 	I.ObjectLayout.File, 
 	I.ObjectLayout.Image, 
 	I.ObjectLayout.Type,
@@ -46,6 +48,7 @@ const IDS40 = [
 const LAYOUT_EMOJI = [ 
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Set, 
+	I.ObjectLayout.Collection,
 	I.ObjectLayout.Type,
 	I.ObjectLayout.Space,
 ];
@@ -202,9 +205,24 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		};
 
 		let onOption = () => {
-			cn.push(`withImage withOption c${iconOption}`);
+			const option: any = Colors.gradientIcons.options[iconOption - 1];
+			const { colors } = option;
+
+			let steps = Colors.gradientIcons.common.steps;
+			if (option.steps) {
+				steps = option.steps;
+			};
+
+			const style = {
+				'--color-from': colors.from,
+				'--color-to': colors.to,
+				'--step-from': steps.from,
+				'--step-to': steps.to
+			} as React.CSSProperties;
+
+			cn.push(`withImage withOption`);
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-			icon = <div></div>;
+			icon = <div className="optionGradient" style={style} />;
 		};
 
 		switch (layout) {

@@ -148,11 +148,13 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 				ref={node => this.node = node}
 				className="innerWrap"
 			>
-				<div id="viewSelect">
-					{viewSelect}
-				</div>
+				{viewSelect ? (
+					<div id="viewSelect">
+						{viewSelect}
+					</div>
+				) : ''}
 				<div id="body" className="body">
-					{loading ? <Loader /> : content}
+					{content}
 				</div>
 			</div>
 		);
@@ -177,6 +179,8 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 		} else {
 			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => { this.resize(); });
 		};
+
+		this.resize();
 	};
 
 	componentDidUpdate (): void {
@@ -225,15 +229,10 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 		const { widgets } = blockStore;
 		const { block, isPreview } = this.props;
 		const { targetBlockId } = block.content;
-		const dataview = blockStore.getLeaf(this.getRootId(), BLOCK_ID);
-		
-		if (!dataview) {
-			return;
-		};
-
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);
-		const isCollection = Dataview.isCollection(targetBlockId, BLOCK_ID);
+		const target = detailStore.get(widgets, targetBlockId);
+		const isCollection = target.type == Constant.typeId.collection;
 
 		if (!setOf.length && !isCollection) {
 			return;
@@ -246,6 +245,7 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			sources: setOf,
 			limit: isPreview ? 0 : Constant.limit.widgetRecords.list,
 			collectionId: (isCollection ? targetBlockId : ''),
+			keys: Constant.sidebarRelationKeys,
 		}, () => {
 			this.resize();
 		});
@@ -269,12 +269,17 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			const viewSelect = node.find('#viewSelect');
 			const inner = viewSelect.find('.inner');
 			const viewItem = viewSelect.find('.viewItem');
-			const maxHeight = $('#listWidget').height() - head.outerHeight(true) - viewSelect.outerHeight(true);
 			const offset = isPreview ? 20 : 8;
+
+			let maxHeight = $('#listWidget').height() - head.outerHeight(true);
+			if (viewSelect.length) {
+				maxHeight -= viewSelect.outerHeight(true);
+			};
+
 			const css: any = { height: Math.min(maxHeight, HEIGHT * length + offset), paddingTop: '', paddingBottom: 8 };
-			
 			if (!length) {
-				css.paddingTop = 8;
+				css.paddingTop = 20;
+				css.paddingBottom = 22;
 				css.height = 36 + css.paddingTop + css.paddingBottom;
 			};
 
