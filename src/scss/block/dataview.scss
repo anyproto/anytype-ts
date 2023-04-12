@@ -77,6 +77,9 @@
 			.editableWrap { color: $colorSecondary; }
 			#head-source-select { display: none; }
 		}
+		.dataviewHead.isCollection {
+			.editableWrap.isEmpty { min-width: 130px; }
+		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
@@ -145,12 +148,9 @@
 			.scrollWrap { background: #fff; padding-bottom: 14px; }
 		}
 
-		.content.isCollection {
-			.dataviewControls { padding-left: 8px; }
-
-			.dataviewControls.viewList {
-				.line { width: 100%; margin: 0px; }
-			}
+		.dataviewControls.isCollection { padding-left: 8px; }
+		.dataviewControls.isCollection.viewList {
+			.line { width: 100%; margin: 0px; }
 		}
 
 		.hoverArea:hover {

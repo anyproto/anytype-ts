@@ -35,15 +35,15 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getRecords, getLimit, getVisibleRelations, getEmpty } = this.props;
+		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getRecords, getLimit, getVisibleRelations, className } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
-		const subId = dbStore.getSubId(rootId, block.id);
 		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
 		const limit = getLimit();
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
+		const cn = [ 'viewContent', className ];
 
 		let content = null;
 
@@ -116,7 +116,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 			>
 				<div id="scroll" className="scroll">
 					<div id="scrollWrap" className="scrollWrap">
-						<div className="viewItem viewGrid">
+						<div className={cn.join(' ')}>
 							<HeadRow 
 								{...this.props} 
 								onCellAdd={this.onCellAdd} 

@@ -102,9 +102,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
-		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]) ].join(' ');
+		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]) ];
 		let head = null;
 		let body = null;
+
+		if (isCollection) {
+			className.push('isCollection');
+		};
 
 		switch (view.type) {
 			default:
@@ -143,6 +147,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isAllowedObject: this.isAllowedObject,
 			isCollection,
 			isInline,
+			className: className.join(' '),
 		};
 
 		const controls = (
@@ -151,14 +156,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					ref={ref => this.refControls = ref} 
 					{...this.props} 
 					{...dataviewProps} 
-					className={className} 
 				/>
 				<Selection 
 					ref={ref => this.refSelect = ref} 
 					{...this.props} 
 					{...dataviewProps} 
 					multiSelectAction={this.multiSelectAction} 
-					className={className} 
 				/>
 			</React.Fragment>
 		);
@@ -171,7 +174,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					{...dataviewProps}
 					onSourceSelect={this.onSourceSelect}
 					onSourceTypeSelect={this.onSourceTypeSelect}
-					className={className}
 				/>
 			);
 		};
@@ -189,7 +191,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			body = this.getEmpty('view');
 		} else {
 			body = (
-				<div className={[ 'content', isCollection ? 'isCollection': '' ].join(' ')}>
+				<div className="content">
 					<ViewComponent 
 						key={'view' + view.id}
 						ref={ref => this.refView = ref} 

@@ -31,7 +31,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, onRecordAdd, getVisibleRelations, getEmpty, getRecords } = this.props;
+		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, getVisibleRelations, getRecords, className } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -41,6 +41,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const limit = getLimit();
 		const length = records.length;
+		const cn = [ 'viewContent', className ];
 
 		// Subscriptions on dependent objects
 		for (let id of records) {
@@ -125,7 +126,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		return (
 			<div className="wrap">
-				<div className="viewItem viewGallery">
+				<div className={cn.join(' ')}>
 					<div className={[ 'galleryWrap', DataUtil.cardSizeClass(cardSize) ].join(' ')}>
 						{content}
 					</div>
