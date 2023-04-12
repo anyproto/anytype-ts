@@ -22,7 +22,7 @@ class Pin extends React.Component<Props> {
 	};
 
 	n = 0;
-	refObj: any = {};
+	refObj = {};
 	timeout = 0;
 
 	constructor (props: Props) {
@@ -41,16 +41,16 @@ class Pin extends React.Component<Props> {
 
 		return (
 			<div className="pin" onClick={this.onClick}>
-				{inputs.map((item: any, i: number) => (
+				{inputs.map((item, i) => (
 					<Input 
 						ref={ref => this.refObj[item.id] = ref} 
 						maxLength={1} 
 						key={i} 
-						onFocus={(e) => { this.onFocus(e, item.id); }} 
-						onBlur={(e) => { this.onBlur(e, item.id); }} 
-						onKeyUp={() => { this.onKeyUp(); }} 
-						onKeyDown={(e: any) => { this.onKeyDown(e, item.id); }} 
-						onChange={(e: any, value: string) => { this.onChange(e, item.id, value); }} 
+						onFocus={e => this.onFocus(e, item.id)} 
+						onBlur={e => this.onBlur(e, item.id)} 
+						onKeyUp={this.onKeyUp} 
+						onKeyDown={e => this.onKeyDown(e, item.id)} 
+						onChange={(e, value) => this.onChange(e, item.id, value)} 
 					/>
 				))}
 			</div>
@@ -75,7 +75,7 @@ class Pin extends React.Component<Props> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('mousedown.pin', (e: any) => { e.preventDefault(); });
+		$(window).on('mousedown.pin', e => { e.preventDefault(); });
 	};
 
 	unbind () {
@@ -90,16 +90,16 @@ class Pin extends React.Component<Props> {
 		this.focus();
 	};
 
-	onFocus (e: any, id: number) {
+	onFocus (e, id: number) {
 		this.n = id;
 		this.refObj[id].addClass('active');
 	};
 
-	onBlur (e: any, id: number) {
+	onBlur (e, id: number) {
 		this.refObj[id].removeClass('active');
 	};
 
-	onKeyDown (e: any, id: number) {
+	onKeyDown (e, id: number) {
 		const prev = this.refObj[id - 1];
 
 		if (prev) {
@@ -115,12 +115,12 @@ class Pin extends React.Component<Props> {
 		const { size } = this.props;
 		const pin = this.get();
 
-		if (pin.length == size) {
+		if (pin.length === size) {
 			this.onFill();
 		};
 	};
 
-	onChange (e: any, id: number, value: string) {
+	onChange (e, id: number, value: string) {
 		const input = this.refObj[id];
 		const next = this.refObj[id + 1];
 		

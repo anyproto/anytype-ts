@@ -5,7 +5,7 @@ import sha1 from 'sha1';
 import { Title, Label, Pin } from 'Component';
 import { I, Storage, translate } from 'Lib';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
+interface Props extends I.Popup, RouteComponentProps {
 	prevPage: string;
 	onPage: (id: string) => void;
 };

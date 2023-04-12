@@ -41,7 +41,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 		);
 	};
 
-	onCheckPin (pin: string) {
+	onCheckPin () {
 		const { onPage, setConfirmPin, onConfirmPin } = this.props;
 
 		onPage('pinSelect');
