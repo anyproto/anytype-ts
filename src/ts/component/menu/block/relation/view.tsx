@@ -56,12 +56,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
 						const id = Relation.cellId(PREFIX, item.relationKey, '0');
-						
-						let canFav = allowedValue;
-						if (([ I.ObjectLayout.Set ].indexOf(object.layout) >= 0) && (item.relationKey == 'description')) {
-							canFav = false;
-						};
-
 						return (
 							<Item 
 								key={id} 
@@ -75,7 +69,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
 								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
 								canDrag={allowedBlock && !readonly}
-								canFav={canFav}
+								canFav={allowedValue}
 								isFeatured={section.id == 'featured'}
 								classNameWrap={classNameWrap}
 								onCellClick={this.onCellClick}
