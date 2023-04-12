@@ -45,7 +45,7 @@
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 
 	> .top { display: flex; flex-direction: row-reverse; }
-	> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overflow-y: scroll; overscroll-behavior: none; }
+	> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: auto; overscroll-behavior: none; }
 
 	> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 12px; height: 12px; cursor: grab; }
 	> .head {
@@ -57,5 +57,9 @@
 html.platformWindows {
 	.sidebar.fixed {
 		> .head { height: 38px; }
+	}
+
+	.sidebar {
+		.body { overflow-y: overlay; }
 	}
 }	
