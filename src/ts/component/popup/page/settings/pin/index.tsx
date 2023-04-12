@@ -13,14 +13,6 @@ interface Props extends I.Popup, RouteComponentProps {
 
 const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<Props> {
 
-	constructor (props: Props) {
-		super(props);
-
-		this.onTurnOnPin = this.onTurnOnPin.bind(this);
-		this.onTurnOffPin = this.onTurnOffPin.bind(this);
-		this.onChangePin = this.onChangePin.bind(this);
-	};
-
 	render () {
 		const pin = Storage.get('pin');
 		const pinTime = commonStore.pinTime / 1000;
@@ -66,14 +58,14 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 		);
 	};
 
-	onTurnOnPin () {
+	onTurnOnPin = () => {
 		const { onPage } = this.props;
 
 		onPage('pinSelect');
 		analytics.event('PinCodeOn');
 	};
 
-	onTurnOffPin () {
+	onTurnOffPin = () => {
 		const { onPage, setConfirmPin } = this.props;
 
 		setConfirmPin(() => { 
@@ -85,7 +77,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 		analytics.event('PinCodeOff');
 	};
 
-	onChangePin () {
+	onChangePin = () => {
 		const { onPage, setConfirmPin } = this.props;
 
 		setConfirmPin(() => onPage('pinSelect'));
