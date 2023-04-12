@@ -1,7 +1,7 @@
 import * as React from 'react';
+import sha1 from 'sha1';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import sha1 from 'sha1';
 import { Title, Pin, Error } from 'Component';
 import { I, Storage, translate } from 'Lib';
 import Head from '../head';
@@ -25,6 +25,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 
 	render () {
 		const { pin, error } = this.state;
+
 		return (
 			<div>
 				<Head onPage={this.onBack} name={translate('commonBack')}></Head>
@@ -41,7 +42,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 		if (!prevPin) {
 			this.setState({ pin });
 			return;
-		}
+		};
 
 		Storage.set('pin', sha1(pin));
 		this.props.onPage('pinIndex');
@@ -50,7 +51,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 	/** Triggered when pins mismatch */
 	onError = () => {
 		this.setState({ error: translate('popupSettingsPinSelectError') });
-	}
+	};
 
 	onBack = () => {
 		const { prevPage, onPage } = this.props;
@@ -59,7 +60,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 		if (pin) {
 			this.setState({ pin: null });
 			return;
-		}
+		};
 
 		onPage(prevPage);
 	};

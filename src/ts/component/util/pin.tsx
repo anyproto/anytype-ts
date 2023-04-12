@@ -20,8 +20,7 @@ interface Props {
 type State = {
 	/** index of the current pin character in focus */
 	index: number;
-}
-
+};
 
 /**
  * This component provides an input field for a pin code
@@ -36,7 +35,7 @@ class Pin extends React.Component<Props, State> {
 
 	state = {
 		index: 0,
-	}
+	};
 
 	inputRefs = [];
 
@@ -100,14 +99,13 @@ class Pin extends React.Component<Props, State> {
 	onPinEntry = () => {
 		const { expectedPin, onSuccess, onError } = this.props;
 		const pin = this.getPin();
-
 		const success = !expectedPin || (expectedPin === sha1(pin));
 
 		// Reset State
 		this.setState({ index: 0 }, () => {
 			this.clearPin();
 			this.focus();	
-		})
+		});
 
 		success ? onSuccess(pin) : onError();
 	};
@@ -124,7 +122,7 @@ class Pin extends React.Component<Props, State> {
 		};
 	};
 
-	// Input Subcomponent Methods Below
+	// Input subcomponent methods
 
 	onInputFocus = (index: number) => {
 		this.setState({ index });
@@ -169,7 +167,8 @@ class Pin extends React.Component<Props, State> {
 		};
 
 		this.timeout = window.setTimeout(() => input.setType('password'), this.TIMEOUT_DURATION);
-	};	
+	};
+
 };
 
 export default Pin;

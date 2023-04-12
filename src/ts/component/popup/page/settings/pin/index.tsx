@@ -16,7 +16,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 	render () {
 		const pin = Storage.get('pin');
 		const pinTime = commonStore.pinTime / 1000;
-		const times = [60, 300, 600, 3600].map(time => ({ id: time, name: Util.duration(time) }));
+		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: Util.duration(time) }));
 
 		return (
 			<React.Fragment>
