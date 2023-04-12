@@ -8,7 +8,7 @@ import { menuStore, popupStore } from 'Store';
 
 import MenuHelp from './help';
 import MenuOnboarding from './onboarding';
-import MenuAccountPath from './account/path';
+
 import MenuSelect from './select';
 import MenuButton from './button';
 
@@ -85,7 +85,6 @@ const Components: any = {
 	help:					 MenuHelp,
 	onboarding:				 MenuOnboarding,
 
-	accountPath:			 MenuAccountPath,
 	select:					 MenuSelect,
 	button:					 MenuButton,
 

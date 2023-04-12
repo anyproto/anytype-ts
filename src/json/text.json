@@ -112,14 +112,8 @@
 	"authRegisterAdvanced": {"en": "Advanced"},
 
 	"authSetupLogin": { "en": "Logging in..." },
-	"authSetupRegister": { "en": "Creating profile..." },
 	"authSetupSelect": { "en": "Selecting profile..." },
 	"authSetupShare": { "en": "Adding space" },
-
-	"authSuccessTitle": { "en": "Congratulations!" },
-	"authSuccessLabel": { "en": "You've created your first profile! It is stored on your device and nobody will know about it until you share it!" },
-	"authSuccessSubmit": { "en": "Let's start!" },
-	"authSuccessCopy": { "en": "Show and copy phrase" },
 
 	"authDeleteTitle": { "en": "Delete profile" },
 	"authDeleteTitleDeleted": { "en": "Account data removed from the backup node" },

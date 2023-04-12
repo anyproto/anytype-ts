@@ -1,10 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Frame, Cover, Title, Label, Error, Button, Header, Footer, Icon } from 'Component';
-import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer, ObjectUtil, Action } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { Frame, Title, Label, Error, Button, Header, Footer, Icon } from 'Component';
+import { I, Storage, translate, C, DataUtil, Util, ObjectUtil, Action } from 'Lib';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 interface State {
@@ -31,12 +30,11 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	render () {
-		const { cover } = commonStore;
 		const { match } = this.props;
 		const error = this.state.error || {};
 		
 		let content = null;
-		let back = (
+		const back = (
 			<div className="authBackWrap" onClick={this.onCancel}>
 				<Icon className="back" />
 				<div className="name">{translate('commonBack')}</div>
@@ -100,7 +98,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		
 		return (
 			<div ref={node => this.node = node}>
-				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
@@ -122,10 +119,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		switch (match.params.id) {
 			case 'init': 
 				this.init(); 
-				break;
-
-			case 'register':
-				this.add();
 				break;
 
 			case 'select': 
@@ -173,47 +166,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				} else {
 					Util.route('/auth/account-select');
 				};
-			});
-		});
-	};
-
-	add () {
-		const { match } = this.props;
-		const { walletPath, accountPath, name, icon, code } = authStore;
-
-		commonStore.defaultTypeSet(Constant.typeId.note);
-
-		C.WalletCreate(walletPath, (message: any) => {
-			if (this.setError(message.error)) {
-				return;
-			};
-
-			authStore.phraseSet(message.mnemonic);
-
-			DataUtil.createSession(() => {
-				C.AccountCreate(name, icon, accountPath, code, Util.rand(1, Constant.iconCnt), (message: any) => {
-					const description = Errors.AccountCreate[message.error.code] || message.error.description;
-
-					if (this.setError({ ...message.error, description }) || !message.account) {
-						return;
-					};
-
-					if (message.config) {
-						commonStore.configSet(message.config, false);
-					};
-
-					authStore.accountSet(message.account);
-					authStore.previewSet('');
-
-					Storage.set('timeRegister', Util.time());
-
-					Renderer.send('keytarSet', message.account.id, authStore.phrase);
-					analytics.event('CreateAccount');
-					
-					if (match.params.id == 'register') {
-						Util.route('/auth/success');
-					};
-				});
 			});
 		});
 	};
