@@ -152,6 +152,7 @@ class Popup extends React.Component<Props> {
 	close () {
 		const { param } = this.props;
 		const { preventMenuClose } = param;
+
 		Preview.previewHide(true);
 		Preview.tooltipHide(true);
 
