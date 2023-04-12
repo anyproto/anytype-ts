@@ -218,7 +218,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		this.dashboardWizardCheck();
+		this.onboardingCheck();
 		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
@@ -264,17 +264,17 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		});
 	};
 
-	dashboardWizardCheck () {
+	onboardingCheck () {
 		const match = this.getMatch();
 		const home = ObjectUtil.getSpaceDashboard();
 		const { id } = match.params;
 		const isPopup = keyboard.isPopup();
 
-		if (!home || !id || (home.id != id) || isPopup) {
+		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('wizardDashboard')) {
 			return;
 		};
 
-		Onboarding.start('wizardDashboard', false);
+		popupStore.open('migration', {});
 	};
 
 	unbind () {

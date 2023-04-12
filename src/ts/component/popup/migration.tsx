@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Title, Label, Button } from 'Component';
-import { I} from 'Lib';
-import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
+import { Title, Label, Button } from 'Component';
+import { I, Onboarding } from 'Lib';
+import { commonStore } from 'Store';
 import QRCode from 'qrcode.react';
 import Url from 'json/url.json';
 
@@ -27,9 +27,14 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 	};
 	node = null;
 
+	constructor (props: I.Popup) {
+		super(props);
+
+		this.onClose = this.onClose.bind(this);
+	};
+
 	render () {
-		const { close } = this.props;
-		const { theme } = commonStore;
+		const theme = commonStore.getThemeClass();
 
 		return (
 			<div ref={ref => this.node = ref}>
@@ -44,14 +49,15 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 				<Label text={`In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href="${Url.community}">community forum</a>.`} />
 
 				<div className="buttons">
-					<Button text="Done" className="c36" onClick={close} />
+					<Button text="Done" className="c36" onClick={this.onClose} />
 				</div>
 			</div>
 		);
 	};
 
-	componentDidUpdate (): void {
-		this.props.position();	
+	onClose () {
+		Onboarding.start('wizardDashboard', false, true);
+		this.props.close();
 	};
 
 });

@@ -41,7 +41,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	render () {
 		const { entropy, showCode } = this.state;
-		const { theme } = commonStore;
+		const theme = commonStore.getThemeClass();
 
 		return (
 			<div
