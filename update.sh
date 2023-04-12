@@ -60,7 +60,7 @@ if [ "$platform" = "windows-latest" ]; then
   printf "Done\n"
   
   echo "Moving... "
-  mv -fv grpc-server.exe "$folder/anytypeHelper.exe"
+  mv -fv anytypeHelper.exe "$folder/anytypeHelper.exe"
 else 
   echo -n "Uncompressing... " 
   tar -zxf $FILE
@@ -69,7 +69,7 @@ else
   echo "Moving... "
   rm -rf "$folder"
   mkdir -p "$folder"
-  mv -fv grpc-server "$folder/anytypeHelper"
+  mv -fv anytypeHelper "$folder/anytypeHelper"
 fi;
 
 rm -rf dist/lib/pb
