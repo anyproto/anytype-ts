@@ -102,15 +102,16 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
 			const cn = [ 'c36' ];
+			const isInstalled = this.isInstalled();
 
-			let onClick = null;
-			if (this.isInstalled()) {
-				cn.push('blank disabled');
-			} else {
-				onClick = this.onInstall;
+			let onClick = isInstalled ? null : this.onInstall;
+			let color = isInstalled ? 'blank' : 'black';
+
+			if (isInstalled) {
+				cn.push('disabled');
 			};
 
-			button = <Button id="button-install" text="Install" className={cn.join(' ')} onClick={onClick} />;
+			button = <Button id="button-install" text="Install" color={color} className={cn.join(' ')} onClick={onClick} />;
 		};
 
 		return (

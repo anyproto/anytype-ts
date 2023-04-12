@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
 import { I, M, C, DataUtil, Util, Action, ObjectUtil } from 'Lib';
-import { blockStore } from 'Store';
+import { blockStore, detailStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 import Errors from 'json/error.json';
@@ -46,7 +46,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
-		const { object } = check;
+		const object = detailStore.get(rootId, rootId, []);
 		const isCollection = object.type === Constant.typeId.collection;
 
 		const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());

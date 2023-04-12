@@ -486,7 +486,7 @@ class DataUtil {
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {
-			object: object,
+			object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
 			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],
