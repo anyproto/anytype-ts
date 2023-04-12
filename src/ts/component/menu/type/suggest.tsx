@@ -224,19 +224,18 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		const { param } = this.props;
 		const { data } = param;
-		const { skipIds, smartblockTypes } = data;
+		const { skipIds } = data;
 		const filter = String(data.filter || '');
-		
-		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
-		];
 		const sorts = [
 			{ relationKey: 'workspaceId', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
-		if (smartblockTypes && smartblockTypes.length) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: smartblockTypes });
+		let filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
+		];
+		if (data.filters) {
+			filters = filters.concat(data.filters);
 		};
 
 		if (skipIds && skipIds.length) {
@@ -367,7 +366,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		const { getId, getSize, param } = this.props;
 		const { data } = param;
-		const { smartblockTypes } = data;
 		const sources = this.getLibrarySources();
 
 		let menuId = '';
@@ -390,13 +388,13 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				menuId = 'searchObject';
 				menuParam.className = 'single';
 
-				const filters: I.Filter[] = [
+				let filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.type },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 				];
-				if (smartblockTypes && smartblockTypes.length) {
-					filters.push({ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: smartblockTypes });
+				if (data.filters) {
+					filters = filters.concat(data.filters);
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {

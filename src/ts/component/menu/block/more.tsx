@@ -275,8 +275,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			return;
 		};
 		
-		let types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
-		let filters = [];
 		let menuId = '';
 		let menuParam: I.MenuParam = {
 			menuKey: item.id,
@@ -299,7 +297,9 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
-					smartblockTypes: [ I.SmartBlockType.Page ],
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
 						close();
@@ -314,12 +314,11 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'move':
 				menuId = 'searchObject';
 
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
-				];
-
 				menuParam.data = Object.assign(menuParam.data, {
-					filters: filters,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
+					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],
 					position: I.BlockPosition.Bottom,
@@ -358,7 +357,9 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types.concat([ Constant.typeId.collection ]) }
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: close,
 					skipIds: [ rootId ],

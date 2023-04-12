@@ -296,18 +296,6 @@ const ObjectGraph = (response: any) => {
 	};
 };
 
-const ObjectToSet = (response: any) => {
-	return {
-		objectId: response.getSetid(),
-	};
-};
-
-const ObjectToCollection = (response: any) => {
-	return {
-		objectId: response.getCollectionid(),
-	};
-};
-
 const ObjectToBookmark = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
@@ -401,8 +389,6 @@ export {
 	ObjectSubscribeIds,
 	ObjectGraph,
 
-	ObjectToSet,
-	ObjectToCollection,
 	ObjectShareByLink,
 	ObjectToBookmark,
 

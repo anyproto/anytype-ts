@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, Title, Label, Switch, Select } from 'Component';
-import { I, translate, analytics, Renderer } from 'Lib';
+import { Icon, Title, Label, Select } from 'Component';
+import { I, translate, analytics, Renderer, DataUtil } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -72,7 +72,9 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 			horizontal: I.MenuDirection.Right,
 			data: {
 				filter: '',
-				smartblockTypes: [ I.SmartBlockType.Page ],
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+				],
 				onClick: (item: any) => {
 					this.onTypeChange(item.id);
 				},
