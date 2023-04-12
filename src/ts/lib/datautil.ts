@@ -662,7 +662,7 @@ class DataUtil {
 	};
 
 	getSystemRelationKeys () {
-		return require('lib/json/systemRelations.json');
+		return require('lib/relations/systemRelations.json');
 	};
 
 	getFileTypes () {
