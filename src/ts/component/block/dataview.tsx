@@ -1079,7 +1079,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!selection || isInline) {
 			return;
 		};
-		
+
 		let ids = [];
 		if (this.isMultiSelecting && id && !ids.length) {
 			ids = this.selected || [];
@@ -1092,8 +1092,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			selection.set(I.SelectType.Record, ids);
 		};
 
-		this.selected = ids;
 		this.setMultiSelect(!!ids.length);
+		this.setSelected(ids);
 
 		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
 	};
@@ -1107,11 +1107,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.selected = [];
 		};
 
+		this.setSelected(this.selected);
 		this.isMultiSelecting = v;
-
-		if (this.refSelect) {
-			this.refSelect.setIds(this.selected);
-		};
 
 		const node = $(this.node);
 		const con = node.find('#dataviewControls');
@@ -1119,6 +1116,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		v ? con.hide() : con.show();
 		v ? sel.show() : sel.hide();
+	};
+
+	setSelected (ids: string[]) {
+		this.selected = ids;
+
+		if (this.refSelect) {
+			this.refSelect.setIds(ids);
+		};
 	};
 
 	multiSelectAction (id: string) {
