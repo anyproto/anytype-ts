@@ -27,6 +27,9 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const m = Number(Util.date('n', value));
 		const y = Number(Util.date('Y', value));
 
+		const today = Util.time();
+		const tomorrow = today + 86400;
+
 		const days = [];
 		const months = [];
 		const years = [];
@@ -107,8 +110,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				</div>
 				<div className="line" />
 				<div className="foot">
-					<div className="btn" onClick={() => { this.setValue(this.getToday(), true, true); }}>{translate('menuCalendarToday')}</div>
-					<div className="btn" onClick={() => { this.setValue(this.getTomorrow(), true, true); }}>{translate('menuCalendarTomorrow')}</div>
+					<div className="btn" onClick={() => { this.setValue(Util.mergeTimewithDate(value, today), true, true); }}>{translate('menuCalendarToday')}</div>
+					<div className="btn" onClick={() => { this.setValue(Util.mergeTimewithDate(value, tomorrow), true, true); }}>{translate('menuCalendarTomorrow')}</div>
 				</div>
 			</div>
 		);
@@ -144,43 +147,6 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		};
 	};
 
-	/** returns today but with the time of the original timestamp*/
-	getToday () {
-		const { param } = this.props;
-		const { data } = param;
-		const { value } = data;
-
-		const s = Number(Util.date('s', value));
-		const i = Number(Util.date('i', value));
-		const h = Number(Util.date('H', value));
-
-		const today = Util.time();
-		const tomorrow = today + 86400;
-		const d = Number(Util.date('d', today));
-		const m = Number(Util.date('n', today));
-		const y = Number(Util.date('Y', today));
-
-		return Util.timestamp(y, m, d, h, i, s);
-	}
-
-	/** returns tomorrow but with the time of the original timestamp*/
-	getTomorrow () {
-		const { param } = this.props;
-		const { data } = param;
-		const { value } = data;
-
-		const s = Number(Util.date('s', value));
-		const i = Number(Util.date('i', value));
-		const h = Number(Util.date('H', value));
-
-		const tomorrow = Util.time() + 86400;
-		const d = Number(Util.date('d', tomorrow));
-		const m = Number(Util.date('n', tomorrow));
-		const y = Number(Util.date('Y', tomorrow));
-
-		return Util.timestamp(y, m, d, h, i, s);
-	}
-	
 	getData () {
 		const { param } = this.props;
 		const { data } = param;
