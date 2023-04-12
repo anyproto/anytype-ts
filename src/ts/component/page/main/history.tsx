@@ -137,11 +137,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					</div>
 				</div>
 
-				<Footer 
-					component="mainEdit" 
-					ref={ref => { this.refFooter = ref; }} 
-					{...this.props} 
-				/>
+				<Footer component="mainObject" ref={ref => this.refFooter = ref} {...this.props} />
 			</div>
 		);
 	};

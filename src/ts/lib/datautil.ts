@@ -682,7 +682,11 @@ class DataUtil {
 			Constant.typeId.option,
 			Constant.typeId.dashboard,
 			Constant.typeId.date,
+		].concat(this.getStoreTypes());
+	};
 
+	getStoreTypes () {
+		return [
 			Constant.storeTypeId.type,
 			Constant.storeTypeId.relation,
 		];

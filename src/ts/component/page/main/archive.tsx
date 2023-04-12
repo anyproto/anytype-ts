@@ -192,7 +192,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 					{content}
 				</div>
 
-				<Footer component="mainEdit" />
+				<Footer component="mainObject" />
 			</div>
 		);
 	};

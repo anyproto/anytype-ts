@@ -50,7 +50,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		return (
 			<div>
-				<Header component="mainEdit" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
 					<HeadSimple ref={ref => { this.refHead = ref;}} type="relation" rootId={rootId} onCreate={this.onCreate} />
@@ -65,7 +65,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 					) : ''}
 				</div>
 
-				<Footer component="mainEdit" {...this.props} />
+				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};

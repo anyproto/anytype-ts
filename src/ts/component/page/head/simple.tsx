@@ -51,8 +51,6 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			canEditIcon = false;
 		};
 
-		console.log(object);
-
 		const Editor = (item: any) => {
 			return (
 				<Editable

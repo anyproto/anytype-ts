@@ -26,22 +26,13 @@ class PageMainEdit extends React.Component<Props> {
 
 		return (
 			<React.Fragment>
-				<Header 
-					component="mainEdit" 
-					ref={ref => { this.refHeader = ref; }} 
-					rootId={rootId}
-					{...this.props} 
-				/>
+				<Header component="mainObject" ref={ref => this.refHeader = ref} rootId={rootId} {...this.props} />
 
 				<div id="bodyWrapper" className="wrapper">
 					<EditorPage key="editorPage" {...this.props} isPopup={isPopup} rootId={rootId} onOpen={this.onOpen} />
 				</div>
 				
-				<Footer 
-					component="mainEdit" 
-					ref={ref => { this.refFooter = ref; }} 
-					{...this.props} 
-				/>
+				<Footer component="mainObject" ref={ref => this.refFooter = ref} {...this.props} />
 			</React.Fragment>
 		);
 	};

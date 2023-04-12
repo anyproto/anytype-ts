@@ -57,7 +57,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				ref={node => this.node = node}
 				className={[ 'setWrapper', check.className ].join(' ')}
 			>
-				<Header component="mainEdit" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
+				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
 
@@ -77,7 +77,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 					))}
 				</div>
 
-				<Footer component="mainEdit" {...this.props} />
+				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};

@@ -242,7 +242,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					</div>
 				</div>
 
-				<Footer component="mainEdit" />
+				<Footer component="mainObject" />
 			</div>
 		);
 	};
