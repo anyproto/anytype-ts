@@ -525,6 +525,19 @@ class Util {
 		return '';
 	};
 
+	/** Merges two unix timestamps, taking the hours/minutes/seconds from the first and the year/month/day from the second */
+	mergeTimeWithDate (date: number, time: number) {
+		const y = Number(this.date('Y', date));
+		const m = Number(this.date('n', date));
+		const d = Number(this.date('d', date));
+
+		const h = Number(this.date('H', time));
+		const i = Number(this.date('i', time));
+		const s = Number(this.date('s', time));
+		
+		return this.timestamp(y, m, d, h, i, s);
+	};
+
 	duration (t: number): string {
 		if (!t) {
 			return '';
