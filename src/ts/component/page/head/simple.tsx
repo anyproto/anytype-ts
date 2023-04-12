@@ -236,7 +236,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				continue;
 			};
 
-			let text = object[item.relationKey];
+			let text = String(object[item.relationKey] || '');
 			if (text == DataUtil.defaultName('page')) {
 				text = '';
 			};
