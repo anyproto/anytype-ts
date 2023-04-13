@@ -345,7 +345,9 @@ class Action {
 							return;
 						};
 
-						DataUtil.onAuth(message.account);
+						DataUtil.onAuth(message.account, () => {
+							popupStore.open('migration', { data: { type: 'import' } });
+						});
 					});
 				});
 			});

@@ -5,11 +5,7 @@
 
 .pageAuth, .pageIndex, .pageObject {
     .input { border-color: $colorLinePrimary; }
-
-	.backWrap:hover { color: $colorPrimary; }
-    .backWrap:hover {
-		.icon.back { background-image: url('#{$themePath}/icon/popup/settings/back1.svg'); } 
-	}
+	.authBackWrap:hover { background-color: $colorHover; }
 }
 
 .pageAuthRegister {

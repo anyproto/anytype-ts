@@ -14,7 +14,8 @@ interface State {
 
 const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.PageComponent, State> {
 
-	node: any = null;
+	node = null;
+	refFrame = null;
 	i = 0;
 	t = 0;
 	state = {
@@ -46,16 +47,16 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		if (error.code) {
 			if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
 				content = (
-					<React.Fragment>
+					<div className="importBackupWrap">
 						{back}
 
-						<Title className="withError" text="Account not found" />
-						<Label text="If you are migrating from Anytype Legacy version you can restore your account from backup" />
+						<Title className="withError" text="⚡️ Congratulations!" />
+						<Label text="You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported." />
 
 						<div className="buttons">
-							<Button text="Restore from backup" onClick={this.onBackup} />
+							<Button text="Import backup" onClick={this.onBackup} />
 						</div>
-					</React.Fragment>
+					</div>
 				);
 			} else {
 				content = (
@@ -104,7 +105,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
-				<Frame>
+				<Frame ref={ref => this.refFrame = ref}>
 					{content}
 				</Frame>
 			</div>
@@ -136,6 +137,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				this.share();
 				break;
 		};
+	};
+
+	componentDidUpdate (): void {
+		this.refFrame.resize();
 	};
 	
 	componentWillUnmount () {
