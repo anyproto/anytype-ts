@@ -463,6 +463,10 @@
 				"to": "node_modules/rimraf"
 			},
 			{
+				"from": "node_modules/sanitize-filename",
+				"to": "node_modules/sanitize-filename"
+			},
+			{
 				"from": "node_modules/sax",
 				"to": "node_modules/sax"
 			},
@@ -485,6 +489,10 @@
 			{
 				"from": "node_modules/supports-color",
 				"to": "node_modules/supports-color"
+			},
+			{
+				"from": "node_modules/truncate-utf8-bytes",
+				"to": "node_modules/truncate-utf8-bytes"
 			},
 			{
 				"from": "node_modules/universalify",
