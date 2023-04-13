@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, Onboarding } from 'Lib';
+import { I, Onboarding, ObjectUtil } from 'Lib';
 import { detailStore, blockStore } from 'Store';
 
 import Constant from 'json/constant.json';
@@ -40,6 +40,7 @@ class PageMainEdit extends React.Component<Props> {
 	onOpen () {
 		const { isPopup, refSidebar } = this.props;
 		const rootId = this.getRootId();
+		const home = ObjectUtil.getSpaceDashboard();
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
 		if (this.refHeader) {
@@ -53,15 +54,17 @@ class PageMainEdit extends React.Component<Props> {
 			refSidebar.setActive(rootId);
 		};
 
-		let key = '';
-		if (object.type == Constant.typeId.template) {
-			key = 'template';
-		} else 
-		if (!blockStore.checkBlockTypeExists(rootId)) {
-			key = 'editor';
-		};
-		if (key) {
-			Onboarding.start(key, isPopup);
+		if (home && (rootId != home.id)) {
+			let key = '';
+			if (object.type == Constant.typeId.template) {
+				key = 'template';
+			} else 
+			if (!blockStore.checkBlockTypeExists(rootId)) {
+				key = 'editor';
+			};
+			if (key) {
+				Onboarding.start(key, isPopup);
+			};
 		};
 	};
 
