@@ -274,7 +274,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		popupStore.open('migration', {});
+		popupStore.open('migration', { data: { type: 'onboarding' } });
 	};
 
 	unbind () {

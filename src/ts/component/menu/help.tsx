@@ -126,7 +126,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				if (isGraph) {
 					Onboarding.start('wizardGraph', keyboard.isPopup(), true);
 				} else {
-					popupStore.open('migration', {});
+					popupStore.open('migration', { data: { type: 'onboarding' } });
 				};
 				break;
 			};

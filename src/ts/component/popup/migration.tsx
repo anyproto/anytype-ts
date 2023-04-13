@@ -36,7 +36,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 		let content = null;
 
 		switch (type) {
-			default: {
+			case 'onboarding': {
 				content = (
 					<React.Fragment>
 						<Title text="⚡️ Congratulations!" />
@@ -50,14 +50,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 						<Label text={`We're excited to hear your feedback about the new features.`} />
 
 						<div className="buttons">
-							<Button 
-								text="Done" 
-								className="c36" 
-								onClick={() => {
-									Onboarding.start('wizardDashboard', false, true);
-									this.props.close();
-								}} 
-							/>
+							<Button text="Done" className="c36" onClick={close} />
 						</div>
 					</React.Fragment>
 				);
@@ -91,6 +84,16 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 				{content}
 			</div>
 		);
+	};
+
+	componentWillUnmount(): void {
+		const { param } = this.props;
+		const { data } = param;
+		const { type } = data;
+
+		if (type == 'onboarding') {
+			Onboarding.start('wizardDashboard', false, true);
+		};
 	};
 
 });
