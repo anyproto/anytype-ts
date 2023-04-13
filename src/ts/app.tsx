@@ -138,7 +138,6 @@ import 'scss/popup/template.scss';
 import 'scss/popup/migration.scss';
 
 import 'scss/menu/common.scss';
-import 'scss/menu/account.scss';
 import 'scss/menu/button.scss';
 import 'scss/menu/common.scss';
 import 'scss/menu/help.scss';
