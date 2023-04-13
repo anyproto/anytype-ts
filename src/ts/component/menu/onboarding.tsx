@@ -84,7 +84,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 				{category ? <Label className="category" text={category} /> : ''}
 				{item.name ? <Label className="name" text={item.name} /> : ''}
 				{item.description ? <Label className="descr" text={item.description} /> : ''}
-				{item.video ? <video src={item.video} onClick={(e: any) => this.onVideoClick(e, item.video)} controls={true} autoPlay={true} loop={true} /> : ''}
+				{item.video ? <video src={item.video} onClick={(e: any) => this.onVideoClick(e, item.video)} controls={false} autoPlay={true} loop={true} /> : ''}
 
 				<div className="bottom">
 					<Steps />
