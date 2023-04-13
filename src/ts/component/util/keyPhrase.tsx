@@ -69,7 +69,7 @@ class KeyPhrase extends React.Component<Props> {
 		}).join('');
 	};
 
-	onInput (e: any) {
+	onInput (e) {
 		const { innerText } = e.target;
 
 		// normalize whitespace

@@ -35,12 +35,13 @@ class Preview {
    * @param element - The element relative to which the tooltip should be positioned.
    * @param typeX - The horizontal direction in which the tooltip should be positioned.
    * @param typeY - The vertical direction in which the tooltip should be positioned.
+   * @param delay - The length of time to wait before showing the tooltip.
    */
 	tooltipShow (param: Partial<TooltipParam>) {
 		const { element } = param;
 		const typeX = Number(param.typeX) || I.MenuDirection.Center;
 		const typeY = Number(param.typeY) || I.MenuDirection.Top;
-		const delay = Number(param.delay) || DELAY_TOOLTIP;
+		const delay = param.delay || DELAY_TOOLTIP;
 
 		if (!element.length || keyboard.isResizing) {
 			return;
@@ -108,7 +109,7 @@ class Preview {
 	 * Hides the tooltip, if any is being shown.
 	 * @param force - hides the tooltip immediately by also removing the animation class.
 	 */
-	tooltipHide (force: boolean) {
+	tooltipHide (force?: boolean) {
 		const obj = $('.tooltip');
 
 		if (force) {
@@ -145,7 +146,7 @@ class Preview {
 	 * Hides preview, if any is being shown.
 	 * @param force - hide the preview immediately, without 250ms delay
 	 */
-	previewHide (force: boolean) {
+	previewHide (force?: boolean) {
 		const obj = $('#preview');
 
 		obj.css({ opacity: 0 });
@@ -185,7 +186,7 @@ class Preview {
 	 * show hide any toast being shown
 	 * @param force - hide the preview immediately, without 250ms delay
 	 */
-	toastHide (force: boolean) {
+	toastHide (force?: boolean) {
 		const obj = $('#toast');
 
 		obj.css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });

@@ -20,16 +20,15 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
 
-	.button { width: 226px; }
+	.button { width: 192px; font-size: 14px;  }
 	.button.orange { background: $colorBlack; color: $colorSecondary; }
 	.button.grey { box-shadow: 0px 0px 0px 1px $colorSecondary inset !important; color: $colorSecondary !important; background: none !important; }
 }
 
-.pageIndexIndex,
-.pageAuthSelect {
+.pageIndexIndex, .pageAuthSelect {
 	.frame { width: 730px; }
-	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 36px; }
-	.label { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; }
+	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 24px; }
+	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; }
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 }
 
@@ -71,14 +70,10 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.frame { padding-bottom: 48px; }
 }
 
-.pageAuthOnboard,
-.pageAuthInvite,
-.pageAuthLogin,
-.pageAuthDeleted {
+.pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted {
 	.frame { width: 415px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; }
 	.label { color: #5C5A54; min-width: 415px; }
-	.icon.back { height: 40px; width: 40px; position: fixed; left: 20px; top: 0; bottom: 0; margin: auto 0; z-index: 1; }
 }
 
 .bodyAuthOnboard #popupConfirm-innerWrap,
@@ -113,28 +108,23 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
 	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: block; background-color: #5C5A54; color: black; }
 	.buttons { display: flex; flex-direction: column; gap: 12px; }
-	input { border-radius: 26px; background: rgba(44, 43, 39, 0.3); font-size: 18px; padding: 20px; margin: 20px; color: white; }
-	input:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
-	input::placeholder { color: #5C5A54; }
+	.input { border-radius: 26px; border: none; background: rgba(44, 43, 39, 0.3); font-size: 18px; padding: 32px 48px 32px 48px; margin: 20px; width: 392px; height: auto; }
+	.input:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
+	.input::placeholder { color: $colorBorderDark !important; }
 
 	.soulContent { width: 100px; }
 	.soulContent {
-		.account,
-		.space,
-		.lineLeft,
-		.lineRight { transition: all 600ms ease-in; position: absolute; display: flex; flex-direction: column; }
-		.account,
-		.space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
+		.account, .space, .line { transition: all 600ms ease-in; position: absolute; display: flex; flex-direction: column; }
+		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
 		.account { z-index: 2; }
 		.space { transition: all 600ms ease-in, opacity 200ms ease-in; z-index: 1; opacity: 0; }
-		.lineLeft,
-		.lineRight { z-index: 0; height: 1px; top: 25px; width: 0; background: white; }
-		.lineLeft { right: 50%; }
-		.lineRight { left: 50%; }
+		.iconObject.withOption.isSpace { background: white }
+		
+		.line { z-index: 0; height: 1px; top: 25px; width: 0; background: white; }
+		.line.left { right: 50%; }
+		.line.right { left: 50%; }
 		.iconObject { margin: 0; }
-		.spaceIcon { border-radius: 8px; width: 48px; height: 48px; background: white; display: flex; justify-content: center; align-items: center; }
-		.accountName,
-		.spaceName { text-overflow: ellipsis; overflow: hidden; width: 100px; }
+		.accountName, .spaceName { text-overflow: ellipsis; overflow: hidden; width: 100px; }
 	}
 	.soulContent.soulCreating {
 		.iconObject { background: white; box-shadow: 0 0 0 0 white; animation: pulse 2s infinite; }
@@ -148,8 +138,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.soulContent.spaceCreating {
 		.account { transform: translateX(-100px); }
 		.space { transform: translateX(100px); opacity: 1; }
-		.lineLeft,
-		.lineRight { width: 100px; }
+		.line { width: 100px; }
 	}
 }
 

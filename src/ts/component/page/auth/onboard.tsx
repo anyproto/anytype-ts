@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, DotIndicator, KeyPhrase, Error, Icon, IconObject } from 'Component';
+import { Frame, Title, Label, Button, DotIndicator, KeyPhrase, Error, Icon, IconObject, Input } from 'Component';
 import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview, keyboard } from 'Lib';
 import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -48,7 +48,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { error, stage } = this.state;
 
 		// Back button
-		const backButton = this.canMoveBackward() ? <Icon className="back" onClick={this.onBack} /> : null;
+		const backButton = this.canMoveBackward() ? <Icon className="arrow back" onClick={this.onBack} /> : null;
 
 		// Progress Indicator
 		let indicator = <div className={ANIMATION_CN}><DotIndicator activeIndex={this.state.stage} count={4} /></div>;
@@ -70,11 +70,17 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		}
 
 		// Label
-		let label = (<Label
-			className={ANIMATION_CN}
-			text={this.getText('Label')}
-			onClick={stage === OnboardStage.KeyPhrase ? this.showKeyPhraseTooltip : null }
-		/>);
+		let label = (
+			<div
+				onMouseEnter={stage === OnboardStage.KeyPhrase ? this.showKeyPhraseTooltip : null }
+				onMouseLeave={stage === OnboardStage.KeyPhrase ? this.hideKeyPhraseTooltip : null}
+			>
+				<Label
+					className={ANIMATION_CN}
+					text={this.getText('Label')}
+				/>
+			</div>
+		);
 		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
 			label = null;
 		}
@@ -116,7 +122,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (stage === OnboardStage.Soul) {
 			return (
 				<div className={ANIMATION_CN}>
-					<input
+					<Input
 						type="text"
 						placeholder="Enter your name"
 						value={authStore.name}
@@ -141,12 +147,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						<IconObject object={{iconOption, layout: I.ObjectLayout.Human}} size={48} />
 						<span className="accountName">{authStore.name}</span>
 					</div>
-					<div className="lineLeft"/>
-					<div className="lineRight"/>
+					<div className="line left"/>
+					<div className="line right"/>
 					<div className="space">
-						<div className="spaceIcon">
-							<IconObject object={{iconOption, layout: I.ObjectLayout.Human}} size={42} />
-						</div>
+						<IconObject object={{iconOption, layout: I.ObjectLayout.Space}} size={48} />
 						<span className="spaceName">Personal Space</span>
 					</div>
 				</div>
@@ -322,11 +326,16 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	showKeyPhraseTooltip = () => {
 		Preview.tooltipShow({
+			delay: 150,
 			text: translate('authOnboardKeyPhraseTooltip'),
 			element: $('.label'),
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Center
 		});
+	};
+
+	hideKeyPhraseTooltip = () => {
+		Preview.tooltipHide();
 	};
 
 	/** Shows a simple popup that educates the user about their account keyphrase */

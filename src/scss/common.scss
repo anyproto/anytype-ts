@@ -78,7 +78,7 @@ html.platformWindows, html.platformLinux {
 .nw { white-space: nowrap; }
 .through { pointer-events: none; }
 .rel { position: relative; }
-.disabled { opacity: 0.5 !important; cursor: default !important; }
+.disabled { filter: brightness(0.5) !important; cursor: default !important; }
 .dis { cursor: default !important; }
 .isReadonly { -webkit-user-modify: unset !important; cursor: default !important; }
 .no-br { border-radius: unset !important; }
