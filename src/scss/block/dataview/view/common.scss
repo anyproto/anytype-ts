@@ -18,7 +18,7 @@
 			}
 		}
 
-		.viewItem.viewGallery, 
+		.viewContent.viewGallery, 
 		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
@@ -82,7 +82,7 @@
 	}
 
 	.block.blockDataview.isInline {
-		.viewItem.viewGallery, 
+		.viewContent.viewGallery, 
 		.viewContent.viewBoard {
 			.cellContent.isName {
 				.name { @include clamp2; }
