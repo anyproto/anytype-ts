@@ -80,7 +80,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
 						readonly={readonly || !isEditing}
-						placeholder={DataUtil.defaultName('set')}
+						placeholder={DataUtil.defaultName(isCollection ? 'collection' : 'set')}
 						onFocus={this.onFocus}
 						onMouseDown={this.onTitle}
 						onBlur={this.onBlur}

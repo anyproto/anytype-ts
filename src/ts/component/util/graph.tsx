@@ -434,7 +434,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
-		const { theme } = commonStore;
+		const theme = commonStore.getThemeClass();
 		const { from, to } = option.colors;
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');

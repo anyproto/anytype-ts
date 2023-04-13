@@ -5,8 +5,6 @@ import { I, translate, analytics, Renderer } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-import Head from './head';
-
 interface Props extends I.Popup, RouteComponentProps<any> {
 	prevPage: string;
 	onPage: (id: string) => void;

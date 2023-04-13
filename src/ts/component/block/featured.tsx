@@ -19,6 +19,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	cellRefs: Map<string, any> = new Map();
 	menuContext: any = null;
 	setId = '';
+	node = null;
 
 	public static defaultProps = {
 		iconSize: 24,
@@ -81,9 +82,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		return (
-			<div className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp}>
+			<div 
+				ref={node => this.node = node}
+				className={[ 'wrap', 'focusable', 'c' + block.id ].join(' ')} 
+				tabIndex={0} 
+				onKeyDown={this.onKeyDown} 
+				onKeyUp={this.onKeyUp}
+			>
 				{featuredRelations.includes('type') ? (
-					<span className="cell canEdit first">
+					<span className="cell canEdit">
 						<div
 							id={Relation.cellId(PREFIX, 'type', 0)}
 							className="cellContent type"
@@ -192,6 +199,19 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				this.checkSource();
 			}, Constant.delay.menu);
 		};
+
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
+		const node = $(this.node);
+
+		node.find('.cell.first').removeClass('first');
+		node.find('.cell').first().addClass('first');
 	};
 
 	componentWillUnmount () {
@@ -305,7 +325,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const { rootId, block, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
-		const type = detailStore.get(rootId, object.type, [ 'smartblockTypes' ]);
+		const type = detailStore.get(rootId, object.type, []);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
 		const typeIsDeleted = type._empty_ || type.isDeleted
 		const options: any[] = [];
@@ -392,10 +412,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
-					smartblockTypes: [ I.SmartBlockType.Page ],
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+					],
 					onClick: (item: any) => {
 						detailStore.update(rootId, { id: item.id, details: item }, false);
-						C.ObjectSetObjectType(rootId, item.id);
+						C.ObjectSetObjectType(rootId, item.id, () => {
+							ObjectUtil.openAuto({ ...object, layout: item.recommendedLayout });
+						});
 
 						this.menuContext.close();
 						analytics.event('ChangeObjectType', { objectType: item.id });

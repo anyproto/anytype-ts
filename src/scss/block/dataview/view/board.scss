@@ -2,8 +2,8 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewItem.viewBoard { padding: 0px 0px 0px 5px; }
-        .viewItem.viewBoard {
+		.viewContent.viewBoard { padding: 0px 0px 0px 5px; }
+        .viewContent.viewBoard {
 
             .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
             .column { width: 240px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
@@ -143,5 +143,5 @@
 }
 
 html.platformLinux {
-	.blocks .block.blockDataview .viewItem.viewBoard .column .body { overflow-y: auto; }
+	.blocks .block.blockDataview .viewContent.viewBoard .column .body { overflow-y: auto; }
 }

@@ -2,10 +2,10 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
 import { I, DataUtil, ObjectUtil, keyboard, sidebar } from 'Lib';
-import { blockStore, detailStore, popupStore, commonStore } from 'Store';
+import { blockStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.HeaderComponent> {
+const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
 
 	constructor (props: I.HeaderComponent) {
 		super(props);
@@ -18,15 +18,11 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 	render () {
 		const { rootId, onForward, onBack, onGraph, onSearch, onTooltipShow, onTooltipHide } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-
-		if (!root) {
-			return null;
-		};
-
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled' ]);
-		const canSync = !object.templateIsBundled;
-		const isLocked = root.isLocked();
-		const showGraph = !(root.isObjectType() || root.isObjectRelation());
+		const isLocked = root ? root.isLocked() : false;
+		const showGraph = !DataUtil.getSystemTypes().includes(object.type);
+		const showMenu = !DataUtil.getStoreTypes().includes(object.type);
+		const canSync = showMenu && !object.templateIsBundled;
 
 		return (
 			<React.Fragment>
@@ -57,7 +53,7 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 
 				<div className="side right">
 					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
-					<Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} />
+					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} /> : ''}
 				</div>
 			</React.Fragment>
 		);
@@ -116,4 +112,4 @@ const HeaderMainEdit = observer(class HeaderMainEdit extends React.Component<I.H
 	
 });
 
-export default HeaderMainEdit;
+export default HeaderMainObject;

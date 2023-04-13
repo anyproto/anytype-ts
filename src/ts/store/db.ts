@@ -220,10 +220,6 @@ class DbStore {
 			filter(it => it && !it.isArchived);
 	};
 
-    getObjectTypesForSBType (SBType: I.SmartBlockType): any[] {
-		return this.getTypes().filter(it => (it.smartblockTypes || []).includes(SBType));
-	};
-
     getObjectRelations (rootId: string, blockId: string): any[] {
 		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey)).filter(it => it);
 	};

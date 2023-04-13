@@ -33,7 +33,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 		};
 
 		const check = DataUtil.checkDetails(rootId);
-		const object = check.object;
+		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });

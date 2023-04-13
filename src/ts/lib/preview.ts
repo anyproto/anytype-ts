@@ -156,6 +156,8 @@ class Preview {
 			obj.removeClass('top bottom withImage');
 
 			commonStore.previewClear();
+
+			$('#graphPreview').remove();
 		}, force ? 0 : 250);
 	};
 

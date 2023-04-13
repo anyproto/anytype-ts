@@ -1,27 +1,3 @@
-export enum SmartBlockType {
-    Breadcrumbs			 = 0,
-
-    Page				 = 0x10,
-    ProfilePage			 = 0x11,
-    Home				 = 0x20,
-    Archive				 = 0x30,
-    Database			 = 0x40,
-    Set					 = 0x41,
-    ObjectType			 = 0x60,
-
-    File				 = 0x100,
-    Template			 = 0x120,
-
-    MarketplaceType		 = 0x110,
-    MarketplaceRelation	 = 0x111,
-    MarketplaceTemplate	 = 0x112,
-
-    BundledRelation		 = 0x200,
-    IndexedRelation		 = 0x201,
-    BundledObjectType	 = 0x202,
-    AnytypeProfile		 = 0x203,
-};
-
 export enum ObjectLayout {
 	Page		 = 0,
 	Human		 = 1,

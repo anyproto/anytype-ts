@@ -129,8 +129,8 @@
         .cellHead.isDragging { background: $colorHover; }
 		.cellHead.isDragging::after { background-color: $colorHover; }
 
-        .viewItem.viewGrid,
-		.viewItem.viewList {
+        .viewContent.viewGrid,
+		.viewContent.viewList {
 			.cell.add { color: $colorSecondary; }
 			.cell.add {
 				.btn:hover { color: $colorPrimary; }
@@ -140,7 +140,7 @@
 			}
 		}
 
-        .viewItem.viewGrid {
+        .viewContent.viewGrid {
             .row { box-shadow: 0px 1px $colorLineSecondary inset; }
 			.loadMore { box-shadow: 0px 1px $colorLineSecondary inset; border-color: $colorLineSecondary; }
 
@@ -157,12 +157,12 @@
 			.cell.cellKeyHover { background-color: rgba(223, 221, 208, 0.04); }
         }
 
-        .viewItem.viewList, .viewItem.viewGallery, .viewItem.viewBoard {
+        .viewContent.viewList, .viewItem.viewGallery, .viewContent.viewBoard {
             .cellContent.isName { color: $colorPrimary; }
         }
 
 		.viewItem.viewGallery, 
-		.viewItem.viewBoard {
+		.viewContent.viewBoard {
 			.card {
 				.cellContent.c-description { color: $colorPrimary; }
 			}
@@ -175,7 +175,7 @@
             }
         }
 
-        .viewItem.viewBoard {
+        .viewContent.viewBoard {
 			.ghost { border-color: $colorOrange; }
             .cardContent { background: $colorBgLight; border-color: $colorLineSecondary; }
 			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }

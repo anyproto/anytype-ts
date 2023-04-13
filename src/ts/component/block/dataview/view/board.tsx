@@ -36,10 +36,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	render () {
-		const { rootId, block, getView } = this.props;
+		const { rootId, block, getView, className } = this.props;
 		const view = getView();
 		const groups = this.getGroups(false);
 		const relation = dbStore.getRelationByKey(view.groupRelationKey);
+		const cn = [ 'viewContent', className ];
 
 		if (!relation || !relation.isInstalled) {
 			return (
@@ -61,7 +62,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				className="wrap"
 			>
 				<div id="scroll" className="scroll">
-					<div className="viewItem viewBoard">
+					<div className={cn.join(' ')}>
 						<div id="columns" className="columns">
 							{groups.map((group: any, i: number) => (
 								<Column 
@@ -361,14 +362,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const { dataset } = this.props;
 		const { selection, preventCommonDrop } = dataset || {};
 		const node = $(this.node);
-		const viewItem = node.find('.viewItem');
+		const view = node.find('.viewContent');
 		const clone = target.clone();
 		
 		this.ox =  node.find('#columns').offset().left;
 
 		target.addClass('isDragging');
 		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
-		viewItem.append(clone);
+		view.append(clone);
 
 		$(document).off('dragover').on('dragover', (e: any) => { e.preventDefault(); });
 		$(window).off('dragend.board drag.board');
@@ -687,7 +688,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const parent = blockStore.getLeaf(rootId, element.parentId);
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
-		const viewItem = node.find('.viewItem');
+		const view = node.find('.viewContent');
 		const container = Util.getPageContainer(isPopup);
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
@@ -699,7 +700,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
 
 			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 });
-			viewItem.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 });
+			view.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 });
 		} else {
 			if (parent.isPage() || parent.isLayoutDiv()) {
 				const wrapper = $('#editorWrapper');
@@ -707,7 +708,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const margin = (cw - ww) / 2;
 
 				scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin });
-				viewItem.css({ width: width + margin });
+				view.css({ width: width + margin });
 			};
 		};
 	};

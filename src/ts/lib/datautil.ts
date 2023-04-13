@@ -434,6 +434,7 @@ class DataUtil {
 			Constant.typeId.note, 
 			Constant.typeId.page, 
 			Constant.typeId.set, 
+			Constant.typeId.collection,
 			Constant.typeId.task,
 			Constant.typeId.bookmark,
 		];
@@ -441,8 +442,8 @@ class DataUtil {
 		let items: any[] = [];
 
 		if (!withDefault) {
-			items = items.concat(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-				if (skip.includes(it.id) || it.workspaceId != workspace) {
+			items = items.concat(dbStore.getTypes().filter(it => {
+				if (!this.getPageLayouts().includes(it.recommendedLayout) || skip.includes(it.id) || (it.workspaceId != workspace)) {
 					return false;
 				};
 				return config.debug.ho ? true : !it.isHidden;
@@ -480,12 +481,12 @@ class DataUtil {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled', 'recommendedRelations', 'smartblockTypes' ].concat(Constant.coverRelationKeys));
+		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled', 'recommendedRelations' ].concat(Constant.coverRelationKeys));
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const { iconEmoji, iconImage, coverType, coverId, type } = object;
 		const ret: any = {
-			object: object,
+			object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
 			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],
@@ -681,6 +682,14 @@ class DataUtil {
 			Constant.typeId.relation,
 			Constant.typeId.option,
 			Constant.typeId.dashboard,
+			Constant.typeId.date,
+		].concat(this.getStoreTypes());
+	};
+
+	getStoreTypes () {
+		return [
+			Constant.storeTypeId.type,
+			Constant.storeTypeId.relation,
 		];
 	};
 
@@ -688,6 +697,15 @@ class DataUtil {
 		return [ 
 			Constant.typeId.set, 
 			Constant.typeId.collection,
+		];
+	};
+
+	getPageLayouts () {
+		return [ 
+			I.ObjectLayout.Page, 
+			I.ObjectLayout.Human, 
+			I.ObjectLayout.Task, 
+			I.ObjectLayout.Note, 
 		];
 	};
 

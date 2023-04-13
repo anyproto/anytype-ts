@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Loader, IconObject, Cover, Icon } from 'Component';
 import { commonStore, detailStore, blockStore } from 'Store';
 import { I, C, DataUtil, Action, translate, Util } from 'Lib';
-import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -37,7 +37,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const { rootId, className, onClick } = this.props;
 		const contextId = this.getRootId();
 		const check = DataUtil.checkDetails(contextId, rootId);
-		const object = check.object;
+		const object = detailStore.get(contextId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(contextId, object.creator, []);
 		const type = detailStore.get(contextId, object.type, []);

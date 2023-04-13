@@ -55,7 +55,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
 		const check = DataUtil.checkDetails(rootId);
-		const object = check.object;
+		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		
 		let cn = [ 'editorWrapper', check.className ];
@@ -137,11 +137,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					</div>
 				</div>
 
-				<Footer 
-					component="mainEdit" 
-					ref={ref => { this.refFooter = ref; }} 
-					{...this.props} 
-				/>
+				<Footer component="mainObject" ref={ref => this.refFooter = ref} {...this.props} />
 			</div>
 		);
 	};

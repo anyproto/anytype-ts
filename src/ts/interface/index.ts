@@ -31,7 +31,7 @@ import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup } from './popup';
 import { Preview, PreviewLink, PreviewType } from './preview';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
-import { SmartBlockType, ObjectLayout, ObjectFlag, RelationType, RelationScope, OptionScope } from './object';
+import { ObjectLayout, ObjectFlag, RelationType, RelationScope, OptionScope } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockHAlign, BlockVAlign, BlockComponent, Block, BlockStructure } from './block';
@@ -129,7 +129,6 @@ export {
 	Menu,
 	MenuItem,
 
-	SmartBlockType,
 	ObjectLayout,
 	ObjectFlag,
 	RelationType, 
