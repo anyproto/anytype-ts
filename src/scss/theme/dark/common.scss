@@ -83,17 +83,17 @@ html.themeDark {
 
     /* Button */
 
-	.button.black { background: $colorWhite; color: $colorBlack; }
-	.button.black:hover { color: $colorSecondary; }
+	.button.black { background: #dfddd0; color: $colorBlack; }
+	.button.black:hover { background: #bebcb1; }
 	.button.black {
 		.arrow { background-image: url('~img/arrow/button/black.svg'); }
 	}
 
-    .button.grey { color: $colorPrimary; box-shadow: 0px 0px 0px 1px $colorLineSecondary inset; background: $colorHover; }
-    .button.grey:hover { box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
+    .button.blank { color: $colorPrimary; border-color: $colorLineSecondary; }
+    .button.blank:hover { border-color: #525148; background: $colorHover; }
 
-    .button.blank { border-color: $colorLineSecondary; }
-    .button.blank:hover { border-color: $colorLinePrimary; }
+	.button.red { border-color: $colorLineSecondary; }
+    .button.red:hover { border-color: #581f0c; background: #311107; }
 
     .filter {
         .line { background: $colorLineSecondary; }
