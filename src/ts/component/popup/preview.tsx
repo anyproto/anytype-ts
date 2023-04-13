@@ -12,11 +12,11 @@ class PopupPreview extends React.Component<I.Popup> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { src, fileType } = data;
+		const { src, type } = data;
 
 		let content = null;
 
-		switch (fileType) {
+		switch (type) {
 			case I.FileType.Image: {
 				content = <img className="media" src={src} />
 				break;
@@ -63,7 +63,7 @@ class PopupPreview extends React.Component<I.Popup> {
 	resize () {
 		const { param, getId } = this.props;
 		const { data } = param;
-		const { src, fileType } = data;
+		const { src, type } = data;
 		const obj = $(`#${getId()}-innerWrap`);
 		const win = $(window);
 		const wrap = obj.find('#wrap');
@@ -71,14 +71,14 @@ class PopupPreview extends React.Component<I.Popup> {
 		const mw = win.width() - BORDER * 2;
 		const mh = win.height() - BORDER * 2;
 
-		wrap.css({ height: 450, width: 450 });
+		wrap.css({ height: 450, width: 300 });
 
 		const onError = () => {
 			wrap.addClass('brokenMedia');
 			loader.remove();
 		};
 
-		switch (fileType) {
+		switch (type) {
 			case I.FileType.Image: {
 				const img = new Image();
 

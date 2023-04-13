@@ -255,7 +255,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 	};
 
 	onVideoClick (e: any, src: string) {
-		popupStore.open('preview', { data: { src: src, fileType: I.FileType.Video }, preventMenuClose: true });
+		popupStore.open('preview', { data: { src, type: I.FileType.Video }, preventMenuClose: true });
 	};
 
 	onImport () {

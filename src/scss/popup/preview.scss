@@ -3,7 +3,7 @@
 .popups {
 	.popup.popupPreview {
 		.innerWrap { 
-			min-width: 450px; min-height: 450px; margin: 0px !important; transform: translate3d(-50%, -50%, 0px) !important;
+			min-width: 450px; min-height: 300px; margin: 0px !important; transform: translate3d(-50%, -50%, 0px) !important;
 			border-radius: 6px;
 		}
 		.innerWrap.anim { transition: $transitionFast; }

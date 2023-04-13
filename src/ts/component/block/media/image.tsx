@@ -228,7 +228,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		const { hash } = block.content;
 		const src = commonStore.imageUrl(hash, Constant.size.image);
 		if (!keyboard.withCommand(e)) {
-			popupStore.open('preview', { data: { src: src, fileType: I.FileType.Image } });
+			popupStore.open('preview', { data: { src, type: I.FileType.Image } });
 		};
 	};
 
