@@ -59,8 +59,6 @@ class MenuUtil {
 		let i = 0;
 		let items = DataUtil.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 
-		console.log(items);
-
 		for (let type of items) {
 			ret.push({ 
 				id: 'object' + i++, 
