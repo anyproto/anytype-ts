@@ -101,7 +101,6 @@
 		"electron-util": "^0.12.3",
 		"electron-window-state": "^5.0.3",
 		"emoji-mart": "^2.11.2",
-		"escape-string-regexp": "^4.0.0",
 		"file-type": "^12.4.2",
 		"filereader": "^0.10.3",
 		"findandreplacedomtext": "^0.4.6",
