@@ -1,4 +1,4 @@
-import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
+import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import { Util, I, M, Decode, translate, analytics, Response, Mapper, Renderer, Action, Dataview, Preview } from 'Lib';
 import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
@@ -910,17 +910,25 @@ class Dispatcher {
 					const process = data.getProcess();
 					const progress = process.getProgress();
 					const state = process.getState();
-					const pt = process.getType();
+					const type = process.getType();
 
 					switch (state) {
 						case I.ProgressState.Running: {
+							let canCancel = true;
+							let isUnlocked = true;
+
+							if ([ I.ProgressType.Recover, I.ProgressType.Migration ].includes(type)) {
+								canCancel = false;
+								isUnlocked = false;
+							};
+
 							commonStore.progressSet({
 								id: process.getId(),
-								status: translate('progress' + pt),
+								status: translate(`progress${type}`),
 								current: progress.getDone(),
 								total: progress.getTotal(),
-								isUnlocked: true,
-								canCancel: pt != I.ProgressType.Recover,
+								isUnlocked,
+								canCancel,
 							});
 							break;
 						};
@@ -931,7 +939,7 @@ class Dispatcher {
 
 							if (state == I.ProgressState.Done) {
 								let toast = '';
-								switch (pt) {
+								switch (type) {
 									case I.ProgressType.Import: { toast = 'Import finished'; break; };
 									case I.ProgressType.Export: { toast = 'Export finished'; break; };
 								};
