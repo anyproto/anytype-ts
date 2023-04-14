@@ -90,7 +90,6 @@
 		"array-move": "^2.2.2",
 		"babel-plugin-prismjs": "^2.0.1",
 		"blueimp-load-image": "^2.31.0",
-		"bytebuffer": "^5.0.1",
 		"canvas-fill-text-on-arc": "^1.0.4",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
