@@ -89,7 +89,6 @@
 		"@sentry/browser": "^7.39.0",
 		"amplitude-js": "^5.11.0",
 		"array-move": "^2.2.2",
-		"babel-plugin-prismjs": "^2.0.1",
 		"blueimp-load-image": "^2.31.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
