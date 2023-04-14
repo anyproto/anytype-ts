@@ -7,7 +7,7 @@ import Constant from 'json/constant.json';
 interface Props {
 	/** the length of the pin, defaults to Constant.pinLength */
 	pinLength: number;
-	/** the expected pin, encrypted in sha1. if none provided, this component does not make a comparison onPinEntry */
+	/** the expected pin, encrypted in sha1. if none provided, this component does not make a comparison check */
 	expectedPin: string | null;
 	/** if true, the input field will be focused on component mount */
 	focusOnMount: boolean;
@@ -98,30 +98,32 @@ class Pin extends React.Component<Props, State> {
 	};
 
 	/** triggers when all the pin characters have been entered in, resetting state and calling callbacks */
-	onPinEntry = () => {
+	check = () => {
 		const { expectedPin, onSuccess, onError } = this.props;
-		const pin = this.getPin();
+		const pin = this.getValue();
 		const success = !expectedPin || (expectedPin === sha1(pin));
-
-		// Reset State
-		this.setState({ index: 0 }, () => {
-			//this.clearPin();
-			this.focus();	
-		});
 
 		success ? onSuccess(pin) : onError();
 	};
 
 	/** returns the pin state stored in the input DOM */
-	getPin = () => {
+	getValue = () => {
 		return this.inputRefs.map((input) => input.getValue()).join('');
 	};
 
 	/** sets all the input boxes to empty string */
-	clearPin = () => {
+	clear = () => {
 		for (const i in this.inputRefs) {
 			this.inputRefs[i].setValue('');
 		};
+	};
+
+	/** resets state */
+	reset () {
+		this.setState({ index: 0 }, () => {
+			this.clear();
+			this.focus();	
+		});
 	};
 
 	// Input subcomponent methods
@@ -148,10 +150,10 @@ class Pin extends React.Component<Props, State> {
 
 	onInputKeyUp = () => {
 		const { pinLength: size } = this.props;
-		const pin = this.getPin();
+		const pin = this.getValue();
 
 		if (pin.length === size) {
-			this.onPinEntry();
+			this.check();
 		};
 	};
 

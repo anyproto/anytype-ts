@@ -16,7 +16,7 @@
 			> .side.left {
 				.iconObject.withLetter { background-color: $colorBorderDark; }
 
-				.section { margin: 0px 0px 25px 0px; }
+				.section { margin: 0px 0px 20px 0px; }
 				.section:last-child { margin: 0px; }
 				.section {
 					> .name { @include text-small; color: $colorDarkGrey; margin: 0px 0px 4px 0px; padding: 0px 8px; }
@@ -34,9 +34,10 @@
 					.type { @include text-small; color: $colorDarkGrey; }
 				}
 
+				.items { display: flex; flex-direction: column; gap: 2px 0px; }
+
 				.item { 
-					display: flex; flex-direction: row; gap: 0px 10px; margin: 0px 0px 2px 0px; padding: 5px 8px; 
-					cursor: pointer; border-radius: 8px; transition: $transitionFast;
+					display: flex; flex-direction: row; gap: 0px 10px; padding: 5px 8px; cursor: pointer; border-radius: 8px; transition: $transitionFast;
 				}
 				.item:hover, .item.active { background: $colorBorderDark; }
 				.item {
