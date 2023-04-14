@@ -116,7 +116,6 @@
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
 		"mem": "^6.1.1",
-		"mini-create-react-context": "^0.4.1",
 		"mobx": "^6.6.1",
 		"mobx-logger": "^0.7.1",
 		"mobx-react": "^7.5.2",
