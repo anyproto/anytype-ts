@@ -94,7 +94,6 @@
 		"css-loader": "^3.6.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
-		"electron-devtools-installer": "^3.1.1",
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^3.0.9",
