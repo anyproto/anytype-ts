@@ -438,18 +438,6 @@ class Keyboard {
 				});
 				break;
 			};
-
-			case 'workspace': {
-				popupStore.open('prompt', {
-					data: {
-						title: 'Create Space',
-						onChange: (v: string) => {
-							C.WorkspaceCreate(v);
-						},
-					}
-				});
-				break;
-			};
 		};
 	};
 

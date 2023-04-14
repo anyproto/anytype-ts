@@ -332,12 +332,6 @@ const TemplateClone = (response: any) => {
 	};
 };
 
-const WorkspaceCreate = (response: any) => {
-	return {
-		id: response.getWorkspaceid(),
-	};
-};
-
 const WorkspaceObjectAdd = (response: any) => {
 	return {
 		objectId: response.getObjectid(),
@@ -424,7 +418,6 @@ export {
 	TemplateCreateFromObjectType,
 	TemplateClone,
 
-	WorkspaceCreate,
 	WorkspaceObjectAdd,
 
 	UnsplashSearch,
