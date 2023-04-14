@@ -33,7 +33,7 @@
 		.tabs {
 			.tab { 
 				display: inline-block; font-weight: 700; cursor: pointer; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
-				color: $colorMediumGrey; transition: $transitionFast;
+				color: $colorMediumGrey; transition: $transitionAllCommon;
 			}
 			.tab:hover, .tab.active { color: $colorBlack; }
 		}
@@ -56,7 +56,7 @@
 			.item {
 				.flex { 
 					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 700;
-					gap: 0px 8px; transition: $transitionFast; max-width: calc(100% - 70px);
+					gap: 0px 8px; transition: $transitionAllCommon; max-width: calc(100% - 70px);
 				}
 				.flex:hover { background: $colorHover; }
 
@@ -65,7 +65,7 @@
 
 				.buttons { flex-shrink: 0; }
 				.buttons {
-					.icon { width: 28px !important; height: 28px !important; background-size: 20px; border-radius: 4px; transition: $transitionFast; }
+					.icon { width: 28px !important; height: 28px !important; background-size: 20px; border-radius: 4px; transition: $transitionAllCommon; }
 					.icon.lock { 
 						margin-right: -2px; width: 16px !important; height: 16px !important; background-size: 16px; background-image: url('~img/icon/store/lock.svg'); 
 					}

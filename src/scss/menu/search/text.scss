@@ -19,7 +19,7 @@
 			.line { height: 20px; width: 1px; background: $colorBorderDark; }
 
 			.icon.arrow { 
-				width: 24px; height: 24px; border-radius: 4px; transition: $transitionFast; margin: 0px; 	
+				width: 24px; height: 24px; border-radius: 4px; transition: $transitionAllCommon; margin: 0px; 	
 				background-image: url('~img/arrow/search.svg'); 
 			}
 			.icon.arrow.right { transform: rotateZ(180deg); }

@@ -20,7 +20,7 @@
 		.body { padding: 0px 16px; }
 		.foot { padding: 0px 16px; }
 		.foot {
-			.btn { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionFast; }
+			.btn { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionAllCommon; }
 			.btn:last-child { margin: 0px; }
 			.btn:hover { color: #e89d00; }
 		}

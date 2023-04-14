@@ -5,7 +5,7 @@
 
 	.items {
 		.item { 
-			cursor: pointer; transition: $transitionFast; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
+			cursor: pointer; transition: $transitionAllCommon; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
 			height: 80px; border: 1px solid $colorBorderLight; border-radius: 8px;
 		}
 		.item {
@@ -52,7 +52,7 @@
 
 	.sideName { margin-bottom: 13px; @include text-common; font-weight: 500; padding: 0px 16px; }
 	
-	.selected { padding: 16px; border-radius: 8px; border: 1px solid $colorBorderLight; transition: $transitionFast; }
+	.selected { padding: 16px; border-radius: 8px; border: 1px solid $colorBorderLight; transition: $transitionAllCommon; }
 	.selected {
 		.iconObject { margin-bottom: 8px; }
 		.name { margin-bottom: 1px; @include text-overflow-nw; height: 22px; }

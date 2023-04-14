@@ -7,7 +7,7 @@
 .pager.isShort { gap: 0px 18px; }
 .pager {
     .pageItem { 
-        min-width: 24px; display: inline-block; padding: 0px 2px; transition: $transitionFast; text-align: center;
+        min-width: 24px; display: inline-block; padding: 0px 2px; transition: $transitionAllCommon; text-align: center;
         vertical-align: top; line-height: 20px; cursor: pointer;
     }
     .pageItem:hover, .pageItem.active { color: $colorBlack; }

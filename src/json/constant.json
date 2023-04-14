@@ -36,8 +36,8 @@
 	],
 	
 	"delay": {
-		"menu": 60,
-		"popup": 60,
+		"menu": 160,
+		"popup": 310,
 		"toast": 2500
 	},
 	

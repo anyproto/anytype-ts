@@ -25,7 +25,7 @@
 
 				.space { 
 					display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px; 
-					border-radius: 8px; transition: $transitionFast; cursor: pointer;
+					border-radius: 8px; transition: $transitionAllCommon; cursor: pointer;
 				}
 				.space:hover, .space.active { background: $colorBorderDark; }
 				.space {
@@ -38,7 +38,7 @@
 				.items { display: flex; flex-direction: column; gap: 2px 0px; }
 
 				.item { 
-					display: flex; flex-direction: row; gap: 0px 10px; padding: 5px 8px; cursor: pointer; border-radius: 8px; transition: $transitionFast;
+					display: flex; flex-direction: row; gap: 0px 10px; padding: 5px 8px; cursor: pointer; border-radius: 8px; transition: $transitionAllCommon;
 				}
 				.item:hover, .item.active { background: $colorBorderDark; }
 				.item {
@@ -108,7 +108,7 @@
 					.iconObject:after {
 						content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
 						background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
-						transition: $transitionFast; opacity: 0;
+						transition: $transitionAllCommon; opacity: 0;
 					}
 					.iconObject:hover:after { opacity: 1; }
 				}
@@ -201,7 +201,7 @@
 		.side.right.tabExportIndex {
 			.items { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 			.item { 
-				width: 132px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionFast; cursor: pointer; 
+				width: 132px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon; cursor: pointer; 
 				position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
 			}
 			.item:hover { border-color: $colorBlack; }
@@ -240,10 +240,10 @@
 
 				.btn { 
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: $colorDarkGrey; 
-					cursor: pointer; transition: $transitionFast;
+					cursor: pointer; transition: $transitionAllCommon;
 				}
 				.btn {
-					.icon.help { width: 14px; height: 14px; background-image: url('~img/icon/popup/settings/help0.svg'); transition: $transitionFast; }
+					.icon.help { width: 14px; height: 14px; background-image: url('~img/icon/popup/settings/help0.svg'); transition: $transitionAllCommon; }
 				}
 				.btn:hover { color: $colorBlack; }
 				.btn:hover {
