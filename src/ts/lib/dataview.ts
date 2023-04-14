@@ -173,24 +173,6 @@ class Dataview {
 		return tabs.filter(it => it);
 	};
 
-	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
-		const block = blockStore.getLeaf(rootId, blockId);
-		if (!block) {
-			return;
-		};
-
-		const groupOrder = Util.objectCopy(block.content.groupOrder);
-		const idx = groupOrder.findIndex(it => it.viewId == viewId);
-
-		if (idx >= 0) {
-			groupOrder[idx].groups = groups;
-		} else {
-			groupOrder.push({ viewId, groups });
-		};
-
-		blockStore.updateContent(rootId, blockId, { groupOrder });
-	};
-
 	getView (rootId: string, blockId: string, viewId?: string): I.View {
 		const views = dbStore.getViews(rootId, blockId);
 		if (!views.length) {
@@ -219,6 +201,38 @@ class Dataview {
 		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'type' ], true) : null;
 
 		return targetObjectId ? target.type == Constant.typeId.collection : isCollection;
+	};
+
+	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const el = block.content.groupOrder.find(it => it.viewId == viewId);
+		if (el) {
+			el.groups = groups;
+		};
+
+		blockStore.updateContent(rootId, blockId, block.content);
+	};
+
+	groupOrderUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const groupOrder = Util.objectCopy(block.content.groupOrder);
+		const idx = groupOrder.findIndex(it => it.viewId == viewId);
+
+		if (idx >= 0) {
+			groupOrder[idx].groups = groups;
+		} else {
+			groupOrder.push({ viewId, groups });
+		};
+
+		blockStore.updateContent(rootId, blockId, { groupOrder });
 	};
 
 };

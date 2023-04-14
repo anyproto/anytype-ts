@@ -589,14 +589,6 @@ class DataUtil {
 		this.checkObjectWithRelationCnt('setOf', Constant.typeId.set, ids, 2, callBack);
 	};
 
-	defaultName (key: string) {
-		return translate(Util.toCamelCase('defaultName-' + key));
-	};
-
-	fileName (object: any) {
-		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
-	};
-
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
@@ -635,7 +627,7 @@ class DataUtil {
 	};
 
 	coverIsImage (type: I.CoverType) {
-		return [ I.CoverType.Upload, I.CoverType.Image, I.CoverType.Source ].includes(type);
+		return [ I.CoverType.Upload, I.CoverType.Source ].includes(type);
 	};
 
 	isFileType (type: string) {
@@ -858,18 +850,12 @@ class DataUtil {
 		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), Util.filterFix(param.fullText).replace(/\\/g, ''), offset, limit, callBack);
 	};
 
-	dataviewGroupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
-		const block = blockStore.getLeaf(rootId, blockId);
-		if (!block) {
-			return;
-		};
+	defaultName (key: string) {
+		return translate(Util.toCamelCase('defaultName-' + key));
+	};
 
-		const el = block.content.groupOrder.find(it => it.viewId == viewId);
-		if (el) {
-			el.groups = groups;
-		};
-
-		blockStore.updateContent(rootId, blockId, block.content);
+	fileName (object: any) {
+		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
 	};
 
 	getObjectName (object: any) {
@@ -886,7 +872,7 @@ class DataUtil {
 		};
 
 		return name;
-	}
+	};
 
 	getObjectById (id: string, callBack: (object: any) => void) {
 		this.getObjectsByIds([ id ], (objects) => {

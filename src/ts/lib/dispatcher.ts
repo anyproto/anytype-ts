@@ -724,7 +724,7 @@ class Dispatcher {
 
 					const order = Mapper.From.GroupOrder(data.getGrouporder());
 
-					Dataview.groupUpdate(rootId, id, order.viewId, order.groups);
+					Dataview.groupOrderUpdate(rootId, id, order.viewId, order.groups);
 					break;
 				};
 
