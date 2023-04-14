@@ -77,8 +77,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { style, checked } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		let canSelect = !isInsideTable;
-		let canDrop = !readonly && !isSelectionDisabled && !isInsideTable;
+		let canSelect = !isInsideTable && !isSelectionDisabled;
+		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = false;
 		let cn: string[] = [ 'block', DataUtil.blockClass(block), 'align' + hAlign, 'index' + index ];
 		let cd: string[] = [ 'wrapContent' ];
