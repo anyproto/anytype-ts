@@ -115,7 +115,6 @@
 		"lazy-val": "^1.0.4",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
-		"lowlight": "^1.15.0",
 		"mem": "^6.1.1",
 		"mini-create-react-context": "^0.4.1",
 		"mobx": "^6.6.1",
