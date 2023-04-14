@@ -186,28 +186,32 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	getLayoutOptions () {
-		let options = [
-			I.WidgetLayout.Tree,
-			I.WidgetLayout.List,
-			I.WidgetLayout.Link,
-		];
+		const isCollection = this.isCollection();
 
-		if (this.target) {
+		let options = [];
+		if (isCollection) {
+			options = [
+				I.WidgetLayout.List,
+				I.WidgetLayout.Tree,
+			];
+		} else {
+			options = [
+				I.WidgetLayout.Tree,
+				I.WidgetLayout.List,
+				I.WidgetLayout.Link,
+			];
+		};
+
+		if (this.target && !isCollection) {
 			const setTypes = DataUtil.getSetTypes();
 			const treeSkipTypes = setTypes.concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
-			const isCollection = this.isCollection();
 
-			// Favorites and Recents and Sets can only become List and Tree layouts
-			if (isCollection) {
-				options = options.filter(it => it != I.WidgetLayout.Link);
-			} else {
-				// Sets can only become Link and List layouts, non-sets can't become List
-				if (treeSkipTypes.includes(this.target.type)) {
-					options = options.filter(it => it != I.WidgetLayout.Tree);
-				};
-				if (!setTypes.includes(this.target.type)) {
-					options = options.filter(it => it != I.WidgetLayout.List);
-				};
+			// Sets can only become Link and List layouts, non-sets can't become List
+			if (treeSkipTypes.includes(this.target.type)) {
+				options = options.filter(it => it != I.WidgetLayout.Tree);
+			};
+			if (!setTypes.includes(this.target.type)) {
+				options = options.filter(it => it != I.WidgetLayout.List);
 			};
 		};
 
