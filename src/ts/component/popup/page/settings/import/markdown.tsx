@@ -1,18 +1,11 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, Icon } from 'Component';
 import { I, Util, translate } from 'Lib';
 import Head from '../head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	prevPage: string;
-	onPage: (id: string) => void;
-	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
-};
+class PopupSettingsPageImportMarkdown extends React.Component<I.PopupSettings> {
 
-class PopupSettingsPageImportMarkdown extends React.Component<Props> {
-
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onImport = this.onImport.bind(this);

@@ -5,12 +5,7 @@ import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Popup {
-	prevPage: string;
-	onPage: (id: string) => void;
-};
-
-const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<Props> {
+const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
 
 	refName: any = null;
 	dashboardId = '';

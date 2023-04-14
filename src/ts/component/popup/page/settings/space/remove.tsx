@@ -4,12 +4,7 @@ import { I, translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
-interface Props extends I.Popup {
-    prevPage: string;
-    onPage: (id: string) => void;
-};
-
-const PopupSettingsSpaceRemove = observer(class PopupSettingsSpaceRemove extends React.Component<Props> {
+const PopupSettingsSpaceRemove = observer(class PopupSettingsSpaceRemove extends React.Component<I.PopupSettings> {
 
     render () {
         const space = {

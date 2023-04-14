@@ -1,3 +1,5 @@
+import { I } from 'Lib';
+
 export interface PopupParam {
 	data?: any;
 	preventResize?: boolean;
@@ -13,4 +15,13 @@ export interface Popup {
 	storageGet?(): any;
 	storageSet?(data: any): void;
 	getId?(): string;
+};
+
+export interface PopupSettings extends Popup {
+	prevPage: string;
+	onPage: (id: string) => void;
+	setConfirmPin: (v: () => void) => void;
+	onConfirmPin: () => void;
+	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
+	onExport: (format: I.ExportType, param: any) => void;
 };

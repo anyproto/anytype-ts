@@ -5,14 +5,9 @@ import { I, translate, analytics, Renderer, DataUtil } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Popup {
-	prevPage: string;
-	onPage: (id: string) => void;
-};
+const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
-const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<Props> {
-
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onType = this.onType.bind(this);

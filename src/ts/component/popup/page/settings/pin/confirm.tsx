@@ -3,18 +3,11 @@ import { Title, Label, Pin, Error } from 'Component';
 import { I, Storage, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup {
-	prevPage: string;
-	onPage: (id: string) => void;
-	setConfirmPin: (v: () => void) => void;
-	onConfirmPin: () => void;
-};
-
 interface State {
 	error: string;
 };
 
-const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm extends React.Component<Props, State> {
+const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm extends React.Component<I.PopupSettings, State> {
 
 	state = {
 		error: '',

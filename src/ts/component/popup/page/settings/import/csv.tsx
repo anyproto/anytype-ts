@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, Icon, Select, Switch } from 'Component';
 import { I, Util, translate, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import Head from '../head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	prevPage: string;
-	onPage: (id: string) => void;
+interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
 };
 
