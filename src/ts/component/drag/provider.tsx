@@ -4,8 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import {I, C, focus, keyboard, Util, scrollOnMove, Action, Preview, DataUtil} from 'Lib';
-import {blockStore, dbStore, detailStore} from 'Store';
+import { I, C, focus, keyboard, Util, scrollOnMove, Action, Preview, DataUtil } from 'Lib';
+import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {

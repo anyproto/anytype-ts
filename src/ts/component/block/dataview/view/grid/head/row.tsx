@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { SortableContainer } from 'react-sortable-hoc';
 import { I } from 'Lib';
 import { Icon } from 'Component';
-import { blockStore, dbStore } from 'Store';
+import { blockStore } from 'Store';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
@@ -14,7 +14,6 @@ interface Props extends I.ViewComponent {
 	onResizeStart(e: any, key: string): void;
 	getColumnWidths?: (relationId: string, width: number) => any;
 };
-
 
 const HeadRow = observer(class HeadRow extends React.Component<Props> {
 
