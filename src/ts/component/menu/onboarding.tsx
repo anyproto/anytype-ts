@@ -14,6 +14,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 
 	node: any = null;
 	confetti: any = null;
+	video: any = null;
 	state = {
 		error: null,
 	};
@@ -84,7 +85,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 				{category ? <Label className="category" text={category} /> : ''}
 				{item.name ? <Label className="name" text={item.name} /> : ''}
 				{item.description ? <Label className="descr" text={item.description} /> : ''}
-				{item.video ? <video src={item.video} onClick={(e: any) => this.onVideoClick(e, item.video)} controls={false} autoPlay={true} loop={true} /> : ''}
+				{item.video ? <video ref={node => this.video = node} src={item.video} onClick={(e: any) => this.onVideoClick(e, item.video)} controls={false} autoPlay={true} loop={true} /> : ''}
 
 				<div className="bottom">
 					<Steps />
@@ -255,7 +256,16 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 	};
 
 	onVideoClick (e: any, src: string) {
-		popupStore.open('preview', { data: { src, type: I.FileType.Video }, preventMenuClose: true });
+		Util.pauseMedia();
+
+		popupStore.open('preview', { data: { src, type: I.FileType.Video },
+			preventMenuClose: true,
+			onClose: () => {
+				if (this.video) {
+					this.video.play();
+				};
+			}
+		});
 	};
 
 	onImport () {

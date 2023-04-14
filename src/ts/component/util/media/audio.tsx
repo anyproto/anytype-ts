@@ -33,10 +33,10 @@ class MediaAudio extends React.Component<Props> {
 
     render () {
         return (
-            <div 
-				ref={node => this.node = node} 
-				className="wrap resizable audio mediaAudio"
-			>
+            <div
+                ref={node => this.node = node}
+                className="wrap resizable audio mediaAudio"
+            >
                 <audio id="audio" preload="auto" src={this.current.src} />
 
                 <div className="controls">
@@ -129,7 +129,7 @@ class MediaAudio extends React.Component<Props> {
         const el = this.audioNode;
         const paused = el.paused;
 
-        $('audio, video').each((i: number, item: any) => { item.pause(); });
+        Util.pauseMedia();
         paused ? this.play() : this.pause();
     };
 

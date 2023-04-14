@@ -984,6 +984,10 @@ class Util {
 		return a.hostname || url;
 	};
 
+	pauseMedia () {
+		$('audio, video').each((i: number, item: any) => { item.pause(); });
+	};
+
 };
 
 export default new Util();
