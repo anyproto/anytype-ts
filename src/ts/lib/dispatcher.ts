@@ -142,6 +142,7 @@ class Dispatcher {
 		if (v == V.OBJECTRELATIONSSET)			 t = 'objectRelationsSet';
 		if (v == V.OBJECTRELATIONSAMEND)		 t = 'objectRelationsAmend';
 		if (v == V.OBJECTRELATIONSREMOVE)		 t = 'objectRelationsRemove';
+		if (v == V.OBJECTRESTRICTIONSSET)		 t = 'objectRestrictionsSet';
 
 		return t;
 	};

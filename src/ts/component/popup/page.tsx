@@ -93,8 +93,8 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 
 		width >= ww ? obj.addClass('full') : obj.removeClass('full');
 
-		obj.css({ width: width });
-		loader.css({ width: width, height: obj.height() });
+		obj.css({ width });
+		loader.css({ width, height: obj.height() });
 		position();
 	};
 
