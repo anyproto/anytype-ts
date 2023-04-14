@@ -109,7 +109,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let template = null;
 		let archive = null;
 		let fav = null;
-		let highlight = null;
 		let pageLock = null;
 		let pageInstall = null;
 
@@ -149,12 +148,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			archive = { id: 'pageArchive', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (object.isHighlighted) {
-			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
-		} else {
-			highlight = { id: 'highlight', name: 'Highlight' };
-		};
-
 		if (block.isLocked()) {
 			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page', caption: `Ctrl+Shift+L` };
 		} else {
@@ -174,7 +167,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedDelete = object.isInstalled && allowedArchive && object.isArchived;
 		const allowedShare = block.isObjectSpace() && config.allowSpaces;
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
-		const allowedHighlight = !(!object.workspaceId || block.isObjectSpace() || !config.allowSpaces);
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedFav = !object.isArchived;
@@ -193,7 +185,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedReload)		 pageReload = null;
 		if (!allowedShare)		 share = null;
-		if (!allowedHighlight)	 highlight = null;
 		if (!allowedSearch)		 search = null;
 		if (!allowedHistory)	 history = null;
 		if (!allowedBlock)		 undo = redo = null;
@@ -210,10 +201,10 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			sections = [
 				{ children: [ archive, pageRemove, pageInstall ] },
-				{ children: [ fav, pageLink, linkTo, pageCopy, highlight ] },
+				{ children: [ fav, pageLink, linkTo, pageCopy ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
-				{ children: [ share, highlight ] },
+				{ children: [ share ] },
 			];
 		} else
 		if (block.isPage()) {
@@ -222,7 +213,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				{ children: [ fav, pageLink, linkTo, pageCopy, template, pageLock ] },
 				{ children: [ search ] },
 				{ children: [ print, pageExport, pageReload ] },
-				{ children: [ highlight ] },
 			];
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		} else {
@@ -561,18 +551,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					ObjectUtil.openPopup({ id: message.id, layout: object.layout });
 
 					analytics.event('CreateTemplate', { objectType: object.type });
-				});
-				break;
-
-			case 'highlight':
-				C.WorkspaceSetIsHighlighted(object.id, true, () => {
-					analytics.event('Highlight', { count: 1 });
-				});
-				break;
-
-			case 'unhighlight':
-				C.WorkspaceSetIsHighlighted(object.id, false, () => {
-					analytics.event('Unhighlight', { count: 1 });
 				});
 				break;
 		};

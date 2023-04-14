@@ -102,14 +102,6 @@ const WorkspaceSelect = (workspaceId: string, callBack?: (message: any) => void)
 	dispatcher.request(WorkspaceSelect.name, request, callBack);
 };
 
-const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Workspace.SetIsHighlighted.Request();
-	
-	request.setObjectid(objectId);
-	request.setIshighlighted(isHightlighted);
-
-	dispatcher.request(WorkspaceSetIsHighlighted.name, request, callBack);
-};
 
 const WorkspaceObjectAdd = (objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Object.Add.Request();
@@ -1698,7 +1690,6 @@ export {
 
 	WorkspaceCreate,
 	WorkspaceSelect,
-	WorkspaceSetIsHighlighted,
 	WorkspaceObjectAdd,
 	WorkspaceObjectListRemove,
 

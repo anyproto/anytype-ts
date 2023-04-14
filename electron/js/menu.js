@@ -265,14 +265,6 @@ class MenuManager {
 				Separator,
 
 				{
-					label: 'Create workspace',
-					click: () => { Util.send(this.win, 'commandGlobal', 'workspace');	}
-				},
-				{
-					label: 'Save page as HTML',
-					click: () => { Util.send(this.win, 'command', 'saveAsHTML');	}
-				},
-				{
 					label: 'Relaunch',
 					click: () => { Api.exit(this.win, true); }
 				},
