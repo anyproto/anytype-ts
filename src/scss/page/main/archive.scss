@@ -14,18 +14,21 @@
 			display: flex; flex-direction: row; padding: 0px 0px 16px 0px; border-bottom: 1px solid $colorBorderLight; margin: 0px 0px 16px 0px;
 		}
 		.controls {
-			.side { width: 50%; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+			.side { width: 70%; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 			.side.left {
 				.element { 
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; line-height: 28px; cursor: pointer;
-					transition: $transitionFast; white-space: nowrap;
+					transition: $transitionFast;
+				}
+				.element {
+					.name { @include text-overflow-nw; width: calc(100% - 26px); }
 				}
 				.element:first-child { margin-left: -4px; }
 				.element:hover { background-color: $colorHover; }
 			}
 			.side.right { justify-content: flex-end; }
 
-			.icon { width: 20px; height: 20px; }
+			.icon { width: 20px; height: 20px; flex-shrink: 0; }
 			.icon.checkbox { background-image: url('~img/icon/archive/controls/checkbox0.svg'); }
 			.icon.checkbox.active { background-image: url('~img/icon/archive/controls/checkbox1.svg'); }
 			.icon.restore { background-image: url('~img/icon/menu/action/restore0.svg'); }
@@ -49,14 +52,14 @@
 
 			.item { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; cursor: pointer; margin: 0px 0px 16px 0px; }
 			.item {
-				.info { width: calc(100% - 100px); }
+				.info { width: calc(100% - 100px); flex-grow: 1; }
 
 				.icon.checkbox { 
-					flex-shrink: 0; margin-right: 4px; cursor: pointer !important; background-image: url('~img/icon/archive/checkbox0.svg');
-					width: 18px; height: 18px; transition: none;
+					flex-shrink: 0; cursor: pointer !important; background-image: url('~img/icon/archive/checkbox0.svg');
+					width: 18px; height: 18px; transition: none; flex-basis: 18px; 
 				}
 				.icon.checkbox.active { background-image: url('~img/icon/archive/checkbox1.svg'); }
-				.iconObject { flex-shrink: 0; }
+				.iconObject { flex-shrink: 0; flex-basis: 48px; }
 
 				.name { @include text-overflow-nw; width: 100%; }
 				.descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorDarkGrey; }
