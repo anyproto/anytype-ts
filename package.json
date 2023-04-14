@@ -104,7 +104,6 @@
 		"file-type": "^12.4.2",
 		"findandreplacedomtext": "^0.4.6",
 		"fs": "^0.0.1-security",
-		"get-input-selection": "^1.1.4",
 		"google-protobuf": "^3.14.0",
 		"grpc-web": "^1.2.1",
 		"history": "^4.10.1",
