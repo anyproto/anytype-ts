@@ -331,7 +331,15 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		menuStore.open('select', {
 			...param,
 			data: {
-				options: [{ id: 'newObject', name: 'New object' }]
+				options: [{ id: 'newObject', name: 'New object' }],
+				onSelect: (event: any, item: any) => {
+					switch (item.id) {
+						case 'newObject': {
+							console.log('NEW OBJECT!')
+							break;
+						};
+					};
+				},
 			}
 		});
 	};
