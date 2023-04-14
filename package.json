@@ -142,7 +142,6 @@
 		"react-virtualized": "^9.22.3",
 		"read-chunk": "^3.2.0",
 		"sanitize-filename": "^1.6.3",
-		"sass": "^1.38.2",
 		"selection-ranges": "^3.0.3",
 		"sentry": "^0.1.2",
 		"sha1": "^1.1.1",
