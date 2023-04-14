@@ -4,6 +4,7 @@
 	.popupSettings {
 		.innerWrap { width: 958px; height: 650px; }
 		.innerWrap.scroll {
+			.sides { display: block; }
 			.sides > .side.left { display: none; } 
 			.sides > .side.right { width: 100%; }
 		}
@@ -221,6 +222,7 @@
 		.side.right.tabImportNotion, 
 		.side.right.tabImportNotionHelp {
 			.icon.logo { background-image: url('~img/icon/import/notion.svg'); }
+			a { font-weight: bold; text-decoration: none; color: $colorMediumGrey; }
 		}
 
 		.side.right.tabImportNotion {
