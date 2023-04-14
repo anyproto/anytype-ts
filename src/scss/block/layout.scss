@@ -26,6 +26,7 @@
 	}
 	.block.blockLayout.layoutColumn > .wrapMenu { display: none; }
 	.block.blockLayout.layoutColumn > .wrapContent { width: 100%; display: flex; flex-flow: column; }
+	.block.blockLayout.layoutColumn > .wrapContent > .children > .block.first { padding-top: 0px; }
 
 	.block.blockLayout.layoutColumn > .wrapContent > .children > .blockDataview {
 		.content { overflow: hidden; }
