@@ -118,7 +118,6 @@
 		"jquery": "^3.5.1",
 		"katex": "^0.13.13",
 		"keytar": "^7.7.0",
-		"latex.js": "^0.12.4",
 		"lazy-val": "^1.0.4",
 		"linebyline": "^1.3.0",
 		"lodash": "^4.17.20",
