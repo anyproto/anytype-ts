@@ -4,7 +4,6 @@ import { commonStore, popupStore, menuStore } from 'Store';
 import { translate } from '.';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-import Cover from 'json/cover.json';
 
 class Util {
 
@@ -680,14 +679,6 @@ class Util {
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
-	};
-
-	coverSrc (id: string, preview?: boolean): string {
-		const item = Cover.find(it => it.id == id);
-		if (item) {
-			return commonStore.imageUrl(item.hash, preview ? 200 : Constant.size.image);
-		};
-		return `./img/cover/${preview ? 'preview/' : ''}${id}.jpg`;
 	};
 
 	selectionRange (): Range {

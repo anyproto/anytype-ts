@@ -42,10 +42,6 @@ class Cover extends React.Component<Props> {
 			style.backgroundImage = `url("${commonStore.imageUrl(image, Constant.size.cover)}")`;
 		};
 
-		if ((type == I.CoverType.Image) && id) {
-			style.backgroundImage = `url("${Util.coverSrc(id, preview)}")`;
-		};
-
 		if (src) {
 			style.backgroundImage = `url("${src}")`;
 		};
