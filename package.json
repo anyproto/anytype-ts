@@ -147,7 +147,6 @@
 		"source-map-loader": "^0.2.4",
 		"typescript": "^3.9.7",
 		"typescript-eslint": "^0.0.1-alpha.0",
-		"xmlhttprequest": "^1.8.0",
 		"xtend": "^4.0.2"
 	},
 	"build": {
