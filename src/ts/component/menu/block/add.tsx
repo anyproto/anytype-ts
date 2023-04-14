@@ -284,12 +284,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			map(it => dbStore.getRelationById(it)).
 			filter(it => it.relationKey && !relationKeys.includes(it.relationKey));
 
-		const ret = relations.concat(typeRelations).filter(it => {
-			if (!config.debug.ho && it.isHidden) {
-				return false;
-			};
-			return it.isInstalled;
-		}).sort(DataUtil.sortByName);
+		const ret = relations.concat(typeRelations).filter(it => config.debug.ho && it.isHidden ? false : it.isInstalled).sort(DataUtil.sortByName);
 
 		ret.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
 

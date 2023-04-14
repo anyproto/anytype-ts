@@ -1509,14 +1509,6 @@ const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (
 	dispatcher.request(ObjectApplyTemplate.name, request, callBack);
 };
 
-const ObjectAddWithObjectId = (objectId: string, payload: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.AddWithObjectId.Request();
-
-	request.setObjectid(objectId);
-	request.setPayload(payload);
-
-	dispatcher.request(ObjectAddWithObjectId.name, request, callBack);
-};
 
 const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ShareByLink.Request();
@@ -1838,7 +1830,6 @@ export {
 	ObjectGraph,
 	ObjectRelationAddFeatured,
 	ObjectRelationRemoveFeatured,
-	ObjectAddWithObjectId,
 	ObjectShareByLink,
 	ObjectSearch,
 	ObjectSearchSubscribe,

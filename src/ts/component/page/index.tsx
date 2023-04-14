@@ -16,7 +16,6 @@ import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/account/select';
 import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
-import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
 
 import PageMainEmpty from './main/empty';
@@ -43,10 +42,7 @@ const Components: any = {
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/success':			 PageAuthSuccess,
-	'auth/share':			 PageAuthShare,
 	'auth/deleted':			 PageAuthDeleted,
-
-	'object/share':			 PageAuthShare,
 
 	'main/empty':			 PageMainEmpty,		
 	'main/edit':			 PageMainEdit,
@@ -236,32 +232,12 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				Survey.check(I.SurveyType.Pmf);
 				Survey.check(I.SurveyType.Object);
 
-				this.shareCheck();
 				Storage.delete('redirect');
 			} else {
 				Storage.set('survey', { askPmf: true });
 				Storage.set('redirect', history.location.pathname);
 			};
 		}, Constant.delay.popup);
-	};
-
-	shareCheck () {
-		const shareSuccess = Storage.get('shareSuccess');
-		if (!shareSuccess) {
-			return;
-		};
-
-		Storage.delete('shareSuccess');
-
-		popupStore.open('confirm', {
-			data: {
-				title: 'You\'ve got shared objects!',
-				text: 'They will be accessible in the "Shared" tab in Home within a minute',
-				textConfirm: 'Ok',
-				canCancel: false,
-				onConfirm: () => {}
-			},
-		});
 	};
 
 	onboardingCheck () {
