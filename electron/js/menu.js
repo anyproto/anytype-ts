@@ -52,15 +52,6 @@ class MenuManager {
 			{
 				role: 'fileMenu',
 				submenu: [
-					/*
-					{ 
-						label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
-						click: () => { WindowManager.createMain({ isChild: true }); } 
-					},
-
-					Separator,
-					*/
-
 					{ label: 'Show work directory', click: () => { shell.openPath(app.getPath('userData')); } },
 					{
 						label: 'Import',
