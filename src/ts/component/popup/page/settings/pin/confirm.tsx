@@ -19,6 +19,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 	state = {
 		error: '',
 	};
+	ref = null;
 
 	render () {
 		const { error } = this.state;
@@ -28,7 +29,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 			<React.Fragment>
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinVerify')} />
-				<Pin expectedPin={pin} onSuccess={this.onCheckPin} onError={this.onError} />
+				<Pin ref={ref => this.ref = ref} expectedPin={pin} onSuccess={this.onCheckPin} onError={this.onError} />
 				<Error text={error} />
 			</React.Fragment>
 		);
@@ -48,6 +49,7 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 	};
 
 	onError = () => {
+		this.ref.reset();
 		this.setState({ error: translate('popupSettingsPinError') });
 	};
 

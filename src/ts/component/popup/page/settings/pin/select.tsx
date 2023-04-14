@@ -22,7 +22,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 		pin: null,
 		error: '',
 	};
-	refPin = null;
+	ref = null;
 
 	render () {
 		const { pin, error } = this.state;
@@ -32,7 +32,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 				<Head onPage={this.onBack} name={translate('commonBack')}></Head>
 				<Title text={translate(pin ? 'popupSettingsPinSelectRepeat' : 'popupSettingsPinSelect')} />
 				<Pin 
-					ref={ref => this.refPin = ref} 
+					ref={ref => this.ref = ref} 
 					expectedPin={pin ? sha1(pin) : null} 
 					onSuccess={this.onSuccess} 
 					onError={this.onError}
@@ -43,10 +43,11 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 	};
 
 	componentDidUpdate (): void {
-		this.refPin.reset();	
+		this.ref.reset();	
 	};
 
 	onSuccess = (pin: string) => {
+		const { onPage } = this.props;
 		const { pin: prevPin } = this.state;
 
 		if (!prevPin) {
@@ -55,16 +56,17 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 		};
 
 		Storage.set('pin', sha1(pin));
-		this.props.onPage('pinIndex');
+		onPage('pinIndex');
 	};
 
 	/** Triggered when pins mismatch */
 	onError = () => {
+		this.ref.reset();
 		this.setState({ error: translate('popupSettingsPinSelectError') });
 	};
 
 	onBack = () => {
-		const { prevPage, onPage } = this.props;
+		const { onPage } = this.props;
 		const { pin } = this.state;
 
 		if (pin) {
@@ -72,7 +74,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 			return;
 		};
 
-		onPage(prevPage);
+		onPage('pinIndex');
 	};
 
 });
