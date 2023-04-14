@@ -29,6 +29,8 @@
 			> .side.left {
 				.space:hover, .space.active { background: $colorHover; }
 				.item:hover, .item.active { background: $colorHover; }
+
+				.iconObject.withLetter { background-color: $colorBgIcon; }
 			}
 
 			> .side.right {

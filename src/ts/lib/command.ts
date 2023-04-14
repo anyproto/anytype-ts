@@ -1217,7 +1217,7 @@ const ObjectImportList = (callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectImportList.name, request, callBack);
 };
 
-const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, callBack?: (message: any) => void) => {
+const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
 
 	let params = null;
@@ -1277,6 +1277,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 	request.setType(type);
 	request.setMode(mode);
 	request.setNoprogress(noProgress);
+	request.setIsmigration(isMigration);
 	
 	dispatcher.request(ObjectImport.name, request, callBack);
 };
