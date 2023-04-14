@@ -148,41 +148,40 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					};
 
 					return (
-						<React.Fragment key={i}>
+						<span
+							key={i}
+							className={cn.join(' ')}
+							onClick={(e: any) => {
+								e.persist();
+								this.onRelation(e, relationKey);
+							}}
+						>
 							{bullet}
-							<span
-								className={cn.join(' ')}
-								onClick={(e: any) => {
-									e.persist();
-									this.onRelation(e, relationKey);
-								}}
-							>
-								<Cell
-									ref={ref => this.cellRefs.set(id, ref)}
-									elementId={id}
-									rootId={rootId}
-									subId={rootId}
-									block={block}
-									relationKey={relationKey}
-									getRecord={() => object}
-									viewType={I.ViewType.Grid}
-									index={0}
-									bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-									pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
-									iconSize={iconSize}
-									readonly={!canEdit}
-									isInline={true}
-									idPrefix={PREFIX + block.id}
-									elementMapper={this.elementMapper}
-									showTooltip={true}
-									tooltipX={I.MenuDirection.Left}
-									arrayLimit={2}
-									textLimit={150}
-									onMouseLeave={this.onMouseLeave}
-									placeholder={translate('placeholderCellCommon')}
-								/>
-							</span>
-						</React.Fragment>
+							<Cell
+								ref={ref => this.cellRefs.set(id, ref)}
+								elementId={id}
+								rootId={rootId}
+								subId={rootId}
+								block={block}
+								relationKey={relationKey}
+								getRecord={() => object}
+								viewType={I.ViewType.Grid}
+								index={0}
+								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
+								pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
+								iconSize={iconSize}
+								readonly={!canEdit}
+								isInline={true}
+								idPrefix={PREFIX + block.id}
+								elementMapper={this.elementMapper}
+								showTooltip={true}
+								tooltipX={I.MenuDirection.Left}
+								arrayLimit={2}
+								textLimit={150}
+								onMouseLeave={this.onMouseLeave}
+								placeholder={translate('placeholderCellCommon')}
+							/>
+						</span>
 					);
 				})}
 			</div>

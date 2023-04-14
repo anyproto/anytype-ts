@@ -706,6 +706,7 @@ class DataUtil {
 			I.ObjectLayout.Human, 
 			I.ObjectLayout.Task, 
 			I.ObjectLayout.Note, 
+			I.ObjectLayout.Bookmark, 
 		];
 	};
 
