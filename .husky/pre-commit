@@ -7,5 +7,5 @@ npx lint-staged --concurrent false
 gitleaks protect --verbose --redact --staged
 
 # Checking dependencies' licenses
-license-checker --production --json --out licenses.json
+npx license-checker --production --json --out licenses.json
 node check-licenses.js
