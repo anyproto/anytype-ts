@@ -143,7 +143,6 @@
 		"read-chunk": "^3.2.0",
 		"sanitize-filename": "^1.6.3",
 		"selection-ranges": "^3.0.3",
-		"sentry": "^0.1.2",
 		"sha1": "^1.1.1",
 		"source-map-loader": "^0.2.4",
 		"sprintf-kit": "^2.0.0",
