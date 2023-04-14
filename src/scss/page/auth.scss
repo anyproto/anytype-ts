@@ -16,6 +16,15 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 		z-index: 1;
 	}
 	.icon.arrow.back:hover { background: url('~img/arrow/auth1.svg'); }
+	
+	.authBackWrap { 
+		position: absolute; top: 4px; left: 4px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; 
+		line-height: 28px; padding: 0px 6px 0px 0px; border-radius: 4px;
+	}
+	.authBackWrap {
+		.icon.back { width: 20px; height: 20px; background-size: 8px; background-image: url('~img/icon/popup/settings/back.svg'); transition: none; }
+	}
+	.authBackWrap:hover { background: $colorHover; }
 
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
@@ -64,6 +73,12 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.title { margin: 0px; }
 	.title.withLabel { margin-bottom: 22px; }
 	.button { width: auto; }
+
+	.importBackupWrap { text-align: left; }
+	.importBackupWrap {
+		.title { @include text-header1; margin: 0px 0px 16px 0px; }
+		.label { margin: 0px 0px 32px 0px; }
+	}
 }
 
 .pageAuthAccountSelect {

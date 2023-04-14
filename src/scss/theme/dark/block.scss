@@ -157,18 +157,18 @@
 			.cell.cellKeyHover { background-color: rgba(223, 221, 208, 0.04); }
         }
 
-        .viewContent.viewList, .viewItem.viewGallery, .viewContent.viewBoard {
+        .viewContent.viewList, .viewContent.viewGallery, .viewContent.viewBoard {
             .cellContent.isName { color: $colorPrimary; }
         }
 
-		.viewItem.viewGallery, 
+		.viewContent.viewGallery, 
 		.viewContent.viewBoard {
 			.card {
 				.cellContent.c-description { color: $colorPrimary; }
 			}
 		}
 
-        .viewItem.viewGallery {
+        .viewContent.viewGallery {
             .card { background: $colorBlack; border-color: $colorLinePrimary; }
             .card {
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }

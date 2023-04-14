@@ -224,7 +224,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = detailStore.get(rootId, storeId, [ 'type' ], true);
 		const type = detailStore.get(rootId, object.type, [ 'isDeleted' ], true);
 
-		if (type._empty_ || type.isDeleted) {
+		if (type.isDeleted) {
 			Onboarding.start('typeDeleted', isPopup);
 		};
 	};

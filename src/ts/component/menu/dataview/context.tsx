@@ -199,6 +199,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let itemId = objectIds[0];
 		let menuId = '';
 		let menuParam = {
+			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
