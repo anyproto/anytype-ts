@@ -14,6 +14,7 @@ interface Props {
 	data: any;
 	onClick?: (object: any) => void;
 	onContextMenu?: (id: string, param: any) => void;
+	onContextSpaceClick?: (param: any) => void;
 	onSelect?: (id: string, related?: string[]) => void;
 };
 
@@ -285,10 +286,25 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onMessage (e) {
 		const { id, data } = e.data;
 		const { root } = blockStore;
-		const { onClick, onContextMenu, onSelect } = this.props;
+		const { onClick, onContextMenu, onContextSpaceClick, onSelect } = this.props;
 		const node = $(this.node);
 		const canvas = node.find('canvas');
 		const { left, top } = node.offset();
+
+		const menuParam = {
+			onOpen: () => {
+				this.isPreviewDisabled = true;
+			},
+			onClose: () => {
+				this.isPreviewDisabled = false;
+			},
+			recalcRect: () => ({
+				width: 0,
+				height: 0,
+				x: data.x + 10 + left,
+				y: data.y + 10 + top,
+			}),
+		};
 
 		switch (id) {
 			case 'onClick': {
@@ -337,18 +353,16 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				this.onPreviewHide();
 
 				onContextMenu(data.node.id, {
-					onOpen: () => {
-						this.isPreviewDisabled = true;
-					},
-					onClose: () => {
-						this.isPreviewDisabled = false;
-					},
-					recalcRect: () => ({
-							width: 0, 
-							height: 0, 
-							x: data.x + 10 + left, 
-							y: data.y + 10 + top,
-					}),
+					...menuParam
+				});
+				break;
+			};
+
+			case 'onContextSpaceClick': {
+				this.onPreviewHide();
+
+				onContextSpaceClick({
+					...menuParam
 				});
 				break;
 			};

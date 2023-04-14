@@ -602,6 +602,7 @@ onContextMenu = ({ x, y }) => {
 
 	const d = getNodeByCoords(x, y);
 	if (!d) {
+		send('onContextSpaceClick', { x, y });
 		return;
 	};
 

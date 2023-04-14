@@ -31,6 +31,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		this.onClickObject = this.onClickObject.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
+		this.onContextSpaceClick = this.onContextSpaceClick.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onTab = this.onTab.bind(this);
 	};
@@ -56,6 +57,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						onClick={this.onClickObject}
 						onSelect={this.onSelect}
 						onContextMenu={this.onContextMenu}
+						onContextSpaceClick={this.onContextSpaceClick}
 					/>
 				</div>
 
@@ -321,6 +323,15 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					this.ids = [];
 					this.refGraph.send('onSetSelected', { ids: this.ids });
 				},
+			}
+		});
+	};
+
+	onContextSpaceClick (param: any) {
+		menuStore.open('select', {
+			...param,
+			data: {
+				options: [{ id: 'newObject', name: 'New object' }]
 			}
 		});
 	};
