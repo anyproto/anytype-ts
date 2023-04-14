@@ -46,7 +46,6 @@
 		"@types/jquery": "^3.5.14",
 		"@types/katex": "^0.14.0",
 		"@types/lodash": "^4.14.165",
-		"@types/long": "^4.0.1",
 		"@types/node": "^12.19.4",
 		"@types/prismjs": "^1.16.1",
 		"@types/raf": "^3.4.0",
