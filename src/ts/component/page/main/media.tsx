@@ -82,7 +82,16 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 		if (file) {
 			if (isVideo || isImage || isAudio || isPdf) {
-				content = <Block {...this.props} key={file.id} rootId={rootId} block={file} readonly={true} isInsideTable={true} />;
+				content = (
+					<Block 
+						{...this.props} 
+						key={file.id} 
+						rootId={rootId} 
+						block={file} 
+						readonly={true} 
+						isSelectionDisabled={true} 
+					/>
+				);
 			} else {
 				content = <IconObject object={object} size={96} />;
 			};
@@ -114,7 +123,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 								<div className="section">
 									{relations.map((item: any) => (
-										<Block {...this.props} key={item.id} rootId={rootId} block={item} readonly={true} isInsideTable={true} />
+										<Block {...this.props} key={item.id} rootId={rootId} block={item} readonly={true} isSelectionDisabled={true} />
 									))}
 								</div>
 							</div>
