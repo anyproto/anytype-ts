@@ -677,6 +677,11 @@ onSetRootId = ({ rootId }) => {
 	redraw();
 };
 
+onNewObject = ({x, y}) => {
+	console.log('COORDS: ', x, y)
+	console.log('NODES: ', nodes)
+};
+
 restart = (alpha) => {
 	simulation.alphaTarget(alpha).restart();
 };

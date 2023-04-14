@@ -14,7 +14,7 @@ interface Props {
 	data: any;
 	onClick?: (object: any) => void;
 	onContextMenu?: (id: string, param: any) => void;
-	onContextSpaceClick?: (param: any) => void;
+	onContextSpaceClick?: (param: any, cb?: () => void) => void;
 	onSelect?: (id: string, related?: string[]) => void;
 };
 
@@ -363,6 +363,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 				onContextSpaceClick({
 					...menuParam
+				}, () => {
+					this.send('onNewObject', { x: data.x, y: data.y });
 				});
 				break;
 			};

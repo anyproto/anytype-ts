@@ -327,7 +327,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		});
 	};
 
-	onContextSpaceClick (param: any) {
+	onContextSpaceClick (param: any, cb?: () => void) {
 		menuStore.open('select', {
 			...param,
 			data: {
@@ -335,7 +335,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				onSelect: (event: any, item: any) => {
 					switch (item.id) {
 						case 'newObject': {
-							console.log('NEW OBJECT!')
+							if (cb) {
+								cb();
+							};
 							break;
 						};
 					};
