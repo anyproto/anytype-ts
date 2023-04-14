@@ -35,7 +35,7 @@
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 	.label.empty { text-align: center; @include text-small; color: $colorDarkGrey; }
 
-	.contentWrapper { transition: height 0.3s ease-out; }
+	.contentWrapper { transition: height 0.4s $easeInQuint; }
 
 	.icon.remove { position: absolute; top: -15px; right: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: pointer !important; }
 	.icon.remove {

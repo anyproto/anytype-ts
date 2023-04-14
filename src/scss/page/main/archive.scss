@@ -18,7 +18,7 @@
 			.side.left {
 				.element { 
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; line-height: 28px; cursor: pointer;
-					transition: $transitionFast;
+					transition: $transitionAllCommon;
 				}
 				.element {
 					.name { @include text-overflow-nw; width: calc(100% - 26px); }
@@ -35,7 +35,7 @@
 			.icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
 			.icon.search { cursor: pointer; background-image: url('~img/icon/menu/action/search0.svg'); }
 
-			.filterWrapper { width: 200px; overflow: hidden; width: 0px; transition: $transitionFast; }
+			.filterWrapper { width: 200px; overflow: hidden; width: 0px; transition: $transitionAllCommon; }
 			.filterWrapper.active { width: 200px; }
 
 			.filter { padding: 0px; }

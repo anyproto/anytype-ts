@@ -73,7 +73,7 @@
 }
 
 .pageAuthRegister {
-	.advanced { line-height: 24px; cursor: pointer; position: absolute; top: 8px; right: 16px; color: $colorDarkGrey; transition: $transitionFast; }
+	.advanced { line-height: 24px; cursor: pointer; position: absolute; top: 8px; right: 16px; color: $colorDarkGrey; transition: $transitionAllCommon; }
 	.advanced:hover { color: $colorBlack; }
 
 	.frame { padding-bottom: 36px; }

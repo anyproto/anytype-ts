@@ -16,14 +16,14 @@
 	.side.right { padding: 0px 10px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; }
 
 	.path { 
-		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; transition: $transitionFast;
+		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; transition: $transitionAllCommon;
 		@include text-overflow-nw; padding: 0px 6px;
 	}
 
 	.tabs { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; height: 100%; }
 	.tabs {
 		.tab { 
-			font-weight: 700; cursor: pointer; color: $colorMediumGrey; transition: $transitionFast; text-align: center;
+			font-weight: 700; cursor: pointer; color: $colorMediumGrey; transition: $transitionAllCommon; text-align: center;
 			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(0,0,0,0);
 		}
 		.tab:hover { color: $colorBlack; }
@@ -67,7 +67,7 @@
 	}
 
 	.item { 
-		color: $colorDarkGrey; transition: $transitionFast; cursor: pointer; height: 20px; line-height: 20px; 
+		color: $colorDarkGrey; transition: $transitionAllCommon; cursor: pointer; height: 20px; line-height: 20px; 
 		display: inline-block; vertical-align: middle; white-space: nowrap;
 	}
 	.item {
@@ -105,7 +105,7 @@
 .header.mainGraph {
 	.side.right { gap: 0px 12px; }
 
-	.filterWrap { width: 0px; overflow: hidden; transition: $transitionFast; display: none; }
+	.filterWrap { width: 0px; overflow: hidden; transition: $transitionAllCommon; display: none; }
 	.filterWrap {
 		.filter { width: 100%; padding: 0px; }
 		.inner { height: 28px; }

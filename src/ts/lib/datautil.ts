@@ -662,6 +662,18 @@ class DataUtil {
 		return this.getFileTypes().includes(type);
 	};
 
+	isSystemType (type: string) {
+		return this.getSystemTypes().includes(type);
+	};
+
+	isSetType (type: string) {
+		return this.getSetTypes().includes(type);
+	};
+
+	isStoreType (type: string) {
+		return this.getStoreTypes().includes(type);
+	};
+
 	getSystemRelationKeys () {
 		return require('lib/json/systemRelations.json');
 	};

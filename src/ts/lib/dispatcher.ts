@@ -240,7 +240,7 @@ class Dispatcher {
 				};
 
 				case 'objectRestrictionsSet': {
-					//blockStore.restrictionsSet(contextId, restrictions);
+					blockStore.restrictionsSet(rootId, Mapper.From.Restrictions(data.getRestrictions()));
 					break;
 				};
 

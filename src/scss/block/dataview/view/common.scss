@@ -7,7 +7,7 @@
 		.viewContent.viewList {
 			.cell.add { color: $colorMediumGrey; line-height: 20px; width: 100%; display: block; }
 			.cell.add {
-				.btn { display: inline-block; cursor: pointer; transition: $transitionFast; }
+				.btn { display: inline-block; cursor: pointer; transition: $transitionAllCommon; }
 				.btn:hover { color: $colorBlack; }
 				.btn:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }

@@ -42,6 +42,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			title: DataUtil.defaultName(type),
 			description: 'Add a description',
 		};
+
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = [ 
 			Constant.typeId.type, 

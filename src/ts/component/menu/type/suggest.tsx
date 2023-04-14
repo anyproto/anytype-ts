@@ -186,9 +186,9 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		menuStore.closeAll([ 'searchObject' ]);
-		menuStore.clearTimeout();
-
+		if (menuStore.isOpen('searchObject', 'store')) {
+			menuStore.closeAll([ 'searchObject' ]);
+		};
 		window.clearTimeout(this.timeoutFilter);
 	};
 

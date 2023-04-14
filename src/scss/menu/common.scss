@@ -18,8 +18,8 @@
 	
 	.menu { 
 		border-radius: 8px; position: absolute; z-index: inherit; text-align: left; backface-visibility: hidden;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: $colorWhite; opacity: 0; transform: scale3d(0.8,0.8,1);
-		transition: opacity 0.05s ease-in-out, transform 0.05s ease-in-out;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: $colorWhite; opacity: 0; transform: scale3d(0.9,0.9,1);
+		transition: opacity 0.15s $easeInQuint, transform 0.15s $easeInQuint;
 	}
 	.menu.fixed { position: fixed; }
 	.menu * { user-select: none; }
@@ -63,7 +63,7 @@
 
 		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorBorderLight; white-space: nowrap; font-weight: 700; color: $colorMediumGrey; }
 		.tabs {
-			.tab { display: inline-block; vertical-align: top; transition: $transitionFast; cursor: pointer; margin-right: 16px; position: relative; }
+			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; cursor: pointer; margin-right: 16px; position: relative; }
 			.tab:hover, .tab.active { color: $colorBlack; }
 			.tab:last-child { margin: 0px; }
 		}

@@ -19,7 +19,7 @@
 
 	.icon.clear { 
 		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 50%;
-		cursor: pointer; transition: background-image 0.2s ease-in-out; margin: -10px 0px 0px 0px !important;
+		cursor: pointer; transition: background-image $transitionCommon; margin: -10px 0px 0px 0px !important;
 	}
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 }
@@ -151,7 +151,7 @@
 .cellContent.c-email, 
 .cellContent.c-phone 
 {
-	.name { text-decoration: none; transition: $transitionFast; cursor: pointer; width: auto; @include text-overflow-nw; width: 100%; }
+	.name { text-decoration: none; transition: $transitionAllCommon; cursor: pointer; width: auto; @include text-overflow-nw; width: 100%; }
 }
 
 .cellContent.canEdit.c-url, 
