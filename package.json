@@ -55,7 +55,6 @@
 		"@types/react-router-dom": "^4.3.5",
 		"@typescript-eslint/eslint-plugin": "^5.46.1",
 		"@typescript-eslint/parser": "^5.46.1",
-		"babel-loader": "^8.2.1",
 		"babel-preset-env": "^1.7.0",
 		"electron": "^22.0.0",
 		"electron-builder": "^23.6.0",
