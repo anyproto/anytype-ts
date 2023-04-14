@@ -10,7 +10,6 @@ class AuthStore {
 	public accountPathValue = '';
 	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
-	public pin = '';
 	public icon = '';
 	public preview = '';
 	public name = '';
@@ -25,7 +24,6 @@ class AuthStore {
 			accountPathValue: observable,
 			accountItem: observable,
 			accountList: observable,
-			pin: observable,
 			icon: observable,
 			preview: observable,
 			name: observable,
@@ -38,7 +36,6 @@ class AuthStore {
 			account: computed,
 			walletPathSet: action,
 			accountPathSet: action,
-			pinSet: action,
 			phraseSet: action,
 			codeSet: action,
 			iconSet: action,
@@ -75,10 +72,6 @@ class AuthStore {
 
 	accountPathSet (v: string) {
 		this.accountPathValue = v;
-    };
-
-	pinSet (v: string) {
-		this.pin = v;
     };
 
 	phraseSet (v: string) {

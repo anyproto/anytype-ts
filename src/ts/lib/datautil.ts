@@ -147,39 +147,19 @@ class DataUtil {
 	};
 
 	coverColors () {
-		return [
-			{ type: I.CoverType.Color, id: 'yellow' },
-			{ type: I.CoverType.Color, id: 'orange' },
-			{ type: I.CoverType.Color, id: 'red' },
-			{ type: I.CoverType.Color, id: 'pink' },
-			{ type: I.CoverType.Color, id: 'purple' },
-			{ type: I.CoverType.Color, id: 'blue' },
-			{ type: I.CoverType.Color, id: 'ice' },
-			{ type: I.CoverType.Color, id: 'teal' },
-			{ type: I.CoverType.Color, id: 'green' },
-			{ type: I.CoverType.Color, id: 'lightgrey' },
-			{ type: I.CoverType.Color, id: 'darkgrey' },
-			{ type: I.CoverType.Color, id: 'black' },
-		].map((it: any) => {
-			it.name = translate('textColor-' + it.id);
-			return it;
-		});
+		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
+			id,
+			type: I.CoverType.Color,
+			name: translate(`textColor-${id}`),
+		}));
 	};
 
 	coverGradients () {
-		return [
-			{ type: I.CoverType.Gradient, id: 'pinkOrange' },
-			{ type: I.CoverType.Gradient, id: 'bluePink' },
-			{ type: I.CoverType.Gradient, id: 'greenOrange' },
-			{ type: I.CoverType.Gradient, id: 'sky' },
-			{ type: I.CoverType.Gradient, id: 'yellow' },
-			{ type: I.CoverType.Gradient, id: 'red' },
-			{ type: I.CoverType.Gradient, id: 'blue' },
-			{ type: I.CoverType.Gradient, id: 'teal' },
-		].map((it: any) => {
-			it.name = translate('gradientColor-' + it.id);
-			return it;
-		});
+		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
+			id,
+			type: I.CoverType.Gradient,
+			name: translate(`gradientColor-${id}`),
+		}));
 	};
 
 	threadColor (s: I.ThreadStatus) {
