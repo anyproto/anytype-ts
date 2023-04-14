@@ -35,7 +35,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 									arrowClassName="light" 
 									options={times}
 									value={String(pinTime || '')} 
-									onChange={commonStore.pinTimeSet}
+									onChange={v => commonStore.pinTimeSet(v)}
 									menuParam={{ horizontal: I.MenuDirection.Right }}
 								/>
 							</div>

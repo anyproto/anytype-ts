@@ -25,6 +25,9 @@ type State = {
 /**
  * This component provides an input field for a pin code
  */
+
+const TIMEOUT_DURATION = 150;
+
 class Pin extends React.Component<Props, State> {
 
 	public static defaultProps = {
@@ -41,7 +44,6 @@ class Pin extends React.Component<Props, State> {
 
 	// This timeout is used so that the input boxes first show the inputted value as text, then hides it as password showing (•)
 	timeout = 0;
-	TIMEOUT_DURATION = 150; // ms
 
 	render () {
 		const { pinLength } = this.props;
@@ -103,7 +105,7 @@ class Pin extends React.Component<Props, State> {
 
 		// Reset State
 		this.setState({ index: 0 }, () => {
-			this.clearPin();
+			//this.clearPin();
 			this.focus();	
 		});
 
@@ -166,7 +168,7 @@ class Pin extends React.Component<Props, State> {
 			next.focus();
 		};
 
-		this.timeout = window.setTimeout(() => input.setType('password'), this.TIMEOUT_DURATION);
+		this.timeout = window.setTimeout(() => input.setType('password'), TIMEOUT_DURATION);
 	};
 
 };
