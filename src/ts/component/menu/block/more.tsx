@@ -229,6 +229,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			sections.push({ children: [
 				turn,
 				move,
+				linkTo,
 				align,
 				blockRemove,
 			]});
@@ -293,7 +294,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		};
 
 		switch (item.id) {
-			case 'turnObject':
+			case 'turnObject': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
@@ -310,10 +311,10 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					},
 				})
 				break;
+			};
 
-			case 'move':
+			case 'move': {
 				menuId = 'searchObject';
-
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
@@ -331,10 +332,10 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					}
 				});
 				break;
+			};
 
-			case 'align':
+			case 'align': {
 				menuId = 'blockAlign';
-
 				menuParam.data = Object.assign(menuParam.data, {
 					value: block.align,
 					onSelect: (align: I.BlockHAlign) => {
@@ -350,10 +351,10 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					}
 				});
 				break;
+			};
 
-			case 'linkTo':
+			case 'linkTo': {
 				menuId = 'searchObject';
-
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
@@ -366,7 +367,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					position: I.BlockPosition.Bottom,
 				});
 				break;
-
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {

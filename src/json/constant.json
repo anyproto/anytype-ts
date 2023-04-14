@@ -89,7 +89,7 @@
 
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
-	"typeRelationKeys":		 [ "recommendedRelations", "sourceObject" ],
+	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject" ],
 	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 
 	"subId": {
