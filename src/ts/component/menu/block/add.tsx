@@ -291,7 +291,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			return it.isInstalled;
 		}).sort(DataUtil.sortByName);
 
-		relations.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
+		ret.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
 
 		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true }));
 	};
