@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import { Util } from 'Lib';
 import { Icon } from 'Component';
 
 interface Props {
@@ -95,7 +96,7 @@ class MediaVideo extends React.Component<Props> {
 		const node = $(this.node);
 		const video = node.find('video');
 
-        $('audio, video').each((i: number, item: any) => { item.pause(); });
+        Util.pauseMedia();
 		video.get(0).play();
     };
 

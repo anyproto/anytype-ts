@@ -256,9 +256,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 	};
 
 	onVideoClick (e: any, src: string) {
-		if (this.video) {
-			this.video.pause();
-		};
+		Util.pauseMedia();
 
 		popupStore.open('preview', { data: { src, type: I.FileType.Video },
 			preventMenuClose: true,
