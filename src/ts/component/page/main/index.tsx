@@ -219,7 +219,6 @@ const PageMainIndex = observer(class PageMainIndex extends React.Component<I.Pag
 		this.resize();
 		
 		analytics.setContext('', '');
-		popupStore.open('migration', {});
 	};
 	
 	componentDidUpdate () {

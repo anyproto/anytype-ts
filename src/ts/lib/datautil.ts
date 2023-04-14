@@ -1,5 +1,5 @@
 import { I, C, keyboard, crumbs, translate, Util, Storage, analytics, dispatcher, Mark } from 'Lib';
-import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
+import { commonStore, blockStore, detailStore, dbStore, authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
@@ -292,6 +292,8 @@ class DataUtil {
 					Util.route(commonStore.redirect ? commonStore.redirect : '/main/index', true);
 					commonStore.redirectSet('');
 				};
+
+				popupStore.open('migration', {});
 
 				if (callBack) {
 					callBack();
