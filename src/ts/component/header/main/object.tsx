@@ -20,8 +20,8 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled' ]);
 		const isLocked = root ? root.isLocked() : false;
-		const showGraph = !DataUtil.getSystemTypes().includes(object.type);
-		const showMenu = !DataUtil.getStoreTypes().includes(object.type);
+		const showGraph = !DataUtil.isSystemType(object.type);
+		const showMenu = !DataUtil.isStoreType(object.type);
 		const canSync = showMenu && !object.templateIsBundled;
 
 		return (

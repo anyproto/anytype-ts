@@ -100,7 +100,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			</div>
 		);
 
-		const ItemAdd = (item: any) => (
+		const ItemAdd = () => (
 			<div id="item-add" className="item add" onClick={this.onRelationAdd}>
 				<div className="clickable">
 					<Icon className="plus" />
@@ -154,35 +154,39 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
 					</div>
 
-					<div className="section layout">
-						<div className="title">Recommended layout</div>
-						<div className="content">
-							{allowedDetails ? (
-								<Select 
-									id="recommendedLayout" 
-									value={object.recommendedLayout} 
-									options={MenuUtil.turnLayouts()} 
-									arrowClassName="light" 
-									onChange={this.onLayout} 
-								/>
-							) : (
-								<React.Fragment>
-									<Icon className={layout.icon} />
-									<div className="name">{layout.name}</div>
-								</React.Fragment>
-							)}
+					{!isFileType ? (
+						<div className="section layout">
+							<div className="title">Recommended layout</div>
+							<div className="content">
+								{allowedDetails ? (
+									<Select 
+										id="recommendedLayout" 
+										value={object.recommendedLayout} 
+										options={MenuUtil.turnLayouts()} 
+										arrowClassName="light" 
+										onChange={this.onLayout} 
+									/>
+								) : (
+									<React.Fragment>
+										<Icon className={layout.icon} />
+										<div className="name">{layout.name}</div>
+									</React.Fragment>
+								)}
+							</div>
 						</div>
-					</div>
+					) : ''}
 
-					<div className="section relation">
-						<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
-						<div className="content">
-							{relations.map((item: any, i: number) => (
-								<ItemRelation key={i} {...item} />
-							))}
-							{allowedRelation ? <ItemAdd /> : ''}
+					{!isFileType ? (
+						<div className="section relation">
+							<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
+							<div className="content">
+								{relations.map((item: any, i: number) => (
+									<ItemRelation key={i} {...item} />
+								))}
+								{allowedRelation ? <ItemAdd /> : ''}
+							</div>
 						</div>
-					</div>
+					) : ''}
 
 					{object.isInstalled ? (
 						<div className="section set">
@@ -310,8 +314,9 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = dbStore.getType(rootId);
-		const allowedObject = DataUtil.getPageLayouts().includes(type.recommendedLayout)
-			|| [ Constant.typeId.collection, Constant.typeId.set ].includes(rootId);
+		const isFileType = DataUtil.isFileType(rootId);
+		const isSetType = DataUtil.isSetType(rootId);
+		const allowedObject = !isFileType && (DataUtil.getPageLayouts().includes(type.recommendedLayout) || isSetType);
 		const options = [];
 
 		if (allowedObject) {

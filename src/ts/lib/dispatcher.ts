@@ -239,6 +239,11 @@ class Dispatcher {
 					break;
 				};
 
+				case 'objectRestrictionsSet': {
+					blockStore.restrictionsSet(rootId, Mapper.From.Restrictions(data.getRestrictions()));
+					break;
+				};
+
 				case 'blockAdd': {
 					blocks = data.getBlocksList() || [];
 					for (let block of blocks) {
