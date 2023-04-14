@@ -3,15 +3,13 @@ import * as ReactDOM from 'react-dom';
 import * as Prism from 'prismjs';
 import $ from 'jquery';
 import raf from 'raf';
-import { RouteComponentProps } from 'react-router';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
 import { I, C, keyboard, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {
-	index?: any;
+interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
 };
 
@@ -71,7 +69,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, readonly, index } = this.props;
+		const { rootId, block, readonly } = this.props;
 		const { id, fields, content } = block;
 		const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
 		const { theme } = commonStore;

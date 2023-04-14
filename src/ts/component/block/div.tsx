@@ -15,7 +15,7 @@ const BlockDiv = observer(class BlockDiv extends React.Component<I.BlockComponen
 	};
 
 	render () {
-		const { rootId, block } = this.props;
+		const { block } = this.props;
 		const { id, content } = block;
 		const { style } = content;
 		

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
@@ -27,7 +26,7 @@ import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
 import Constant from 'json/constant.json';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {
+interface Props extends I.BlockComponent {
 	css?: any;
 	iconSize?: number;
 };
