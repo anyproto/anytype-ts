@@ -26,7 +26,6 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 
     render () {
         const { toast } = commonStore;
-
 		if (!toast) {
 			return null;
 		};

@@ -288,7 +288,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			data: {
 				rebind: this.rebind,
 				rootId,
-				blockId,
+				blockId: rootId,
 				blockIds: [ blockId ],
 			},
 		};
