@@ -205,7 +205,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { skipIds } = data;
 		const filter = this.getFilter();
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes(), },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes(), },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -272,7 +272,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = commonStore.filter;
 
 		const cb = (id: string, name: string) => {
-			name = String(name || DataUtil.defaultName('page'));
+			name = String(name || ObjectUtil.defaultName('page'));
 			name = Util.shorten(name, 30);
 
 			const to = from + name.length;

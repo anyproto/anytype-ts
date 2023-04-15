@@ -1,6 +1,5 @@
-import { C, I, Storage, Util, analytics, Renderer, translate, DataUtil } from 'Lib';
+import { C, I, Storage, Util, analytics, Renderer, translate, ObjectUtil } from 'Lib';
 import { popupStore, authStore } from 'Store';
-
 import Surveys from 'json/survey.json';
 
 class Survey {
@@ -133,8 +132,8 @@ class Survey {
         };
 
         const filters: I.Filter[] = [
-            { operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
+            { operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
             { operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 30 },
         ];
 

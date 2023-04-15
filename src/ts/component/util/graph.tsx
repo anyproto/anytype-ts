@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
+import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -166,7 +166,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
-			d.name = d.name || DataUtil.defaultName('page');
+			d.name = d.name || ObjectUtil.defaultName('page');
 		};
 
 		d.name = SmileUtil.strip(d.name);
@@ -448,8 +448,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			steps = option.steps;
 		};
 
-		const step0 = DataUtil.getPercentage(fillR, Number(steps.from.replace('%', '')));
-		const step1 = DataUtil.getPercentage(fillR, Number(steps.to.replace('%', '')));
+		const step0 = Util.getPercentage(fillR, Number(steps.from.replace('%', '')));
+		const step1 = Util.getPercentage(fillR, Number(steps.to.replace('%', '')));
 		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
 
 		canvas.width = w;

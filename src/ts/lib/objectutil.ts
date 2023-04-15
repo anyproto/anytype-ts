@@ -1,4 +1,4 @@
-import { I, C, keyboard, Util, history as historyPopup, Renderer } from 'Lib';
+import { I, C, keyboard, Util, history as historyPopup, Renderer, FileUtil, translate } from 'Lib';
 import { commonStore, blockStore, popupStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -216,6 +216,115 @@ class ObjectUtil {
 
 	setAlign (rootId: string, align: I.BlockHAlign, callBack?: (message: any) => void) {
 		C.BlockListSetAlign(rootId, [], align, callBack);
+	};
+
+	defaultName (key: string) {
+		return translate(Util.toCamelCase('defaultName-' + key));
+	};
+
+	name (object: any) {
+		const { isDeleted, type, layout, snippet } = object;
+
+		let name = '';
+		if (!isDeleted && this.isFileType(type)) {
+			name = FileUtil.name(object);
+		} else
+		if (layout == I.ObjectLayout.Note) {
+			name = snippet || translate('commonEmpty');
+		} else {
+			name = object.name || this.defaultName('page');
+		};
+
+		return name;
+	};
+
+	getById (id: string, callBack: (object: any) => void) {
+		this.getByIds([ id ], objects => {
+			if (callBack) {
+				callBack(objects[0]);
+			};
+		});
+	};
+
+	getByIds (ids: string[], callBack: (objects: any[]) => void) {
+		const filters = [
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
+		];
+
+		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
+			if (message.error.code || !message.records.length) {
+				return;
+			};
+
+			if (callBack) {
+				const records = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
+				callBack(records);
+			};
+		});
+	};
+
+	isFileType (type: string) {
+		return this.getFileTypes().includes(type);
+	};
+
+	isSystemType (type: string) {
+		return this.getSystemTypes().includes(type);
+	};
+
+	isSetType (type: string) {
+		return this.getSetTypes().includes(type);
+	};
+
+	isStoreType (type: string) {
+		return this.getStoreTypes().includes(type);
+	};
+
+	getSystemRelationKeys () {
+		return require('lib/json/systemRelations.json');
+	};
+
+	getFileTypes () {
+		return [
+			Constant.typeId.file, 
+			Constant.typeId.image, 
+			Constant.typeId.audio, 
+			Constant.typeId.video,
+		];
+	};
+
+	getSystemTypes () {
+		return [
+			Constant.typeId.type,
+			Constant.typeId.template,
+			Constant.typeId.relation,
+			Constant.typeId.option,
+			Constant.typeId.dashboard,
+			Constant.typeId.date,
+		].concat(this.getStoreTypes());
+	};
+
+	getStoreTypes () {
+		return [
+			Constant.storeTypeId.type,
+			Constant.storeTypeId.relation,
+		];
+	};
+
+	getSetTypes () {
+		return [ 
+			Constant.typeId.set, 
+			Constant.typeId.collection,
+		];
+	};
+
+	getPageLayouts () {
+		return [ 
+			I.ObjectLayout.Page, 
+			I.ObjectLayout.Human, 
+			I.ObjectLayout.Task, 
+			I.ObjectLayout.Note, 
+			I.ObjectLayout.Bookmark, 
+		];
 	};
 
 };

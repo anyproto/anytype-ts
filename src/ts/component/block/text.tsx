@@ -96,7 +96,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		switch (style) {
 			case I.TextStyle.Title: {
-				placeholder = DataUtil.defaultName('page');
+				placeholder = ObjectUtil.defaultName('page');
 
 				if (root && root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };

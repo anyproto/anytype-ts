@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select } from 'Component';
-import { I, translate, analytics, Renderer, DataUtil } from 'Lib';
+import { I, translate, analytics, Renderer, ObjectUtil } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -68,7 +68,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 			data: {
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
 				],
 				onClick: (item: any) => {
 					this.onTypeChange(item.id);

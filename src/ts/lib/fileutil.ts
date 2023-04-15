@@ -145,6 +145,10 @@ class FileUtil {
 		return new Date().toISOString().replace(/:/g, '_').replace(/\..+/, '');
 	};
 
+	name (object: any) {
+		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
+	};
+
 };
 
 export default new FileUtil();

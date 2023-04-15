@@ -412,8 +412,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
 					],
 				});
 				break;
@@ -430,7 +430,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						menuParam.data.onSelect();

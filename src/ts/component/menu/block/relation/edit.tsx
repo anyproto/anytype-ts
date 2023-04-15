@@ -39,7 +39,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const allowed = root ? !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) : true;
-		const canDelete = allowed && relation && !DataUtil.getSystemRelationKeys().includes(relation.relationKey);
+		const canDelete = allowed && relation && !ObjectUtil.getSystemRelationKeys().includes(relation.relationKey);
 		const isReadonly = this.isReadonly();
 
 		let opts: any = null;
@@ -289,8 +289,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => dbStore.getType(it.id),

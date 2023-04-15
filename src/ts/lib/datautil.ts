@@ -403,6 +403,7 @@ class DataUtil {
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
 		const { workspace, config } = commonStore;
+		const pageLayouts = ObjectUtil.getPageLayouts();
 		const page = dbStore.getType(Constant.typeId.page);
 		const note = dbStore.getType(Constant.typeId.note);
 		const set = dbStore.getType(Constant.typeId.set);
@@ -423,7 +424,7 @@ class DataUtil {
 
 		if (!withDefault) {
 			items = items.concat(dbStore.getTypes().filter(it => {
-				if (!this.getPageLayouts().includes(it.recommendedLayout) || skip.includes(it.id) || (it.workspaceId != workspace)) {
+				if (!pageLayouts.includes(it.recommendedLayout) || skip.includes(it.id) || (it.workspaceId != workspace)) {
 					return false;
 				};
 				return config.debug.ho ? true : !it.isHidden;
@@ -630,70 +631,6 @@ class DataUtil {
 		return [ I.CoverType.Upload, I.CoverType.Source ].includes(type);
 	};
 
-	isFileType (type: string) {
-		return this.getFileTypes().includes(type);
-	};
-
-	isSystemType (type: string) {
-		return this.getSystemTypes().includes(type);
-	};
-
-	isSetType (type: string) {
-		return this.getSetTypes().includes(type);
-	};
-
-	isStoreType (type: string) {
-		return this.getStoreTypes().includes(type);
-	};
-
-	getSystemRelationKeys () {
-		return require('lib/json/systemRelations.json');
-	};
-
-	getFileTypes () {
-		return [
-			Constant.typeId.file, 
-			Constant.typeId.image, 
-			Constant.typeId.audio, 
-			Constant.typeId.video,
-		];
-	};
-
-	getSystemTypes () {
-		return [
-			Constant.typeId.type,
-			Constant.typeId.template,
-			Constant.typeId.relation,
-			Constant.typeId.option,
-			Constant.typeId.dashboard,
-			Constant.typeId.date,
-		].concat(this.getStoreTypes());
-	};
-
-	getStoreTypes () {
-		return [
-			Constant.storeTypeId.type,
-			Constant.storeTypeId.relation,
-		];
-	};
-
-	getSetTypes () {
-		return [ 
-			Constant.typeId.set, 
-			Constant.typeId.collection,
-		];
-	};
-
-	getPageLayouts () {
-		return [ 
-			I.ObjectLayout.Page, 
-			I.ObjectLayout.Human, 
-			I.ObjectLayout.Task, 
-			I.ObjectLayout.Note, 
-			I.ObjectLayout.Bookmark, 
-		];
-	};
-
 	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
 		if (message.error.code) {
 			return;
@@ -850,78 +787,30 @@ class DataUtil {
 		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), Util.filterFix(param.fullText).replace(/\\/g, ''), offset, limit, callBack);
 	};
 
-	defaultName (key: string) {
-		return translate(Util.toCamelCase('defaultName-' + key));
-	};
-
-	fileName (object: any) {
-		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
-	};
-
-	getObjectName (object: any) {
-		const { isDeleted, type, layout, snippet } = object;
-
-		let name = '';
-		if (!isDeleted && this.isFileType(type)) {
-			name = this.fileName(object);
-		} else
-		if (layout == I.ObjectLayout.Note) {
-			name = snippet || translate('commonEmpty');
-		} else {
-			name = object.name || this.defaultName('page');
-		};
-
-		return name;
-	};
-
-	getObjectById (id: string, callBack: (object: any) => void) {
-		this.getObjectsByIds([ id ], (objects) => {
-			if (callBack) {
-				callBack(objects[0]);
-			};
-		});
-	};
-
-	getObjectsByIds (ids: string[], callBack: (objects: any[]) => void) {
-		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
-		];
-
-		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
-			if (message.error.code || !message.records.length) {
-				return;
-			};
-
-			if (callBack) {
-				const records = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
-				callBack(records);
-			};
-		});
-	};
-
 	setWindowTitle (rootId: string, objectId: string) {
-		const object = detailStore.get(rootId, objectId, []);
-
-		this.setWindowTitleText(this.getObjectName(object));
+		this.setWindowTitleText(ObjectUtil.name(detailStore.get(rootId, objectId, [])));
 	};
 
 	setWindowTitleText (name: string) {
 		const space = detailStore.get(Constant.subId.space, commonStore.workspace, []);
-		const title = [ Util.shorten(name, 60) ];
+		const title = [];
+
+		if (name) {
+			title.push(Util.shorten(name, 60));
+		};
 
 		if (!space._empty_) {
 			title.push(space.name);
 		};
 
 		title.push(Constant.appName);
-
 		document.title = title.join(' - ');
 	};
 
 	graphFilters () {
 		const { workspace } = commonStore;
 		const { profile } = blockStore;
-		const skipTypes = this.getFileTypes().concat(this.getSystemTypes());
+		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
 		const skipIds = [ '_anytype_profile', profile ];
 
 		return [
@@ -932,10 +821,6 @@ class DataUtil {
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
 			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
 		];
-	};
-
-	getPercentage (num: number, percent: number) {
-		return Number(((num / 100) * percent).toFixed(3));
 	};
 
 };

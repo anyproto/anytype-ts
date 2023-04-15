@@ -18,7 +18,7 @@ const NO_TEMPLATES = [
 	Constant.typeId.set, 
 	Constant.typeId.collection,
 	Constant.typeId.bookmark,
-].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
+].concat(ObjectUtil.getFileTypes()).concat(ObjectUtil.getSystemTypes());
 
 const PageMainType = observer(class PageMainType extends React.Component<I.PageComponent, State> {
 
@@ -67,19 +67,19 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
-		const allowedObject = object.isInstalled && DataUtil.getPageLayouts().includes(object.recommendedLayout);
+		const allowedObject = object.isInstalled && ObjectUtil.getPageLayouts().includes(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 
 		const relations = (object.recommendedRelations || []).map(id => dbStore.getRelationById(id)).filter((it: any) => {
-			if (!it || DataUtil.getSystemRelationKeys().includes(it.relationKey)) {
+			if (!it || ObjectUtil.getSystemRelationKeys().includes(it.relationKey)) {
 				return false;
 			};
 			return config.debug.ho ? true : !it.isHidden;
 		});
 
-		const isFileType = DataUtil.isFileType(rootId);
+		const isFileType = ObjectUtil.isFileType(rootId);
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: 'Updated',  
@@ -314,8 +314,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = dbStore.getType(rootId);
-		const isSetType = DataUtil.isSetType(rootId);
-		const allowedObject = DataUtil.getPageLayouts().includes(type.recommendedLayout) || isSetType;
+		const isSetType = ObjectUtil.isSetType(rootId);
+		const allowedObject = ObjectUtil.getPageLayouts().includes(type.recommendedLayout) || isSetType;
 		const options = [];
 
 		if (allowedObject) {
@@ -430,7 +430,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: recommendedRelations.concat(DataUtil.getSystemRelationKeys()),
+				skipKeys: recommendedRelations.concat(ObjectUtil.getSystemRelationKeys()),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
 						menuStore.close('relationSuggest'); 

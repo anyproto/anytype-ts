@@ -110,7 +110,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 		if (type == I.PreviewType.Default) {
 			if (!object || (object.id != target)) {
-				DataUtil.getObjectById(target, object => {
+				ObjectUtil.getById(target, object => {
 					this.setObject(object);
 					this.position();
 				});

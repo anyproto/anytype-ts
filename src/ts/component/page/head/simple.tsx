@@ -39,7 +39,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const placeholder = {
-			title: DataUtil.defaultName(type),
+			title: ObjectUtil.defaultName(type),
 			description: 'Add a description',
 		};
 
@@ -160,7 +160,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			this.placeholderCheck(item.blockId);
 		};
 
-		if (!focused && !object._empty_ && (object.name == DataUtil.defaultName('page'))) {
+		if (!focused && !object._empty_ && (object.name == ObjectUtil.defaultName('page'))) {
 			focus.set('title', { from: 0, to: 0 });
 		};
 
@@ -242,7 +242,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 
 			let text = String(object[item.relationKey] || '');
-			if (text == DataUtil.defaultName('page')) {
+			if (text == ObjectUtil.defaultName('page')) {
 				text = '';
 			};
 

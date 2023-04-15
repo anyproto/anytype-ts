@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, analytics, keyboard, DataUtil, Action, Util } from 'Lib';
+import { I, analytics, keyboard, DataUtil, ObjectUtil, Action, Util } from 'Lib';
 import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -223,7 +223,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const filter = String(data.filter || '');
-		const skipKeys = (data.skipKeys || []).concat(DataUtil.getSystemRelationKeys());
+		const skipKeys = (data.skipKeys || []).concat(ObjectUtil.getSystemRelationKeys());
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
 			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
@@ -356,7 +356,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 		const { getId, getSize, param, close } = this.props;
 		const { classNameWrap, data } = param;
-		const skipKeys = (data.skipKeys || []).concat(DataUtil.getSystemRelationKeys());
+		const skipKeys = (data.skipKeys || []).concat(ObjectUtil.getSystemRelationKeys());
 
 		let sources = this.getLibrarySources();
 		let menuId = '';

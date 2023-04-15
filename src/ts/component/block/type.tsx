@@ -192,7 +192,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			data: {
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
 				],
 				onClick: (item: any) => {
 					this.onClick(e, item);
@@ -211,7 +211,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (DataUtil.getSetTypes().includes(item.id)) {
+		if (ObjectUtil.getSetTypes().includes(item.id)) {
 			this.onObjectTo(item.id);
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {

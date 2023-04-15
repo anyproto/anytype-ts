@@ -488,7 +488,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let name = String(item.name || '');
 		let isReadonly = Boolean(item.isReadonly);
 
-		if (name == DataUtil.defaultName('page')) {
+		if (name == ObjectUtil.defaultName('page')) {
 			name = '';
 		};
 
@@ -1007,7 +1007,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
-		const skipTypes = DataUtil.getFileTypes().concat(DataUtil.getSystemTypes());
+		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
 
 		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		for (const type of types) {

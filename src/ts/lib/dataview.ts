@@ -1,6 +1,6 @@
 import arrayMove from 'array-move';
 import { dbStore, commonStore, blockStore, detailStore } from 'Store';
-import { I, M, C, Util, DataUtil, Relation } from 'Lib';
+import { I, M, C, Util, DataUtil, ObjectUtil, Relation } from 'Lib';
 import Constant from 'json/constant.json';
 
 class Dataview {
@@ -186,7 +186,7 @@ class Dataview {
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 		const { type } = object;
-		const isInline = !DataUtil.getSetTypes().includes(type);
+		const isInline = !ObjectUtil.getSetTypes().includes(type);
 
 		if (!isInline) {
 			return type == Constant.typeId.collection;

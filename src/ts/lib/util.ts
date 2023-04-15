@@ -979,6 +979,10 @@ class Util {
 		$('audio, video').each((i: number, item: any) => { item.pause(); });
 	};
 
+	getPercentage (num: number, percent: number) {
+		return Number((num / 100 * percent).toFixed(3));
+	};
+
 };
 
 export default new Util();
