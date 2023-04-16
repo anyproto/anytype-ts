@@ -8,7 +8,7 @@ import DragProvider from './drag/provider';
 import DragBox from './drag/box';
 import DropTarget from './drag/target';
 
-import SelectionProvider from './util/selection';
+import SelectionProvider from './selection/provider';
 
 import ListPopup from './list/popup';
 import ListMenu from './list/menu';
@@ -29,39 +29,40 @@ import Frame from './util/frame';
 import Cover from './util/cover';
 import Title from './util/title';
 import Label from './util/label';
-import IconEmoji from './util/iconEmoji';
 import Tag from './util/tag';
 import Loader from './util/loader';
 import Deleted from './util/deleted';
 import Progress from './util/progress';
 import EmptySearch from './util/emptySearch';
 
+import Input from './util/form/input';
+import InputWithFile from './util/form/inputWithFile';
+import Switch from './util/form/switch';
+import Editable from './util/form/editable';
+import Checkbox from './util/form/checkbox';
+import Textarea from './util/form/textarea';
+import Button from './util/form/button';
+import Select from './util/form/select';
+import Drag from './util/form/drag';
+import Pin from './util/form/pin';
+import Filter from './util/form/filter';
+
 import Pager from './util/pager';
 import Dimmer from './util/dimmer';
-import Switch from './util/switch';
-import Input from './util/input';
-import InputWithFile from './util/inputWithFile';
-import Editable from './util/editable'
-import Checkbox from './util/checkbox';
-import Textarea from './util/textarea';
-import Button from './util/button';
 import Error from './util/error';
-import Select from './util/select';
 import Toast from './util/toast';
-import Drag from './util/drag';
 import Marker from './util/marker';
-import Pin from './util/pin';
 import Sync from './util/sync';
-import Filter from './util/filter';
 import LoadMore from './util/loadMore';
 
 import Icon from './util/icon';
 import IconObject from './util/iconObject';
+import IconEmoji from './util/iconEmoji';
 
-import Preview from './util/preview';
-import PreviewLink from './util/preview/link';
-import PreviewObject from './util/preview/object';
-import PreviewDefault from './util/preview/default';
+import Preview from './preview';
+import PreviewLink from './preview/link';
+import PreviewObject from './preview/object';
+import PreviewDefault from './preview/default';
 
 import Graph from './util/graph';
 
