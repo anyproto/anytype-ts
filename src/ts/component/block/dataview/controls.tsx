@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button } from 'Component';
-import { C, I, Util, analytics, Relation, Dataview, keyboard } from 'Lib';
+import { C, I, Util, analytics, Relation, Dataview, keyboard, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -219,7 +219,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const object = getTarget();
 
 		const newView = {
-			name: '',
+			name: translate(`viewName${I.ViewType.Grid}`),
 			type: I.ViewType.Grid,
 			groupRelationKey: Relation.getGroupOption(rootId, block.id, '')?.id,
 			cardSize: I.CardSize.Medium,
