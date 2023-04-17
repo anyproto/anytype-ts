@@ -101,7 +101,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
-		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
+		if (ObjectUtil.isStoreType(object.type)) {
 			const cn = [ 'c36' ];
 			const isInstalled = this.isInstalled();
 
