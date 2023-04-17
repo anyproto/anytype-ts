@@ -434,7 +434,9 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			cb();
 		} else {
 			this.cover.css({ opacity: 0 });
+
 			el.onload = cb;
+			el.onerror = cb;
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
