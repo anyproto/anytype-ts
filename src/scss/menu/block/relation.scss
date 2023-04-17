@@ -78,7 +78,7 @@
 			.icon.fav:hover { background-color: $colorHover; }
 
 			.info { 
-				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
+				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; 
 				flex-shrink: 0; padding: 6px; color: $colorDarkGrey; display: flex; gap: 0px 6px; align-items: center; position: relative;
 			}
 			.info.canEdit { cursor: pointer; }
@@ -92,7 +92,7 @@
 			.cellContent.isName { display: flex; align-items: center; }
 
 			.cell { 
-				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background 0.2s ease-in-out; 
+				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background $transitionCommon; 
 				position: relative; margin-right: 6px;
 			}
 			.cell.canEdit:hover { background: $colorHover; }

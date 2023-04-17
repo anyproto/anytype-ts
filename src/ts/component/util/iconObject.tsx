@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { IconEmoji } from 'Component';
-import { I, Preview, SmileUtil, DataUtil, FileUtil } from 'Lib';
+import { I, Preview, SmileUtil, DataUtil, FileUtil, ObjectUtil } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -525,7 +525,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || DataUtil.defaultName('page'));
+		let name = String(object.name || ObjectUtil.defaultName('page'));
 		name = SmileUtil.strip(name);
 		name = name.trim().substr(0, 1).toUpperCase();
 

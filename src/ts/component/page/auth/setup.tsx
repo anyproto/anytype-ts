@@ -133,9 +133,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				this.select();
 				break;
 
-			case 'share': 
-				this.share();
-				break;
 		};
 	};
 
@@ -237,20 +234,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		});
 	};
 
-	share () {
-		const { location } = this.props;
-		const param = Util.searchParam(location.search);
-
-		C.ObjectAddWithObjectId(param.id, param.payload, (message: any) => {
-			if (this.setError(message.error)) {
-				return;
-			};
-
-			Storage.set('shareSuccess', 1);
-			ObjectUtil.openHome('route');
-		});
-	};
-	
 	setError (error: { description: string, code: number}) {
 		if (!error.code) {
 			return false;

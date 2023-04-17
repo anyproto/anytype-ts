@@ -203,7 +203,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				);
 			};
 
-			value = value || DataUtil.defaultName('page');
+			value = value || ObjectUtil.defaultName('page');
 			if (record.layout == I.ObjectLayout.Note) {
 				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};

@@ -1,20 +1,12 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Button } from 'Component';
 import { I, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
-
 import Head from '../../head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	prevPage: string;
-	onPage: (id: string) => void;
-	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
-};
+class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettings> {
 
-class PopupSettingsPageImportNotionWarning extends React.Component<Props> {
-
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onImport = this.onImport.bind(this);

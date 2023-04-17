@@ -1,16 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Icon, Title, Label, Switch } from 'Component';
 import { I, translate, analytics, Renderer } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	prevPage: string;
-	onPage: (id: string) => void;
-};
-
-const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance extends React.Component<Props> {
+const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance extends React.Component<I.PopupSettings> {
 
 	render () {
 		const { autoSidebar } = commonStore;

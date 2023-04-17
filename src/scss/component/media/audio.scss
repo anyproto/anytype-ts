@@ -33,7 +33,7 @@
         }
 
         #time { margin: 6px 0px; width: 100%; display: block; }
-        #volume { width: 40px; opacity: 0; transition: opacity 0.2s ease-in-out; }
+        #volume { width: 40px; opacity: 0; transition: opacity $transitionCommon; }
     }
     .controls:hover {
         #volume { opacity: 1; }

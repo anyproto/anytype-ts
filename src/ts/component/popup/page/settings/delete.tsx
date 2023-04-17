@@ -1,23 +1,16 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Button, Checkbox } from 'Component';
 import { I, C, translate, Util, analytics } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-
 import Head from './head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	prevPage: string;
-	onPage: (id: string) => void;
-};
-
-const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<Props> {
+const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends React.Component<I.PopupSettings> {
 
 	refCheckbox: any = null;
 	node: any = null;
 
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onDelete = this.onDelete.bind(this);

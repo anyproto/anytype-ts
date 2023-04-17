@@ -70,6 +70,7 @@ export interface BlockComponent {
 	isPopup?: boolean;
 	isInsideTable?: boolean;
 	isInsidePreview?: boolean;
+	isSelectionDisabled?: boolean;
 	index?: any;
 	className?: string;
 	setLoading?(v: boolean): void;

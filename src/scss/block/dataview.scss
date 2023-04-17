@@ -16,7 +16,7 @@
 
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorDarkGrey;
-			transition: $transitionFast; cursor: pointer;
+			transition: $transitionAllCommon; cursor: pointer;
 		}
 		.loadMore {
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
@@ -49,10 +49,10 @@
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
 		.dataviewHead {
 			.side.left { gap: 0px 6px; }
-			.side.right { opacity: 0; transition: $transitionFast; }
+			.side.right { opacity: 0; transition: $transitionAllCommon; }
 
 			.iconWrap { 
-				padding: 4px; border-radius: 4px; transition: $transitionFast; cursor: pointer; display: flex; align-items: center;
+				padding: 4px; border-radius: 4px; transition: $transitionAllCommon; cursor: pointer; display: flex; align-items: center;
 				line-height: 20px; @include text-small; color: $colorMediumGrey;
 			}
 			.iconWrap:hover { background-color: $colorHover; }
@@ -91,7 +91,7 @@
 			.side { padding: 10px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
 
-			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionFast; }
+			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionAllCommon; }
 			.icon:hover, .icon.active { background-color: $colorHover; }
 
 			.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
@@ -106,7 +106,7 @@
 			}
 
 			.viewItem { 
-				transition: color 0.2s ease-in-out; cursor: pointer; @include text-paragraph; font-weight: 700; @include text-overflow-nw; 
+				transition: color $transitionCommon; cursor: pointer; @include text-paragraph; font-weight: 700; @include text-overflow-nw; 
 				max-width: 300px; color: $colorMediumGrey;
 			}
 			.viewItem { 
@@ -135,7 +135,7 @@
 			.side.right {
 				.element {
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; cursor: pointer;
-					transition: $transitionFast;
+					transition: $transitionAllCommon;
 				}
 				.element.black { color: $colorBlack; }
 				.element.orange { color: #f09c0e; font-weight: 500; }
@@ -176,7 +176,7 @@
 		.dataviewControls {
 			.side { padding: 9px 0px; }
 			.side.left { padding-left: 0px; }
-			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
+			.side.right { transition: opacity $transitionCommon; opacity: 0; }
 			.line { display: none; }
 		}
 		.dataviewControls.active {

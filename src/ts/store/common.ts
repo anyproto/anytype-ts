@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, Util, DataUtil } from 'Lib';
+import { analytics, I, Storage, Util, ObjectUtil } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -148,7 +148,7 @@ class CommonStore {
 
 		const type = dbStore.getType(typeId);
 
-		if (!type || !type.isInstalled || !DataUtil.getPageLayouts().includes(type.recommendedLayout)) {
+		if (!type || !type.isInstalled || !ObjectUtil.getPageLayouts().includes(type.recommendedLayout)) {
 			return Constant.typeId.note;
 		};
 
@@ -255,7 +255,7 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			DataUtil.getObjectsByIds(ids, (objects: any[]) => {
+			ObjectUtil.getByIds(ids, (objects: any[]) => {
 				const map = Util.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {

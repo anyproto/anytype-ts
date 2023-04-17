@@ -3,11 +3,8 @@ import { Icon, Title, Label } from 'Component';
 import { I, Util, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore } from 'Store';
-import Head from '../head';
 
-interface Props extends I.Popup {
-	prevPage: string;
-	onPage: (id: string) => void;
+interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any) => void;
 };
 

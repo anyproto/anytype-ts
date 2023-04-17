@@ -36,7 +36,7 @@
 		.item.sides { display: flex; padding: 6px 16px; }
 
 		.info { 
-			width: 154px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background 0.2s ease-in-out; 
+			width: 154px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; 
 			flex-shrink: 0; margin-right: 6px;
 		}
 

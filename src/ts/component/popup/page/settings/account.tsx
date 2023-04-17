@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { Icon, Title, Label, IconObject, Input, Loader } from 'Component';
-import { I, C, Storage, translate, Util, analytics, Action, DataUtil, ObjectUtil } from 'Lib';
+import { Label, IconObject, Input, Loader } from 'Component';
+import { I, C, translate, Util, analytics, Action, DataUtil, ObjectUtil } from 'Lib';
 import { authStore, commonStore, popupStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
-import Head from './head';
 
-interface Props extends I.Popup {
-	prevPage: string;
-	onPage: (id: string) => void;
+interface Props extends I.PopupSettings {
 	setPinConfirmed: (v: boolean) => void;
 	setLoading: (v: boolean) => void;
 };
@@ -72,7 +69,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 								ref={ref => this.refName = ref} 
 								value={profile.name} 
 								onKeyUp={this.onName} 
-								placeholder={DataUtil.defaultName('page')} 
+								placeholder={ObjectUtil.defaultName('page')} 
 							/>
 						</div>
 					</div>

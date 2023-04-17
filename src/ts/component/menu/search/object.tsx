@@ -448,7 +448,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				close();
 			} else {
 				ObjectUtil.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-					DataUtil.getObjectById(message.targetId, (object: any) => { process(object, true); });
+					ObjectUtil.getById(message.targetId, (object: any) => { process(object, true); });
 					close();
 				});
 			};

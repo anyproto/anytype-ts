@@ -1,6 +1,6 @@
 import arrayMove from 'array-move';
 import { dbStore, commonStore, blockStore, detailStore } from 'Store';
-import { I, M, C, Util, DataUtil, Relation } from 'Lib';
+import { I, M, C, Util, DataUtil, ObjectUtil, Relation } from 'Lib';
 import Constant from 'json/constant.json';
 
 class Dataview {
@@ -173,7 +173,51 @@ class Dataview {
 		return tabs.filter(it => it);
 	};
 
+	getView (rootId: string, blockId: string, viewId?: string): I.View {
+		const views = dbStore.getViews(rootId, blockId);
+		if (!views.length) {
+			return null;
+		};
+
+		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, blockId), '').viewId;
+		return dbStore.getView(rootId, blockId, viewId) || views[0];
+	};
+
+	isCollection (rootId: string, blockId: string): boolean {
+		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
+		const { type } = object;
+		const isInline = !ObjectUtil.getSetTypes().includes(type);
+
+		if (!isInline) {
+			return type == Constant.typeId.collection;
+		};
+
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return false;
+		};
+
+		const { targetObjectId, isCollection } = block.content;
+		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'type' ], true) : null;
+
+		return targetObjectId ? target.type == Constant.typeId.collection : isCollection;
+	};
+
 	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return;
+		};
+
+		const el = block.content.groupOrder.find(it => it.viewId == viewId);
+		if (el) {
+			el.groups = groups;
+		};
+
+		blockStore.updateContent(rootId, blockId, block.content);
+	};
+
+	groupOrderUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
 		const block = blockStore.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
@@ -189,36 +233,6 @@ class Dataview {
 		};
 
 		blockStore.updateContent(rootId, blockId, { groupOrder });
-	};
-
-	getView (rootId: string, blockId: string, viewId?: string): I.View {
-		const views = dbStore.getViews(rootId, blockId);
-		if (!views.length) {
-			return null;
-		};
-
-		viewId = viewId || dbStore.getMeta(dbStore.getSubId(rootId, blockId), '').viewId;
-		return dbStore.getView(rootId, blockId, viewId) || views[0];
-	};
-
-	isCollection (rootId: string, blockId: string): boolean {
-		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-		const { type } = object;
-		const isInline = !DataUtil.getSetTypes().includes(type);
-
-		if (!isInline) {
-			return type == Constant.typeId.collection;
-		};
-
-		const block = blockStore.getLeaf(rootId, blockId);
-		if (!block) {
-			return false;
-		};
-
-		const { targetObjectId, isCollection } = block.content;
-		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'type' ], true) : null;
-
-		return targetObjectId ? target.type == Constant.typeId.collection : isCollection;
 	};
 
 };

@@ -488,7 +488,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let name = String(item.name || '');
 		let isReadonly = Boolean(item.isReadonly);
 
-		if (name == DataUtil.defaultName('page')) {
+		if (name == ObjectUtil.defaultName('page')) {
 			name = '';
 		};
 
@@ -952,16 +952,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { isInline, block } = this.props;
 		const cn = [];
 
-		let emptyProps = { 
-			title: '', 
-			description: '', 
-			button: '', 
-			onClick: e => {},
-		};
-
 		if (isInline) {
 			cn.push('withHead');
 		};
+
+		let emptyProps: any = {};
 
 		switch (type) {
 			case 'target': {
@@ -987,11 +982,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			case 'view': {
 				cn.push('withHead');
 
-				emptyProps = {
-					title: 'No objects',
-					description: 'Create your first one to begin',
-					button: 'Create object',
-					onClick: (e) => this.onRecordAdd(e, 1),
+				emptyProps.title = 'No objects';
+
+				if (this.isAllowedObject()) {
+					emptyProps.description = 'Create your first one to begin';
+					emptyProps.button = 'Create object';
+					emptyProps.onClick = e => this.onRecordAdd(e, 1);
 				};
 				break;
 			};
@@ -1002,7 +998,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				{...this.props}
 				{...emptyProps}
 				className={cn.join(' ')}
-				withButton={true}
+				withButton={emptyProps.button ? true : false}
 			/>
 		);
 	};
@@ -1011,7 +1007,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
-		const skipTypes = DataUtil.getFileTypes().concat(DataUtil.getSystemTypes());
+		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
 
 		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		for (const type of types) {

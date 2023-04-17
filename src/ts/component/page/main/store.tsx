@@ -446,7 +446,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 			case Tab.Relation:
 				keys = keys.concat(Constant.relationRelationKeys);
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemRelationKeys() });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemRelationKeys() });
 				break;
 		};
 

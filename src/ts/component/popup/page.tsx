@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
+import { observer } from 'mobx-react';
 import { I, history as historyPopup, Util } from 'Lib';
 import { Page } from 'Component';
 import { menuStore } from 'Store';

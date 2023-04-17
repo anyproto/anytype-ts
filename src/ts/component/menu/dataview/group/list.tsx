@@ -6,7 +6,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import $ from 'jquery';
 import { Icon, Switch } from 'Component';
 import Cell from 'Component/block/dataview/cell';
-import { I, C, DataUtil, keyboard, translate } from 'Lib';
+import { I, C, Dataview, keyboard, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -256,7 +256,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		});
 
 		dbStore.groupsSet(rootId, blockId, groups);
-		DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, update);
+		Dataview.groupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 	};
 

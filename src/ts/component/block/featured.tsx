@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Cell } from 'Component';
-import { I, C, DataUtil, Util, ObjectUtil, Preview, focus, analytics, Relation, translate, Onboarding } from 'Lib';
+import { I, C, DataUtil, Util, ObjectUtil, Preview, focus, analytics, Relation, translate, Onboarding, history as historyPopup, keyboard } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -338,7 +338,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		if (!typeIsDeleted && (object.type === Constant.typeId.set)) {
-			options.push({ id: 'turnToCollection', name: 'Turn into collection' });
+			options.push({ id: 'turnCollection', name: 'Turn into collection' });
 		};
 
 		const showMenu = () => {
@@ -412,7 +412,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						detailStore.update(rootId, { id: item.id, details: item }, false);
@@ -456,9 +456,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
-		const blocks = blockStore.getChildren(rootId, rootId, it => it.isDataview());
 		const type = dbStore.getType(object.type);
 
 		this.menuContext.close();
@@ -487,13 +486,18 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				});
 				break;
 
-			case 'turnToCollection':
+			case 'turnCollection':
 				C.ObjectToCollection(rootId, (message: any) => {
 					if (message.error.code) {
 						return;
 					};
 
-					ObjectUtil.openRoute({ id: message.objectId, layout: I.ObjectLayout.Collection });
+					if (isPopup) {
+						historyPopup.clear();
+					};
+
+					keyboard.disableClose(true);
+					ObjectUtil.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
 					window.setTimeout(() => { Preview.toastShow({ text: `${object.name} is collection now!`}); }, 200);
 
 					analytics.event('SetTurnIntoCollection');

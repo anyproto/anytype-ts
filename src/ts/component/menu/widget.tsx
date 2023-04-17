@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
-import { C, I, keyboard, MenuUtil, translate, Action, DataUtil, analytics } from 'Lib';
+import { C, I, keyboard, MenuUtil, translate, Action, ObjectUtil, analytics } from 'Lib';
 import { blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -128,7 +128,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		let layoutName = 'Choose a layout';
 
 		if (this.target) {
-			sourceName = DataUtil.getObjectName(this.target);
+			sourceName = ObjectUtil.name(this.target);
 		};
 
 		if (this.layout !== null) {
@@ -161,7 +161,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	checkState () {
-		const setTypes = DataUtil.getSetTypes();
+		const setTypes = ObjectUtil.getSetTypes();
 		const options = this.getLayoutOptions().map(it => it.id);
 
 		if (this.isCollection()) {
@@ -203,8 +203,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		};
 
 		if (this.target && !isCollection) {
-			const setTypes = DataUtil.getSetTypes();
-			const treeSkipTypes = setTypes.concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
+			const setTypes = ObjectUtil.getSetTypes();
+			const treeSkipTypes = setTypes.concat(ObjectUtil.getSystemTypes()).concat(ObjectUtil.getFileTypes());
 
 			// Sets can only become Link and List layouts, non-sets can't become List
 			if (treeSkipTypes.includes(this.target.type)) {
@@ -262,7 +262,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		switch (item.itemId) {
 			case 'source':
 				let filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes().concat(DataUtil.getFileTypes()) },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes().concat(ObjectUtil.getFileTypes()) },
 				];
 
 				menuId = 'searchObject';

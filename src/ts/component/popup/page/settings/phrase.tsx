@@ -1,16 +1,9 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
-import { Title, Label, Textarea, Button } from 'Component';
+import { Title, Label, Textarea } from 'Component';
 import { I, C, translate, analytics, Util, Preview } from 'Lib';
 import { commonStore, authStore } from 'Store';
-import Head from './head';
-
-interface Props extends I.Popup, RouteComponentProps<any> {
-	prevPage: string;
-	onPage: (id: string) => void;
-};
 
 interface State {
 	entropy: string;
@@ -22,7 +15,7 @@ const QRColor = {
 	dark: '#b6b6b6',
 };
 
-const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends React.Component<Props, State> {
+const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends React.Component<I.PopupSettings, State> {
 
 	node: any = null;
 	refPhrase: any = null;
@@ -31,7 +24,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		showCode: false,
 	};
 
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);

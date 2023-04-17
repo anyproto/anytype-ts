@@ -109,7 +109,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let template = null;
 		let archive = null;
 		let fav = null;
-		let highlight = null;
 		let pageLock = null;
 		let pageInstall = null;
 
@@ -149,12 +148,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			archive = { id: 'pageArchive', icon: 'remove', name: 'Move to bin' };
 		};
 
-		if (object.isHighlighted) {
-			highlight = { id: 'unhighlight', icon: 'highlight', name: 'Unhighlight' };
-		} else {
-			highlight = { id: 'highlight', name: 'Highlight' };
-		};
-
 		if (block.isLocked()) {
 			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page', caption: `Ctrl+Shift+L` };
 		} else {
@@ -174,7 +167,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedDelete = object.isInstalled && allowedArchive && object.isArchived;
 		const allowedShare = block.isObjectSpace() && config.allowSpaces;
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
-		const allowedHighlight = !(!object.workspaceId || block.isObjectSpace() || !config.allowSpaces);
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
 		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedFav = !object.isArchived;
@@ -193,7 +185,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedReload)		 pageReload = null;
 		if (!allowedShare)		 share = null;
-		if (!allowedHighlight)	 highlight = null;
 		if (!allowedSearch)		 search = null;
 		if (!allowedHistory)	 history = null;
 		if (!allowedBlock)		 undo = redo = null;
@@ -210,10 +201,10 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			sections = [
 				{ children: [ archive, pageRemove, pageInstall ] },
-				{ children: [ fav, pageLink, linkTo, pageCopy, highlight ] },
+				{ children: [ fav, pageLink, linkTo, pageCopy ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
-				{ children: [ share, highlight ] },
+				{ children: [ share ] },
 			];
 		} else
 		if (block.isPage()) {
@@ -222,13 +213,13 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				{ children: [ fav, pageLink, linkTo, pageCopy, template, pageLock ] },
 				{ children: [ search ] },
 				{ children: [ print, pageExport, pageReload ] },
-				{ children: [ highlight ] },
 			];
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		} else {
 			sections.push({ children: [
 				turn,
 				move,
+				linkTo,
 				align,
 				blockRemove,
 			]});
@@ -287,18 +278,18 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			data: {
 				rebind: this.rebind,
 				rootId,
-				blockId,
+				blockId: rootId,
 				blockIds: [ blockId ],
 			},
 		};
 
 		switch (item.id) {
-			case 'turnObject':
+			case 'turnObject': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
@@ -310,14 +301,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					},
 				})
 				break;
+			};
 
-			case 'move':
+			case 'move': {
 				menuId = 'searchObject';
-
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
 					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],
@@ -331,10 +322,10 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					}
 				});
 				break;
+			};
 
-			case 'align':
+			case 'align': {
 				menuId = 'blockAlign';
-
 				menuParam.data = Object.assign(menuParam.data, {
 					value: block.align,
 					onSelect: (align: I.BlockHAlign) => {
@@ -350,15 +341,15 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					}
 				});
 				break;
+			};
 
-			case 'linkTo':
+			case 'linkTo': {
 				menuId = 'searchObject';
-
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: close,
@@ -366,7 +357,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					position: I.BlockPosition.Bottom,
 				});
 				break;
-
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
@@ -560,18 +551,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					ObjectUtil.openPopup({ id: message.id, layout: object.layout });
 
 					analytics.event('CreateTemplate', { objectType: object.type });
-				});
-				break;
-
-			case 'highlight':
-				C.WorkspaceSetIsHighlighted(object.id, true, () => {
-					analytics.event('Highlight', { count: 1 });
-				});
-				break;
-
-			case 'unhighlight':
-				C.WorkspaceSetIsHighlighted(object.id, false, () => {
-					analytics.event('Unhighlight', { count: 1 });
 				});
 				break;
 		};

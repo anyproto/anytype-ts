@@ -2,19 +2,16 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import * as Docs from 'Docs';
-import { RouteComponentProps } from 'react-router';
 import { Label, Icon, Cover, Button } from 'Component';
 import { I, Util, translate } from 'Lib';
 import Block from 'Component/block/help';
 import Url from 'json/url.json';
 
-interface Props extends I.Popup, RouteComponentProps<any> {};
-
 interface State {
 	showFull: boolean;
 };
 
-class PopupHelp extends React.Component<Props, State> {
+class PopupHelp extends React.Component<I.Popup, State> {
 
 	_isMounted = false;
 	node: any = null;

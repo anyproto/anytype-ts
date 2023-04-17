@@ -86,31 +86,6 @@ const WalletCloseSession = (token: string, callBack?: (message: any) => void) =>
 
 // ---------------------- WORKSPACE ---------------------- //
 
-const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Workspace.Create.Request();
-
-	request.setName(name);
-
-	dispatcher.request(WorkspaceCreate.name, request, callBack);
-};
-
-const WorkspaceSelect = (workspaceId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Workspace.Select.Request();
-	
-	request.setWorkspaceid(workspaceId);
-
-	dispatcher.request(WorkspaceSelect.name, request, callBack);
-};
-
-const WorkspaceSetIsHighlighted = (objectId: string, isHightlighted: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Workspace.SetIsHighlighted.Request();
-	
-	request.setObjectid(objectId);
-	request.setIshighlighted(isHightlighted);
-
-	dispatcher.request(WorkspaceSetIsHighlighted.name, request, callBack);
-};
-
 const WorkspaceObjectAdd = (objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Object.Add.Request();
 	
@@ -1217,7 +1192,7 @@ const ObjectImportList = (callBack?: (message: any) => void) => {
 	dispatcher.request(ObjectImportList.name, request, callBack);
 };
 
-const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, callBack?: (message: any) => void) => {
+const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I.ImportType, mode: I.ImportMode, noProgress: boolean, isMigration: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Import.Request();
 
 	let params = null;
@@ -1277,6 +1252,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 	request.setType(type);
 	request.setMode(mode);
 	request.setNoprogress(noProgress);
+	request.setIsmigration(isMigration);
 	
 	dispatcher.request(ObjectImport.name, request, callBack);
 };
@@ -1508,14 +1484,6 @@ const ObjectApplyTemplate = (contextId: string, templateId: string, callBack?: (
 	dispatcher.request(ObjectApplyTemplate.name, request, callBack);
 };
 
-const ObjectAddWithObjectId = (objectId: string, payload: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Object.AddWithObjectId.Request();
-
-	request.setObjectid(objectId);
-	request.setPayload(payload);
-
-	dispatcher.request(ObjectAddWithObjectId.name, request, callBack);
-};
 
 const ObjectShareByLink = (objectId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ShareByLink.Request();
@@ -1703,9 +1671,6 @@ export {
 	WalletCreateSession,
 	WalletCloseSession,
 
-	WorkspaceCreate,
-	WorkspaceSelect,
-	WorkspaceSetIsHighlighted,
 	WorkspaceObjectAdd,
 	WorkspaceObjectListRemove,
 
@@ -1837,7 +1802,6 @@ export {
 	ObjectGraph,
 	ObjectRelationAddFeatured,
 	ObjectRelationRemoveFeatured,
-	ObjectAddWithObjectId,
 	ObjectShareByLink,
 	ObjectSearch,
 	ObjectSearchSubscribe,

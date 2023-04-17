@@ -1,6 +1,5 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { RouteComponentProps } from 'react-router';
 import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
@@ -27,7 +26,7 @@ import BlockAudio from './media/audio';
 import BlockPdf from './media/pdf'; 
 import Constant from 'json/constant.json';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {
+interface Props extends I.BlockComponent {
 	css?: any;
 	iconSize?: number;
 };
@@ -67,7 +66,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, css, className, block, readonly, isInsideTable, index } = this.props;
+		const { rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, index } = this.props;
 		const { id, type, fields, content, hAlign, bgColor } = block;
 
 		if (!id) {
@@ -77,7 +76,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { style, checked } = content;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		let canSelect = !isInsideTable;
+		let canSelect = !isInsideTable && !isSelectionDisabled;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = false;
 		let cn: string[] = [ 'block', DataUtil.blockClass(block), 'align' + hAlign, 'index' + index ];
