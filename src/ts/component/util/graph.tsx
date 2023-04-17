@@ -367,6 +367,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 							onClose: () => {
 								ObjectUtil.getById(message.targetId, (object) => {
 									const node = this.nodeMapper(object);
+									this.nodes.push(node);
 									this.send('onAddOrphan', { x: data.x, y: data.y, node });
 								});
 							}
