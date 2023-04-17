@@ -71,6 +71,7 @@ let isHovering = false;
 let edgeMap = new Map();
 let hoverAlpha = 0.2;
 let fontFamily = 'Helvetica';
+let timeoutHover = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -580,18 +581,25 @@ onMouseMove = ({ x, y }) => {
 	isHovering = false;
 
 	const active = nodes.find(d => d.isOver);
+
 	if (active) {
 		active.isOver = false;
 	};
 
-	const d = getNodeByCoords(x, y);
-	if (d) {
-		d.isOver = true;
-		isHovering = true;
-	};
-
-	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
+	send('onMouseMove', { node: '', x, y, k: transform.k });
 	redraw();
+
+	clearTimeout(timeoutHover);
+	timeoutHover = setTimeout(() => {
+		const d = getNodeByCoords(x, y);
+		if (d) {
+			d.isOver = true;
+			isHovering = true;
+		};
+
+		send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
+		redraw();
+	}, 300);
 };
 
 onContextMenu = ({ x, y }) => {
