@@ -47,12 +47,6 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote() && !root.isObjectBookmark();
 		let allowedCover = !checkType && allowedDetails && !root.isObjectNote();
 
-		console.log('checkType', checkType);
-		console.log('allowedIcon', allowedIcon);
-		console.log('allowedCover', allowedCover);
-		console.log('allowedLayout', allowedLayout);
-		console.log('allowedRelation', allowedRelation);
-
 		if (root.isLocked() || readonly) {
 			allowedIcon = false;
 			allowedLayout = false;

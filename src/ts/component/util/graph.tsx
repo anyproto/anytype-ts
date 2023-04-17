@@ -314,12 +314,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 				if (this.subject) {
 					window.clearTimeout(this.timeoutPreview);
-					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 50);
-
-					canvas.addClass('cp');
+					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
 				} else {
 					this.onPreviewHide();	
-					canvas.removeClass('cp');
 				};
 				break;
 			};
