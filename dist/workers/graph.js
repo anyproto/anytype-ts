@@ -230,7 +230,7 @@ updateForces = () => {
 
 	// Filter orphans
 	if (!settings.orphan) {
-		nodes = nodes.filter(d => !d.isOrphan);
+		nodes = nodes.filter(d => !d.isOrphan || d.forceShow);
 	};
 
 	map = getNodeMap();
@@ -633,6 +633,22 @@ onAddNode = ({ sourceId, target }) => {
 	updateForces();
 };
 
+onAddOrphan = ({x, y, node}) => {
+	const id = data.nodes.length;
+
+	node = Object.assign(node, {
+		index: id,
+		x: x,
+		y: y,
+		vx: 1,
+		vy: 1,
+		forceShow: true,
+	});
+
+	data.nodes.push(node);
+	updateForces();
+};
+
 onRemoveNode = ({ ids }) => {
 	isHovering = false;
 
@@ -675,11 +691,6 @@ onSetRootId = ({ rootId }) => {
 	.start();
 
 	redraw();
-};
-
-onNewObject = ({x, y}) => {
-	console.log('COORDS: ', x, y)
-	console.log('NODES: ', nodes)
 };
 
 restart = (alpha) => {

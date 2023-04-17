@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
+import { I, Util, ObjectUtil, DataUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -286,7 +286,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onMessage (e) {
 		const { id, data } = e.data;
 		const { root } = blockStore;
-		const { onClick, onContextMenu, onContextSpaceClick, onSelect } = this.props;
+		const { onClick, onContextMenu, onContextSpaceClick, onSelect, rootId } = this.props;
 		const node = $(this.node);
 		const canvas = node.find('canvas');
 		const { left, top } = node.offset();
@@ -361,7 +361,21 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				onContextSpaceClick({
 					...menuParam
 				}, () => {
-					this.send('onNewObject', { x: data.x, y: data.y });
+
+					ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+						ObjectUtil.openPopup({ id: message.targetId }, {
+							onClose: () => {
+								ObjectUtil.getById(message.targetId, (object) => {
+									const node = this.nodeMapper(object);
+									this.send('onAddOrphan', { x: data.x, y: data.y, node });
+								});
+							}
+						});
+
+						analytics.event('CreateObject', {
+							route: 'Graph',
+						});
+					});
 				});
 				break;
 			};
