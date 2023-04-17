@@ -54,7 +54,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	
 	onDashboard () {
 		const { workspace } = commonStore;
-		const skipTypes = DataUtil.getFileTypes().concat(DataUtil.getSystemTypes());
+		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
 
 		menuStore.open('searchObject', {
 			element: `#empty-dashboard-select`,

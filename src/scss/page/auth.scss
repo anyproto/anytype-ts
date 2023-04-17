@@ -5,7 +5,9 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 }
 
 .pageAuth, .pageIndex, .pageObject {
-	.frame { text-align: center; background: none !important; }
+	.frame { width: 672px; padding: 60px 48px 48px 48px; text-align: center; background: none !important; }
+	.title { margin-bottom: 22px; }
+	.label { margin-bottom: 26px; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
 
 	.header { width: 100% !important; }

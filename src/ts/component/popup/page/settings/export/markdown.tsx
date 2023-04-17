@@ -1,17 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Label, Button, Switch } from 'Component';
 import { I, translate, Storage } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	prevPage: string;
-	onPage: (id: string) => void;
-	onExport: (format: I.ExportType, param: any) => void;
-};
-
-const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMarkdown extends React.Component<Props> {
+const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMarkdown extends React.Component<I.PopupSettings> {
 
 	data: any = {};
 

@@ -6,16 +6,11 @@ import { AutoSizer, CellMeasurer, CellMeasurerCache, List, InfiniteLoader } from
 import Head from '../head';
 import { detailStore } from 'Store';
 
-interface Props extends I.Popup {
-    prevPage: string;
-    onPage: (id: string) => void;
-};
-
 const HEIGHT = 44;
 const LIMIT = 5;
 const FILTER_LIMIT = 20;
 
-const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends React.Component<Props> {
+const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends React.Component<I.PopupSettings> {
 
 	node: any = null;
     team: any[] = [];
@@ -25,7 +20,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
     refFilter: any = null;
 	refList: any = null;
 
-    constructor (props: any) {
+    constructor (props: I.PopupSettings) {
         super(props);
 
         this.onScroll = this.onScroll.bind(this);

@@ -156,7 +156,7 @@ initFonts = () => {
 	};
 
 	const name = 'Inter';
-	const fontFace = new FontFace(name, `url("../font/inter/regular.ttf") format("truetype")`);
+	const fontFace = new FontFace(name, `url("../font/inter/regular.woff") format("woff")`);
 
 	self.fonts.add(fontFace);
 	fontFace.load().then(() => { fontFamily = name; });

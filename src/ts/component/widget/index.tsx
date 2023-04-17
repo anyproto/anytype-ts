@@ -311,7 +311,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const { targetBlockId } = child?.content;
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
 		];
 
 		let limit = layout == I.WidgetLayout.Tree ? Constant.limit.widgetRecords.tree : Constant.limit.widgetRecords.list;

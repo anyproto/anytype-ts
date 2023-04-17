@@ -12,7 +12,7 @@
 			.grey { color: $colorMediumGrey; }
 			.iconObject { margin-right: 10px; }
 
-			.buttons { line-height: 44px; opacity: 0; transition: $transitionFast; }
+			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
 			.buttons {
 				.icon { vertical-align: middle; opacity: 1; }
 			}
@@ -79,7 +79,7 @@
 
 			.icon.clear { 
 				width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 10px; top: 4px;
-				cursor: pointer; opacity: 0; margin: 0px; transition: opacity 0.2s ease-in-out;
+				cursor: pointer; opacity: 0; margin: 0px; transition: opacity $transitionCommon;
 			}
 			.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 			.icon.clear.active { opacity: 1; }

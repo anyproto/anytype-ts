@@ -4,8 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import {I, C, focus, keyboard, Util, scrollOnMove, Action, Preview, DataUtil} from 'Lib';
-import {blockStore, dbStore, detailStore} from 'Store';
+import { I, C, focus, keyboard, Util, scrollOnMove, Action, Preview, DataUtil, ObjectUtil } from 'Lib';
+import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -325,7 +325,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const processAddRecord = () => {
-			DataUtil.getObjectById(targetContextId, (object) => {
+			ObjectUtil.getById(targetContextId, (object) => {
 				if (object.type === Constant.typeId.collection) {
 					// add to collection
 					C.ObjectCollectionAdd(targetContextId, ids);

@@ -66,12 +66,12 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		const Button = (item: any) => (
 			<div className="element" onClick={item.onClick}>
 				<Icon className={item.icon} />
-				{item.text}
+				<div className="name">{item.text}</div>
 			</div>
 		);
 
 		const Item = (item: any) => (
-			<div className="item" onClick={(e: any) => { this.onClick(e, item); }}>
+			<div className="item" onClick={e => this.onClick(e, item)}>
 				<Checkbox 
 					ref={ref => { this.refCheckbox.set(item.id, ref); }} 
 					readonly={true}

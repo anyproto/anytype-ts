@@ -1,18 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select } from 'Component';
-import { I, translate, analytics, Renderer, DataUtil } from 'Lib';
+import { I, translate, analytics, Renderer, ObjectUtil } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Popup {
-	prevPage: string;
-	onPage: (id: string) => void;
-};
+const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
-const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<Props> {
-
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onType = this.onType.bind(this);
@@ -73,7 +68,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 			data: {
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: DataUtil.getPageLayouts() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
 				],
 				onClick: (item: any) => {
 					this.onTypeChange(item.id);

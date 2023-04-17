@@ -256,7 +256,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (types && types.length) {
 			filters.push({ relationKey: 'type', operator: I.FilterOperator.And, condition: I.FilterCondition.In, value: types });
 		} else {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() });
 		};
 
 		if (clear) {
@@ -279,7 +279,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || DataUtil.defaultName('page'));
+				it.name = String(it.name || ObjectUtil.defaultName('page'));
 				return it;
 			}));
 

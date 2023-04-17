@@ -1,9 +1,9 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import $ from 'jquery';
 import { Filter, MenuItemVertical, Icon, Loader } from 'Component';
-import { I, Util, Relation, keyboard, DataUtil } from 'Lib';
+import { I, Util, Relation, keyboard, DataUtil, ObjectUtil, FileUtil } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -64,7 +64,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 					<MenuItemVertical 
 						id={item.id}
 						object={item}
-						name={item.name}
+						name={FileUtil.name(item)}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						caption={type ? type.name : undefined}
@@ -234,7 +234,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || DataUtil.defaultName('page'));
+				it.name = String(it.name || ObjectUtil.defaultName('page'));
 				return it;
 			}));
 

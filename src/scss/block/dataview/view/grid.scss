@@ -4,7 +4,7 @@
 	.block.blockDataview {
 		.cellHead { 
 			text-align: left; color: $colorDarkGrey; font-weight: 400; line-height: 20px; position: relative; 
-			cursor: grab; display: inline-block; vertical-align: top; transition: background-color 0.2s ease-in-out;
+			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon;
 		}
 		.cellHead {
 			.cellContent { cursor: grab; height: 46px !important; overflow: visible !important; }

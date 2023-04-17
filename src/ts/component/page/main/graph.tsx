@@ -270,7 +270,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						this.data.edges.push(this.refGraph.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
 						this.refGraph.send('onSetEdges', { edges: this.data.edges });
 					} else {
-						DataUtil.getObjectById(targetId, (object: any) => {
+						ObjectUtil.getById(targetId, (object: any) => {
 							target = this.refGraph.nodeMapper(object);
 							this.refGraph.send('onAddNode', { sourceId, target });
 						});

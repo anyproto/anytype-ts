@@ -24,7 +24,7 @@
 			.icon.arrow { background-color: $colorHover; }
 		}
 
-		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background 0.2s ease-in-out; border-radius: 4px; cursor: default; }
+		.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background $transitionCommon; border-radius: 4px; cursor: default; }
 		.icon.set { background-image: url('~img/icon/sidebar/set.svg'); }
 		.icon.collection { background-image: url('~img/icon/sidebar/collection.svg'); }
 		.icon.blank { background-image: url('~img/icon/sidebar/blank.svg'); }

@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuDataviewText { box-shadow: 0px 0px; background: transparent; }
 	.menu.menuDataviewText {
-		.content { overflow: visible; max-height: none; height: 100%; transition: $transitionFast; padding: 0px; }
+		.content { overflow: visible; max-height: none; height: 100%; transition: $transitionAllCommon; padding: 0px; }
 		.editableWrap { height: 100%; }
 
 		#input { 

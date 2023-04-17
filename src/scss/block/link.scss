@@ -24,7 +24,7 @@
 
         .linkCard {
             .sides { display: flex; flex-direction: row; }
-			.side { transition: border-color 0.2s ease-in-out; }
+			.side { transition: border-color $transitionCommon; }
 			.side.left { width: 100%; position: relative; display: flex; }
 			.side.right { display: none; overflow: hidden; }
 
@@ -35,7 +35,7 @@
 			.cover { position: relative; height: 100%; background-size: cover !important; background-color: unset; }
 			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; position: static; }
 			.cardName {
-				.name { transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out; font-weight: 500; }
+				.name { transition: color $transitionCommon, border-color $transitionCommon; font-weight: 500; }
 				.iconObject { flex-shrink: 0; }
 			}
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 2px 0px 0px 0px; }

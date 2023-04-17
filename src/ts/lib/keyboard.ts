@@ -438,18 +438,6 @@ class Keyboard {
 				});
 				break;
 			};
-
-			case 'workspace': {
-				popupStore.open('prompt', {
-					data: {
-						title: 'Create Space',
-						onChange: (v: string) => {
-							C.WorkspaceCreate(v);
-						},
-					}
-				});
-				break;
-			};
 		};
 	};
 
@@ -520,8 +508,14 @@ class Keyboard {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
-		// Do not allow in set or store
-		if (!isPopup && (this.isMainSet() || this.isMainStore()) || (isPopup && ([ 'set', 'store' ].indexOf(popupMatch.params.action) >= 0))) {
+		let isDisabled = false;
+		if (!isPopup) {
+			isDisabled = this.isMainSet() || this.isMainStore() || this.isMainGraph();
+		} else {
+			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
+		};
+
+		if (isDisabled) {
 			return;
 		};
 
@@ -603,6 +597,10 @@ class Keyboard {
 
 	isMainStore () {
 		return this.isMain() && (this.match?.params?.action == 'store');
+	};
+
+	isMainGraph () {
+		return this.isMain() && (this.match?.params?.action == 'graph');
 	};
 
 	isMainIndex () {

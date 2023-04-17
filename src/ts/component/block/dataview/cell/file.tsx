@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
-import { I, DataUtil, ObjectUtil, translate, Relation } from 'Lib';
+import { I, FileUtil, ObjectUtil, translate, Relation } from 'Lib';
 import { detailStore } from 'Store';
 
 interface State { 
@@ -51,7 +51,7 @@ const CellFile = observer(class CellFile extends React.Component<I.Cell, State> 
 			<div className="element" onClick={(e: any) => { this.onClick(e, item); }}>
 				<div className="flex">
 					<IconObject object={item} size={iconSize} />
-					<div className="name">{DataUtil.fileName(item)}</div>
+					<div className="name">{FileUtil.name(item)}</div>
 				</div>
 			</div>
 		);

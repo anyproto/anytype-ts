@@ -3,7 +3,7 @@
 .listPreviewObject { white-space: nowrap; position: relative; }
 .listPreviewObject {
 	.wrap { overflow: hidden; border-radius: 8px; }
-	.scroll { transition: transform 0.2s ease-in-out; display: inline-block; }
+	.scroll { transition: transform $transitionCommon; display: inline-block; }
 
 	.item { display: inline-block; vertical-align: top; margin-right: 16px; position: relative; }
 	.item {
@@ -35,5 +35,5 @@
 
 	.content { white-space: nowrap; position: relative; }
 	.wrap { overflow: hidden; border-radius: 8px; }
-	.scroll { transition: transform 0.2s ease-in-out; display: inline-block; }
+	.scroll { transition: transform $transitionCommon; display: inline-block; }
 }

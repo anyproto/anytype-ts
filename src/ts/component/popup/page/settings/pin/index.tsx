@@ -1,17 +1,10 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Label, Select, Button } from 'Component';
 import { I, Util, Storage, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup, RouteComponentProps {
-	prevPage: string;
-	onPage: (id: string) => void;
-	setConfirmPin: (v: () => void) => void;
-};
-
-const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<Props> {
+const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<I.PopupSettings> {
 
 	render () {
 		const pin = Storage.get('pin');
@@ -35,7 +28,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 									arrowClassName="light" 
 									options={times}
 									value={String(pinTime || '')} 
-									onChange={commonStore.pinTimeSet}
+									onChange={v => commonStore.pinTimeSet(v)}
 									menuParam={{ horizontal: I.MenuDirection.Right }}
 								/>
 							</div>

@@ -1,4 +1,4 @@
-import { I, keyboard, translate, Util, DataUtil, Relation, Dataview } from 'Lib';
+import { I, keyboard, translate, Util, DataUtil, ObjectUtil, Relation, Dataview } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -65,7 +65,7 @@ class MenuUtil {
 				type: I.BlockType.Page, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
-				name: type.name || DataUtil.defaultName('page'), 
+				name: type.name || ObjectUtil.defaultName('page'), 
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,
@@ -103,7 +103,7 @@ class MenuUtil {
 				id: 'object' + i++, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
-				name: type.name || DataUtil.defaultName('page'), 
+				name: type.name || ObjectUtil.defaultName('page'), 
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,

@@ -39,7 +39,9 @@ class PopupStore {
 
 		param.data = param.data || {};
 
-		menuStore.closeAll();
+		if (!param.preventMenuClose) {
+			menuStore.closeAll();
+		};
 		focus.clear(true);
 
 		const item = this.get(id);

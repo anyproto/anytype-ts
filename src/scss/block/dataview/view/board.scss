@@ -86,7 +86,7 @@
 				}
 
 				.cardContent { 
-					border: 1px solid $colorHover; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color 0.2s ease-in-out;
+					border: 1px solid $colorHover; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color $transitionCommon;
 				}
 
 				.cellContent {
@@ -126,7 +126,7 @@
 			}
 
             .card.add { 
-				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px auto; line-height: 1; transition: $transitionFast; cursor: pointer; 
+				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px auto; line-height: 1; transition: $transitionAllCommon; cursor: pointer; 
 				border: 1px solid $colorVeryLightGrey; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorWhite;
 			}
 			.card.add.first { margin: 0px; }

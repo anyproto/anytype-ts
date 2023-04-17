@@ -39,9 +39,10 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const placeholder = {
-			title: DataUtil.defaultName(type),
+			title: ObjectUtil.defaultName(type),
 			description: 'Add a description',
 		};
+
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = [ 
 			Constant.typeId.type, 
@@ -100,7 +101,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
-		if ([ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type)) {
+		if (ObjectUtil.isStoreType(object.type)) {
 			const cn = [ 'c36' ];
 			const isInstalled = this.isInstalled();
 
@@ -159,7 +160,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			this.placeholderCheck(item.blockId);
 		};
 
-		if (!focused && !object._empty_ && (object.name == DataUtil.defaultName('page'))) {
+		if (!focused && !object._empty_ && (object.name == ObjectUtil.defaultName('page'))) {
 			focus.set('title', { from: 0, to: 0 });
 		};
 
@@ -241,7 +242,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 
 			let text = String(object[item.relationKey] || '');
-			if (text == DataUtil.defaultName('page')) {
+			if (text == ObjectUtil.defaultName('page')) {
 				text = '';
 			};
 

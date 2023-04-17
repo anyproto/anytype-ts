@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { set } from 'mobx';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, Util, DataUtil, analytics, keyboard, Relation } from 'Lib';
+import { I, C, Util, DataUtil, Dataview, analytics, keyboard, Relation } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
@@ -472,7 +471,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			update.push({ ...it, groupId: it.id, index: i });
 		});
 
-		DataUtil.dataviewGroupUpdate(rootId, block.id, view.id, update);
+		Dataview.groupUpdate(rootId, block.id, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, block.id, { viewId: view.id, groups: update });
 
 		this.cache = {};

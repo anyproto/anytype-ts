@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
 import { commonStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
-import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
+import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, Storage, Mapper, Action, translate, analytics, Renderer, sidebar } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -56,6 +56,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		this.focusTitle = this.focusTitle.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
 		this.setLayoutWidth = this.setLayoutWidth.bind(this);
+		this.setLoading = this.setLoading.bind(this);
 	};
 
 	render () {
@@ -105,6 +106,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							setLayoutWidth={this.setLayoutWidth}
+							setLoading={this.setLoading}
 							readonly={readonly}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -123,6 +125,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 								readonly={readonly}
 								blockRemove={this.blockRemove}
 								getWrapperWidth={this.getWrapperWidth}
+								setLoading={this.setLoading}
 							/>
 						))}
 					</div>
@@ -193,6 +196,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 		blockStore.updateNumbers(rootId);
 		this.resizePage();
+		sidebar.resizePage();
 
 		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};
@@ -223,9 +227,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		this.id = rootId;
-		this.loading = true;
 		this.isDeleted = false;
-		this.forceUpdate();
+		this.setLoading(true);
 
 		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
@@ -242,9 +245,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			};
 
 			this.scrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
-			this.loading = false;
 			this.focusTitle();
-			this.forceUpdate();
+			this.setLoading(false);
 			
 			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 
@@ -2190,6 +2192,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 
 		return root?.isLocked() || !allowed;
+	};
+
+	setLoading (v: boolean): void {
+		this.loading = v;
+		this.forceUpdate();
 	};
 
 });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, DataUtil, MenuUtil, keyboard, Relation } from 'Lib';
+import { I, C, Dataview, MenuUtil, keyboard, Relation } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import { dbStore } from 'Store';
 
@@ -142,7 +142,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		});
 
 		dbStore.groupsSet(rootId, blockId, update);
-		DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, update);
+		Dataview.groupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 
 		if (!view.groupBackgroundColors && this.color) {

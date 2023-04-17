@@ -19,7 +19,7 @@
 				.icon.arrow { display: none; }
 			}
 
-			.buttons { line-height: 44px; opacity: 0; transition: $transitionFast; }
+			.buttons { line-height: 44px; opacity: 0; transition: $transitionAllCommon; }
 			.buttons {
 				.icon { vertical-align: middle; opacity: 1; }
 			}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, analytics, keyboard, Key, translate, DataUtil, MenuUtil, Relation, Util } from 'Lib';
+import { I, C, analytics, keyboard, Key, translate, Dataview, MenuUtil, Relation, Util } from 'Lib';
 import { Input, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -221,7 +221,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 
 		C.BlockDataviewViewUpdate(rootId, blockId, current.id, this.param, () => {
 			if (clearGroups) {
-				DataUtil.dataviewGroupUpdate(rootId, blockId, current.id, []);
+				Dataview.groupUpdate(rootId, blockId, current.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: current.id, groups: [] }, onSave);
 			} else {
 				if (onSave) {

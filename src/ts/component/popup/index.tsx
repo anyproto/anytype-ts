@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import $ from 'jquery';
 import raf from 'raf';
 import { I, Util, analytics, Storage, Preview } from 'Lib';
 import { Dimmer } from 'Component';
 import { menuStore, popupStore } from 'Store';
+import Constant from 'json/constant.json';
+
 import PopupSettings from './settings';
 import PopupSearch from './search';
 import PopupHelp from './help';
@@ -16,17 +17,14 @@ import PopupPage from './page';
 import PopupTemplate from './template';
 import PopupExport from './export';
 import PopupMigration from './migration';
-import Constant from 'json/constant.json';
 
-interface Props extends I.Popup, RouteComponentProps<any> {};
-
-class Popup extends React.Component<Props> {
+class Popup extends React.Component<I.Popup> {
 
 	_isMounted = false;
 	node: any = null;
 	isAnimating = false;
 
-	constructor (props: Props) {
+	constructor (props: I.Popup) {
 		super(props);
 
 		this.position = this.position.bind(this);
@@ -150,10 +148,15 @@ class Popup extends React.Component<Props> {
 	};
 
 	close () {
+		const { param } = this.props;
+		const { preventMenuClose } = param;
+
 		Preview.previewHide(true);
 		Preview.tooltipHide(true);
 
-		menuStore.closeAll();
+		if (!preventMenuClose) {
+			menuStore.closeAll();
+		};
 		popupStore.close(this.props.id);
 	};
 

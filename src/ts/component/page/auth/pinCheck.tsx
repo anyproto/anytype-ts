@@ -18,6 +18,7 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 	constructor (props: I.PageComponent) {
 		super(props);
 
+		this.onError = this.onError.bind(this);
 		this.onSuccess = this.onSuccess.bind(this);
 	};
 	
@@ -58,6 +59,11 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 	rebind () {
 		this.unbind();
 		$(window).on('focus.pin', () => { this.ref.focus(); });
+	};
+
+	onError () {
+		this.ref.reset();		
+		this.setState({ error: translate('authPinCheckError') });
 	};
 
 	onSuccess () {

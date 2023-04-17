@@ -71,6 +71,7 @@
 	"progress2": { "en": "Export in progress" },
 	"progress3": { "en": "Download in progress" },
 	"progress4": { "en": "Recovering account" },
+	"progress5": { "en": "Migration in progress" },
 
 	"headerHistoryCurrent": { "en": "Current version" },
 	"headerHistoryRestore": { "en": "Restore version" },

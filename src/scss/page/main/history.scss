@@ -19,7 +19,7 @@
 
 		.wrap { position: relative; }
 
-		.item { padding: 5px 16px 5px 30px; cursor: pointer; transition: $transitionFast; position: relative; }
+		.item { padding: 5px 16px 5px 30px; cursor: pointer; transition: $transitionAllCommon; position: relative; }
 		.item {
 			.name { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
 			.date { @include text-overflow-nw; }
@@ -32,7 +32,7 @@
 			.icon.arrow { transform: rotateZ(90deg); }
 		}
 
-		.children { display: none; transition: $transitionFast; }
+		.children { display: none; transition: $transitionAllCommon; }
 		.children {
 			.item { padding-left: 48px; }
 		}
