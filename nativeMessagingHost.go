@@ -16,6 +16,10 @@ import (
 	"unsafe"
 )
 
+
+// UTILITY FUNCTIONS
+
+// splits stdout into an array of lines, removing empty lines
 func splitStdOutLines(stdout string) []string {
 	lines := strings.Split(stdout, "\n")
 	filteredLines := make([]string, 0)
@@ -27,15 +31,18 @@ func splitStdOutLines(stdout string) []string {
 	return filteredLines
 }
 
+// splits stdout into an array of tokens, replacing tabs with spaces
 func splitStdOutTokens(line string) []string {
 	return strings.Fields(strings.Replace(line, "\t", " ", -1))
 }
 
+// executes a command and returns the stdout as string
 func execCommand(command string) (string, error) {
 	stdout, err := exec.Command("bash", "-c", command).Output()
 	return string(stdout), err
 }
 
+// checks if a string is contained in an array of strings
 func contains(s []string, e string) bool {
 	for _, a := range s {
 		if a == e {
@@ -45,8 +52,12 @@ func contains(s []string, e string) bool {
 	return false
 }
 
+// CORE LOGIC
+
+// Windows: returns a list of open ports for all instances of anytypeHelper.exe found using cli utilities tasklist, netstat and findstr
 func getOpenPortsWindows() (map[string][]string, error) {
-	stdout, err := execCommand(`tasklist | findstr "anytypeHelper.exe"`)
+	appName := "anytypeHelper.exe"
+	stdout, err := execCommand(`tasklist | findstr "` + appName + `"`)
 	if err != nil {
 		return nil, err
 	}
@@ -88,10 +99,12 @@ func getOpenPortsWindows() (map[string][]string, error) {
 	return result, nil
 }
 
-func getOpenPortsUnix(query string) (map[string][]string, error) {
+// MacOS and Linux: returns a list of all open ports for all instances of anytype found using cli utilities lsof and grep
+func getOpenPortsUnix() (map[string][]string, error) {
 	// execute the command
-	stdout, err := execCommand(`lsof -i -P -n | grep LISTEN | grep "` + query + `"`)
-	Trace.Print(`lsof -i -P -n | grep LISTEN | grep "` + query + `"`)
+	appName := "anytype"
+	stdout, err := execCommand(`lsof -i -P -n | grep LISTEN | grep "` + appName + `"`)
+	Trace.Print(`lsof -i -P -n | grep LISTEN | grep "` + appName + `"`)
 	if err != nil {
 		Trace.Print(err)
 		return nil, err
@@ -124,24 +137,26 @@ func getOpenPortsUnix(query string) (map[string][]string, error) {
 	return result, nil
 }
 
-func getOpenPorts(query string) (map[string][]string, error) {
+// Windows, MacOS and Linux: returns a list of all open ports for all instances of anytype found using cli utilities
+func getOpenPorts() (map[string][]string, error) {
 	// Get Platform
 	platform := runtime.GOOS
 
-	Trace.Print("Getting Open Ports on Platform: " + platform + " with query: " + query)
+	Trace.Print("Getting Open Ports on Platform: " + platform)
 
 	// Platform specific functions
 	if platform == "windows" {
 		return getOpenPortsWindows()
 	} else if platform == "darwin" {
-		return getOpenPortsUnix(query)
+		return getOpenPortsUnix()
 	} else if platform == "linux" {
-		return getOpenPortsUnix(query)
+		return getOpenPortsUnix()
 	} else {
 		return nil, errors.New("unsupported platform")
 	}
 }
 
+// Windows, MacOS and Linux: Starts AnyType as a detached process and returns the PID
 func startApplication() (int, error) {
 	platform := runtime.GOOS
 	executablePath, err := os.Executable()
@@ -171,7 +186,7 @@ func startApplication() (int, error) {
 	return sub.Process.Pid, nil
 }
 
-// Messaging Code
+// MESSAGING LOGIC
 
 // constants for Logger
 var (
@@ -292,7 +307,7 @@ func parseMessage(msg []byte) {
 	case "NMHGetOpenPorts":
 
 		// Get open ports
-		openPorts, err := getOpenPorts("anytype")
+		openPorts, err := getOpenPorts()
 		if err != nil {
 			oMsg.Error = err.Error()
 		} else {
