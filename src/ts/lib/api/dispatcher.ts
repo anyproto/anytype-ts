@@ -1,16 +1,18 @@
-import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
-import { Util, I, M, Decode, translate, analytics, Response, Mapper, Renderer, Action, Dataview, Preview } from 'Lib';
+import Commands from 'protobuf/pb/protos/commands_pb';
+import Events from 'protobuf/pb/protos/events_pb';
+import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
+import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
+import { Util, I, M, translate, analytics, Renderer, Action, Dataview, Preview } from 'Lib';
 import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
-
-const Service = require('lib/pb/protos/service/service_grpc_web_pb');
-const Commands = require('lib/pb/protos/commands_pb');
-const Events = require('lib/pb/protos/events_pb');
+import { Decode } from './struct';
+import { Mapper } from './mapper';
+import * as Response from "./response";
+import { ClientReadableStream } from 'grpc-web';
 
 const SORT_IDS = [ 
-	'objectShow', 
 	'blockAdd', 
 	'blockDelete', 
 	'blockSetChildrenIds', 
@@ -27,8 +29,8 @@ const SKIP_SENTRY_ERRORS = [ 'LinkPreview' ];
 
 class Dispatcher {
 
-	service: any = null;
-	stream: any = null;
+	service: Service.ClientCommandsClient = null;
+	stream: ClientReadableStream<Events.Event> = null;
 	timeoutStream = 0;
 	timeoutEvent: any = {};
 	reconnects = 0;
@@ -50,7 +52,7 @@ class Dispatcher {
 
 		this.stream = this.service.listenSessionEvents(request, null);
 
-		this.stream.on('data', (event: any) => {
+		this.stream.on('data', (event) => {
 			try {
 				this.event(event, false);
 			} catch (e) {
@@ -58,7 +60,7 @@ class Dispatcher {
 			};
 		});
 
-		this.stream.on('status', (status: any) => {
+		this.stream.on('status', (status) => {
 			if (status.code) {
 				console.error('[Dispatcher.stream] Restarting', status);
 				this.listenEvents();
@@ -134,12 +136,10 @@ class Dispatcher {
 		if (v == V.PROCESSUPDATE)				 t = 'processUpdate';
 		if (v == V.PROCESSDONE)					 t = 'processDone';
 
-		if (v == V.OBJECTSHOW)					 t = 'objectShow';
 		if (v == V.OBJECTREMOVE)				 t = 'objectRemove';
 		if (v == V.OBJECTDETAILSSET)			 t = 'objectDetailsSet';
 		if (v == V.OBJECTDETAILSAMEND)			 t = 'objectDetailsAmend';
 		if (v == V.OBJECTDETAILSUNSET)			 t = 'objectDetailsUnset';
-		if (v == V.OBJECTRELATIONSSET)			 t = 'objectRelationsSet';
 		if (v == V.OBJECTRELATIONSAMEND)		 t = 'objectRelationsAmend';
 		if (v == V.OBJECTRELATIONSREMOVE)		 t = 'objectRelationsRemove';
 		if (v == V.OBJECTRESTRICTIONSSET)		 t = 'objectRestrictionsSet';
@@ -147,7 +147,7 @@ class Dispatcher {
 		return t;
 	};
 
-	event (event: any, skipDebug?: boolean) {
+	event (event: Events.Event, skipDebug?: boolean) {
 		const { config } = commonStore;
 		const traceId = event.getTraceid();
 		const ctx: string[] = [ event.getContextid() ];
@@ -178,7 +178,6 @@ class Dispatcher {
 		let details: any = null;
 		let viewId = '';
 		let keys: string[] = [];
-		let ids: string[] = [];
 		let subIds: string[] = [];
 		let uniqueSubIds: string[] = [];
 		let subId = '';
@@ -223,7 +222,6 @@ class Dispatcher {
 				};
 
 				case 'objectRemove': {
-					ids = data.getIdsList();
 					break;
 				};
 
@@ -557,7 +555,7 @@ class Dispatcher {
 						const fields = Mapper.From.ViewFields(data.getFields());
 						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit' ];
 
-						for (let f of updateKeys) {
+						for (const f of updateKeys) {
 							if (fields[f] != view[f]) {
 								updateData = true;
 								break;
@@ -577,7 +575,7 @@ class Dispatcher {
 						const items = data[Util.toCamelCase(`get-${key.id}-list`)]() || [];
 						const mapper = Mapper.From[key.mapper];
 
-						items.forEach((item: any) => {
+						items.forEach(item => {
 							let list = view[key.field];
 
 							if (item.hasAdd()) {
@@ -586,7 +584,7 @@ class Dispatcher {
 								const items = (op.getItemsList() || []).map(mapper);
 								const idx = afterId ? list.findIndex(it => it[key.idField] == afterId) + 1 : list.length;
 
-								items.forEach((item: any, i: number) => { 
+								items.forEach((item, i) => { 
 									list.splice(idx + i, 0, item);
 								});
 
@@ -628,7 +626,7 @@ class Dispatcher {
 										if (key.id == 'relation') {
 											const updateKeys = [ 'includeTime' ];
 
-											for (let f of updateKeys) {
+											for (const f of updateKeys) {
 												if (list[idx][f] != item[f]) {
 													updateData = true;
 													break;
@@ -748,7 +746,7 @@ class Dispatcher {
 						block.content.objectOrder.push(el);
 					};
 
-					changes.forEach((it: any) => {
+					changes.forEach(it => {
 						const op = it.getOp();
 						const ids = it.getIdsList() || [];
 						const afterId = it.getAfterid();
@@ -893,7 +891,7 @@ class Dispatcher {
 				};
 
 				case 'subscriptionGroups': {
-					const [ rid, bid, key ] = data.getSubid().split('-');
+					const [ rid, bid ] = data.getSubid().split('-');
 					const group = Mapper.From.BoardGroup(data.getGroup());
 
 					if (data.getRemove()) {
@@ -1025,7 +1023,7 @@ class Dispatcher {
 			root.layout = object.layout;
 		};
 
-		const blocks = objectView.blocks.map((it: any) => {
+		const blocks = objectView.blocks.map(it => {
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(contextId, it.id, it.content.relationLinks);
 				dbStore.viewsSet(contextId, it.id, it.content.views);
