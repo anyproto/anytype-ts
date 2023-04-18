@@ -8,6 +8,7 @@ const UpdateManager = require('./update.js');
 const MenuManager = require('./menu.js');
 const Server = require('./server.js');
 const Util = require('./util.js');
+const { installNativeMessagingHost } = require('./installNativeMessagingHost.js');
 
 const KEYTAR_SERVICE = 'Anytype';
 
@@ -30,6 +31,7 @@ class Api {
 			languages: win.webContents.session.availableSpellCheckerLanguages,
 		});
 
+		installNativeMessagingHost();
 		win.route = '';
 	};
 

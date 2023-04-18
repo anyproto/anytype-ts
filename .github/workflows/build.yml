@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.16.x ]
+        go-version: [ 1.18.10 ]
         os: [ macos-latest, ubuntu-latest, windows-latest ]
 
     steps:
@@ -45,6 +45,14 @@ jobs:
         run: |
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
           ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
+
+        - name: Build Native Messaging Host Windows
+        if: matrix.os == 'windows-latest'
+        run: npm run build:nmh-win
+
+      - name: Build Native Messaging Host
+        if: matrix.os != 'windows-latest'
+        run: npm run build:nmh
 
       - name: Build Front Mac OS
         if: matrix.os == 'macos-latest'
@@ -88,6 +96,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           rm dist/anytypeHelper.exe
+          rm dist/nativeMessagingHost.exe
           mv dist/*.exe artifacts
 
       - name: Release
