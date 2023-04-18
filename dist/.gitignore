@@ -21,6 +21,7 @@ main.js.map
 commands.js
 bundle-back.js
 anytypeHelper*
+nativeMessagingHost*
 alpha-linux.yml
 beta-linux.yml
 builder-debug.yml
