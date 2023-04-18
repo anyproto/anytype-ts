@@ -1,3 +1,14 @@
+/* 
+
+- This file is responsible for installing the native messaging host manifest file in the correct location for each browser on each platform.
+- It is idempotent, meaning it can run multiple times without causing any problems.
+- The native messaging host is a small executable that can be called by the Webclipper browser extension.
+- the executable remains in the anytype application files, but the manifest file is installed in each browser's unique nativeMessagingHost directory.
+- Read about what the actual executable does in the file: nativeMessagingHost.go
+- For full docs on this system, checkout the webclipper repository: https://github.com/anytypeio/webclipper
+
+*/
+
 const { existsSync, mkdir, writeFile } = require('fs');
 const { userInfo, homedir } = require('os');
 const { app } = require('electron');
