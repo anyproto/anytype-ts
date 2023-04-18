@@ -1,9 +1,7 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - feature/native-messaging-host
+  push
 
 jobs:
   release:
