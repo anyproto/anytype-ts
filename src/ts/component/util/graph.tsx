@@ -298,9 +298,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 			case 'onSelect': {
 				const { related } = data;
-				if (data.node != root) {
-					onSelect(data.node, related);
-				};
+				onSelect(data.node, related);
 				break;
 			};
 
