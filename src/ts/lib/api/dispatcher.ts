@@ -9,7 +9,7 @@ import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
 import { Decode } from './struct';
 import { Mapper } from './mapper';
-import * as Response from "./response";
+import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 
 const SORT_IDS = [ 
