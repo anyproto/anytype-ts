@@ -26,8 +26,11 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 				<div className="text">
-					<b>We&apos;re sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request.</b>
-					<p>You will be logged out on all other devices. You will have 30 days to recover it. Afterwards it will be deleted permanently</p>
+					<b>1. You have 30 days to cancel account deletion</b>
+					<p className="first">We&apos;re sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.</p>
+
+					<b>2. Delete data from other devices</b>
+					<p>Since Anytype stores all your data locally on the device, you need to remove it from other devices also. Launch and remove data in Anytype or just delete the app.</p>
 				</div>
 
 				<div className="check" onClick={this.onCheck}>

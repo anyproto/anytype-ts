@@ -154,6 +154,7 @@
 			.text { margin: 0px 0px 32px 0px; }
 			.text {
 				b { margin: 0px 0px 8px 0px; display: block; }
+				p.first { margin: 0px 0px 20px 0px; }
 			}
 
 			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; cursor: pointer; }
