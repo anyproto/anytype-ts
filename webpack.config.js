@@ -21,6 +21,7 @@ module.exports = (env, argv) => {
 		resolve: {
 			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
 			alias: {
+				protobuf: path.resolve(__dirname, 'dist/lib'),
       			json: path.resolve(__dirname, 'src/json'),
       			Lib: path.resolve(__dirname, 'src/ts/lib'),
 				Store: path.resolve(__dirname, 'src/ts/store'),
