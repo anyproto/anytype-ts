@@ -61,7 +61,7 @@
 					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 700;
 					gap: 0px 8px; transition: $transitionAllCommon; max-width: calc(100% - 70px);
 				}
-				.flex:hover { background: $colorHover; }
+				.flex:hover { background: $colorHoverMedium; }
 
 				.iconObject { flex-shrink: 0; }
 				.name { @include text-overflow-nw; width: 100%; }

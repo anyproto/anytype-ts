@@ -45,7 +45,7 @@
 							flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer; vertical-align: top; 
 							opacity: 0; 
 						}
-						.icon:hover { background-color: $colorHover; }
+						.icon:hover { background-color: $colorHoverMedium; }
 
 						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 						.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
@@ -86,7 +86,7 @@
 				}
 
 				.cardContent { 
-					border: 1px solid $colorHover; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color $transitionCommon;
+					border: 1px solid $colorHoverMedium; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color $transitionCommon;
 				}
 
 				.cellContent {

@@ -16,7 +16,7 @@
 	.authBackWrap {
 		.icon.back { width: 20px; height: 20px; background-size: 8px; background-image: url('~img/icon/popup/settings/back.svg'); transition: none; }
 	}
-	.authBackWrap:hover { background: $colorHover; }
+	.authBackWrap:hover { background: $colorHoverMedium; }
 
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }

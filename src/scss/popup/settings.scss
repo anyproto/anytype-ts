@@ -69,7 +69,7 @@
 						color: $colorDarkGrey; cursor: pointer; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 4px; 
 						border-radius: 6px; margin-left: -5px;
 					}
-					.element:hover { background: $colorHover; }
+					.element:hover { background: $colorHoverMedium; }
 				}
 
 				.title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
