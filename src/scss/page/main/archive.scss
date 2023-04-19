@@ -24,7 +24,7 @@
 					.name { @include text-overflow-nw; width: calc(100% - 26px); }
 				}
 				.element:first-child { margin-left: -4px; }
-				.element:hover { background-color: $colorHover; }
+				.element:hover { background-color: $colorHoverMedium; }
 			}
 			.side.right { justify-content: flex-end; }
 

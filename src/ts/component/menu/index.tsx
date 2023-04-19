@@ -804,7 +804,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			});
 		};
 
-		if (!refInput || (refInput && !refInput.isFocused)) {
+		if (!keyboard.isFocused && (!refInput || (refInput && !refInput.isFocused))) {
 			if (this.ref && this.ref.onRemove) {
 				keyboard.shortcut('backspace', e, () => {
 					e.preventDefault();

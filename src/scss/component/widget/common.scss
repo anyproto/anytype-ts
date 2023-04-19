@@ -15,8 +15,8 @@
 		}
 
 		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-		.iconWrap:hover { background-color: $colorHover; }
-		.iconWrap.active { opacity: 1; background-color: $colorHover; }
+		.iconWrap:hover { background-color: $colorHoverMedium; }
+		.iconWrap.active { opacity: 1; background-color: $colorHoverMedium; }
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
@@ -52,7 +52,7 @@
 	.head {
 		.clickable { width: calc(100% - 60px); }
 		.buttons { display: flex; }
-		.iconWrap.options { background-color: $colorHover; }
+		.iconWrap.options { background-color: $colorHoverMedium; }
 	}
 }
 

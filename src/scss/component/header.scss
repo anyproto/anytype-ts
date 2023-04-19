@@ -23,7 +23,7 @@
 	.tabs { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; height: 100%; }
 	.tabs {
 		.tab { 
-			font-weight: 700; cursor: pointer; color: $colorMediumGrey; transition: $transitionAllCommon; text-align: center;
+			font-weight: 700; color: $colorMediumGrey; transition: $transitionAllCommon; text-align: center;
 			vertical-align: top; padding: 0px 16px; display: flex; align-items: center; height: 100%; border-bottom: 1px solid rgba(0,0,0,0);
 		}
 		.tab:hover { color: $colorBlack; }

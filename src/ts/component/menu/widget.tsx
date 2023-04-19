@@ -272,9 +272,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					dataChange: (items: any[]) => {
 						const fixed: any[] = [
 							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
-							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':books:' },
 							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':open_file_folder:' },
+							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 						];
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 					},

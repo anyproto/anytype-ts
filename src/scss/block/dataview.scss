@@ -55,7 +55,7 @@
 				padding: 4px; border-radius: 4px; transition: $transitionAllCommon; cursor: pointer; display: flex; align-items: center;
 				line-height: 20px; @include text-small; color: $colorMediumGrey;
 			}
-			.iconWrap:hover { background-color: $colorHover; }
+			.iconWrap:hover { background-color: $colorHoverMedium; }
 			.iconWrap.icon { flex-shrink: 0; }
 			.iconWrap {
 				.icon { width: 20px; height: 20px; }
@@ -92,7 +92,7 @@
 			.side.left { padding-left: 14px; }
 
 			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionAllCommon; }
-			.icon:hover, .icon.active { background-color: $colorHover; }
+			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
 
 			.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 			.icon.filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
@@ -139,7 +139,7 @@
 				}
 				.element.black { color: $colorBlack; }
 				.element.orange { color: #f09c0e; font-weight: 500; }
-				.element:hover { background-color: $colorHover; }
+				.element:hover { background-color: $colorHoverMedium; }
 			}
 		}
 

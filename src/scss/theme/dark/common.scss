@@ -40,7 +40,7 @@ html.themeDark {
     .bgColor-teal { background: rgba(15, 200, 186, 0.25) !important; }
     .bgColor-lime { background: rgba(93, 212, 0, 0.25) !important; }
 
-	.isTag.archive { background-color: $colorHover; color: $colorSecondary; }
+	.isTag.archive { background-color: $colorHoverMedium; color: $colorSecondary; }
     .isTag.tagColor-default { color: $colorPrimary !important; background: $colorBlack !important; box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
     .isTag.tagColor-grey { color: #8C9EA5 !important; background: rgba(140, 158, 165, 0.25) !important; }
     .isTag.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
@@ -81,7 +81,7 @@ html.themeDark {
             .icon.volume.active { background-image: url('#{$themePath}/icon/audio/mute.svg'); }
 
             .input-drag {
-                .back { background: $colorHover; }
+                .back { background: $colorHoverMedium; }
             }
         }
     }
@@ -95,7 +95,7 @@ html.themeDark {
 	}
 
     .button.blank { color: $colorPrimary; border-color: $colorLineSecondary; }
-    .button.blank:hover { border-color: #525148; background: $colorHover; }
+    .button.blank:hover { border-color: #525148; background: $colorHoverMedium; }
 
 	.button.red { border-color: $colorLineSecondary; }
     .button.red:hover { border-color: #581f0c; background: #311107; }
@@ -122,14 +122,14 @@ html.themeDark {
 	.textareaWrap { background-color: $colorBgLight; }
 
     .select { border-color: $colorLinePrimary; }
-    .select:hover, .select.active { background: $colorHover; }
+    .select:hover, .select.active { background: $colorHoverMedium; }
     .select {
         .icon.arrow { background-image: url('#{$themePath}/arrow/select/dark.svg') !important; }
     }
 
 	.input.isReadonly { background: rgba(255,255,255,0.1); }
 
-    .inputWithFile { background: $colorHover; color: $colorSecondary; border-color: transparent; }
+    .inputWithFile { background: $colorHoverMedium; color: $colorSecondary; border-color: transparent; }
     .inputWithFile {
         .input::placeholder { color: $colorSecondary; }
         .fileWrap:hover .border { color: $colorPrimary; }
@@ -139,7 +139,7 @@ html.themeDark {
 
     .listPreviewObject {
         .item.add { border-color: $colorLinePrimary; }
-        .item:before { background: $colorHover; }
+        .item:before { background: $colorHoverMedium; }
 
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
         .icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
@@ -218,7 +218,7 @@ html.themeDark {
         .inner {
 			.fill { background: $colorSecondary; }
             .label { color: $colorPrimary; }
-            .bar { background: $colorHover; }
+            .bar { background: $colorHoverMedium; }
         }
     }
 
@@ -269,9 +269,9 @@ html.themeDark {
     .header.isCommon { background: $colorBlack; }
     .header.isCommon {
         .path { border: 0px; line-height: 28px; }
-		.path:hover { background-color: $colorHover; color: $colorPrimary; }
+		.path:hover { background-color: $colorHoverMedium; color: $colorPrimary; }
 
-        .icon.big:hover, .icon.big.hover { background-color: $colorHover; }
+        .icon.big:hover, .icon.big.hover { background-color: $colorHoverMedium; }
 
         .tabs { color: $colorSecondary; }
         .tabs {
@@ -279,7 +279,7 @@ html.themeDark {
         }
     }
 	.header.isCommon.active {
-		.path { background-color: $colorHover; color: $colorPrimary; }
+		.path { background-color: $colorHoverMedium; color: $colorPrimary; }
 	}
 
     .header.mainHistory { background: $colorBlack; }
@@ -315,7 +315,7 @@ html.themeDark {
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
     .sidebar {
 		> .head {
-			.icon:hover { background-color: $colorHover; }
+			.icon:hover { background-color: $colorHoverMedium; }
 		}
     }
 
