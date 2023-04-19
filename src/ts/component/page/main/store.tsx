@@ -23,8 +23,8 @@ enum View {
 
 const cmd = keyboard.cmdSymbol();
 const Tabs = [
-	{ id: Tab.Type, name: 'Types', tooltip: `${cmd} + T` },
-	{ id: Tab.Relation, name: 'Relations', tooltip: `${cmd} + Alt + T` },
+	{ id: Tab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
+	{ id: Tab.Relation, name: 'Relations', tooltipCaption: `${cmd} + Alt + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {

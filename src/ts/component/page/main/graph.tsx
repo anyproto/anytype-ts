@@ -8,8 +8,8 @@ import Constant from 'json/constant.json';
 
 const ctrl = keyboard.cmdSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltip: `${ctrl} + Alt + O` },
-	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltip: `${ctrl} + O` },
+	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltipCaption: `${ctrl} + Alt + O` },
+	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltipCaption: `${ctrl} + O` },
 ];
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {

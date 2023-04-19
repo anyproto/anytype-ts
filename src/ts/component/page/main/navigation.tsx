@@ -26,8 +26,8 @@ enum Panel {
 
 const cmd = keyboard.cmdSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltip: `${cmd} + Alt + O` },
-	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltip: `${cmd} + O` },
+	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltipCaption: `${cmd} + Alt + O` },
+	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltipCaption: `${cmd} + O` },
 ];
 
 const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
