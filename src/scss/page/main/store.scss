@@ -12,7 +12,10 @@
 			.title { margin-bottom: 25px; line-height: 40px; }
 			.label { @include text-paragraph; margin: 0px auto 24px auto; width: 610px; }
 
-			.filter { width: 512px; height: 48px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 10px; padding: 0px; text-align: center; }
+			.filter { 
+				width: 512px; height: 48px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 10px; padding: 0px; text-align: center; 
+				cursor: pointer;
+			}
 			.filter {
 				.line { display: none; }
 				.filterInputWrap { height: 100%; width: auto; }
@@ -32,7 +35,7 @@
 		.tabs { white-space: nowrap; text-align: left; display: flex; flex-direction: row; gap: 0px 24px; }
 		.tabs {
 			.tab { 
-				display: inline-block; font-weight: 700; cursor: pointer; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
+				display: inline-block; font-weight: 700; font-size: 18px; line-height: 26px; letter-spacing: -0.16px;
 				color: $colorMediumGrey; transition: $transitionAllCommon;
 			}
 			.tab:hover, .tab.active { color: $colorBlack; }
@@ -52,7 +55,7 @@
 			.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-column-gap: 48px; }
 			.row.block { display: block; }
 
-			.item { height: 48px; line-height: 48px; display: flex; position: relative; cursor: pointer; justify-content: space-between; }
+			.item { height: 48px; line-height: 48px; display: flex; position: relative; justify-content: space-between; }
 			.item {
 				.flex { 
 					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 700;
@@ -74,7 +77,10 @@
 					.icon.plus { background-size: 28px; background-image: url('~img/icon/store/plus0.svg'); opacity: 0; }
 					.icon.plus:hover { background-image: url('~img/icon/store/plus1.svg'); }
 
-					.button { @include text-common; opacity: 0; background: none; color: $colorDarkGrey; border-radius: 0px; padding: 0px; height: 1em; line-height: 1em; }
+					.button { 
+						@include text-common; opacity: 0; background: none; color: $colorDarkGrey; border-radius: 0px; padding: 0px; height: 1em; 
+						line-height: 1em; cursor: default;
+					}
 					.button:hover { color: $colorBlack; }
 				}
 			}
