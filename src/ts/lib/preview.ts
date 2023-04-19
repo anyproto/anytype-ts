@@ -42,8 +42,6 @@ class Preview {
 		const typeY = Number(param.typeY) || I.MenuDirection.Top;
 		const delay = Number(param.delay) || DELAY_TOOLTIP;
 
-		console.log(element.length, keyboard.isResizing);
-
 		if (!element.length || keyboard.isResizing) {
 			return;
 		};
@@ -97,8 +95,6 @@ class Preview {
 			
 			x = Math.max(BORDER, x);
 			x = Math.min(win.width() - ow - BORDER, x);
-
-			console.log('show', node);
 
 			node.css({ left: x, top: y }).addClass('show');
 
