@@ -620,10 +620,14 @@ onContextMenu = ({ x, y }) => {
 
 onAddNode = ({ sourceId, target }) => {
 	const id = data.nodes.length;
-	const source = nodes.find(it => it.id == sourceId);
 
-	if (!source) {
-		return;
+	if (sourceId) {
+		const source = nodes.find(it => it.id == sourceId);
+		if (!source) {
+			return;
+		};
+
+		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 	};
 
 	target = Object.assign(target, {
@@ -635,7 +639,6 @@ onAddNode = ({ sourceId, target }) => {
 	});
 
 	data.nodes.push(target);
-	data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 
 	updateForces();
 };
