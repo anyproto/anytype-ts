@@ -35,7 +35,7 @@
 	.controlButtons { position: absolute; bottom: 0px; width: 100%; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 	
 	.btn { 
-		background: $colorWhite; font-weight: 500; font-size: 14px; color: $colorMediumGrey; cursor: pointer; display: inline-block; 
+		background: $colorWhite; font-weight: 500; font-size: 14px; color: $colorMediumGrey; display: inline-block; 
 		transition: background $transitionCommon, color $transitionCommon; height: 28px; padding: 0px 8px 0px 6px; border-radius: 6px; display: flex; 
 		flex-direction: row; align-items: center;
 	}
