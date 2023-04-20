@@ -1051,6 +1051,8 @@ class Dispatcher {
 	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
+		type = type.replace(/^command_/, '');
+
 		const { config } = commonStore;
 		const debug = config.debug.mw;
 		const ct = Util.toCamelCase(type);
