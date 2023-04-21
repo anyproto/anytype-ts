@@ -23,7 +23,7 @@ const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComp
 				<div 
 					id="button-help" 
 					className="iconWrap" 
-					onClick={onAdd}
+					onClick={onHelp}
 					onMouseEnter={e => this.onTooltipShow(e, 'Help')}
 				>
 					<Icon />
