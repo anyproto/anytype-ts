@@ -581,9 +581,14 @@ onMouseMove = ({ x, y }) => {
 	isHovering = false;
 
 	const active = nodes.find(d => d.isOver);
+	const d = getNodeByCoords(x, y);
 
 	if (active) {
 		active.isOver = false;
+	};
+
+	if (d) {
+		d.isOver = true;
 	};
 
 	send('onMouseMove', { node: '', x, y, k: transform.k });
@@ -592,11 +597,8 @@ onMouseMove = ({ x, y }) => {
 	clearTimeout(timeoutHover);
 	timeoutHover = setTimeout(() => {
 		const d = getNodeByCoords(x, y);
-		if (d) {
-			d.isOver = true;
-			isHovering = true;
-		};
 
+		isHovering = true;
 		send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 		redraw();
 	}, 300);
