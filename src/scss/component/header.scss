@@ -13,7 +13,7 @@
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; }
 	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; }
 	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
-	.side.right { padding: 0px 10px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; }
+	.side.right { padding: 0px 12px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; }
 
 	.path { 
 		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; transition: $transitionAllCommon;
@@ -33,8 +33,8 @@
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon.big.expand, .icon.big.toggleSidebar { width: 32px; margin-right: 10px; }
-	.icon.big.nav, .icon.big.graph { width: 32px; margin-left: 10px; }
+	.icon.big.expand, .icon.big.toggleSidebar { margin-right: 12px; }
+	.icon.big.nav, .icon.big.graph { margin-left: 12px; }
 	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
 
 	.icon.back { background-image: url('~img/icon/header/back.svg'); }
@@ -140,7 +140,7 @@ html.platformMac {
 	}
 
 	.header.withSidebar.snapLeft {
-		.side.left { padding-left: 6px; }
+		.side.left { padding-left: 12px; }
 	}
 }
 
