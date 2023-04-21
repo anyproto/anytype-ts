@@ -47,7 +47,7 @@
 	
 	.menu.menuDataviewOptionEdit {
 		.filter { margin-bottom: 8px; }
-		.item:hover::before { background: $colorHover; }
+		.item:hover::before { background: $colorHoverMedium; }
 		.item.active::before { z-index: 1; }
 	}
 

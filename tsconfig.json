@@ -52,6 +52,9 @@
             "Store": [
                 "ts/store",
             ],
+            "protobuf/*": [
+                "../dist/lib/*"
+            ],
           }
     },
     "exclude": ["node_modules", "dist", "extensions"]

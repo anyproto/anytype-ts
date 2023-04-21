@@ -304,7 +304,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		if (canSelect) {
 			object = (
 				<div 
-					id={'selectable-' + id} 
+					id={`selectable-${id}`} 
 					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
 					{...Util.dataProps({ id, type: I.SelectType.Block })}
 				>
@@ -312,7 +312,14 @@ const Block = observer(class Block extends React.Component<Props> {
 				</div>
 			);
 		} else {
-			object = <div className="selectable">{object}</div>;
+			object = (
+				<div 
+					id={`selectable-${id}`} 
+					className="selectable"
+				>
+					{object}
+				</div>
+			);
 		};
 
 		return (

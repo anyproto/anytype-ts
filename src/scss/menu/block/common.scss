@@ -14,7 +14,7 @@
 		.item {
 			.name { @include text-overflow-nw; }
 		}
-		.item:hover::before { background: $colorHover; }
+		.item:hover::before { background: $colorHoverMedium; }
 
 		.item.isReadonly::before { opacity: 0 !important; }
 	}

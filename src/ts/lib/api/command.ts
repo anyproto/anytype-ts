@@ -1,7 +1,10 @@
-import { I, Util, Mark, dispatcher, Encode, Mapper } from 'Lib';
+import Commands from 'protobuf/pb/protos/commands_pb';
+import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
+import { Encode } from './struct';
+import { Mapper } from './mapper';
+import { dispatcher } from './dispatcher';
+import { I, Util, Mark } from 'Lib';
 
-const Commands = require('lib/pb/protos/commands_pb');
-const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
 const Rpc = Commands.Rpc;
 
 const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) => void) => {
@@ -171,7 +174,7 @@ const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition
 	
 	request.setContextid(contextId);
 	request.setDroptargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 	request.setLocalfilepathsList(paths);
 
 	dispatcher.request(FileDrop.name, request, callBack);
@@ -186,7 +189,7 @@ const FileUpload = (url: string, path: string, type: I.FileType, callBack?: (mes
 	
 	request.setUrl(url);
 	request.setLocalpath(path);
-	request.setType(type);
+	request.setType(type as number);
 
 	dispatcher.request(FileUpload.name, request, callBack);
 };
@@ -222,7 +225,7 @@ const BlockCreate = (contextId: string, targetId: string, position: I.BlockPosit
 	
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 	request.setBlock(Mapper.To.Block(block));
 
 	dispatcher.request(BlockCreate.name, request, callBack);
@@ -245,14 +248,14 @@ const BlockTextSetText = (contextId: string, blockId: string, text: string, mark
 	text = text.replace(/&gt;/g, '>');
 
 	marks = Util.objectCopy(marks);
-	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark);
+	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark) as any;
 
 	const request = new Rpc.BlockText.SetText.Request();
 	
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setText(text);
-	request.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks));
+	request.setMarks(new Model.Block.Content.Text.Marks().setMarksList(marks as any));
 
 	dispatcher.request(BlockTextSetText.name, request, callBack);
 };
@@ -305,8 +308,8 @@ const BlockSplit = (contextId: string, blockId: string, range: I.TextRange, styl
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setRange(Mapper.To.Range(range));
-	request.setStyle(style);
-	request.setMode(mode);
+	request.setStyle(style as number);
+	request.setMode(mode as number);
 
 	dispatcher.request(BlockSplit.name, request, callBack);
 };
@@ -326,7 +329,7 @@ const BlockBookmarkCreateAndFetch = (contextId: string, targetId: string, positi
 	
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 	request.setUrl(url);
 
 	dispatcher.request(BlockBookmarkCreateAndFetch.name, request, callBack);
@@ -392,7 +395,7 @@ const BlockListMoveToExistingObject = (contextId: string, targetContextId: strin
     request.setTargetcontextid(targetContextId);
     request.setBlockidsList(blockIds);
     request.setDroptargetid(targetId);
-    request.setPosition(position);
+    request.setPosition(position as number);
 
 	dispatcher.request(BlockListMoveToExistingObject.name, request, callBack);
 };
@@ -414,7 +417,7 @@ const BlockListDuplicate = (contextId: string, targetContextId: string, blockIds
 	request.setTargetcontextid(targetContextId);
     request.setBlockidsList(blockIds);
     request.setTargetid(targetId);
-    request.setPosition(position);
+    request.setPosition(position as number);
 
 	dispatcher.request(BlockListDuplicate.name, request, callBack);
 };
@@ -424,7 +427,7 @@ const BlockListTurnInto = (contextId: string, blockIds: string[], style: I.TextS
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
-    request.setStyle(style);
+    request.setStyle(style as number);
 
 	dispatcher.request(BlockListTurnInto.name, request, callBack);
 };
@@ -445,7 +448,7 @@ const BlockDivListSetStyle = (contextId: string, blockIds: string[], style: I.Te
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
-    request.setStyle(style);
+    request.setStyle(style as number);
 
 	dispatcher.request(BlockDivListSetStyle.name, request, callBack);
 };
@@ -471,7 +474,7 @@ const BlockLinkCreateWithObject = (contextId: string, targetId: string, details:
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 	request.setDetails(Encode.encodeStruct(details));
 	request.setTemplateid(templateId);
 	request.setFields(Encode.encodeStruct(fields || {}));
@@ -485,9 +488,9 @@ const BlockLinkListSetAppearance = (contextId: string, blockIds: any[], iconSize
 	
 	request.setContextid(contextId);
 	request.setBlockidsList(blockIds);
-	request.setIconsize(iconSize);
-	request.setCardstyle(cardStyle);
-	request.setDescription(description);
+	request.setIconsize(iconSize as number);
+	request.setCardstyle(cardStyle as number);
+	request.setDescription(description as number);
 	request.setRelationsList(relations);
 
 	dispatcher.request(BlockLinkListSetAppearance.name, request, callBack);
@@ -500,7 +503,7 @@ const BlockTableCreate = (contextId: string, targetId: string, position: I.Block
 	
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 	request.setRows(rows);
 	request.setColumns(columns);
 	request.setWithheaderrow(withHeaderRow);
@@ -524,7 +527,7 @@ const BlockTableSort = (contextId: string, columnId: string, type: I.SortType, c
 	
 	request.setContextid(contextId);
 	request.setColumnid(columnId);
-	request.setType(type);
+	request.setType(type as number);
 
 	dispatcher.request(BlockTableSort.name, request, callBack);
 };
@@ -534,7 +537,7 @@ const BlockTableRowCreate = (contextId: string, targetId: string, position: I.Bl
 	
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 
 	dispatcher.request(BlockTableRowCreate.name, request, callBack);
 };
@@ -545,7 +548,7 @@ const BlockTableRowDuplicate = (contextId: string, blockId: string, targetId: st
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setTargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 
 	dispatcher.request(BlockTableRowDuplicate.name, request, callBack);
 };
@@ -583,7 +586,7 @@ const BlockTableColumnCreate = (contextId: string, targetId: string, position: I
 	
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 
 	dispatcher.request(BlockTableColumnCreate.name, request, callBack);
 };
@@ -603,7 +606,7 @@ const BlockTableColumnMove = (contextId: string, targetId: string, dropTargetId:
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setDroptargetid(dropTargetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 
 	dispatcher.request(BlockTableColumnMove.name, request, callBack);
 };
@@ -614,7 +617,7 @@ const BlockTableColumnDuplicate = (contextId: string, blockId: string, targetId:
 	request.setContextid(contextId);
 	request.setBlockid(blockId);
 	request.setTargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 
 	dispatcher.request(BlockTableColumnDuplicate.name, request, callBack);
 };
@@ -631,13 +634,13 @@ const BlockTableColumnListFill = (contextId: string, blockIds: string[], callBac
 // ---------------------- BLOCK FILE ---------------------- //
 
 const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockfFile.CreateAndUpload.Request();
+	const request = new Rpc.BlockFile.CreateAndUpload.Request();
 	
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
-	request.setPosition(position);
+	request.setPosition(position as number);
 	request.setUrl(url);
-	request.setFilepath(path);
+	request.setLocalpath(path);
 
 	dispatcher.request(BlockFileCreateAndUpload.name, request, callBack);
 };
@@ -647,7 +650,7 @@ const BlockFileListSetStyle = (contextId: string, blockIds: string[], style: I.F
 
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
-    request.setStyle(style);
+    request.setStyle(style as number);
 
 	dispatcher.request(BlockFileListSetStyle.name, request, callBack);
 };
@@ -679,7 +682,7 @@ const BlockTextListSetStyle = (contextId: string, blockIds: string[], style: I.T
 	
 	request.setContextid(contextId);
 	request.setBlockidsList(blockIds);
-	request.setStyle(style);
+	request.setStyle(style as number);
 
 	dispatcher.request(BlockTextListSetStyle.name, request, callBack);
 };
@@ -728,7 +731,7 @@ const BlockListSetAlign = (contextId: string, blockIds: string[], align: I.Block
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
-    request.setAlign(align);
+    request.setAlign(align as number);
 
 	dispatcher.request(BlockListSetAlign.name, request, callBack);
 };
@@ -738,7 +741,7 @@ const BlockListSetVerticalAlign = (contextId: string, blockIds: string[], align:
 	
 	request.setContextid(contextId);
     request.setBlockidsList(blockIds);
-    request.setVerticalalign(align);
+    request.setVerticalalign(align as number);
 
 	dispatcher.request(BlockListSetVerticalAlign.name, request, callBack);
 };
@@ -990,8 +993,8 @@ const BlockCreateWidget = (contextId: string, targetId: string, block: any, posi
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
 	request.setBlock(Mapper.To.Block(block));
-	request.setPosition(position);
-	request.setWidgetlayout(layout);
+	request.setPosition(position as number);
+	request.setWidgetlayout(layout as number);
 
 	dispatcher.request(BlockCreateWidget.name, request, callBack);
 };
@@ -1249,8 +1252,8 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 
 	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
 	request.setUpdateexistingobjects(existing);
-	request.setType(type);
-	request.setMode(mode);
+	request.setType(type as number);
+	request.setMode(mode as number);
 	request.setNoprogress(noProgress);
 	request.setIsmigration(isMigration);
 	
@@ -1317,7 +1320,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setLimit(limit);
 	request.setKeysList(Util.arrayUnique(keys));
 	request.setSourceList(sources);
-	request.setIgnoreworkspace(ignoreWorkspace);
+	request.setIgnoreworkspace(ignoreWorkspace as any);
 	request.setAfterid(afterId);
 	request.setBeforeid(beforeId);
 	request.setNodepsubscription(noDeps);
@@ -1344,7 +1347,7 @@ const ObjectSubscribeIds = (subId: string, ids: string[], keys: string[], ignore
 	request.setSubid(subId);
 	request.setIdsList(ids);
 	request.setKeysList(keys);
-	request.setIgnoreworkspace(ignoreWorkspace);
+	request.setIgnoreworkspace(ignoreWorkspace as any);
 	request.setNodepsubscription(noDeps);
 
 	dispatcher.request(ObjectSubscribeIds.name, request, callBack);
@@ -1398,7 +1401,7 @@ const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (
 	const request = new Rpc.Object.SetLayout.Request();
 	
 	request.setContextid(contextId);
-    request.setLayout(layout);
+    request.setLayout(layout as number);
 
 	dispatcher.request(ObjectSetLayout.name, request, callBack);
 };
@@ -1561,7 +1564,7 @@ const ObjectListExport = (path: string, objectIds: string[], format: I.ExportTyp
 
 	request.setPath(path);
 	request.setObjectidsList(objectIds);
-	request.setFormat(format);
+	request.setFormat(format as number);
 	request.setZip(zip);
 	request.setIncludenested(includeNested);
 	request.setIncludefiles(includeFiles);
@@ -1625,18 +1628,10 @@ const UnsplashDownload = (id: string, callBack?: (message: any) => void) => {
 
 // ---------------------- DEBUG ---------------------- //
 
-const DebugSync = (limit: number, callBack?: (message: any) => void) => {
-	const request = new Rpc.Debug.Sync.Request();
-
-	request.setRecordstraverselimit(limit);
-
-	dispatcher.request(DebugSync.name, request, callBack);
-};
-
 const DebugTree = (objectId: string, path: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Debug.Tree.Request();
 
-	request.setObjectid(objectId);
+	request.setTreeid(objectId);
 	request.setPath(path);
 
 	dispatcher.request(DebugTree.name, request, callBack);
@@ -1682,7 +1677,6 @@ export {
 	AccountDelete,
 	AccountMove,
 
-	DebugSync,
 	DebugTree,
 	DebugExportLocalstore,
 	DebugSpaceSummary,

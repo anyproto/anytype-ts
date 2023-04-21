@@ -13,7 +13,7 @@
 		.button { width: 100%; }
 		.button.grey { cursor: default; }
 
-		.item:hover::before { background: $colorHover; }
+		.item:hover::before { background: $colorHoverMedium; }
 		.item.disabled:hover::before { opacity: 0; }
 
 		.item.withCaption {
@@ -31,13 +31,12 @@
 		.icon.edit { display: none; }
 		.icon.checkbox { width: 20px; height: 20px; vertical-align: top; background-image: url('~img/icon/dataview/checkbox0.svg'); }
 		.icon.checkbox.active { background-image: url('~img/icon/dataview/checkbox1.svg'); }
+		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); transition: $transitionAllCommon; }
 
 		.sides { display: flex; align-items: flex-start; gap: 0px 6px; }
 
 		.content { overflow: hidden; max-height: unset; padding: 0px; }
 		.input { @include text-common; line-height: 20px; vertical-align: top; display: inline-block; height: 21px; padding: 0px; border: 0px; padding: 0px; }
-
-		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 
 		.sections { display: flex; flex-direction: column; height: 100%; }
 
@@ -75,14 +74,12 @@
 				margin: 0px; position: absolute; right: -38px; top: 0px; opacity: 0;
 			}
 			.icon.fav.active { background-image: url('~img/icon/fav1.svg'); }
-			.icon.fav:hover { background-color: $colorHover; }
 
 			.info { 
 				width: 192px; @include text-overflow-nw; line-height: 20px; border-radius: 4px; transition: background $transitionCommon; 
 				flex-shrink: 0; padding: 6px; color: $colorDarkGrey; display: flex; gap: 0px 6px; align-items: center; position: relative;
 			}
-			.info.canEdit { cursor: pointer; }
-			.info.canEdit:hover { background: $colorHover; }
+			.info.canEdit:hover { background: $colorHoverLight; }
 
 			.cellContent { min-height: 22px; }
 			.cellContent {
@@ -95,7 +92,7 @@
 				padding: 5px 8px; border-radius: 4px; width: calc(100% - 236px); line-height: 22px; transition: background $transitionCommon; 
 				position: relative; margin-right: 6px;
 			}
-			.cell.canEdit:hover { background: $colorHover; }
+			.cell.canEdit:hover { background: $colorHoverLight; }
 			.cell.canEdit {
 				.cellContent {
 					.empty { display: block; }
@@ -167,10 +164,11 @@
 		.item.add { padding: 7px 26px 8px 26px; cursor: pointer; background: none; }
 		.item.add {
 			.line { margin: 0px; position: absolute; top: 0px; left: 32px; width: calc(100% - 64px); }
-			.info { width: 100%; }
+			.info { width: 100%; transition: $transitionAllCommon; }
 		}
 		.item.add:hover { 
-            .info { background: $colorHover; } 
+            .info { color: $colorBlack; } 
+			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
         }
 	}
 

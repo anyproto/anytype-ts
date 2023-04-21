@@ -30,7 +30,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 								key={i}
 								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
 								onClick={() => { onTab(item.id); }}
-								onMouseOver={e => onTooltipShow(e, item.tooltip)} 
+								onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
 								onMouseOut={onTooltipHide}
 							>
 								{item.name}

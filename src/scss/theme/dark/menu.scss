@@ -44,9 +44,9 @@
 		.separator .inner { background: $colorLineSecondary; }
 
         .item { background: none; }
-        .item.hover::before { background: $colorHover; }
+        .item.hover::before { background: $colorHoverMedium; }
         .item {
-            .icon.delete:hover, .icon.more:hover { background-color: $colorHover; }
+            .icon.delete:hover, .icon.more:hover { background-color: $colorHoverMedium; }
             .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg'); }
 			.icon.chk { background-image: url('#{$themePath}/icon/menu/checkbox.svg'); }
         }
@@ -123,15 +123,15 @@
 			 .icon.dnd { border-color: rgba(217, 212, 184, 0.14); }
 
 			.info { color: $colorSecondary; }
-        	.info.canEdit:hover { background: $colorHover; }
+        	.info.canEdit:hover { background: $colorHoverMedium; }
 
-        	.cell.canEdit:hover { background: $colorHover; }
+        	.cell.canEdit:hover { background: $colorHoverMedium; }
 
-			.icon.fav:hover { background-color: $colorHover; }
+			.icon.fav:hover { background-color: $colorHoverMedium; }
 		}
 
         .item.add:hover { 
-            .info { background: $colorHover; }
+            .info { background: $colorHoverMedium; }
         }
     }
 
@@ -139,14 +139,14 @@
 
     .menu.menuBlockRelationEdit {
         .input { border-color: $colorLinePrimary; }
-        .item:hover::before { background: $colorHover; }
+        .item:hover::before { background: $colorHoverMedium; }
     }
 
      /* MenuDataviewRelationEdit */
 
      .menu.menuDataviewRelationEdit {
         .input { border-color: $colorLinePrimary; }
-        .item:hover::before { background: $colorHover; }
+        .item:hover::before { background: $colorHoverMedium; }
     }
 
     /* MenuDataviewText */
@@ -158,16 +158,16 @@
     /* MenuDataviewRelationList */
 
     .menu.menuDataviewRelationList {
-        .item:hover::before { background: $colorHover; }
+        .item:hover::before { background: $colorHoverMedium; }
     }
 
     /* MenuDataviewFileValues */
 
     .menu.menuDataviewFileValues {
 		.item { color: $colorPrimary; }
-        .item:hover::before { background: $colorHover; }
+        .item:hover::before { background: $colorHoverMedium; }
 		.item {
-            .icon.more { background-color: $colorHover; }
+            .icon.more { background-color: $colorHoverMedium; }
         }
     }
 
@@ -182,7 +182,7 @@
     /* MenuDataviewOptionEdit */
 
     .menu.menuDataviewOptionEdit {
-		.item:hover::before { background: $colorHover; }
+		.item:hover::before { background: $colorHoverMedium; }
 	}
 
     /* MenuSearchObject */
@@ -197,7 +197,7 @@
 
     .menu.menuThreadList {
         .item { border-color: $colorLineSecondary; }
-        .item:hover::before { background: $colorHover; }
+        .item:hover::before { background: $colorHoverMedium; }
 
         .item {
             .icon.cafe { background-image: url('#{$themePath}/icon/cafe.svg'); }
@@ -207,13 +207,13 @@
     /* MenuBlockMore */
 
     .menu.menuBlockMore {
-        .item:hover::before { background: $colorHover; }
+        .item:hover::before { background: $colorHoverMedium; }
     }
 
     /* MenuHelp */
 
     .menu.menuHelp {
-        .item:hover::before { background: $colorHover; }
+        .item:hover::before { background: $colorHoverMedium; }
     }
 
     /* MenuButton */
@@ -242,7 +242,7 @@
     /* MenuBlockContext */
 
     .menu.menuBlockContext {
-		.icon:hover { background-color: $colorHover; }
+		.icon:hover { background-color: $colorHoverMedium; }
 
         .icon.active.bold { background-image: url('#{$themePath}/icon/menu/action/mark/bold1.svg'); }
 		.icon.active.kbd { background-image: url('#{$themePath}/icon/menu/action/mark/code1.svg'); }
@@ -278,7 +278,7 @@
 				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card1.svg'); }
 			}
 
-            .item.active { color: $colorPrimary; background: $colorHover; }
+            .item.active { color: $colorPrimary; background: $colorHoverMedium; }
 			.item.active {
 				.icon.style-text { background-image: url('#{$themePath}/icon/menu/linkSettings/text2.svg'); }		
 				.icon.style-card { background-image: url('#{$themePath}/icon/menu/linkSettings/card2.svg'); }

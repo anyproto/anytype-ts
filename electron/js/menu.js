@@ -308,7 +308,7 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: 'Space debug', click: () => { show(); Util.send(this.win, 'command', 'debugSync'); } },
+			{ label: 'Space debug', click: () => { show(); Util.send(this.win, 'command', 'debugSpace'); } },
 			{ label: 'Tree diagnostics', click: () => { show(); Util.send(this.win, 'command', 'debugTree'); } },
 
 			Separator,
