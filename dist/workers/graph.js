@@ -597,8 +597,10 @@ onMouseMove = ({ x, y }) => {
 	clearTimeout(timeoutHover);
 	timeoutHover = setTimeout(() => {
 		const d = getNodeByCoords(x, y);
+		if (d) {
+			isHovering = true;
+		};
 
-		isHovering = true;
 		send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 		redraw();
 	}, 300);
