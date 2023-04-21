@@ -158,11 +158,12 @@ const AccountMove = (path: string, callBack?: (message: any) => void) => {
 	dispatcher.request(AccountMove.name, request, callBack);
 };
 
-const AccountRecoverFromLegacyExport = (path: string, rootPath: string, callBack?: (message: any) => void) => {
+const AccountRecoverFromLegacyExport = (path: string, rootPath: string, icon: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.RecoverFromLegacyExport.Request();
 	
 	request.setPath(path);
 	request.setRootpath(rootPath);
+	request.setIcon(icon);
 
 	dispatcher.request(AccountRecoverFromLegacyExport.name, request, callBack);
 };
