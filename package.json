@@ -55,7 +55,7 @@
 		"@typescript-eslint/parser": "^5.46.1",
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
-		"electron": "^24.1.2",
+		"electron": "^24.0.0",
 		"electron-builder": "^23.6.0",
 		"electron-notarize": "^0.2.1",
 		"eslint": "^8.29.0",
