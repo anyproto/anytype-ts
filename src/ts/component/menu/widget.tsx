@@ -368,7 +368,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				onSave();
 			};
 
-			analytics.event(isEditing ? 'EditWidget' : 'AddWidget', { type: this.layout });
+			if (!isEditing) {
+				analytics.event('AddWidget', { type: this.layout });
+			};
 		});
 
 		close(); 
