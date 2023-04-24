@@ -92,7 +92,7 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 		const { type } = data;
 
 		if (type == 'onboarding') {
-			Onboarding.start('wizardDashboard', false, true);
+			Onboarding.start('dashboard', false, true);
 		};
 	};
 

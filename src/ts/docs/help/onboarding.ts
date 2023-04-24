@@ -1,7 +1,7 @@
 import { I } from 'Lib';
 
 export default {
-    wizardGraph: {
+    mainGraph: {
         category: 'Onboarding',
         showConfetti: true,
         items: [
@@ -31,7 +31,7 @@ export default {
         },
     },
 
-    wizardDashboard: {
+    dashboard: {
         category: 'Onboarding',
         showConfetti: true,
         items: [
