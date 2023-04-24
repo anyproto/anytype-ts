@@ -88,7 +88,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 }
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted {
-	.frame { width: 415px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+	.frame { width: 866px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; }
 	.label { color: #5C5A54; min-width: 415px; }
 }

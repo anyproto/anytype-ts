@@ -47,12 +47,14 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	render () {
 		const { error, stage } = this.state;
 
-		// Back button
-		const backButton = this.canMoveBackward() ? <Icon className="arrow back" onClick={this.onBack} /> : null;
-
+		let back = null;
 		let indicator = null;
 		let label = null;
 		let footer = null;
+
+		if (this.canMoveBackward()) {
+			back = <Icon className="arrow back" onClick={this.onBack} />;
+		};
 
 		if (![ OnboardStage.SoulCreating, OnboardStage.SpaceCreating ].includes(stage)) {
 			let onMouseEnter = null;
@@ -63,11 +65,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				onMouseLeave = this.hideKeyPhraseTooltip;
 			};
 
-			indicator = (
-				<div className={ANIMATION_CN}>
-					<DotIndicator index={stage} count={4} />
-				</div>
-			);
+			indicator = <DotIndicator index={stage} count={4} />;
 
 			label = (
 				<Label 
@@ -92,7 +90,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
         return (
 			<div>
-				{backButton}
+				{back}
 				<Frame>
 					{indicator}
 					<Title className={ANIMATION_CN} text={this.getText('Title')} />
