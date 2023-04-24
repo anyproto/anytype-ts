@@ -1,7 +1,7 @@
 import { I } from 'Lib';
 
 export default {
-    wizardGraph: {
+    mainGraph: {
         category: 'Onboarding',
         showConfetti: true,
         items: [
@@ -27,11 +27,12 @@ export default {
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
+			noClose: true,
             offsetY: -4,
         },
     },
 
-    wizardDashboard: {
+    dashboard: {
         category: 'Onboarding',
         showConfetti: true,
         items: [
@@ -86,6 +87,7 @@ export default {
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
             noArrow: true,
+			noClose: true,
 			offsetY: -4,
 		},
     },

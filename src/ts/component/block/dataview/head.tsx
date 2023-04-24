@@ -184,7 +184,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
 				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
-					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, onCreate);
 					analytics.event('InlineSetSetSource', { type: 'newObject' });
 				});
 			};

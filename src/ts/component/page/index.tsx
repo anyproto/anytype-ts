@@ -239,7 +239,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { id } = match.params;
 		const isPopup = keyboard.isPopup();
 
-		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('wizardDashboard')) {
+		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('dashboard')) {
 			return;
 		};
 

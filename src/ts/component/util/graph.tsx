@@ -287,7 +287,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const { root } = blockStore;
 		const { onClick, onContextMenu, onSelect } = this.props;
 		const node = $(this.node);
-		const canvas = node.find('canvas');
 		const { left, top } = node.offset();
 
 		switch (id) {
@@ -299,9 +298,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 			case 'onSelect': {
 				const { related } = data;
-				if (data.node != root) {
-					onSelect(data.node, related);
-				};
+				onSelect(data.node, related);
 				break;
 			};
 
@@ -311,16 +308,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				};
 
 				this.subject = this.nodes.find(d => d.id == data.node);
-
-				if (this.subject) {
-					window.clearTimeout(this.timeoutPreview);
-					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 50);
-
-					canvas.addClass('cp');
-				} else {
-					this.onPreviewHide();	
-					canvas.removeClass('cp');
-				};
+				this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
 				break;
 			};
 

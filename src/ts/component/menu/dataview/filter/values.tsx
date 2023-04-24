@@ -585,8 +585,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				noFlipY: true,
 				data: { 
 					rebind: this.rebind,
-					rootId: rootId,
-					blockId: blockId,
+					rootId,
+					blockId,
 					value: item.value, 
 					types: relation.objectTypes,
 					relation: observable.box(relation),

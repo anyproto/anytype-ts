@@ -120,7 +120,9 @@ class MenuSearchText extends React.Component<I.Menu> {
 	};
 
 	search () {
-		const { storageSet } = this.props;
+		const { storageSet, param } = this.props;
+		const { data } = param;
+		const { route } = data;
 		const searchContainer = this.getSearchContainer();
 		const value = Util.filterFix(this.ref.getValue());
 		const node = $(this.node);
@@ -138,7 +140,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return;
 		};
 
-		analytics.event('SearchWords', { length: value.length });
+		analytics.event('SearchWords', { length: value.length, route });
 
 		findAndReplaceDOMText(searchContainer.get(0), {
 			preset: 'prose',

@@ -239,8 +239,7 @@ class Analytics {
 				break;
 			};
 
-			case 'AddWidget':
-			case 'EditWidget': {
+			case 'AddWidget': {
 				data.type = I.WidgetLayout[data.type];
 				break;
 			};

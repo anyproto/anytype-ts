@@ -46,7 +46,7 @@
 
 	.block.blockFeatured { color: $colorSecondary; }
     .block.blockFeatured {
-        .cellContent:hover, .cellContent.hover { background: $colorHover; }
+        .cellContent:hover, .cellContent.hover { background: $colorHoverMedium; }
     }
 
     /* BlockFile */
@@ -58,7 +58,7 @@
 	/* BlockRelation */
 
 	.block.blockRelation {
-        .cell.canEdit:hover { background: $colorHover; }
+        .cell.canEdit:hover { background: $colorHoverMedium; }
     }
 
     /* BlockMedia */
@@ -67,7 +67,7 @@
         .loaderWrapper { border: 0px; }
         .pdfWrapper { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
     }
-    .block.blockMedia.isAudio.withFile > .wrapContent { background-color: $colorHover; }
+    .block.blockMedia.isAudio.withFile > .wrapContent { background-color: $colorHoverMedium; }
 
     /* BlockDataview */
 
@@ -94,7 +94,7 @@
 
 		.dataviewHead { border-color: $colorLineSecondary; }
 		.dataviewHead {
-			.iconWrap:hover { background-color: $colorHover; }
+			.iconWrap:hover { background-color: $colorHoverMedium; }
 		}
 
         .dataviewControls {
@@ -104,9 +104,9 @@
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
             }
             .viewItem:hover, .viewItem.active { color: $colorPrimary; }
-            .viewItem.isDragging { background: $colorHover; }
+            .viewItem.isDragging { background: $colorHoverMedium; }
 
-			.icon:hover, .icon.active { background-color: $colorHover; }
+			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
 			/*
             .icon.search { background-image: url('#{$themePath}/icon/dataview/button/search0.svg'); }
 			.icon.manager { background-image: url('#{$themePath}/icon/dataview/button/manager0.svg'); }
@@ -122,12 +122,12 @@
 			.side.left { color: $colorPrimary; }
 			.side.right {
 				.element.black { color: $colorPrimary; }
-				.element:hover { background-color: $colorHover; }
+				.element:hover { background-color: $colorHoverMedium; }
 			}
 		}
 
-        .cellHead.isDragging { background: $colorHover; }
-		.cellHead.isDragging::after { background-color: $colorHover; }
+        .cellHead.isDragging { background: $colorHoverMedium; }
+		.cellHead.isDragging::after { background-color: $colorHoverMedium; }
 
         .viewContent.viewGrid,
 		.viewContent.viewList {
@@ -205,19 +205,19 @@
 
     .block.blockType {
         .item { border-color: $colorLineSecondary; color: $colorSecondary; }
-        .item.hover { background: $colorHover; }
+        .item.hover { background: $colorHoverMedium; }
     }
 
     /* BlockText */
 
     .block.blockText {
-        kbd { background: $colorHover; color: $colorOrange; }
+        kbd { background: $colorHoverMedium; color: $colorOrange; }
 		lnk, obj { border-color: $colorSecondary; }
 		lnk:hover, obj:hover { border-color: $colorPrimary; }
     }
 
-    .block.blockText.textCallout > .wrapContent { background: $colorHover; }
-    .block.blockText.textCode > .wrapContent > .selectable > .dropTarget { background: $colorHover; }
+    .block.blockText.textCallout > .wrapContent { background: $colorHoverMedium; }
+    .block.blockText.textCode > .wrapContent > .selectable > .dropTarget { background: $colorHoverMedium; }
 	.block.blockText.textQuote > .wrapContent > .additional > .line { border-color: $colorPrimary; }
 
     /* BlockLink */
@@ -268,7 +268,7 @@
 		.loaderWrapper { border: 0px; }
 		.deleted { color: $colorSecondary; }
 
-        .inner { border-color: transparent; background-color: $colorHover; }
+        .inner { border-color: transparent; background-color: $colorHoverMedium; }
         .inner {
 			.name { color: $colorPrimary; }
     	    .descr { color: $colorSecondary; }

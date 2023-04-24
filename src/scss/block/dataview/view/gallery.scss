@@ -7,7 +7,7 @@
 			.galleryWrap { margin-left: 14px; }
 
 			.card { 
-				width: 260px; border: 1px solid $colorHover; transition: border-color $transitionCommon; border-radius: 12px; display: inline-block; 
+				width: 260px; border: 1px solid $colorHoverMedium; transition: border-color $transitionCommon; border-radius: 12px; display: inline-block; 
 				cursor: pointer; background: $colorWhite; overflow: hidden;
 			}
 			.card {
@@ -15,7 +15,7 @@
 
 				.cover { 
 					position: relative; aspect-ratio: 7/3; background-position: top center; display: flex; align-items: center;
-					background-color: $colorHover; width: 100%; justify-content: center;
+					background-color: $colorHoverMedium; width: 100%; justify-content: center;
 				}
 
 				.cover {

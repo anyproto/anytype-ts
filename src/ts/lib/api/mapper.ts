@@ -1,10 +1,9 @@
-import { I, M, Decode, Util, Encode } from 'Lib';
+import { Rpc } from 'protobuf/pb/protos/commands_pb';
+import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
+import { Encode, Decode } from './struct';
+import { I, M, Util } from 'Lib';
 
-const Commands = require('lib/pb/protos/commands_pb');
-const Model = require('lib/pkg/lib/pb/model/protos/models_pb.js');
-const Rpc = Commands.Rpc;
-
-const Mapper = {
+export const Mapper = {
 
 	BlockType: (v: number): I.BlockType => {
 		const V = Model.Block.ContentCase;
@@ -722,12 +721,12 @@ const Mapper = {
 
 			item.setId(obj.id);
 			item.setName(obj.name);
-			item.setType(obj.type);
+			item.setType(obj.type as any);
 			item.setCoverrelationkey(obj.coverRelationKey);
 			item.setGrouprelationkey(obj.groupRelationKey);
 			item.setGroupbackgroundcolors(obj.groupBackgroundColors);
 			item.setCoverfit(obj.coverFit);
-			item.setCardsize(obj.cardSize);
+			item.setCardsize(obj.cardSize as any);
 			item.setHideicon(obj.hideIcon);
 			item.setPagelimit(obj.pageLimit);
 			item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
@@ -777,7 +776,7 @@ const Mapper = {
 		InternalFlag: (value: I.ObjectFlag) => {
 			const item = new Model.InternalFlag();
 
-			item.setValue(value);
+			item.setValue(value as any);
 
 			return item;
 		},
@@ -794,5 +793,3 @@ const Mapper = {
 	}
 
 };
-
-export default Mapper;

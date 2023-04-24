@@ -1,13 +1,14 @@
 import * as React from 'react';
+import { Util } from 'Lib';
 
 const COLORS = [
 	'orange',
-	'turquoise',
-	'green',
+	'red',
+	'pink',
+	'purple',
 	'blue',
-	'yellow',
-	'lavender',
-	'magenta',
+	'ice',
+	'lime',
 ];
 
 type Props = {
@@ -16,28 +17,34 @@ type Props = {
 	isEditable?: boolean
 	isInvalid?: boolean
 	onChange?: (phrase: string) => void
-}
+};
 
 class KeyPhrase extends React.Component<Props> {
+
+	public static defaultProps: Props = {
+		phrase: '',
+	};
+
 	el = React.createRef<HTMLDivElement>();
 
-	constructor(props: Props) {
+	constructor (props: Props) {
 		super(props);
+
 		this.onInput = this.onInput.bind(this);
-	}
+	};
 
 	render () {
-		const { phrase, isBlurred, isEditable, isInvalid } = this.props;
-
+		const { isBlurred, isEditable, isInvalid } = this.props;
+		const content = this.getHTML();
 		const cn = ['keyPhrase'];
+
 		if (isBlurred) {
 			cn.push('isBlurred');
-		}
+		};
+
 		if (isInvalid) {
 			cn.push('isInvalid');
-		}
-
-		const content = this.getHTML(phrase);
+		};
 
 		return (
 			<div
@@ -54,18 +61,18 @@ class KeyPhrase extends React.Component<Props> {
 	componentDidUpdate() {
 		const el = this.el.current;
 		if (!el) {
-		  return;
-		}
+			return;
+		};
+
 		this.replaceCaret(el);
 	};
 
-	getHTML (phrase: string) {
+	getHTML () {
+		const { phrase } = this.props;
+
 		return phrase.split(' ').map((word, index) => {
-			// rotate through the colors
 			const color = COLORS[index % COLORS.length];
-			// capitalize each word
-			word = word.charAt(0).toUpperCase() + word.slice(1);
-			return `<span class="${color}">${word}</span>`
+			return `<span class="textColor textColor-${color}">${Util.ucFirst(word)}</span>`;
 		}).join('');
 	};
 
@@ -81,21 +88,30 @@ class KeyPhrase extends React.Component<Props> {
 	replaceCaret (el: HTMLElement) {
 		// Place the caret at the end of the element
 		const target = document.createTextNode('');
+
 		el.appendChild(target);
+
 		// do not move caret if element was not focused
-		const isTargetFocused = document.activeElement === el;
+		const isTargetFocused = document.activeElement == el;
+
 		if (target !== null && target.nodeValue !== null && isTargetFocused) {
-		  const sel = window.getSelection();
-		  if (sel !== null) {
-			  const range = document.createRange();
+			const sel = window.getSelection();
+			if (!sel) {
+				return;
+			};
+
+			const range = document.createRange();
+
 			range.setStart(target, target.nodeValue.length);
 			range.collapse(true);
+
 			sel.removeAllRanges();
 			sel.addRange(range);
-		  }
-		  el.focus();
-		}
+
+			el.focus();
+		};
 	};
+
 };
 
 export default KeyPhrase;

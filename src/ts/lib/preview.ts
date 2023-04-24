@@ -121,6 +121,17 @@ class Preview {
 		window.clearTimeout(this.timeout.delay);
 	};
 
+	tooltipCaption (text: string, caption: string): string {
+		const t = [];
+		if (text) {
+			t.push(text);
+		};
+		if (caption) {
+			t.push(`<span class="caption">${caption}</span>`);
+		};
+		return t.length ? t.join(' ') : '';
+	};
+
 	/**
 	 * Display a preview
 	 */

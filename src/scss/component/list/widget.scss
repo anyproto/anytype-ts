@@ -22,7 +22,7 @@
 
 		.button.disabled { background: $colorVeryLightGrey; max-width: 80px; }
 		.button.edit { 
-			box-shadow: 0px 0px; background: $colorHover; border-radius: 6px; @include text-common; color: $colorBlack; line-height: 26px; width: auto;
+			box-shadow: 0px 0px; background: $colorHoverMedium; border-radius: 6px; @include text-common; color: $colorBlack; line-height: 26px; width: auto;
 			padding: 0px 10px;
 		}
 	}

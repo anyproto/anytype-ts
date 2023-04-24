@@ -13,7 +13,7 @@
 			.switch { position: absolute; right: 16px; top: 50%; margin-top: -8px; }
 			.name { @include text-overflow-nw; width: calc(100% - 90px); }
 		}
-		.item:hover::before { background: $colorHover; }
+		.item:hover::before { background: $colorHoverMedium; }
 
 		.bottom { flex-shrink: 0; }
 		.bottom {
@@ -29,7 +29,7 @@
 		.button { width: 100%; }
 		.button.grey { cursor: default; }
 
-		.item:hover::before { background: $colorHover; }
+		.item:hover::before { background: $colorHoverMedium; }
 		.item.disabled { cursor: default; opacity: 1 !important; }
 		.item.disabled:hover::before { opacity: 0; }
 

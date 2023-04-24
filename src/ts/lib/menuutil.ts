@@ -207,20 +207,20 @@ class MenuUtil {
 
 	getLayouts () {
 		return [
-			{ id: I.ObjectLayout.Page, icon: 'page' },
-			{ id: I.ObjectLayout.Human, icon: 'human' },
-			{ id: I.ObjectLayout.Task, icon: 'task' },
-			{ id: I.ObjectLayout.Set, icon: 'set' },
-			{ id: I.ObjectLayout.File, icon: 'file' },
-			{ id: I.ObjectLayout.Image, icon: 'image' },
-			{ id: I.ObjectLayout.Type, icon: 'type' },
-			{ id: I.ObjectLayout.Relation, icon: 'relation' },
-			{ id: I.ObjectLayout.Note, icon: 'note' },
-		].map((it: any) => {
-			it.icon = 'layout c-' + it.icon;
-			it.name = translate('layout' + it.id);
-			return it;
-		});
+			{ id: I.ObjectLayout.Page },
+			{ id: I.ObjectLayout.Human },
+			{ id: I.ObjectLayout.Task },
+			{ id: I.ObjectLayout.Set },
+			{ id: I.ObjectLayout.File },
+			{ id: I.ObjectLayout.Image },
+			{ id: I.ObjectLayout.Type },
+			{ id: I.ObjectLayout.Relation },
+			{ id: I.ObjectLayout.Note },
+		].map(it => ({ 
+			...it, 
+			icon: 'layout c-' + I.ObjectLayout[it.id].toLowerCase(),
+			name: translate('layout' + it.id),
+		}));
 	};
 
 	turnLayouts () {

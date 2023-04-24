@@ -26,7 +26,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.authBackWrap {
 		.icon.back { width: 20px; height: 20px; background-size: 8px; background-image: url('~img/icon/popup/settings/back.svg'); transition: none; }
 	}
-	.authBackWrap:hover { background: $colorHover; }
+	.authBackWrap:hover { background: $colorHoverMedium; }
 
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
@@ -68,7 +68,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.title { font-size: 22px; margin-bottom: 20px; }
 	.input { width: 86px; height: 86px; border: none; border-radius: 24px; background: rgba(44, 43, 39, 0.3); margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
 	.input:last-child { margin: 0px; }
-	.isInvalid .input { background: #240E07 }
+	.isInvalid .input { background: #240E07; }
 }
 
 .pageAuthSetup {

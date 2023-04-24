@@ -44,7 +44,7 @@
 				width: 24px; height: 24px; background-size: 20px; right: 10px; margin-top: -12px; border-radius: 4px; 
 				opacity: 0; z-index: 1; transition: none;
 			}
-			.icon.delete:hover { background-color: $colorHover; }
+			.icon.delete:hover { background-color: $colorHoverMedium; }
 		}
 		.item.hover, .item:hover {
 			.clickable { width: calc(100% - 44px) !important; }

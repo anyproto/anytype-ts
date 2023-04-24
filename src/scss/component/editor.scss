@@ -17,8 +17,8 @@
 
 	.editor {
 		.icon.buttonAdd { 
-			width: 20px; height: 20px; position: absolute; z-index: 5; cursor: pointer; user-select: none; 
-			background-image: url('~img/icon/block/add.svg'); transition: opacity 0.075s ease-in-out, transform 0.075s ease-in-out; display: none;
+			width: 20px; height: 20px; position: absolute; z-index: 5; user-select: none; background-image: url('~img/icon/block/add.svg'); 
+			transition: opacity 0.075s ease-in-out, transform 0.075s ease-in-out; display: none;
 		}
 		.icon.buttonAdd.show { display: block; }
 		
@@ -35,11 +35,11 @@
 	.controlButtons { position: absolute; bottom: 0px; width: 100%; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 	
 	.btn { 
-		background: $colorWhite; font-weight: 500; font-size: 14px; color: $colorMediumGrey; cursor: pointer; display: inline-block; 
+		background: $colorWhite; font-weight: 500; font-size: 14px; color: $colorMediumGrey; display: inline-block; 
 		transition: background $transitionCommon, color $transitionCommon; height: 28px; padding: 0px 8px 0px 6px; border-radius: 6px; display: flex; 
 		flex-direction: row; align-items: center;
 	}
-	.btn:hover, .btn.hover { background: $colorHover; color: $colorBlack; }
+	.btn:hover, .btn.hover { background: $colorHoverMedium; color: $colorBlack; }
 
 	.btn {
 		.icon { width: 20px; height: 20px; margin-right: 4px; }

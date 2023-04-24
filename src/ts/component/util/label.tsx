@@ -7,6 +7,8 @@ interface Props {
 	text: string;
 	className?: string;
 	dataset?: any;
+	onMouseEnter?: (e: any) => void;
+	onMouseLeave?: (e: any) => void;
 	onClick?: (e: any) => void;
 };
 
