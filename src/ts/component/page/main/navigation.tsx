@@ -428,6 +428,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	unsetActive () {
 		const node = $(this.node);
 
+		console.log(node.find('.items .item.active'));
+
 		node.find('.items .item.active').removeClass('active');
 	};
 

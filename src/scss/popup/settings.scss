@@ -140,7 +140,10 @@
 			.inputs { margin: 0px 0px 54px 0px; }
 			.title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
 
-			.qrWrap { padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; }
+			.qrWrap { 
+				padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; 
+				cursor: pointer; 
+			}
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
 			}
