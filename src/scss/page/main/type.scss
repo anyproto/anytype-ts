@@ -57,7 +57,7 @@
 			}
 			.item.canEdit {
 				.clickable { cursor: pointer; }
-				.clickable:hover { background: $colorHoverMedium; }
+				.clickable:hover { background: $colorHoverLight; }
 			}
 
 			.item.add { line-height: 20px; }
