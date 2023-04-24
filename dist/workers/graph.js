@@ -591,7 +591,7 @@ onMouseMove = ({ x, y }) => {
 		d.isOver = true;
 	};
 
-	send('onMouseMove', { node: '', x, y, k: transform.k });
+	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 	redraw();
 
 	clearTimeout(timeoutHover);
