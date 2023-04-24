@@ -7,8 +7,6 @@ const Duration = {
 	Word: 0.07,
 };
 
-const MS_SECOND = 1000;
-
 const WORD_DELAY_COEF = 0.75;
 
 class Animation {
@@ -138,11 +136,11 @@ class Animation {
 			});
 		});
 
-		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * MS_SECOND);
+		window.setTimeout(() => { obj.css({ transition: '' }); }, (delay + duration) * 1000);
 	};
 
 	getDuration () {
-		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * MS_SECOND;
+		return ($('.animation').length * Duration.Normal + $('.animationWord').length * Duration.Word * WORD_DELAY_COEF) * 1000;
 	};
 
 };
