@@ -138,21 +138,18 @@ const Toast = observer(class Toast extends React.Component<object, State> {
     onClick (e: any, action: string) {
        
 		switch (action) {
-            case 'open':
+            case 'open': {
                 this.onOpen(e);
                 break;
+			};
 
-            case 'undo':
-                this.onUndo(e);
+            case 'undo': {
+                keyboard.onUndo(commonStore.toast.originId, 'Toast');
                 break;
+			};
         };
 
 		this.close();
-    };
-
-    onUndo (e: any) {
-        C.ObjectUndo(commonStore.toast.originId);
-		analytics.event('Undo', { route: 'toast' });
     };
 
     onOpen (e: any) {
