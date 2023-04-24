@@ -77,8 +77,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			let { layout, name, description, snippet } = item || {};
 
 			return (
-				<div id={'item-' + item.id} className="item" onMouseOver={(e: any) => { this.onOver(e, item); }}>
-					<div className="inner" onClick={(e: any) => { this.onClick(e, item); }}>
+				<div 
+					id={'item-' + item.id} 
+					className="item" 
+					onMouseEnter={e => this.onOver(e, item)}
+					onMouseLeave={() => this.unsetActive()}
+				>
+					<div className="inner" onClick={e => this.onClick(e, item)}>
 						{item.isRoot ? iconHome : <IconObject object={item} forceLetter={true} size={48} iconSize={24} />}
 						<div className="info">
 							<ObjectName object={item} />
@@ -264,8 +269,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const { pagesIn, pagesOut } = this.state;
 
 		this.loadPage(rootId);
-		this.resize();
-		this.setActive();
 
 		this.cacheIn = new CellMeasurerCache({
 			fixedWidth: true,
@@ -278,6 +281,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			defaultHeight: HEIGHT,
 			keyMapper: i => (pagesOut[i] || {}).id,
 		});
+
+		this.resize();
+		this.setActive();
 	};
 	
 	componentWillUnmount () {
@@ -427,9 +433,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 	unsetActive () {
 		const node = $(this.node);
-
-		console.log(node.find('.items .item.active'));
-
 		node.find('.items .item.active').removeClass('active');
 	};
 
