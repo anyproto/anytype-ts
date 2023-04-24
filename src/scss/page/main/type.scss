@@ -55,14 +55,19 @@
 				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
 				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorDarkGrey; }
 			}
-			.item.canEdit, .item.add {
+			.item.canEdit {
 				.clickable { cursor: pointer; }
 				.clickable:hover { background: $colorHoverMedium; }
 			}
 
 			.item.add { line-height: 20px; }
 			.item.add {
-				.name { color: $colorDarkGrey; }
+				.icon { transition: $transitionAllCommon; }
+				.name { color: $colorDarkGrey; transition: $transitionAllCommon; }
+			}
+			.item.add:hover { 
+				.name { color: $colorBlack; } 
+				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 			}
 		}
 
