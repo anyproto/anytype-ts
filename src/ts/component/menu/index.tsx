@@ -176,6 +176,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		this.getSize = this.getSize.bind(this);
 		this.getPosition = this.getPosition.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
+		this.onDimmerClick = this.onDimmerClick.bind(this);
 	};
 
 	render () {
@@ -272,7 +273,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					</div>
 				</div>
 				{!noDimmer ? (
-					<Dimmer onClick={() => { menuStore.close(id); }} className={cd.join(' ')} />
+					<Dimmer onClick={this.onDimmerClick} className={cd.join(' ')} />
 				) : ''}
 			</div>
 		);
@@ -627,6 +628,15 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	close () {
 		menuStore.close(this.props.id);
+	};
+
+	onDimmerClick () {
+		const { param } = this.props;
+		const { noClose } = param;
+
+		if (!noClose) {
+			this.close();
+		};
 	};
 	
 	onMouseLeave (e: any) {
