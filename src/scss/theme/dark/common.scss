@@ -95,7 +95,7 @@ html.themeDark {
 	}
 
     .button.blank { color: $colorPrimary; border-color: $colorLineSecondary; }
-    .button.blank:hover { border-color: #525148; background: $colorHoverMedium; }
+    .button.blank:not(.disabled):hover { border-color: #525148; background: $colorHoverMedium; }
 
 	.button.red { border-color: $colorLineSecondary; }
     .button.red:hover { border-color: #581f0c; background: #311107; }

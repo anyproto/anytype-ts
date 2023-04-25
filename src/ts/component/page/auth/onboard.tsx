@@ -114,10 +114,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					className={ANIMATION_CN}
 					onClick={this.copyAndUnblurKeyPhrase}
 				>
-						<KeyPhrase
-							isBlurred={!keyPhraseCopied}
-							phrase={authStore.phrase}
-						/>
+					<KeyPhrase isBlurred={!keyPhraseCopied} value={authStore.phrase} />
 				</div>
 			);
 		};

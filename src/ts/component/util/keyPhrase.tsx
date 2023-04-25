@@ -1,4 +1,6 @@
 import * as React from 'react';
+import $ from 'jquery';
+import { setRange } from 'selection-ranges';
 import { Util } from 'Lib';
 
 const COLORS = [
@@ -12,7 +14,7 @@ const COLORS = [
 ];
 
 type Props = {
-	phrase: string
+	value: string
 	isBlurred?: boolean,
 	isEditable?: boolean
 	isInvalid?: boolean
@@ -22,10 +24,10 @@ type Props = {
 class KeyPhrase extends React.Component<Props> {
 
 	public static defaultProps: Props = {
-		phrase: '',
+		value: '',
 	};
 
-	el = React.createRef<HTMLDivElement>();
+	node = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -35,8 +37,7 @@ class KeyPhrase extends React.Component<Props> {
 
 	render () {
 		const { isBlurred, isEditable, isInvalid } = this.props;
-		const content = this.getHTML();
-		const cn = ['keyPhrase'];
+		const cn = [ 'keyPhrase' ];
 
 		if (isBlurred) {
 			cn.push('isBlurred');
@@ -48,68 +49,45 @@ class KeyPhrase extends React.Component<Props> {
 
 		return (
 			<div
-				ref={this.el}
+				ref={ref => this.node = ref}
 				contentEditable={isEditable}
 				suppressContentEditableWarning={true}
 				className={cn.join(' ')}
 				onInput={this.onInput}
-				dangerouslySetInnerHTML={{__html: content }}
 			/>
 		);
 	};
 
-	componentDidUpdate() {
-		const el = this.el.current;
-		if (!el) {
-			return;
-		};
-
-		this.replaceCaret(el);
+	componentDidMount () {
+		this.setValue(this.props.value);
 	};
 
-	getHTML () {
-		const { phrase } = this.props;
+	componentDidUpdate() {
+	};
 
-		return phrase.split(' ').map((word, index) => {
+	focus () {
+	};
+
+	setValue (v: string) {
+		const node = $(this.node);
+
+		node.html(this.getHtml(v));
+	};
+
+	getValue () {
+		const node = $(this.node);
+		return String(node.get(0).innerText || '').replace(/\s+/g, ' ').trim();
+	};
+
+	getHtml (v: string) {
+		return String(v || '').split(' ').map((word, index) => {
 			const color = COLORS[index % COLORS.length];
 			return `<span class="textColor textColor-${color}">${Util.ucFirst(word)}</span>`;
-		}).join('');
+		}).join(' ');
 	};
 
-	onInput (e) {
-		const { innerText } = e.target;
-
-		// normalize whitespace
-		const phrase = innerText.replace(/\s+/g, ' ').trim();
-
-		this.props.onChange(phrase);
-	}
-
-	replaceCaret (el: HTMLElement) {
-		// Place the caret at the end of the element
-		const target = document.createTextNode('');
-
-		el.appendChild(target);
-
-		// do not move caret if element was not focused
-		const isTargetFocused = document.activeElement == el;
-
-		if (target !== null && target.nodeValue !== null && isTargetFocused) {
-			const sel = window.getSelection();
-			if (!sel) {
-				return;
-			};
-
-			const range = document.createRange();
-
-			range.setStart(target, target.nodeValue.length);
-			range.collapse(true);
-
-			sel.removeAllRanges();
-			sel.addRange(range);
-
-			el.focus();
-		};
+	onInput () {
+		this.props.onChange(this.getValue());
 	};
 
 };

@@ -87,7 +87,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 									totalValue={DAYS}
 									startAngle={270}
 									lengthAngle={-360}
-									data={[ { title: '', value: daysUntilDeletion, color: '#5C5A54' } ]}
+									data={[ { title: '', value: daysUntilDeletion, color: '#5c5a54' } ]}
 								/>
 							</div>
 						</div>
