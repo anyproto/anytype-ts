@@ -250,23 +250,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if ((stage == Stage.KeyPhrase) && !keyPhraseCopied) {
 			this.onCopy();
-			return;
-		};
-
-		if (stage == Stage.Soul) {
-			window.setTimeout(() => this.onNext(), 5000);
-		};
-
-		if (stage == Stage.SoulCreating) {
-			window.setTimeout(() => this.onNext(), 5000);
-		};
-
+		} else
+		if ([ Stage.Soul, Stage.SoulCreating ].includes(stage)) {
+			window.setTimeout(() => this.onNext(), 3000);
+		} else
 		if (stage == Stage.SpaceCreating) {
 			this.createAccount();
-			return;
+		} else {
+			Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
 		};
-
-		Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
 	};
 
 	/** Guard to prevent illegal state change */
