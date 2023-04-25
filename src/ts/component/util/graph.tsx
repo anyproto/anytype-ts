@@ -4,8 +4,9 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, Util, DataUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
+import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
+import Colors from 'json/colors.json';
 
 interface Props {
 	isPopup?: boolean;
@@ -14,6 +15,11 @@ interface Props {
 	onClick?: (object: any) => void;
 	onContextMenu?: (id: string, param: any) => void;
 	onSelect?: (id: string, related?: string[]) => void;
+};
+
+const bgColor = {
+	'': '#000',
+	dark: '#fff',
 };
 
 const Graph = observer(class Graph extends React.Component<Props> {
@@ -160,7 +166,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
-			d.name = d.name || DataUtil.defaultName('page');
+			d.name = d.name || ObjectUtil.defaultName('page');
 		};
 
 		d.name = SmileUtil.strip(d.name);
@@ -281,7 +287,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const { root } = blockStore;
 		const { onClick, onContextMenu, onSelect } = this.props;
 		const node = $(this.node);
-		const canvas = node.find('canvas');
 		const { left, top } = node.offset();
 
 		switch (id) {
@@ -293,9 +298,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 			case 'onSelect': {
 				const { related } = data;
-				if (data.node != root) {
-					onSelect(data.node, related);
-				};
+				onSelect(data.node, related);
 				break;
 			};
 
@@ -305,16 +308,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				};
 
 				this.subject = this.nodes.find(d => d.id == data.node);
-
-				if (this.subject) {
-					window.clearTimeout(this.timeoutPreview);
-					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 50);
-
-					canvas.addClass('cp');
-				} else {
-					this.onPreviewHide();	
-					canvas.removeClass('cp');
-				};
+				this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
 				break;
 			};
 
@@ -386,7 +380,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				break;
 				
 			case I.ObjectLayout.Human:
-				src = d.iconImage ? commonStore.imageUrl(d.iconImage, 160) : '';
+				if (d.iconImage) {
+					src = commonStore.imageUrl(d.iconImage, 160);
+				} else
+				if (d.iconOption) {
+					src = this.gradientIcon(d.iconOption);
+				};
+
 				break;
 
 			case I.ObjectLayout.Note:
@@ -406,11 +406,56 @@ const Graph = observer(class Graph extends React.Component<Props> {
 						src = SmileUtil.srcFromColons(data.colons, data.skin);
 					};
 					src = src.replace(/^.\//, '');
+				} else
+				if (d.iconOption) {
+					src = this.gradientIcon(d.iconOption, true);
 				};
 				break;
 		};
 
 		return src;
+	};
+
+	gradientIcon (iconOption: number, small?: boolean) {
+		const option: any = Colors.gradientIcons.options[iconOption - 1];
+		if (!option) {
+			return;
+		};
+
+		const theme = commonStore.getThemeClass();
+		const { from, to } = option.colors;
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+		const w = 160;
+		const r = w / 2;
+		const fillW = small ? w * 0.7 : w;
+		const fillR = fillW / 2;
+
+		let steps = Colors.gradientIcons.common.steps;
+		if (option.steps) {
+			steps = option.steps;
+		};
+
+		const step0 = Util.getPercentage(fillR, Number(steps.from.replace('%', '')));
+		const step1 = Util.getPercentage(fillR, Number(steps.to.replace('%', '')));
+		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
+
+		canvas.width = w;
+		canvas.height = w;
+		grd.addColorStop(0, from);
+		grd.addColorStop(1, to);
+
+		if (small) {
+			ctx.fillStyle = bgColor[theme];
+			ctx.fillRect(0, 0, w, w);
+		};
+
+		ctx.fillStyle = grd;
+		ctx.beginPath();
+		ctx.arc(r, r, fillR, 0, 2 * Math.PI);
+		ctx.fill();
+
+		return canvas.toDataURL();
 	};
 
 	setRootId (id: string) {

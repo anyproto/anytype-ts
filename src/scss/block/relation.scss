@@ -37,8 +37,8 @@
 			.empty { display: block; }
 		}
 
-		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background 0.2s ease-in-out; }
-		.cell.canEdit:hover { background: $colorHover; }
+		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
+		.cell.canEdit:hover { background: $colorHoverMedium; }
 		
 		.cell.c-select { padding: 4px 8px; }
 		.cell.c-select {

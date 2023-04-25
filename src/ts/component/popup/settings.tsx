@@ -288,7 +288,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	onImport (type: I.ImportType, param: any, callBack?: (message: any) => void) {
-		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, false, (message: any) => {
+		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};
@@ -300,9 +300,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	onExport (format: I.ExportType, param: any) {
-		const { zip, nested, files } = param || {};
+		const { zip, nested, files, archived } = param || {};
 
-		Action.export([], format, zip, nested, files, () => { this.props.close(); });
+		Action.export([], format, zip, nested, files, archived, () => { this.props.close(); });
 	};
 
 	onKeyDown (e: any) {

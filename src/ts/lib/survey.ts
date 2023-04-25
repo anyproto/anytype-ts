@@ -1,6 +1,5 @@
-import { C, I, Storage, Util, analytics, Renderer, translate } from 'Lib';
-import { popupStore, authStore, dbStore } from 'Store';
-
+import { C, I, Storage, Util, analytics, Renderer, translate, ObjectUtil } from 'Lib';
+import { popupStore, authStore } from 'Store';
 import Surveys from 'json/survey.json';
 
 class Survey {
@@ -132,9 +131,9 @@ class Survey {
             return;
         };
 
-        const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
         const filters: I.Filter[] = [
-            { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
+            { operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
             { operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 30 },
         ];
 

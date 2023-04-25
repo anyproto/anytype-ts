@@ -23,8 +23,8 @@ enum View {
 
 const cmd = keyboard.cmdSymbol();
 const Tabs = [
-	{ id: Tab.Type, name: 'Types', tooltip: `${cmd} + T` },
-	{ id: Tab.Relation, name: 'Relations', tooltip: `${cmd} + Alt + T` },
+	{ id: Tab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
+	{ id: Tab.Relation, name: 'Relations', tooltipCaption: `${cmd} + Alt + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
@@ -244,7 +244,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 					</div>
 				</div>
 
-				<Footer component="mainEdit" />
+				<Footer component="mainObject" />
 			</div>
 		);
 	};
@@ -446,7 +446,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 			case Tab.Relation:
 				keys = keys.concat(Constant.relationRelationKeys);
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemRelationKeys() });
 				break;
 		};
 

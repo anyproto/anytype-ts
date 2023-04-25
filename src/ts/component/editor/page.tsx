@@ -4,8 +4,8 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Block, Icon, Loader, Deleted, DropTarget } from 'Component';
-import { commonStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
-import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, Storage, Mapper, Action, translate, analytics, Renderer } from 'Lib';
+import { commonStore, blockStore, detailStore, menuStore, popupStore, dbStore } from 'Store';
+import { I, C, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, keyboard, Storage, Mapper, Action, translate, analytics, Renderer, sidebar } from 'Lib';
 import Controls from 'Component/page/head/controls';
 import PageHeadEdit from 'Component/page/head/edit';
 import Constant from 'json/constant.json';
@@ -56,6 +56,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		this.focusTitle = this.focusTitle.bind(this);
 		this.blockRemove = this.blockRemove.bind(this);
 		this.setLayoutWidth = this.setLayoutWidth.bind(this);
+		this.setLoading = this.setLoading.bind(this);
 	};
 
 	render () {
@@ -105,6 +106,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 							onMenuAdd={this.onMenuAdd}
 							onPaste={this.onPaste}
 							setLayoutWidth={this.setLayoutWidth}
+							setLoading={this.setLoading}
 							readonly={readonly}
 							getWrapperWidth={this.getWrapperWidth}
 						/>
@@ -123,6 +125,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 								readonly={readonly}
 								blockRemove={this.blockRemove}
 								getWrapperWidth={this.getWrapperWidth}
+								setLoading={this.setLoading}
 							/>
 						))}
 					</div>
@@ -193,6 +196,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 		blockStore.updateNumbers(rootId);
 		this.resizePage();
+		sidebar.resizePage();
 
 		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};
@@ -223,9 +227,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		this.id = rootId;
-		this.loading = true;
 		this.isDeleted = false;
-		this.forceUpdate();
+		this.setLoading(true);
 
 		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
@@ -242,9 +245,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			};
 
 			this.scrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
-			this.loading = false;
 			this.focusTitle();
-			this.forceUpdate();
+			this.setLoading(false);
 			
 			Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 
@@ -500,18 +502,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		});
 
 		// Undo
-		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+z`, e, () => {
 			if (!readonly) {
 				e.preventDefault();
-				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onUndo(rootId, 'editor', () => { focus.clear(true); });
 			};
 		});
 
 		// Redo
-		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 			if (readonly) {
 				e.preventDefault();
-				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onRedo(rootId, 'editor', () => { focus.clear(true); });
 			};
 		});
 
@@ -717,18 +719,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			// Undo
 			keyboard.shortcut(`${cmd}+z`, e, () => {
 				e.preventDefault();
-				keyboard.onUndo(rootId, () => { focus.clear(true); });
+				keyboard.onUndo(rootId, 'editor', () => { focus.clear(true); });
 			});
 
 			// Redo
 			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
-				keyboard.onRedo(rootId, () => { focus.clear(true); });
+				keyboard.onRedo(rootId, 'editor', () => { focus.clear(true); });
 			});
 
 			// Search
 			keyboard.shortcut(`${cmd}+f`, e, () => {
-				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from));
+				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from), 'editor');
 			});
 
 			if (block.isTextToggle()) {
@@ -1597,6 +1599,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				text.push(String(it.content.text || ''));
 			};
 
+			if (it.type == I.BlockType.Dataview) {
+				it.content.views = dbStore.getViews(rootId, it.id);
+			};
+
 			it.childrenIds = element.childrenIds;
 			return it;
 		});
@@ -2186,6 +2192,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 
 		return root?.isLocked() || !allowed;
+	};
+
+	setLoading (v: boolean): void {
+		this.loading = v;
+		this.forceUpdate();
 	};
 
 });

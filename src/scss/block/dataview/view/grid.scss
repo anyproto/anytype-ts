@@ -4,7 +4,7 @@
 	.block.blockDataview {
 		.cellHead { 
 			text-align: left; color: $colorDarkGrey; font-weight: 400; line-height: 20px; position: relative; 
-			cursor: grab; display: inline-block; vertical-align: top; transition: background-color 0.2s ease-in-out;
+			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon;
 		}
 		.cellHead {
 			.cellContent { cursor: grab; height: 46px !important; overflow: visible !important; }
@@ -50,8 +50,8 @@
 			.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 		}
 
-        .viewItem.viewGrid { width: 100%; position: relative; }
-		.viewItem.viewGrid {
+        .viewContent.viewGrid { width: 100%; position: relative; }
+		.viewContent.viewGrid {
 			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 46px; }
 			.loadMore { padding: 10px 2px; box-shadow: 0px 1px $colorBorderLight inset; }
 
@@ -119,19 +119,17 @@
 			}
 		}
 
-		.isCollection {
-			.viewItem.viewGrid {
-				.row .icon.dnd { left: 0; height: 32px; top: 8px; z-index: 1; }
+		.viewContent.viewGrid.isCollection {
+			.row .icon.dnd { left: 0; height: 32px; top: 8px; z-index: 1; }
 
-				.cellHead:first-child { padding-left: 8px; }
-				.cell:first-child { padding-left: 20px; }
-				.cell.isEditing:first-child .cellContent.isName { padding-left: 20px !important; }
-			}
+			.cellHead:first-child { padding-left: 8px; }
+			.cell:first-child { padding-left: 20px; }
+			.cell.isEditing:first-child .cellContent.isName { padding-left: 20px !important; }
 		}
     }
 
 	.block.blockDataview.isInline {
-		.viewItem.viewGrid {
+		.viewContent.viewGrid {
 			.row { height: 40px; }
 			.rowHead { height: 40px; }
 

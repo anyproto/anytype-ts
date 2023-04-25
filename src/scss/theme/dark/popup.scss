@@ -17,7 +17,7 @@
         .item {
             .descr { color: $colorSecondary; }
         }
-        .item.active { background-color: $colorHover; }
+        .item.active { background-color: $colorHoverMedium; }
     }
 
     /* PopupSettings */
@@ -27,14 +27,16 @@
 		.sides {
 			> .side.left { background: $colorBgLight; }
 			> .side.left {
-				.space:hover, .space.active { background: $colorHover; }
-				.item:hover, .item.active { background: $colorHover; }
+				.space:hover, .space.active { background: $colorHoverMedium; }
+				.item:hover, .item.active { background: $colorHoverMedium; }
+
+				.iconObject.withLetter { background-color: $colorBgIcon; }
 			}
 
 			> .side.right {
 				.head { background: $colorBlack; }
 				.head {
-					.element:hover { background-color: $colorHover; }
+					.element:hover { background-color: $colorHoverMedium; }
 				}
 
 				.label.section, .label.small, .label.grey { color: $colorSecondary; }
@@ -43,7 +45,7 @@
 				.input { border-color: $colorLinePrimary; }
 
 				.select { color: $colorSecondary; }
-				.select:hover { background-color: $colorHover; }
+				.select:hover { background-color: $colorHoverMedium; }
 			}
 
 		}
@@ -157,7 +159,7 @@
 			.icon.twitter:hover { background-image: url('#{$themePath}/icon/social/twitter1.svg'); }
 		}
 
-        .highlight { color: $colorOrange; background: $colorHover; }
+        .highlight { color: $colorOrange; background: $colorHoverMedium; }
 	}
 
     /* PopupPrompt */
@@ -171,4 +173,11 @@
     .popup.popupExport {
         .row { border-color: $colorLinePrimary; }
     }
+
+	/* PopupMigration */
+
+	.popup.popupMigration {
+		.qrWrap { background-color: $colorBgLight; }
+	}
+
 }

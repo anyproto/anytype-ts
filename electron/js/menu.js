@@ -52,15 +52,6 @@ class MenuManager {
 			{
 				role: 'fileMenu',
 				submenu: [
-					/*
-					{ 
-						label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
-						click: () => { WindowManager.createMain({ isChild: true }); } 
-					},
-
-					Separator,
-					*/
-
 					{ label: 'Show work directory', click: () => { shell.openPath(app.getPath('userData')); } },
 					{
 						label: 'Import',
@@ -265,14 +256,6 @@ class MenuManager {
 				Separator,
 
 				{
-					label: 'Create workspace',
-					click: () => { Util.send(this.win, 'commandGlobal', 'workspace');	}
-				},
-				{
-					label: 'Save page as HTML',
-					click: () => { Util.send(this.win, 'command', 'saveAsHTML');	}
-				},
-				{
 					label: 'Relaunch',
 					click: () => { Api.exit(this.win, true); }
 				},
@@ -325,7 +308,7 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: 'Space debug', click: () => { show(); Util.send(this.win, 'command', 'debugSync'); } },
+			{ label: 'Space debug', click: () => { show(); Util.send(this.win, 'command', 'debugSpace'); } },
 			{ label: 'Tree diagnostics', click: () => { show(); Util.send(this.win, 'command', 'debugTree'); } },
 
 			Separator,

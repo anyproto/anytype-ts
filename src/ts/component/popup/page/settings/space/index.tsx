@@ -5,12 +5,7 @@ import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.Popup {
-	prevPage: string;
-	onPage: (id: string) => void;
-};
-
-const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<Props> {
+const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
 
 	refName: any = null;
 	dashboardId = '';
@@ -54,7 +49,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								ref={ref => this.refName = ref} 
 								value={name} 
 								onKeyUp={this.onName} 
-								placeholder={DataUtil.defaultName('page')} 
+								placeholder={ObjectUtil.defaultName('page')} 
 							/>
 						</div>
 					</div>
@@ -105,7 +100,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	onDashboard () {
 		const { getId } = this.props;
 		const { workspace } = commonStore;
-		const skipTypes = DataUtil.getFileTypes().concat(DataUtil.getSystemTypes());
+		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
 
 		menuStore.open('searchObject', {
 			element: `#${getId()} #dashboard`,
@@ -140,7 +135,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	checkName (v: string): string {
-		if ((v == DataUtil.defaultName('space')) || (v == DataUtil.defaultName('page'))) {
+		if ((v == ObjectUtil.defaultName('space')) || (v == ObjectUtil.defaultName('page'))) {
 			v = '';
 		};
 		return v;

@@ -18,9 +18,13 @@ $colorGreen: #57c600;
 $colorBorderLight: #ebebeb;
 $colorBorderDark: #e3e3e3;
 $colorSecondary: #d4d4d4;
-$colorHover: rgba(79,79,79,0.08);
 
-$transitionFast: all 0.2s ease-in-out;
+$colorHoverMedium: rgba(79,79,79,0.08);
+$colorHoverLight: rgba(79,79,79,0.04);
+
+$easeInQuint: cubic-bezier(0.22, 1, 0.36, 1);
+$transitionCommon: 0.1s $easeInQuint;
+$transitionAllCommon: all $transitionCommon;
 
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

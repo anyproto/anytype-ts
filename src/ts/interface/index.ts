@@ -28,10 +28,10 @@ import {
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
-import { PopupParam, Popup } from './popup';
+import { PopupParam, Popup, PopupSettings } from './popup';
 import { Preview, PreviewLink, PreviewType } from './preview';
 import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
-import { SmartBlockType, ObjectLayout, ObjectFlag, RelationType, RelationScope, OptionScope } from './object';
+import { ObjectLayout, ObjectFlag, RelationType, RelationScope, OptionScope } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 
 import { PageInfo, BlockType, BlockPosition, BlockSplitMode, BlockHAlign, BlockVAlign, BlockComponent, Block, BlockStructure } from './block';
@@ -115,6 +115,7 @@ export {
 
 	PopupParam,
 	Popup,
+	PopupSettings,
 
 	Preview,
 	PreviewLink,
@@ -129,7 +130,6 @@ export {
 	Menu,
 	MenuItem,
 
-	SmartBlockType,
 	ObjectLayout,
 	ObjectFlag,
 	RelationType, 

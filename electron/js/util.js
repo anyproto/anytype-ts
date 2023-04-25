@@ -109,7 +109,7 @@ class Util {
 	};
 
 	printHtml (win, exportPath, name, options) {
-		const fn = `${name}_files`;
+		const fn = `${name.replace(/\.html$/, '')}_files`;
 		const filesPath = path.join(exportPath, fn);
 		const exportName = path.join(exportPath, this.fileName(name));
 
@@ -137,17 +137,25 @@ class Util {
 			content = content.replace(/<script[^>]+><\/script>/g, '');
 
 			try {
+				const css = [ 'export' ];
 				const js = [ 'export', 'jquery' ];
 				const ap = app.getAppPath();
 
-				js.forEach((it) => {
+				let replaceJs = '';
+				let replaceCss = '';
+
+				js.forEach(it => {
 					fs.copyFileSync(`${ap}/dist/js/${it}.js`, path.join(filesPath, it + '.js'));
+					replaceJs += `<script src="./${fn}/${it}.js" type="text/javascript"></script>`;
 				});
 
-				content = content.replace('<!-- %REPLACE% -->', `
-					<script src="./${fn}/jquery.js" type="text/javascript"></script>
-					<script src="./${fn}/export.js" type="text/javascript"></script>
-				`);
+				css.forEach(it => {
+					fs.copyFileSync(`${ap}/dist/css/${it}.css`, path.join(filesPath, it + '.css'));
+					replaceCss += `<link rel="stylesheet" href="./${fn}/${it}.css" type="text/css" />`;
+				});
+
+				content = content.replace('<!-- %REPLACE-JS% -->', replaceJs);
+				content = content.replace('</head>', replaceCss + '</head>');
 			} catch (e) {
 				this.log('info', e);
 			};

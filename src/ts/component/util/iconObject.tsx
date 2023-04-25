@@ -2,8 +2,9 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { IconEmoji } from 'Component';
-import { I, Preview, SmileUtil, DataUtil, FileUtil } from 'Lib';
+import { I, Preview, SmileUtil, DataUtil, FileUtil, ObjectUtil } from 'Lib';
 import { commonStore, menuStore } from 'Store';
+import Colors from 'json/colors.json';
 
 interface Props {
 	id?: string;
@@ -204,9 +205,24 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		};
 
 		let onOption = () => {
-			cn.push(`withImage withOption c${iconOption}`);
+			const option: any = Colors.gradientIcons.options[iconOption - 1];
+			const { colors } = option;
+
+			let steps = Colors.gradientIcons.common.steps;
+			if (option.steps) {
+				steps = option.steps;
+			};
+
+			const style = {
+				'--color-from': colors.from,
+				'--color-to': colors.to,
+				'--step-from': steps.from,
+				'--step-to': steps.to
+			} as React.CSSProperties;
+
+			cn.push(`withImage withOption`);
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-			icon = <div></div>;
+			icon = <div className="optionGradient" style={style} />;
 		};
 
 		switch (layout) {
@@ -509,7 +525,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || DataUtil.defaultName('page'));
+		let name = String(object.name || ObjectUtil.defaultName('page'));
 		name = SmileUtil.strip(name);
 		name = name.trim().substr(0, 1).toUpperCase();
 

@@ -14,7 +14,6 @@ export interface MenuParam {
 	menuKey?: string;
 	element?: any;
 	rect?: any;
-	recalcRect?(): { width: number, height: number, x: number, y: number };
 	type?: MenuType;
 	vertical?: MenuDirection;
 	horizontal?: MenuDirection;
@@ -24,7 +23,6 @@ export interface MenuParam {
 	offsetY?: any;
 	width?: number;
 	height?: number;
-	getTabs?(): I.MenuTab[];
 	initialTab?: string;
 	data?: any;
 	isSub?: boolean;
@@ -32,14 +30,17 @@ export interface MenuParam {
 	passThrough?: boolean;
 	className?: string;
 	classNameWrap?: string;
+	withArrow?: boolean;
+	commonFilter?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
 	noFlipX?: boolean;
 	noFlipY?: boolean;
-	withArrow?: boolean;
-	commonFilter?: boolean;
+	noClose?: boolean;
+	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;
+	getTabs?(): I.MenuTab[];
 };
 
 export interface Menu {
@@ -71,10 +72,6 @@ export interface MenuItem {
 	arrow?: boolean;
 	checkbox?: boolean;
 	className?: string;
-	isActive?: boolean;
-	withDescription?: boolean;
-	withSwitch?: boolean;
-	withSelect?: boolean;
 	switchValue?: boolean;
 	selectValue?: any;
 	readonly?: boolean;
@@ -83,6 +80,10 @@ export interface MenuItem {
 	forceLetter?: boolean;
 	options?: I.Option[];
 	selectMenuParam?: any;
+	isActive?: boolean;
+	withDescription?: boolean;
+	withSwitch?: boolean;
+	withSelect?: boolean;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;

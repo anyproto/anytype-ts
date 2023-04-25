@@ -323,7 +323,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const { config } = commonStore;
 		const { filter } = this.state;
-		const skipTypes = [].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
+		const skipTypes = [].concat(ObjectUtil.getFileTypes()).concat(ObjectUtil.getSystemTypes());
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },

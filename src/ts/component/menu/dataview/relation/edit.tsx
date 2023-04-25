@@ -215,7 +215,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const relation = this.getRelation();
 		const isFile = relation && (relation.format == I.RelationType.File);
 		const allowed = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
-		const canDelete = allowed && DataUtil.getSystemRelationKeys().indexOf(relation.relationKey) < 0;
+		const canDelete = allowed && ObjectUtil.getSystemRelationKeys().indexOf(relation.relationKey) < 0;
 		const canFilter = !isFile;
 		const canSort = !isFile;
 		const canHide = relation && (relation.relationKey != 'name');
@@ -441,7 +441,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'smartblockTypes', condition: I.FilterCondition.In, value: [ I.SmartBlockType.Page ] },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: Constant.typeId.type },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => dbStore.getType(it.id),

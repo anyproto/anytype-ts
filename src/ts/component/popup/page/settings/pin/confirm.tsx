@@ -3,29 +3,16 @@ import { Title, Label, Pin, Error } from 'Component';
 import { I, Storage, translate } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface Props extends I.Popup {
-	prevPage: string;
-	onPage: (id: string) => void;
-	setConfirmPin: (v: () => void) => void;
-	onConfirmPin: () => void;
-};
-
 interface State {
 	error: string;
 };
 
-const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm extends React.Component<Props, State> {
+const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm extends React.Component<I.PopupSettings, State> {
 
 	state = {
 		error: '',
 	};
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onCheckPin = this.onCheckPin.bind(this);
-		this.onError = this.onError.bind(this);
-	};
+	ref = null;
 
 	render () {
 		const { error } = this.state;
@@ -35,13 +22,13 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 			<React.Fragment>
 				<Title text={translate('popupSettingsPinTitle')} />
 				<Label className="description" text={translate('popupSettingsPinVerify')} />
-				<Pin value={pin} onSuccess={this.onCheckPin} onError={this.onError} />
+				<Pin ref={ref => this.ref = ref} expectedPin={pin} onSuccess={this.onCheckPin} onError={this.onError} />
 				<Error text={error} />
 			</React.Fragment>
 		);
 	};
 
-	onCheckPin (pin: string) {
+	onCheckPin = () => {
 		const { onPage, setConfirmPin, onConfirmPin } = this.props;
 
 		onPage('pinSelect');
@@ -54,7 +41,8 @@ const PopupSettingsPagePinConfirm = observer(class PopupSettingsPagePinConfirm e
 		this.setState({ error: '' });
 	};
 
-	onError () {
+	onError = () => {
+		this.ref.reset();
 		this.setState({ error: translate('popupSettingsPinError') });
 	};
 

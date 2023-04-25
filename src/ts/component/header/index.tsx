@@ -3,7 +3,7 @@ import { I, ObjectUtil, Renderer, keyboard, sidebar, Preview } from 'Lib';
 import { menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
-import HeaderMainEdit from './main/edit';
+import HeaderMainObject from './main/object';
 import HeaderMainHistory from './main/history';
 import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
@@ -16,7 +16,7 @@ interface Props extends I.HeaderComponent {
 
 const Components = {
 	authIndex:			 HeaderAuthIndex,
-	mainEdit:			 HeaderMainEdit,
+	mainObject:			 HeaderMainObject,
 	mainHistory:		 HeaderMainHistory,
 	mainGraph:			 HeaderMainGraph,
 	mainNavigation:		 HeaderMainNavigation,
@@ -88,8 +88,11 @@ class Header extends React.Component<Props> {
 		ObjectUtil.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
-	onTooltipShow (e: any, text: string) {
-		Preview.tooltipShow({ text, element: $(e.currentTarget) });
+	onTooltipShow (e: any, text: string, caption?: string) {
+		const t = Preview.tooltipCaption(text, caption);
+		if (t) {
+			Preview.tooltipShow({ text: t, element: $(e.currentTarget), typeY: I.MenuDirection.Bottom });
+		};
 	};
 
 	onTooltipHide () {

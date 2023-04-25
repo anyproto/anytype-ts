@@ -2,7 +2,7 @@
 
 .toast {
     position: fixed; left: 0px; top: 0px; border-radius: 8px; background: $colorBlack; padding: 15px 18px; text-transform: none; cursor: pointer;
-    @include text-common; color: $colorWhite; display: none; z-index: 1000; white-space: nowrap; transition-duration: 0.2s;
+    @include text-common; color: $colorWhite; display: none; z-index: 1000; white-space: nowrap; transition-duration: 0.25s;
 	transition-property: opacity, transform; transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 

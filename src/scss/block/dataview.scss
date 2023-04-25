@@ -16,7 +16,7 @@
 
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorDarkGrey;
-			transition: $transitionFast; cursor: pointer;
+			transition: $transitionAllCommon; cursor: pointer;
 		}
 		.loadMore {
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
@@ -49,13 +49,13 @@
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
 		.dataviewHead {
 			.side.left { gap: 0px 6px; }
-			.side.right { opacity: 0; transition: $transitionFast; }
+			.side.right { opacity: 0; transition: $transitionAllCommon; }
 
 			.iconWrap { 
-				padding: 4px; border-radius: 4px; transition: $transitionFast; cursor: pointer; display: flex; align-items: center;
+				padding: 4px; border-radius: 4px; transition: $transitionAllCommon; cursor: pointer; display: flex; align-items: center;
 				line-height: 20px; @include text-small; color: $colorMediumGrey;
 			}
-			.iconWrap:hover { background-color: $colorHover; }
+			.iconWrap:hover { background-color: $colorHoverMedium; }
 			.iconWrap.icon { flex-shrink: 0; }
 			.iconWrap {
 				.icon { width: 20px; height: 20px; }
@@ -77,8 +77,11 @@
 			.editableWrap { color: $colorSecondary; }
 			#head-source-select { display: none; }
 		}
+		.dataviewHead.isCollection {
+			.editableWrap.isEmpty { min-width: 130px; }
+		}
 
-		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; height: 49px; }
+		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
 
 		.dataviewControls.viewGrid::after { display: block; }
@@ -88,8 +91,8 @@
 			.side { padding: 10px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
 
-			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionFast; }
-			.icon:hover, .icon.active { background-color: $colorHover; }
+			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionAllCommon; }
+			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
 
 			.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 			.icon.filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
@@ -99,28 +102,28 @@
 
 			.views { display: flex; gap: 0px 16px; flex-direction: row; align-items: center; justify-content: flex-start; }
 			.views {
-				.viewItem { 
-					transition: color 0.2s ease-in-out; cursor: pointer; @include text-paragraph; font-weight: 700; @include text-overflow-nw; 
-					max-width: 300px; color: $colorMediumGrey;
-				}
-				.viewItem { 
-					.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
-				}
-				.viewItem:last-child { margin: 0px; }
-				.viewItem:hover, .viewItem.active { color: $colorBlack; }
-				.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
-
 				.icon.plus { opacity: 0; }
 			}
 
-			.viewSelect { display: none; border: 0px; @include text-header3; }
+			.viewItem { 
+				transition: color $transitionCommon; cursor: pointer; @include text-paragraph; font-weight: 700; @include text-overflow-nw; 
+				max-width: 300px; color: $colorMediumGrey;
+			}
+			.viewItem { 
+				.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/view.svg'); }
+			}
+			.viewItem:last-child { margin: 0px; }
+			.viewItem:hover, .viewItem.active { color: $colorBlack; }
+			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
+
+			.viewSelect { display: none; border: 0px; padding-left: 0px; }
 			.viewSelect {
 				.icon:hover, .icon.active { background-color: transparent !important; }
 			}
 
 			.side.left.small {
 				.views { display: none; }
-				.viewSelect { display: inline-block; line-height: 20px; }
+				.viewSelect { display: inline-block; }
 			}
 
 			.button { padding: 0px 8px; @include text-common; }
@@ -132,11 +135,11 @@
 			.side.right {
 				.element {
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; cursor: pointer;
-					transition: $transitionFast;
+					transition: $transitionAllCommon;
 				}
 				.element.black { color: $colorBlack; }
 				.element.orange { color: #f09c0e; font-weight: 500; }
-				.element:hover { background-color: $colorHover; }
+				.element:hover { background-color: $colorHoverMedium; }
 			}
 		}
 
@@ -145,12 +148,9 @@
 			.scrollWrap { background: #fff; padding-bottom: 14px; }
 		}
 
-		.content.isCollection {
-			.dataviewControls { padding-left: 8px; }
-
-			.dataviewControls.viewList {
-				.line { width: 100%; margin: 0px; }
-			}
+		.dataviewControls.isCollection { padding-left: 8px; }
+		.dataviewControls.isCollection.viewList {
+			.line { width: 100%; margin: 0px; }
 		}
 
 		.hoverArea:hover {
@@ -174,9 +174,9 @@
 		.dataviewHead { padding-left: 0px; padding-right: 0px; }
 
 		.dataviewControls {
-			.side { padding-top: 9px; padding-bottom: 9px; }
+			.side { padding: 9px 0px; }
 			.side.left { padding-left: 0px; }
-			.side.right { transition: opacity 0.2s ease-in-out; opacity: 0; }
+			.side.right { transition: opacity $transitionCommon; opacity: 0; }
 			.line { display: none; }
 		}
 		.dataviewControls.active {

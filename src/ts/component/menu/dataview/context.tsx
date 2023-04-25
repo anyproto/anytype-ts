@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, Util, ObjectUtil, focus } from 'Lib';
-import { detailStore, menuStore, blockStore, dbStore } from 'Store';
+import { I, C, keyboard, analytics, DataUtil, ObjectUtil, focus } from 'Lib';
+import { detailStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuContext extends React.Component<I.Menu> {
@@ -186,7 +186,6 @@ class MenuContext extends React.Component<I.Menu> {
 		const { param, getId, getSize, close } = this.props;
 		const { data, classNameWrap } = param;
 		const { objectIds, onLinkTo } = data;
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
@@ -200,6 +199,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let itemId = objectIds[0];
 		let menuId = '';
 		let menuParam = {
+			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
@@ -215,8 +215,9 @@ class MenuContext extends React.Component<I.Menu> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types.concat([ Constant.typeId.collection ]) },
-						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false }
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
 					blockId: itemId,
@@ -269,6 +270,10 @@ class MenuContext extends React.Component<I.Menu> {
 
 			case 'copy':
 				C.ObjectListDuplicate(objectIds, (message: any) => {
+					if (message.error.code || !message.ids.length) {
+						return;
+					};
+
 					if (count == 1) {
 						ObjectUtil.openPopup(detailStore.get(subId, message.ids[0], []));
 					};

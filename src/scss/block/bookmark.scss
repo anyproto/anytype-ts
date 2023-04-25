@@ -13,7 +13,7 @@
         }
 
 		.inner { 
-			display: flex; border: 1px solid $colorBorderLight; transition: border-color 0.2s ease-in-out; cursor: pointer; 
+			display: flex; border: 1px solid $colorBorderLight; transition: border-color $transitionCommon; cursor: pointer; 
 			position: relative; border-radius: 12px; overflow: hidden;
 		}
 		.inner:hover { border-color: $colorBorderDark; }

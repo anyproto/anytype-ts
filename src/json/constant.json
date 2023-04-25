@@ -1,6 +1,6 @@
 {
 	"server": "http://127.0.0.1:31008",
-	"pinSize": 6,
+	"pinLength": 6,
 	"sentry": "https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3",
 	"amplitude": "1ba981d1a9afb8af8c81847ef3383a20",
 	"protocol": "anytype",
@@ -36,8 +36,8 @@
 	],
 	
 	"delay": {
-		"menu": 60,
-		"popup": 60,
+		"menu": 160,
+		"popup": 310,
 		"toast": 2500
 	},
 	
@@ -89,8 +89,8 @@
 
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
-	"typeRelationKeys":		 [ "smartblockTypes", "recommendedRelations", "sourceObject" ],
-	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
+	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject" ],
+	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 
 	"subId": {
 		"index": "index",
@@ -123,7 +123,8 @@
 		"bookmark": "ot-bookmark",
 		"option": "ot-relationOption",
 		"collection": "ot-collection",
-		"dashboard": "ot-dashboard"
+		"dashboard": "ot-dashboard",
+		"date": "ot-date"
 	},
 
 	"storeTypeId": {

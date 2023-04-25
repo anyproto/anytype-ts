@@ -46,8 +46,8 @@
 		}
 	
 		.btn { 
-			font-weight: 500; font-size: 14px; height: 28px; line-height: 28px; cursor: pointer; display: inline-block;
-			padding: 0px 8px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background 0.2s ease-in-out;
+			font-weight: 500; font-size: 14px; height: 28px; line-height: 28px; display: inline-block;
+			padding: 0px 8px; border-radius: 6px; margin-right: 8px; white-space: nowrap; transition: background $transitionCommon;
 		}
 		.btn:last-child { margin: 0px; }
 

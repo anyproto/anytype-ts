@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Label, Textarea, Button } from 'Component';
 import { I, C, translate, analytics, Util, Preview } from 'Lib';
 import { authStore } from 'Store';
@@ -7,19 +6,12 @@ import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 import Head from './head';
 
-interface Props extends I.Popup, RouteComponentProps<any> {
-	prevPage: string;
-	isLogout: boolean;
-	onPage: (id: string) => void;
-	setPinConfirmed: (v: boolean) => void;
-};
-
 interface State {
 	entropy: string;
 	showCode: boolean;
 };
 
-const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends React.Component<Props, State> {
+const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends React.Component<I.PopupSettings, State> {
 
 	node: any = null;
 	refPhrase: any = null;
@@ -28,7 +20,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 		showCode: false,
 	};
 
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onFocus = this.onFocus.bind(this);

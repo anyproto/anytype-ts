@@ -14,7 +14,7 @@
 			.inner { padding: 0px 16px; white-space: nowrap; }
 
 			.viewItem { 
-				@include text-common; font-weight: 500; color: $colorMediumGrey; transition: $transitionFast; 	margin-right: 16px; display: inline-block; 
+				@include text-common; font-weight: 500; color: $colorMediumGrey; transition: $transitionAllCommon; 	margin-right: 16px; display: inline-block; 
 				vertical-align: top; cursor: pointer;
 			}
 			.viewItem:last-child { margin: 0px; }
@@ -41,11 +41,11 @@
 		}
 
 		.item.active { 
-			.icon.more { background-color: $colorHover; }
+			.icon.more { background-color: $colorHoverMedium; }
 		}
 
 		.item::before {
-			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorHover; z-index: 1; pointer-events: none;
+			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorHoverMedium; z-index: 1; pointer-events: none;
 			border-radius: 8px; opacity: 0;
 		}
 		.item:hover::before { opacity: 1; }
@@ -63,8 +63,8 @@
 			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 			.buttons {
 				.icon { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
-				.icon:hover { background-color: $colorHover; }
-				.icon.active { opacity: 1; background-color: $colorHover; }
+				.icon:hover { background-color: $colorHoverMedium; }
+				.icon.active { opacity: 1; background-color: $colorHoverMedium; }
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
 			}
 		}

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import arrayMove from 'array-move';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, MenuItemVertical } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, Relation, Renderer, keyboard, Action } from 'Lib';
+import { I, C, Util, FileUtil, ObjectUtil, Relation, Renderer, keyboard, Action } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -40,7 +40,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 		const File = (item: any) => (
 			<React.Fragment>
 				<IconObject object={item} />
-				<div className="name">{DataUtil.fileName(item)}</div>
+				<div className="name">{FileUtil.name(item)}</div>
 			</React.Fragment>
 		);
 

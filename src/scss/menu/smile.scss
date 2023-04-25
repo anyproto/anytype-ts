@@ -9,7 +9,7 @@
 
 		.head { color: $colorMediumGrey; font-weight: 500; padding: 3px 16px 10px 16px; border-bottom: 1px solid $colorBorderLight; }
 		.head {
-			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
+			.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 			.btn:last-child { margin-right: 0px; }
 			.btn:hover { color: $colorBlack; }
 		}
@@ -39,7 +39,7 @@
 
 		.foot { padding: 5px 16px 6px 16px; border-top: 1px solid $colorBorderLight; display: flex; justify-content: space-between; }
 		.foot {
-			.icon { width: 32px; height: 32px; border-radius: 4px; background-size: 20px; flex-shrink: 0; cursor: pointer; transition: $transitionFast; }
+			.icon { width: 32px; height: 32px; border-radius: 4px; background-size: 20px; flex-shrink: 0; transition: $transitionAllCommon; }
 			.icon:hover { background-color: $colorVeryLightGrey; }
 
 			.icon.recent { background-image: url('~img/icon/emoji/recent0.svg'); }

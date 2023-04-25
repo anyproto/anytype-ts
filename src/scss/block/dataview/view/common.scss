@@ -3,11 +3,11 @@
 .blocks {
 	.block.blockDataview {
 
-		.viewItem.viewGrid,
-		.viewItem.viewList {
+		.viewContent.viewGrid,
+		.viewContent.viewList {
 			.cell.add { color: $colorMediumGrey; line-height: 20px; width: 100%; display: block; }
 			.cell.add {
-				.btn { display: inline-block; cursor: pointer; transition: $transitionFast; }
+				.btn { display: inline-block; cursor: pointer; transition: $transitionAllCommon; }
 				.btn:hover { color: $colorBlack; }
 				.btn:hover {
 					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
@@ -18,8 +18,8 @@
 			}
 		}
 
-		.viewItem.viewGallery, 
-		.viewItem.viewBoard {
+		.viewContent.viewGallery, 
+		.viewContent.viewBoard {
 			.card { white-space: normal; }
 			.card {
 				.cellContent { cursor: pointer; margin-bottom: 4px; @include text-small; color: $colorDarkGrey; }
@@ -70,22 +70,20 @@
 			}
 		}
 
-		.isCollection {
-			.viewItem.viewGrid,
-			.viewItem.viewList {
-				.row:hover {
-					.icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
-					.icon.dnd:hover {
-						background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;
-					}
+		.viewContent.viewGrid.isCollection,
+		.viewContent.viewList.isCollection {
+			.row:hover {
+				.icon.dnd { opacity: 1; background-image: url('~img/icon/block/menu1.svg'); }
+				.icon.dnd:hover {
+					background-image: url('~img/icon/block/menu2.svg') !important; border-color: $colorOrange; box-shadow: 0px 0px 0px 1px $colorOrange;
 				}
 			}
 		}
 	}
 
 	.block.blockDataview.isInline {
-		.viewItem.viewGallery, 
-		.viewItem.viewBoard {
+		.viewContent.viewGallery, 
+		.viewContent.viewBoard {
 			.cellContent.isName {
 				.name { @include clamp2; }
 			}

@@ -75,9 +75,13 @@ fi;
 rm -rf dist/lib/pb
 rm -rf dist/lib/pkg
 rm -rf dist/lib/protos
+rm -rf dist/lib/json
 
 mv -fv protobuf/* "dist/lib/"
+mkdir -p dist/lib/json
+mv -fv json/* "dist/lib/json"
 rm -rf protobuf
+rm -rf relations
 rm -rf $FILE
 
 printf "Done\n\n"

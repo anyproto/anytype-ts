@@ -18,7 +18,7 @@ const NO_TEMPLATES = [
 	Constant.typeId.set, 
 	Constant.typeId.collection,
 	Constant.typeId.bookmark,
-].concat(DataUtil.getFileTypes()).concat(DataUtil.getSystemTypes());
+].concat(ObjectUtil.getFileTypes()).concat(ObjectUtil.getSystemTypes());
 
 const PageMainType = observer(class PageMainType extends React.Component<I.PageComponent, State> {
 
@@ -58,7 +58,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const { config } = commonStore;
 		const rootId = this.getRootId();
 		const check = DataUtil.checkDetails(rootId);
-		const object = check.object;
+		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
@@ -67,19 +67,25 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 
-		const allowedObject = object.isInstalled && (object.smartblockTypes || []).includes(I.SmartBlockType.Page);
+		const allowedObject = object.isInstalled && ObjectUtil.getPageLayouts().includes(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 
-		const relations = (object.recommendedRelations || []).map(id => dbStore.getRelationById(id)).filter((it: any) => {
-			if (!it || DataUtil.getSystemRelationKeys().includes(it.relationKey)) {
+		const relations = (object.recommendedRelations || []).map(id => dbStore.getRelationById(id)).filter(it => {
+			if (!it) {
+				return false;
+			};
+			if ([ 'tag', 'description' ].includes(it.relationKey)) {
+				return true;
+			};
+			if (ObjectUtil.getSystemRelationKeys().includes(it.relationKey)) {
 				return false;
 			};
 			return config.debug.ho ? true : !it.isHidden;
 		});
 
-		const isFileType = DataUtil.isFileType(rootId);
+		const isFileType = ObjectUtil.isFileType(rootId);
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: 'Updated',  
@@ -100,7 +106,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			</div>
 		);
 
-		const ItemAdd = (item: any) => (
+		const ItemAdd = () => (
 			<div id="item-add" className="item add" onClick={this.onRelationAdd}>
 				<div className="clickable">
 					<Icon className="plus" />
@@ -112,7 +118,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		return (
 			<div>
-				<Header component="mainEdit" ref={ref => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainObject" ref={ref => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
@@ -154,35 +160,39 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
 					</div>
 
-					<div className="section layout">
-						<div className="title">Recommended layout</div>
-						<div className="content">
-							{allowedDetails ? (
-								<Select 
-									id="recommendedLayout" 
-									value={object.recommendedLayout} 
-									options={MenuUtil.turnLayouts()} 
-									arrowClassName="light" 
-									onChange={this.onLayout} 
-								/>
-							) : (
-								<React.Fragment>
-									<Icon className={layout.icon} />
-									<div className="name">{layout.name}</div>
-								</React.Fragment>
-							)}
-						</div>
-					</div>
+					{allowedObject ? (
+						<React.Fragment>
+							<div className="section layout">
+								<div className="title">Recommended layout</div>
+								<div className="content">
+									{allowedDetails ? (
+										<Select 
+											id="recommendedLayout" 
+											value={object.recommendedLayout} 
+											options={MenuUtil.turnLayouts()} 
+											arrowClassName="light" 
+											onChange={this.onLayout} 
+										/>
+									) : (
+										<React.Fragment>
+											<Icon className={layout.icon} />
+											<div className="name">{layout.name}</div>
+										</React.Fragment>
+									)}
+								</div>
+							</div>
 
-					<div className="section relation">
-						<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
-						<div className="content">
-							{relations.map((item: any, i: number) => (
-								<ItemRelation key={i} {...item} />
-							))}
-							{allowedRelation ? <ItemAdd /> : ''}
-						</div>
-					</div>
+							<div className="section relation">
+								<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
+								<div className="content">
+									{relations.map((item: any, i: number) => (
+										<ItemRelation key={i} {...item} />
+									))}
+									{allowedRelation ? <ItemAdd /> : ''}
+								</div>
+							</div>
+						</React.Fragment>
+					) : ''}
 
 					{object.isInstalled ? (
 						<div className="section set">
@@ -194,7 +204,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					) : ''}
 				</div>
 
-				<Footer component="mainEdit" {...this.props} />
+				<Footer component="mainObject" {...this.props} />
 			</div>
 		);
 	};
@@ -310,8 +320,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = dbStore.getType(rootId);
-		const allowedObject = (type.smartblockTypes || []).includes(I.SmartBlockType.Page)
-			|| [ Constant.typeId.collection, Constant.typeId.set ].includes(rootId);
+		const isSetType = ObjectUtil.isSetType(rootId);
+		const allowedObject = ObjectUtil.getPageLayouts().includes(type.recommendedLayout) || isSetType;
 		const options = [];
 
 		if (allowedObject) {
@@ -426,7 +436,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: recommendedRelations.concat(DataUtil.getSystemRelationKeys()),
+				skipKeys: recommendedRelations.concat(ObjectUtil.getSystemRelationKeys()),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
 						menuStore.close('relationSuggest'); 

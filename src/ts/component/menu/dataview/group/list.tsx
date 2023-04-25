@@ -6,7 +6,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import $ from 'jquery';
 import { Icon, Switch } from 'Component';
 import Cell from 'Component/block/dataview/cell';
-import { I, C, DataUtil, keyboard, translate } from 'Lib';
+import { I, C, Dataview, keyboard, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -31,7 +31,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 	};
 	
 	render () {
-		const { param } = this.props;
+		const { param, getId } = this.props;
 		const { data } = param;
 		const { readonly, rootId, blockId, getView } = data;
 		const items = this.getItems();
@@ -105,38 +105,36 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 			);
 		};
 		
-		const List = SortableContainer((item: any) => {
-			return (
-				<div className="items">
-					<InfiniteLoader
-						rowCount={items.length}
-						loadMoreRows={() => {}}
-						isRowLoaded={() => true}
-						threshold={LIMIT}
-					>
-						{({ onRowsRendered, registerChild }) => (
-							<AutoSizer className="scrollArea">
-								{({ width, height }) => (
-									<VList
-										ref={ref => { this.refList = ref; }}
-										width={width}
-										height={height}
-										deferredMeasurmentCache={this.cache}
-										rowCount={items.length}
-										rowHeight={HEIGHT}
-										rowRenderer={rowRenderer}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={LIMIT}
-										onScroll={this.onScroll}
-										scrollToAlignment="center"
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</InfiniteLoader>
-				</div>
-			);
-		});
+		const List = SortableContainer(() => (
+			<div className="items">
+				<InfiniteLoader
+					rowCount={items.length}
+					loadMoreRows={() => {}}
+					isRowLoaded={() => true}
+					threshold={LIMIT}
+				>
+					{({ onRowsRendered, registerChild }) => (
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<VList
+									ref={ref => { this.refList = ref; }}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={HEIGHT}
+									rowRenderer={rowRenderer}
+									onRowsRendered={onRowsRendered}
+									overscanRowCount={LIMIT}
+									onScroll={this.onScroll}
+									scrollToAlignment="center"
+								/>
+							)}
+						</AutoSizer>
+					)}
+				</InfiniteLoader>
+			</div>
+		));
 		
 		return (
 			<div className="wrap">
@@ -150,7 +148,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 					onSortEnd={this.onSortEnd}
 					useDragHandle={true}
 					helperClass="isDragging"
-					helperContainer={() => $(this.node).find('.items').get(0)}
+					helperContainer={() => $(`#${getId()} .items`).get(0)}
 				/>
 			</div>
 		);
@@ -258,7 +256,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		});
 
 		dbStore.groupsSet(rootId, blockId, groups);
-		DataUtil.dataviewGroupUpdate(rootId, blockId, view.id, update);
+		Dataview.groupUpdate(rootId, blockId, view.id, update);
 		C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: update });
 	};
 

@@ -425,7 +425,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const el = node.find(`#item-${item.id}`);
 		const offsetX = node.outerWidth();
 		
-		let types: string[] = [];
 		let ids: string[] = [];
 		let filters = [];
 		let menuId = '';
@@ -486,7 +485,9 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
-					smartblockTypes: [ I.SmartBlockType.Page ],
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+					],
 					onClick: (item: any) => {
 						this.moveToPage(item.id);
 						close();
@@ -496,12 +497,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'move': {
-				types = DataUtil.getObjectTypesForNewObject().map(it => it.id); 
 				menuId = 'searchObject';
-
-				filters = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types }
-				];
 
 				let skipIds = [ rootId ];
 				blockIds.forEach((id: string) => {
@@ -515,7 +511,10 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					type: I.NavigationType.Move, 
 					position: I.BlockPosition.Bottom,
 					skipIds,
-					filters,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+					],
 					canAdd: true,
 					onSelect: () => { close(); }
 				});

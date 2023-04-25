@@ -191,7 +191,9 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			},
 			data: {
 				filter: '',
-				smartblockTypes: [ I.SmartBlockType.Page, I.SmartBlockType.Set ],
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
+				],
 				onClick: (item: any) => {
 					this.onClick(e, item);
 				}
@@ -209,8 +211,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (DataUtil.getSetTypes().includes(item.id)) {
-			this.onObjectTo(e, item.id);
+		if (ObjectUtil.getSetTypes().includes(item.id)) {
+			this.onObjectTo(item.id);
 		} else {
 			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
 				if (message.records.length > 1) {
@@ -229,17 +231,18 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		};
 	};
 
-	onObjectTo (e: any, type: string) {
-		const { rootId, isPopup } = this.props;
+	onObjectTo (type: string) {
+		const { rootId, isPopup, setLoading } = this.props;
 
 		let layout: I.ObjectLayout = null;
 
-		const cb = (message) => {
+		const cb = () => {
 			if (isPopup) {
 				historyPopup.clear();
 			};
 
-			ObjectUtil.openAuto({ id: message.objectId, layout });
+			keyboard.disableClose(true);
+			ObjectUtil.openAuto({ id: rootId, layout }, { replace: true });
 
 			analytics.event('CreateObject', {
 				route: 'SelectType',
@@ -247,6 +250,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 				layout,
 			});
 		};
+
+		setLoading(true);
 
 		switch (type) {
 			case Constant.typeId.set: {

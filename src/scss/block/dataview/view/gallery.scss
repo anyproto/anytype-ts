@@ -2,12 +2,12 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewItem.viewGallery { padding: 0px; }
-		.viewItem.viewGallery {
+		.viewContent.viewGallery { padding: 0px; }
+		.viewContent.viewGallery {
 			.galleryWrap { margin-left: 14px; }
 
 			.card { 
-				width: 260px; border: 1px solid $colorHover; transition: border-color 0.2s ease-in-out; border-radius: 12px; display: inline-block; 
+				width: 260px; border: 1px solid $colorHoverMedium; transition: border-color $transitionCommon; border-radius: 12px; display: inline-block; 
 				cursor: pointer; background: $colorWhite; overflow: hidden;
 			}
 			.card {
@@ -15,14 +15,14 @@
 
 				.cover { 
 					position: relative; aspect-ratio: 7/3; background-position: top center; display: flex; align-items: center;
-					background-color: $colorHover; width: 100%; justify-content: center;
+					background-color: $colorHoverMedium; width: 100%; justify-content: center;
 				}
 
 				.cover {
 					img { width: 100%; height: 100%; object-fit: cover; }
 
 					.inner { 
-						position: relative; color: $colorSecondary; transition: $transitionFast; width: 100%; height: 100%; 
+						position: relative; color: $colorSecondary; transition: $transitionAllCommon; width: 100%; height: 100%; 
 						background-image: url('~img/icon/dataview/gallery-image-preview.svg'); background-repeat: no-repeat;
 						background-position: center center;
 					}
@@ -76,17 +76,15 @@
 
 		}
 
-		.isCollection {
-			.viewItem.viewGallery {
-				.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 4px; height: 100%; border-radius: 2px; top: 0px; left: 0px; }
-			}
+		.viewContent.viewGallery.isCollection {
+			.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 4px; height: 100%; border-radius: 2px; top: 0px; left: 0px; }
 		}
 	}
 }
 
 .blocks {
 	.block.blockDataview.isInline {
-		.viewItem.viewGallery {
+		.viewContent.viewGallery {
 			.galleryWrap { margin: 0px; display: grid; gap: 16px; }
 			.galleryWrap.small { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 			.galleryWrap.medium { grid-template-columns: repeat(3, minmax(0, 1fr)); }

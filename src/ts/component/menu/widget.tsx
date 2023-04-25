@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
-import { C, I, keyboard, MenuUtil, translate, Action, DataUtil, analytics } from 'Lib';
+import { C, I, keyboard, MenuUtil, translate, Action, ObjectUtil, analytics } from 'Lib';
 import { blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -126,15 +126,13 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		
 		let sourceName = 'Choose a source';
 		let layoutName = 'Choose a layout';
-		let layoutIcon = '';
 
 		if (this.target) {
-			sourceName = DataUtil.getObjectName(this.target);
+			sourceName = ObjectUtil.name(this.target);
 		};
 
 		if (this.layout !== null) {
 			layoutName = translate(`widget${this.layout}Name`);
-			layoutIcon = `widget-${this.layout}`;
 		};
 
 		const sections: any[] = [
@@ -145,7 +143,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			},
 			{ 
 				id: 'layout', name: 'Appearance', children: [
-					{ id: 'layout', name: layoutName, icon: layoutIcon, arrow: true }
+					{ id: 'layout', name: layoutName, arrow: true }
 				] 
 			},
 		];
@@ -163,7 +161,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	checkState () {
-		const setTypes = DataUtil.getSetTypes();
+		const setTypes = ObjectUtil.getSetTypes();
 		const options = this.getLayoutOptions().map(it => it.id);
 
 		if (this.isCollection()) {
@@ -188,28 +186,32 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	getLayoutOptions () {
-		let options = [
-			I.WidgetLayout.Tree,
-			I.WidgetLayout.List,
-			I.WidgetLayout.Link,
-		];
+		const isCollection = this.isCollection();
 
-		if (this.target) {
-			const setTypes = DataUtil.getSetTypes();
-			const treeSkipTypes = setTypes.concat(DataUtil.getSystemTypes()).concat(DataUtil.getFileTypes());
-			const isCollection = this.isCollection();
+		let options = [];
+		if (isCollection) {
+			options = [
+				I.WidgetLayout.List,
+				I.WidgetLayout.Tree,
+			];
+		} else {
+			options = [
+				I.WidgetLayout.Tree,
+				I.WidgetLayout.List,
+				I.WidgetLayout.Link,
+			];
+		};
 
-			// Favorites and Recents and Sets can only become List and Tree layouts
-			if (isCollection) {
-				options = options.filter(it => it != I.WidgetLayout.Link);
-			} else {
-				// Sets can only become Link and List layouts, non-sets can't become List
-				if (treeSkipTypes.includes(this.target.type)) {
-					options = options.filter(it => it != I.WidgetLayout.Tree);
-				};
-				if (!setTypes.includes(this.target.type)) {
-					options = options.filter(it => it != I.WidgetLayout.List);
-				};
+		if (this.target && !isCollection) {
+			const setTypes = ObjectUtil.getSetTypes();
+			const treeSkipTypes = setTypes.concat(ObjectUtil.getSystemTypes()).concat(ObjectUtil.getFileTypes());
+
+			// Sets can only become Link and List layouts, non-sets can't become List
+			if (treeSkipTypes.includes(this.target.type)) {
+				options = options.filter(it => it != I.WidgetLayout.Tree);
+			};
+			if (!setTypes.includes(this.target.type)) {
+				options = options.filter(it => it != I.WidgetLayout.List);
 			};
 		};
 
@@ -260,7 +262,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		switch (item.itemId) {
 			case 'source':
 				let filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: DataUtil.getSystemTypes().concat(DataUtil.getFileTypes()) },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes().concat(ObjectUtil.getFileTypes()) },
 				];
 
 				menuId = 'searchObject';
@@ -270,9 +272,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					dataChange: (items: any[]) => {
 						const fixed: any[] = [
 							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
-							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':books:' },
 							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':open_file_folder:' },
+							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 						];
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 					},
@@ -366,7 +368,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				onSave();
 			};
 
-			analytics.event(isEditing ? 'EditWidget' : 'AddWidget', { type: this.layout });
+			if (!isEditing) {
+				analytics.event('AddWidget', { type: this.layout });
+			};
 		});
 
 		close(); 

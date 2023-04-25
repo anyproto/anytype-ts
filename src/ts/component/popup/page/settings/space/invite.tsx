@@ -4,12 +4,7 @@ import { I, translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
-interface Props extends I.Popup {
-    prevPage: string;
-    onPage: (id: string) => void;
-};
-
-const PopupSettingsSpaceInvite = observer(class PopupSettingsSpaceInvite extends React.Component<Props> {
+const PopupSettingsSpaceInvite = observer(class PopupSettingsSpaceInvite extends React.Component<I.PopupSettings> {
 
     memberType = 'reader';
 

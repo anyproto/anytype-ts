@@ -306,8 +306,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 	
 	getHeight (p: number) {
 		const { block } = this.props;
-		const { id } = block;
-		const el = $('#selectable-' + id);
+		const el = $('#selectable-' + block.id);
 		
 		if (!el.length) {
 			return 0;

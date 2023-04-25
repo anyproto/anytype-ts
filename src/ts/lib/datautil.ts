@@ -147,39 +147,19 @@ class DataUtil {
 	};
 
 	coverColors () {
-		return [
-			{ type: I.CoverType.Color, id: 'yellow' },
-			{ type: I.CoverType.Color, id: 'orange' },
-			{ type: I.CoverType.Color, id: 'red' },
-			{ type: I.CoverType.Color, id: 'pink' },
-			{ type: I.CoverType.Color, id: 'purple' },
-			{ type: I.CoverType.Color, id: 'blue' },
-			{ type: I.CoverType.Color, id: 'ice' },
-			{ type: I.CoverType.Color, id: 'teal' },
-			{ type: I.CoverType.Color, id: 'green' },
-			{ type: I.CoverType.Color, id: 'lightgrey' },
-			{ type: I.CoverType.Color, id: 'darkgrey' },
-			{ type: I.CoverType.Color, id: 'black' },
-		].map((it: any) => {
-			it.name = translate('textColor-' + it.id);
-			return it;
-		});
+		return [ 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'green', 'lightgrey', 'darkgrey', 'black' ].map(id => ({
+			id,
+			type: I.CoverType.Color,
+			name: translate(`textColor-${id}`),
+		}));
 	};
 
 	coverGradients () {
-		return [
-			{ type: I.CoverType.Gradient, id: 'pinkOrange' },
-			{ type: I.CoverType.Gradient, id: 'bluePink' },
-			{ type: I.CoverType.Gradient, id: 'greenOrange' },
-			{ type: I.CoverType.Gradient, id: 'sky' },
-			{ type: I.CoverType.Gradient, id: 'yellow' },
-			{ type: I.CoverType.Gradient, id: 'red' },
-			{ type: I.CoverType.Gradient, id: 'blue' },
-			{ type: I.CoverType.Gradient, id: 'teal' },
-		].map((it: any) => {
-			it.name = translate('gradientColor-' + it.id);
-			return it;
-		});
+		return [ 'pinkOrange', 'bluePink', 'greenOrange', 'sky', 'yellow', 'red', 'blue', 'teal' ].map(id => ({
+			id,
+			type: I.CoverType.Gradient,
+			name: translate(`gradientColor-${id}`),
+		}));
 	};
 
 	threadColor (s: I.ThreadStatus) {
@@ -423,6 +403,7 @@ class DataUtil {
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
 		const { workspace, config } = commonStore;
+		const pageLayouts = ObjectUtil.getPageLayouts();
 		const page = dbStore.getType(Constant.typeId.page);
 		const note = dbStore.getType(Constant.typeId.note);
 		const set = dbStore.getType(Constant.typeId.set);
@@ -434,6 +415,7 @@ class DataUtil {
 			Constant.typeId.note, 
 			Constant.typeId.page, 
 			Constant.typeId.set, 
+			Constant.typeId.collection,
 			Constant.typeId.task,
 			Constant.typeId.bookmark,
 		];
@@ -441,8 +423,8 @@ class DataUtil {
 		let items: any[] = [];
 
 		if (!withDefault) {
-			items = items.concat(dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).filter((it: any) => {
-				if (skip.includes(it.id) || it.workspaceId != workspace) {
+			items = items.concat(dbStore.getTypes().filter(it => {
+				if (!pageLayouts.includes(it.recommendedLayout) || skip.includes(it.id) || (it.workspaceId != workspace)) {
 					return false;
 				};
 				return config.debug.ho ? true : !it.isHidden;
@@ -480,12 +462,11 @@ class DataUtil {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled', 'recommendedRelations', 'smartblockTypes' ].concat(Constant.coverRelationKeys));
+		const object = detailStore.get(rootId, blockId, [ 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys));
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
-		const { iconEmoji, iconImage, coverType, coverId, type } = object;
+		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret: any = {
-			object: object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
 			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],
@@ -493,37 +474,21 @@ class DataUtil {
 
 		switch (object.layout) {
 			default:
-			case I.ObjectLayout.Page:
 				ret.withIcon = iconEmoji || iconImage;
-				break;
-
-			case I.ObjectLayout.Human:
-				ret.withIcon = true;
 				break;
 
 			case I.ObjectLayout.Bookmark:
-			case I.ObjectLayout.Task:
+			case I.ObjectLayout.Task: {
 				break;
+			};
 
-			case I.ObjectLayout.Set:
-				ret.withIcon = iconEmoji || iconImage;
-				break;
-
-			case I.ObjectLayout.Image:
-				ret.withIcon = true;
-				break;
-
-			case I.ObjectLayout.File:
-				ret.withIcon = true;
-				break;
-
-			case I.ObjectLayout.Type:
-				ret.withIcon = true;
-				break;
-
+			case I.ObjectLayout.Human:
 			case I.ObjectLayout.Relation:
+			case I.ObjectLayout.File:
+			case I.ObjectLayout.Image: {
 				ret.withIcon = true;
 				break;
+			};
 		};
 
 		if (checkType) {
@@ -608,14 +573,6 @@ class DataUtil {
 		this.checkObjectWithRelationCnt('setOf', Constant.typeId.set, ids, 2, callBack);
 	};
 
-	defaultName (key: string) {
-		return translate(Util.toCamelCase('defaultName-' + key));
-	};
-
-	fileName (object: any) {
-		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
-	};
-
 	defaultLinkSettings () {
 		return {
 			iconSize: I.LinkIconSize.Small,
@@ -654,41 +611,7 @@ class DataUtil {
 	};
 
 	coverIsImage (type: I.CoverType) {
-		return [ I.CoverType.Upload, I.CoverType.Image, I.CoverType.Source ].includes(type);
-	};
-
-	isFileType (type: string) {
-		return this.getFileTypes().includes(type);
-	};
-
-	getSystemRelationKeys () {
-		return require('lib/relations/systemRelations.json');
-	};
-
-	getFileTypes () {
-		return [
-			Constant.typeId.file, 
-			Constant.typeId.image, 
-			Constant.typeId.audio, 
-			Constant.typeId.video,
-		];
-	};
-
-	getSystemTypes () {
-		return [
-			Constant.typeId.type,
-			Constant.typeId.template,
-			Constant.typeId.relation,
-			Constant.typeId.option,
-			Constant.typeId.dashboard,
-		];
-	};
-
-	getSetTypes () {
-		return [ 
-			Constant.typeId.set, 
-			Constant.typeId.collection,
-		];
+		return [ I.CoverType.Upload, I.CoverType.Source ].includes(type);
 	};
 
 	onSubscribe (subId: string, idField: string, keys: string[], message: any) {
@@ -847,84 +770,30 @@ class DataUtil {
 		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), Util.filterFix(param.fullText).replace(/\\/g, ''), offset, limit, callBack);
 	};
 
-	dataviewGroupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {
-		const block = blockStore.getLeaf(rootId, blockId);
-		if (!block) {
-			return;
-		};
-
-		const el = block.content.groupOrder.find(it => it.viewId == viewId);
-		if (el) {
-			el.groups = groups;
-		};
-
-		blockStore.updateContent(rootId, blockId, block.content);
-	};
-
-	getObjectName (object: any) {
-		const { isDeleted, type, layout, snippet } = object;
-
-		let name = '';
-		if (!isDeleted && this.isFileType(type)) {
-			name = this.fileName(object);
-		} else
-		if (layout == I.ObjectLayout.Note) {
-			name = snippet || translate('commonEmpty');
-		} else {
-			name = object.name || this.defaultName('page');
-		};
-
-		return name;
-	}
-
-	getObjectById (id: string, callBack: (object: any) => void) {
-		this.getObjectsByIds([ id ], (objects) => {
-			if (callBack) {
-				callBack(objects[0]);
-			};
-		});
-	};
-
-	getObjectsByIds (ids: string[], callBack: (objects: any[]) => void) {
-		const filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.In, value: ids }
-		];
-
-		C.ObjectSearch(filters, [], [], '', 0, 0, (message: any) => {
-			if (message.error.code || !message.records.length) {
-				return;
-			};
-
-			if (callBack) {
-				const records = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
-				callBack(records);
-			};
-		});
-	};
-
 	setWindowTitle (rootId: string, objectId: string) {
-		const object = detailStore.get(rootId, objectId, []);
-
-		this.setWindowTitleText(this.getObjectName(object));
+		this.setWindowTitleText(ObjectUtil.name(detailStore.get(rootId, objectId, [])));
 	};
 
 	setWindowTitleText (name: string) {
 		const space = detailStore.get(Constant.subId.space, commonStore.workspace, []);
-		const title = [ Util.shorten(name, 60) ];
+		const title = [];
+
+		if (name) {
+			title.push(Util.shorten(name, 60));
+		};
 
 		if (!space._empty_) {
 			title.push(space.name);
 		};
 
 		title.push(Constant.appName);
-
 		document.title = title.join(' - ');
 	};
 
 	graphFilters () {
 		const { workspace } = commonStore;
 		const { profile } = blockStore;
-		const skipTypes = this.getFileTypes().concat(this.getSystemTypes());
+		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
 		const skipIds = [ '_anytype_profile', profile ];
 
 		return [

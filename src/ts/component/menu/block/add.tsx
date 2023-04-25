@@ -284,14 +284,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			map(it => dbStore.getRelationById(it)).
 			filter(it => it.relationKey && !relationKeys.includes(it.relationKey));
 
-		const ret = relations.concat(typeRelations).filter(it => {
-			if (!config.debug.ho && it.isHidden) {
-				return false;
-			};
-			return it.isInstalled;
-		}).sort(DataUtil.sortByName);
+		const ret = relations.concat(typeRelations).filter(it => !config.debug.ho && it.isHidden ? false : it.isInstalled).sort(DataUtil.sortByName);
 
-		relations.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
+		ret.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
 
 		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true }));
 	};
@@ -376,13 +371,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { data } = param;
 		const { rootId, blockId } = data;
 		const { filter } = commonStore;
-		const types = dbStore.getObjectTypesForSBType(I.SmartBlockType.Page).map(it => it.id);
 		const block = blockStore.getLeaf(rootId, blockId);
-
-		let filters = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types },
-		];
-
 		const text = Util.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
@@ -422,13 +411,15 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
-					filters: filters,
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+					],
 				});
 				break;
 
 			case 'existing':
 				menuId = 'searchObject';
-
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Link,
 				});
@@ -436,10 +427,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 			case 'turnObject':
 				menuId = 'typeSuggest';
-
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
-					smartblockTypes: [ I.SmartBlockType.Page ],
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+					],
 					onClick: (item: any) => {
 						menuParam.data.onSelect();
 

@@ -3,7 +3,7 @@ import { ObjectUtil, I, sidebar } from 'Lib';
 import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';
-import FooterMainEdit from './main/edit';
+import FooterMainObject from './main/object';
 
 interface Props extends I.FooterComponent {
 	component: string;
@@ -11,7 +11,7 @@ interface Props extends I.FooterComponent {
 
 const Components = {
 	authIndex:			 FooterAuthIndex,
-	mainEdit:			 FooterMainEdit,
+	mainObject:			 FooterMainObject,
 };
 
 class Footer extends React.Component<Props> {

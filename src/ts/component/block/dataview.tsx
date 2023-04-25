@@ -102,9 +102,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
-		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]) ].join(' ');
+		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]) ];
 		let head = null;
 		let body = null;
+
+		if (isCollection) {
+			className.push('isCollection');
+		};
 
 		switch (view.type) {
 			default:
@@ -143,6 +147,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			isAllowedObject: this.isAllowedObject,
 			isCollection,
 			isInline,
+			className: className.join(' '),
 		};
 
 		const controls = (
@@ -151,14 +156,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					ref={ref => this.refControls = ref} 
 					{...this.props} 
 					{...dataviewProps} 
-					className={className} 
 				/>
 				<Selection 
 					ref={ref => this.refSelect = ref} 
 					{...this.props} 
 					{...dataviewProps} 
 					multiSelectAction={this.multiSelectAction} 
-					className={className} 
 				/>
 			</React.Fragment>
 		);
@@ -171,7 +174,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					{...dataviewProps}
 					onSourceSelect={this.onSourceSelect}
 					onSourceTypeSelect={this.onSourceTypeSelect}
-					className={className}
 				/>
 			);
 		};
@@ -189,7 +191,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			body = this.getEmpty('view');
 		} else {
 			body = (
-				<div className={[ 'content', isCollection ? 'isCollection': '' ].join(' ')}>
+				<div className="content">
 					<ViewComponent 
 						key={'view' + view.id}
 						ref={ref => this.refView = ref} 
@@ -486,7 +488,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let name = String(item.name || '');
 		let isReadonly = Boolean(item.isReadonly);
 
-		if (name == DataUtil.defaultName('page')) {
+		if (name == ObjectUtil.defaultName('page')) {
 			name = '';
 		};
 
@@ -950,16 +952,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { isInline, block } = this.props;
 		const cn = [];
 
-		let emptyProps = { 
-			title: '', 
-			description: '', 
-			button: '', 
-			onClick: e => {},
-		};
-
 		if (isInline) {
 			cn.push('withHead');
 		};
+
+		let emptyProps: any = {};
 
 		switch (type) {
 			case 'target': {
@@ -985,11 +982,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			case 'view': {
 				cn.push('withHead');
 
-				emptyProps = {
-					title: 'No objects',
-					description: 'Create your first one to begin',
-					button: 'Create object',
-					onClick: (e) => this.onRecordAdd(e, 1),
+				emptyProps.title = 'No objects';
+
+				if (this.isAllowedObject()) {
+					emptyProps.description = 'Create your first one to begin';
+					emptyProps.button = 'Create object';
+					emptyProps.onClick = e => this.onRecordAdd(e, 1);
 				};
 				break;
 			};
@@ -1000,7 +998,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				{...this.props}
 				{...emptyProps}
 				className={cn.join(' ')}
-				withButton={true}
+				withButton={emptyProps.button ? true : false}
 			/>
 		);
 	};
@@ -1009,7 +1007,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
-		const skipTypes = DataUtil.getFileTypes().concat(DataUtil.getSystemTypes());
+		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
 
 		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		for (const type of types) {
@@ -1077,7 +1075,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!selection || isInline) {
 			return;
 		};
-		
+
 		let ids = [];
 		if (this.isMultiSelecting && id && !ids.length) {
 			ids = this.selected || [];
@@ -1090,8 +1088,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			selection.set(I.SelectType.Record, ids);
 		};
 
-		this.selected = ids;
 		this.setMultiSelect(!!ids.length);
+		this.setSelected(ids);
 
 		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
 	};
@@ -1105,11 +1103,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			this.selected = [];
 		};
 
+		this.setSelected(this.selected);
 		this.isMultiSelecting = v;
-
-		if (this.refSelect) {
-			this.refSelect.setIds(this.selected);
-		};
 
 		const node = $(this.node);
 		const con = node.find('#dataviewControls');
@@ -1117,6 +1112,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		v ? con.hide() : con.show();
 		v ? sel.show() : sel.hide();
+	};
+
+	setSelected (ids: string[]) {
+		this.selected = ids;
+
+		if (this.refSelect) {
+			this.refSelect.setIds(ids);
+		};
 	};
 
 	multiSelectAction (id: string) {

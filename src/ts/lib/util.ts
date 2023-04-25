@@ -4,7 +4,6 @@ import { commonStore, popupStore, menuStore } from 'Store';
 import { translate } from '.';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
-import Cover from 'json/cover.json';
 
 class Util {
 
@@ -525,6 +524,19 @@ class Util {
 		return '';
 	};
 
+	/** Merges two unix timestamps, taking the hours/minutes/seconds from the first and the year/month/day from the second */
+	mergeTimeWithDate (date: number, time: number) {
+		const y = Number(this.date('Y', date));
+		const m = Number(this.date('n', date));
+		const d = Number(this.date('d', date));
+
+		const h = Number(this.date('H', time));
+		const i = Number(this.date('i', time));
+		const s = Number(this.date('s', time));
+		
+		return this.timestamp(y, m, d, h, i, s);
+	};
+
 	duration (t: number): string {
 		if (!t) {
 			return '';
@@ -667,14 +679,6 @@ class Util {
 	
 	emailCheck (v: string) {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
-	};
-
-	coverSrc (id: string, preview?: boolean): string {
-		const item = Cover.find(it => it.id == id);
-		if (item) {
-			return commonStore.imageUrl(item.hash, preview ? 200 : Constant.size.image);
-		};
-		return `./img/cover/${preview ? 'preview/' : ''}${id}.jpg`;
 	};
 
 	selectionRange (): Range {
@@ -969,6 +973,14 @@ class Util {
 		let a: any = {};
 		try { a = new URL(url); } catch (e) {};
 		return a.hostname || url;
+	};
+
+	pauseMedia () {
+		$('audio, video').each((i: number, item: any) => { item.pause(); });
+	};
+
+	getPercentage (num: number, percent: number) {
+		return Number((num / 100 * percent).toFixed(3));
 	};
 
 };

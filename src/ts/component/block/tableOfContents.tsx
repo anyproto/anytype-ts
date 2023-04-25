@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, focus, DataUtil, Util } from 'Lib';
+import { I, focus, ObjectUtil, Util } from 'Lib';
 import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -106,7 +106,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 			list.push({ 
 				depth, 
 				id: block.id,
-				text: String(block.content.text || DataUtil.defaultName('page')),
+				text: String(block.content.text || ObjectUtil.defaultName('page')),
 			});
 		});
 		return list;

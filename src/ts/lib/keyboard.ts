@@ -165,7 +165,7 @@ class Keyboard {
 			// Print
 			keyboard.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
-				this.onPrint();
+				this.onPrint('Shortcut');
 			});
 
 			// Navigation search
@@ -185,7 +185,7 @@ class Keyboard {
 			// Text search
 			this.shortcut(`${cmd}+f`, e, () => {
 				if (!this.isFocused) {
-					this.onSearchMenu('');
+					this.onSearchMenu('', 'Shortcut');
 				};
 			});
 
@@ -402,7 +402,7 @@ class Keyboard {
 
 		switch (cmd) {
 			case 'search': {
-				this.onSearchMenu('');
+				this.onSearchMenu('', 'MenuSystem');
 				break;
 			};
 
@@ -412,7 +412,7 @@ class Keyboard {
 			};
 
 			case 'print': {
-				this.onPrint();
+				this.onPrint('MenuSystem');
 				break;
 			};
 
@@ -438,31 +438,19 @@ class Keyboard {
 				});
 				break;
 			};
-
-			case 'workspace': {
-				popupStore.open('prompt', {
-					data: {
-						title: 'Create Space',
-						onChange: (v: string) => {
-							C.WorkspaceCreate(v);
-						},
-					}
-				});
-				break;
-			};
 		};
 	};
 
-	onUndo (rootId: string, callBack?: (message: any) => void) {
+	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
 		C.ObjectUndo(rootId, callBack);
 
-		analytics.event('Undo', { route: 'editor' });
+		analytics.event('Undo', { route });
 	};
 
-	onRedo (rootId: string, callBack?: (message: any) => void) {
+	onRedo (rootId: string, route?: string, callBack?: (message: any) => void) {
 		C.ObjectRedo(rootId, callBack);
 
-		analytics.event('Redo', { route: 'editor' });
+		analytics.event('Redo', { route });
 	};
 
 	printApply (className: string, clearTheme: boolean) {
@@ -491,13 +479,13 @@ class Keyboard {
 		$(window).trigger('resize');
 	};
 
-	onPrint () {
+	onPrint (route?: string) {
 		this.printApply('print', true);
 
 		window.print();
 
 		this.printRemove();
-		analytics.event('Print');
+		analytics.event('Print', { route });
 	};
 
 	onSaveAsHTML () {
@@ -516,12 +504,18 @@ class Keyboard {
 		Renderer.send('winCommand', 'printPdf', { name: object.name, options });
 	};
 
-	onSearchMenu (value: string) {
+	onSearchMenu (value: string, route?: string) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 
-		// Do not allow in set or store
-		if (!isPopup && (this.isMainSet() || this.isMainStore()) || (isPopup && ([ 'set', 'store' ].indexOf(popupMatch.params.action) >= 0))) {
+		let isDisabled = false;
+		if (!isPopup) {
+			isDisabled = this.isMainSet() || this.isMainStore() || this.isMainGraph();
+		} else {
+			isDisabled = [ 'set', 'store', 'graph' ].includes(popupMatch.params.action);
+		};
+
+		if (isDisabled) {
 			return;
 		};
 
@@ -536,6 +530,7 @@ class Keyboard {
 				data: {
 					isPopup,
 					value,
+					route,
 				},
 			});
 		}, Constant.delay.menu);
@@ -548,7 +543,7 @@ class Keyboard {
 		});
 	};
 
-	onLock (rootId: string, v: boolean) {
+	onLock (rootId: string, v: boolean, route?: string) {
 		const block = blockStore.getLeaf(rootId, rootId);
 		if (!block) {
 			return;
@@ -559,7 +554,7 @@ class Keyboard {
 		]);
 
 		Preview.toastShow({ objectId: rootId, action: I.ToastAction.Lock, value: v });
-		analytics.event((v ? 'LockPage' : 'UnlockPage'));
+		analytics.event((v ? 'LockPage' : 'UnlockPage'), { route });
 	};
 
 	onToggleLock () {
@@ -567,7 +562,7 @@ class Keyboard {
 		const root = blockStore.getLeaf(rootId, rootId);
 		
 		if (root) {
-			this.onLock(rootId, !root.isLocked());
+			this.onLock(rootId, !root.isLocked(), 'Shortcut');
 		};
 	};
 
@@ -603,6 +598,10 @@ class Keyboard {
 
 	isMainStore () {
 		return this.isMain() && (this.match?.params?.action == 'store');
+	};
+
+	isMainGraph () {
+		return this.isMain() && (this.match?.params?.action == 'graph');
 	};
 
 	isMainIndex () {

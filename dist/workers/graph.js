@@ -71,6 +71,7 @@ let isHovering = false;
 let edgeMap = new Map();
 let hoverAlpha = 0.2;
 let fontFamily = 'Helvetica';
+let timeoutHover = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -156,7 +157,7 @@ initFonts = () => {
 	};
 
 	const name = 'Inter';
-	const fontFace = new FontFace(name, `url("../font/inter/regular.ttf") format("truetype")`);
+	const fontFace = new FontFace(name, `url("../font/inter/regular.woff") format("woff")`);
 
 	self.fonts.add(fontFace);
 	fontFace.load().then(() => { fontFamily = name; });
@@ -580,18 +581,29 @@ onMouseMove = ({ x, y }) => {
 	isHovering = false;
 
 	const active = nodes.find(d => d.isOver);
+	const d = getNodeByCoords(x, y);
+
 	if (active) {
 		active.isOver = false;
 	};
 
-	const d = getNodeByCoords(x, y);
 	if (d) {
 		d.isOver = true;
-		isHovering = true;
 	};
 
 	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 	redraw();
+
+	clearTimeout(timeoutHover);
+	timeoutHover = setTimeout(() => {
+		const d = getNodeByCoords(x, y);
+		if (d) {
+			isHovering = true;
+		};
+
+		send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
+		redraw();
+	}, 300);
 };
 
 onContextMenu = ({ x, y }) => {
@@ -612,10 +624,14 @@ onContextMenu = ({ x, y }) => {
 
 onAddNode = ({ sourceId, target }) => {
 	const id = data.nodes.length;
-	const source = nodes.find(it => it.id == sourceId);
 
-	if (!source) {
-		return;
+	if (sourceId) {
+		const source = nodes.find(it => it.id == sourceId);
+		if (!source) {
+			return;
+		};
+
+		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 	};
 
 	target = Object.assign(target, {
@@ -627,7 +643,6 @@ onAddNode = ({ sourceId, target }) => {
 	});
 
 	data.nodes.push(target);
-	data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 
 	updateForces();
 };

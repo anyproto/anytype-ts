@@ -1,7 +1,7 @@
 import { I } from 'Lib';
 
 export default {
-    wizardGraph: {
+    mainGraph: {
         category: 'Onboarding',
         showConfetti: true,
         items: [
@@ -12,7 +12,7 @@ export default {
 					</p>
 					<p>To access your Dashboard, click the icon in the center of your screen.</p>
 				`,
-                video: './img/help/31/1-inline-set.mp4',
+                video: './img/help/onboarding/space.mp4',
                 noButton: true,
                 buttons: [
                     { text: 'Next', action: 'dashboard' }
@@ -27,11 +27,12 @@ export default {
             vertical: I.MenuDirection.Top,
             horizontal: I.MenuDirection.Right,
             noArrow: true,
+			noClose: true,
             offsetY: -4,
         },
     },
 
-    wizardDashboard: {
+    dashboard: {
         category: 'Onboarding',
         showConfetti: true,
         items: [
@@ -43,26 +44,29 @@ export default {
 					</p>
 					<p>Let's take a few minutes to explore the features together.</p>
 				`,
-                video: './img/help/31/1-inline-set.mp4'
+                video: './img/help/onboarding/dashboard.mp4',
             },
             {
                 description: `
 					<p>On the Dashboard page, you'll find <b>Sets, which act as filters for your objects</b> with various viewing options.</p>
 					<p>Sets make it easy to navigate and collect specific objects, such as notes, links, tasks, ideas, and more.</p>
 					<p>To access different Set views, simply select them.</p>
-                `
+                `,
+                video: './img/help/onboarding/sets.mp4',
             },
             {
                 description: `
 					<p><b>Objects in Anytype</b> have specific types depending on their purpose. You can use system types or define custom ones. Structure objects with relations and links.</p>
 					<p>To add an object to a set, click the <span class="highlight">New</span> button and view its relation as properties in columns.</p>
-                `
+                `,
+                video: './img/help/onboarding/objects.mp4',
             },
             {
                 description: `
 					<p><b>You'll find the Sidebar on the left.</b> It's a navigation tool that you can customize with multiple widget types.</p>
 					<p>Change the widget appearance and see what looks best. Make your Favorites as a Tree Widget.</p>
-                `
+                `,
+                video: './img/help/onboarding/sidebar.mp4',
             },
             {
                 description: `
@@ -83,6 +87,7 @@ export default {
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
             noArrow: true,
+			noClose: true,
 			offsetY: -4,
 		},
     },

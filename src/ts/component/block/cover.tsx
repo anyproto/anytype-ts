@@ -434,14 +434,13 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			cb();
 		} else {
 			this.cover.css({ opacity: 0 });
+
 			el.onload = cb;
+			el.onerror = cb;
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
 			el.src = commonStore.imageUrl(coverId, Constant.size.cover);
-		} else
-		if (coverType == I.CoverType.Image) {
-			el.src = Util.coverSrc(coverId);
 		};
 	};
 	

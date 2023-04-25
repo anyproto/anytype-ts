@@ -1,17 +1,17 @@
 {
-  "register": {
-    "url": "https://anytype.typeform.com/to/GlS8NAKb"
-  },
+ 	"register": {
+		"url": "https://anytype.typeform.com/to/GlS8NAKb"
+	},
 
-  "pmf": {
-    "url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s"
-  },
+	"pmf": {
+		"url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s"
+	},
 
-  "delete": {
-    "url": "https://anytype.typeform.com/to/lSyoRr8U"
-  },
+	"delete": {
+		"url": "https://anytype.typeform.com/to/lSyoRr8U"
+	},
 
-  "object": {
-    "url": "https://anytype.typeform.com/to/edqF9PKQ"
-  }
+	"object": {
+		"url": "https://anytype.typeform.com/to/edqF9PKQ"
+	}
 }

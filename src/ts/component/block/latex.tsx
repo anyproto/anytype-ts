@@ -3,7 +3,6 @@ import $ from 'jquery';
 import Prism from 'prismjs';
 import katex from 'katex';
 import raf from 'raf';
-import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, keyboard, Util, C, focus, Renderer } from 'Lib';
@@ -11,9 +10,7 @@ import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import Constant from 'json/constant.json';
 
-interface Props extends I.BlockComponent, RouteComponentProps<any> {};
-
-const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
+const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComponent> {
 	
 	_isMounted = false;
 	range: any = { start: 0, end: 0 };
@@ -25,7 +22,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 	value: any = null;
 	empty: any = null;
 
-	constructor (props: Props) {
+	constructor (props: I.BlockComponent) {
 		super(props);
 
 		this.onKeyDownBlock = this.onKeyDownBlock.bind(this);
@@ -169,15 +166,15 @@ const BlockLatex = observer(class BlockLatex extends React.Component<Props> {
 
 		if (isEditing) {
 			// Undo
-			keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+z`, e, () => {
 				e.preventDefault();
-				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onUndo(rootId, 'editor', () => { focus.clear(true); });
 			});
 
 			// Redo
-			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
-				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onRedo(rootId, 'editor', () => { focus.clear(true); });
 			});
 		};
 

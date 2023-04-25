@@ -13,8 +13,8 @@
 
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; vertical-align: middle; margin: 0px 2px; }
 
-		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background 0.2s ease-in-out; cursor: pointer; }
-		.cellContent:hover, .cellContent.hover { background: $colorHover; }
+		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background $transitionCommon; }
+		.cellContent:hover, .cellContent.hover { background: $colorHoverMedium; }
 		.cellContent > .wrap { display: inline; }
 		.cellContent.isName .name { display: inline; }
 		.cellContent {
@@ -57,6 +57,7 @@
 
 	.block.blockFeatured.align0 {
 		.cell.first { margin-left: -6px; }
+		.cell.first .bullet { display: none; }
 	}
 
 	.block.blockFeatured.small { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }

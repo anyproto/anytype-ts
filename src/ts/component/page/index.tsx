@@ -16,7 +16,6 @@ import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/account/select';
 import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
-import PageAuthShare from './auth/share';
 import PageAuthDeleted from './auth/deleted';
 import PageAuthUsecase from './auth/usecase';
 
@@ -44,11 +43,8 @@ const Components: any = {
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/success':			 PageAuthSuccess,
-	'auth/share':			 PageAuthShare,
 	'auth/deleted':			 PageAuthDeleted,
 	'auth/usecase':			 PageAuthUsecase,
-
-	'object/share':			 PageAuthShare,
 
 	'main/empty':			 PageMainEmpty,		
 	'main/edit':			 PageMainEdit,
@@ -220,7 +216,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		this.dashboardWizardCheck();
+		this.onboardingCheck();
 		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
@@ -238,7 +234,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				Survey.check(I.SurveyType.Pmf);
 				Survey.check(I.SurveyType.Object);
 
-				this.shareCheck();
 				Storage.delete('redirect');
 			} else {
 				Storage.set('survey', { askPmf: true });
@@ -247,36 +242,17 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		}, Constant.delay.popup);
 	};
 
-	shareCheck () {
-		const shareSuccess = Storage.get('shareSuccess');
-		if (!shareSuccess) {
-			return;
-		};
-
-		Storage.delete('shareSuccess');
-
-		popupStore.open('confirm', {
-			data: {
-				title: 'You\'ve got shared objects!',
-				text: 'They will be accessible in the "Shared" tab in Home within a minute',
-				textConfirm: 'Ok',
-				canCancel: false,
-				onConfirm: () => {}
-			},
-		});
-	};
-
-	dashboardWizardCheck () {
+	onboardingCheck () {
 		const match = this.getMatch();
 		const home = ObjectUtil.getSpaceDashboard();
 		const { id } = match.params;
 		const isPopup = keyboard.isPopup();
 
-		if (!home || !id || (home.id != id) || isPopup) {
+		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('dashboard')) {
 			return;
 		};
 
-		Onboarding.start('wizardDashboard', false);
+		popupStore.open('migration', { data: { type: 'onboarding' } });
 	};
 
 	unbind () {

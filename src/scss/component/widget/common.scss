@@ -15,8 +15,8 @@
 		}
 
 		.iconWrap { width: 24px; height: 24px; border-radius: 4px; cursor: default; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-		.iconWrap:hover { background-color: $colorHover; }
-		.iconWrap.active { opacity: 1; background-color: $colorHover; }
+		.iconWrap:hover { background-color: $colorHoverMedium; }
+		.iconWrap.active { opacity: 1; background-color: $colorHoverMedium; }
 
 		.icon { width: 20px; height: 20px; flex-shrink: 0; }
 		.icon.back { background-image: url('~img/icon/widget/back.svg'); }
@@ -35,7 +35,7 @@
 	.dimmer { position: absolute; height: 100%; width: 100%; border-radius: 2px; left: 0px; top: 0px; z-index: 1; cursor: grab; display: none; }
 	.label.empty { text-align: center; @include text-small; color: $colorDarkGrey; }
 
-	.contentWrapper { transition: height 0.3s ease-out; }
+	.contentWrapper { transition: height 0.4s $easeInQuint; }
 
 	.icon.remove { position: absolute; top: -15px; right: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: pointer !important; }
 	.icon.remove {
@@ -52,7 +52,7 @@
 	.head {
 		.clickable { width: calc(100% - 60px); }
 		.buttons { display: flex; }
-		.iconWrap.options { background-color: $colorHover; }
+		.iconWrap.options { background-color: $colorHoverMedium; }
 	}
 }
 

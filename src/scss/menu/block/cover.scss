@@ -12,7 +12,7 @@
 			flex-shrink: 0;
 		}
 		.head {
-			.btn { display: inline-block; margin-right: 16px; transition: $transitionFast; cursor: pointer; }
+			.btn { display: inline-block; margin-right: 16px; transition: $transitionAllCommon; }
 			.btn:hover, .btn.active { color: $colorBlack; }
 			.btn:last-child { margin: 0px; }
 		}

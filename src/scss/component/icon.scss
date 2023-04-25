@@ -2,18 +2,16 @@
 
 .icon { 
 	display: inline-block; vertical-align: middle; background-size: 100% 100%; background-repeat: no-repeat;
-	background-position: center center; transition: $transitionFast; position: relative;
+	background-position: center center; transition: $transitionAllCommon; position: relative;
 }
 
-.arrow { background-position: center center; transition: $transitionFast; background-repeat: no-repeat; background-size: 100% 100%; }
+.arrow { background-position: center center; transition: $transitionAllCommon; background-repeat: no-repeat; background-size: 100% 100%; }
 
 .icon.home { background-image: url('~img/icon/home.svg'); }
 .icon.home-big { background-image: url('~img/icon/home-big.svg'); }
 
 .icon.back, .icon.forward { background-image: url('~img/icon/back.svg'); }
 .icon.forward { transform: rotateZ(180deg); }
-
-.icon.help { width: 44px; height: 44px; background-image: url('~img/icon/footer/help.svg'); }
 
 .icon.toggleSidebar { background-image: url('~img/icon/sidebar/toggle-sidebar.svg'); }
 

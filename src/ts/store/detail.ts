@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, Relation, DataUtil, translate } from 'Lib';
+import { I, Relation, ObjectUtil, translate } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -155,7 +155,7 @@ class DetailStore {
 	/** Mutates object provided and also returns a new object. Sets defaults.
 	 * This Function contains domain logic which should be encapsulated in a model */
 	public mapper (object: any): any {
-		object.name = object.name || DataUtil.defaultName('page');
+		object.name = object.name || ObjectUtil.defaultName('page');
 		object.layout = object.layout || I.ObjectLayout.Page;
 		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 
@@ -226,7 +226,6 @@ class DetailStore {
 	};
 
 	private mapObjectType (object: any) {
-		object.smartblockTypes = Relation.getArrayValue(object.smartblockTypes).map(it => Number(it));
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		object.isInstalled = object.workspaceId != Constant.storeSpaceId;

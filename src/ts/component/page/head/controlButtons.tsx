@@ -53,6 +53,12 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			allowedCover = false;
 		};
 
+		if (root.isObjectType()) {
+			allowedLayout = false;
+			allowedCover = false;
+			allowedRelation = false;
+		};
+
 		return (
 			<div className="controlButtons">
 				{allowedIcon ? (

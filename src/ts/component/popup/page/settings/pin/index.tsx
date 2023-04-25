@@ -1,40 +1,15 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Title, Label, Select, Button } from 'Component';
 import { I, Util, Storage, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
-import Head from '../head';
-
-interface Props extends I.Popup, RouteComponentProps<any> {
-	prevPage: string;
-	onPage: (id: string) => void;
-	setConfirmPin: (v: () => void) => void;
-};
-
-const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<Props> {
-
-	constructor (props: any) {
-		super(props);
-
-		this.onTurnOnPin = this.onTurnOnPin.bind(this);
-		this.onTurnOffPin = this.onTurnOffPin.bind(this);
-		this.onChangePin = this.onChangePin.bind(this);
-	};
+const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex extends React.Component<I.PopupSettings> {
 
 	render () {
 		const pin = Storage.get('pin');
 		const pinTime = commonStore.pinTime / 1000;
-		const times: any[] = [
-			{ id: 60 },
-			{ id: 300 },
-			{ id: 600 },
-			{ id: 3600 },
-		].map((it: any) => {
-			it.name = Util.duration(it.id);
-			return it;
-		});
+		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: Util.duration(time) }));
 
 		return (
 			<React.Fragment>
@@ -51,8 +26,9 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 								<Select 
 									id="pinTime" 
 									arrowClassName="light" 
-									options={times} value={String(pinTime || '')} 
-									onChange={(id: string) => { commonStore.pinTimeSet(id); }}
+									options={times}
+									value={String(pinTime || '')} 
+									onChange={v => commonStore.pinTimeSet(v)}
 									menuParam={{ horizontal: I.MenuDirection.Right }}
 								/>
 							</div>
@@ -75,14 +51,14 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 		);
 	};
 
-	onTurnOnPin () {
+	onTurnOnPin = () => {
 		const { onPage } = this.props;
 
 		onPage('pinSelect');
 		analytics.event('PinCodeOn');
 	};
 
-	onTurnOffPin () {
+	onTurnOffPin = () => {
 		const { onPage, setConfirmPin } = this.props;
 
 		setConfirmPin(() => { 
@@ -94,10 +70,10 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 		analytics.event('PinCodeOff');
 	};
 
-	onChangePin () {
+	onChangePin = () => {
 		const { onPage, setConfirmPin } = this.props;
 
-		setConfirmPin(() => { onPage('pinSelect'); });
+		setConfirmPin(() => onPage('pinSelect'));
 
 		onPage('pinConfirm');
 		analytics.event('PinCodeChange');

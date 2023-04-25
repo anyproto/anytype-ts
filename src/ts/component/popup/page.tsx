@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { RouteComponentProps } from 'react-router';
+import { observer } from 'mobx-react';
 import { I, history as historyPopup, Util } from 'Lib';
 import { Page } from 'Component';
 import { menuStore } from 'Store';
@@ -93,8 +93,8 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 
 		width >= ww ? obj.addClass('full') : obj.removeClass('full');
 
-		obj.css({ width: width });
-		loader.css({ width: width, height: obj.height() });
+		obj.css({ width });
+		loader.css({ width, height: obj.height() });
 		position();
 	};
 

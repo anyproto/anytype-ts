@@ -80,7 +80,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 						ref={(ref: any) => { this.ref = ref; }}
 						id="value"
 						readonly={readonly || !isEditing}
-						placeholder={DataUtil.defaultName('set')}
+						placeholder={ObjectUtil.defaultName(isCollection ? 'collection' : 'set')}
 						onFocus={this.onFocus}
 						onMouseDown={this.onTitle}
 						onBlur={this.onBlur}
@@ -184,7 +184,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
 				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
-					C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, onCreate);
 					analytics.event('InlineSetSetSource', { type: 'newObject' });
 				});
 			};
@@ -333,7 +333,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 		const object = getTarget();
 
 		let name = String(object.name || '');
-		if ((name == DataUtil.defaultName('page')) || (name == DataUtil.defaultName('set'))) {
+		if ((name == ObjectUtil.defaultName('page')) || (name == ObjectUtil.defaultName('set'))) {
 			name = '';
 		};
 
@@ -366,7 +366,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 			return;
 		};
 
-		if ((value == DataUtil.defaultName('page')) || (value == DataUtil.defaultName('set'))) {
+		if ((value == ObjectUtil.defaultName('page')) || (value == ObjectUtil.defaultName('set'))) {
 			value = '';
 		};
 

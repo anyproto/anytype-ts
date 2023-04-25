@@ -203,19 +203,19 @@ class Action {
 		});
 	};
 
-	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
+	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
 		this.openDir(paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};
 
-			C.ObjectListExport(paths[0], ids, format, zip, nested, files, false, false, false, (message: any) => {
+			C.ObjectListExport(paths[0], ids, format, zip, nested, files, archived, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
 				Renderer.send('pathOpen', paths[0]);
-				analytics.event('Export' + I.ExportType[format], { middleTime: message.middleTime });
+				analytics.event('Export', { type: format, middleTime: message.middleTime });
 
 				if (callBack) {
 					callBack(message);
@@ -236,22 +236,25 @@ class Action {
 
 			let { details } = message;
 			let toast = '';
+			let subId = '';
 
 			switch (object.type) {
 				case Constant.storeTypeId.type:
 					toast = `Object type <b>${object.name}</b> has been added to your library`;
+					subId = Constant.subId.type;
 					break;
 
 				case Constant.storeTypeId.relation:
 					toast = `Relation <b>${object.name}</b> has been added to your library`;
-
-					detailStore.update(Constant.subId.relation, { id: details.id, details }, false);
+					subId = Constant.subId.relation;
 					break;
 			};
 
 			if (showToast) {
 				Preview.toastShow({ text: toast });
 			};
+
+			detailStore.update(subId, { id: details.id, details }, false);
 			analytics.event('ObjectInstall', { objectType: object.type, relationKey: object.relationKey });
 		});
 	};
@@ -325,14 +328,14 @@ class Action {
 		const { walletPath } = authStore;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], walletPath, (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], walletPath, Util.rand(1, Constant.iconCnt), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};
 
 				const { accountId } = message;
 
-				C.ObjectImport({ paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, (message: any) => {
+				C.ObjectImport({ paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, (message: any) => {
 					if (onError(message.error)) {
 						return;
 					};
@@ -342,7 +345,9 @@ class Action {
 							return;
 						};
 
-						DataUtil.onAuth(message.account);
+						DataUtil.onAuth(message.account, () => {
+							popupStore.open('migration', { data: { type: 'import' } });
+						});
 					});
 				});
 			});

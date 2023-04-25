@@ -4,24 +4,18 @@ import { I, C, translate } from 'Lib';
 import { commonStore } from 'Store';
 import Head from '../head';
 
-interface Props extends I.Popup {
-	prevPage: string;
-	onPage: (id: string) => void;
-	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
-};
-
 interface State {
 	error: string;
 };
 
-class PopupSettingsPageImportNotion extends React.Component<Props, State> {
+class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, State> {
 
 	ref: any = null;
 	state: State = {
 		error: '',
 	};
 
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onImport = this.onImport.bind(this);

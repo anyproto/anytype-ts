@@ -29,7 +29,7 @@
 		.section.template {
 			.btn { 
 				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorDarkGrey; 
-				cursor: pointer; transition: $transitionFast;
+				cursor: pointer; transition: $transitionAllCommon;
 			}
 			.btn {
 				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
@@ -50,19 +50,24 @@
 			.item {
 				.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
 
-				.clickable { width: 228px; padding: 4px; display: flex; transition: $transitionFast; border-radius: 4px; }
+				.clickable { width: 228px; padding: 4px; display: flex; transition: $transitionAllCommon; border-radius: 4px; }
 
 				.icon { flex-shrink: 0; width: 20px; height: 20px; margin-right: 8px; }
 				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorDarkGrey; }
 			}
-			.item.canEdit, .item.add {
+			.item.canEdit {
 				.clickable { cursor: pointer; }
-				.clickable:hover { background: $colorHover; }
+				.clickable:hover { background: $colorHoverLight; }
 			}
 
 			.item.add { line-height: 20px; }
 			.item.add {
-				.name { color: $colorDarkGrey; }
+				.icon { transition: $transitionAllCommon; }
+				.name { color: $colorDarkGrey; transition: $transitionAllCommon; }
+			}
+			.item.add:hover { 
+				.name { color: $colorBlack; } 
+				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
 			}
 		}
 
