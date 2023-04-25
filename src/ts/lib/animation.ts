@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { I } from 'Lib';
 
 const Duration = {
-	Normal: 0.2,
+	Normal: 0.25,
 	Word: 0.07,
 };
 
@@ -30,6 +30,7 @@ class Animation {
 
 	from (callBack?: () => void) {
 		const css = { opacity: 1, transform: 'translate3d(0px,0px,0px)' };
+
 		this.initNodes(css, I.AnimDirection.From);
 
 		raf(() => {
@@ -94,6 +95,8 @@ class Animation {
 
 				case I.AnimType.Text: {
 					if (dir == I.AnimDirection.From) {
+						el.html(el.attr('data-content'));
+
 						this.applyCss(el, css, Duration.Normal, delay);
 						delay += Duration.Normal;
 						break;
@@ -103,17 +106,19 @@ class Animation {
 
 					const processWord = (word) => {
 						const w = $('<span></span>').html(word).addClass('animationWord');
+
 						el.append(w);
 						el.append(' ');
+
 						this.applyCss(w, css, Duration.Word, delay);
 						delay += Duration.Word * WORD_DELAY_COEF;
-					}
+					};
 
 					$(`<div>${el.attr('data-content')}</div>`).contents().toArray().forEach(child => {
-						if (child.nodeType === 3) {
+						if (child.nodeType == 3) {
 							child.textContent.trim().split(' ').forEach(processWord);
 						} else {
-							processWord(child)
+							processWord(child);
 						};
 					});
 					break;

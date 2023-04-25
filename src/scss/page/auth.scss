@@ -93,21 +93,20 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 	.label { color: #5C5A54; min-width: 415px; }
 }
 
-.bodyAuthOnboard #popupConfirm-innerWrap,
-.bodyAuthLogin #popupConfirm-innerWrap,
-.bodyAuthDeleted #popupConfirm-innerWrap { background: #1A1A18; min-width: 700px; padding-top: 15px; }
-
-.bodyAuthOnboard #popupConfirm-innerWrap,
-.bodyAuthLogin #popupConfirm-innerWrap,
-.bodyAuthDeleted #popupConfirm-innerWrap {
-	ul { list-style-position: inside; margin-bottom: 10px; }
-	.content { padding: 0px 20px; text-align: left; }
-	.title { font-size: 14px; color: #929082; }
-	.buttons { width: 200px; }
+.bodyAuthOnboard, .bodyAuthLogin, .bodyAuthDeleted {
+	#popupConfirm-innerWrap { background: #1A1A18; min-width: 700px; padding-top: 15px; }
+	#popupConfirm-innerWrap {
+		ul { list-style-position: inside; margin-bottom: 10px; }
+		.content { padding: 0px 20px; text-align: left; }
+		.title { font-size: 14px; color: #929082; }
+		.buttons { width: 200px; }
+	}
 }
 
-.bodyAuthDeleted #popupConfirm-innerWrap {
-	.buttons { flex-direction: row-reverse; justify-content: space-between; width: 100%;}
+.bodyAuthDeleted {
+	#popupConfirm-innerWrap {
+		.buttons { flex-direction: row-reverse; justify-content: space-between; width: 100%;}
+	}
 }
 
 .pageAuthOnboard {
@@ -143,6 +142,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 		.iconObject { margin: 0; }
 		.accountName, .spaceName { text-overflow: ellipsis; overflow: hidden; width: 100px; }
 	}
+
 	.soulContent.soulCreating {
 		.iconObject { background: white; box-shadow: 0 0 0 0 white; animation: pulse 2s infinite; }
 
@@ -152,6 +152,7 @@ html.bodyIndex, html.bodyAuth, html.bodyObject {
 			100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 121, 63, 0); }
 		  }
 	}
+
 	.soulContent.spaceCreating {
 		.account { transform: translateX(-100px); }
 		.space { transform: translateX(100px); opacity: 1; }
