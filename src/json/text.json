@@ -102,7 +102,7 @@
 	"authLoginLabel": { "en": "Type your recovery phrase" },
 	"authLoginSelfHost": { "en": "Self-host" },
 	"authLoginSubmit": { "en": "Continue" },
-	"authLoginLostPhrase": { "en": "I lost the phrase" },
+	"authLoginLostPhrase": { "en": "I've lost the phrase" },
 	"authLoginLostPhrasePopupTitle": { "en": "Lost Phrase" },
 	"authLoginLostPhrasePopupContent": { "en": "Anytype cannot recover recovery phrase for you<br/>There is technically no possible way access it, as it’s not stored on Anytype side. Check out the places where it can be stored: <ul><li>In system password storage. We did it for you automatically</li><li>Inside a password manager if you use one</li><li>On a piece of paper stored in a secure place chosen prior</li></ul>" },
 
