@@ -4,6 +4,22 @@ html.bodyIndex, html.bodyAuth {
 	body { background: #060606 !important; color: $colorSecondary; }
 }
 
+html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
+	#popupConfirm-innerWrap { background: #1A1A18; min-width: 700px; padding-top: 15px; }
+	#popupConfirm-innerWrap {
+		ul { list-style-position: inside; margin-bottom: 10px; }
+		.content { padding: 0px 20px; text-align: left; }
+		.title { font-size: 14px; color: #929082; }
+		.buttons { width: 200px; }
+	}
+}
+
+html.bodyAuthDeleted {
+	#popupConfirm-innerWrap {
+		.buttons { flex-direction: row-reverse; justify-content: space-between; width: 100%;}
+	}
+}
+
 .pageAuth, .pageIndex {
 	.frame { width: 672px; padding: 60px 48px 48px 48px; text-align: center; background: none !important; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
@@ -104,22 +120,6 @@ html.bodyIndex, html.bodyAuth {
 	.label { color: #5c5a54; min-width: 415px; }
 }
 
-.bodyAuthOnboard, .bodyAuthLogin, .bodyAuthDeleted {
-	#popupConfirm-innerWrap { background: #1a1a18; min-width: 700px; padding-top: 15px; }
-	#popupConfirm-innerWrap {
-		ul { list-style-position: inside; margin-bottom: 10px; }
-		.content { padding: 0px 20px; text-align: left; }
-		.title { font-size: 14px; color: #929082; }
-		.buttons { width: 200px; }
-	}
-}
-
-.bodyAuthDeleted {
-	#popupConfirm-innerWrap {
-		.buttons { flex-direction: row-reverse; justify-content: space-between; width: 100%; }
-	}
-}
-
 .pageAuthOnboard {
 	canvas { height: 100vh; width: 100vw; }
 
@@ -183,4 +183,38 @@ html.bodyIndex, html.bodyAuth {
 	.button { color: #cbc9bd }
 	.button.outlined { border: 1px solid #5c5a54; }
 	.remove { color: $colorRed; font-weight: 500; font-size: 16px; cursor: pointer; }
+
+	.row { 
+		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
+		@include text-paragraph; line-height: 28px;
+	}
+	.row.red { color: $colorRed; }
+}
+
+.pageAuthUsecase {
+	.usecaseWrapper { transition: opacity 600ms; }
+	.frame { width: 836px; box-shadow: 0px 6px 24px rgba(0,0,0,0.2); border-radius: 12px; padding: 44px 48px 36px; text-align: left; }
+
+	.frame {
+		.frameTitle { @include text-header1; margin-bottom: 8px; }
+		.frameLabel { color: $colorDarkGrey; margin-bottom: 18px; }
+
+		.usecaseList { display: flex; justify-content: space-between; align-items: stretch; gap: 0px 16px; }
+		.usecaseList {
+			.case { 
+				position: relative; overflow: hidden; width: 236px; min-height: 236px; padding: 16px 16px 124px 16px; margin-bottom: 18px;
+				cursor: pointer; transition: $transitionAllCommon; border: 1px solid $colorBorderDark; border-radius: 8px; 
+			}
+			.case:hover { border-color: $colorMediumGrey; }
+			.case {
+				.caseTitle { @include text-header3; margin-bottom: 8px; }
+				.caseLabel { color: $colorDarkGrey; }
+
+				img { position: absolute; width: 100%; left: 0; bottom: 0; }
+			}
+		}
+
+		.button { width: auto; }
+		.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.3); }
+	}
 }

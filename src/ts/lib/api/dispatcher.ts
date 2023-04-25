@@ -2,13 +2,11 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, translate, analytics, Renderer, Action, Dataview, Preview } from 'Lib';
+import { Util, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode } from 'Lib';
 import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
-import { Decode } from './struct';
-import { Mapper } from './mapper';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
 

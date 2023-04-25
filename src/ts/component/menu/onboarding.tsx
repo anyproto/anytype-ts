@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import * as Docs from 'Docs';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard, Action, ObjectUtil } from 'Lib';
+import { I, Onboarding, Util, analytics, keyboard, ObjectUtil } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
