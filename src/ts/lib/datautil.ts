@@ -293,15 +293,17 @@ class DataUtil {
 					commonStore.redirectSet('');
 				};
 
-				popupStore.open('migration', {
-					onClose: () => {
-						const migrationHint = Storage.get('migrationHint') || {};
-						if (!Storage.get('migrationHint') || migrationHint.showHint) {
-							Storage.set('migrationHint', { showHint: true });
-							Preview.showMigrationTooltip();
-						};
-					}
-				});
+				window.setTimeout(() => {
+					popupStore.open('migration', {
+						onClose: () => {
+							const migrationHint = Storage.get('migrationHint') || {};
+							if (!Storage.get('migrationHint') || migrationHint.showHint) {
+								Storage.set('migrationHint', { showHint: true });
+								Preview.showMigrationTooltip();
+							};
+						}
+					});
+				}, Constant.delay.popup);
 
 				if (callBack) {
 					callBack();
