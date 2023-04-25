@@ -49,6 +49,8 @@ html.bodyAuthDeleted {
 	.button { width: 192px; }
 	.button.blank { border-color: #1e1e1c; }
 	.button.blank:hover { border-color: #272723; background: none; }
+
+	.withError { background: #240e07; }
 }
 
 .pageIndexIndex, .pageAuthSelect {
@@ -59,17 +61,8 @@ html.bodyAuthDeleted {
 
 .pageAuthLogin {
 	.form { width: 100%; }
-
 	.icon { height: 20px; width: 20px; transition: $transitionAllCommon; }
-	.icon.see { background-image: url('~img/icon/keyphrase/see0.svg'); }
-	.icon.see:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
-	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
-	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
-	
-	.keyPhraseContainer { position: relative; margin: 0px 0px 20px 0px; }
-	.keyPhraseContainer {
-		.icon { position: absolute; right: -32px; top: 50%; margin: -10px 0px 0px 0px; }
-	}
+	.keyPhraseWrapper { margin: 0px 0px 20px 0px; }
 
 	.small { color: #cbc9bd; cursor: pointer; transition: $transitionAllCommon; }
 	.small:hover { color: $colorWhite; }
@@ -95,7 +88,6 @@ html.bodyAuthDeleted {
 	.title { font-size: 22px; margin-bottom: 20px; }
 	.input { width: 86px; height: 86px; border: none; border-radius: 24px; background: rgba(44, 43, 39, 0.3); margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
 	.input:last-child { margin: 0px; }
-	.isInvalid .input { background: #240E07; }
 }
 
 .pageAuthSetup {
@@ -132,7 +124,6 @@ html.bodyAuthDeleted {
 	.storageInfo,
 	.moreInfo,
 	.questionMark:hover { cursor: pointer; }
-	.keyPhrase { width: fit-content }
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
 	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: block; background-color: #5c5a54; color: black; }

@@ -121,7 +121,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (stage == Stage.KeyPhrase) {
 			return (
 				<div className="animation" onClick={this.onCopy}>
-					<KeyPhrase isBlurred={!keyPhraseCopied} value={authStore.phrase} />
+					<KeyPhrase value={authStore.phrase} />
 				</div>
 			);
 		};

@@ -1,13 +1,32 @@
-.keyPhrase {
-    border-radius: 24px; background: rgba(44, 43, 39, 0.3); font-size: 18px; line-height: 18px; display: flex; width: 100%;
-    flex-direction: row; align-items: center; justify-content: center; padding: 36px 48px;
-}
+@import "~scss/_vars";
 
-.keyPhrase {
-    .textColor { padding: 0px 10px; font-size: 18px; min-height: 18px; user-select: text !important; }
+.keyPhraseWrapper {
+	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: 100%; position: relative; padding: 36px 48px; font-size: 18px; line-height: 18px;
 }
+.keyPhraseWrapper {
+	.keyPhrase { width: 100%; text-align: center; -webkit-user-modify: read-write-plaintext-only; }
+	.keyPhrase {
+		.textColor { padding: 0px 10px; font-size: 18px; min-height: 18px; user-select: text !important; }
+		.rect { height: 35px; display: inline-block; vertical-align: top; border-radius: 35px; }
 
-.keyPhrase:hover { cursor: text; background: rgba(44, 43, 39, 0.5); }
-.keyPhrase.isBlurred { filter: none } // to overwrite the commmon.scss .isBlurred class
-.keyPhrase.isBlurred span { filter: blur(7px); }
-.keyPhrase.isInvalid { background: #240E07; }
+		.bgColor-orange { background: $colorOrange !important; }
+		.bgColor-red { background: $colorRed !important; }
+		.bgColor-pink { background: $colorPink !important; }
+		.bgColor-purple { background: $colorPurple !important; }
+		.bgColor-blue { background: $colorBlue !important; }
+		.bgColor-ice { background: $colorIce !important; }
+		.bgColor-lime { background: $colorLime !important; }
+		.bgColor-green { background: $colorGreen !important; }
+	}
+
+	.icon { height: 20px; width: 20px; transition: $transitionAllCommon; position: absolute; right: -32px; top: 50%; margin: -10px 0px 0px 0px; }
+	.icon.see { background-image: url('~img/icon/keyphrase/see0.svg'); }
+	.icon.see:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
+	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
+	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
+}
+.keyPhraseWrapper:hover { cursor: text; background: rgba(44, 43, 39, 0.5); }
+
+.keyPhraseWrapper.isHidden {
+	.rect { filter: blur(7px); }
+}

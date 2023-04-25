@@ -1,6 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
+import { Icon } from 'Component';
 import { Util } from 'Lib';
 
 const COLORS = [
@@ -13,18 +14,25 @@ const COLORS = [
 	'lime',
 ];
 
-type Props = {
-	value: string
-	isBlurred?: boolean,
-	isEditable?: boolean
-	isInvalid?: boolean
-	onChange?: (phrase: string) => void
+interface Props {
+	value: string;
+	onChange?: (phrase: string) => void;
 };
 
-class KeyPhrase extends React.Component<Props> {
+interface State {
+	value: string;
+	isHidden: boolean;
+};
+
+class KeyPhrase extends React.Component<Props, State> {
 
 	public static defaultProps: Props = {
 		value: '',
+	};
+
+	state = {
+		value: '',
+		isHidden: true,
 	};
 
 	node = null;
@@ -32,62 +40,107 @@ class KeyPhrase extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
-		this.onInput = this.onInput.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onToggle = this.onToggle.bind(this);
 	};
 
 	render () {
-		const { isBlurred, isEditable, isInvalid } = this.props;
+		const { isHidden } = this.state;
+		const cw = [ 'keyPhraseWrapper' ];
 		const cn = [ 'keyPhrase' ];
 
-		if (isBlurred) {
-			cn.push('isBlurred');
-		};
-
-		if (isInvalid) {
-			cn.push('isInvalid');
+		if (isHidden) {
+			cw.push('isHidden');
 		};
 
 		return (
-			<div
+			<div 
 				ref={ref => this.node = ref}
-				contentEditable={isEditable}
-				suppressContentEditableWarning={true}
-				className={cn.join(' ')}
-				onInput={this.onInput}
-			/>
+				className={cw.join(' ')}
+			>
+				<div
+					contentEditable={true}
+					suppressContentEditableWarning={true}
+					className={cn.join(' ')}
+					onKeyUp={this.onKeyUp}
+				/>
+				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
+			</div>
 		);
 	};
 
 	componentDidMount () {
-		this.setValue(this.props.value);
+		this.setState({ value: this.props.value });
 	};
 
-	componentDidUpdate() {
+	componentDidUpdate () {
+		this.setValue(this.state.value);
 	};
 
 	focus () {
+		const node = $(this.node);
+		const phrase = node.find('.keyPhrase');
+		const value = this.getValue();
+		const length = value.length;
+
+		setRange(phrase.get(0), { start: length, end: length });
 	};
 
 	setValue (v: string) {
 		const node = $(this.node);
+		const phrase = node.find('.keyPhrase');
 
-		node.html(this.getHtml(v));
+		phrase.html(this.getHtml(v));
 	};
 
 	getValue () {
 		const node = $(this.node);
-		return String(node.get(0).innerText || '').replace(/\s+/g, ' ').trim();
+		const phrase = node.find('.keyPhrase');
+
+		return String(phrase.get(0).innerText || '').replace(/\s+/g, ' ').trim();
 	};
 
 	getHtml (v: string) {
-		return String(v || '').split(' ').map((word, index) => {
+		v = String(v || '');
+
+		if (!v) {
+			return '';
+		};
+
+		const { isHidden } = this.state;
+
+		return v.split(' ').map((word, index) => {
 			const color = COLORS[index % COLORS.length];
-			return `<span class="textColor textColor-${color}">${Util.ucFirst(word)}</span>`;
+			
+			let w = '';
+			if (isHidden) {
+				w = `<span class="rect bgColor bgColor-${color}" style="width: ${9 * word.length}px"></span>`;
+			} else {
+				w = `<span class="textColor textColor-${color}">${Util.ucFirst(word)}</span>`
+			};
+			return w;
 		}).join(' ');
 	};
 
-	onInput () {
-		this.props.onChange(this.getValue());
+	onKeyUp () {
+		const { onChange } = this.props;
+		const node = $(this.node);
+		const value = this.getValue();
+
+		this.focus();
+
+		onChange(value);
+		node.removeClass('withError');
+	};
+
+	onToggle () {
+		this.setState({ isHidden: !this.state.isHidden });
+	};
+
+	setError () {
+		const node = $(this.node);
+
+		node.addClass('withError');
 	};
 
 };
