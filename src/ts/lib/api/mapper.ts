@@ -1,7 +1,6 @@
 import { Rpc } from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
-import { Encode, Decode } from './struct';
-import { I, M, Util } from 'Lib';
+import { I, M, Util, Encode, Decode } from 'Lib';
 
 export const Mapper = {
 

@@ -311,20 +311,22 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				if (message.error.code) {
 					const error = Errors.AccountCreate[message.error.code] || message.error.description;
 					this.setState({ error });
+					return;
 				};
 
 				if (message.config) {
 					commonStore.configSet(message.config, false);
 				};
 
-				authStore.accountSet(message.account);
+				Renderer.send('keytarSet', message.account.id, authStore.phrase);
 				authStore.previewSet('');
 
 				Storage.set('timeRegister', Util.time());
-				Renderer.send('keytarSet', message.account.id, authStore.phrase);
 
+				DataUtil.onAuth(message.account, () => {
+					Util.route('/auth/usecase');
+				});
 				analytics.event('CreateAccount');
-				Util.route('/auth/setup/init', true);
 			});
 		})
 	};
