@@ -16,7 +16,6 @@ import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/accountSelect';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
-import PageAuthUsecase from './auth/usecase';
 
 import PageMainEmpty from './main/empty';
 import PageMainEdit from './main/edit';
@@ -31,6 +30,7 @@ import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
+import PageMainUsecase from './main/usecase';
 
 const Components: { [key: string]: any } = {
 	'/':					 PageAuthSelect,
@@ -42,7 +42,6 @@ const Components: { [key: string]: any } = {
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
-	'auth/usecase':			 PageAuthUsecase,
 
 	'main/empty':			 PageMainEmpty,		
 	'main/edit':			 PageMainEdit,
@@ -57,6 +56,7 @@ const Components: { [key: string]: any } = {
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
 	'main/block':			 PageMainBlock,
+	'main/usecase':			 PageMainUsecase,
 };
 
 const Titles = {
@@ -82,7 +82,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
 		const showNotice = !Storage.get('firstRun');
-		const showSidebar = page == 'main';
+		const showSidebar = page == 'main' && action != 'usecase';
 
 		if (showNotice) {
 			Components['/'] = PageAuthNotice;

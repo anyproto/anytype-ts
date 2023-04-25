@@ -321,7 +321,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				Storage.set('timeRegister', Util.time());
 
 				DataUtil.onAuth(message.account, () => {
-					Util.route('/auth/usecase');
+					Util.route('/main/usecase');
 				});
 				analytics.event('CreateAccount');
 			});
