@@ -5,6 +5,7 @@ import Renderer from './renderer';
 import * as C from './api/command';
 import { dispatcher } from './api/dispatcher';
 import { Mapper } from './api/mapper';
+import { Encode, Decode } from './api/struct';
 
 import { keyboard, Key } from './keyboard';
 import { sidebar } from './sidebar';
@@ -73,6 +74,8 @@ export {
 	translate,
 	dispatcher,
 	Mapper,
+	Encode, 
+	Decode,
 	analytics,
 	history,
 	scrollOnMove,

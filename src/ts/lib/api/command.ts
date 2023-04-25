@@ -632,7 +632,7 @@ const BlockTableColumnListFill = (contextId: string, blockIds: string[], callBac
 // ---------------------- BLOCK FILE ---------------------- //
 
 const BlockFileCreateAndUpload = (contextId: string, targetId: string, position: I.BlockPosition, url: string, path: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockfFile.CreateAndUpload.Request();
+	const request = new Rpc.BlockFile.CreateAndUpload.Request();
 
 	request.setContextid(contextId);
 	request.setTargetid(targetId);
