@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Frame, Title, Label, Error, Button, Header, Footer, Icon } from 'Component';
-import { I, Storage, translate, C, DataUtil, Util, ObjectUtil, Action } from 'Lib';
+import { I, Storage, translate, C, DataUtil, Util, Action } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -78,18 +78,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					break;
 				};
 
-				case 'register': {
-					title = translate('authSetupRegister');
-					break;
-				};
-
 				case 'select': {
 					title = translate('authSetupSelect');
-					break;
-				};
-
-				case 'share': {
-					title = translate('authSetupShare');
 					break;
 				};
 			};

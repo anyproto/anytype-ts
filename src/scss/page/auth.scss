@@ -117,11 +117,13 @@ html.bodyAuthDeleted {
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted {
 	.frame { width: 866px; display: flex; flex-direction: column; gap: 12px 0px; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; }
-	.label { color: #5c5a54; min-width: 415px; }
+	.label { color: #5c5a54; }
 }
 
 .pageAuthOnboard {
 	canvas { height: 100vh; width: 100vw; }
+	.label { width: 415px; }
+	.button { width: auto; }
 
 	.icon.dataLocation { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; margin-right: 6px; }
 
@@ -136,7 +138,7 @@ html.bodyAuthDeleted {
 	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: block; background-color: #5c5a54; color: black; }
 	.input { border-radius: 26px; border: none; background: rgba(44, 43, 39, 0.3); font-size: 18px; padding: 32px 48px 32px 48px; margin: 20px; width: 392px; height: auto; }
 	.input:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
-	.input::placeholder { color: $colorBorderDark !important; }
+	.input::placeholder { color: #5c5a54 !important; }
 
 	.soulContent { width: 100px; }
 	.soulContent {

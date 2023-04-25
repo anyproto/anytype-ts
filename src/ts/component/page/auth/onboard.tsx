@@ -6,42 +6,23 @@ import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
-import { OnboardStage } from './animation/constants';
+import { OnboardStage as Stage } from './animation/constants';
 
 type State = {
-	stage: OnboardStage;
+	stage: Stage;
 	keyPhraseCopied: boolean;
 	error?: string;
 	iconOption: number;
 };
 
-const ANIMATION_CN = 'animation';
-const STORAGE_INFO_CN = 'storageInfo';
-
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 
-	soulContentRef: any = null;
+	refFrame = null;
 
 	state: State = {
-		stage: OnboardStage.Void,
+		stage: Stage.Void,
 		keyPhraseCopied: false,
 		iconOption: Util.rand(1, Constant.iconCnt)
-	};
-
-	componentDidMount (): void {
-		Animation.to();
-		this.createWallet();
-		$(window).on('keydown.navigation', (e) => { this.onKeyDown(e); });
-	};
-
-	componentWillUnmount(): void {
-		$(window).off('keydown.navigation');
-	};
-
-	componentDidUpdate (prevProps, prevState): void {
-		if (prevState.stage !== this.state.stage) {
-			Animation.to();
-		}
 	};
 
 	render () {
@@ -56,20 +37,20 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			back = <Icon className="arrow back" onClick={this.onBack} />;
 		};
 
-		if (![ OnboardStage.SoulCreating, OnboardStage.SpaceCreating ].includes(stage)) {
+		if (![ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
 			let onMouseEnter = null;
 			let onMouseLeave = null;
 
-			if (stage == OnboardStage.KeyPhrase) {
+			if (stage == Stage.KeyPhrase) {
 				onMouseEnter = this.showKeyPhraseTooltip;
-				onMouseLeave = this.hideKeyPhraseTooltip;
+				onMouseLeave = () => Preview.tooltipHide();
 			};
 
 			indicator = <DotIndicator index={stage} count={4} />;
 
 			label = (
 				<Label 
-					className={ANIMATION_CN} 
+					className="animation" 
 					text={this.getText('Label')} 
 					onMouseEnter={onMouseEnter}
 					onMouseLeave={onMouseLeave}
@@ -77,13 +58,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			);
 		};
 
-		if ([ OnboardStage.KeyPhrase, OnboardStage.Offline ].includes(stage)) {
+		if ([ Stage.KeyPhrase, Stage.Offline ].includes(stage)) {
 			footer = (
-				<span
-					className={[ ANIMATION_CN, STORAGE_INFO_CN, 'bottom' ].join(' ')}
-					onClick={this.showAccountDataTooltip}>
-						<Icon className="dataLocation" />
-						Account data location
+				<span className="animation storageInfo bottom" onClick={this.showAccountDataTooltip}>
+					<Icon className="dataLocation" />
+					Account data location
 				</span>
 			);
 		};
@@ -91,11 +70,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
         return (
 			<div>
 				{back}
-				<Frame>
+				<Frame ref={ref => this.refFrame = ref}>
 					{indicator}
-					<Title className={ANIMATION_CN} text={this.getText('Title')} />
+					<Title className="animation" text={this.getText('Title')} />
 					{label}
-					<Error className={ANIMATION_CN} text={error} />
+					<Error className="animation" text={error} />
 					{this.renderContent()}
 					{this.renderButtons()}
 					{footer}
@@ -105,46 +84,74 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		);
 	};
 
+	componentDidMount (): void {
+		Animation.to();
+
+		this.walletCreate();
+		this.rebind();
+	};
+
+	componentDidUpdate (prevProps, prevState): void {
+		if (prevState.stage !== this.state.stage) {
+			Animation.to();
+		};
+
+		if (this.refFrame) {
+			this.refFrame.resize();
+		};
+	};
+
+	componentWillUnmount(): void {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off('keydown.onboarding');
+	};
+
+	rebind () {
+		this.unbind();
+
+		$(window).on('keydown.onboarding', (e) => { this.onKeyDown(e); });
+	};
+
 	renderContent = (): JSX.Element => {
 		const { stage, keyPhraseCopied, iconOption } = this.state;
 
-		if (stage === OnboardStage.KeyPhrase) {
+		if (stage == Stage.KeyPhrase) {
 			return (
-				<div
-					className={ANIMATION_CN}
-					onClick={this.copyAndUnblurKeyPhrase}
-				>
+				<div className="animation" onClick={this.onCopy}>
 					<KeyPhrase isBlurred={!keyPhraseCopied} value={authStore.phrase} />
 				</div>
 			);
 		};
 
-		if (stage === OnboardStage.Soul) {
+		if (stage == Stage.Soul) {
 			return (
-				<div className={ANIMATION_CN}>
+				<div className="animation">
 					<Input
 						type="text"
 						placeholder="Enter your name"
 						value={authStore.name}
 						onChange={e => authStore.nameSet(e.target.value)}
-						/>
+					/>
 				</div>
 			);
 		};
 
-		if (stage === OnboardStage.SoulCreating || stage === OnboardStage.SpaceCreating) {
-			const cn = [ 'soulContent', ANIMATION_CN ];
+		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
+			const cn = [ 'soulContent', 'animation' ];
 
-			if (stage === OnboardStage.SoulCreating) {
+			if (stage == Stage.SoulCreating) {
 				cn.push('soulCreating');
 			};
 
-			if (stage === OnboardStage.SpaceCreating) {
+			if (stage == Stage.SpaceCreating) {
 				cn.push('spaceCreating');
 			};
 
 			return (
-				<div ref={ref => { this.soulContentRef = ref; }} className={cn.join(' ')}>
+				<div className={cn.join(' ')}>
 					<div className="account">
 						<IconObject object={{ iconOption, layout: I.ObjectLayout.Human }} size={48} />
 						<span className="accountName">{authStore.name}</span>
@@ -165,28 +172,29 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	renderButtons = (): JSX.Element => {
 		const { stage, keyPhraseCopied } = this.state;
 
-		if ([ OnboardStage.SoulCreating, OnboardStage.SpaceCreating ].includes(stage)) {
+		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
 			return null;
 		};
 
-		const submitText = (stage == OnboardStage.Void) || (stage == OnboardStage.KeyPhrase && keyPhraseCopied) ? translate('authOnboardSubmit') : this.getText('Submit');
+		const submitText = (stage == Stage.Void) || (stage == Stage.KeyPhrase && keyPhraseCopied) ? translate('authOnboardSubmit') : this.getText('Submit');
 
 		const submit = (
 			<Button
-				className={[ ANIMATION_CN, (this.canMoveForward() ? '' : 'disabled') ].join(' ')}
+				className={[ 'animation', (this.canMoveForward() ? '' : 'disabled') ].join(' ')}
 				text={submitText}
 				onClick={this.guardedOnNext}
 			/>
 		);
 
-		const moreInfo = stage == OnboardStage.KeyPhrase ? (
-			<span
-				className={[ ANIMATION_CN, 'moreInfo' ].join(' ')}
-				onClick={this.showKeyPhraseInfoPopup}
-			>
-				More info
-			</span>
-		) : null;
+		let moreInfo = null;
+
+		if (stage == Stage.KeyPhrase) {
+			moreInfo = (
+				<span className="animation moreInfo" onClick={this.showKeyPhraseInfoPopup}>
+					More info
+				</span>
+			);
+		};
 
 		return (
 			<div className="buttons">
@@ -200,12 +208,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage } = this.state;
 
 		const stageNameMap = {
-			[ OnboardStage.Void ]: 'Void',
-			[ OnboardStage.KeyPhrase ]: 'KeyPhrase',
-			[ OnboardStage.Offline ]: 'Offline',
-			[ OnboardStage.Soul ]: 'Soul',
-			[ OnboardStage.SoulCreating ]: 'SoulCreating',
-			[ OnboardStage.SpaceCreating ]: 'SpaceCreating',
+			[ Stage.Void ]: 'Void',
+			[ Stage.KeyPhrase ]: 'KeyPhrase',
+			[ Stage.Offline ]: 'Offline',
+			[ Stage.Soul ]: 'Soul',
+			[ Stage.SoulCreating ]: 'SoulCreating',
+			[ Stage.SpaceCreating ]: 'SpaceCreating',
 		};
 
 		return translate(`authOnboard${stageNameMap[stage]}${name}`);
@@ -227,8 +235,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage } = this.state;
 
 		return (
-			[ OnboardStage.Void, OnboardStage.KeyPhrase, OnboardStage.Offline ].includes(stage)
-			|| ((stage == OnboardStage.Soul) && Boolean(authStore.name))
+			[ Stage.Void, Stage.KeyPhrase, Stage.Offline ].includes(stage)
+			|| ((stage == Stage.Soul) && Boolean(authStore.name))
 		);
 	};
 
@@ -240,54 +248,53 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	onNext = () => {
 		const { stage, keyPhraseCopied } = this.state;
 
-		if ((stage == OnboardStage.KeyPhrase) && !keyPhraseCopied) {
-			this.copyAndUnblurKeyPhrase();
+		if ((stage == Stage.KeyPhrase) && !keyPhraseCopied) {
+			this.onCopy();
 			return;
 		};
 
-		if (stage == OnboardStage.Soul) {
+		if (stage == Stage.Soul) {
 			window.setTimeout(() => this.onNext(), 5000);
 		};
 
-		if (stage == OnboardStage.SoulCreating) {
+		if (stage == Stage.SoulCreating) {
 			window.setTimeout(() => this.onNext(), 5000);
 		};
 
-		if (stage == OnboardStage.SpaceCreating) {
+		if (stage == Stage.SpaceCreating) {
 			this.createAccount();
 			return;
 		};
 
 		Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
-	}
+	};
 
 	/** Guard to prevent illegal state change */
 	canMoveBackward = (): boolean => {
 		const { stage } = this.state;
-		return stage <= OnboardStage.Soul;
-	}
+		return stage <= Stage.Soul;
+	};
 
 	/** Moves the Onboarding Flow one stage backward, or exits it entirely */
 	onBack = () => {
+		const { stage } = this.state;
+
 		if (!this.canMoveBackward()) {
 			return;
 		};
 
-		if (this.state.stage === OnboardStage.Void) {
+		if (stage == Stage.Void) {
 			Util.route('/auth/invite');
 		} else {
 			Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage - 1 })) });
 		};
 	};
 
-	createWallet = () => {
-		const { walletPath } = authStore;
-
-		commonStore.defaultTypeSet(Constant.typeId.note); // TODO necessary?
-
-		C.WalletCreate(walletPath, message => {
+	walletCreate () {
+		C.WalletCreate(authStore.walletPath, message => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
+				return;
 			};
 
 			authStore.phraseSet(message.mnemonic);
@@ -302,6 +309,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			if (message.error.code) {
 				const error = Errors.AccountCreate[message.error.code] || message.error.description;
 				this.setState({ error });
+				return;
 			};
 
 			C.AccountCreate(name, '', accountPath, code, iconOption, message => {
@@ -323,13 +331,14 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				DataUtil.onAuth(message.account, () => {
 					Util.route('/auth/usecase');
 				});
+
 				analytics.event('CreateAccount');
 			});
-		})
+		});
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */
-	copyAndUnblurKeyPhrase = () => {
+	onCopy = () => {
 		this.setState({ keyPhraseCopied: true });
 		Util.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
@@ -346,17 +355,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		});
 	};
 
-	hideKeyPhraseTooltip = () => {
-		Preview.tooltipHide();
-	};
-
 	/** Shows a simple popup that educates the user about their account keyphrase */
 	showKeyPhraseInfoPopup = () => {
 		popupStore.open('confirm', {
             data: {
                 title: translate('authOnboardKeyPhraseMoreInfoPopupTitle'),
                 text: translate('authOnboardKeyPhraseMoreInfoPopupContent'),
-                textConfirm: 'Okay',
+                textConfirm: translate('commonOk'),
 				canConfirm: true,
 				canCancel: false,
                 onConfirm: () => { popupStore.close('confirm'); },
@@ -366,12 +371,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
 	showAccountDataTooltip = () => {
-		const { accountPath } = authStore;
-		const text = `${translate('authOnboardAccountDataLocationTooltip')}:<br/>${accountPath}`;
-
 		Preview.tooltipShow({
-			text,
-			element: $('.' + STORAGE_INFO_CN),
+			text: `${translate('authOnboardAccountDataLocationTooltip')}:<br/>${authStore.accountPath}`,
+			element: $('.storageInfo'),
 			typeY: I.MenuDirection.Top,
 			typeX: I.MenuDirection.Center
 		});
