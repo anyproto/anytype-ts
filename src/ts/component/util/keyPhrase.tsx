@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-import { Icon } from 'Component';
+import { Icon, Input } from 'Component';
 import { Util } from 'Lib';
 
 const COLORS = [
@@ -20,28 +20,30 @@ interface Props {
 };
 
 interface State {
-	value: string;
 	isHidden: boolean;
 };
 
 class KeyPhrase extends React.Component<Props, State> {
+
+	timeout = 0;
 
 	public static defaultProps: Props = {
 		value: '',
 	};
 
 	state = {
-		value: '',
 		isHidden: true,
 	};
 
 	node = null;
+	refInput = null;
 
 	constructor (props: Props) {
 		super(props);
 
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onToggle = this.onToggle.bind(this);
+		this.onClick = this.onClick.bind(this);
 	};
 
 	render () {
@@ -57,11 +59,11 @@ class KeyPhrase extends React.Component<Props, State> {
 			<div 
 				ref={ref => this.node = ref}
 				className={cw.join(' ')}
+				onClick={this.onClick}
 			>
-				<div
-					contentEditable={true}
-					suppressContentEditableWarning={true}
-					className={cn.join(' ')}
+				<div className={cn.join(' ')} />
+				<Input 
+					ref={ref => this.refInput = ref} 
 					onKeyUp={this.onKeyUp}
 				/>
 				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
@@ -70,11 +72,13 @@ class KeyPhrase extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		this.setState({ value: this.props.value });
+		const { value } = this.props;
+
+		this.refInput.setValue(value);
+		this.setHtml(value);
 	};
 
 	componentDidUpdate () {
-		this.setValue(this.state.value);
 	};
 
 	focus () {
@@ -86,7 +90,7 @@ class KeyPhrase extends React.Component<Props, State> {
 		setRange(phrase.get(0), { start: length, end: length });
 	};
 
-	setValue (v: string) {
+	setHtml (v: string) {
 		const node = $(this.node);
 		const phrase = node.find('.keyPhrase');
 
@@ -114,19 +118,24 @@ class KeyPhrase extends React.Component<Props, State> {
 			
 			let w = '';
 			if (isHidden) {
-				w = `<span class="rect bgColor bgColor-${color}" style="width: ${9 * word.length}px"></span>`;
+				w = `<span contenteditable="false" class="rect bgColor bgColor-${color}" style="width: ${9 * word.length}px"></span>`;
 			} else {
-				w = `<span class="textColor textColor-${color}">${Util.ucFirst(word)}</span>`
+				w = `<span contenteditable="false" class="textColor textColor-${color}">${Util.ucFirst(word)}</span>`
 			};
 			return w;
 		}).join(' ');
 	};
 
+	onClick () {
+		this.refInput.focus();
+	};
+
 	onKeyUp () {
 		const { onChange } = this.props;
 		const node = $(this.node);
-		const value = this.getValue();
+		const value = this.refInput.getValue();
 
+		this.setHtml(value);
 		this.focus();
 
 		onChange(value);
