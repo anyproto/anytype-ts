@@ -476,6 +476,8 @@ class App extends React.Component<object, State> {
 			Storage.delete('redirect');
 		};
 
+		Storage.setHighlight('migration', true);
+
 		raf(() => { anim.removeClass('from'); })
 
 		const cb = () => {

@@ -1,4 +1,5 @@
-import { I, C, keyboard, crumbs, translate, Util, Storage, analytics, dispatcher, Mark } from 'Lib';
+import $ from 'jquery';
+import {I, C, keyboard, crumbs, translate, Util, Storage, analytics, dispatcher, Mark, Preview} from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -293,7 +294,15 @@ class DataUtil {
 					commonStore.redirectSet('');
 				};
 
-				popupStore.open('migration', {});
+				popupStore.open('migration', {
+					onClose: () => {
+						const migrationHint = Storage.get('migrationHint') || {};
+						if (!Storage.get('migrationHint') || migrationHint.showHint) {
+							Storage.set('migrationHint', { showHint: true });
+							Preview.showMigrationTooltip();
+						};
+					}
+				});
 
 				if (callBack) {
 					callBack();

@@ -155,6 +155,15 @@ class Preview {
 		});
 	};
 
+	showMigrationTooltip () {
+		this.tooltipShow(
+			'The new version is available',
+			$('#button-help'),
+			I.MenuDirection.Center,
+			I.MenuDirection.Top
+		);
+	};
+
 	hideAll () {
 		this.tooltipHide(true);
 		this.previewHide(true);

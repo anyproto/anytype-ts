@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { Storage } from 'Lib';
 
 const HIGHLIGHTS_MAP = {
-    whatsNew: [ '#button-help', '#menuHelp #item-whatsNew' ],
+    migration: [ '#button-help', '#menuHelp #item-migration' ],
     shortcut: [ '#button-help', '#menuHelp #item-shortcut' ],
     hints: [ '#button-help', '#menuHelp #item-hints' ],
 };
@@ -28,6 +28,10 @@ class Highlight {
     };
 
     hide (key: string) {
+        if (key === 'migration') {
+            return;
+        };
+
         Storage.setHighlight(key, false);
 
         if (HIGHLIGHTS_MAP[key]) {
