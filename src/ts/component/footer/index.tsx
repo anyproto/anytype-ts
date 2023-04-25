@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {I, Preview, sidebar, Storage} from 'Lib';
+import { I, Preview, sidebar, Storage } from 'Lib';
 import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';

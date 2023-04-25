@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import {I, C, keyboard, crumbs, translate, Util, Storage, analytics, dispatcher, Mark, Preview} from 'Lib';
+import { I, C, keyboard, crumbs, translate, Util, Storage, analytics, dispatcher, Mark, Preview } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
