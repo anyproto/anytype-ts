@@ -2,6 +2,7 @@
 
 .keyPhraseWrapper {
 	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: 100%; position: relative; padding: 36px 48px; font-size: 18px; line-height: 18px;
+	transition: $transitionAllCommon;
 }
 .keyPhraseWrapper {
 	.keyPhrase { width: 100%; text-align: center; -webkit-user-modify: read-write-plaintext-only; }
