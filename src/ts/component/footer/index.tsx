@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, sidebar } from 'Lib';
+import { I, Preview, sidebar, Storage } from 'Lib';
 import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';
@@ -57,6 +57,14 @@ class Footer extends React.Component<Props> {
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Right,
 			offsetY: -4,
+			onClose: () => {
+				const migrationHint = Storage.get('migrationHint') || {};
+
+				if (migrationHint.showHint) {
+					Preview.showMigrationTooltip();
+				};
+			}
+
 		});
 	};
 
