@@ -20,7 +20,9 @@
 		.bgColor-green { background: $colorGreen !important; }
 	}
 
-	.icon { height: 20px; width: 20px; transition: $transitionAllCommon; position: absolute; right: -32px; top: 50%; margin: -10px 0px 0px 0px; }
+	.icon { 
+		height: 20px; width: 20px; transition: $transitionAllCommon; position: absolute; right: -32px; top: 50%; margin: -10px 0px 0px 0px; cursor: default;
+	}
 	.icon.see { background-image: url('~img/icon/keyphrase/see0.svg'); }
 	.icon.see:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
 	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
