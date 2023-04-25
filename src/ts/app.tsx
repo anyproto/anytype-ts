@@ -369,7 +369,6 @@ class App extends React.Component<object, State> {
 		};
 
 		Storage.delete('lastSurveyCanceled');
-		commonStore.coverSetDefault();
 	};
 
 	registerIpcEvents () {

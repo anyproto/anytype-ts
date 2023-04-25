@@ -61,16 +61,18 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						<div className="buttons animation">
 							<Button id="submit" type="input" text={translate('authLoginSubmit')} />
 
-							<span className="small" onClick={this.onForgot}>{translate('authLoginLostPhrase')}</span>
+							<div className="small" onClick={this.onForgot}>{translate('authLoginLostPhrase')}</div>
 						</div>
 					</form>
 				</Frame>
 
 				{config.experimental ? (
-					<span className="animation small bottom" onClick={this.onSelfHost}>
-						<Icon />
-						{translate('authLoginSelfHost')}
-					</span>
+					<div className="animation">
+						<div className="animation small bottom" onClick={this.onSelfHost}>
+							<Icon />
+							{translate('authLoginSelfHost')}
+						</div>
+					</div>
 				) : ''}
 			</div>
 		);

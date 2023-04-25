@@ -133,13 +133,7 @@ class ObjectUtil {
 			return;
 		};
 
-		const { root } = blockStore;
 		const action = this.actionByLayout(object.layout);
-
-		if ((action == 'edit') && (object.id == root)) {
-			this.openRoute(object);
-			return;
-		};
 
 		param = param || {};
 		param.data = Object.assign(param.data || {}, { 

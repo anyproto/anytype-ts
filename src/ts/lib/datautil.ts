@@ -217,15 +217,10 @@ class DataUtil {
 		authStore.accountSet(account);
 
 		const pin = Storage.get('pin');
-		const { root, profile, widgets } = blockStore;
+		const { profile, widgets } = blockStore;
 		const { redirect } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
-
-		if (!root) {
-			console.error('[onAuth] No root defined');
-			return;
-		};
 
 		if (!profile) {
 			console.error('[onAuth] No profile defined');
@@ -329,35 +324,18 @@ class DataUtil {
 			};
 		};
 
-		C.ObjectOpen(root, '', (message: any) => {
-			if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-				Util.onErrorUpdate();
-				return;
+		C.ObjectOpen(widgets, '', () => {
+			for (const item of subscriptions) {
+				this.searchSubscribe(item, () => { cb(item); });
 			};
 
-			const object = detailStore.get(root, root, Constant.coverRelationKeys, true);
-			if (object._empty_) {
-				console.error('Dashboard is empty');
-				return;
+			if (profile) {
+				this.subscribeIds({
+					subId: Constant.subId.profile, 
+					ids: [ profile ], 
+					noDeps: true,
+				});
 			};
-
-			if (object.coverId && (object.coverType != I.CoverType.None)) {
-				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
-			};
-
-			C.ObjectOpen(widgets, '', (message: any) => {
-				for (const item of subscriptions) {
-					this.searchSubscribe(item, () => { cb(item); });
-				};
-
-				if (profile) {
-					this.subscribeIds({
-						subId: Constant.subId.profile, 
-						ids: [ profile ], 
-						noDeps: true,
-					});
-				};
-			});
 		});
 	};
 

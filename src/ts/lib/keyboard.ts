@@ -286,7 +286,9 @@ class Keyboard {
 	getRootId (): string {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
-		return isPopup ? popupMatch.params.id : (this.match?.params?.id || blockStore.root);
+		const home = ObjectUtil.getSpaceDashboard();
+
+		return isPopup ? popupMatch.params.id : (this.match?.params?.id || home?.id || '');
 	};
 
 	onKeyUp (e: any) {

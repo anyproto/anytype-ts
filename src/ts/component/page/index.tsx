@@ -152,7 +152,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getRootId () {
 		const match = this.getMatch();
-		return match?.params?.id || blockStore.root;
+		const home = ObjectUtil.getSpaceDashboard();
+
+		return match?.params?.id || home?.id;
 	};
 
 	init () {

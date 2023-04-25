@@ -44,23 +44,29 @@ html.bodyIndex, html.bodyAuth {
 .pageAuthLogin {
 	.form { width: 100%; }
 
-	.icon { height: 20px; width: 20px; }
-	.icon.see { background-image: url('~img/icon/keyphrase/see.svg'); }
-	.icon.hide { background-image: url('~img/icon/keyphrase/hide.svg'); }
+	.icon { height: 20px; width: 20px; transition: $transitionAllCommon; }
+	.icon.see { background-image: url('~img/icon/keyphrase/see0.svg'); }
+	.icon.see:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
+	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
+	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
 	
 	.keyPhraseContainer { position: relative; margin: 0px 0px 20px 0px; }
 	.keyPhraseContainer {
 		.icon { position: absolute; right: -32px; top: 50%; margin: -10px 0px 0px 0px; }
 	}
 
-	.small { color: #5c5a54; cursor: pointer; transition: $transitionAllCommon; }
+	.small { color: #cbc9bd; cursor: pointer; transition: $transitionAllCommon; }
 	.small:hover { color: $colorWhite; }
 
 	.bottom { 
 		position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px;
+		opacity: 0.6;
 	}
 	.bottom {
-		.icon { background-image: url('~img/icon/footer/gear.svg'); }
+		.icon { background-image: url('~img/icon/footer/gear0.svg'); }
+	}
+	.bottom:hover {
+		.icon { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
 }
 
@@ -117,10 +123,9 @@ html.bodyIndex, html.bodyAuth {
 .pageAuthOnboard {
 	canvas { height: 100vh; width: 100vw; }
 
-	.icon.dataLocation { background-image: url('~img/icon/footer/gear.svg'); height: 20px; width: 20px; margin-right: 6px; }
+	.icon.dataLocation { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; margin-right: 6px; }
 
-	.storageInfo,
-	.moreInfo { color: #5c5a54; }
+	.storageInfo, .moreInfo { color: #5c5a54; }
 
 	.storageInfo,
 	.moreInfo,

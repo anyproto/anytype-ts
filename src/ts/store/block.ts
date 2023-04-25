@@ -6,7 +6,6 @@ import Constant from 'json/constant.json';
 
 class BlockStore {
 
-    public rootId = '';
     public profileId = '';
 	public widgetsId = '';
     public recentId = '';
@@ -17,13 +16,10 @@ class BlockStore {
 
     constructor() {
         makeObservable(this, {
-            rootId: observable,
             profileId: observable,
             recentId: observable,
-            root: computed,
             profile: computed,
             recent: computed,
-            rootSet: action,
             profileSet: action,
             widgetsSet: action,
             recentSet: action,
@@ -38,10 +34,6 @@ class BlockStore {
         });
     }
 
-    get root (): string {
-		return this.rootId;
-	};
-
     get profile (): string {
 		return this.profileId;
 	};
@@ -52,10 +44,6 @@ class BlockStore {
 
     get recent (): string {
 		return this.recentId;
-	};
-
-    rootSet (id: string) {
-		this.rootId = String(id || '');
 	};
 
 	profileSet (id: string) {
@@ -112,7 +100,6 @@ class BlockStore {
 		this.profileSet('');
 		this.widgetsSet('');
 		this.recentSet('');
-		this.rootSet('');
 
 		this.blockMap.clear();
 		this.treeMap.clear();
