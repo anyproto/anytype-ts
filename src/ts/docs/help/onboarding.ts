@@ -3,7 +3,6 @@ import { I } from 'Lib';
 export default {
     mainGraph: {
         category: 'Onboarding',
-        showConfetti: true,
         items: [
             {
                 description: `
