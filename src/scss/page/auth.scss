@@ -31,6 +31,8 @@ html.bodyIndex, html.bodyAuth {
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { width: 192px; }
+	.button.blank { border-color: #1e1e1c; }
+	.button.blank:hover { border-color: #272723; background: none; }
 }
 
 .pageIndexIndex, .pageAuthSelect {
