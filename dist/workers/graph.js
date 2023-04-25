@@ -578,8 +578,6 @@ onSelect = ({ x, y, selectRelated }) => {
 };
 
 onMouseMove = ({ x, y }) => {
-	isHovering = false;
-
 	const active = nodes.find(d => d.isOver);
 	const d = getNodeByCoords(x, y);
 
@@ -589,6 +587,8 @@ onMouseMove = ({ x, y }) => {
 
 	if (d) {
 		d.isOver = true;
+	} else {
+		isHovering = false;
 	};
 
 	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
