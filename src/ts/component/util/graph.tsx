@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
+import { I, Util, ObjectUtil, DataUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -14,6 +14,7 @@ interface Props {
 	data: any;
 	onClick?: (object: any) => void;
 	onContextMenu?: (id: string, param: any) => void;
+	onContextSpaceClick?: (param: any, data: any) => void;
 	onSelect?: (id: string, related?: string[]) => void;
 };
 
@@ -285,9 +286,24 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onMessage (e) {
 		const { id, data } = e.data;
 		const { root } = blockStore;
-		const { onClick, onContextMenu, onSelect } = this.props;
+		const { onClick, onContextMenu, onContextSpaceClick, onSelect } = this.props;
 		const node = $(this.node);
 		const { left, top } = node.offset();
+
+		const menuParam = {
+			onOpen: () => {
+				this.isPreviewDisabled = true;
+			},
+			onClose: () => {
+				this.isPreviewDisabled = false;
+			},
+			recalcRect: () => ({
+				width: 0,
+				height: 0,
+				x: data.x + 10 + left,
+				y: data.y + 10 + top,
+			}),
+		};
 
 		switch (id) {
 			case 'onClick': {
@@ -324,20 +340,14 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 				this.onPreviewHide();
 
-				onContextMenu(data.node.id, {
-					onOpen: () => {
-						this.isPreviewDisabled = true;
-					},
-					onClose: () => {
-						this.isPreviewDisabled = false;
-					},
-					recalcRect: () => ({
-							width: 0, 
-							height: 0, 
-							x: data.x + 10 + left, 
-							y: data.y + 10 + top,
-					}),
-				});
+				onContextMenu(data.node.id, menuParam);
+				break;
+			};
+
+			case 'onContextSpaceClick': {
+				this.onPreviewHide();
+
+				onContextSpaceClick(menuParam, data);
 				break;
 			};
 

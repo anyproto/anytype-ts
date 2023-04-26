@@ -231,7 +231,7 @@ updateForces = () => {
 
 	// Filter orphans
 	if (!settings.orphan) {
-		nodes = nodes.filter(d => !d.isOrphan);
+		nodes = nodes.filter(d => !d.isOrphan || d.forceShow);
 	};
 
 	map = getNodeMap();
@@ -614,6 +614,7 @@ onContextMenu = ({ x, y }) => {
 
 	const d = getNodeByCoords(x, y);
 	if (!d) {
+		send('onContextSpaceClick', { x, y });
 		return;
 	};
 
@@ -622,8 +623,11 @@ onContextMenu = ({ x, y }) => {
 	redraw();
 };
 
-onAddNode = ({ sourceId, target }) => {
+onAddNode = ({ target, sourceId }) => {
 	const id = data.nodes.length;
+
+	let x = 0;
+	let y = 0;
 
 	if (sourceId) {
 		const source = nodes.find(it => it.id == sourceId);
@@ -631,18 +635,29 @@ onAddNode = ({ sourceId, target }) => {
 			return;
 		};
 
+		x = source.x + target.radius * 2;
+		y = source.y + target.radius * 2;
+
 		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 	};
 
+
 	target = Object.assign(target, {
-		index: id, 
-		x: source.x + target.radius * 2, 
-		y: source.y + target.radius * 2, 
+		index: id,
 		vx: 1, 
 		vy: 1,
+		forceShow: true,
 	});
 
+	if (!target.x && !target.y) {
+		target = Object.assign(target, { x, y });
+	};
+
 	data.nodes.push(target);
+
+	if (sourceId) {
+		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
+	};
 
 	updateForces();
 };
