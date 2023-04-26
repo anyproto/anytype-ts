@@ -208,7 +208,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					</div>
 
 					<div id={'panel-' + Panel.Center} className="items center">
-						{info ? <Selected {...info} /> : ''}
+						{info ? <Selected {...info} /> : <ItemEmpty name="Object can not be shown" />}
 					</div>
 
 					<div id={'panel-' + Panel.Right} className="items right">
