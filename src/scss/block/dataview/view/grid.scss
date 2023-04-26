@@ -93,7 +93,7 @@
 				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; border-radius: 4px; }
 				.cellContent.isName { padding: 0px 14px !important; }
 				.cellContent.isName {
-					.iconObject { margin: 14px 4px 14px 0px; }
+					.iconObject { margin: 14px 0px; }
 					.input-text { height: 47px; width: calc(100% - 26px) !important; }
 					.name { width: 100%; }
 				}
@@ -124,7 +124,7 @@
 
 			.cellHead:first-child { padding-left: 8px; }
 			.cell:first-child { padding-left: 20px; }
-			.cell.isEditing:first-child .cellContent.isName { padding-left: 16px !important; }
+			.cell.isEditing:first-child .cellContent.isName { padding-left: 20px !important; }
 		}
     }
 
