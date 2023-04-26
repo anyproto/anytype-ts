@@ -1,30 +1,6 @@
 @import "~scss/_vars";
 @import "~scss/theme/dark/_vars";
 
-/* PageAuth */
-
-.pageAuth, .pageIndex {
-    .input { border-color: $colorLinePrimary; }
-	.authBackWrap:hover { background-color: $colorHoverMedium; }
-}
-
-.pageAuthDeleted {
-	.row { border-color: $colorLineSecondary; }
-	.pie .inner { border-color: $colorLineSecondary; }
-}
-
-
-.pageAuthUsecase {
-	.frame { background: $colorBgLight; }
-	.frame {
-		.usecaseList {
-			.case { border-color: $colorLineSecondary; }
-			.case:hover { border-color: $colorLinePrimary; }
-		}
-		.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); }
-	}
-}
-
 /* PageMainGraph */
 
 .pageMainGraph {
