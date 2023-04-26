@@ -25,7 +25,7 @@
 
 				.space { 
 					display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px; 
-					border-radius: 8px; transition: $transitionAllCommon; cursor: pointer;
+					border-radius: 8px; transition: $transitionAllCommon;
 				}
 				.space:hover, .space.active { background: $colorBorderDark; }
 				.space {
@@ -37,9 +37,7 @@
 
 				.items { display: flex; flex-direction: column; gap: 2px 0px; }
 
-				.item { 
-					display: flex; flex-direction: row; gap: 0px 10px; padding: 5px 8px; cursor: pointer; border-radius: 8px; transition: $transitionAllCommon;
-				}
+				.item { display: flex; flex-direction: row; gap: 0px 10px; padding: 5px 8px; border-radius: 8px; transition: $transitionAllCommon; }
 				.item:hover, .item.active { background: $colorBorderDark; }
 				.item {
 					.icon { width: 22px; height: 22px; }
@@ -69,7 +67,7 @@
 						color: $colorDarkGrey; cursor: pointer; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 4px; 
 						border-radius: 6px; margin-left: -5px;
 					}
-					.element:hover { background: $colorHover; }
+					.element:hover { background: $colorHoverMedium; }
 				}
 
 				.title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
@@ -92,7 +90,10 @@
 				.label.small, .label.section { @include text-small; }
 				.label.section { margin: 30px 0px 4px 0px; }
 
-				.select { border: 0px; color: $colorDarkGrey; }
+				.select { border: 0px; color: $colorDarkGrey;  cursor: default; }
+				.select {
+					.icon.arrow { margin: 0px !important; top: 3px; }
+				}
 
 				.name { width: 100%; }
 				.name {
@@ -139,7 +140,10 @@
 			.inputs { margin: 0px 0px 54px 0px; }
 			.title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
 
-			.qrWrap { padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; }
+			.qrWrap { 
+				padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; 
+				cursor: pointer; 
+			}
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
 			}
@@ -154,6 +158,7 @@
 			.text { margin: 0px 0px 32px 0px; }
 			.text {
 				b { margin: 0px 0px 8px 0px; display: block; }
+				p.first { margin: 0px 0px 20px 0px; }
 			}
 
 			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; cursor: pointer; }
@@ -201,7 +206,7 @@
 		.side.right.tabExportIndex {
 			.items { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 			.item { 
-				width: 132px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon; cursor: pointer; 
+				width: 132px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
 				position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
 			}
 			.item:hover { border-color: $colorBlack; }

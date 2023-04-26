@@ -2,12 +2,13 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { PreviewLink, PreviewObject, PreviewDefault } from 'Component';
-import { I, Util, DataUtil, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
+import { PreviewLink, PreviewObject, PreviewDefault, Loader } from 'Component';
+import { I, Util, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 interface State {
 	object: any;
+	loading: boolean;
 };
 
 const OFFSET_Y = 8;
@@ -17,6 +18,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 	state = {
 		object: null,
+		loading: false,
 	};
 	ref: any = null;
 	
@@ -34,7 +36,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	render () {
 		const { preview } = commonStore;
 		const { type, target, noUnlink } = preview;
-		const { object } = this.state;
+		const { object, loading } = this.state;
 		const cn = [ 'previewWrapper' ];
 
 		let head = null;
@@ -92,35 +94,49 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		return (
 			<div id="preview" className={cn.join(' ')}>
 				<div className="polygon" onClick={this.onClick} />
-				<div className="content">
-					{head}
+				{loading ? <Loader /> : (
+					<div className="content">
+						{head}
 
-					<div className="cp" onClick={this.onClick}>
-						{content}
+						<div className="cp" onClick={this.onClick}>
+							{content}
+						</div>
 					</div>
-				</div>
+				)}
 			</div>
 		);
 	};
 
-	componentDidUpdate () {
+	componentDidMount(): void {
+		this.init();
+	};
+
+	componentDidUpdate (): void {
+		this.init();
+	};
+
+	init () {
 		const { preview } = commonStore;
 		const { type, target } = preview;
-		const { object } = this.state;
+		const { object, loading } = this.state;
 
-		if (type == I.PreviewType.Default) {
-			if (!object || (object.id != target)) {
-				ObjectUtil.getById(target, object => {
-					this.setObject(object);
-					this.position();
-				});
-			} else {
+		if (type != I.PreviewType.Default) {
+			return;
+		};
+
+		if (!loading && (!object || (object.id != target))) {
+			this.setState({ loading: true });
+
+			ObjectUtil.getById(target, object => {
+				this.setState({ object, loading: false });
 				this.position();
-			};
+			});
+		} else {
+			this.position();
 		};
 	};
 	
-	onClick (e) {
+	onClick (e: React.MouseEvent) {
 		const { preview } = commonStore;
 		const { type, target } = preview;
 		const { object } = this.state;

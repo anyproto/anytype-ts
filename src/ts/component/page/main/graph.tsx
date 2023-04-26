@@ -8,8 +8,8 @@ import Constant from 'json/constant.json';
 
 const ctrl = keyboard.cmdSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltip: `${ctrl} + Alt + O` },
-	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltip: `${ctrl} + O` },
+	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltipCaption: `${ctrl} + Alt + O` },
+	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltipCaption: `${ctrl} + O` },
 ];
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
@@ -239,14 +239,34 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	onSelect (id: string, related?: string[]) {
+		const { root } = blockStore;
+		const isSelected = this.ids.includes(id);
+
+		if (id === root) {
+			return;
+		};
+
 		let ids = [ id ];
 
 		if (related && related.length) {
-			this.ids = [];
+
+			if (!isSelected) {
+				this.ids = [];
+			};
+
 			ids = ids.concat(related);
 		};
 
 		ids.forEach((id) => {
+			if (id === root) {
+				return;
+			};
+
+			if (isSelected) {
+				this.ids = this.ids.filter(it => it != id);
+				return;
+			};
+
 			this.ids = this.ids.includes(id) ? this.ids.filter(it => it != id) : this.ids.concat([ id ]);
 		});
 		this.refGraph.send('onSetSelected', { ids: this.ids });

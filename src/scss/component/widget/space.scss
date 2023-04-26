@@ -18,7 +18,7 @@
 	.side.right { flex-shrink: 0; display: none; }
 
 	.icon { width: 28px; height: 28px; border-radius: 4px; background-size: 20px; }
-	.icon:hover { background-color: $colorHover; }
+	.icon:hover { background-color: $colorHoverMedium; }
 	.icon.settings { background-image: url('~img/icon/widget/settings.svg'); }
 }
 

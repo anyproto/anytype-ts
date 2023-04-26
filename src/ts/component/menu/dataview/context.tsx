@@ -270,6 +270,10 @@ class MenuContext extends React.Component<I.Menu> {
 
 			case 'copy':
 				C.ObjectListDuplicate(objectIds, (message: any) => {
+					if (message.error.code || !message.ids.length) {
+						return;
+					};
+
 					if (count == 1) {
 						ObjectUtil.openPopup(detailStore.get(subId, message.ids[0], []));
 					};

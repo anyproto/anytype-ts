@@ -88,8 +88,11 @@ class Header extends React.Component<Props> {
 		ObjectUtil.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
-	onTooltipShow (e: any, text: string) {
-		Preview.tooltipShow({ text, element: $(e.currentTarget) });
+	onTooltipShow (e: any, text: string, caption?: string) {
+		const t = Preview.tooltipCaption(text, caption);
+		if (t) {
+			Preview.tooltipShow({ text: t, element: $(e.currentTarget), typeY: I.MenuDirection.Bottom });
+		};
 	};
 
 	onTooltipHide () {

@@ -83,7 +83,7 @@
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(80,73,28,0); z-index: 1;
 			pointer-events: none;
 		}
-		.item.hover::before { background: $colorHover; }
+		.item.hover::before { background: $colorHoverMedium; }
 		.item.hover, .item:hover {
 			.icon.delete, .icon.more { opacity: 1; }
 		}
@@ -104,7 +104,7 @@
 				margin: -12px 0px 0px 0px; border-radius: 4px; opacity: 0; z-index: 1;
 			}
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
-			.icon.delete:hover, .icon.more:hover { background-color: $colorHover; }
+			.icon.delete:hover, .icon.more:hover { background-color: $colorHoverMedium; }
 			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/arrow/menu.svg'); }
 			.icon.chk { width: 20px; height: 20px; position: absolute; right: 6px; top: 50%; margin: -10px 0px 0px 0px; background-image: url('~img/icon/menu/checkbox.svg'); }
 

@@ -72,8 +72,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 
-		const relations = (object.recommendedRelations || []).map(id => dbStore.getRelationById(id)).filter((it: any) => {
-			if (!it || ObjectUtil.getSystemRelationKeys().includes(it.relationKey)) {
+		const relations = (object.recommendedRelations || []).map(id => dbStore.getRelationById(id)).filter(it => {
+			if (!it) {
+				return false;
+			};
+			if ([ 'tag', 'description' ].includes(it.relationKey)) {
+				return true;
+			};
+			if (ObjectUtil.getSystemRelationKeys().includes(it.relationKey)) {
 				return false;
 			};
 			return config.debug.ho ? true : !it.isHidden;

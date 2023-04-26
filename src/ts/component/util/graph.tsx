@@ -314,9 +314,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 			case 'onSelect': {
 				const { related } = data;
-				if (data.node != root) {
-					onSelect(data.node, related);
-				};
+				onSelect(data.node, related);
 				break;
 			};
 
@@ -326,13 +324,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				};
 
 				this.subject = this.nodes.find(d => d.id == data.node);
-
-				if (this.subject) {
-					window.clearTimeout(this.timeoutPreview);
-					this.timeoutPreview = window.setTimeout(() => { this.onPreviewShow(data); }, 300);
-				} else {
-					this.onPreviewHide();	
-				};
+				this.subject ? this.onPreviewShow(data) : this.onPreviewHide();
 				break;
 			};
 

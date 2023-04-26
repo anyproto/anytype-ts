@@ -4,14 +4,14 @@
 	}
 }
 
-.widget { background-color: $colorHover; color: $colorPrimary; border-color: $colorLineSecondary !important;  }
+.widget { background-color: $colorHoverMedium; color: $colorPrimary; border-color: $colorLineSecondary !important;  }
 .widget {
-	.iconWrap:hover, .iconWrap.active { background-color: $colorHover; }
+	.iconWrap:hover, .iconWrap.active { background-color: $colorHoverMedium; }
 	.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
 	.icon.collapse { background-image: url('#{$themePath}/icon/widget/collapse.svg'); }
 	.icon.options { background-image: url('#{$themePath}/icon/widget/options.svg'); }
 
-	.head::before { background-color: $colorHover; }
+	.head::before { background-color: $colorHoverMedium; }
 
 	.icon.remove .inner { background-color: $colorBgIcon; }
 	.icon.remove:hover .inner { background-color: $colorTertiary; }
@@ -19,12 +19,12 @@
 
 .widget.active {
 	.head {
-		.iconWrap.options { background-color: $colorHover; }
+		.iconWrap.options { background-color: $colorHoverMedium; }
 	}
 }
 
 .widget.widgetSpace {
-	.icon:hover { background-color: $colorHover; }
+	.icon:hover { background-color: $colorHoverMedium; }
 }
 
 .widget.isPreview {
@@ -36,13 +36,13 @@
 	.icon.collection { background-image: url('#{$themePath}/icon/sidebar/collection.svg'); }
 	.icon.blank { background-image: url('#{$themePath}/icon/sidebar/blank.svg'); }
 	.icon.arrow { background-image: url('~img/arrow/select/light.svg'); }
-	.icon.arrow:hover { background-color: $colorHover; }
+	.icon.arrow:hover { background-color: $colorHoverMedium; }
 
 	.item {
-		.inner:hover::before { background: $colorHover; }
+		.inner:hover::before { background: $colorHoverMedium; }
 
 		.buttons {
-			.icon:hover { background-color: $colorHover; }
+			.icon:hover { background-color: $colorHoverMedium; }
 		}
 	}
 }
@@ -61,13 +61,13 @@
 	}
 
 	.body {
-		.item:hover { background: $colorHover; }
+		.item:hover { background: $colorHoverMedium; }
 		.item {
 			.iconObject { background: $colorBgIcon; }
 			.iconObject.isTask, .iconObject.isBookmark { background: none; }
 
 			.buttons {
-				.icon:hover { background-color: $colorHover; }
+				.icon:hover { background-color: $colorHoverMedium; }
 			}
 		}
 	}

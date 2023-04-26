@@ -71,6 +71,7 @@ let isHovering = false;
 let edgeMap = new Map();
 let hoverAlpha = 0.2;
 let fontFamily = 'Helvetica';
+let timeoutHover = 0;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -577,21 +578,32 @@ onSelect = ({ x, y, selectRelated }) => {
 };
 
 onMouseMove = ({ x, y }) => {
-	isHovering = false;
-
 	const active = nodes.find(d => d.isOver);
+	const d = getNodeByCoords(x, y);
+
 	if (active) {
 		active.isOver = false;
 	};
 
-	const d = getNodeByCoords(x, y);
 	if (d) {
 		d.isOver = true;
-		isHovering = true;
+	} else {
+		isHovering = false;
 	};
 
 	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 	redraw();
+
+	clearTimeout(timeoutHover);
+	timeoutHover = setTimeout(() => {
+		const d = getNodeByCoords(x, y);
+		if (d) {
+			isHovering = true;
+		};
+
+		send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
+		redraw();
+	}, 300);
 };
 
 onContextMenu = ({ x, y }) => {
@@ -619,13 +631,14 @@ onAddNode = ({ target, sourceId }) => {
 
 	if (sourceId) {
 		const source = nodes.find(it => it.id == sourceId);
-
 		if (!source) {
 			return;
 		};
 
 		x = source.x + target.radius * 2;
 		y = source.y + target.radius * 2;
+
+		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 	};
 
 

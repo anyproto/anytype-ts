@@ -328,7 +328,7 @@ class Action {
 		const { walletPath } = authStore;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], walletPath, (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], walletPath, Util.rand(1, Constant.iconCnt), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};

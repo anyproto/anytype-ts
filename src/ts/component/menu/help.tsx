@@ -85,10 +85,8 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
-		const rootId = keyboard.getRootId();
 		const match = keyboard.getMatch();
 		const { page, action } = match.params;
-		const isEditor = (page == 'main') && (action == 'edit');
 		const isGraph = (page == 'main') && (action == 'graph');
 
 		close();
@@ -124,7 +122,7 @@ class MenuHelp extends React.Component<I.Menu> {
 
 			case 'hints': {
 				if (isGraph) {
-					Onboarding.start('wizardGraph', keyboard.isPopup(), true);
+					Onboarding.start('mainGraph', keyboard.isPopup(), true);
 				} else {
 					popupStore.open('migration', { data: { type: 'onboarding' } });
 				};

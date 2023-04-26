@@ -228,6 +228,11 @@ class Relation {
 				break;
 			};
 
+			case I.RelationType.Checkbox: {
+				ret = true;
+				break;
+			};
+
 			case I.RelationType.Status:
 			case I.RelationType.File:
 			case I.RelationType.Tag:

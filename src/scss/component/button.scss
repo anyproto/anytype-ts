@@ -23,10 +23,10 @@
 .button.dark:not(.disabled):hover { background: rgba(0,0,0,0.4); }
 
 .button.blank { background: none; border: solid 1px $colorBorderDark; font-weight: 400; }
-.button.blank:not(.disabled):hover { background: $colorHover; }
+.button.blank:not(.disabled):hover { background: $colorHoverMedium; }
 
 .button.outlined { background: none; border: solid 1px $colorBorderDark; color: $colorBlack; }
-.button.outlined:not(.disabled):hover { background: $colorHover; }
+.button.outlined:not(.disabled):hover { background: $colorHoverMedium; }
 
 .button.c36 { @include text-common; height: 36px; border-radius: 6px; padding: 0px 12px; }
 .button.c28 { @include text-small; height: 28px; border-radius: 6px; padding: 0px 10px; }

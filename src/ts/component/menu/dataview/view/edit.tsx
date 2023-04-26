@@ -233,9 +233,9 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		this.forceUpdate();
 	};
 
-	getViewName () {
-		const { name, type } = this.param;
-		return name || translate(`viewName${type}`);
+	getViewName (name?: string) {
+		const { type } = this.param;
+		return name || this.param.name || translate(`viewName${type}`);
 	};
 
 	getSections () {
@@ -438,7 +438,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 
 			switch (item.id) {
 				case 'copy': {
-					C.BlockDataviewViewCreate(rootId, blockId, view, sources, (message: any) => {
+					C.BlockDataviewViewCreate(rootId, blockId, { ...view, name: this.getViewName(view.name) }, sources, (message: any) => {
 						if (onSave) {
 							onSave();
 						};

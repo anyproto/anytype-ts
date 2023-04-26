@@ -462,12 +462,11 @@ class DataUtil {
 	checkDetails (rootId: string, blockId?: string) {
 		blockId = blockId || rootId;
 
-		const object = detailStore.get(rootId, blockId, [ 'creator', 'layoutAlign', 'templateIsBundled', 'recommendedRelations' ].concat(Constant.coverRelationKeys));
+		const object = detailStore.get(rootId, blockId, [ 'layoutAlign', 'templateIsBundled' ].concat(Constant.coverRelationKeys));
 		const childrenIds = blockStore.getChildrenIds(rootId, blockId);
 		const checkType = blockStore.checkBlockTypeExists(rootId);
-		const { iconEmoji, iconImage, coverType, coverId, type } = object;
+		const { iconEmoji, iconImage, coverType, coverId } = object;
 		const ret: any = {
-			object,
 			withCover: Boolean((coverType != I.CoverType.None) && coverId),
 			withIcon: false,
 			className: [ this.layoutClass(object.id, object.layout), 'align' + object.layoutAlign ],

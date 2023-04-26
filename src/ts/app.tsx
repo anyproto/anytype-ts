@@ -12,7 +12,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as Prev
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
 	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
-	focus, Preview, Mark, Encode, Animation
+	focus, Preview, Mark, Animation
 } from 'Lib';
 
 configure({ enforceActions: 'never' });
@@ -230,7 +230,6 @@ window.Lib = {
 	DataUtil,
 	Preview,
 	Storage,
-	Encode,
 	Animation,
 };
 
@@ -621,13 +620,13 @@ class App extends React.Component<object, State> {
 		switch (key) {
 			case 'undo':
 				if (!keyboard.isFocused) {
-					keyboard.onUndo(rootId);
+					keyboard.onUndo(rootId, 'MenuSystem');
 				};
 				break;
 
 			case 'redo':
 				if (!keyboard.isFocused) {
-					keyboard.onRedo(rootId);
+					keyboard.onRedo(rootId, 'MenuSystem');
 				};
 				break;
 
@@ -666,16 +665,6 @@ class App extends React.Component<object, State> {
 							Renderer.send('pathOpen', paths[0]);
 						};
 					});
-				});
-				break;
-
-			case 'debugSync':
-				C.DebugSync(100, (message: any) => {
-					if (!message.error.code) {
-						window.Electron.fileWrite('debug-sync.json', JSON.stringify(message, null, 5), 'utf8');
-
-						Renderer.send('pathOpen', tmpPath);
-					};
 				});
 				break;
 
