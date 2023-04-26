@@ -17,6 +17,7 @@ const COLORS = [
 interface Props {
 	value: string;
 	readonly?: boolean;
+	isHidden?: boolean;
 	onChange?: (phrase: string) => void;
 };
 
@@ -41,8 +42,6 @@ class Phrase extends React.Component<Props, State> {
 	constructor (props: Props) {
 		super(props);
 
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onToggle = this.onToggle.bind(this);
@@ -74,8 +73,6 @@ class Phrase extends React.Component<Props, State> {
 					id="entry" 
 					contentEditable={true}
 					suppressContentEditableWarning={true} 
-					onFocus={this.onFocus}
-					onBlur={this.onBlur}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
 					onPaste={this.onPaste}
@@ -88,20 +85,16 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	componentDidMount () {
-		const { value } = this.props;
+		const { value, isHidden } = this.props;
 
+		this.setState({ isHidden });
 		this.setValue(value);
 		this.focus();
 	};
 
 	componentDidUpdate () {
 		this.setValue(this.value);
-	};
-
-	onFocus () {
-	};
-
-	onBlur () {
+		this.focus();
 	};
 
 	onKeyDown (e: React.KeyboardEvent) {

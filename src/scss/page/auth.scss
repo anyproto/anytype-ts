@@ -131,6 +131,10 @@ html.bodyAuthDeleted {
 	.input:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
 	.input::placeholder { color: #5c5a54 !important; }
 
+	.phraseWrapper {
+		.icon { display: none; }
+	}
+
 	.soulContent { width: 100px; }
 	.soulContent {
 		.account, .space, .line { transition: all 600ms ease-in; position: absolute; display: flex; flex-direction: column; }

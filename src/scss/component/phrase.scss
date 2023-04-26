@@ -32,3 +32,7 @@
 	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
 }
 .phraseWrapper:hover { cursor: text; background: rgba(44, 43, 39, 0.5); }
+
+.phraseWrapper.isReadonly {
+	#entry { display: none; }
+}

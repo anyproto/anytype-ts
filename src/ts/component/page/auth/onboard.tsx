@@ -18,6 +18,7 @@ type State = {
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 
 	refFrame = null;
+	refPhrase = null;
 
 	state: State = {
 		stage: Stage.Void,
@@ -84,44 +85,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		);
 	};
 
-	componentDidMount (): void {
-		Animation.to();
-
-		this.walletCreate();
-		this.rebind();
-	};
-
-	componentDidUpdate (prevProps, prevState): void {
-		if (prevState.stage !== this.state.stage) {
-			Animation.to();
-		};
-
-		if (this.refFrame) {
-			this.refFrame.resize();
-		};
-	};
-
-	componentWillUnmount(): void {
-		this.unbind();
-	};
-
-	unbind () {
-		$(window).off('keydown.onboarding');
-	};
-
-	rebind () {
-		this.unbind();
-
-		$(window).on('keydown.onboarding', (e) => { this.onKeyDown(e); });
-	};
-
 	renderContent = (): JSX.Element => {
 		const { stage, phraseCopied, iconOption } = this.state;
 
 		if (stage == Stage.KeyPhrase) {
 			return (
 				<div className="animation" onClick={this.onCopy}>
-					<Phrase value={authStore.phrase} readonly={true} />
+					<Phrase ref={ref => this.refPhrase = ref} value={authStore.phrase} readonly={true} isHidden={!phraseCopied} />
 				</div>
 			);
 		};
@@ -133,7 +103,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						type="text"
 						placeholder="Enter your name"
 						value={authStore.name}
-						onChange={e => authStore.nameSet(e.target.value)}
+						onKeyUp={(e, v) => authStore.nameSet(v)}
 					/>
 				</div>
 			);
@@ -190,7 +160,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.KeyPhrase) {
 			moreInfo = (
-				<span className="animation moreInfo" onClick={this.showKeyPhraseInfoPopup}>
+				<span className="animation moreInfo" onClick={this.showPhraseInfoPopup}>
 					More info
 				</span>
 			);
@@ -204,12 +174,43 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		);
 	}
 
+	componentDidMount (): void {
+		Animation.to();
+
+		this.walletCreate();
+		this.rebind();
+	};
+
+	componentDidUpdate (prevProps, prevState): void {
+		if (prevState.stage !== this.state.stage) {
+			Animation.to();
+		};
+
+		if (this.refFrame) {
+			this.refFrame.resize();
+		};
+	};
+
+	componentWillUnmount(): void {
+		this.unbind();
+	};
+
+	unbind () {
+		$(window).off('keydown.onboarding');
+	};
+
+	rebind () {
+		this.unbind();
+
+		$(window).on('keydown.onboarding', (e) => { this.onKeyDown(e); });
+	};
+
 	getText = (name: string) => {
 		const { stage } = this.state;
 
 		const stageNameMap = {
 			[ Stage.Void ]: 'Void',
-			[ Stage.KeyPhrase ]: 'KeyPhrase',
+			[ Stage.KeyPhrase ]: 'Phrase',
 			[ Stage.Offline ]: 'Offline',
 			[ Stage.Soul ]: 'Soul',
 			[ Stage.SoulCreating ]: 'SoulCreating',
@@ -234,31 +235,14 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	canMoveForward = (): boolean => {
 		const { stage } = this.state;
 
-		return (
-			[ Stage.Void, Stage.KeyPhrase, Stage.Offline ].includes(stage)
-			|| ((stage == Stage.Soul) && Boolean(authStore.name))
-		);
-	};
-
-	/** Moves the Onboarding Flow one stage forward
-	 * Should not be triggered directly by UI without checking
-	 * if state change is allowed.
-	 *
-	*/
-	onNext = () => {
-		const { stage, phraseCopied } = this.state;
-
-		if ((stage == Stage.KeyPhrase) && !phraseCopied) {
-			this.onCopy();
-		} else
-		if ([ Stage.Soul, Stage.SoulCreating ].includes(stage)) {
-			window.setTimeout(() => this.onNext(), 3000);
-		} else
-		if (stage == Stage.SpaceCreating) {
-			this.createAccount();
-		} else {
-			Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
+		let ret = false;
+		if ([ Stage.Void, Stage.KeyPhrase, Stage.Offline ].includes(stage)) {
+			ret = true;
 		};
+		if ((stage == Stage.Soul) && authStore.name) {
+			ret = true;
+		};
+		return ret;
 	};
 
 	/** Guard to prevent illegal state change */
@@ -267,13 +251,39 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		return stage <= Stage.Soul;
 	};
 
+	/** Moves the Onboarding Flow one stage forward
+	 * Should not be triggered directly by UI without checking
+	 * if state change is allowed.
+	 *
+	*/
+
+	onNext = () => {
+		const { stage, phraseCopied } = this.state;
+
+		if ((stage == Stage.KeyPhrase) && !phraseCopied) {
+			this.onCopy();
+			return;
+		};
+
+		if ([ Stage.Soul, Stage.SoulCreating ].includes(stage)) {
+			window.setTimeout(() => this.onNext(), 3000);
+		};
+
+		if (stage == Stage.SpaceCreating) {
+			this.createAccount();
+			return;
+		};
+
+		Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
+	}
+
 	/** Moves the Onboarding Flow one stage backward, or exits it entirely */
 	onBack = () => {
-		const { stage } = this.state;
-
 		if (!this.canMoveBackward()) {
 			return;
 		};
+
+		const { stage } = this.state;
 
 		if (stage == Stage.Void) {
 			Util.route('/auth/invite');
@@ -294,7 +304,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	createAccount = () => {
-		const { accountPath, name, code } = authStore;
+		const { accountPath, name, code, phrase } = authStore;
 		const { iconOption } = this.state;
 
 		DataUtil.createSession(message => {
@@ -315,14 +325,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					commonStore.configSet(message.config, false);
 				};
 
-				Renderer.send('keytarSet', message.account.id, authStore.phrase);
+				Renderer.send('keytarSet', message.account.id, phrase);
 				authStore.previewSet('');
 
 				Storage.set('timeRegister', Util.time());
-
-				DataUtil.onAuth(message.account, () => {
-					Util.route('/main/usecase');
-				});
+				DataUtil.onAuth(message.account, () => { Util.route('/main/usecase'); });
 
 				analytics.event('CreateAccount');
 			});
@@ -331,7 +338,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy = () => {
+		authStore.phraseSet(this.refPhrase.getValue());
+
 		this.setState({ phraseCopied: true });
+		this.refPhrase.onToggle();
+
 		Util.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
 	};
@@ -348,7 +359,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	/** Shows a simple popup that educates the user about their account keyphrase */
-	showKeyPhraseInfoPopup = () => {
+	showPhraseInfoPopup = () => {
 		popupStore.open('confirm', {
             data: {
                 title: translate('authOnboardPhraseMoreInfoPopupTitle'),
