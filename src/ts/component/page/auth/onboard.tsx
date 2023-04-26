@@ -43,7 +43,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			let onMouseLeave = null;
 
 			if (stage == Stage.KeyPhrase) {
-				onMouseEnter = this.showKeyPhraseTooltip;
+				onMouseEnter = this.onPhraseTooltip;
 				onMouseLeave = () => Preview.tooltipHide();
 			};
 
@@ -61,7 +61,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if ([ Stage.KeyPhrase, Stage.Offline ].includes(stage)) {
 			footer = (
-				<span className="animation storageInfo bottom" onClick={this.showAccountDataTooltip}>
+				<span className="animation storageInfo bottom" onClick={this.onAccountTooltip}>
 					<Icon className="dataLocation" />
 					Account data location
 				</span>
@@ -160,7 +160,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.KeyPhrase) {
 			moreInfo = (
-				<span className="animation moreInfo" onClick={this.showPhraseInfoPopup}>
+				<span className="animation moreInfo" onClick={this.onPhraseInfo}>
 					More info
 				</span>
 			);
@@ -348,7 +348,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
-	showKeyPhraseTooltip = () => {
+	onPhraseTooltip = () => {
 		Preview.tooltipShow({
 			delay: 150,
 			text: translate('authOnboardPhraseTooltip'),
@@ -359,7 +359,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	/** Shows a simple popup that educates the user about their account keyphrase */
-	showPhraseInfoPopup = () => {
+	onPhraseInfo = () => {
 		popupStore.open('confirm', {
             data: {
                 title: translate('authOnboardPhraseMoreInfoPopupTitle'),
@@ -373,7 +373,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
-	showAccountDataTooltip = () => {
+	onAccountTooltip = () => {
 		Preview.tooltipShow({
 			text: `${translate('authOnboardAccountDataLocationTooltip')}:<br/>${authStore.accountPath}`,
 			element: $('.storageInfo'),
