@@ -11,16 +11,14 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
     constructor (props: I.PageComponent) {
         super(props);
 
-        console.log('HERE!')
-
         this.onClick = this.onClick.bind(this);
     };
 
     render () {
         const cases: any[] = [
-            { id: 1, img: 'img/usecase/plug.png' },
-            { id: 2, img: 'img/usecase/plug.png' },
-            { id: 3, img: 'img/usecase/plug.png' }
+            { id: 1, img: 'img/usecase/personal-projects.png' },
+            { id: 2, img: 'img/usecase/knowledge-base.png' },
+            { id: 3, img: 'img/usecase/notes-or-diary.png' }
         ];
 
         const Case = (el) => (
