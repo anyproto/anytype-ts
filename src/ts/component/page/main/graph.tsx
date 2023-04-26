@@ -65,17 +65,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	componentDidMount () {
-		const obj = Util.getPageContainer(this.props.isPopup);
-		const isPopup = this.props.isPopup && !obj.hasClass('full');
-
 		this.rebind();
 		this.resize();
 		this.load();
 		this.initRootId(this.getRootId());
-
-		if (!isPopup) {
-			Onboarding.start('wizardGraph', false);
-		};
 
 		window.Graph = this;
 	};
