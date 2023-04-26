@@ -286,9 +286,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onMessage (e) {
 		const { id, data } = e.data;
 		const { root } = blockStore;
-		const { onClick, onContextMenu, onContextSpaceClick, onSelect, rootId } = this.props;
+		const { onClick, onContextMenu, onContextSpaceClick, onSelect } = this.props;
 		const node = $(this.node);
-		const canvas = node.find('canvas');
 		const { left, top } = node.offset();
 
 		const menuParam = {
@@ -349,9 +348,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 				this.onPreviewHide();
 
-				onContextMenu(data.node.id, {
-					...menuParam
-				});
+				onContextMenu(data.node.id, menuParam);
 				break;
 			};
 

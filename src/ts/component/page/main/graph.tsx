@@ -258,7 +258,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	addNewNode (id: string, cb: (target: any) => void) {
 		ObjectUtil.getById(id, (object: any) => {
-			let target = this.refGraph.nodeMapper(object);
+			const target = this.refGraph.nodeMapper(object);
+
 			this.data.nodes.push(target);
 			this.refGraph.nodes.push(target);
 
@@ -282,9 +283,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						this.data.edges.push(this.refGraph.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
 						this.refGraph.send('onSetEdges', { edges: this.data.edges });
 					} else {
-						this.addNewNode(targetId, (target) => {
-							this.refGraph.send('onAddNode', { target, sourceId });
-						});
+						this.addNewNode(targetId, target => this.refGraph.send('onAddNode', { target, sourceId }));
 					};
 				},
 				onSelect: (itemId: string) => {
@@ -347,12 +346,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 							ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 								ObjectUtil.openPopup({ id: message.targetId }, {
 									onClose: () => {
-										this.addNewNode(message.targetId, (target) => {
-											target = Object.assign(target, {
-												x: data.x,
-												y: data.y
-											});
-
+										this.addNewNode(message.targetId, target => {
+											target = Object.assign(target, { x: data.x, y: data.y });
 											this.refGraph.send('onAddNode', { target });
 										});
 									}
