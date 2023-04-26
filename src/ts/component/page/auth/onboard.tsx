@@ -340,7 +340,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	showKeyPhraseTooltip = () => {
 		Preview.tooltipShow({
 			delay: 150,
-			text: translate('authOnboardKeyPhraseTooltip'),
+			text: translate('authOnboardPhraseTooltip'),
 			element: $('.label'),
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Center
@@ -351,8 +351,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	showKeyPhraseInfoPopup = () => {
 		popupStore.open('confirm', {
             data: {
-                title: translate('authOnboardKeyPhraseMoreInfoPopupTitle'),
-                text: translate('authOnboardKeyPhraseMoreInfoPopupContent'),
+                title: translate('authOnboardPhraseMoreInfoPopupTitle'),
+                text: translate('authOnboardPhraseMoreInfoPopupContent'),
                 textConfirm: translate('commonOk'),
 				canConfirm: true,
 				canCancel: false,
