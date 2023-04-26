@@ -202,3 +202,10 @@
 		.archiveEmpty { border-color: $colorLinePrimary; }
 	}
 }
+
+/* PageMainUsecase */
+
+.pageMainUsecase {
+    .frame { background: $colorBlack; border: 0.5px solid #4C4B43; }
+    .loaderWrapper { background-color: rgba(0,0,0,0.3); }
+}

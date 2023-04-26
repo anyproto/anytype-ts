@@ -98,6 +98,7 @@ import 'scss/page/main/graph.scss';
 import 'scss/page/main/navigation.scss';
 import 'scss/page/main/block.scss';
 import 'scss/page/main/empty.scss';
+import 'scss/page/main/usecase.scss';
 
 import 'scss/block/bookmark.scss';
 import 'scss/block/common.scss';
@@ -426,7 +427,7 @@ class App extends React.Component<object, State> {
 			Storage.delete('redirect');
 		};
 
-		raf(() => { anim.removeClass('from'); })
+		raf(() => { anim.removeClass('from'); });
 
 		const cb = () => {
 			window.setTimeout(() => {
