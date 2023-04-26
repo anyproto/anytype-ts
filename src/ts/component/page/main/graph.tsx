@@ -339,9 +339,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		menuStore.open('select', {
 			...param,
 			data: {
-				options: [{ id: 'newObject', name: 'New object' }],
-				onSelect: (event: any, item: any) => {
+				options: [
+					{ id: 'newObject', name: 'New object' },
+				],
+				onSelect: (e: any, item: any) => {
+
 					switch (item.id) {
+
 						case 'newObject': {
 							ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 								ObjectUtil.openPopup({ id: message.targetId }, {
@@ -353,13 +357,13 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 									}
 								});
 
-								analytics.event('CreateObject', {
-									route: 'Graph',
-								});
+								analytics.event('CreateObject', { route: 'Graph' });
 							});
 							break;
 						};
+
 					};
+
 				},
 			}
 		});
