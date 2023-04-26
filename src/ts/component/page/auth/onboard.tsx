@@ -146,17 +146,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return null;
 		};
 
-		const submitText = (stage == Stage.Void) || (stage == Stage.KeyPhrase && phraseCopied) ? translate('authOnboardSubmit') : this.getText('Submit');
-
-		const submit = (
-			<Button
-				className={[ 'animation', (this.canMoveForward() ? '' : 'disabled') ].join(' ')}
-				text={submitText}
-				onClick={this.guardedOnNext}
-			/>
-		);
-
+		let text = this.getText('Submit');
 		let moreInfo = null;
+
+		if ((stage == Stage.Void) || (stage == Stage.KeyPhrase && phraseCopied)) {
+			text = translate('authOnboardSubmit');
+		};
 
 		if (stage == Stage.KeyPhrase) {
 			moreInfo = (
@@ -168,7 +163,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		return (
 			<div className="buttons">
-				{submit}
+				<Button
+					className={[ 'animation', (this.canMoveForward() ? '' : 'disabled') ].join(' ')}
+					text={text}
+					onClick={this.guardedOnNext}
+				/>
 				{moreInfo}
 			</div>
 		);
