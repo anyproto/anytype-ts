@@ -4,7 +4,7 @@ import { I, Util, C, Action, Survey, ObjectUtil, analytics, translate } from 'Li
 import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
-import CanvasWorkerBridge from "./animation/canvasWorkerBridge"
+import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage } from './animation/constants';
 import Constant from 'json/constant.json';
 
@@ -42,7 +42,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 			Math.max(0, ...) is to prevent negative numbers
 			Math.ceil(...) is to round up to the day
 		*/
-		const daysUntilDeletion =  Math.ceil(Math.max(0, (account.status.date - Util.time()) / SECS_PER_DAY ));
+		const daysUntilDeletion = Math.ceil(Math.max(0, (account.status.date - Util.time()) / SECS_PER_DAY ));
 		const dt = `${daysUntilDeletion} ${Util.cntWord(daysUntilDeletion, 'day', 'days')}`;
 
 		// Deletion Status
@@ -56,22 +56,25 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		let title = '';
 		let description = '';
 		let cancelButton = null;
-		const exportButton = <Button className="outlined" text={translate("authDeleteExportButton")} onClick={this.onExport} />;
-		const removeButton = <span className="remove" onClick={this.onRemoveLocalData}>{translate("authDeleteRemoveButton")}</span>
+
+		const exportButton = <Button className="outlined" text={translate('authDeleteExportButton')} onClick={this.onExport} />;
+		const removeButton = <span className="remove" onClick={this.onRemoveLocalData}>{translate('authDeleteRemoveButton')}</span>
 
 		switch (status) {
-			case I.AccountStatusType.PendingDeletion:
+			case I.AccountStatusType.PendingDeletion: {
 				showPie = true;
-				// TODO figure out how to make translate work with dynamic templating
 				title = `This account is planned for deletion in ${dt}`;
-				description = translate("authDeleteDescription");
-				cancelButton = <Button type="input" text={translate("authDeleteCancelButton")} onClick={this.onCancel} />;
+				description = translate('authDeleteDescription');
+				cancelButton = <Button type="input" text={translate('authDeleteCancelButton')} onClick={this.onCancel} />;
 				break;
+			};
+
 			case I.AccountStatusType.StartedDeletion:
-			case I.AccountStatusType.Deleted:
-				title = translate("authDeleteTitleDeleted");
-				description = translate("authDeleteDescriptionDeleted");
+			case I.AccountStatusType.Deleted: {
+				title = translate('authDeleteTitleDeleted');
+				description = translate('authDeleteDescriptionDeleted');
 				break;
+			};
 		};
 
         return (
@@ -91,7 +94,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 								/>
 							</div>
 						</div>
-					): null}
+					) : null}
 
 					<Title className="animation" text={title} />
 					<Label className="animation" text={description} />
@@ -116,9 +119,9 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	onRemoveLocalData () {
 		popupStore.open('confirm', {
 			data: {
-				title: translate("authDeleteRemovePopupTitle"),
-				text: translate("authDeleteRemovePopupText"),
-				textConfirm: translate("authDeleteRemovePopupConfirm"),
+				title: translate('authDeleteRemovePopupTitle'),
+				text: translate('authDeleteRemovePopupText'),
+				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
 					authStore.logout(true);
 					Util.route('/');
