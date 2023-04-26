@@ -256,6 +256,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		return this.data.nodes.find(d => d.id == id);
 	};
 
+	addNewNode (id: string, cb: (target: any) => void) {
+		ObjectUtil.getById(id, (object: any) => {
+			let target = this.refGraph.nodeMapper(object);
+			this.data.nodes.push(target);
+			this.refGraph.nodes.push(target);
+
+			cb(target);
+		});
+	};
+
 	onContextMenu (id: string, param: any) {
 		const { root } = blockStore;
 		const ids = this.ids.length ? this.ids : [ id ];
@@ -272,9 +282,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						this.data.edges.push(this.refGraph.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
 						this.refGraph.send('onSetEdges', { edges: this.data.edges });
 					} else {
-						ObjectUtil.getById(targetId, (object: any) => {
-							target = this.refGraph.nodeMapper(object);
-							this.refGraph.send('onAddNode', { sourceId, target });
+						this.addNewNode(targetId, (target) => {
+							this.refGraph.send('onAddNode', { target, sourceId });
 						});
 					};
 				},
@@ -327,7 +336,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		});
 	};
 
-	onContextSpaceClick (param: any, cb?: () => void) {
+	onContextSpaceClick (param: any, data: any) {
 		menuStore.open('select', {
 			...param,
 			data: {
@@ -335,9 +344,24 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				onSelect: (event: any, item: any) => {
 					switch (item.id) {
 						case 'newObject': {
-							if (cb) {
-								cb();
-							};
+							ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+								ObjectUtil.openPopup({ id: message.targetId }, {
+									onClose: () => {
+										this.addNewNode(message.targetId, (target) => {
+											target = Object.assign(target, {
+												x: data.x,
+												y: data.y
+											});
+
+											this.refGraph.send('onAddNode', { target });
+										});
+									}
+								});
+
+								analytics.event('CreateObject', {
+									route: 'Graph',
+								});
+							});
 							break;
 						};
 					};

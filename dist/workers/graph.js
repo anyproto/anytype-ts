@@ -611,41 +611,44 @@ onContextMenu = ({ x, y }) => {
 	redraw();
 };
 
-onAddNode = ({ sourceId, target }) => {
+onAddNode = ({ target, sourceId }) => {
 	const id = data.nodes.length;
-	const source = nodes.find(it => it.id == sourceId);
 
-	if (!source) {
-		return;
+	let x = 0;
+	let y = 0;
+
+	if (sourceId) {
+		const source = nodes.find(it => it.id == sourceId);
+
+		if (!source) {
+			return;
+		};
+
+		x = source.x + target.radius * 2;
+		y = source.y + target.radius * 2;
 	};
 
+
 	target = Object.assign(target, {
-		index: id, 
-		x: source.x + target.radius * 2, 
-		y: source.y + target.radius * 2, 
-		vx: 1, 
-		vy: 1,
-	});
-
-	data.nodes.push(target);
-	data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
-
-	updateForces();
-};
-
-onAddOrphan = ({x, y, node}) => {
-	const id = data.nodes.length;
-
-	node = Object.assign(node, {
 		index: id,
-		x: x,
-		y: y,
-		vx: 1,
+		vx: 1, 
 		vy: 1,
 		forceShow: true,
 	});
 
-	data.nodes.push(node);
+	if (!target.x && !target.y) {
+		target = Object.assign(target, {
+			x: target.x,
+			y: target.y,
+		});
+	};
+
+	data.nodes.push(target);
+
+	if (sourceId) {
+		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
+	};
+
 	updateForces();
 };
 

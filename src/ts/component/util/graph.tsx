@@ -14,7 +14,7 @@ interface Props {
 	data: any;
 	onClick?: (object: any) => void;
 	onContextMenu?: (id: string, param: any) => void;
-	onContextSpaceClick?: (param: any, cb?: () => void) => void;
+	onContextSpaceClick?: (param: any, data: any) => void;
 	onSelect?: (id: string, related?: string[]) => void;
 };
 
@@ -358,26 +358,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			case 'onContextSpaceClick': {
 				this.onPreviewHide();
 
-				onContextSpaceClick({
-					...menuParam
-				}, () => {
-
-					ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-						ObjectUtil.openPopup({ id: message.targetId }, {
-							onClose: () => {
-								ObjectUtil.getById(message.targetId, (object) => {
-									const node = this.nodeMapper(object);
-									this.nodes.push(node);
-									this.send('onAddOrphan', { x: data.x, y: data.y, node });
-								});
-							}
-						});
-
-						analytics.event('CreateObject', {
-							route: 'Graph',
-						});
-					});
-				});
+				onContextSpaceClick(menuParam, data);
 				break;
 			};
 
