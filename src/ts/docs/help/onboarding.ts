@@ -3,7 +3,6 @@ import { I } from 'Lib';
 export default {
     mainGraph: {
         category: 'Onboarding',
-        showConfetti: true,
         items: [
             {
                 description: `
@@ -28,6 +27,7 @@ export default {
             horizontal: I.MenuDirection.Right,
             noArrow: true,
 			noClose: true,
+			passThrough: true,
             offsetY: -4,
         },
     },
@@ -88,6 +88,7 @@ export default {
 			horizontal: I.MenuDirection.Right,
             noArrow: true,
 			noClose: true,
+			passThrough: true,
 			offsetY: -4,
 		},
     },
