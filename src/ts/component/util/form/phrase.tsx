@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { setRange } from 'selection-ranges';
-import { Icon, Input } from 'Component';
-import { Util } from 'Lib';
+import { getRange, setRange } from 'selection-ranges';
+import { Icon } from 'Component';
+import { Util, keyboard } from 'Lib';
 
 const COLORS = [
 	'orange',
@@ -16,6 +16,7 @@ const COLORS = [
 
 interface Props {
 	value: string;
+	readonly?: boolean;
 	onChange?: (phrase: string) => void;
 };
 
@@ -24,8 +25,6 @@ interface State {
 };
 
 class Phrase extends React.Component<Props, State> {
-
-	timeout = 0;
 
 	public static defaultProps: Props = {
 		value: '',
@@ -36,21 +35,32 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	node = null;
+	value = '';
+	timeout = 0;
 
 	constructor (props: Props) {
 		super(props);
 
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onPaste = this.onPaste.bind(this);
 	};
 
 	render () {
+		const { readonly } = this.props;
 		const { isHidden } = this.state;
 		const cn = [ 'phraseWrapper' ];
 
 		if (isHidden) {
 			cn.push('isHidden');
+		};
+
+		if (readonly) {
+			cn.push('isReadonly');
 		};
 
 		return (
@@ -66,9 +76,9 @@ class Phrase extends React.Component<Props, State> {
 					suppressContentEditableWarning={true} 
 					onFocus={this.onFocus}
 					onBlur={this.onBlur}
-					onInput={this.onInput}
 					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
+					onPaste={this.onPaste}
 				>
 					{'\n'}
 				</span>
@@ -80,10 +90,12 @@ class Phrase extends React.Component<Props, State> {
 	componentDidMount () {
 		const { value } = this.props;
 
-		this.setHtml(value);
+		this.setValue(value);
+		this.focus();
 	};
 
 	componentDidUpdate () {
+		this.setValue(this.value);
 	};
 
 	onFocus () {
@@ -92,29 +104,76 @@ class Phrase extends React.Component<Props, State> {
 	onBlur () {
 	};
 
-	onInput () {
-	};
-
-	onKeyDown () {
-	};
-
-	focus () {
+	onKeyDown (e: React.KeyboardEvent) {
 		const node = $(this.node);
-		const phrase = node.find('.phrase');
-		const value = this.getValue();
-		const length = value.length;
+		const entry = node.find('#entry');
 
-		setRange(phrase.get(0), { start: length, end: length });
+		keyboard.shortcut('space, enter', e, () => {
+			e.preventDefault();
+		});
+
+		keyboard.shortcut('backspace', e, () => {
+			e.stopPropagation();
+
+			const range = getRange(entry.get(0));
+			if (range.start || range.end) {
+				return;
+			};
+
+			e.preventDefault();
+			
+			const value = this.getList();
+			value.list.pop();
+
+			this.setValue(value.list.join(' '));
+		});
 	};
 
 	onClick () {
+		this.focus();
 	};
 
-	onKeyUp () {
+	onKeyUp (e: React.KeyboardEvent) {
+		const value = this.getList();
+
+		keyboard.shortcut('space, enter', e, () => {
+			e.preventDefault();
+
+			this.setValue(value.list.concat([ value.new ]).join(' '));
+			this.clear();
+		});
+	};
+
+	onPaste (e) {
+		const value = this.getList();
+		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const text = cb.getData('text/plain');
+
+		this.setValue(value.list.concat([ text ]).join(' '));
+		this.clear();
 	};
 
 	onToggle () {
 		this.setState({ isHidden: !this.state.isHidden });
+	};
+
+	focus () {
+		const node = $(this.node);
+		const entry = node.find('#entry');
+		
+		if (entry.length) {
+			window.setTimeout(() => {
+				entry.trigger('focus');
+				setRange(entry.get(0), { start: 0, end: 0 });
+			});
+		};
+	};
+
+	clear () {
+		const node = $(this.node);
+		const entry = node.find('#entry');
+
+		window.setTimeout(() => { entry.text(' '); });
 	};
 
 	setError () {
@@ -123,40 +182,56 @@ class Phrase extends React.Component<Props, State> {
 		node.addClass('withError');
 	};
 
-	getValue () {
+	getList () {
 		const node = $(this.node);
 		const phrase = node.find('#phrase');
+		const items = phrase.find('.item');
+		const entry = node.find('#entry');
+		const list = [];
 
-		return String(phrase.get(0).innerText || '').replace(/\s+/g, ' ').trim();
-	};
+		items.each((i: number, item: any) => {
+			item = $(item);
 
-	setHtml (v: string) {
-		const node = $(this.node);
-		const phrase = node.find('#phrase');
+			const w = item.hasClass('bgColor') ? item.data('content') : item.text();
+			if (w) {
+				list.push(w);
+			};
+		});
 
-		phrase.html(this.getHtml(v));
-	};
-
-	getHtml (v: string) {
-		v = String(v || '');
-
-		if (!v) {
-			return '';
+		return {
+			list,
+			new: (entry.length ? String(entry.text() || '').trim() : ''),
 		};
+	};
 
+	getValue () {
+		return this.value;
+	};
+
+	setValue (v: string) {
+		v = String(v || '').trim();
+
+		const node = $(this.node);
+		const phrase = node.find('#phrase').html('');
 		const { isHidden } = this.state;
 
-		return v.split(' ').map((word, index) => {
-			const color = COLORS[index % COLORS.length];
+		this.value = v;
+
+		v.split(' ').forEach((word, index) => {
+			const c = COLORS[index % COLORS.length];
+			const el = $('<span></span>').addClass('item');
 			
-			let w = '';
 			if (isHidden) {
-				w = `<span contenteditable="false" class="rect bgColor bgColor-${color}" style="width: ${9 * word.length}px"></span>`;
+				el.addClass(`bgColor bgColor-${c}`);
+				el.css({ width: 6 * word.length });
+				el.data({ content: word });
 			} else {
-				w = `<span contenteditable="false" class="textColor textColor-${color}">${Util.ucFirst(word)}</span>`
+				el.addClass(`textColor textColor-${c}`);
+				el.text(Util.ucFirst(word));
 			};
-			return w;
-		}).join(' ');
+
+			phrase.append(el);
+		});
 	};
 
 };

@@ -84,11 +84,11 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	onSubmit (e: any) {
+		e.preventDefault();
+
 		if (!this.canSubmit()) {
 			return;
 		};
-		
-		e.preventDefault();
 		
 		const { walletPath } = authStore;
 		const phrase = this.refPhrase.getValue();

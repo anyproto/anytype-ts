@@ -48,7 +48,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					<div className="importBackupWrap">
 						{back}
 
-						<Title className="withError" text="⚡️ Congratulations!" />
+						<Title text="⚡️ Congratulations!" />
 						<Label text="You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported." />
 
 						<div className="buttons">
@@ -61,7 +61,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					<React.Fragment>
 						{back}
 
-						<Title className="withError" text="Error" />
+						<Title text="Error" />
 						<Error text={error.description} />
 						<div className="buttons">
 							<Button text={translate('commonBack')} onClick={() => Util.route('/')} />

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Frame, Title, Label, Button, DotIndicator, KeyPhrase, Error, Icon, IconObject, Input } from 'Component';
+import { Frame, Title, Label, Button, DotIndicator, Phrase, Error, Icon, IconObject, Input } from 'Component';
 import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview, keyboard } from 'Lib';
 import { authStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -121,7 +121,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (stage == Stage.KeyPhrase) {
 			return (
 				<div className="animation" onClick={this.onCopy}>
-					<KeyPhrase value={authStore.phrase} />
+					<Phrase value={authStore.phrase} readonly={true} />
 				</div>
 			);
 		};
