@@ -5,11 +5,13 @@ import { observer } from 'mobx-react';
 import $ from 'jquery';
 import Constant from 'json/constant.json';
 
-const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I.PageComponent, object> {
+const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I.PageComponent, object> {
     loading: boolean = false;
 
     constructor (props: I.PageComponent) {
         super(props);
+
+        console.log('HERE!')
 
         this.onClick = this.onClick.bind(this);
     };
@@ -73,4 +75,4 @@ const PageAuthUsecase = observer(class PageAuthUsecase extends React.Component<I
 
 });
 
-export default PageAuthUsecase;
+export default PageMainUsecase;

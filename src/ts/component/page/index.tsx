@@ -16,7 +16,6 @@ import PageAuthSetup from './auth/setup';
 import PageAuthAccountSelect from './auth/accountSelect';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
-import PageAuthUsecase from './auth/usecase';
 
 import PageMainEmpty from './main/empty';
 import PageMainEdit from './main/edit';
@@ -31,9 +30,11 @@ import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
+import PageMainUsecase from './main/usecase';
 
 const Components: { [key: string]: any } = {
-	'/':					 PageAuthSelect,
+	'index/index':			 PageAuthSelect,
+
 	'auth/invite':			 PageAuthInvite,
 	'auth/select':			 PageAuthSelect,
 	'auth/login':			 PageAuthLogin,
@@ -42,7 +43,6 @@ const Components: { [key: string]: any } = {
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
-	'auth/usecase':			 PageAuthUsecase,
 
 	'main/empty':			 PageMainEmpty,		
 	'main/edit':			 PageMainEdit,
@@ -57,6 +57,7 @@ const Components: { [key: string]: any } = {
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
 	'main/block':			 PageMainBlock,
+	'main/usecase':			 PageMainUsecase,
 };
 
 const Titles = {
@@ -78,14 +79,13 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { isPopup } = this.props;
 		const { config, theme } = commonStore;
 		const { account } = authStore;
-		const match = this.getMatch();
-		const { page, action } = match.params || {};
+		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
 		const showNotice = !Storage.get('firstRun');
-		const showSidebar = page == 'main';
+		const showSidebar = this.isMain() && !this.isMainUsecase();
 
 		if (showNotice) {
-			Components['/'] = PageAuthNotice;
+			Components['index/index'] = PageAuthNotice;
 		};
 
 		const Component = Components[path];
@@ -152,23 +152,32 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		return (isPopup ? matchPopup : match) || { params: {} };
 	};
 
-	getRootId () {
+	getMatchParams () {
 		const match = this.getMatch();
+		const page = String(match?.params?.page || 'index');
+		const action = String(match?.params?.action || 'index');
+		const id = String(match?.params?.id || '');
+
+		return { page, action, id };
+	};
+
+	getRootId () {
+		const { id } = this.getMatchParams();
 		const home = ObjectUtil.getSpaceDashboard();
 
-		return match?.params?.id || home?.id;
+		return id || home?.id;
 	};
 
 	init () {
 		const { account } = authStore;
 		const { isPopup, history } = this.props;
 		const match = this.getMatch();
-		const { page, action } = match.params || {};
-		const isIndex = !page;
-		const isAuth = page == 'auth';
-		const isMain = page == 'main';
-		const isMainIndex = isMain && (action == 'index');
-		const isPinCheck = isAuth && (action == 'pin-check');
+		const { page, action } = this.getMatchParams();
+		const isIndex = this.isIndex();
+		const isAuth = this.isAuth();
+		const isMain = this.isMain();
+		const isMainIndex = this.isMainIndex();
+		const isPinCheck = this.isAuthPinCheck();
 		const pin = Storage.get('pin');
 		const win = $(window);
 		const path = [ page, action ].join('/');
@@ -238,9 +247,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	onboardingCheck () {
-		const match = this.getMatch();
 		const home = ObjectUtil.getSpaceDashboard();
-		const { id } = match.params;
+		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 
 		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('dashboard')) {
@@ -256,15 +264,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 	
 	event () {
-		const match = this.getMatch();
-		const page = String(match.params.page || 'index');
-		const action = String(match.params.action || 'index');
-		const id = String(match.params.id || '');
+		const { page, action, id } = this.getMatchParams();
 		const showNotice = !Storage.get('firstRun');
 		const params = { page, action, id: undefined };
-		const isMain = page == 'main';
-		const isMainType = isMain && (action == 'type');
-		const isMainRelation = isMain && (action == 'relation');
+		const isMainType = this.isMainType();
+		const isMainRelation = this.isMainRelation();
 
 		if (showNotice) {
 			params.page = 'auth';
@@ -278,11 +282,50 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		analytics.event('page', { params });
 	};
-	
+
+	isIndex () {
+		const { page } = this.getMatchParams();
+		return page == 'index';
+	};
+
+	isAuth () {
+		const { page } = this.getMatchParams();
+		return page == 'auth';
+	};
+
+	isAuthPinCheck () {
+		const { action } = this.getMatchParams();
+		return this.isAuth() && (action == 'pin-check');
+	};
+
+	isMain () {
+		const { page } = this.getMatchParams();
+		return page == 'main';
+	};
+
+	isMainIndex () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'index');
+	};
+
+	isMainType () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'type');
+	};
+
+	isMainRelation () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'relation');
+	};
+
+	isMainUsecase () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'usecase');
+	};
+
 	getClass (prefix: string) {
 		const { isPopup } = this.props;
-		const match = this.getMatch();
-		const page = match.params.page || 'index';
+		const { page } = this.getMatchParams();
 		
 		return [ 
 			Util.toCamelCase([ prefix, page ].join('-')),
@@ -315,10 +358,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	getId (prefix: string) {
-		const match = this.getMatch();
-		const page = match.params.page || 'index';
-		const action = match.params.action || 'index';
-
+		const { page, action } = this.getMatchParams();
 		return Util.toCamelCase([ prefix, page, action ].join('-'));
 	};
 
