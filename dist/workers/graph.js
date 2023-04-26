@@ -637,10 +637,7 @@ onAddNode = ({ target, sourceId }) => {
 	});
 
 	if (!target.x && !target.y) {
-		target = Object.assign(target, {
-			x: target.x,
-			y: target.y,
-		});
+		target = Object.assign(target, { x, y });
 	};
 
 	data.nodes.push(target);
