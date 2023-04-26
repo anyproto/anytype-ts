@@ -34,7 +34,6 @@ import Loader from './util/loader';
 import Deleted from './util/deleted';
 import Progress from './util/progress';
 import DotIndicator from './util/dotIndicator';
-import KeyPhrase from './util/keyPhrase';
 import EmptySearch from './util/emptySearch';
 
 import Input from './util/form/input';
@@ -48,6 +47,7 @@ import Select from './util/form/select';
 import Drag from './util/form/drag';
 import Pin from './util/form/pin';
 import Filter from './util/form/filter';
+import Phrase from './util/form/phrase';
 
 import Pager from './util/pager';
 import Dimmer from './util/dimmer';
@@ -116,7 +116,7 @@ export {
 	Deleted,
 	Progress,
 	DotIndicator,
-	KeyPhrase,
+	Phrase,
 	EmptySearch,
 	SelectionProvider,
 	Popup,

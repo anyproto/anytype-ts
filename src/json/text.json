@@ -102,7 +102,7 @@
 	"authLoginLabel": { "en": "Type your recovery phrase" },
 	"authLoginSelfHost": { "en": "Self-host" },
 	"authLoginSubmit": { "en": "Continue" },
-	"authLoginLostPhrase": { "en": "I lost the phrase" },
+	"authLoginLostPhrase": { "en": "I've lost the phrase" },
 	"authLoginLostPhrasePopupTitle": { "en": "Lost Phrase" },
 	"authLoginLostPhrasePopupContent": { "en": "Anytype cannot recover recovery phrase for you<br/>There is technically no possible way access it, as it’s not stored on Anytype side. Check out the places where it can be stored: <ul><li>In system password storage. We did it for you automatically</li><li>Inside a password manager if you use one</li><li>On a piece of paper stored in a secure place chosen prior</li></ul>" },
 
@@ -138,12 +138,12 @@
 	"authOnboardVoidTitle": { "en": "This is your Void" },
 	"authOnboardVoidLabel": { "en": "Everything you create will be stored here. It is a special encrypted place, which exist on your machine and is backed up to the network." },
 
-	"authOnboardKeyPhraseTitle": { "en": "Your Void is encrypted by your Key" },
-	"authOnboardKeyPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. if you lose it there is no way to recover it. Keep it in safe place <span class='questionMark'>?</span>" },
-	"authOnboardKeyPhraseTooltip": { "en": "How to secure your phrase: <ul><li>In system password storage. We will do it for you</li><li>On a piece of paper stored in a secure place</li><li>Inside a password manager if you use one</li></ul>" },
-	"authOnboardKeyPhraseMoreInfoPopupTitle": { "en": "Recovery phrase" },
-	"authOnboardKeyPhraseMoreInfoPopupContent": { "en": "<b>Anytype uses recovery phrase instead of login and password to encrypt your data</b><ul><li>Phrase is randomly generated on your device and stored locally</li><li>No one can access your data without recovery phrase</li><li>Phrase ensures only you own your data, but if you lose it there is no way to recover it.</li></ul><b>If you lose recovery phrase there is no way to recover it</b><ul><li>Anytype cannot recover it for you</li><li>There is technically no possible way access it, as it’s not stored on anytype side</li><li>Anytype will never reach out to ask for it</li><li>Sharing the phase equals sharing the ownership of account- The ordering of the words in a recovery phrase matters</li></ul><b>Store recovery phrase in secure place In system password storage</b><ul><li>In system password storage. We will do it for you</li><li>Inside password manager if you use one</li><li>On a piece of paper in safe and secure place</li></ul>" },
-	"authOnboardKeyPhraseSubmit": { "en": "Show and copy" },
+	"authOnboardPhraseTitle": { "en": "Your Void is encrypted by your Key" },
+	"authOnboardPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. if you lose it there is no way to recover it. Keep it in safe place <span class='questionMark'>?</span>" },
+	"authOnboardPhraseTooltip": { "en": "How to secure your phrase: <ul><li>In system password storage. We will do it for you</li><li>On a piece of paper stored in a secure place</li><li>Inside a password manager if you use one</li></ul>" },
+	"authOnboardPhraseMoreInfoPopupTitle": { "en": "Recovery phrase" },
+	"authOnboardPhraseMoreInfoPopupContent": { "en": "<b>Anytype uses recovery phrase instead of login and password to encrypt your data</b><ul><li>Phrase is randomly generated on your device and stored locally</li><li>No one can access your data without recovery phrase</li><li>Phrase ensures only you own your data, but if you lose it there is no way to recover it.</li></ul><b>If you lose recovery phrase there is no way to recover it</b><ul><li>Anytype cannot recover it for you</li><li>There is technically no possible way access it, as it’s not stored on anytype side</li><li>Anytype will never reach out to ask for it</li><li>Sharing the phase equals sharing the ownership of account- The ordering of the words in a recovery phrase matters</li></ul><b>Store recovery phrase in secure place In system password storage</b><ul><li>In system password storage. We will do it for you</li><li>Inside password manager if you use one</li><li>On a piece of paper in safe and secure place</li></ul>" },
+	"authOnboardPhraseSubmit": { "en": "Show and copy" },
 
 	"authOnboardOfflineTitle": { "en": "Anytype is an offline-first application" },
 	"authOnboardOfflineLabel": { "en": "Here, everything you create is truly yours. Connecting to the distributed network helps to backup and sync data between your devices." },

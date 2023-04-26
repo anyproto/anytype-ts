@@ -1,13 +1,12 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Frame, Title, Error, Button, Header, Icon, KeyPhrase } from 'Component';
+import { Frame, Title, Error, Button, Header, Icon, Phrase } from 'Component';
 import { I, Util, translate, C, keyboard, Animation } from 'Lib';
 import { authStore, popupStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
 	error: string;
-	showPhrase: boolean;
 };
 
 const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.PageComponent, State> {
@@ -17,7 +16,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 	state = {
 		error: '',
-		showPhrase: false,
 	};
 	
 	constructor (props: I.PageComponent) {
@@ -28,13 +26,12 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.canSubmit = this.canSubmit.bind(this);
-		this.onToggle = this.onToggle.bind(this);
 		this.onSelfHost = this.onSelfHost.bind(this);
 		this.onForgot = this.onForgot.bind(this);
 	};
 	
 	render () {
-		const { error, showPhrase } = this.state;
+		const { error } = this.state;
 		const { config } = commonStore;
 		
         return (
@@ -48,15 +45,8 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 					<form className="form" onSubmit={this.onSubmit}>
 						<Error text={error} className="animation" />
 
-						<div className="keyPhraseContainer animation">
-							<KeyPhrase
-								ref={ref => this.refPhrase = ref}
-								isEditable
-								isBlurred={!showPhrase}
-								isInvalid={error.length > 0}
-								onChange={this.onChange}
-							/>
-							<Icon className={showPhrase ? 'see' : 'hide' } onClick={this.onToggle} />
+						<div className="animation">
+							<Phrase ref={ref => this.refPhrase = ref} onChange={this.onChange} />
 						</div>
 						<div className="buttons animation">
 							<Button id="submit" type="input" text={translate('authLoginSubmit')} />
@@ -94,11 +84,11 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 
 	onSubmit (e: any) {
+		e.preventDefault();
+
 		if (!this.canSubmit()) {
 			return;
 		};
-		
-		e.preventDefault();
 		
 		const { walletPath } = authStore;
 		const phrase = this.refPhrase.getValue();
@@ -138,10 +128,6 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 
 	onChange () {
 		this.checkButton();
-	};
-
-	onToggle () {
-		this.setState({ showPhrase: !this.state.showPhrase });
 	};
 
 	onForgot () {
