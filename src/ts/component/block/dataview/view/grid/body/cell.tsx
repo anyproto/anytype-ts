@@ -54,7 +54,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		};
 
 		let iconEdit = null;
-		if ((relation.relationKey == 'name') && (record.type != Constant.typeId.note)) {
+		if ((relation.relationKey == 'name') && (record.layout != I.ObjectLayout.Note)) {
 			iconEdit = <Icon className="edit" onClick={this.onEdit} />;
 		};
 
