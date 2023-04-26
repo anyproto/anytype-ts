@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Frame, Title, Error, Button, Header, Icon, KeyPhrase } from 'Component';
+import { Frame, Title, Error, Button, Header, Icon, Phrase } from 'Component';
 import { I, Util, translate, C, keyboard, Animation } from 'Lib';
 import { authStore, popupStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -46,7 +46,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						<Error text={error} className="animation" />
 
 						<div className="animation">
-							<KeyPhrase ref={ref => this.refPhrase = ref} onChange={this.onChange} />
+							<Phrase ref={ref => this.refPhrase = ref} onChange={this.onChange} />
 						</div>
 						<div className="buttons animation">
 							<Button id="submit" type="input" text={translate('authLoginSubmit')} />

@@ -10,7 +10,7 @@ import { OnboardStage as Stage } from './animation/constants';
 
 type State = {
 	stage: Stage;
-	keyPhraseCopied: boolean;
+	phraseCopied: boolean;
 	error?: string;
 	iconOption: number;
 };
@@ -21,7 +21,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	state: State = {
 		stage: Stage.Void,
-		keyPhraseCopied: false,
+		phraseCopied: false,
 		iconOption: Util.rand(1, Constant.iconCnt)
 	};
 
@@ -116,7 +116,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	renderContent = (): JSX.Element => {
-		const { stage, keyPhraseCopied, iconOption } = this.state;
+		const { stage, phraseCopied, iconOption } = this.state;
 
 		if (stage == Stage.KeyPhrase) {
 			return (
@@ -170,13 +170,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	renderButtons = (): JSX.Element => {
-		const { stage, keyPhraseCopied } = this.state;
+		const { stage, phraseCopied } = this.state;
 
 		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
 			return null;
 		};
 
-		const submitText = (stage == Stage.Void) || (stage == Stage.KeyPhrase && keyPhraseCopied) ? translate('authOnboardSubmit') : this.getText('Submit');
+		const submitText = (stage == Stage.Void) || (stage == Stage.KeyPhrase && phraseCopied) ? translate('authOnboardSubmit') : this.getText('Submit');
 
 		const submit = (
 			<Button
@@ -246,9 +246,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	 *
 	*/
 	onNext = () => {
-		const { stage, keyPhraseCopied } = this.state;
+		const { stage, phraseCopied } = this.state;
 
-		if ((stage == Stage.KeyPhrase) && !keyPhraseCopied) {
+		if ((stage == Stage.KeyPhrase) && !phraseCopied) {
 			this.onCopy();
 		} else
 		if ([ Stage.Soul, Stage.SoulCreating ].includes(stage)) {
@@ -331,7 +331,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy = () => {
-		this.setState({ keyPhraseCopied: true });
+		this.setState({ phraseCopied: true });
 		Util.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
 	};

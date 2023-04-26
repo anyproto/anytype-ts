@@ -62,7 +62,7 @@ html.bodyAuthDeleted {
 .pageAuthLogin {
 	.form { width: 100%; }
 	.icon { height: 20px; width: 20px; transition: $transitionAllCommon; }
-	.keyPhraseWrapper { margin: 0px 0px 20px 0px; }
+	.phraseWrapper { margin: 0px 0px 20px 0px; }
 
 	.small { color: #cbc9bd; cursor: pointer; transition: $transitionAllCommon; }
 	.small:hover { color: $colorWhite; }

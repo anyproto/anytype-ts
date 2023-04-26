@@ -1,12 +1,12 @@
 @import "~scss/_vars";
 
-.keyPhraseWrapper {
+.phraseWrapper {
 	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: 100%; position: relative; padding: 36px 48px; font-size: 18px; line-height: 18px;
 	transition: $transitionAllCommon;
 }
-.keyPhraseWrapper {
-	.keyPhrase { width: 100%; text-align: center; -webkit-user-modify: read-write-plaintext-only; }
-	.keyPhrase {
+.phraseWrapper {
+	.phrase { width: 100%; text-align: center; -webkit-user-modify: read-write-plaintext-only; }
+	.phrase {
 		.textColor { padding: 0px 10px; font-size: 18px; min-height: 18px; user-select: text !important; }
 		.rect { height: 35px; display: inline-block; vertical-align: top; border-radius: 35px; }
 
@@ -28,8 +28,8 @@
 	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
 	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
 }
-.keyPhraseWrapper:hover { cursor: text; background: rgba(44, 43, 39, 0.5); }
+.phraseWrapper:hover { cursor: text; background: rgba(44, 43, 39, 0.5); }
 
-.keyPhraseWrapper.isHidden {
+.phraseWrapper.isHidden {
 	.rect { filter: blur(7px); }
 }

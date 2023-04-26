@@ -23,7 +23,7 @@ interface State {
 	isHidden: boolean;
 };
 
-class KeyPhrase extends React.Component<Props, State> {
+class Phrase extends React.Component<Props, State> {
 
 	timeout = 0;
 
@@ -36,7 +36,6 @@ class KeyPhrase extends React.Component<Props, State> {
 	};
 
 	node = null;
-	refInput = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -48,24 +47,31 @@ class KeyPhrase extends React.Component<Props, State> {
 
 	render () {
 		const { isHidden } = this.state;
-		const cw = [ 'keyPhraseWrapper' ];
-		const cn = [ 'keyPhrase' ];
+		const cn = [ 'phraseWrapper' ];
 
 		if (isHidden) {
-			cw.push('isHidden');
+			cn.push('isHidden');
 		};
 
 		return (
 			<div 
 				ref={ref => this.node = ref}
-				className={cw.join(' ')}
+				className={cn.join(' ')}
 				onClick={this.onClick}
 			>
-				<div className={cn.join(' ')} />
-				<Input 
-					ref={ref => this.refInput = ref} 
+				<div id="phrase" className="phrase" />
+				<span 
+					id="entry" 
+					contentEditable={true}
+					suppressContentEditableWarning={true} 
+					onFocus={this.onFocus}
+					onBlur={this.onBlur}
+					onInput={this.onInput}
+					onKeyDown={this.onKeyDown}
 					onKeyUp={this.onKeyUp}
-				/>
+				>
+					{'\n'}
+				</span>
 				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
 			</div>
 		);
@@ -74,34 +80,61 @@ class KeyPhrase extends React.Component<Props, State> {
 	componentDidMount () {
 		const { value } = this.props;
 
-		this.refInput.setValue(value);
 		this.setHtml(value);
 	};
 
 	componentDidUpdate () {
 	};
 
+	onFocus () {
+	};
+
+	onBlur () {
+	};
+
+	onInput () {
+	};
+
+	onKeyDown () {
+	};
+
 	focus () {
 		const node = $(this.node);
-		const phrase = node.find('.keyPhrase');
+		const phrase = node.find('.phrase');
 		const value = this.getValue();
 		const length = value.length;
 
 		setRange(phrase.get(0), { start: length, end: length });
 	};
 
-	setHtml (v: string) {
-		const node = $(this.node);
-		const phrase = node.find('.keyPhrase');
+	onClick () {
+	};
 
-		phrase.html(this.getHtml(v));
+	onKeyUp () {
+	};
+
+	onToggle () {
+		this.setState({ isHidden: !this.state.isHidden });
+	};
+
+	setError () {
+		const node = $(this.node);
+
+		node.addClass('withError');
 	};
 
 	getValue () {
 		const node = $(this.node);
-		const phrase = node.find('.keyPhrase');
+		const phrase = node.find('#phrase');
 
 		return String(phrase.get(0).innerText || '').replace(/\s+/g, ' ').trim();
+	};
+
+	setHtml (v: string) {
+		const node = $(this.node);
+		const phrase = node.find('#phrase');
+
+		phrase.html(this.getHtml(v));
 	};
 
 	getHtml (v: string) {
@@ -126,32 +159,6 @@ class KeyPhrase extends React.Component<Props, State> {
 		}).join(' ');
 	};
 
-	onClick () {
-		this.refInput.focus();
-	};
-
-	onKeyUp () {
-		const { onChange } = this.props;
-		const node = $(this.node);
-		const value = this.refInput.getValue();
-
-		this.setHtml(value);
-		this.focus();
-
-		onChange(value);
-		node.removeClass('withError');
-	};
-
-	onToggle () {
-		this.setState({ isHidden: !this.state.isHidden });
-	};
-
-	setError () {
-		const node = $(this.node);
-
-		node.addClass('withError');
-	};
-
 };
 
-export default KeyPhrase;
+export default Phrase;
