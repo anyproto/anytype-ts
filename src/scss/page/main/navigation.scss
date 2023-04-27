@@ -74,4 +74,10 @@
 			.icon.arrow { right: auto; left: -24px; }
 		}
 	}
+
+	.items.center {
+		.item {
+			.icon.arrow { display: none; }
+		}
+	}
 }

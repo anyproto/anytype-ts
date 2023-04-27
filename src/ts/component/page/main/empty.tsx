@@ -64,6 +64,10 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 				],
 				canAdd: true,
+				dataChange: (items: any[]) => {
+					const fixed: any[] = [ ObjectUtil.graph() ];
+					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
+				},
 				onSelect: (el: any) => {
 					C.ObjectWorkspaceSetDashboard(workspace, el.id, (message: any) => {
 						if (message.error.code) {
