@@ -276,15 +276,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		*/
 		Animation.from(() => {
 			const duration = 3000;
-			if ([Stage.SoulCreating, Stage.Soul].includes(stage)) {
-				window.setTimeout(() =>
-					this.setState(prev =>
-						({ ...prev, stage: prev.stage + 1 }),
-						this.onNext
-					), duration);
-				return;
-			}
+			
 
+			// during this stage, we want the animation to go forward 2 steps, and then after a delay the onboarding to go forward 1 step
 			if (stage == Stage.Offline) {
 				this.setState(prev =>
 					({ ...prev, animationStage: prev.animationStage + 1 }),
@@ -300,6 +294,18 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				return;
 			}
 
+			// during these stages we want the onboarding to progress, but not the animation
+			if ([Stage.SoulCreating, Stage.Soul].includes(stage)) {
+				window.setTimeout(() =>
+					this.setState(prev =>
+						({ ...prev, stage: prev.stage + 1 }),
+						this.onNext
+					), duration);
+				return;
+			}
+			
+
+			// during the rest of the stages, we want the animation to go forward a step, a delay, then the onboarding to go forward a step
 			this.setState(
 				prev => ({ ...prev, animationStage: prev.animationStage + 1 }),
 				() => {
@@ -320,9 +326,17 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Void) {
 			Util.route('/auth/invite');
-		} else {
-			Animation.from(() => { this.setState(prev => ({ ...prev, animationStage: prev.animationStage - 1, stage: prev.stage - 1 })) });
-		};
+			return;
+		}
+
+		// jump back two stages for the animation
+		if (stage == Stage.Soul) {
+			Animation.from(() => { this.setState(prev => ({ ...prev, animationStage: prev.animationStage - 2, stage: prev.stage - 1 })) });
+			return;
+		}
+
+		// jump back one stage for both
+		Animation.from(() => { this.setState(prev => ({ ...prev, animationStage: prev.animationStage - 1, stage: prev.stage - 1 })) });
 	};
 
 	walletCreate = () => {
