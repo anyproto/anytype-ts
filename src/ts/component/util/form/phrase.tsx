@@ -140,15 +140,16 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyUp = (e: React.KeyboardEvent) => {
-		const entry  = this.getEntry();
+		const entry  = this.getEntryValue();
 
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
 
+			this.clear();
+			
 			this.setState(({ phrase }) => {
 				return { phrase: entry.length ? phrase.concat([ entry ]) : [] };
 			});
-			this.clear();
 		});
 	};
 
@@ -156,12 +157,12 @@ class Phrase extends React.Component<Props, State> {
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = this.normalizeWhiteSpace(cb.getData('text/plain'));
 
-		this.setState(({ phrase }) => ({ phrase: phrase.concat(text.split(' ')) }));
 		this.clear();
+		this.setState(({ phrase }) => ({ phrase: phrase.concat(text.split(' ')) }));
 	};
 
 	onBlur = () => {
-		const value = this.getEntry();
+		const value = this.getEntryValue();
 		this.setState(({ phrase }) => ({ showPlaceholder: phrase.length === 0 && value.length === 0 }));
 	}
 
@@ -193,11 +194,10 @@ class Phrase extends React.Component<Props, State> {
 	clear = () => {
 		const node = $(this.node);
 		const entry = node.find('#entry');
-
-		window.setTimeout(() => { entry.text(' '); });
+		entry.text('');
 	};
 
-	getEntry = () => {
+	getEntryValue = () => {
 		const node = $(this.node);
 		const entry = node.find('#entry');
 		return this.normalizeWhiteSpace(entry.text());
