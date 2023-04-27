@@ -41,31 +41,14 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (![ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
-			let onMouseEnter = null;
-			let onMouseLeave = null;
-
-			if (stage == Stage.KeyPhrase) {
-				onMouseEnter = () => this.onPhraseTooltip();
-				onMouseLeave = () => Preview.tooltipHide();
-			};
-
 			indicator = <DotIndicator index={stage} count={4} />;
-
-			label = (
-				<Label 
-					id="label"
-					className="animation" 
-					text={this.getText('Label')} 
-					onMouseEnter={onMouseEnter}
-					onMouseLeave={onMouseLeave}
-				/>
-			);
+			label = <Label id="label" className="animation" text={this.getText('Label')} />;
 		};
 
 		if ([ Stage.KeyPhrase, Stage.Offline ].includes(stage) && config.experimental) {
 			footer = (
 				<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
-					<Icon className="dataLocation" />
+					<Icon className="gear" />
 					Account data location
 				</div>
 			);
@@ -190,6 +173,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (this.refFrame) {
 			this.refFrame.resize();
 		};
+
+		this.rebind();
 	};
 
 	componentWillUnmount(): void {
@@ -201,9 +186,16 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	rebind () {
+		const node = $(this.node);
+		const question = node.find('.questionMark');
+
 		this.unbind();
 
 		$(window).on('keydown.onboarding', (e) => { this.onKeyDown(e); });
+
+		question.off('mouseenter mouseleave');
+		question.on('mouseenter', () => this.onPhraseTooltip());
+		question.on('mouseleave', () => Preview.tooltipHide());
 	};
 
 	getText = (name: string) => {
