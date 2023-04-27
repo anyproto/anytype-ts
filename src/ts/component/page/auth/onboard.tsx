@@ -372,7 +372,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
 	onAccountTooltip = () => {
 		Preview.tooltipShow({
-			text: `${translate('authOnboardAccountDataLocationTooltip')}:<br/>${authStore.accountPath}`,
+			text: `${translate('authOnboardAccountDataLocationTooltip')}<br/><br/>${authStore.accountPath}`,
 			element: $('.storageInfo'),
 			typeY: I.MenuDirection.Top,
 			typeX: I.MenuDirection.Center

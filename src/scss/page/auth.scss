@@ -13,6 +13,10 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		p { margin-bottom: 8px; }
 		ul { list-style-position: inside; margin-bottom: 8px; }
 	}
+	.tooltip {
+		padding: 20px !important;
+		border-radius: 12px !important;
+	}
 }
 
 html.bodyAuthDeleted {
