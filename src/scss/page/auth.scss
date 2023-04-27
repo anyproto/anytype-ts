@@ -124,7 +124,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted {
-	.frame { width: 866px; display: flex; flex-direction: column; gap: 12px 0px; align-items: center; }
+	.frame { width: 866px; margin-top: -150px !important; display: flex; flex-direction: column; gap: 12px 0px; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; }
 	.label { color: #5c5a54; }
 }

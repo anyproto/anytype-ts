@@ -68,6 +68,7 @@ class Phrase extends React.Component<Props, State> {
 				className={cn.join(' ')}
 				onClick={this.onClick}
 			>
+				<div className="phraseInnerWrapper">
 				<div id="phrase" className="phrase" />
 				<span 
 					id="entry" 
@@ -79,6 +80,7 @@ class Phrase extends React.Component<Props, State> {
 				>
 					{'\n'}
 				</span>
+				</div>
 				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
 			</div>
 		);
@@ -185,7 +187,8 @@ class Phrase extends React.Component<Props, State> {
 		items.each((i: number, item: any) => {
 			item = $(item);
 
-			const w = item.hasClass('bgColor') ? item.data('content') : item.text();
+			const w = item.text();
+
 			if (w) {
 				list.push(w);
 			};
@@ -213,15 +216,12 @@ class Phrase extends React.Component<Props, State> {
 		v.split(' ').forEach((word, index) => {
 			const c = COLORS[index % COLORS.length];
 			const el = $('<span></span>').addClass('item');
+			el.text(Util.ucFirst(word));
+			el.addClass(`textColor textColor-${c}`);
 			
 			if (isHidden) {
 				el.addClass(`bgColor bgColor-${c}`);
-				el.css({ width: 6 * word.length });
-				el.data({ content: word });
-			} else {
-				el.addClass(`textColor textColor-${c}`);
-				el.text(Util.ucFirst(word));
-			};
+			}
 
 			phrase.append(el);
 		});
