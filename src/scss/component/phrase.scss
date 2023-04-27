@@ -1,17 +1,17 @@
 @import "~scss/_vars";
 
 .phraseWrapper {
-	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: 100%; position: relative; padding: 36px 48px; font-size: 18px; line-height: 18px;
-	transition: $transitionAllCommon; text-align: center; letter-spacing: -0.12px;
+	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: fit-content; min-width: 100%; position: relative; padding: 36px 48px;
+	font-size: 18px; line-height: 18px; transition: $transitionAllCommon; text-align: center; letter-spacing: -0.12px;
 }
 .phraseWrapper {
 	.phrase { display: inline; vertical-align: top; }
 	.phrase * { user-select: text !important; }
 	.phrase {
-		.textColor { font-size: 18px; line-height: 18px; height: 18px; margin: 0px 20px 0px 0px; user-select: text !important; }
+		.item { font-size: 18px; line-height: 18px; height: 18px; margin: 0px 20px 0px 0px; user-select: text !important; }
 
-		.bgColor { height: 18px; display: inline-block; vertical-align: top; border-radius: 6px; margin: 0px 20px 0px 0px; filter: blur(3px); }
-		.bgColor-orange { background: $colorOrange !important; }
+		.bgColor { border-radius: 6px; filter: blur(3px); }
+		.bgColor-orange { background: $colorOrange !important; user-select: none !important; }
 		.bgColor-red { background: $colorRed !important; }
 		.bgColor-pink { background: $colorPink !important; }
 		.bgColor-purple { background: $colorPurple !important; }
@@ -24,7 +24,8 @@
 	#entry { display: inline; font-size: 18px; line-height: 18px; height: 18px; -webkit-user-modify: read-write-plaintext-only; }
 
 	.icon { 
-		height: 20px; width: 20px; vertical-align: top; transition: $transitionAllCommon; position: absolute; right: -32px; top: 50%; margin: -10px 0px 0px 0px; cursor: default;
+		height: 20px; width: 20px; vertical-align: top; transition: $transitionAllCommon; position: absolute;
+		right: -32px; top: 50%; margin: -10px 0px 0px 0px; cursor: default;
 	}
 	.icon.see { background-image: url('~img/icon/keyphrase/see0.svg'); }
 	.icon.see:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
