@@ -1,5 +1,7 @@
 @import "~scss/_vars";
 
+$colorSecondary: #8d8d8d;
+
 html.bodyIndex, html.bodyAuth {
 	body { background: #060606 !important; color: $colorSecondary; overflow: hidden; }
 }
@@ -18,7 +20,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	.menus {
 		.menu.menuAccountPath { background: #252525; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; } 
 		.menu.menuAccountPath {
-			.label { color: #8d8d8d; }
+			.label { color: $colorSecondary; }
 			.label.path { color: #d4d4d4; }
 		}
 	}
@@ -79,7 +81,7 @@ html.bodyAuthDeleted {
 	.icon { height: 20px; width: 20px; transition: $transitionAllCommon; }
 	.phraseWrapper { margin: 0px 0px 20px 0px; }
 
-	.small { color: #929082; cursor: pointer; transition: $transitionAllCommon; }
+	.small { color: $colorSecondary; cursor: pointer; transition: $transitionAllCommon; }
 	.small:hover { color: #cbc9bd; }
 
 	.bottom { 
@@ -133,7 +135,7 @@ html.bodyAuthDeleted {
 	.button { width: auto; }
 
 	.icon.gear { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; transition: $transitionAllCommon; }
-	.small { color: #929082; transition: $transitionAllCommon; }
+	.small { color: $colorSecondary; transition: $transitionAllCommon; }
 
 	#accountPath { display: flex; align-items: center; flex-direction: row; gap: 0px 6px; }
 	#accountPath:hover { color: #cbc9bd; }
