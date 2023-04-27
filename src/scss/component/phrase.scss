@@ -6,9 +6,9 @@
 }
 .phraseWrapper {
 	.phrase { display: inline; vertical-align: top; }
-	.phrase * { user-select: all; }
+	.phrase * { user-select: text !important; }
 	.phrase {
-		.textColor { font-size: 18px; line-height: 18px; height: 18px; margin: 0px 20px 0px 0px; user-select: all; }
+		.textColor { font-size: 18px; line-height: 18px; height: 18px; margin: 0px 20px 0px 0px; user-select: text !important; }
 
 		.bgColor { height: 18px; display: inline-block; vertical-align: top; border-radius: 6px; margin: 0px 20px 0px 0px; filter: blur(3px); }
 		.bgColor-orange { background: $colorOrange !important; }
@@ -31,7 +31,7 @@
 	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
 	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
 }
-.phraseWrapper:hover { cursor: text; background: rgba(44, 43, 39, 0.5); }
+.phraseWrapper:hover { cursor: text !important; background: rgba(44, 43, 39, 0.5); }
 
 .phraseWrapper.isReadonly {
 	#entry { display: none; }
