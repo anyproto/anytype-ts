@@ -133,7 +133,7 @@ html.bodyAuthDeleted {
 	.small, .questionMark:hover { cursor: pointer; }
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
-	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: block; background-color: #5c5a54; color: black; }
+	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: #5c5a54; color: black; }
 	.input { border-radius: 26px; border: none; background: rgba(44, 43, 39, 0.3); font-size: 18px; padding: 32px 48px 32px 48px; width: 392px; height: auto; }
 	.input:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
 	.input::placeholder { color: #5c5a54 !important; }
