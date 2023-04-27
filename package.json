@@ -35,7 +35,7 @@
 		"name": "Anytype",
 		"email": "info@anytype.io"
 	},
-	"license": "",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/anytypeio/js-anytype/issues"
 	},
