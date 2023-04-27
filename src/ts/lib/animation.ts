@@ -36,7 +36,7 @@ class Animation {
 		raf(() => {
 			const css = { opacity: 0, transform: 'translate3d(0px,-10%,0px)' };
 
-			$('.animation').css(css);
+			$('.animation').not('.not-from').css(css);
 			$('.animationWord').css(css);
 		});
 

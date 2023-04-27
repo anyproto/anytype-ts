@@ -111,7 +111,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
-			const cn = [ 'soulContent', 'animation' ];
+			const cn = [ 'soulContent', 'animation', 'not-from' ];
 
 			if (stage == Stage.SoulCreating) {
 				cn.push('soulCreating');
