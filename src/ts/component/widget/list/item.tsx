@@ -29,7 +29,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const { subId, id, block, isEditing, style } = this.props;
 		const rootId = keyboard.getRootId();
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
-		const { isReadonly, isArchived, restrictions, source } = object;
+		const { isReadonly, isArchived, restrictions, source, done } = object;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 
 		let descr = null;
@@ -150,8 +150,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	};
 
 	onCheckbox () {
-		const { id } = this.props;
-		const object = detailStore.get(id, id, []);
+		const { subId, id } = this.props;
+		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 
 		ObjectUtil.setDone(id, !object.done);
 	};
