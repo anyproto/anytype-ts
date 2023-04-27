@@ -100,6 +100,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return (
 				<div className="animation">
 					<Input
+						focusOnMount
 						type="text"
 						placeholder="Enter your name"
 						value={authStore.name}
@@ -294,7 +295,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 	};
 
-	walletCreate () {
+	walletCreate = () => {
 		C.WalletCreate(authStore.walletPath, message => {
 			if (message.error.code) {
 				this.setState({ error: message.error.description });
