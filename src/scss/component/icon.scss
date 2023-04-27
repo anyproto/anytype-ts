@@ -13,7 +13,8 @@
 .icon.back, .icon.forward { background-image: url('~img/icon/back.svg'); }
 .icon.forward { transform: rotateZ(180deg); }
 
-.icon.toggleSidebar { background-image: url('~img/icon/sidebar/toggle-sidebar.svg'); }
+.icon.toggleSidebar { background-image: url('~img/icon/sidebar/toggle0.svg'); }
+.icon.toggleSidebar:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
 
 .icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
 
