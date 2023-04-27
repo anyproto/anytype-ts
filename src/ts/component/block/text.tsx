@@ -723,7 +723,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			ret = true;
 		});
 
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('backspace', e, () => {
 			if (keyboard.pressed.includes(Key.enter)) {
 				ret = true;
 				return;
@@ -752,7 +752,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		});
 
-		keyboard.shortcut('delete', e, (pressed: string) => {
+		keyboard.shortcut('delete', e, () => {
 			if (!range) {
 				return;
 			};
@@ -932,7 +932,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		keyboard.shortcut('backspace, delete', e, (pressed: string) => { menuStore.close('blockContext'); });
+		let ret = false;
+
+		keyboard.shortcut('backspace, delete', e, () => { 
+			menuStore.close('blockContext'); 
+			ret = true;
+		});
 
 		this.placeholderCheck();
 
@@ -942,7 +947,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			text = Mark.fromUnicode(text);
 		};
 
-		if (marksChanged || (value != text)) {
+		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);
 
 			const diff = value.length - text.length;
