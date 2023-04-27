@@ -1,10 +1,12 @@
 @import "~scss/_vars";
 
 .phraseWrapper {
-	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: fit-content; min-width: 100%; position: relative; padding: 36px 48px;
+	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: 100%; position: relative; padding: 36px 48px;
 	font-size: 18px; line-height: 18px; transition: $transitionAllCommon; text-align: center; letter-spacing: -0.12px;
 }
 .phraseWrapper {
+	.phraseInnerWrapper { overflow-x: scroll;  }
+	.phraseInnerWrapper::-webkit-scrollbar { width: 0; height: 0;}
 	.phrase { display: inline; vertical-align: top; }
 	.phrase * { user-select: text !important; }
 	.phrase {

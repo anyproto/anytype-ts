@@ -68,6 +68,7 @@ class Phrase extends React.Component<Props, State> {
 				className={cn.join(' ')}
 				onClick={this.onClick}
 			>
+				<div className="phraseInnerWrapper">
 				<div id="phrase" className="phrase" />
 				<span 
 					id="entry" 
@@ -79,6 +80,7 @@ class Phrase extends React.Component<Props, State> {
 				>
 					{'\n'}
 				</span>
+				</div>
 				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
 			</div>
 		);
