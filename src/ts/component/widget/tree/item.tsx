@@ -72,6 +72,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 				>
 					{arrow}
 					<IconObject 
+						id={`widget-icon-${id}`}
 						object={object} 
 						size={20} 
 						canEdit={!isReadonly && !isArchived} 

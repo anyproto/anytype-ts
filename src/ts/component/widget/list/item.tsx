@@ -46,6 +46,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		let inner = (
 			<div className="inner">
 				<IconObject 
+					id={`widget-icon-${id}`}
 					object={object} 
 					size={48} 
 					canEdit={!isReadonly && !isArchived} 
