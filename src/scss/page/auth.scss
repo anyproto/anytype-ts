@@ -154,9 +154,9 @@ html.bodyAuthDeleted {
 		.iconObject { background: white; box-shadow: 0px 0px 0px 0px white; animation: pulse 2s infinite; }
 
 		@keyframes pulse {
-			0% { transform: scale(0.95); box-shadow: 0px 0px 0px 0px rgba(255, 255, 255, 0.7); }
-			70% { transform: scale(1); box-shadow: 0px 0px 0px 12px rgba(255, 121, 63, 0); }
-			100% { transform: scale(0.95); box-shadow: 0px 0px 0px 0px rgba(255, 121, 63, 0); }
+			0% { transform: scale(1); }
+			70% { transform: scale(1.05); }
+			100% { transform: scale(1); }
 		}
 	}
 
