@@ -95,7 +95,7 @@ class Phrase extends React.Component<Props, State> {
 						{'\n'}
 					</span>
 				</div>
-				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
+				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.toggleVisibility} />
 			</div>
 		);
 	};
@@ -108,6 +108,22 @@ class Phrase extends React.Component<Props, State> {
 
 		this.setState({ isHidden, phrase });
 		this.focus();
+	};
+
+	onClick = () => {
+		this.focus();
+	};
+
+	onKeyUp = (e: React.KeyboardEvent) => {
+		const entry  = this.getEntryValue();
+
+		keyboard.shortcut('space, enter', e, () => {
+			e.preventDefault();
+
+			this.clear();
+			
+			this.setState(({ phrase }) => ({ phrase: entry.length ? phrase.concat([ entry ]) : [] }));
+		});
 	};
 
 	onKeyDown = (e: React.KeyboardEvent) => {
@@ -135,24 +151,6 @@ class Phrase extends React.Component<Props, State> {
 		});
 	};
 
-	onClick = () => {
-		this.focus();
-	};
-
-	onKeyUp = (e: React.KeyboardEvent) => {
-		const entry  = this.getEntryValue();
-
-		keyboard.shortcut('space, enter', e, () => {
-			e.preventDefault();
-
-			this.clear();
-			
-			this.setState(({ phrase }) => {
-				return { phrase: entry.length ? phrase.concat([ entry ]) : [] };
-			});
-		});
-	};
-
 	onPaste = (e) => {
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = this.normalizeWhiteSpace(cb.getData('text/plain'));
@@ -170,37 +168,32 @@ class Phrase extends React.Component<Props, State> {
 		this.setState({ showPlaceholder: false });
 	}
 
-	onToggle = () => {
+	toggleVisibility = () => {
 		this.setState({ isHidden: !this.state.isHidden });
 	};
 
-
-	setError = () => {
+	publicsetError = () => {
 		this.setState({ hasError: true })
 	};
 
 	focus = () => {
-		const node = $(this.node);
-		const entry = node.find('#entry');
-		
-		if (entry.length) {
-			window.setTimeout(() => {
-				entry.trigger('focus');
-				setRange(entry.get(0), { start: 0, end: 0 });
-			});
-		};
+		const entry = this.getEntry();
+		entry.trigger('focus');
+		setRange(entry.get(0), { start: 0, end: 0 });
 	};
 
 	clear = () => {
-		const node = $(this.node);
-		const entry = node.find('#entry');
-		entry.text('');
+		this.getEntry().text('');
 	};
 
-	getEntryValue = () => {
+	getEntry = () => {
 		const node = $(this.node);
 		const entry = node.find('#entry');
-		return this.normalizeWhiteSpace(entry.text());
+		return entry;
+	}
+
+	getEntryValue = () => {
+		return this.normalizeWhiteSpace(this.getEntry().text());
 	};
 
 	normalizeWhiteSpace = (val: string) => {
