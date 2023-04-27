@@ -150,6 +150,8 @@ import 'scss/menu/thread.scss';
 import 'scss/menu/type.scss';
 import 'scss/menu/widget.scss';
 
+import 'scss/menu/account/path.scss';
+
 import 'scss/menu/search/object.scss';
 import 'scss/menu/search/text.scss';
 

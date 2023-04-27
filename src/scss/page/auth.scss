@@ -5,13 +5,22 @@ html.bodyIndex, html.bodyAuth {
 }
 
 html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
-	#popupConfirm-innerWrap { background: #1A1A18; min-width: 700px }
+	#popupConfirm-innerWrap { background: #252525; min-width: 700px }
 	#popupConfirm-innerWrap {
 		.content { text-align: left; }
+
 		h1 { font-size: 18px; margin-bottom: 16px; }
 		h2 { font-size: 14px; margin-bottom: 8px; }
 		p { margin-bottom: 8px; }
 		ul { list-style-position: inside; margin-bottom: 8px; }
+	}
+
+	.menus {
+		.menu.menuAccountPath { background: #252525; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; } 
+		.menu.menuAccountPath {
+			.label { color: #8d8d8d; }
+			.label.path { color: #d4d4d4; }
+		}
 	}
 }
 
@@ -120,11 +129,8 @@ html.bodyAuthDeleted {
 
 	.icon.dataLocation { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; margin-right: 6px; }
 
-	.storageInfo, .moreInfo { color: #5c5a54; }
-
-	.storageInfo,
-	.moreInfo,
-	.questionMark:hover { cursor: pointer; }
+	.small { color: #5c5a54; }
+	.small, .questionMark:hover { cursor: pointer; }
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
 	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: block; background-color: #5c5a54; color: black; }

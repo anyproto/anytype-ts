@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Error, Icon, IconObject, Input } from 'Component';
 import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview, keyboard } from 'Lib';
-import { authStore, commonStore, popupStore } from 'Store';
+import { authStore, commonStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
@@ -28,6 +28,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	render () {
 		const { error, stage } = this.state;
+		const { config } = commonStore;
 
 		let back = null;
 		let indicator = null;
@@ -59,12 +60,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			);
 		};
 
-		if ([ Stage.KeyPhrase, Stage.Offline ].includes(stage)) {
+		if ([ Stage.KeyPhrase, Stage.Offline ].includes(stage) && config.experimental) {
 			footer = (
-				<span className="animation storageInfo bottom" onClick={this.onAccountTooltip}>
+				<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
 					<Icon className="dataLocation" />
 					Account data location
-				</span>
+				</div>
 			);
 		};
 
@@ -155,11 +156,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (stage == Stage.KeyPhrase) {
-			moreInfo = (
-				<span className="animation moreInfo" onClick={this.onPhraseInfo}>
-					More info
-				</span>
-			);
+			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>More info</div>;
 		};
 
 		return (
@@ -370,12 +367,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
-	onAccountTooltip = () => {
-		Preview.tooltipShow({
-			text: `${translate('authOnboardAccountDataLocationTooltip')}:<br/>${authStore.accountPath}`,
-			element: $('.storageInfo'),
-			typeY: I.MenuDirection.Top,
-			typeX: I.MenuDirection.Center
+	onAccountPath = () => {
+		menuStore.open('accountPath', {
+			element: '#accountPath',
+			vertical: I.MenuDirection.Top,
+			horizontal: I.MenuDirection.Center,
+			offsetY: -20,
 		});
 	};
 

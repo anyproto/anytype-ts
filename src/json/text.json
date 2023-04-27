@@ -132,7 +132,6 @@
 	"authOnboardSubmit": { "en": "Next" },
 	"authOnboardMoreInfo": { "en": "More info" },
 	"authOnboardAccountDataLocation": { "en": "Account data location" },
-	"authOnboardAccountDataLocationTooltip": { "en": "Your key files will be stored here" },
 
 	"authOnboardVoidTitle": { "en": "This is your Void" },
 	"authOnboardVoidLabel": { "en": "Everything you create will be stored here. It is a special encrypted place, which exist on your machine and is backed up to the network." },
