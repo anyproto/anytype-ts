@@ -250,6 +250,7 @@ class DataUtil {
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
 				],
 				noDeps: true,
+				ignoreWorkspace: true,
 			},
 			{
 				subId: Constant.subId.type,

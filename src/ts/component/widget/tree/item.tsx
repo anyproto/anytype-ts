@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName } from 'Component';
-import { I, keyboard, Storage } from 'Lib';
+import { I, keyboard, Storage, ObjectUtil } from 'Lib';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -25,6 +25,9 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		super(props);
 
 		this.onToggle = this.onToggle.bind(this);
+		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
 	};
 
 	render () {
@@ -33,18 +36,19 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const subId = dbStore.getSubId(subKey, parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+		const { isReadonly, isArchived, type, restrictions } = object;
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
-		const canDrop = !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 		const paddingLeft = depth > 1 ? (depth - 1) * 12 : 6;
 
 		let arrow = null;
 		let onArrowClick = null;
 
-		if (object.type == Constant.typeId.collection) {
+		if (type == Constant.typeId.collection) {
 			arrow = <Icon className="collection" />;
 		} else
-		if (object.type == Constant.typeId.set) {
+		if (type == Constant.typeId.set) {
 			arrow = <Icon className="set" />;
 		} else
 		if (numChildren > 0) {
@@ -64,10 +68,17 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			<div className="inner" style={{ paddingLeft }}>
 				<div
 					className="clickable"
-					onClick={(e: React.MouseEvent) => { onClick(e, object); }}
+					onMouseDown={(e: React.MouseEvent) => { onClick(e, object); }}
 				>
 					{arrow}
-					<IconObject object={object} size={20} />
+					<IconObject 
+						object={object} 
+						size={20} 
+						canEdit={!isReadonly && !isArchived} 
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload} 
+						onCheckbox={this.onCheckbox} 
+					/>
 					<ObjectName object={object} />
 				</div>
 
@@ -151,6 +162,25 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 
 	getSubKey (): string {
 		return `widget${this.props.block.id}`;
+	};
+
+	onSelect (icon: string) {
+		const { id } = this.props;
+
+		ObjectUtil.setIcon(id, icon, '');
+	};
+
+	onUpload (hash: string) {
+		const { id } = this.props;
+
+		ObjectUtil.setIcon(id, '', hash);
+	};
+
+	onCheckbox () {
+		const { id } = this.props;
+		const object = detailStore.get(id, id, []);
+
+		ObjectUtil.setDone(id, !object.done);
 	};
 
 });

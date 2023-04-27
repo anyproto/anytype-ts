@@ -17,18 +17,26 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 	node = null;
 
+	constructor (props: Props) {
+		super(props);
+
+		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
+		this.onCheckbox = this.onCheckbox.bind(this);
+	};
+
 	render () {
 		const { subId, id, block, isEditing, style } = this.props;
 		const rootId = keyboard.getRootId();
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
-		const iconSize = [ I.ObjectLayout.Task, I.ObjectLayout.Bookmark ].includes(object.layout) ? 20 : 28;
-		const canDrop = !isEditing && blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ]);
+		const { isReadonly, isArchived, restrictions, source } = object;
+		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 
 		let descr = null;
 		if (object.type == Constant.typeId.bookmark) {
 			descr = (
 				<div className="descr">
-					{Util.shortUrl(object.source)}
+					{Util.shortUrl(source)}
 				</div>
 			);
 		} else {
@@ -37,7 +45,15 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 
 		let inner = (
 			<div className="inner">
-				<IconObject object={object} size={48} iconSize={iconSize} />
+				<IconObject 
+					object={object} 
+					size={48} 
+					canEdit={!isReadonly && !isArchived} 
+					onSelect={this.onSelect} 
+					onUpload={this.onUpload} 
+					onCheckbox={this.onCheckbox} 
+				/>
+
 				<div className="info">
 					<ObjectName object={object} />
 					{descr}
@@ -68,7 +84,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 				ref={node => this.node = node}
 				className="item"
 				key={object.id}
-				onClick={(e) => this.onClick(e, object)}
+				onMouseDown={(e) => this.onClick(e, object)}
 				onContextMenu={(e) => this.onContext(e, false)}
 				style={style}
 			>
@@ -118,6 +134,25 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		};
 
 		menuStore.open('dataviewContext', menuParam);
+	};
+
+	onSelect (icon: string) {
+		const { id } = this.props;
+
+		ObjectUtil.setIcon(id, icon, '');
+	};
+
+	onUpload (hash: string) {
+		const { id } = this.props;
+
+		ObjectUtil.setIcon(id, '', hash);
+	};
+
+	onCheckbox () {
+		const { id } = this.props;
+		const object = detailStore.get(id, id, []);
+
+		ObjectUtil.setDone(id, !object.done);
 	};
 
 });
