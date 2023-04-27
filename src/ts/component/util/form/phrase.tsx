@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { Util, keyboard } from 'Lib';
+import { Util, keyboard, translate } from 'Lib';
 
 const COLORS = [
 	'orange',
@@ -22,7 +22,10 @@ interface Props {
 };
 
 interface State {
+	phrase: string[];
 	isHidden: boolean;
+	hasError: boolean;
+	showPlaceholder: boolean;
 };
 
 class Phrase extends React.Component<Props, State> {
@@ -31,36 +34,44 @@ class Phrase extends React.Component<Props, State> {
 		value: '',
 	};
 
-	state = {
+	state: State = {
 		isHidden: true,
+		hasError: false,
+		showPlaceholder: false,
+		phrase: [],
 	};
 
 	node = null;
-	value = '';
 	timeout = 0;
-
-	constructor (props: Props) {
-		super(props);
-
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onToggle = this.onToggle.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.onPaste = this.onPaste.bind(this);
-	};
 
 	render () {
 		const { readonly } = this.props;
-		const { isHidden } = this.state;
+		const { isHidden, hasError, showPlaceholder, phrase } = this.state;
 		const cn = [ 'phraseWrapper' ];
 
 		if (isHidden) {
 			cn.push('isHidden');
 		};
 
+		if (hasError) {
+			cn.push('hasError');
+		}
+
 		if (readonly) {
 			cn.push('isReadonly');
 		};
+
+		const renderWord = (word: string, index: number) => {
+			const c = COLORS[index % COLORS.length];
+
+			const cn = ['item', 'textColor', `textColor-${c}`];
+
+			if (isHidden) {
+				cn.push('bgColor', `bgColor-${c}`);
+			}
+
+			return <span className={cn.join(' ')} key={index}>{Util.ucFirst(word)}</span>;
+		}
 
 		return (
 			<div 
@@ -69,17 +80,20 @@ class Phrase extends React.Component<Props, State> {
 				onClick={this.onClick}
 			>
 				<div className="phraseInnerWrapper">
-				<div id="phrase" className="phrase" />
-				<span 
-					id="entry" 
-					contentEditable={true}
-					suppressContentEditableWarning={true} 
-					onKeyDown={this.onKeyDown}
-					onKeyUp={this.onKeyUp}
-					onPaste={this.onPaste}
-				>
-					{'\n'}
-				</span>
+					{ phrase.map(renderWord) }
+					{ showPlaceholder ? <span id="placeholder">{translate('phrasePlaceholder')}</span> : null}
+					<span 
+						id="entry" 
+						contentEditable={true}
+						suppressContentEditableWarning={true} 
+						onKeyDown={this.onKeyDown}
+						onKeyUp={this.onKeyUp}
+						onPaste={this.onPaste}
+						onBlur={this.onBlur}
+						onFocus={this.onFocus}
+					>
+						{'\n'}
+					</span>
 				</div>
 				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
 			</div>
@@ -89,17 +103,14 @@ class Phrase extends React.Component<Props, State> {
 	componentDidMount () {
 		const { value, isHidden } = this.props;
 
-		this.setState({ isHidden });
-		this.setValue(value);
+		const text = this.normalizeWhiteSpace(value);
+		const phrase = text.length ? text.split(' '): [];
+
+		this.setState({ isHidden, phrase });
 		this.focus();
 	};
 
-	componentDidUpdate () {
-		this.setValue(this.value);
-		this.focus();
-	};
-
-	onKeyDown (e: React.KeyboardEvent) {
+	onKeyDown = (e: React.KeyboardEvent) => {
 		const node = $(this.node);
 		const entry = node.find('#entry');
 
@@ -116,43 +127,58 @@ class Phrase extends React.Component<Props, State> {
 			};
 
 			e.preventDefault();
-			
-			const value = this.getList();
-			value.list.pop();
 
-			this.setValue(value.list.join(' '));
+			this.setState(({ phrase }) => {
+				phrase.pop();
+				return { phrase }
+			});
 		});
 	};
 
-	onClick () {
+	onClick = () => {
 		this.focus();
 	};
 
-	onKeyUp (e: React.KeyboardEvent) {
-		const value = this.getList();
+	onKeyUp = (e: React.KeyboardEvent) => {
+		const entry  = this.getEntry();
 
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
 
-			this.setValue(value.list.concat([ value.new ]).join(' '));
+			this.setState(({ phrase }) => {
+				return { phrase: entry.length ? phrase.concat([ entry ]) : [] };
+			});
 			this.clear();
 		});
 	};
 
-	onPaste (e) {
-		const value = this.getList();
+	onPaste = (e) => {
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
-		const text = cb.getData('text/plain');
+		const text = this.normalizeWhiteSpace(cb.getData('text/plain'));
 
-		this.setValue(value.list.concat([ text ]).join(' '));
+		this.setState(({ phrase }) => ({ phrase: phrase.concat(text.split(' ')) }));
 		this.clear();
 	};
 
-	onToggle () {
+	onBlur = () => {
+		const value = this.getEntry();
+		this.setState(({ phrase }) => ({ showPlaceholder: phrase.length === 0 && value.length === 0 }));
+	}
+
+	onFocus = () => {
+		this.setState({ showPlaceholder: false });
+	}
+
+	onToggle = () => {
 		this.setState({ isHidden: !this.state.isHidden });
 	};
 
-	focus () {
+
+	setError = () => {
+		this.setState({ hasError: true })
+	};
+
+	focus = () => {
 		const node = $(this.node);
 		const entry = node.find('#entry');
 		
@@ -164,69 +190,26 @@ class Phrase extends React.Component<Props, State> {
 		};
 	};
 
-	clear () {
+	clear = () => {
 		const node = $(this.node);
 		const entry = node.find('#entry');
 
 		window.setTimeout(() => { entry.text(' '); });
 	};
 
-	setError () {
+	getEntry = () => {
 		const node = $(this.node);
-
-		node.addClass('withError');
-	};
-
-	getList () {
-		const node = $(this.node);
-		const phrase = node.find('#phrase');
-		const items = phrase.find('.item');
 		const entry = node.find('#entry');
-		const list = [];
-
-		items.each((i: number, item: any) => {
-			item = $(item);
-
-			const w = item.text();
-
-			if (w) {
-				list.push(w);
-			};
-		});
-
-		return {
-			list,
-			new: (entry.length ? String(entry.text() || '').trim() : ''),
-		};
+		return this.normalizeWhiteSpace(entry.text());
 	};
 
-	getValue () {
-		return this.value;
+	normalizeWhiteSpace = (val: string) => {
+		return val.replace(/\s\s+/g, ' ').trim() || '';
+	}
+
+	getValue = () => {
+		return this.state.phrase.join(' ');
 	};
-
-	setValue (v: string) {
-		v = String(v || '').trim();
-
-		const node = $(this.node);
-		const phrase = node.find('#phrase').html('');
-		const { isHidden } = this.state;
-
-		this.value = v;
-
-		v.split(' ').forEach((word, index) => {
-			const c = COLORS[index % COLORS.length];
-			const el = $('<span></span>').addClass('item');
-			el.text(Util.ucFirst(word));
-			el.addClass(`textColor textColor-${c}`);
-			
-			if (isHidden) {
-				el.addClass(`bgColor bgColor-${c}`);
-			}
-
-			phrase.append(el);
-		});
-	};
-
 };
 
 export default Phrase;

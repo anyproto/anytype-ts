@@ -99,7 +99,6 @@
 	"authNoticeStart": { "en": "Start" },
 
 	"authLoginTitle": { "en": "Login with recovery phrase" },
-	"authLoginLabel": { "en": "Type your recovery phrase" },
 	"authLoginSelfHost": { "en": "Self-host" },
 	"authLoginSubmit": { "en": "Continue" },
 	"authLoginLostPhrase": { "en": "I've lost the phrase" },
@@ -574,6 +573,8 @@
 	"widgetSet": { "en": "Sets" },
 	"widgetCollection": { "en": "Collections" },
 
-	"spaceType0": { "en": "Personal space" }
+	"spaceType0": { "en": "Personal space" },
+
+	"phrasePlaceholder": { "en": "Type your recovery phrase" }
 
 }
