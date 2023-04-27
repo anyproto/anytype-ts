@@ -17,6 +17,7 @@ type State = {
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 
+	node = null;
 	refFrame = null;
 	refPhrase = null;
 
@@ -44,7 +45,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			let onMouseLeave = null;
 
 			if (stage == Stage.KeyPhrase) {
-				onMouseEnter = this.onPhraseTooltip;
+				onMouseEnter = () => this.onPhraseTooltip();
 				onMouseLeave = () => Preview.tooltipHide();
 			};
 
@@ -52,6 +53,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 			label = (
 				<Label 
+					id="label"
 					className="animation" 
 					text={this.getText('Label')} 
 					onMouseEnter={onMouseEnter}
@@ -70,7 +72,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
         return (
-			<div>
+			<div ref={ref => this.node = ref}>
 				{back}
 				<Frame ref={ref => this.refFrame = ref}>
 					{indicator}
@@ -128,8 +130,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						<IconObject object={{ iconOption, layout: I.ObjectLayout.Human }} size={48} />
 						<span className="accountName">{authStore.name}</span>
 					</div>
+
 					<div className="line left" />
 					<div className="line right" />
+
 					<div className="space">
 						<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={48} />
 						<span className="spaceName">Personal Space</span>
@@ -344,10 +348,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip = () => {
+		const node = $(this.node);
+		const label = node.find('#label');
+
 		Preview.tooltipShow({
 			delay: 150,
 			text: translate('authOnboardPhraseTooltip'),
-			element: $('.label'),
+			element: label,
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Center
 		});
