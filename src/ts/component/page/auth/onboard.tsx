@@ -276,19 +276,37 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		*/
 		Animation.from(() => {
 			const duration = 3000;
-			if (stage == Stage.SoulCreating) {
-				window.setTimeout(() => this.setState(prev => ({ ...prev, stage: prev.stage + 1 }), this.onNext), duration);
+			if ([Stage.SoulCreating, Stage.Soul].includes(stage)) {
+				window.setTimeout(() =>
+					this.setState(prev =>
+						({ ...prev, stage: prev.stage + 1 }),
+						this.onNext
+					), duration);
 				return;
 			}
 
-			this.setState(prev => ({ ...prev, animationStage: prev.animationStage + 1 }),
-			() => {
-				window.setTimeout(() => {
-					this.setState(prev => ({ ...prev, stage: prev.stage + 1 }), () => {
-						if (Stage.Soul == stage) window.setTimeout(this.onNext, duration);
-					});
-				}, duration)
-			})
+			if (stage == Stage.Offline) {
+				this.setState(prev =>
+					({ ...prev, animationStage: prev.animationStage + 1 }),
+					() => {
+						window.setTimeout(() =>
+							this.setState(prev =>
+								({ ...prev, animationStage: prev.animationStage + 1 }),
+								()	=> { this.setState(prev =>({ ...prev, stage: prev.stage + 1 }));
+							}
+						), duration);
+					}
+				);
+				return;
+			}
+
+			this.setState(
+				prev => ({ ...prev, animationStage: prev.animationStage + 1 }),
+				() => {
+					window.setTimeout(() => {
+						this.setState(prev => ({ ...prev, stage: prev.stage + 1 }));
+					}, duration);
+			});
 		});
 	}
 
@@ -303,7 +321,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (stage == Stage.Void) {
 			Util.route('/auth/invite');
 		} else {
-			Animation.from(() => { this.setState(prev => ({ ...prev, animationStage: prev.animationStage - 1, stage: prev.stage })) });
+			Animation.from(() => { this.setState(prev => ({ ...prev, animationStage: prev.animationStage - 1, stage: prev.stage - 1 })) });
 		};
 	};
 
