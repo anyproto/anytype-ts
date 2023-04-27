@@ -593,8 +593,12 @@ onMouseMove = ({ x, y }) => {
 
 	send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 	redraw();
-
 	clearTimeout(timeoutHover);
+
+	if (!d) {
+		return;
+	};
+
 	timeoutHover = setTimeout(() => {
 		const d = getNodeByCoords(x, y);
 		if (d) {
@@ -640,7 +644,6 @@ onAddNode = ({ target, sourceId }) => {
 
 		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
 	};
-
 
 	target = Object.assign(target, {
 		index: id,
