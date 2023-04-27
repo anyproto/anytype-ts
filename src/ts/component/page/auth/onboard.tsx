@@ -260,6 +260,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage, phraseCopied } = this.state;
 
 		if ((stage == Stage.KeyPhrase) && !phraseCopied) {
+			this.refPhrase.onToggle();
+			authStore.phraseSet(this.refPhrase.getValue());
+			this.setState({ phraseCopied: true });
 			this.onCopy();
 			return;
 		};
@@ -337,11 +340,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy = () => {
-		authStore.phraseSet(this.refPhrase.getValue());
-
-		this.setState({ phraseCopied: true });
-		this.refPhrase.onToggle();
-
 		Util.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
 	};
