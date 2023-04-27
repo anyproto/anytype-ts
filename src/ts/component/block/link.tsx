@@ -288,8 +288,14 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 
 	onMouseEnter () {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
 		const { targetBlockId } = block.content;
+		const object = detailStore.get(rootId, targetBlockId, []);
+
+		if (object.isArchived) {
+			return;
+		};
+
 		const node = $(this.node);
 		const element = node.find('.name');
 
