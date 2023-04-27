@@ -43,7 +43,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			let onMouseLeave = null;
 
 			if (stage == Stage.KeyPhrase) {
-				onMouseEnter = this.onPhraseTooltip;
+				onMouseEnter = () => this.onPhraseTooltip();
 				onMouseLeave = () => Preview.tooltipHide();
 			};
 

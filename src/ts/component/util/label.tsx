@@ -31,6 +31,8 @@ class Label extends React.Component<Props> {
 				className={cn.join(' ')} 
 				dangerouslySetInnerHTML={{ __html: text }} 
 				onClick={onClick} 
+				onMouseEnter={this.props.onMouseEnter}
+				onMouseLeave={this.props.onMouseLeave}
 				{...Util.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 			/>
 		);
