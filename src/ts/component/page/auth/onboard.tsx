@@ -10,6 +10,7 @@ import { OnboardStage as Stage } from './animation/constants';
 
 type State = {
 	stage: Stage;
+	animationStage: Stage;
 	phraseCopied: boolean;
 	error?: string;
 	iconOption: number;
@@ -23,12 +24,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	state: State = {
 		stage: Stage.Void,
+		animationStage: Stage.Void,
 		phraseCopied: false,
 		iconOption: Util.rand(1, Constant.iconCnt)
 	};
 
 	render () {
-		const { error, stage } = this.state;
+		const { error, stage, animationStage } = this.state;
 		const { config } = commonStore;
 
 		let back = null;
@@ -41,7 +43,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (![ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
-			indicator = <DotIndicator index={stage} count={4} />;
+			indicator = <DotIndicator className="animation" index={stage} count={4} />;
 			label = <Label id="label" className="animation" text={this.getText('Label')} />;
 		};
 
@@ -66,7 +68,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{this.renderButtons()}
 					{footer}
 				</Frame>
-				<CanvasWorkerBridge state={stage} />
+				<CanvasWorkerBridge state={animationStage} />
 			</div>
 		);
 	};
@@ -261,16 +263,33 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return;
 		};
 
-		if ([ Stage.Soul, Stage.SoulCreating ].includes(stage)) {
-			window.setTimeout(() => this.onNext(), 3000);
-		};
-
 		if (stage == Stage.SpaceCreating) {
 			this.createAccount();
 			return;
 		};
 
-		Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage + 1 })) });
+		/* 
+			We want the onboarding stage to lag behind the animation stage by duration,
+			but once we get to the Soul Creating, we dont want to update the animation anymore, and 
+			instead we want it to lag behind the Animation Stage by a full step. Afterwards, the final animation stemp
+			happens when the account is created, just before routing to the post-auth page.
+		*/
+		Animation.from(() => {
+			const duration = 3000;
+			if (stage == Stage.SoulCreating) {
+				window.setTimeout(() => this.setState(prev => ({ ...prev, stage: prev.stage + 1 }), this.onNext), duration);
+				return;
+			}
+
+			this.setState(prev => ({ ...prev, animationStage: prev.animationStage + 1 }),
+			() => {
+				window.setTimeout(() => {
+					this.setState(prev => ({ ...prev, stage: prev.stage + 1 }), () => {
+						if (Stage.Soul == stage) window.setTimeout(this.onNext, duration);
+					});
+				}, duration)
+			})
+		});
 	}
 
 	/** Moves the Onboarding Flow one stage backward, or exits it entirely */
@@ -284,7 +303,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (stage == Stage.Void) {
 			Util.route('/auth/invite');
 		} else {
-			Animation.from(() => { this.setState(prev => ({ ...prev, stage: prev.stage - 1 })) });
+			Animation.from(() => { this.setState(prev => ({ ...prev, animationStage: prev.animationStage - 1, stage: prev.stage })) });
 		};
 	};
 
@@ -325,7 +344,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				authStore.previewSet('');
 
 				Storage.set('timeRegister', Util.time());
-				DataUtil.onAuth(message.account, () => { Util.route('/main/usecase'); });
+				DataUtil.onAuth(message.account, () => { this.setState(prev => ({ ...prev, animationStage: prev.animationStage + 1 }), () => { Util.route('/main/usecase'); }) });
 
 				analytics.event('CreateAccount');
 			});

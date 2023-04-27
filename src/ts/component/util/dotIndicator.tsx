@@ -3,12 +3,13 @@ import React from 'react';
 interface DotIndicatorProps {
 	index: number;
 	count: number;
+	className?: string;
 };
 	
 class DotIndicator extends React.Component<DotIndicatorProps> {
 
 	render () {
-		const { index, count } = this.props;
+		const { index, count, className } = this.props;
 		const dots = [];
 
 		for (let i = 0; i < count; i++) {
@@ -22,7 +23,7 @@ class DotIndicator extends React.Component<DotIndicatorProps> {
 			dots.push(<span	key={i} className={cn.join(' ')} />);
 		};
 
-		return <div className="dotIndicator">{dots}</div>;
+		return <div className={['dotIndicator', className].join(' ')}>{dots}</div>;
 	};
 
 };
