@@ -5,12 +5,13 @@ html.bodyIndex, html.bodyAuth {
 }
 
 html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
-	#popupConfirm-innerWrap { background: #1A1A18; min-width: 700px; padding-top: 15px; }
+	#popupConfirm-innerWrap { background: #1A1A18; min-width: 700px }
 	#popupConfirm-innerWrap {
-		ul { list-style-position: inside; margin-bottom: 10px; }
-		.content { padding: 0px 20px; text-align: left; }
-		.title { font-size: 14px; color: #929082; }
-		.buttons { width: 200px; }
+		.content { text-align: left; }
+		h1 { font-size: 18px; margin-bottom: 16px; }
+		h2 { font-size: 14px; margin-bottom: 8px; }
+		p { margin-bottom: 8px; }
+		ul { list-style-position: inside; margin-bottom: 8px; }
 	}
 }
 
