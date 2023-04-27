@@ -7,6 +7,7 @@ import FooterMainObject from './main/object';
 
 interface Props extends I.FooterComponent {
 	component: string;
+	className?: string;
 };
 
 const Components = {
@@ -26,9 +27,9 @@ class Footer extends React.Component<Props> {
 	};
 	
 	render () {
-		const { component } = this.props;
+		const { component, className } = this.props;
 		const Component = Components[component] || null;
-		const cn = [ 'footer', component ];
+		const cn = [ 'footer', component, className ];
 
 		return (
 			<div id="footer" className={cn.join(' ')}>

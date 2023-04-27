@@ -15,9 +15,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	render () {
         return (
 			<div>
-				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
-
+				<Header {...this.props} className="animation" component="authIndex" />
 				<Frame>
 					<Title className="animation" text={translate('authSelectTitle')} />
 					<Label className="animation" text={translate('authSelectLabel')} />
@@ -31,6 +29,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 						</div>
 					</div>
 				</Frame>
+				<Footer {...this.props} className="animation" component="authIndex" />
 			</div>
 		);
 	};

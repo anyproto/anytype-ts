@@ -12,6 +12,7 @@ import HeaderMainEmpty from './main/empty';
 
 interface Props extends I.HeaderComponent {
 	component: string;
+	className?: string;
 };
 
 const Components = {
@@ -41,9 +42,9 @@ class Header extends React.Component<Props> {
 	};
 	
 	render () {
-		const { component } = this.props;
+		const { component, className } = this.props;
 		const Component = Components[component] || null;
-		const cn = [ 'header', component ];
+		const cn = [ 'header', component, className ];
 
 		if (![ 'authIndex', 'mainIndex' ].includes(component)) {
 			cn.push('isCommon');
