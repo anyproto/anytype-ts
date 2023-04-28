@@ -344,7 +344,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				const object = detailStore.get(rootId, routeParam.id, []);
 
 				target = object.id;
-				type = I.PreviewType.Default;
 			} else {
 				target = Util.urlFix(url);
 				type = I.PreviewType.Link;
@@ -436,7 +435,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
-				type: I.PreviewType.Default,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,
@@ -521,7 +519,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
-				type: I.PreviewType.Default,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,

@@ -1,10 +1,8 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
-import { PreviewDefault } from 'Component';
-import { I, Util, ObjectUtil, DataUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
+import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics, Preview } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -33,11 +31,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	images: any = {};
 	subject: any = null;
 	isDragging = false;
-	isPreview = false;
 	isPreviewDisabled = false;
 	ids: string[] = [];
 	timeoutPreview = 0;
 	zoom: any = null;
+	previewId = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -250,36 +248,29 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
-		this.isPreview = true;
+		if (this.previewId == this.subject.id) {
+			return;
+		};
+
+
+		this.previewId = this.subject.id;
 
 		const win = $(window);
-		const body = $('body');
 		const node = $(this.node);
 		const { left, top } = node.offset();
+		const x = data.x + left;
+		const y = data.y + top - win.scrollTop();
 
-		let el = $('#graphPreview');
-
-		const position = () => {
-			const obj = el.find('.previewGraph');
-			const x = data.x + left - obj.outerWidth() / 2;
-			const y = data.y + top + 20 - win.scrollTop();
-
-			el.css({ left: x, top: y });
-		};
-
-		if (!el.length) {
-			el = $('<div id="graphPreview" />');
-			body.append(el);
-			ReactDOM.render(<PreviewDefault object={this.subject} className="previewGraph" />, el.get(0), position);
-		} else {
-			position();
-		};
+		Preview.previewShow({ 
+			rect: { x, y, width: 0, height: 10 }, 
+			target: this.subject.id, 
+			noUnlink: true,
+		});
 	};
 
 	onPreviewHide () {
-		if (this.isPreview) {
-			window.clearTimeout(this.timeoutPreview);
-			$('#graphPreview').remove();
+		if (this.previewId) {
+			Preview.previewHide(false);
 		};
 	};
 
@@ -308,7 +299,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		switch (id) {
 			case 'onClick': {
 				onClick(data.node);
-				window.clearTimeout(this.timeoutPreview);
 				break;
 			};
 

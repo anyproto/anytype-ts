@@ -366,7 +366,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 	getObject () {
 		const { getObject } = this.props;
-		return getObject ? getObject() : this.props.object;
+		return (getObject ? getObject() : this.props.object) || {};
 	};
 
 	onClick (e: any) {

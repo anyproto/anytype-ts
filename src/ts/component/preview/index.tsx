@@ -6,21 +6,19 @@ import { PreviewLink, PreviewObject, PreviewDefault, Loader } from 'Component';
 import { I, Util, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
-interface State {
-	object: any;
-	loading: boolean;
-};
-
 const OFFSET_Y = 8;
 const BORDER = 12;
 
+interface State {
+	object: any;
+};
+
 const PreviewComponent = observer(class PreviewComponent extends React.Component<object, State> {
 
+	ref: any = null;
 	state = {
 		object: null,
-		loading: false,
 	};
-	ref: any = null;
 	
 	constructor (props) {
 		super(props);
@@ -36,7 +34,6 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	render () {
 		const { preview } = commonStore;
 		const { type, target, noUnlink } = preview;
-		const { object, loading } = this.state;
 		const cn = [ 'previewWrapper' ];
 
 		let head = null;
@@ -70,10 +67,6 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			};
 
 			case I.PreviewType.Default: {
-				if (!object) {
-					break;
-				};
-
 				if (!noUnlink) {
 					head = (
 						<div className="head">
@@ -82,7 +75,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					);
 				};
 
-				content = <PreviewDefault ref={ref => this.ref = ref} object={object} />;
+				content = <PreviewDefault ref={ref => this.ref = ref} rootId={target} setObject={this.setObject} position={this.position} />;
 				break;
 			};
 		};
@@ -94,48 +87,17 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		return (
 			<div id="preview" className={cn.join(' ')}>
 				<div className="polygon" onClick={this.onClick} />
-				{loading ? <Loader /> : (
-					<div className="content">
-						{head}
+				<div className="content">
+					{head}
 
-						<div className="cp" onClick={this.onClick}>
-							{content}
-						</div>
+					<div className="cp" onClick={this.onClick}>
+						{content}
 					</div>
-				)}
+				</div>
 			</div>
 		);
 	};
 
-	componentDidMount(): void {
-		this.init();
-	};
-
-	componentDidUpdate (): void {
-		this.init();
-	};
-
-	init () {
-		const { preview } = commonStore;
-		const { type, target } = preview;
-		const { object, loading } = this.state;
-
-		if (type != I.PreviewType.Default) {
-			return;
-		};
-
-		if (!loading && (!object || (object.id != target))) {
-			this.setState({ loading: true });
-
-			ObjectUtil.getById(target, object => {
-				this.setState({ object, loading: false });
-				this.position();
-			});
-		} else {
-			this.position();
-		};
-	};
-	
 	onClick (e: React.MouseEvent) {
 		const { preview } = commonStore;
 		const { type, target } = preview;
@@ -217,9 +179,9 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 	position () {
 		const { preview } = commonStore;
-		const { element } = preview;
-		
-		if (!element || !element.length) {
+		const { element, rect } = preview;
+
+		if (!element && !rect) {
 			return;
 		};
 
@@ -229,12 +191,30 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const ww = win.width();
 		const wh = win.height();
 		const st = win.scrollTop();
-		const offset = element.offset();
-		const nw = element.outerWidth();
-		const nh = element.outerHeight();
 		const ow = obj.outerWidth();
 		const oh = obj.outerHeight();
-		const css = { opacity: 0, left: 0, top: 0 };
+
+		let ox = 0;
+		let oy = 0;
+		let nw = 0;
+		let nh = 0;
+
+		if (rect) {
+			ox = rect.x;
+			oy = rect.y;
+			nw = rect.width;
+			nh = rect.height;
+		} else 
+		if (element && element.length) {
+			const offset = element.offset();
+
+			ox = offset.left;
+			oy = offset.top;
+			nw = element.outerWidth();
+			nh = element.outerHeight();
+		}; 
+
+		const css: any = { opacity: 0, left: 0, top: 0 };
 		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: nh + OFFSET_Y, clipPath: '' };
 
 		let typeY = I.MenuDirection.Bottom;		
@@ -253,32 +233,34 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			cpBot = 'polygon(0% 0%, ' + ps + '% 100%, ' + pe + '% 100%, 100% 0%)';
 		};
 
-		if (offset.top + oh + nh >= st + wh) {
+		if (oy + oh + nh >= st + wh) {
 			typeY = I.MenuDirection.Top;
 		};
 		
 		if (typeY == I.MenuDirection.Top) {
-			css.top = offset.top - oh - OFFSET_Y;
+			css.top = oy - oh - OFFSET_Y;
+			css.transform = 'translateY(-10%)';
 				
 			pcss.bottom = -nh - OFFSET_Y;
 			pcss.clipPath = cpTop;
 		};
 			
 		if (typeY == I.MenuDirection.Bottom) {
-			css.top = offset.top + nh + OFFSET_Y;
+			css.top = oy + nh + OFFSET_Y;
+			css.transform = 'translateY(10%)';
 				
 			pcss.top = -nh - OFFSET_Y;
 			pcss.clipPath = cpBot;
 		};
 			
-		css.left = offset.left - ow / 2 + nw / 2;
+		css.left = ox - ow / 2 + nw / 2;
 		css.left = Math.max(BORDER, css.left);
 		css.left = Math.min(ww - ow - BORDER, css.left);
 
 		obj.show().css(css);
 		poly.css(pcss);
 		
-		raf(() => { obj.css({ opacity: 1 }); });
+		window.setTimeout(() => { obj.css({ opacity: 1, transform: 'translateY(0%)' }); }, 15);
 	};
 
 });

@@ -605,7 +605,6 @@ onMouseMove = ({ x, y }) => {
 			isHovering = true;
 		};
 
-		send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 		redraw();
 	}, 300);
 };
