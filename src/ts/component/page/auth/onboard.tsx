@@ -18,9 +18,9 @@ type State = {
 
 const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I.PageComponent, State> {
 
-		node = null;
-		refFrame = null;
-		refPhrase = null;
+		node: HTMLDivElement = null;
+		refFrame: Frame = null;
+		refPhrase: Phrase = null;
 
 		state: State = {
 			stage: Stage.Void,
@@ -72,6 +72,17 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				);
 			}
 
+			if (error) {
+				return (
+					<div>
+						<Frame ref={(ref) => (this.refFrame = ref)}>
+							<Error className="animation" text={error} />
+						</Frame>
+						<CanvasWorkerBridge state={animationStage} />
+					</div>
+				);
+			}
+
 			return (
 				<div ref={(ref) => (this.node = ref)}>
 					{back}
@@ -79,7 +90,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						{indicator}
 						<Title className="animation" text={this.getText('Title')} />
 						{label}
-						<Error className="animation" text={error} />
 						{this.renderContent()}
 						{this.renderButtons()}
 						{footer}
