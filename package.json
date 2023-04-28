@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.31.25-alpha",
+	"version": "0.31.28-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -37,7 +37,7 @@
 		"name": "Anytype",
 		"email": "info@anytype.io"
 	},
-	"license": "",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/anytypeio/js-anytype/issues"
 	},
@@ -105,7 +105,7 @@
 		"file-type": "^12.4.2",
 		"findandreplacedomtext": "^0.4.6",
 		"google-protobuf": "^3.14.0",
-		"grpc-web": "^1.2.1",
+		"grpc-web": "^1.4.2",
 		"history": "^4.10.1",
 		"inputmask": "^5.0.5",
 		"install": "^0.13.0",

@@ -182,6 +182,10 @@
 		.dataviewControls.active {
 			.side.right { opacity: 1; }
 		}
+
+		.content {
+			.scroll { padding-bottom: 2px; }
+		}
 	}
 
 	.block.blockDataview.showMenu {

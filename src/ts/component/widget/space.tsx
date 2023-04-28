@@ -35,8 +35,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	onOpenSpace () {
-		ObjectUtil.openHome('route');
-		analytics.event('GoToSpaceDashboard');
+		ObjectUtil.openRoute({ layout: I.ObjectLayout.Graph });
 	};
 
 	onOpenSettings (e: React.MouseEvent) {

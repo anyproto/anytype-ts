@@ -620,13 +620,13 @@ class App extends React.Component<object, State> {
 		switch (key) {
 			case 'undo':
 				if (!keyboard.isFocused) {
-					keyboard.onUndo(rootId);
+					keyboard.onUndo(rootId, 'MenuSystem');
 				};
 				break;
 
 			case 'redo':
 				if (!keyboard.isFocused) {
-					keyboard.onRedo(rootId);
+					keyboard.onRedo(rootId, 'MenuSystem');
 				};
 				break;
 

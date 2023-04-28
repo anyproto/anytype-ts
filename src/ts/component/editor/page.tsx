@@ -502,18 +502,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		});
 
 		// Undo
-		keyboard.shortcut(`${cmd}+z`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+z`, e, () => {
 			if (!readonly) {
 				e.preventDefault();
-				keyboard.onUndo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onUndo(rootId, 'editor', () => { focus.clear(true); });
 			};
 		});
 
 		// Redo
-		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 			if (readonly) {
 				e.preventDefault();
-				keyboard.onRedo(rootId, (message: any) => { focus.clear(true); });
+				keyboard.onRedo(rootId, 'editor', () => { focus.clear(true); });
 			};
 		});
 
@@ -719,18 +719,18 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			// Undo
 			keyboard.shortcut(`${cmd}+z`, e, () => {
 				e.preventDefault();
-				keyboard.onUndo(rootId, () => { focus.clear(true); });
+				keyboard.onUndo(rootId, 'editor', () => { focus.clear(true); });
 			});
 
 			// Redo
 			keyboard.shortcut(`${cmd}+shift+z, ${cmd}+y`, e, () => {
 				e.preventDefault();
-				keyboard.onRedo(rootId, () => { focus.clear(true); });
+				keyboard.onRedo(rootId, 'editor', () => { focus.clear(true); });
 			});
 
 			// Search
 			keyboard.shortcut(`${cmd}+f`, e, () => {
-				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from));
+				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from), 'editor');
 			});
 
 			if (block.isTextToggle()) {

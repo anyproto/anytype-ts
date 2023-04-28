@@ -209,8 +209,8 @@ class MediaAudio extends React.Component<Props> {
         };
 
         const node = $(this.node);
-        const current = node.find('.time .current');
-        const total = node.find('.time .total');
+        const current = node.find('#timeCurrent');
+        const total = node.find('#timeTotal');
 
         let t = this.getTime(el.currentTime);
         current.text(`${Util.sprintf('%02d', t.m)}:${Util.sprintf('%02d', t.s)}`);
@@ -222,10 +222,12 @@ class MediaAudio extends React.Component<Props> {
     };
 
     getTime (t: number): { m: number, s: number } {
-        let m = Math.floor(t / 60);
+		t = Number(t) || 0;
+
+        const m = Math.floor(t / 60);
 
         t -= m * 60;
-        let s = Math.floor(t);
+        const s = Math.floor(t);
 
         return { m, s };
     };

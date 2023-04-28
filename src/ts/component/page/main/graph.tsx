@@ -31,6 +31,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		this.onClickObject = this.onClickObject.bind(this);
 		this.onContextMenu = this.onContextMenu.bind(this);
+		this.onContextSpaceClick = this.onContextSpaceClick.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onTab = this.onTab.bind(this);
 	};
@@ -56,6 +57,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						onClick={this.onClickObject}
 						onSelect={this.onSelect}
 						onContextMenu={this.onContextMenu}
+						onContextSpaceClick={this.onContextSpaceClick}
 					/>
 				</div>
 
@@ -274,6 +276,17 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		return this.data.nodes.find(d => d.id == id);
 	};
 
+	addNewNode (id: string, cb: (target: any) => void) {
+		ObjectUtil.getById(id, (object: any) => {
+			const target = this.refGraph.nodeMapper(object);
+
+			this.data.nodes.push(target);
+			this.refGraph.nodes.push(target);
+
+			cb(target);
+		});
+	};
+
 	onContextMenu (id: string, param: any) {
 		const { root } = blockStore;
 		const ids = this.ids.length ? this.ids : [ id ];
@@ -290,10 +303,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 						this.data.edges.push(this.refGraph.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
 						this.refGraph.send('onSetEdges', { edges: this.data.edges });
 					} else {
-						ObjectUtil.getById(targetId, (object: any) => {
-							target = this.refGraph.nodeMapper(object);
-							this.refGraph.send('onAddNode', { sourceId, target });
-						});
+						this.addNewNode(targetId, target => this.refGraph.send('onAddNode', { target, sourceId }));
 					};
 				},
 				onSelect: (itemId: string) => {
@@ -340,6 +350,40 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 					this.ids = [];
 					this.refGraph.send('onSetSelected', { ids: this.ids });
+				},
+			}
+		});
+	};
+
+	onContextSpaceClick (param: any, data: any) {
+		menuStore.open('select', {
+			...param,
+			data: {
+				options: [
+					{ id: 'newObject', name: 'New object' },
+				],
+				onSelect: (e: any, item: any) => {
+
+					switch (item.id) {
+
+						case 'newObject': {
+							ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+								ObjectUtil.openPopup({ id: message.targetId }, {
+									onClose: () => {
+										this.addNewNode(message.targetId, target => {
+											target = Object.assign(target, { x: data.x, y: data.y });
+											this.refGraph.send('onAddNode', { target });
+										});
+									}
+								});
+
+								analytics.event('CreateObject', { route: 'Graph' });
+							});
+							break;
+						};
+
+					};
+
 				},
 			}
 		});

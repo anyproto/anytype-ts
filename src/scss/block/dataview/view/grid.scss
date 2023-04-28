@@ -124,7 +124,9 @@
 
 			.cellHead:first-child { padding-left: 8px; }
 			.cell:first-child { padding-left: 20px; }
-			.cell.isEditing:first-child .cellContent.isName { padding-left: 20px !important; }
+			.cell.isEditing:first-child {
+				.cellContent.isName { padding-left: 20px !important; }
+			}
 		}
     }
 
@@ -149,6 +151,7 @@
 			.cell.isEditing {
 				.cellContent { padding: 10px 14px; }
 
+				.cellContent.isName { padding-left: 6px !important; }
 				.cellContent.isName {
 					.iconObject { margin-top: 10px; margin-bottom: 10px; }
 					.input-text { height: 39px; }
