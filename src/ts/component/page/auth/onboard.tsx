@@ -130,7 +130,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			}
 
 			if ([Stage.SoulCreating, Stage.SpaceCreating].includes(stage)) {
-				const cn = ['soulContent', 'animation', 'not-from'];
+				const cn = ['soulContent'];
 
 				if (stage == Stage.SoulCreating) {
 					cn.push('soulCreating');
@@ -141,7 +141,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				}
 
 				return (
-					<div className={cn.join(' ')}>
+					// Hack, because React's diffing algorithm doesnt change the DOM node when only the className changes,
+					// so we have to set a different element type to force the DOM to change,
+					// otherwise the animation library css styles remain (I tried setting style={{}}, doesnt work)
+					// https://legacy.reactjs.org/docs/reconciliation.html
+					<section className={cn.join(' ')}>
 						<div className="account">
 							<IconObject object={{ iconOption, layout: I.ObjectLayout.Human }} size={48} />
 							<span className="accountName">
@@ -156,7 +160,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 							<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={48} />
 							<span className="spaceName">Personal Space</span>
 						</div>
-					</div>
+					</section>
 				);
 			}
 
