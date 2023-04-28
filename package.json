@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.31.27-alpha",
+	"version": "0.31.28-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -35,7 +35,7 @@
 		"name": "Anytype",
 		"email": "info@anytype.io"
 	},
-	"license": "",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/anytypeio/js-anytype/issues"
 	},
