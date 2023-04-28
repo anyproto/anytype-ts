@@ -280,8 +280,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
+		const events = [ 'resize', 'keydown', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
 
-		$(window).off(`resize.${block.id} updateDataviewData.${block.id} setDataviewSource.${block.id} selectionEnd.${block.id}  selectionClear.${I.SelectType.Record}`);
+		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
 
 	rebind () {
@@ -294,51 +295,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		win.on(`setDataviewSource.${block.id}`, () => { 
 			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
 		});
-		win.on(`selectionEnd`, () => { this.onMultiSelect(); });
-		win.on(`selectionClear.${I.SelectType.Record}`, () => {
+		win.on(`selectionEnd.${block.id}`, () => { this.onMultiSelect(); });
+		win.on(`selectionClear.${block.id}`, () => {
 			if (this.isMultiSelecting) {
 				this.setMultiSelect(false);
 			};
 		});
+		win.on(`keydown.${block.id}`, e => this.onKeyDownBlock(e));
 	};
 
 	onKeyDown (e: any) {
-		const { dataset, isInline, onKeyDown } = this.props;
-		const { selection } = dataset || {};
-		const cmd = keyboard.cmdKey();
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
-		const count = ids.length;
+		const { onKeyDown } = this.props;
 
-		let ret = false;
-
-		if (!isInline) {
-			if (!this.creating) {
-				keyboard.shortcut(`${cmd}+n`, e, () => { 
-					this.onRecordAdd(e, -1, true); 
-					ret = true;
-				});
-			};
-
-			if (!isInline && !keyboard.isFocused) {
-				keyboard.shortcut(`${cmd}+a`, e, () => {
-					selection.set(I.SelectType.Record, this.getRecords());
-					ret = true;
-				});
-			};
-
-			if (count) {
-				keyboard.shortcut('backspace, delete', e, () => {
-					e.preventDefault();
-
-					C.ObjectListSetIsArchived(ids, true);
-					
-					selection.clear();
-					analytics.event('MoveToBin', { count });
-					ret = true;
-				});
-			};
-		};
-
+		const ret = this.onKeyDownBlock(e);
 		if (!ret && onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
@@ -350,6 +319,47 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (onKeyUp) {
 			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
 		};
+	};
+
+	onKeyDownBlock (e: any) {
+		const { dataset, isInline } = this.props;
+		const { selection } = dataset || {};
+		const cmd = keyboard.cmdKey();
+		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const count = ids.length;
+
+		let ret = false;
+
+		if (isInline) {
+			return ret;
+		};
+
+		if (!this.creating) {
+			keyboard.shortcut(`${cmd}+n`, e, () => { 
+				this.onRecordAdd(e, -1, true); 
+				ret = true;
+			});
+		};
+
+		if (!keyboard.isFocused) {
+			keyboard.shortcut(`${cmd}+a`, e, () => {
+				selection.set(I.SelectType.Record, this.getRecords());
+				ret = true;
+			});
+		};
+
+		if (count) {
+			keyboard.shortcut('backspace, delete', e, () => {
+				e.preventDefault();
+				C.ObjectListSetIsArchived(ids, true);
+				
+				selection.clear();
+				analytics.event('MoveToBin', { count });
+				ret = true;
+			});
+		};
+
+		return ret;
 	};
 
 	onFocus () {
