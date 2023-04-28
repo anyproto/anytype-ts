@@ -157,7 +157,7 @@ html.bodyAuthDeleted {
 		.icon { display: none; }
 	}
 
-	.soulContent { width: 100px; }
+	.soulContent { width: 100px; padding-top: 5px; }
 	.soulContent {
 		.account, .space, .line { transition: all 600ms ease-in; position: absolute; display: flex; flex-direction: column; }
 		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }

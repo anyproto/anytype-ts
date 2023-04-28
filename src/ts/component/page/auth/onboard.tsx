@@ -290,22 +290,24 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				// Move animation forward, wait for delay, move onboarding forward
 				if (stage == Stage.Phrase) {
-					const DURATION = 3000;
+					const DURATION = 1000;
 					incrementAnimation(delay(incrementOnboarding(), DURATION))();
 					return;
 				}
 
 				// Move animation forward, wait for delay, move animation forward again, then move onboarding forward
 				if (stage == Stage.Offline) {
-					const DURATION = 3000;
-					incrementAnimation(delay(incrementAnimation(incrementOnboarding()), DURATION))();
+					const DURATION_ONE = 3000;
+					const DURATION_TWO = 1000;
+					incrementAnimation(delay(incrementAnimation(delay(incrementOnboarding(), DURATION_TWO)), DURATION_ONE))();
 					return;
 				}
 
 				// Wait for delay, move onboarding forward, wait for delay, move onboarding forward again
 				if (stage == Stage.Soul) {
-					const DURATION = 3000;
-					delay(incrementOnboarding(delay(incrementOnboarding(this.createAccount), DURATION)), DURATION)();
+					const DURATION_ONE = 2500;
+					const DURATION_TWO = 3000;
+					delay(incrementOnboarding(delay(incrementOnboarding(this.createAccount), DURATION_ONE)), DURATION_TWO)();
 					return;
 				}
 			});
