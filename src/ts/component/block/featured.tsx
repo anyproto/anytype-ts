@@ -109,7 +109,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					</span>
 				) : ''}
 
-				{featuredRelations.includes('setOf') && (object.layout == I.ObjectLayout.Set) ? (
+				{featuredRelations.includes('setOf') ? (
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
 						{bullet}
 						<div
