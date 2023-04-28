@@ -19,7 +19,7 @@ export const DOM_EVENTS: { [key: string]: [string, boolean] } = {
 
 export enum OnboardStage {
 	Void = 0,
-	KeyPhrase = 1,
+	Phrase = 1,
 	Offline = 2,
 	Soul = 3,
 	SoulCreating = 4,
