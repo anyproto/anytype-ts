@@ -78,10 +78,10 @@ html.bodyAuthDeleted {
 
 .pageAuthLogin {
 	.form { width: 100%; }
-	.icon { height: 20px; width: 20px; transition: $transitionAllCommon; }
+	.icon { height: 20px; width: 20px; }
 	.phraseWrapper { margin: 0px 0px 20px 0px; }
 
-	.small { color: $colorSecondary; cursor: pointer; transition: $transitionAllCommon; }
+	.small { color: $colorSecondary; cursor: pointer; }
 	.small:hover { color: #cbc9bd; }
 
 	.bottom { 
@@ -138,8 +138,8 @@ html.bodyAuthDeleted {
 	.label { width: 415px; }
 	.button { width: auto; }
 
-	.icon.gear { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; transition: $transitionAllCommon; }
-	.small { color: $colorSecondary; transition: $transitionAllCommon; }
+	.icon.gear { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; }
+	.small { color: $colorSecondary }
 
 	#accountPath { display: flex; align-items: center; flex-direction: row; gap: 0px 6px; }
 	#accountPath:hover { color: #cbc9bd; }
