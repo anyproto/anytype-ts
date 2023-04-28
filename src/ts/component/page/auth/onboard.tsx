@@ -186,7 +186,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<Button
 						className={['animation', this.canMoveForward() ? '' : 'disabled'].join(' ')}
 						text={text}
-						onClick={this.guardedOnNext}
+						onClick={this.onNext}
 					/>
 					{moreInfo}
 				</div>
@@ -237,14 +237,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		onKeyDown = (e) => {
-			keyboard.shortcut('enter', e, this.guardedOnNext);
-		};
-
-		/** Like onNext, but only moves forward if it is a legal state change  */
-		guardedOnNext = () => {
-			if (this.canMoveForward()) {
-				this.onNext();
-			}
+			keyboard.shortcut('enter', e, this.onNext);
 		};
 
 		/** Guard to prevent illegal state change */
@@ -267,12 +260,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return stage <= Stage.Soul;
 		};
 
-		/** Moves the Onboarding Flow one stage forward
-		 * Should not be triggered directly by UI without checking
-		 * if state change is allowed.
-		 *
-		 */
+		/** Moves the Onboarding Flow one stage forward if possible */
 		onNext = () => {
+			if (!this.canMoveForward()) {
+				return;
+			}
+
 			const { stage, phraseCopied } = this.state;
 
 			if (stage == Stage.Phrase && !phraseCopied) {
@@ -283,52 +276,38 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				return;
 			}
 
-			if (stage == Stage.SpaceCreating) {
-				this.createAccount();
-				return;
-			}
+			const delay = (cb, duration) => () => window.setTimeout(cb, duration);
+			const incrementAnimation = (cb?) => () => this.setState((prev) => ({ ...prev, animationStage: prev.animationStage + 1 }), cb);
+			const incrementOnboarding = (cb?) => () => this.setState((prev) => ({ ...prev, stage: prev.stage + 1 }), cb);
 
 			Animation.from(() => {
-				const DURATION = 3000;
+				// Move animation forward, wait for delay, move onboarding forward
+				if (stage == Stage.Void) {
+					const DURATION = 3000;
+					incrementAnimation(delay(incrementOnboarding(), DURATION))();
+					return;
+				}
 
-				// during this stage, we want the animation to go forward 2 steps, and then after a delay the onboarding to go forward 1 step
+				// Move animation forward, wait for delay, move onboarding forward
+				if (stage == Stage.Phrase) {
+					const DURATION = 3000;
+					incrementAnimation(delay(incrementOnboarding(), DURATION))();
+					return;
+				}
+
+				// Move animation forward, wait for delay, move animation forward again, then move onboarding forward
 				if (stage == Stage.Offline) {
-					this.setState(
-						(prev) => ({ ...prev, animationStage: prev.animationStage + 1 }),
-						() => 
-							window.setTimeout(
-								() =>
-									this.setState(
-										(prev) => ({ ...prev, animationStage: prev.animationStage + 1 }),
-										() => this.setState((prev) => ({ ...prev, stage: prev.stage + 1 }))
-									),
-								DURATION
-							)
-					);
+					const DURATION = 3000;
+					incrementAnimation(delay(incrementAnimation(incrementOnboarding()), DURATION))();
 					return;
 				}
 
-				// during these stages we want the onboarding to progress, but not the animation
-				if ([Stage.SoulCreating, Stage.Soul].includes(stage)) {
-					window.setTimeout(
-						() =>
-							this.setState(
-								(prev) => ({ ...prev, stage: prev.stage + 1 }),
-								this.onNext
-							),
-						DURATION
-					);
+				// Wait for delay, move onboarding forward, wait for delay, move onboarding forward again
+				if (stage == Stage.Soul) {
+					const DURATION = 3000;
+					delay(incrementOnboarding(delay(incrementOnboarding(this.createAccount), DURATION)), DURATION)();
 					return;
 				}
-
-				// during the rest of the stages, we want the animation to go forward a step, a delay, then the onboarding to go forward a step
-				this.setState(
-					(prev) => ({ ...prev, animationStage: prev.animationStage + 1 }),
-					() => 
-						window.setTimeout(() => 
-							this.setState((prev) => ({ ...prev, stage: prev.stage + 1 }))
-						, DURATION)
-				);
 			});
 		};
 
