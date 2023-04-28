@@ -313,21 +313,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (!isInline) {
 			if (!this.creating) {
-				keyboard.shortcut(`${cmd}+n`, e, (pressed: string) => { 
+				keyboard.shortcut(`${cmd}+n`, e, () => { 
 					this.onRecordAdd(e, -1, true); 
 					ret = true;
 				});
 			};
 
 			if (!isInline && !keyboard.isFocused) {
-				keyboard.shortcut(`${cmd}+a`, e, (pressed: string) => {
+				keyboard.shortcut(`${cmd}+a`, e, () => {
 					selection.set(I.SelectType.Record, this.getRecords());
 					ret = true;
 				});
 			};
 
 			if (count) {
-				keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+				keyboard.shortcut('backspace, delete', e, () => {
+					e.preventDefault();
+
 					C.ObjectListSetIsArchived(ids, true);
 					
 					selection.clear();
