@@ -440,12 +440,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return this.applyObjectOrder(Util.objectCopy(records));
 	};
 
-	getRecord (id?: string) {
+	getRecord (recordId: string) {
 		const { rootId, block } = this.props;
 		const view = this.getView();
 		const keys = this.getKeys(view.id);
 		const subId = dbStore.getSubId(rootId, block.id);
-		const item = detailStore.get(subId, id, keys);
+		const item = detailStore.get(subId, recordId, keys);
 
 		if (!item) {
 			return {};

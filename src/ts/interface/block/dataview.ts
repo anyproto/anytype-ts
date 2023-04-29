@@ -112,7 +112,7 @@ export interface ViewComponent {
 	onRef?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecords?(): string[];
-	getRecord(id?: string): any;
+	getRecord(id: string): any;
 	getView?(): View;
 	getSources?(): string[];
 	getTarget?(): any;
@@ -188,7 +188,7 @@ export interface Cell {
 	arrayLimit?: number;
 	shortUrl?: boolean;
 	getView?(): View;
-	getRecord(id?: string): any;
+	getRecord(id: string): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;

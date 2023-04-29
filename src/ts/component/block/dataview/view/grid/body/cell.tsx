@@ -13,7 +13,7 @@ interface Props {
 	readonly: boolean;
 	width: number;
 	className?: string;
-	getRecord(id?: string): any;
+	getRecord(id: string): any;
 	getIdPrefix?(): string;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, id?: string): void;
