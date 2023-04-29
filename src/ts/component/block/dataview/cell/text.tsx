@@ -37,8 +37,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	render () {
 		const { isEditing } = this.state;
-		const { index, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
-		const record = getRecord(index);
+		const { index, recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
+		const record = getRecord(index, recordId);
 		
 		if (!record) {
 			return null;
@@ -218,8 +218,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	componentDidMount () {
-		const { relation, index, getRecord } = this.props;
-		const record = getRecord(index);
+		const { relation, index, recordId, getRecord } = this.props;
+		const record = getRecord(index, recordId);
 
 		this._isMounted = true;
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
@@ -358,8 +358,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onBlur (e: any) {
-		const { relation, onChange, index, getRecord } = this.props;
-		const record = getRecord(index);
+		const { relation, onChange, index, recordId, getRecord } = this.props;
+		const record = getRecord(index, recordId);
 
 		if (!this.ref || keyboard.isBlurDisabled || !record) {
 			return;
@@ -402,22 +402,16 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onIconSelect (icon: string) {
-		const { index, getRecord } = this.props;
-		const record = getRecord(index);
-
-		ObjectUtil.setIcon(record.id, icon, '');
+		ObjectUtil.setIcon(this.props.recordId, icon, '');
 	};
 
 	onIconUpload (hash: string) {
-		const { index, getRecord } = this.props;
-		const record = getRecord(index);
-
-		ObjectUtil.setIcon(record.id, '', hash);
+		ObjectUtil.setIcon(this.props.recordId, '', hash);
 	};
 
 	onCheckbox () {
-		const { index, getRecord, onCellChange } = this.props;
-		const record = getRecord(index);
+		const { index, recordId, getRecord, onCellChange } = this.props;
+		const record = getRecord(index, recordId);
 
 		onCellChange(record.id, 'done', !record.done);
 	};

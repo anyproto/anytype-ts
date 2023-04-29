@@ -440,19 +440,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return this.applyObjectOrder(Util.objectCopy(records));
 	};
 
-	getRecord (index: number) {
+	getRecord (index: number, id?: string) {
 		const { rootId, block } = this.props;
 		const view = this.getView();
 		const keys = this.getKeys(view.id);
-		const subId = dbStore.getSubId(rootId, block.id,);
-		const records = this.getRecords();
+		const subId = dbStore.getSubId(rootId, block.id);
 
-		if (index > records.length - 1) {
+		let item = null;
+		if (id) {
+			item = detailStore.get(subId, id, keys);
+		} else {
+			const records = this.getRecords();
+
+			if (index > records.length - 1) {
+				return {};
+			};
+
+			item = detailStore.get(subId, records[index], keys);
+		};
+
+		if (!item) {
 			return {};
 		};
 
-		const item = detailStore.get(subId, records[index], keys);
-		
 		let { name, layout, isReadonly, isDeleted, snippet } = item;
 		if (name == ObjectUtil.defaultName('page')) {
 			name = '';

@@ -6,7 +6,8 @@ import { Cell, DropTarget, Icon } from 'Component';
 import { dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
-	index: number;
+	index?: number;
+	recordId?: string;
 	style?: any;
 };
 
@@ -16,12 +17,12 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, index, getView, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiSelect } = this.props;
+		const { rootId, block, index, recordId, getView, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiSelect } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(index);
+		const record = getRecord(index, recordId);
 
 		// Subscriptions
 		const { hideIcon } = view;
@@ -43,6 +44,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							idPrefix={idPrefix}
 							onClick={(e: any) => { this.onCellClick(e, relation); }}
 							index={index}
+							recordId={recordId}
 							isInline={true}
 							showTooltip={true}
 							arrayLimit={2}
@@ -112,9 +114,9 @@ const Row = observer(class Row extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { onContext, dataset, getRecord, index } = this.props;
+		const { onContext, dataset, getRecord, index, recordId } = this.props;
 		const { selection } = dataset || {};
-		const record = getRecord(index);
+		const record = getRecord(index, recordId);
 		const cb = {
 			0: () => {
 				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 

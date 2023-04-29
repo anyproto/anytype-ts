@@ -8,12 +8,13 @@ import Constant from 'json/constant.json';
 interface Props {
 	rootId?: string;
 	block?: I.Block;
+	index?: number;
+	recordId?: string;
 	relationKey: string;
-	index: number;
 	readonly: boolean;
 	width: number;
 	className?: string;
-	getRecord(index: number): any;
+	getRecord(index: number, id?: string): any;
 	getIdPrefix?(): string;
 	onRef?(ref: any, id: string): void;
 	onCellClick?(e: any, key: string, index: number): void;
@@ -31,7 +32,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, className, relationKey, index, readonly, onRef, getRecord, onCellClick, onCellChange, getIdPrefix } = this.props;
+		const { rootId, block, className, relationKey, index, recordId, readonly, onRef, getRecord, onCellClick, onCellChange, getIdPrefix } = this.props;
 		const relation: any = dbStore.getRelationByKey(relationKey) || {};
 		const cn = [ 'cell', `cell-key-${this.props.relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = getIdPrefix();
@@ -39,7 +40,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(index);
+		const record = getRecord(index, recordId);
 
 		if (relation.relationKey == 'name') {
 			cn.push('isName');

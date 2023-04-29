@@ -7,7 +7,8 @@ import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
-	index: number;
+	index?: number;
+	recordId?: string;
 	style?: any;
 };
 
@@ -24,12 +25,12 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, index, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection, onMultiSelect } = this.props;
+		const { rootId, block, index, recordId, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection, onMultiSelect } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
-		const record = getRecord(index);
+		const record = getRecord(index, recordId);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
 		const readonly = true;
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -78,7 +79,6 @@ const Card = observer(class Card extends React.Component<Props> {
 								relationKey={relation.relationKey}
 								viewType={view.type}
 								idPrefix={idPrefix}
-								index={index}
 								arrayLimit={2}
 								showTooltip={true}
 								onClick={(e: any) => { this.onCellClick(e, relation); }}
@@ -172,9 +172,9 @@ const Card = observer(class Card extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { index, getRecord, onContext, dataset } = this.props;
+		const { index, recordId, getRecord, onContext, dataset } = this.props;
 		const { selection } = dataset || {};
-		const record = getRecord(index);
+		const record = getRecord(index, recordId);
 		const cb = {
 			0: () => { 
 				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
@@ -203,7 +203,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	getCover (): any {
-		const { rootId, block, index, getView, getRecord } = this.props;
+		const { rootId, block, index, recordId, getView, getRecord } = this.props;
 		const view = getView();
 
 		if (!view.coverRelationKey) {
@@ -211,7 +211,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(index);
+		const record = getRecord(index, recordId);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
 
 		let cover = null;

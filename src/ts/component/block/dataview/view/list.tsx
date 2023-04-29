@@ -42,6 +42,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 							style={{height: HEIGHT}}
 							readonly={!isAllowedObject}
 							index={index}
+							recordId={id}
 						/>
 					))}
 				</div>
@@ -74,6 +75,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 														<Row
 															{...this.props}
 															index={index}
+															recordId={records[index]}
 														/>
 													</div>
 												)}

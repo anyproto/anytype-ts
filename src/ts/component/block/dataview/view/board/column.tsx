@@ -106,6 +106,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								id={item.id}
 								groupId={id}
 								index={i}
+								recordId={item.id}
 							/>
 						))}
 

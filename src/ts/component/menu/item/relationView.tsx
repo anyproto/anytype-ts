@@ -22,7 +22,7 @@ interface Props {
 	onEdit(e: any, relationKey: string): void;
 	onRef(id: string, ref: any): void;
 	onFav(e: any, item: any): void;
-	onCellClick(e: any, relationKey: string, index: number): void;
+	onCellClick(e: any, relationKey: string, index: number, id?: string): void;
 	onCellChange(id: string, relationKey: string, value: any, callBack?: (message: any) => void): void;
 };
 
@@ -100,7 +100,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						bodyContainer={Util.getBodyContainer('menuBlockRelationView')}
 						pageContainer={Util.getCellContainer('menuBlockRelationView')}
 						readonly={readonly}
-						onClick={(e: any) => { onCellClick(e, relationKey, 0); }}
+						onClick={(e: any) => { onCellClick(e, relationKey, 0, id); }}
 						onCellChange={onCellChange}
 					/>
 					{canFav ? (

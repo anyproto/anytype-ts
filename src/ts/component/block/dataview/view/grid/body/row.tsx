@@ -5,7 +5,8 @@ import { DropTarget, Icon } from 'Component';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
-	index: number;
+	index?: number;
+	recordId?: string;
 	style?: any;
 	cellPosition?: (cellId: string) => void;
 	onRef?(ref: any, id: string): void;
@@ -15,9 +16,9 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, index, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
+		const { rootId, index, recordId, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
 		const relations = getVisibleRelations();
-		const record = getRecord(index);
+		const record = getRecord(index, recordId);
 		const widths = getColumnWidths('', 0);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const cn = [ 'row' ];
@@ -39,7 +40,6 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 						key={[ 'grid', block.id, relation.relationKey, record.id ].join(' ')}
 						{...this.props}
 						width={relation.width}
-						index={index}
 						relationKey={relation.relationKey}
 						className={`index${i}`}
 					/>

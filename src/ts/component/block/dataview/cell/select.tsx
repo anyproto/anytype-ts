@@ -36,9 +36,9 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	render () {
-		const { relation, getRecord, index, elementMapper, arrayLimit } = this.props;
+		const { relation, getRecord, index, recordId, elementMapper, arrayLimit } = this.props;
 		const { isEditing } = this.state;
-		const record = getRecord(index);
+		const record = getRecord(index, recordId);
 		const isStatus = relation.format == I.RelationType.Status;
 		const cn = [ 'wrap' ];
 
@@ -316,8 +316,8 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 	};
 
 	getItems (): any[] {
-		const { relation, getRecord, index } = this.props;
-		const record = getRecord(index);
+		const { relation, getRecord, index, recordId } = this.props;
+		const record = getRecord(index, recordId);
 
 		return record && relation ? Relation.getOptions(record[relation.relationKey]) : [];
 	};

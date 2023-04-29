@@ -7,7 +7,8 @@ import { Cell, DropTarget, Icon } from 'Component';
 interface Props extends I.ViewComponent {
 	id: string;
 	groupId: string;
-	index: number;
+	index?: number;
+	recordId?: string;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 

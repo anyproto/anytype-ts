@@ -39,8 +39,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { getRecord, index, relation, iconSize, elementMapper, arrayLimit } = this.props;
-		const record = getRecord(index);
+		const { getRecord, index, recordId, relation, iconSize, elementMapper, arrayLimit } = this.props;
+		const record = getRecord(index, recordId);
 		const cn = [ 'wrap' ];
 
 		if (!relation || !record) {
@@ -205,8 +205,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	getItems (): any[] {
-		const { relation, getRecord, index, subId } = this.props;
-		const record = getRecord(index);
+		const { relation, getRecord, index, recordId, subId } = this.props;
+		const record = getRecord(index, recordId);
 
 		if (!relation || !record) {
 			return [];

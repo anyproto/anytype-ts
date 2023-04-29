@@ -72,6 +72,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 							key={'gallery-card-' + view.id + index} 
 							{...this.props}
 							index={index} 
+							recordId={id}
 						/>
 					))}
 				</React.Fragment>
@@ -107,7 +108,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 														<Card 
 															key={'gallery-card-' + view.id + index} 
 															{...this.props} 
-															index={index} 
+															index={index}
+															recordId={records[index]}
 															style={{ ...style, width: this.columnWidth }}
 														/>
 													</CellMeasurer>
