@@ -132,7 +132,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			cnc.push('c' + n);
 
 			element = (
-				<div className={cnc.join(' ')} onClick={this.onClick}>
+				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
 					<div id="sides" className={cns.join(' ')}>
 						<div key="sideLeft" className={cnl.join(' ')}>
 							<div className="relationItem cardName">
