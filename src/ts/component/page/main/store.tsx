@@ -44,7 +44,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	view: View = View.Marketplace;
 	frame = 0;
 	limit = 0;
-	threshold = false;
 	midHeight = 0;
 
 	constructor (props: I.PageComponent) {
