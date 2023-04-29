@@ -397,7 +397,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				break;
 
 			case I.ObjectLayout.Bookmark:
-				src = commonStore.imageUrl(d.iconImage, 24);
+				if (d.iconImage) {
+					src = commonStore.imageUrl(d.iconImage, 24);
+				};
 				break;
 				
 			default:
