@@ -280,13 +280,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		const events = [ 'resize', 'keydown', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
+		const events = [ 'resize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
 
 	rebind () {
-		const { block, isInline } = this.props;
+		const { block } = this.props;
 		const win = $(window);
 
 		this.unbind();
@@ -300,17 +300,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				this.setMultiSelect(false);
 			};
 		});
-
-		if (!isInline) {
-			win.on(`keydown.${block.id}`, e => this.onKeyDownBlock(e));
-		};
 	};
 
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
-		const ret = this.onKeyDownBlock(e);
 
-		if (!ret && onKeyDown) {
+		if (onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
 	};
@@ -321,47 +316,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (onKeyUp) {
 			onKeyUp(e, '', [], { from: 0, to: 0 }, this.props);
 		};
-	};
-
-	onKeyDownBlock (e: any) {
-		const { dataset, isInline } = this.props;
-		const { selection } = dataset || {};
-		const cmd = keyboard.cmdKey();
-		const ids = selection ? selection.get(I.SelectType.Record) : [];
-		const count = ids.length;
-
-		let ret = false;
-
-		if (isInline) {
-			return ret;
-		};
-
-		if (!this.creating) {
-			keyboard.shortcut(`${cmd}+n`, e, () => { 
-				this.onRecordAdd(e, -1, true); 
-				ret = true;
-			});
-		};
-
-		if (!keyboard.isFocused) {
-			keyboard.shortcut(`${cmd}+a`, e, () => {
-				selection.set(I.SelectType.Record, this.getRecords());
-				ret = true;
-			});
-		};
-
-		if (count) {
-			keyboard.shortcut('backspace, delete', e, () => {
-				e.preventDefault();
-				C.ObjectListSetIsArchived(ids, true);
-				
-				selection.clear();
-				analytics.event('MoveToBin', { count });
-				ret = true;
-			});
-		};
-
-		return ret;
 	};
 
 	onFocus () {
@@ -558,6 +512,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
 		if (e.persist) {
 			e.persist();
+		};
+
+		if (this.creating) {
+			return;
 		};
 
 		const { rootId, block } = this.props;
