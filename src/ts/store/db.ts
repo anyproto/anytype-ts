@@ -289,6 +289,7 @@ class DbStore {
 	getGroupSubId (rootId: string, blockId: string, groupId: string): string {
 		return [ rootId, blockId, groupId ].join('-');
 	};
+
 };
 
  export const dbStore: DbStore = new DbStore();

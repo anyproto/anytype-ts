@@ -142,6 +142,7 @@ class DetailStore {
 
 			keys.push('id');
 			keys = [ ...new Set(keys) ];
+
 			list = list.filter(it => keys.includes(it.relationKey));
 		};
 
