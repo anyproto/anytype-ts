@@ -32,8 +32,14 @@ if (process.defaultApp) {
 	app.setAsDefaultProtocolClient(protocol);
 };
 
+powerMonitor.on('suspend', () => {
+	Util.log('info', '[PowerMonitor] suspend');
+});
+
 powerMonitor.on('resume', () => {
 	BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
+
+	Util.log('info', '[PowerMonitor] resume');
 });
 
 let deeplinkingUrl = '';
