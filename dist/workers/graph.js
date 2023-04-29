@@ -747,7 +747,7 @@ const isLayoutBookmark = (d) => {
 };
 
 const isIconCircle = (d) => {
-	return isLayoutHuman(d) || isLayoutBookmark(d);
+	return isLayoutHuman(d);
 };
 
 const getNodeById = (id) => {
