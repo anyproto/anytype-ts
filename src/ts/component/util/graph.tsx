@@ -1,7 +1,9 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
+import { PreviewDefault } from 'Component';
 import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics, Preview } from 'Lib';
 import { commonStore, blockStore } from 'Store';
 import Colors from 'json/colors.json';
@@ -248,26 +250,32 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
-		if (this.previewId == this.subject.id) {
-			return;
-		};
-
 		const win = $(window);
+		const body = $('body');
 		const node = $(this.node);
 		const { left, top } = node.offset();
-		const x = data.x + left;
-		const y = data.y + top - win.scrollTop();
-		const rect = { x, y, width: 0, height: 10 };
 		
-		Preview.previewShow({ rect, object: this.subject, noUnlink: true });
-		this.previewId = this.subject.id;
+		let el = $('#graphPreview');
+
+		const position = () => {
+			const obj = el.find('.previewGraph');
+			const x = data.x + left - obj.outerWidth() / 2;
+			const y = data.y + top + 20 - win.scrollTop();
+
+			el.css({ left: x, top: y });
+		};
+
+		if (!el.length) {
+			el = $('<div id="graphPreview" />');
+			body.append(el);
+			ReactDOM.render(<PreviewDefault object={this.subject} className="previewGraph" />, el.get(0), position);
+		} else {
+			position();
+		};
 	};
 
 	onPreviewHide () {
-		if (this.previewId) {
-			Preview.previewHide(false);
-			this.previewId = '';
-		};
+		Preview.previewHide(false);
 	};
 
 	onMessage (e) {

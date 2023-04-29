@@ -189,6 +189,11 @@ html.themeDark {
             .link { color: $colorSecondary; }
             .img { border-color: $colorLineSecondary; }
         }
+
+		.previewGraph { 
+			background: $colorBgLight; border-color: $colorLinePrimary; 
+			box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; 
+		}
     }
 
     /* Pager */

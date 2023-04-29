@@ -183,6 +183,8 @@ class Preview {
 			obj.hide();
 			obj.removeClass('top bottom withImage').css({ transform: '' });
 			commonStore.previewClear();
+
+			$('#graphPreview').remove();
 		};
 
 		window.clearTimeout(this.timeout.preview);

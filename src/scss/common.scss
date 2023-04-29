@@ -54,6 +54,8 @@ input, textarea, select { font-family: 'Inter'; }
 	.version { @include text-small; color: #75bdec; transition-delay: 0.25s; }
 }
 
+#graphPreview { position: fixed; z-index: 1000; }
+
 html.platformWindows {
 	body { overflow-y: overlay; }
 }

@@ -5,8 +5,8 @@ import { translate, Util, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
 
 interface Props {
-	rootId: string;
-	object: any;
+	rootId?: string;
+	object?: any;
 	className?: string;
 	position?: () => void;
 	setObject?: (object: any) => void;
@@ -34,7 +34,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		const { className } = this.props;
 		const { loading } = this.state;
 		const cn = [ 'previewDefault', className ];
-		const object = this.state.object || {};
+		const object = this.props.object || this.state.object || {};
 
 		let typeObj = null;
 
@@ -67,8 +67,6 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		const { object, setObject } = this.props;
 
 		if (object) {
-			this.setState({ object });
-
 			if (setObject) {
 				setObject(object);
 			};

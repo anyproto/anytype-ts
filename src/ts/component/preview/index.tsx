@@ -239,7 +239,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		
 		if (typeY == I.MenuDirection.Top) {
 			css.top = oy - oh - OFFSET_Y;
-			css.transform = 'translateY(-10%)';
+			css.transform = 'translateY(-5%)';
 				
 			pcss.bottom = -nh - OFFSET_Y;
 			pcss.clipPath = cpTop;
@@ -247,7 +247,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 			
 		if (typeY == I.MenuDirection.Bottom) {
 			css.top = oy + nh + OFFSET_Y;
-			css.transform = 'translateY(10%)';
+			css.transform = 'translateY(5%)';
 				
 			pcss.top = -nh - OFFSET_Y;
 			pcss.clipPath = cpBot;
