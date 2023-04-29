@@ -286,28 +286,30 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	rebind () {
-		const { block } = this.props;
+		const { block, isInline } = this.props;
 		const win = $(window);
 
 		this.unbind();
-		win.on(`resize.${block.id}`, throttle(() => { this.resize(); }, 20));
-		win.on(`updateDataviewData.${block.id}`, () => { this.loadData(this.getView().id, 0, true);});
-		win.on(`setDataviewSource.${block.id}`, () => { 
-			this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}); 
-		});
-		win.on(`selectionEnd.${block.id}`, () => { this.onMultiSelect(); });
+
+		win.on(`resize.${block.id}`, throttle(() => this.resize(), 20));
+		win.on(`updateDataviewData.${block.id}`, () => this.loadData(this.getView().id, 0, true));
+		win.on(`setDataviewSource.${block.id}`, () => this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}));
+		win.on(`selectionEnd.${block.id}`, () => this.onMultiSelect());
 		win.on(`selectionClear.${block.id}`, () => {
 			if (this.isMultiSelecting) {
 				this.setMultiSelect(false);
 			};
 		});
-		win.on(`keydown.${block.id}`, e => this.onKeyDownBlock(e));
+
+		if (!isInline) {
+			win.on(`keydown.${block.id}`, e => this.onKeyDownBlock(e));
+		};
 	};
 
 	onKeyDown (e: any) {
 		const { onKeyDown } = this.props;
-
 		const ret = this.onKeyDownBlock(e);
+
 		if (!ret && onKeyDown) {
 			onKeyDown(e, '', [], { from: 0, to: 0 }, this.props);
 		};
