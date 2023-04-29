@@ -45,6 +45,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	frame = 0;
 	limit = 0;
 	threshold = false;
+	midHeight = 0;
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -303,7 +304,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getRowHeight (item: any) {
 		let h = 0;
 		switch (item.id) {
-			case 'mid':		 h = this.threshold ? 385 : 305; break;
+			case 'mid':		 h = this.midHeight || 305; break;
 			case 'tabs':	 h = 52; break;
 			case 'empty':	 h = 190; break;
 			default:		 h = 64; break;
@@ -608,14 +609,6 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		return Math.max(1, Math.min(5, limit));
 	};
 
-	getThreshold () {
-		const win = $(window);
-		const container = Util.getPageContainer(this.props.isPopup);
-		const isPopup = this.props.isPopup && !container.hasClass('full');
-		const ww = isPopup ? container.width() : win.width();
-		return ww < 650;
-	};
-
 	resize () {
 		const win = $(window);
 		const container = Util.getPageContainer(this.props.isPopup);
@@ -625,10 +618,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const hh = Util.sizeHeader();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
 		const limit = this.getLimit();
-		const threshold = this.getThreshold();
 		const wh = isPopup ? container.height() : win.height();
-
-		console.log('MID: ', $('.mid').height())
+		const midHeight = node.find('.mid').outerHeight();
 
 		node.css({ height: wh });
 		
@@ -640,9 +631,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			content.css({ minHeight: '', height: '' });
 		};
 
-		if ((limit != this.limit) || (threshold != this.threshold)) {
+		if ((limit != this.limit) || (midHeight != this.midHeight)) {
 			this.limit = limit;
-			this.threshold = threshold;
+			this.midHeight = midHeight;
 
 			raf.cancel(this.frame);
 			this.frame = raf(() => { this.forceUpdate(); });
