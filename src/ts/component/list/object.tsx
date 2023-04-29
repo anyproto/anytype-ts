@@ -94,10 +94,9 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 								};
 							} else 
 							if (column.isCell) {
-								const id = Relation.cellId(PREFIX, column.relationKey, 0);
 								content = (
 									<Cell
-										elementId={id}
+										elementId={Relation.cellId(PREFIX, column.relationKey, item.id)}
 										rootId={rootId}
 										subId={subId}
 										block={null}

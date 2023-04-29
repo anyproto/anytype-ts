@@ -17,7 +17,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	constructor (props: I.Menu) {
 		super(props);
 
-		this.scrollTo = this.scrollTo.bind(this);
 		this.onFav = this.onFav.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
@@ -55,7 +54,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				</div>
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
-						const id = Relation.cellId(PREFIX, item.relationKey, '0');
+						const id = Relation.cellId(PREFIX, item.relationKey, rootId);
 						return (
 							<Item 
 								key={id} 
@@ -297,21 +296,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		if (ref) {
 			ref.onClick(e);
 		};
-	};
-
-	scrollTo (relationKey: string, index: number) {
-		const { getId } = this.props;
-		const id = Relation.cellId(PREFIX, relationKey, index);
-		const obj = $(`#${getId()}`);
-		const container = obj.find('.content');
-		const cell = obj.find(`#${id}`);
-		
-		if (!container.length || !cell.length) {
-			return;
-		};
-
-		const y = Math.max(0, cell.offset().top - container.offset().top);
-		container.scrollTop(y);
 	};
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {

@@ -299,7 +299,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onMouseEnter (e: any, relationKey: string, text?: string) {
-		const cell = $(`#${Relation.cellId(PREFIX, relationKey, 0)}`);
+		const { rootId } = this.props;
+		const cell = $(`#${Relation.cellId(PREFIX, relationKey, rootId)}`);
 		const relation = dbStore.getRelationByKey(relationKey);
 		const show = (text: string) => {
 			Preview.tooltipShow({ text, element: cell });
@@ -343,7 +344,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const showMenu = () => {
 			menuStore.open('select', {
-				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', 0)}`,
+				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
 				offsetY: 8,
 				subIds: Constant.menuIds.featuredType,
 				onOpen: (context: any) => {
@@ -515,7 +516,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		menuStore.closeAll(null, () => {
 			menuStore.open('dataviewSource', {
-				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', 0)}`,
+				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
 				className: 'big single',
 				horizontal: I.MenuDirection.Center,
 				data: {

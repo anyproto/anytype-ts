@@ -66,7 +66,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				{cover}
 
 				<div className="inner">
-					{relations.map((relation: any, i: number) => {
+					{relations.map(relation => {
 						const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
 						return (
 							<Cell
@@ -74,7 +74,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								key={'list-cell-' + view.id + relation.relationKey}
 								{...this.props}
 								subId={subId}
-								ref={ref => { onRef(ref, id); }}
+								ref={ref => onRef(ref, id)}
 								relationKey={relation.relationKey}
 								viewType={view.type}
 								idPrefix={idPrefix}
