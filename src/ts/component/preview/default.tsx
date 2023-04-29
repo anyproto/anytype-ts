@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 
 interface Props {
 	rootId: string;
+	object: any;
 	className?: string;
 	position?: () => void;
 	setObject?: (object: any) => void;
@@ -63,7 +64,17 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 	componentDidMount (): void {
 		this._isMounted = true;
 
-		this.load();
+		const { object, setObject } = this.props;
+
+		if (object) {
+			this.setState({ object });
+
+			if (setObject) {
+				setObject(object);
+			};
+		} else {
+			this.load();
+		};
 	};
 
 	componentDidUpdate (): void {

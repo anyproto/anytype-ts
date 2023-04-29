@@ -33,7 +33,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	
 	render () {
 		const { preview } = commonStore;
-		const { type, target, noUnlink } = preview;
+		const { type, target, noUnlink, object } = preview;
 		const cn = [ 'previewWrapper' ];
 
 		let head = null;
@@ -75,7 +75,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					);
 				};
 
-				content = <PreviewDefault ref={ref => this.ref = ref} rootId={target} setObject={this.setObject} position={this.position} />;
+				content = <PreviewDefault ref={ref => this.ref = ref} rootId={target} object={object} setObject={this.setObject} position={this.position} />;
 				break;
 			};
 		};

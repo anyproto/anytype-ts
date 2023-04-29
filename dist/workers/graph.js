@@ -606,7 +606,7 @@ onMouseMove = ({ x, y }) => {
 		};
 
 		redraw();
-	}, 300);
+	}, 200);
 };
 
 onContextMenu = ({ x, y }) => {

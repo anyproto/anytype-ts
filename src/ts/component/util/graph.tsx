@@ -252,25 +252,21 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
-
-		this.previewId = this.subject.id;
-
 		const win = $(window);
 		const node = $(this.node);
 		const { left, top } = node.offset();
 		const x = data.x + left;
 		const y = data.y + top - win.scrollTop();
-
-		Preview.previewShow({ 
-			rect: { x, y, width: 0, height: 10 }, 
-			target: this.subject.id, 
-			noUnlink: true,
-		});
+		const rect = { x, y, width: 0, height: 10 };
+		
+		Preview.previewShow({ rect, object: this.subject, noUnlink: true });
+		this.previewId = this.subject.id;
 	};
 
 	onPreviewHide () {
 		if (this.previewId) {
 			Preview.previewHide(false);
+			this.previewId = '';
 		};
 	};
 

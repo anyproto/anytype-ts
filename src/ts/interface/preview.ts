@@ -17,7 +17,8 @@ export interface PreviewLink {
 
 export interface Preview {
 	type?: PreviewType,
-	target: string; /** object ID or URL */
+	target?: string; /** object ID or URL */
+	object?: any;
 	element?: JQuery<HTMLElement>;
 	rect?: any;
 	range?: I.TextRange;
