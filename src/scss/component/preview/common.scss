@@ -2,7 +2,7 @@
 
 .previewWrapper {
 	position: absolute; left: 0px; top: 0px; width: 320px; z-index: 1000; display: none; opacity: 0;
-	transition: opacity $transitionCommon;
+	transition-duration: 0.3s; transition-timing-function: $easeInQuint; transition-property: opacity, transform;
 }
 .previewWrapper {
 	.content { background: $colorWhite; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px; position: relative; height: 100%; overflow: hidden; }
@@ -33,4 +33,9 @@
 
 .previewWrapper.withHead {
 	.content { padding-bottom: 44px; }
+}
+
+.previewGraph {
+	background: $colorWhite; height: auto; padding: 8px 12px; border: 1px solid $colorBorderLight; border-radius: 8px; width: 320px;
+	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
 }

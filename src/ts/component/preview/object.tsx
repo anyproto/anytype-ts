@@ -385,10 +385,10 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	checkNumber (block: I.Block, n: number) {
 		const isText = block.type == I.BlockType.Text;
-		if ([ I.BlockType.Layout ].indexOf(block.type) >= 0) {
+		if ([ I.BlockType.Layout ].includes(block.type)) {
 			n = 0;
 		};
-		if (isText && ([ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].indexOf(block.content.style) >= 0)) {
+		if (isText && [ I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3 ].includes(block.content.style)) {
 			n = 0;
 		};
 		return n;

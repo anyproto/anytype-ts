@@ -287,19 +287,22 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		ObjectUtil.setDone(targetBlockId, !object.done);
 	};
 
-	onMouseEnter () {
+	onMouseEnter (e: React.MouseEvent) {
 		const { rootId, block } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
+		const node = $(this.node);
 
 		if (object.isArchived) {
 			return;
 		};
 
-		const node = $(this.node);
-		const element = node.find('.name');
-
-		Preview.previewShow({ element, target: targetBlockId, type: I.PreviewType.Default, noUnlink: true });
+		Preview.previewShow({ 
+			element: node,
+			rect: { x: e.pageX, y: e.pageY, width: 0, height: 10 }, 
+			target: targetBlockId, 
+			noUnlink: true 
+		});
 	};
 
 	resize () {
