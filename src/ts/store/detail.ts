@@ -155,9 +155,7 @@ class DetailStore {
 	/** Mutates object provided and also returns a new object. Sets defaults.
 	 * This Function contains domain logic which should be encapsulated in a model */
 	public mapper (object: any): any {
-		object.name = object.name || ObjectUtil.defaultName('page');
-		object.layout = object.layout || I.ObjectLayout.Page;
-		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
+		object = this.mapCommon(object);
 
 		if (object.layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;
@@ -205,12 +203,14 @@ class DetailStore {
 			};
 		};
 
-		return this.mapCommon(object);
+		return object;
 	};
 
 	private mapCommon (object: any) {
-		object.name = Relation.getStringValue(object.name);
+		object.name = Relation.getStringValue(object.name) || ObjectUtil.defaultName('page');
+		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
 		object.type = Relation.getStringValue(object.type);
+		object.layout = Number(object.layout) || I.ObjectLayout.Page;
 		object.iconImage = Relation.getStringValue(object.iconImage);
 		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
 		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
