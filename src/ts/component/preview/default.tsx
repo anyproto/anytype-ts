@@ -36,8 +36,6 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		const cn = [ 'previewDefault', className ];
 		const object = this.props.object || this.state.object || {};
 
-		console.log(object);
-
 		let typeObj = null;
 
 		if (object) {
