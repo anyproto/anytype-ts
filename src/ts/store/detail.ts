@@ -136,13 +136,12 @@ class DetailStore {
 		};
 		
 		if (keys) {
-			keys = [ ...new Set(keys) ];
-			keys.push('id');
-
 			if (!forceKeys) {
-				keys = keys.concat(Constant.defaultRelationKeys);
+				keys = (keys || []).concat(Constant.defaultRelationKeys);
 			};
 
+			keys.push('id');
+			keys = [ ...new Set(keys) ];
 			list = list.filter(it => keys.includes(it.relationKey));
 		};
 
