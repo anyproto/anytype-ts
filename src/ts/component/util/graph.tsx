@@ -275,7 +275,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onPreviewHide () {
-		Preview.previewHide(false);
+		$('#graphPreview').remove();
 	};
 
 	onMessage (e) {

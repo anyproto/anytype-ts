@@ -64,13 +64,8 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 	componentDidMount (): void {
 		this._isMounted = true;
 
-		const { object, setObject } = this.props;
-
-		if (object) {
-			if (setObject) {
-				setObject(object);
-			};
-		} else {
+		const { object } = this.props;
+		if (!object) {
 			this.load();
 		};
 	};
