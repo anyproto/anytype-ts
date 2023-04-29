@@ -42,12 +42,11 @@ class Preview {
 		const typeX = Number(param.typeX) || I.MenuDirection.Center;
 		const typeY = Number(param.typeY) || I.MenuDirection.Top;
 		const delay = Number(param.delay) || DELAY_TOOLTIP;
+		const text = String(param.text || '').replace(/\\n/g, '\n');
 
 		if (!element.length || keyboard.isResizing) {
 			return;
 		};
-
-		const text = String(param.text || '').replace(/\\n/, '\n');
 
 		this.delayTooltip = delay;
 
@@ -106,7 +105,6 @@ class Preview {
 			node.css({ left: x, top: y }).addClass('show');
 
 			window.clearTimeout(this.timeout.delay);
-
 			this.timeout.delay = window.setTimeout(() => { this.delayTooltip = delay; }, 500);
 			this.delayTooltip = 100;
 		}, this.delayTooltip);
@@ -124,6 +122,7 @@ class Preview {
 		};
 
 		obj.removeClass('show');
+
 		window.clearTimeout(this.timeout.tooltip);
 		window.clearTimeout(this.timeout.delay);
 	};

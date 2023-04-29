@@ -15,6 +15,7 @@ const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComp
 					className="iconWrap" 
 					onClick={onAdd}
 					onMouseEnter={e => this.onTooltipShow(e, 'Add new object', `${cmd} + N`)}
+					onMouseLeave={e => Preview.tooltipHide(false)}
 				>
 					<Icon />
 					<div className="bg" />
@@ -25,6 +26,7 @@ const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComp
 					className="iconWrap" 
 					onClick={onHelp}
 					onMouseEnter={e => this.onTooltipShow(e, 'Help')}
+					onMouseLeave={e => Preview.tooltipHide(false)}
 				>
 					<Icon />
 					<div className="bg" />

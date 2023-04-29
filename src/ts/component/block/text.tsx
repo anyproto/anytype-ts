@@ -625,8 +625,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			return;
 		};
 
-		console.log(e);
-
 		let value = this.getValue();
 		let ret = false;
 
@@ -788,8 +786,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	
 	onKeyUp (e: any) {
 		e.persist();
-
-		console.log(e);
 
 		const { rootId, block, onMenuAdd, isInsideTable, onKeyUp } = this.props;
 		const { filter } = commonStore;
