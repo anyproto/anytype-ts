@@ -27,7 +27,6 @@ class Sidebar {
 	};
 	obj: JQuery<HTMLElement> = null;
 	isAnimating = false;
-	isCollapsed = false;
 	isDragging = false;
 	timeoutHide = 0;
 	timeoutAnim = 0;
@@ -158,20 +157,17 @@ class Sidebar {
 
 		raf(() => {
 			const css: any = {};
-			const threshold = this.isCollapsed ? 30 : width;
 			if (
 				(this.data.snap === null) ||
-				(autoSidebar && (mouse.x >= x) && (mouse.x <= x + threshold))
+				(autoSidebar && (mouse.x >= x) && (mouse.x <= x + width))
 			) {
 				css.top = y;
 				css.height = height;
 				css.transform = `translate3d(0px,0px,0px)`;
-				this.isCollapsed = false;
 			} else {
 				css.top = 0;
 				css.height = '100%';
 				css.transform = `translate3d(${tx}%,0px,0px)`;
-				this.isCollapsed = true;
 			};
 
 			this.obj.css(css);
