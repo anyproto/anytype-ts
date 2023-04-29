@@ -452,26 +452,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const item = detailStore.get(subId, records[index], keys);
-
-		let name = String(item.name || '');
-		let isReadonly = Boolean(item.isReadonly);
-
+		
+		let { name, layout, isReadonly, isDeleted, snippet } = item;
 		if (name == ObjectUtil.defaultName('page')) {
 			name = '';
 		};
-
-		if (item.layout == I.ObjectLayout.Note) {
-			name = String(item.snippet || '').replace(/\n/g, ' ');
-		};
-		if (item.isDeleted) {
-			isReadonly = true;
+		if (layout == I.ObjectLayout.Note) {
+			name = String(snippet || '').replace(/\n/g, ' ');
 		};
 
-		return {
-			...item,
-			name,
-			isReadonly,
-		};
+		item.name = name;
+		item.isReadonly = isDeleted || isReadonly;
+
+		return item;
 	};
 
 	getView (viewId?: string): I.View {
@@ -915,9 +908,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getVisibleRelations () {
 		const { rootId, block } = this.props;
 		const view = this.getView();
-		const relations = dbStore.getObjectRelations(rootId, block.id).map(it => it.relationKey);
+		const keys = dbStore.getObjectRelationsKeys(rootId, block.id);
 
-		return view.getVisibleRelations().filter(it => relations.includes(it.relationKey));
+		return view.getVisibleRelations().filter(it => keys.includes(it.relationKey));
 	};
 
 	getEmpty (type: string) {

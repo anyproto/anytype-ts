@@ -209,20 +209,21 @@ class DetailStore {
 	};
 
 	private mapCommon (object: any) {
-		return {
-			...object,
-			type: Relation.getStringValue(object.type),
-			iconImage: Relation.getStringValue(object.iconImage),
-			iconEmoji: Relation.getStringValue(object.iconEmoji),
-			layoutAlign: Number(object.layoutAlign) || I.BlockHAlign.Left,
-			coverX: Number(object.coverX) || 0,
-			coverY: Number(object.coverY) || 0,
-			coverScale: Number(object.coverScale) || 0,
-			coverType: Number(object.coverType) || I.CoverType.None,
-			isArchived: Boolean(object.isArchived),
-			isFavorite: Boolean(object.isFavorite),
-			isHidden: Boolean(object.isHidden),
-		};
+		object.name = Relation.getStringValue(object.name);
+		object.type = Relation.getStringValue(object.type);
+		object.iconImage = Relation.getStringValue(object.iconImage);
+		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
+		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
+		object.coverX = Number(object.coverX) || 0;
+		object.coverY = Number(object.coverY) || 0;
+		object.coverScale = Number(object.coverScale) || 0;
+		object.coverType = Number(object.coverType) || I.CoverType.None;
+		object.isArchived = Boolean(object.isArchived);
+		object.isFavorite = Boolean(object.isFavorite);
+		object.isHidden = Boolean(object.isHidden);
+		object.isReadonly = Boolean(object.isReadonly);
+		object.isDeleted = Boolean(object.isDeleted);
+		return object;
 	};
 
 	private mapObjectType (object: any) {

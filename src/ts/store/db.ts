@@ -220,8 +220,12 @@ class DbStore {
 			filter(it => it && !it.isArchived);
 	};
 
+	getObjectRelationsKeys (rootId: string, blockId: string): any[] {
+		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => it.relationKey);
+	};
+
     getObjectRelations (rootId: string, blockId: string): any[] {
-		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => this.getRelationByKey(it.relationKey)).filter(it => it);
+		return this.getObjectRelationsKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
 	};
 
     getRelationByKey (relationKey: string): any {
