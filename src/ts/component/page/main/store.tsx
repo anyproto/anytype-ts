@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action, keyboard, sidebar } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -617,6 +617,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const isPopup = this.props.isPopup && !container.hasClass('full');
 		const limit = this.getLimit();
 		const wh = isPopup ? container.height() : win.height();
+		const ww = isPopup ? container.width() : win.width();
 
 		node.css({ height: wh });
 		
