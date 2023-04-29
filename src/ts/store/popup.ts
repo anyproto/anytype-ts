@@ -61,6 +61,8 @@ class PopupStore {
 		if (!item) {
 			return;
 		};
+
+		param = Object.assign(item.param, param);
 		
 		set(item, { param: param });
 	};
