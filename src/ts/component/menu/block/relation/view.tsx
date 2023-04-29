@@ -281,7 +281,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		});
 	};
 
-	onCellClick (e: any, relationKey: string, index: number) {
+	onCellClick (e: any, relationKey: string, recordId: string) {
 		const { param } = this.props;
 		const { data } = param;
 		const { readonly } = data;
@@ -291,7 +291,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return;
 		};
 
-		const id = Relation.cellId(PREFIX, relationKey, index);
+		const id = Relation.cellId(PREFIX, relationKey, recordId);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {

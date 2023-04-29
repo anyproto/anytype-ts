@@ -7,8 +7,7 @@ import { Cell, DropTarget, Icon } from 'Component';
 interface Props extends I.ViewComponent {
 	id: string;
 	groupId: string;
-	index?: number;
-	recordId?: string;
+	recordId: string;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
@@ -39,7 +38,6 @@ const Card = observer(class Card extends React.Component<Props> {
 							subId={subId}
 							ref={ref => { onRef(ref, id); }}
 							relationKey={relation.relationKey}
-							index={0}
 							viewType={view.type}
 							idPrefix={idPrefix}
 							arrayLimit={2}

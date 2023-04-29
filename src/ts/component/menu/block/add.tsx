@@ -87,8 +87,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								block={block}
 								relationKey={item.relationKey}
 								getRecord={() => record}
+								recordId={record.id}
 								viewType={I.ViewType.Grid}
-								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
 								bodyContainer={Util.getBodyContainer('menuBlockAdd')}

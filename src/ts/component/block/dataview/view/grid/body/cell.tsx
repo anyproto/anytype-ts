@@ -8,16 +8,15 @@ import Constant from 'json/constant.json';
 interface Props {
 	rootId?: string;
 	block?: I.Block;
-	index?: number;
-	recordId?: string;
+	recordId: string;
 	relationKey: string;
 	readonly: boolean;
 	width: number;
 	className?: string;
-	getRecord(index: number, id?: string): any;
+	getRecord(id?: string): any;
 	getIdPrefix?(): string;
 	onRef?(ref: any, id: string): void;
-	onCellClick?(e: any, key: string, index: number): void;
+	onCellClick?(e: any, key: string, id?: string): void;
 	onCellChange?(id: string, key: string, value: any, callBack?: (message: any) => void): void;
 };
 
@@ -32,15 +31,15 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, className, relationKey, index, recordId, readonly, onRef, getRecord, onCellClick, onCellChange, getIdPrefix } = this.props;
+		const { rootId, block, className, relationKey, recordId, readonly, onRef, getRecord, onCellClick, onCellChange, getIdPrefix } = this.props;
 		const relation: any = dbStore.getRelationByKey(relationKey) || {};
 		const cn = [ 'cell', `cell-key-${this.props.relationKey}`, Relation.className(relation.format), (!readonly ? 'canEdit' : '') ];
 		const idPrefix = getIdPrefix();
-		const id = Relation.cellId(idPrefix, relation.relationKey, index);
+		const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
 		const width = Relation.width(this.props.width, relation.format);
 		const size = Constant.size.dataview.cell;
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(index, recordId);
+		const record = getRecord(recordId);
 
 		if (relation.relationKey == 'name') {
 			cn.push('isName');
@@ -64,7 +63,7 @@ const BodyCell = observer(class BodyCell extends React.Component<Props> {
 				key={id} 
 				id={id} 
 				className={cn.join(' ')} 
-				onClick={(e: any) => { onCellClick(e, relation.relationKey, index); }} 
+				onClick={(e: any) => { onCellClick(e, relation.relationKey, recordId); }} 
 			>
 				<Cell 
 					ref={ref => { 

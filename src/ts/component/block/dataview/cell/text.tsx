@@ -37,8 +37,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	render () {
 		const { isEditing } = this.state;
-		const { index, recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
-		const record = getRecord(index, recordId);
+		const { recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
+		const record = getRecord(recordId);
 		
 		if (!record) {
 			return null;
@@ -218,8 +218,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	componentDidMount () {
-		const { relation, index, recordId, getRecord } = this.props;
-		const record = getRecord(index, recordId);
+		const { relation, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 
 		this._isMounted = true;
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
@@ -358,8 +358,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onBlur (e: any) {
-		const { relation, onChange, index, recordId, getRecord } = this.props;
-		const record = getRecord(index, recordId);
+		const { relation, onChange, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 
 		if (!this.ref || keyboard.isBlurDisabled || !record) {
 			return;
@@ -410,8 +410,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onCheckbox () {
-		const { index, recordId, getRecord, onCellChange } = this.props;
-		const record = getRecord(index, recordId);
+		const { recordId, getRecord, onCellChange } = this.props;
+		const record = getRecord(recordId);
 
 		onCellChange(record.id, 'done', !record.done);
 	};

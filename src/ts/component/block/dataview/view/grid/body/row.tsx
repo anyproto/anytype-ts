@@ -5,8 +5,7 @@ import { DropTarget, Icon } from 'Component';
 import Cell from './cell';
 
 interface Props extends I.ViewComponent {
-	index?: number;
-	recordId?: string;
+	recordId: string;
 	style?: any;
 	cellPosition?: (cellId: string) => void;
 	onRef?(ref: any, id: string): void;
@@ -16,9 +15,9 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, index, recordId, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
+		const { rootId, recordId, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
 		const relations = getVisibleRelations();
-		const record = getRecord(index, recordId);
+		const record = getRecord(recordId);
 		const widths = getColumnWidths('', 0);
 		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const cn = [ 'row' ];
@@ -74,7 +73,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 						className="dnd"
 						draggable={true}
 						onClick={() => { onMultiSelect(record.id); }}
-						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, recordId); }}
 						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
 						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
 					/>
@@ -87,7 +86,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		return (
 			<div
-				id={'row-' + index}
+				id={'row-' + recordId}
 				className={cn.join(' ')}
 				style={style}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}

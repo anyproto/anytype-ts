@@ -92,7 +92,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				{featuredRelations.includes('type') ? (
 					<span className="cell canEdit">
 						<div
-							id={Relation.cellId(PREFIX, 'type', 0)}
+							id={Relation.cellId(PREFIX, 'type', object.id)}
 							className="cellContent type"
 							onClick={this.onType}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
@@ -113,7 +113,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
 						{bullet}
 						<div
-							id={Relation.cellId(PREFIX, 'setOf', 0)}
+							id={Relation.cellId(PREFIX, 'setOf', object.id)}
 							className="cellContent setOf"
 							onClick={this.onSource}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'setOf', 'Query'); }}
@@ -133,7 +133,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				) : ''}
 
 				{items.map((relationKey: any, i: any) => {
-					const id = Relation.cellId(PREFIX + block.id, relationKey, 0);
+					const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 					const relation = dbStore.getRelationByKey(relationKey);
 					const canEdit = allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
@@ -165,8 +165,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								block={block}
 								relationKey={relationKey}
 								getRecord={() => object}
+								recordId={object.id}
 								viewType={I.ViewType.Grid}
-								index={0}
 								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 								pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
 								iconSize={iconSize}
@@ -283,14 +283,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 	};
 
-	onCellClick (e: any, relationKey: string, index: number) {
+	onCellClick (e: any, relationKey: string, recordId: string) {
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || relation.isReadonlyValue) {
 			return;
 		};
 
-		const id = Relation.cellId(PREFIX, relationKey, index);
+		const id = Relation.cellId(PREFIX, relationKey, recordId);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {
@@ -559,7 +559,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			subIds: Constant.menuIds.cell,
 			onOpen: (component: any) => {
 				if (component && component.ref) {
-					component.ref.onCellClick(e, relationKey, 0);
+					component.ref.onCellClick(e, relationKey, 0, '');
 					component.ref.scrollTo(relationKey, 0);
 				};
 			},

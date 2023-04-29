@@ -81,6 +81,7 @@ const Column = observer(class Column extends React.Component<Props> {
 								relationKey={view.groupRelationKey} 
 								viewType={I.ViewType.Board}
 								getRecord={() => head}
+								recordId=""
 								readonly={true} 
 								arrayLimit={4}
 								withLabel={true}
@@ -105,7 +106,6 @@ const Column = observer(class Column extends React.Component<Props> {
 								{...this.props}
 								id={item.id}
 								groupId={id}
-								index={i}
 								recordId={item.id}
 							/>
 						))}

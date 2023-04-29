@@ -6,8 +6,7 @@ import { Cell, DropTarget, Icon } from 'Component';
 import { dbStore } from 'Store';
 
 interface Props extends I.ViewComponent {
-	index?: number;
-	recordId?: string;
+	recordId: string;
 	style?: any;
 };
 
@@ -17,12 +16,12 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, index, recordId, getView, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiSelect } = this.props;
+		const { rootId, block, recordId, getView, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiSelect } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(index, recordId);
+		const record = getRecord(recordId);
 
 		// Subscriptions
 		const { hideIcon } = view;
@@ -31,7 +30,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		let content = (
 			<React.Fragment>
 				{relations.map((relation: any, i: number) => {
-					const id = Relation.cellId(idPrefix, relation.relationKey, index);
+					const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
 					return (
 						<Cell
 							key={'list-cell-' + relation.relationKey}
@@ -43,8 +42,6 @@ const Row = observer(class Row extends React.Component<Props> {
 							viewType={I.ViewType.List}
 							idPrefix={idPrefix}
 							onClick={(e: any) => { this.onCellClick(e, relation); }}
-							index={index}
-							recordId={recordId}
 							isInline={true}
 							showTooltip={true}
 							arrayLimit={2}
@@ -74,7 +71,7 @@ const Row = observer(class Row extends React.Component<Props> {
 						className="dnd"
 						draggable={true}
 						onClick={(e: any) => { onMultiSelect(record.id); }}
-						onDragStart={(e: any) => { onDragRecordStart(e, index); }}
+						onDragStart={(e: any) => { onDragRecordStart(e, recordId); }}
 						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
 						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
 					/>
@@ -114,9 +111,9 @@ const Row = observer(class Row extends React.Component<Props> {
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { onContext, dataset, getRecord, index, recordId } = this.props;
+		const { onContext, dataset, getRecord, recordId } = this.props;
 		const { selection } = dataset || {};
-		const record = getRecord(index, recordId);
+		const record = getRecord(recordId);
 		const cb = {
 			0: () => {
 				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
@@ -135,13 +132,13 @@ const Row = observer(class Row extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, relation) {
-		const { onCellClick, index } = this.props;
+		const { onCellClick, recordId } = this.props;
 
 		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;
 		};
 
-		onCellClick(e, relation.relationKey, index);
+		onCellClick(e, relation.relationKey, recordId);
 	};
 
 	resize () {

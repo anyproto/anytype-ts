@@ -103,8 +103,8 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 										block={null}
 										relationKey={column.relationKey}
 										getRecord={() => item}
+										recordId={item.id}
 										viewType={I.ViewType.Grid}
-										index={0}
 										idPrefix={PREFIX}
 										iconSize={20}
 										readonly={true}

@@ -7,8 +7,7 @@ import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.ViewComponent {
-	index?: number;
-	recordId?: string;
+	recordId: string;
 	style?: any;
 };
 
@@ -25,12 +24,12 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, index, recordId, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection, onMultiSelect } = this.props;
+		const { rootId, block, recordId, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection, onMultiSelect } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
-		const record = getRecord(index, recordId);
+		const record = getRecord(recordId);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
 		const readonly = true;
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -68,7 +67,7 @@ const Card = observer(class Card extends React.Component<Props> {
 
 				<div className="inner">
 					{relations.map((relation: any, i: number) => {
-						const id = Relation.cellId(idPrefix, relation.relationKey, index);
+						const id = Relation.cellId(idPrefix, relation.relationKey, recordId);
 						return (
 							<Cell
 								elementId={id}
@@ -162,19 +161,19 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onDragStart (e: any) {
-		const { isCollection, index, onDragRecordStart } = this.props;
+		const { isCollection, recordId, onDragRecordStart } = this.props;
 
 		if (isCollection) {
-			onDragRecordStart(e, index);
+			onDragRecordStart(e, recordId);
 		};
 	};
 
 	onClick (e: any) {
 		e.preventDefault();
 
-		const { index, recordId, getRecord, onContext, dataset } = this.props;
+		const { recordId, getRecord, onContext, dataset } = this.props;
 		const { selection } = dataset || {};
-		const record = getRecord(index, recordId);
+		const record = getRecord(recordId);
 		const cb = {
 			0: () => { 
 				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
@@ -193,17 +192,17 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, relation) {
-		const { onCellClick, index } = this.props;
+		const { onCellClick, recordId } = this.props;
 
 		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;
 		};
 
-		onCellClick(e, relation.relationKey, index);
+		onCellClick(e, relation.relationKey, recordId);
 	};
 
 	getCover (): any {
-		const { rootId, block, index, recordId, getView, getRecord } = this.props;
+		const { rootId, block, recordId, getView, getRecord } = this.props;
 		const view = getView();
 
 		if (!view.coverRelationKey) {
@@ -211,7 +210,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 
 		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(index, recordId);
+		const record = getRecord(recordId);
 		const value = Relation.getArrayValue(record[view.coverRelationKey]);
 
 		let cover = null;
