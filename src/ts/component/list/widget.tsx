@@ -16,8 +16,6 @@ type State = {
 	previewId: string;
 };
 
-const LIMIT = 10;
-
 const ListWidget = observer(class ListWidget extends React.Component<Props, State> {
 		
 	state: State = {
@@ -99,7 +97,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			};
 
 			if (isEditing) {
-				if (blocks.length <= LIMIT) {
+				if (blocks.length <= Constant.limit.widgets) {
 					buttons.push({ id: 'widget-list-add', text: 'Add', onClick: this.addWidget });
 				};
 
@@ -288,7 +286,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			{ id: 'edit', name: 'Edit widgets' },
 		];
 
-		if (widgetIds.length < LIMIT) {
+		if (widgetIds.length < Constant.limit.widgets) {
 			options.unshift({ id: 'add', name: 'Add widget', arrow: true });
 		};
 
