@@ -768,7 +768,7 @@ class DataUtil {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), Util.filterFix(param.fullText).replace(/\\/g, ''), offset, limit, callBack);
+		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), Util.filterFix(param.fullText), offset, limit, callBack);
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {
