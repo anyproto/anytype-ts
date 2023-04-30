@@ -232,7 +232,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
-		const relations = dbStore.getObjectRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
@@ -244,7 +243,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: relations.map(it => it.relationKey),
+				skipKeys: dbStore.getObjectRelationsKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},

@@ -12,8 +12,9 @@ class Dataview {
 			return [];
 		};
 
-		let relations = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId));
 		const order: any = {};
+
+		let relations = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId));
 		let o = 0;
 
 		if (!config.debug.ho) {
