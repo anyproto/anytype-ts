@@ -59,7 +59,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 							key={'grid-row-' + view.id + index} 
 							{...this.props} 
 							readonly={!isAllowedObject}
-							index={index} 
+							recordId={id}
 							cellPosition={this.cellPosition}
 							getColumnWidths={this.getColumnWidths}
 						/>
@@ -94,7 +94,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 															key={'grid-row-' + view.id + index} 
 															{...this.props} 
 															readonly={!isAllowedObject}
-															index={index} 
+															recordId={records[index]}
 															style={{ ...style, top: style.top + 2 }}
 															cellPosition={this.cellPosition}
 															getColumnWidths={this.getColumnWidths}
