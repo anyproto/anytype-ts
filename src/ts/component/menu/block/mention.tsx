@@ -171,7 +171,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	getSections () {
-		const filter = this.getFilter().replace(/\\/g, '');
+		const filter = this.getFilter();
 		const sections: any[] = [];
 
 		if (this.items.length) {
