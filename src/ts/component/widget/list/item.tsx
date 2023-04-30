@@ -49,6 +49,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					id={`widget-icon-${id}`}
 					object={object} 
 					size={48} 
+					iconSize={24}
 					canEdit={!isReadonly && !isArchived} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
