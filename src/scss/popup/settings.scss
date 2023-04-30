@@ -3,6 +3,11 @@
 .popups {
 	.popupSettings {
 		.innerWrap { width: 958px; height: 650px; }
+
+		@media (max-width: 990px) {
+			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
+		}
+
 		.innerWrap.scroll {
 			.sides { display: block; }
 			.sides > .side.left { display: none; } 

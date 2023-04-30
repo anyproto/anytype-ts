@@ -137,7 +137,7 @@ class Sidebar {
 		const { x, y, width, height, snap } = this.data;
 		const css: any = { top: 0, height: '100%' };
 		const mouse = keyboard.mouse.page;
-
+		
 		let tx = 0;
 		if (snap == I.MenuDirection.Left) {
 			css.left = 0;

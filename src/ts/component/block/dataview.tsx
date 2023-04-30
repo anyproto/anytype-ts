@@ -436,19 +436,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return this.applyObjectOrder(Util.objectCopy(records));
 	};
 
-	getRecord (index: number) {
+	getRecord (recordId: string) {
 		const { rootId, block } = this.props;
 		const view = this.getView();
 		const keys = this.getKeys(view.id);
-		const subId = dbStore.getSubId(rootId, block.id,);
-		const records = this.getRecords();
+		const subId = dbStore.getSubId(rootId, block.id);
+		const item = detailStore.get(subId, recordId, keys);
 
-		if (index > records.length - 1) {
+		if (!item) {
 			return {};
 		};
 
-		const item = detailStore.get(subId, records[index], keys);
-		
 		let { name, layout, isReadonly, isDeleted, snippet } = item;
 		if (name == ObjectUtil.defaultName('page')) {
 			name = '';
@@ -574,7 +572,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
 				};
 
-				const id = Relation.cellId(this.getIdPrefix(), 'name', newIndex);
+				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
 				const ref = this.refCells.get(id);
 
 				if (ref && view.isGrid() && (object.type != Constant.typeId.note)) {
@@ -652,7 +650,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onCellClick (e: any, relationKey: string, index: number) {
+	onCellClick (e: any, relationKey: string, recordId: string) {
 		if (e.button) {
 			return;
 		};
@@ -660,9 +658,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const relation = dbStore.getRelationByKey(relationKey);
-		const id = Relation.cellId(this.getIdPrefix(), relationKey, index);
+		const id = Relation.cellId(this.getIdPrefix(), relationKey, recordId);
 		const ref = this.refCells.get(id);
-		const record = this.getRecord(index);
+		const record = this.getRecord(recordId);
 		const view = this.getView();
 
 		if (!relation || !ref || !record) {
@@ -838,12 +836,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	onDragRecordStart (e: any, index: number) {
+	onDragRecordStart (e: any, recordId: string) {
 		e.stopPropagation();
 
 		const { dataset, block } = this.props;
 		const { selection, onDragStart } = dataset || {};
-		const record = this.getRecord(index);
+		const record = this.getRecord(recordId);
 
 		let ids = selection.get(I.SelectType.Record);
 		if (!ids.length) {
