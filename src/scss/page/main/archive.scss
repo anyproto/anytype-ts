@@ -45,6 +45,13 @@
 			}
 		}
 
+		@media (max-width: 940px) {
+			.controls.withSelected {
+				.side.left .element { height: 28px; }
+				.side.left .element .name { display: none; }
+			}
+		}
+
 		.body { height: 100%; display: flex; flex-direction: column; }
 		.items { height: 100%; }
 		.items {
@@ -74,6 +81,8 @@
 			.inner { width: 300px; }
 			.name { font-weight: 500; margin: 0px 0px 2px 0px; }
 		}
+
+		.controls + .archiveEmpty { border-top: 0; }
 	}
 
 }
