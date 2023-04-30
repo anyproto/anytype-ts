@@ -347,6 +347,7 @@ class Sidebar {
 	};
 
 	set (v: Partial<SidebarData>) {
+		const requestedWidth = v.width;
 		v = Object.assign(this.data, v);
 
 		const width = this.limitWidth(v.width);
@@ -360,6 +361,10 @@ class Sidebar {
 			height,
 			snap: this.getSnap(x, width),
 		});
+
+		if (requestedWidth && (width - requestedWidth > 20) && (commonStore.isSidebarFixed)) {
+			this.collapse();
+		};
 
 		this.save();
 		this.resizePage();

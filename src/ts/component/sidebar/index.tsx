@@ -33,11 +33,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
         const cn = [ 'sidebar' ];
 
         return (
-            <div 
+            <div
 				ref={node => this.node = node}
-                id="sidebar" 
-                className={cn.join(' ')} 
-            >
+				id="sidebar"
+				className={cn.join(' ')}
+			>
                 <div className="head" draggable={true} onDragStart={this.onDragStart}>
 					<Icon
 						className="toggleSidebar"
@@ -51,7 +51,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					<ListWidget {...this.props} />
 				</div>
 
-				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
+				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }}>
+					<div className="resize-handle" />
+				</div>
 				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
             </div>
 		);
