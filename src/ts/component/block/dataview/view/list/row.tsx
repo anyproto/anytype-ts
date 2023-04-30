@@ -22,10 +22,15 @@ const Row = observer(class Row extends React.Component<Props> {
 		const idPrefix = getIdPrefix();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const record = getRecord(recordId);
+		const cn = [ 'row' ];
 
 		// Subscriptions
 		const { hideIcon } = view;
 		const { done } = record;
+
+		if ((record.layout == I.ObjectLayout.Task) && done) {
+			cn.push('isDone');
+		};
 
 		let content = (
 			<React.Fragment>
@@ -85,7 +90,7 @@ const Row = observer(class Row extends React.Component<Props> {
 		return (
 			<div 
 				ref={node => this.node = node} 
-				className="row" 
+				className={cn.join(' ')} 
 				style={style}
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}

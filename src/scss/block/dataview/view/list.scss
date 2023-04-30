@@ -8,6 +8,7 @@
 
 		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; position: relative; }
 			.row:last-child { margin: 0px; }
+			.row.isDone * { color: $colorDarkGrey; }
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
