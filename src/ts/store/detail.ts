@@ -59,7 +59,7 @@ class DetailStore {
 		if (!map) {
 			map = observable.map(new Map());
 			createMap = true;
-		}
+		};
 
 		if (clear) {
 			map.delete(item.id);
@@ -81,15 +81,15 @@ class DetailStore {
 				makeObservable(el, { value: observable });
 
 				list.push(el);
-			};
 
-			intercept(el as any, (change: any) => { 
-				return (change.newValue === el[change.name] ? null : change); 
-			});
-
-			if (createList) {
-				map.set(item.id, list);
+				intercept(el as any, (change: any) => { 
+					return (change.newValue === el[change.name] ? null : change); 
+				});
 			};
+		};
+
+		if (createList) {
+			map.set(item.id, list);
 		};
 
 		// Update relationKeyMap in dbStore to keep consistency

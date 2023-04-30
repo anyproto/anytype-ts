@@ -45,7 +45,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
 
-		if (!records.length) {
+		if (!length) {
 			return getEmpty('view');
 		};
 

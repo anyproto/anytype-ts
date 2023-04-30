@@ -38,12 +38,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const records = getRecords();
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const limit = getLimit();
 		const length = records.length;
 		const cn = [ 'viewContent', className ];
 
-		if (!records.length) {
+		if (!length) {
 			return getEmpty('view');
 		};
 

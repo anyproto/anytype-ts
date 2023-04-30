@@ -160,10 +160,8 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
-		const details = [ 
-			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
+		
+		C.ObjectSetDetails(rootId, [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'block' });

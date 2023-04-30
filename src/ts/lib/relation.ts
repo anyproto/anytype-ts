@@ -277,9 +277,7 @@ class Relation {
 		});
 		const idxName = relations.findIndex(it => it.relationKey == 'name');
 
-		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, {
-			relationKey: 'done',
-		});
+		relations.splice((idxName >= 0 ? idxName + 1 : 0), 0, { relationKey: 'done' });
 
 		relations.forEach((it: I.ViewRelation) => {
 			const relation: any = dbStore.getRelationByKey(it.relationKey);

@@ -30,7 +30,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
 
-		if (!records.length) {
+		if (!length) {
 			return getEmpty('view');
 		};
 
