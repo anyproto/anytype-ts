@@ -1,4 +1,4 @@
-import { C, I, Storage, Util, analytics, Renderer, translate, ObjectUtil } from 'Lib';
+import { I, Storage, Util, analytics, Renderer, translate, ObjectUtil, DataUtil } from 'Lib';
 import { popupStore, authStore } from 'Store';
 import Surveys from 'json/survey.json';
 
@@ -131,18 +131,15 @@ class Survey {
             return;
         };
 
-        const filters: I.Filter[] = [
-            { operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
-            { operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 30 },
-        ];
-
-        C.ObjectSearch(filters, [], [], '', 0, 50, (message: any) => {
-            if (message.error.code) {
-                return;
-            };
-
-            if (message.records.length >= 50) {
+		DataUtil.search({
+			filters: [
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+            	{ operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 30 }
+			],
+			limit: 50,
+		}, (message: any) => {
+            if (!message.error.code && message.records.length >= 50) {
                 this.show(I.SurveyType.Object);
             };
         });

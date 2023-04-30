@@ -162,6 +162,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
     };
 
     load () {
+		/*
 		const filter = this.refFilter ? this.refFilter.getValue() : '';
         const filters = [
             { operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: 'ot-profile' }
@@ -175,6 +176,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
             this.team = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
             this.forceUpdate();
         });
+		*/
     };
 
 	resize () {
