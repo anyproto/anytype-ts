@@ -97,7 +97,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const sources = this.getSources();
 		const targetId = this.getObjectId();
 		const isCollection = this.isCollection();
-		const records = this.getRecords();
 		const cn = [ 'focusable', 'c' + block.id ];
 
 		let { groupRelationKey, pageLimit } = view;
@@ -186,9 +185,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else
 		if (!isCollection && !sources.length) {
 			body = this.getEmpty('source');
-		} else 
-		if (!view.isBoard() && !records.length) {	
-			body = this.getEmpty('view');
 		} else {
 			body = (
 				<div className="content">

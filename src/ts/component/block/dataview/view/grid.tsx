@@ -35,7 +35,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getRecords, getLimit, getVisibleRelations, className } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const records = getRecords();
@@ -44,6 +44,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
+
+		if (!records.length) {
+			return getEmpty('view');
+		};
 
 		let content = null;
 

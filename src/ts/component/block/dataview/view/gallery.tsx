@@ -31,7 +31,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, getVisibleRelations, getRecords, className } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, getRecords, getEmpty } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
@@ -42,6 +42,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const limit = getLimit();
 		const length = records.length;
 		const cn = [ 'viewContent', className ];
+
+		if (!records.length) {
+			return getEmpty('view');
+		};
 
 		// Subscriptions on dependent objects
 		for (let id of records) {

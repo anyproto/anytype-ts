@@ -21,7 +21,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, getView, isPopup, onRecordAdd, isInline, getLimit, className, getRecords } = this.props;
+		const { rootId, block, className, isPopup, isInline, getView, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
@@ -29,6 +29,10 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
+
+		if (!records.length) {
+			return getEmpty('view');
+		};
 
 		let content = null;
 
