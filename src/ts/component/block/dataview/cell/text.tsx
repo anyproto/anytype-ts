@@ -119,6 +119,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					/>
 				);
 			};
+
 			Name = (item: any) => (
 				<EditorComponent 
 					value={item.name} 
@@ -153,22 +154,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					const date = day ? day : Util.date(DataUtil.dateFormat(viewRelation.dateFormat), value);
 					const time = Util.date(DataUtil.timeFormat(viewRelation.timeFormat), value);
 					
-					if (viewRelation.includeTime) {
-						value = [ date, time ].join((day ? ', ' : ' '));
-					} else {
-						value = date;
-					};
+					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {
 					value = '';
 				};
 			};
 
 			if ((relation.format == I.RelationType.Url) && shortUrl) {
-				if (value !== null) {
-					value = Util.shortUrl(value);
-				} else {
-					value = '';
-				};
+				value = value !== null ? Util.shortUrl(value) : '';
 			};
 
 			if (relation.format == I.RelationType.Number) {
@@ -410,10 +403,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onCheckbox () {
-		const { recordId, getRecord, onCellChange } = this.props;
+		const { recordId, getRecord } = this.props;
 		const record = getRecord(recordId);
 
-		onCellChange(record.id, 'done', !record.done);
+		ObjectUtil.setDone(recordId, !record.done, () => this.forceUpdate());
 	};
 
 });
