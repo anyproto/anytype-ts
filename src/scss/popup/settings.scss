@@ -3,6 +3,11 @@
 .popups {
 	.popupSettings {
 		.innerWrap { width: 958px; height: 650px; }
+
+		@media (max-width: 990px) {
+			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
+		}
+
 		.innerWrap.scroll {
 			.sides { display: block; }
 			.sides > .side.left { display: none; } 
@@ -117,6 +122,11 @@
 				.icon.logo { width: 54px; height: 54px; margin: 0px 0px 16px 0px; }
 
 				ol, ul { padding-left: 1.35em; margin: 8px 0px; }
+			}
+
+			@media (max-width: 714px) {
+				.side.left { width: 100%; }
+				.side.right { width: 408px; }
 			}
 		}
 
