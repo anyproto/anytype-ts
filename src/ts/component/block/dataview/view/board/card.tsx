@@ -7,7 +7,7 @@ import { Cell, DropTarget, Icon } from 'Component';
 interface Props extends I.ViewComponent {
 	id: string;
 	groupId: string;
-	index: number;
+	recordId: string;
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
@@ -28,26 +28,22 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		let content = (
 			<div className="cardContent">
-				{relations.map((relation: any, i: number) => {
-					const id = Relation.cellId(idPrefix, relation.relationKey, 0);
-					return (
-						<Cell
-							key={'board-cell-' + view.id + relation.relationKey}
-							{...this.props}
-							getRecord={() => record}
-							subId={subId}
-							ref={ref => { onRef(ref, id); }}
-							relationKey={relation.relationKey}
-							index={0}
-							viewType={view.type}
-							idPrefix={idPrefix}
-							arrayLimit={2}
-							showTooltip={true}
-							tooltipX={I.MenuDirection.Left}
-							iconSize={18}
-						/>
-					);
-				})}
+				{relations.map((relation: any, i: number) => (
+					<Cell
+						key={'board-cell-' + view.id + relation.relationKey}
+						{...this.props}
+						getRecord={() => record}
+						subId={subId}
+						ref={ref => onRef(ref, Relation.cellId(idPrefix, relation.relationKey, record.id))}
+						relationKey={relation.relationKey}
+						viewType={view.type}
+						idPrefix={idPrefix}
+						arrayLimit={2}
+						showTooltip={true}
+						tooltipX={I.MenuDirection.Left}
+						iconSize={18}
+					/>
+				))}
 			</div>
 		);
 

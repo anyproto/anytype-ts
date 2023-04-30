@@ -94,17 +94,16 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 								};
 							} else 
 							if (column.isCell) {
-								const id = Relation.cellId(PREFIX, column.relationKey, 0);
 								content = (
 									<Cell
-										elementId={id}
+										elementId={Relation.cellId(PREFIX, column.relationKey, item.id)}
 										rootId={rootId}
 										subId={subId}
 										block={null}
 										relationKey={column.relationKey}
 										getRecord={() => item}
+										recordId={item.id}
 										viewType={I.ViewType.Grid}
-										index={0}
 										idPrefix={PREFIX}
 										iconSize={20}
 										readonly={true}

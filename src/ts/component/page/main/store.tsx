@@ -44,6 +44,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	view: View = View.Marketplace;
 	frame = 0;
 	limit = 0;
+	midHeight = 0;
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -302,7 +303,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getRowHeight (item: any) {
 		let h = 0;
 		switch (item.id) {
-			case 'mid':		 h = 305; break;
+			case 'mid':		 h = this.midHeight || 305; break;
 			case 'tabs':	 h = 52; break;
 			case 'empty':	 h = 190; break;
 			default:		 h = 64; break;
@@ -617,6 +618,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const isPopup = this.props.isPopup && !container.hasClass('full');
 		const limit = this.getLimit();
 		const wh = isPopup ? container.height() : win.height();
+		const midHeight = node.find('.mid').outerHeight();
 
 		node.css({ height: wh });
 		
@@ -628,8 +630,9 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			content.css({ minHeight: '', height: '' });
 		};
 
-		if (limit != this.limit) {
+		if ((limit != this.limit) || (midHeight != this.midHeight)) {
 			this.limit = limit;
+			this.midHeight = midHeight;
 
 			raf.cancel(this.frame);
 			this.frame = raf(() => { this.forceUpdate(); });
