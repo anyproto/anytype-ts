@@ -52,7 +52,7 @@
 				width: 100% !important; height: 100% !important; overflow: hidden; 
 			}
 			.react-pdf__Page__svg svg { width: 100%; height: auto; }
-			.react-pdf__Page__textContent { width: 100% !important; height: auto !important; }
+			.react-pdf__Page__textContent { display: none; }
 			.react-pdf__Page__annotations { display: none; }
 		}
 		.pdfWrapper:hover {

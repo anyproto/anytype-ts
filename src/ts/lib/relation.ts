@@ -381,20 +381,15 @@ class Relation {
 
 	public getArrayValue (value: any): string[] {
 		if (this.isEmpty(value)) {
-			value = [];
+			return [];
 		};
-
-		value = Util.objectCopy(value);
-		
 		if (typeof value !== 'object') {
-			value = [ value ];
-		} else 
-		if (!Util.objectLength(value)) {
-			value = [];
+			return [ value ];
 		};
-
-		value = value.map(it => String(it || '')).filter(it => !this.isEmpty(it));
-		return Util.arrayUnique(value);
+		if (!Util.objectLength(value)) {
+			return [];
+		};
+		return Util.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
 	};
 
 	private isEmpty (v: any) {
