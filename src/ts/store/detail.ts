@@ -129,24 +129,21 @@ class DetailStore {
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, Constant.defaultRelationKeys are included */
-    public get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
+    public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
 		let list = this.getDetailList(rootId, id);		
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
 		
-		if (keys) {
+		if (withKeys) {
+			let keys = [ ...withKeys ];
 			if (!forceKeys) {
-				keys = (keys || []).concat(Constant.defaultRelationKeys);
+				keys = keys.concat(Constant.defaultRelationKeys);
 			};
-
-			keys.push('id');
-			keys = [ ...new Set(keys) ];
-
 			list = list.filter(it => keys.includes(it.relationKey));
 		};
 
-		const object = {};
+		const object = { id };
 		list.forEach(it => object[it.relationKey] = it.value);
 
 		return this.mapper(object);
