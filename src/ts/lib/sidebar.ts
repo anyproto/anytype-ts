@@ -362,10 +362,6 @@ class Sidebar {
 			snap: this.getSnap(x, width),
 		});
 
-		if (requestedWidth && (width - requestedWidth > 20) && (commonStore.isSidebarFixed)) {
-			this.collapse();
-		};
-
 		this.save();
 		this.resizePage();
 		this.setStyle();
