@@ -136,14 +136,14 @@ class DetailStore {
 		};
 		
 		if (withKeys) {
-			let keys = [ ...withKeys ];
+			let keys = [ 'id', ...withKeys ];
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
 			};
 			list = list.filter(it => keys.includes(it.relationKey));
 		};
 
-		const object = { id };
+		const object = {};
 		list.forEach(it => object[it.relationKey] = it.value);
 
 		return this.mapper(object);
