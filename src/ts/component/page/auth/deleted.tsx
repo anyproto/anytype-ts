@@ -57,7 +57,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		let description = '';
 		let cancelButton = null;
 
-		const exportButton = <Button className="outlined" text={translate('authDeleteExportButton')} onClick={this.onExport} />;
+		const exportButton = <Button color="blank" text={translate('authDeleteExportButton')} onClick={this.onExport} />;
 		const removeButton = <span className="remove" onClick={this.onRemoveLocalData}>{translate('authDeleteRemoveButton')}</span>
 
 		switch (status) {

@@ -44,7 +44,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
                     </div>
 
                     <div className="buttons">
-                        <Button className="c28 outlined" text={translate('authUsecaseSkip')} onClick={(e) => this.onClick(e, 0)} />
+                        <Button color="blank" className="c36" text={translate('authUsecaseSkip')} onClick={(e) => this.onClick(e, 0)} />
                     </div>
                     {this.loading ? <Loader /> : ''}
                 </Frame>
