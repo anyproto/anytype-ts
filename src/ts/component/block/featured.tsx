@@ -560,8 +560,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			subIds: Constant.menuIds.cell,
 			onOpen: (component: any) => {
 				if (component && component.ref) {
-					component.ref.onCellClick(e, relationKey, 0, '');
-					component.ref.scrollTo(relationKey, 0);
+					component.ref.onCellClick(e, relationKey);
+					component.ref.scrollTo(relationKey);
 				};
 			},
 			onClose: () => {
