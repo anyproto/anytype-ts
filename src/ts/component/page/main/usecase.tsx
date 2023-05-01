@@ -31,6 +31,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 
         return (
             <div className="usecaseWrapper">
+                <div className='fadeInOverlay' />
 
                 <Frame>
                     <Title className="frameTitle" text={translate('authUsecaseTitle')} />
