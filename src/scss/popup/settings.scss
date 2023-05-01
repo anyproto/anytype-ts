@@ -156,7 +156,7 @@
 		}
 
 		.side.right.tabStorageIndex {
-			.button { font-size: 14px; line-height: 22px; font-weight: 400; }
+			.button { font-size: 14px; line-height: 22px; color: $colorBlack; }
 			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
 			.storageUsage {
 				.space { margin-bottom: 16px; }

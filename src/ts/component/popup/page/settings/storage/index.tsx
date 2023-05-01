@@ -35,7 +35,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                             <div className="type">{translate(`popupSettingsStorageIndexUsage`)}</div>
                         </div>
                     </div>
-                    <Button className="c28 outlined" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
+                    <Button className="c28 blank" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
                 </div>
 
                 <div className="progressBar"><div className="progressBarFill" style={{ width: '25%' }} /></div>
@@ -51,7 +51,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                             <div className="type">{translate(`popupSettingsStorageIndexLocalStorageUsage`)}</div>
                         </div>
                     </div>
-                    <Button className="c28 outlined" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onFileOffload} />
+                    <Button className="c28 blank" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onFileOffload} />
                 </div>
 
             </React.Fragment>

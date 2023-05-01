@@ -42,6 +42,9 @@
 			}
 
 			.buttons { display: flex; gap: 8px; }
+			.buttons {
+				.button.blank { color: $colorBlack; font-weight: 500; }
+			}
 
 			.steps { display: flex; flex-wrap: nowrap; }
 			.steps {
