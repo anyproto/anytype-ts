@@ -288,30 +288,30 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			Animation.from(() => {
 				// Move animation forward, wait for delay, move onboarding forward
 				if (stage == Stage.Void) {
-					const DURATION = 3000;
+					const DURATION = 2000; // GRID animation
 					incrementAnimation(delay(incrementOnboarding(), DURATION))();
 					return;
 				}
 
 				// Move animation forward, wait for delay, move onboarding forward
 				if (stage == Stage.Phrase) {
-					const DURATION = 1000;
+					const DURATION = 1000; // Zoom out to multiple cicrles
 					incrementAnimation(delay(incrementOnboarding(), DURATION))();
 					return;
 				}
 
 				// Move animation forward, wait for delay, move animation forward again, then move onboarding forward
 				if (stage == Stage.Offline) {
-					const DURATION_ONE = 750;
-					const DURATION_TWO = 250;
+					const DURATION_ONE = 2400; // connect the dots
+					const DURATION_TWO = 1000; // zoom in
 					incrementAnimation(delay(incrementAnimation(delay(incrementOnboarding(), DURATION_TWO)), DURATION_ONE))();
 					return;
 				}
 
 				// Wait for delay, move onboarding forward, wait for delay, move onboarding forward again
 				if (stage == Stage.Soul) {
-					const DURATION_ONE = 1500;
-					const DURATION_TWO = 2000;
+					const DURATION_ONE = 1200; // time until "creating soul" appears
+					const DURATION_TWO = 3000; // time until "creating space appears"
 					delay(incrementOnboarding(delay(incrementOnboarding(this.createAccount), DURATION_ONE)), DURATION_TWO)();
 					return;
 				}

@@ -141,7 +141,7 @@ html.bodyAuthDeleted {
 	  }
 
 	.label { width: 415px; }
-	.button { width: 192px; }
+	.button { min-width: 192px; width: auto; }
 
 	.icon.gear { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; }
 	.small { color: $colorSecondary; cursor: pointer; }
