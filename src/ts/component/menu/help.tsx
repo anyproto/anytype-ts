@@ -66,12 +66,12 @@ class MenuHelp extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		const btn1 = <Button color="black" className="c16" text={window.Electron.version.app} />;
-		const btn2 = <Button color="orange" className="c16" text="0.32.0" />;
+		const btn1 = <Button color="orange" className="c16" text="0.32.0" />;
+		const btn2 = <Button color="black" className="c16" text={window.Electron.version.app} />;
 
 		return [
-			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn1 },
-			{ id: 'migration', name: 'Migration to New infrastructure', caption: btn2 },
+			{ id: 'migration', name: 'Migration to New infrastructure', caption: btn1 },
+			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn2 },
 			{ id: 'community', name: 'Anytype Community' },
 			{ isDiv: true },
 			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' },
