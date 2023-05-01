@@ -60,7 +60,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 
 		if (arrow) {
 			arrow = (
-				<div className="arrowWrap" onClick={onArrowClick}>{arrow}</div>
+				<div className="arrowWrap" onMouseDown={onArrowClick}>{arrow}</div>
 			);
 		};
 

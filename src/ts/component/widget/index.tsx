@@ -322,6 +322,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
+				limit = 0;
 				break;
 			};
 
