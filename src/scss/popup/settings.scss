@@ -15,6 +15,17 @@
 		}
 		.content { height: 100%; }
 
+		.space {
+			display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px;
+			border-radius: 8px; transition: $transitionAllCommon;
+		}
+		.space {
+			.iconObject { flex-shrink: 0; }
+			.txt { width: calc(100% - 40px); }
+			.name { @include text-common; font-weight: 600; }
+			.type { @include text-small; color: $colorDarkGrey; }
+		}
+
 		.sides { display: flex; height: 100%; }
 		.sides {
 			> .side { position: relative; }
@@ -28,17 +39,7 @@
 					> .name { @include text-small; color: $colorDarkGrey; margin: 0px 0px 4px 0px; padding: 0px 8px; }
 				}
 
-				.space { 
-					display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px; 
-					border-radius: 8px; transition: $transitionAllCommon;
-				}
 				.space:hover, .space.active { background: $colorBorderDark; }
-				.space {
-					.iconObject { flex-shrink: 0; }
-					.txt { width: calc(100% - 40px); }
-					.name { @include text-common; font-weight: 600; }
-					.type { @include text-small; color: $colorDarkGrey; }
-				}
 
 				.items { display: flex; flex-direction: column; gap: 2px 0px; }
 
@@ -152,6 +153,11 @@
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
 			}
+		}
+
+		.side.right.tabStorageIndex {
+			.button { font-size: 14px; line-height: 22px; font-weight: 400; }
+			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
 		}
 
 		.side.right.tabLogout {

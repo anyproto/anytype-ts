@@ -275,7 +275,10 @@
 
 	"popupSettingsStorageIndexTitle": { "en":  "File storage" },
 	"popupSettingsStorageIndexText": { "en":  "You can store up to 1 GB of your files on our encrypted backup node for free. If you reach the limit, remove some files." },
-	
+	"popupSettingsStorageIndexUsageInfo": { "en":  "224 MB of 1 GB used" },
+	"popupSettingsStorageIndexManageFiles": { "en":  "Manage files" },
+	"popupSettingsStorageManagerTitle": { "en":  "Files management" },
+
 	"popupSettingsImportTitle": { "en": "Import" },
 	"popupSettingsImportText": { "en": "Choose application or format of data source" },
 	"popupSettingsImportMarkdownTitle": { "en": "How to import Markdown" },

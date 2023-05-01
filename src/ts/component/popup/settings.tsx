@@ -18,6 +18,7 @@ import PagePinSelect from './page/settings/pin/select';
 import PagePinConfirm from './page/settings/pin/confirm';
 
 import PageStorageIndex from './page/settings/storage/index';
+import PageStorageManager from './page/settings/storage/manager';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
@@ -53,6 +54,7 @@ const Components: any = {
 	pinConfirm:			 PagePinConfirm,
 
 	storageIndex: 		 PageStorageIndex,
+	storageManager: 	 PageStorageManager,
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
