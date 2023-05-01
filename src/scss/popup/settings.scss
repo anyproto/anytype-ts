@@ -157,7 +157,13 @@
 
 		.side.right.tabStorageIndex {
 			.button { font-size: 14px; line-height: 22px; font-weight: 400; }
-			.storageUsage { display: flex; justify-content: space-between; align-items: center; margin-bottom: 54px; }
+			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
+			.storageUsage {
+				.space { margin-bottom: 16px; }
+			}
+			.progressBar { position: relative; overflow: hidden; height: 6px; border-radius: 8px;  margin-bottom: 54px; background-color: $colorVeryLightGrey;}
+			.progressBar .progressBarFill { height: 6px; background-color: $colorBlack; }
+
 			.localStorageIcon { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
 
