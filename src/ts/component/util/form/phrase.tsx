@@ -25,7 +25,6 @@ interface State {
 	phrase: string[];
 	isHidden: boolean;
 	hasError: boolean;
-	showPlaceholder: boolean;
 };
 
 class Phrase extends React.Component<Props, State> {
@@ -37,16 +36,17 @@ class Phrase extends React.Component<Props, State> {
 	state: State = {
 		isHidden: true,
 		hasError: false,
-		showPlaceholder: false,
 		phrase: [],
 	};
 
 	node = null;
+	placeholder = null;
+	entry = null;
 	timeout = 0;
 
 	render () {
 		const { readonly } = this.props;
-		const { isHidden, hasError, showPlaceholder, phrase } = this.state;
+		const { isHidden, hasError, phrase } = this.state;
 		const cn = [ 'phraseWrapper' ];
 
 		if (isHidden) {
@@ -55,7 +55,7 @@ class Phrase extends React.Component<Props, State> {
 
 		if (hasError) {
 			cn.push('hasError');
-		}
+		};
 
 		if (readonly) {
 			cn.push('isReadonly');
@@ -63,15 +63,16 @@ class Phrase extends React.Component<Props, State> {
 
 		const renderWord = (word: string, index: number) => {
 			const c = COLORS[index % COLORS.length];
-
-			const cn = ['item', 'textColor', `textColor-${c}`];
+			const cn = [ 'item' ];
 
 			if (isHidden) {
 				cn.push('bgColor', `bgColor-${c}`);
-			}
+			} else {
+				cn.push('textColor', `textColor-${c}`);
+			};
 
 			return <span className={cn.join(' ')} key={index}>{Util.ucFirst(word)}</span>;
-		}
+		};
 
 		return (
 			<div 
@@ -80,8 +81,8 @@ class Phrase extends React.Component<Props, State> {
 				onClick={this.onClick}
 			>
 				<div className="phraseInnerWrapper">
-					{ phrase.map(renderWord) }
-					{ showPlaceholder ? <span id="placeholder">{translate('phrasePlaceholder')}</span> : null}
+					{phrase.map(renderWord)}
+					<span id="placeholder" className="placeholder">{translate('phrasePlaceholder')}</span>
 					<span 
 						id="entry" 
 						contentEditable={true}
@@ -106,30 +107,28 @@ class Phrase extends React.Component<Props, State> {
 		const text = this.normalizeWhiteSpace(value);
 		const phrase = text.length ? text.split(' '): [];
 
+		this.init();
 		this.setState({ isHidden, phrase });
 		this.focus();
+	};
+
+	componentDidUpdate () {
+		this.init();
+		this.placeholderCheck();
+	};
+
+	init () {
+		const node = $(this.node);
+
+		this.placeholder = node.find('#placeholder');
+		this.entry = node.find('#entry');
 	};
 
 	onClick = () => {
 		this.focus();
 	};
 
-	onKeyUp = (e: React.KeyboardEvent) => {
-		const entry  = this.getEntryValue();
-
-		keyboard.shortcut('space, enter', e, () => {
-			e.preventDefault();
-
-			this.clear();
-			
-			this.setState(({ phrase }) => ({ phrase: entry.length ? phrase.concat([ entry ]) : [] }));
-		});
-	};
-
 	onKeyDown = (e: React.KeyboardEvent) => {
-		const node = $(this.node);
-		const entry = node.find('#entry');
-
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
 		});
@@ -137,7 +136,7 @@ class Phrase extends React.Component<Props, State> {
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
-			const range = getRange(entry.get(0));
+			const range = getRange(this.entry.get(0));
 			if (range.start || range.end) {
 				return;
 			};
@@ -149,6 +148,21 @@ class Phrase extends React.Component<Props, State> {
 				return { phrase }
 			});
 		});
+
+		this.placeholderCheck();
+	};
+
+	onKeyUp = (e: React.KeyboardEvent) => {
+		const value = this.getEntryValue();
+
+		keyboard.shortcut('space, enter', e, () => {
+			e.preventDefault();
+
+			this.clear();
+			this.setState(({ phrase }) => ({ phrase: value.length ? phrase.concat([ value ]) : [] }));
+		});
+
+		this.placeholderCheck();
 	};
 
 	onPaste = (e) => {
@@ -160,13 +174,12 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onBlur = () => {
-		const value = this.getEntryValue();
-		this.setState(({ phrase }) => ({ showPlaceholder: phrase.length === 0 && value.length === 0 }));
-	}
+		this.placeholderCheck();
+	};
 
 	onFocus = () => {
-		this.setState({ showPlaceholder: false });
-	}
+		this.placeholderCheck();
+	};
 
 	toggleVisibility = () => {
 		this.setState({ isHidden: !this.state.isHidden });
@@ -177,32 +190,38 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	focus = () => {
-		const entry = this.getEntry();
-		entry.trigger('focus');
-		setRange(entry.get(0), { start: 0, end: 0 });
+		this.entry.trigger('focus');
+		setRange(this.entry.get(0), { start: 0, end: 0 });
 	};
 
 	clear = () => {
-		this.getEntry().text('');
+		this.entry.text('');
 	};
 
-	getEntry = () => {
-		const node = $(this.node);
-		const entry = node.find('#entry');
-		return entry;
-	}
-
 	getEntryValue = () => {
-		return this.normalizeWhiteSpace(this.getEntry().text());
+		return this.normalizeWhiteSpace(this.entry.text());
 	};
 
 	normalizeWhiteSpace = (val: string) => {
 		return val.replace(/\s\s+/g, ' ').trim() || '';
-	}
+	};
 
 	getValue = () => {
 		return this.state.phrase.join(' ');
 	};
+
+	placeholderCheck () {
+		this.getValue().length || this.getEntryValue() ? this.placeholderHide() : this.placeholderShow();	
+	};
+
+	placeholderHide () {
+		this.placeholder.hide();
+	};
+
+	placeholderShow () {
+		this.placeholder.show();
+	};
+
 };
 
 export default Phrase;
