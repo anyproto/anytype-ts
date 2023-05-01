@@ -92,8 +92,6 @@ class Drag extends React.Component<Props> {
 		const iw = this.icon.width();
 		const ox = node.offset().left;
 		
-		$('body').addClass('grab');
-
 		this.move(e.pageX - ox - iw / 2);
 		node.addClass('isDragging');
 		
@@ -147,8 +145,6 @@ class Drag extends React.Component<Props> {
 		const node = $(this.node);
 		
 		win.off('mousemove.drag touchmove.drag mouseup.drag touchend.drag');
-
-		$('body').removeClass('grab');
 		node.removeClass('isDragging');
 	};
 

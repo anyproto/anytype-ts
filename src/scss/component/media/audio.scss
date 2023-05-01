@@ -4,6 +4,10 @@
 .mediaAudio {
     .controls { width: 100%; min-width: 160px; position: relative; text-align: left; color: $colorBlack; }
     .controls {
+		.input-drag { 
+			.icon { cursor: default; }
+		}
+
         .name {
             @include text-common; display: inline-block; vertical-align: top;
             line-height: 20px; width: calc(100% - 26px);
