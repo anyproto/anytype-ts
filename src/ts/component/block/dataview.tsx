@@ -448,7 +448,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		let { name, layout, isReadonly, isDeleted, snippet } = item;
-		if (name == ObjectUtil.defaultName('page')) {
+		if (name == ObjectUtil.defaultName('Page')) {
 			name = '';
 		};
 		if (layout == I.ObjectLayout.Note) {

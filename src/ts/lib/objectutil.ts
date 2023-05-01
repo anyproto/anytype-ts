@@ -219,7 +219,7 @@ class ObjectUtil {
 	};
 
 	defaultName (key: string) {
-		return translate(Util.toCamelCase('defaultName-' + key));
+		return translate(`defaultName${key}`);
 	};
 
 	name (object: any) {

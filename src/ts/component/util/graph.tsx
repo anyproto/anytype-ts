@@ -167,7 +167,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
-			d.name = d.name || ObjectUtil.defaultName('page');
+			d.name = d.name || ObjectUtil.defaultName('Page');
 		};
 
 		d.name = SmileUtil.strip(d.name);
