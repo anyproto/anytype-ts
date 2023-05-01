@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 
 interface Props {
 	id?: string;
@@ -66,9 +67,10 @@ class Drag extends React.Component<Props> {
 
 		this.setValue(this.props.value);
 	};
-	
+
 	setValue (v: number) {
 		v = this.checkValue(v);
+
 		if (this.value !== v) {
 			this.move(v * this.maxWidth());
 		};
@@ -117,27 +119,29 @@ class Drag extends React.Component<Props> {
 	};
 	
 	move (x: number) {
-		const { snap } = this.props;
-		const node = $(this.node);
-		const nw = node.width();
-		const iw = this.icon.width();
-		const ib = parseInt(this.icon.css('border-width'));
-		const mw = this.maxWidth();
-		
-		x = Math.max(0, x);
-		x = Math.min(mw, x);
+		raf(() => {
+			const { snap } = this.props;
+			const node = $(this.node);
+			const nw = node.width();
+			const iw = this.icon.width();
+			const ib = parseInt(this.icon.css('border-width'));
+			const mw = this.maxWidth();
 
-		this.value = this.checkValue(x / mw);
-		if (snap && (this.value > snap - 0.025) && (this.value < snap + 0.025)) {
-			this.value = snap;
-		};
-		x = this.value * mw;
+			x = Math.max(0, x);
+			x = Math.min(mw, x);
 
-		const w = Math.min(nw, x + iw / 2);
+			this.value = this.checkValue(x / mw);
+			if (snap && (this.value > snap - 0.025) && (this.value < snap + 0.025)) {
+				this.value = snap;
+			};
+			x = this.value * mw;
 
-		this.icon.css({ left: x });
-		this.back.css({ left: (w + iw / 2 + ib), width: (nw - w - iw / 2 - ib) });
-		this.fill.css({ width: (w - ib) });
+			const w = Math.min(nw, x + iw / 2);
+
+			this.icon.css({ left: x });
+			this.back.css({ left: (w + iw / 2 + ib), width: (nw - w - iw / 2 - ib) });
+			this.fill.css({ width: (w - ib) });
+		});
 	};
 	
 	end () {
