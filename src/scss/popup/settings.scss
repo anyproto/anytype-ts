@@ -77,6 +77,7 @@
 				}
 
 				.title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
+				.title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
 				.description { margin: 0px 0px 24px 0px; }
 				b { font-weight: 500; }
 
@@ -144,7 +145,6 @@
 
 		.side.right.tabPhrase {
 			.inputs { margin: 0px 0px 54px 0px; }
-			.title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
 
 			.qrWrap { 
 				padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; 
@@ -157,7 +157,8 @@
 
 		.side.right.tabStorageIndex {
 			.button { font-size: 14px; line-height: 22px; font-weight: 400; }
-			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
+			.storageUsage { display: flex; justify-content: space-between; align-items: center; margin-bottom: 54px; }
+			.localStorageIcon { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
 
 		.side.right.tabLogout {
