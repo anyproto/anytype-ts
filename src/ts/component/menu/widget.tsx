@@ -338,6 +338,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 			case 'edit':
 				setEditing(true);
+				analytics.event('EditWidget');
 				break;
 		};
 

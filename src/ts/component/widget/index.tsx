@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Loader } from 'Component';
-import { I, Util, ObjectUtil, DataUtil, translate, Storage, Action } from 'Lib';
+import {I, Util, ObjectUtil, DataUtil, translate, Storage, Action, analytics} from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -84,7 +84,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		};
 
 		if (isPreview) {
-			back = <Icon className="back" onClick={() => setPreview('')} />
+			back = (
+				<Icon
+					className="back"
+					onClick={() => {
+						setPreview('');
+						analytics.event('ScreenHome', { view: 'Widget' });
+					}}
+				/>
+			);
 		} else {
 			buttons = (
 				<div className="buttons">
@@ -101,9 +109,24 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		if (layout != I.WidgetLayout.Space) {
 			let onClick = null;
 			if (!this.isCollection(targetBlockId)) {
-				onClick = e => ObjectUtil.openEvent(e, object);
+				onClick = e => {
+					ObjectUtil.openEvent(e, object);
+				};
 			} else {
-				onClick = () => setPreview(isPreview ? '' : block.id);
+				onClick = () => {
+					let blockId = '';
+					let eventName = 'ScreenHome';
+					let eventData: any = { view: 'Widget' };
+
+					if (!isPreview) {
+						blockId = block.id;
+						eventName = 'SelectHomeTab';
+						eventData.tab = object.name;
+					};
+
+					setPreview(blockId);
+					analytics.event(eventName, eventData);
+				};
 			};
 
 			head = (
