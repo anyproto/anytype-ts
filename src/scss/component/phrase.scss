@@ -34,6 +34,7 @@
 }
 .phraseWrapper:hover { cursor: text !important; background: rgba(44, 43, 39, 0.5); }
 .phraseWrapper.isHidden:hover { cursor: pointer !important; }
+.phraseWrapper.isReadonly:hover { background: rgba(44, 43, 39, 0.3); }
 .phraseWrapper.isReadonly {
 	#entry { display: none; }
 }
