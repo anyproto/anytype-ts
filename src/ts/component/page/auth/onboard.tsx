@@ -95,6 +95,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						{footer}
 					</Frame>
 					<CanvasWorkerBridge state={animationStage} />
+					<div className="fadeInOverlay" />
 				</div>
 			);
 		};
@@ -301,8 +302,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				// Move animation forward, wait for delay, move animation forward again, then move onboarding forward
 				if (stage == Stage.Offline) {
-					const DURATION_ONE = 3000;
-					const DURATION_TWO = 1000;
+					const DURATION_ONE = 750;
+					const DURATION_TWO = 250;
 					incrementAnimation(delay(incrementAnimation(delay(incrementOnboarding(), DURATION_TWO)), DURATION_ONE))();
 					return;
 				}
