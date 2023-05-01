@@ -23,7 +23,7 @@ class FileUtil {
 		let g = v / (unit * unit * unit);
 		let m = v / (unit * unit);
 		let k = v / unit;
-		if (g > 1) {
+		if (g >= 1) {
 			v = Util.sprintf('%0.2fGB', Util.round(g, 2));
 		} else if (m > 1) {
 			v = Util.sprintf('%0.2fMB', Util.round(m, 2));

@@ -274,12 +274,12 @@
 	"popupSettingsPinSelectError": { "en": "Pin codes do not match, please try again" },
 
 	"popupSettingsStorageIndexTitle": { "en":  "File storage" },
-	"popupSettingsStorageIndexText": { "en":  "You can store up to 1 GB of your files on our encrypted backup node for free. If you reach the limit, remove some files." },
-	"popupSettingsStorageIndexUsage": { "en":  "224 MB of 1 GB used" },
+	"popupSettingsStorageIndexText": { "en":  "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, remove some files." },
+	"popupSettingsStorageIndexUsage": { "en":  "%s of %s used" },
 	"popupSettingsStorageIndexManageFiles": { "en":  "Manage files" },
 	"popupSettingsStorageIndexLocalStorageTitle": { "en":  "Local storage" },
 	"popupSettingsStorageIndexLocalStorageText": { "en":  "In order to save your local space, you can offload all your Anytype files to our encrypted backup node." },
-	"popupSettingsStorageIndexLocalStorageUsage": { "en":  "591 MB used" },
+	"popupSettingsStorageIndexLocalStorageUsage": { "en":  "%s used" },
 	"popupSettingsStorageIndexOffloadFiles": { "en":  "Offload files" },
 	"popupSettingsStorageManagerTitle": { "en":  "Files management" },
 
