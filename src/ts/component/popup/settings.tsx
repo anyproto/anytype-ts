@@ -17,6 +17,8 @@ import PagePinIndex from './page/settings/pin/index';
 import PagePinSelect from './page/settings/pin/select';
 import PagePinConfirm from './page/settings/pin/confirm';
 
+import PageStorageIndex from './page/settings/storage/index';
+
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
 import PageImportNotionHelp from './page/settings/import/notion/help';
@@ -49,6 +51,8 @@ const Components: any = {
 	pinIndex:			 PagePinIndex,
 	pinSelect:			 PagePinSelect,
 	pinConfirm:			 PagePinConfirm,
+
+	storageIndex: 		 PageStorageIndex,
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
@@ -222,7 +226,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
 					{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-					//{ id: 'cloud', name: 'Cloud storage' },
+					{ id: 'storageIndex', name: translate('popupSettingsStorageIndexTitle'), icon: 'storage' },
 				] 
 			},
 			{ 
