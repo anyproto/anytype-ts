@@ -310,8 +310,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				// Wait for delay, move onboarding forward, wait for delay, move onboarding forward again
 				if (stage == Stage.Soul) {
-					const DURATION_ONE = 2500;
-					const DURATION_TWO = 3000;
+					const DURATION_ONE = 1500;
+					const DURATION_TWO = 2000;
 					delay(incrementOnboarding(delay(incrementOnboarding(this.createAccount), DURATION_ONE)), DURATION_TWO)();
 					return;
 				}
