@@ -232,7 +232,7 @@ class ObjectUtil {
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || translate('commonEmpty');
 		} else {
-			name = object.name || this.defaultName('page');
+			name = object.name || this.defaultName('Page');
 		};
 
 		return name;
