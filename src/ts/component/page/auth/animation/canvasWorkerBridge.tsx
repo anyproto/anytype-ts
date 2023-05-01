@@ -6,86 +6,90 @@ import * as React from 'react';
 import { DOM_EVENTS, OnboardStage } from './constants';
 
 type Props = {
-  state: OnboardStage;
+	state: OnboardStage;
 };
-
-// NOTE: Change this next line to new Worker(`workers/onboard.js`) when copying over to JS-anytype
-const worker = new Worker('workers/onboard.js');
 
 const CanvasWorkerBridge = (props: Props) => {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+	const canvasRef = React.useRef<HTMLCanvasElement>(null);
+	const worker = React.useRef<Worker | null>(null);
 
-  React.useEffect(() => {
-    if (!canvasRef.current) {
-      return;
-    }
+	React.useEffect(() => {
+		if (!canvasRef.current) {
+			return;
+		};
 
-    const canvas = canvasRef.current;
-    const offscreen = canvasRef.current.transferControlToOffscreen();
+		// NOTE: Change this next line to new Worker(`workers/onboard.js`) when copying over to JS-anytype
+		worker.current = new Worker('workers/onboard.js');
 
-    worker.postMessage(
-      {
-        type: 'init',
-        payload: {
-          props: props,
-          drawingSurface: offscreen,
-          width: canvas.clientWidth,
-          height: canvas.clientHeight,
-          pixelRatio: window.devicePixelRatio,
-        },
-      },
-      [offscreen]
-    );
+		const canvas = canvasRef.current;
+		const offscreen = canvasRef.current.transferControlToOffscreen();
 
-    Object.values(DOM_EVENTS).forEach(([eventName, passive]) => {
-      canvas.addEventListener(
-        eventName,
-        (event: any) => {
-          worker.postMessage({
-            type: 'dom_events',
-            payload: {
-              eventName,
-              clientX: event.clientX,
-              clientY: event.clientY,
-              offsetX: event.offsetX,
-              offsetY: event.offsetY,
-              x: event.x,
-              y: event.y,
-            },
-          });
-        },
-        { passive }
-      );
-    });
+		worker.current.postMessage(
+			{
+				type: 'init',
+				payload: {
+					props: props,
+					drawingSurface: offscreen,
+					width: canvas.clientWidth,
+					height: canvas.clientHeight,
+					pixelRatio: 1, //window.devicePixelRatio,
+				},
+			},
+			[offscreen]
+		);
 
-    const handleResize = () => {
-      const dpr = window.devicePixelRatio;
-      worker.postMessage({
-        type: 'resize',
-        payload: {
-          width: canvas.clientWidth,
-          height: canvas.clientHeight,
-          dpr,
-        },
-      });
-    };
+		Object.values(DOM_EVENTS).forEach(([eventName, passive]) => {
+			canvas.addEventListener(
+				eventName,
+				(event: any) => {
+					if (!worker.current) return;
+					worker.current.postMessage({
+						type: 'dom_events',
+						payload: {
+							eventName,
+							clientX: event.clientX,
+							clientY: event.clientY,
+							offsetX: event.offsetX,
+							offsetY: event.offsetY,
+							x: event.x,
+							y: event.y,
+						},
+					});
+				},
+				{ passive }
+			);
+		});
 
-    window.addEventListener('resize', handleResize);
+		const handleResize = () => {
+			const dpr = window.devicePixelRatio;
+			if (!worker.current) return;
+			worker.current.postMessage({
+				type: 'resize',
+				payload: {
+					width: canvas.clientWidth,
+					height: canvas.clientHeight,
+					dpr,
+				},
+			});
+		};
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [worker]);
+		window.addEventListener('resize', handleResize);
 
-  React.useEffect(() => {
-    if (!worker) return;
-    worker.postMessage({
-      type: 'props',
-      payload: props,
-    });
-  }, [props]);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+			worker.current?.terminate();
+		};
+	}, []);
 
-  return <canvas ref={canvasRef} />;
+	React.useEffect(() => {
+		if (!worker.current) {
+			return;
+		};
+
+		worker.current.postMessage({ type: 'props', payload: props });
+	}, [ props ]);
+
+	return <canvas ref={canvasRef} />;
 };
-
+	
 export default CanvasWorkerBridge;
