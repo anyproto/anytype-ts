@@ -262,8 +262,6 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 		const records = dbStore.getRecords(subId, '');
 		const length = records.length;
 
-		console.log('length', length);
-
 		raf(() => {
 			const node = $(this.node);
 			const body = node.find('#body');
