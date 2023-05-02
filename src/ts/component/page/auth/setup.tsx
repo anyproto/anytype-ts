@@ -206,6 +206,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 					authStore.accountSet(message.account);
 					authStore.previewSet('');
+					analytics.profile(message.account);
 
 					Storage.set('timeRegister', Util.time());
 
