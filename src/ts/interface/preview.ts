@@ -24,5 +24,6 @@ export interface Preview {
 	range?: I.TextRange;
 	marks?: I.Mark[];
 	noUnlink?: boolean;
+	passThrough?: boolean;
 	onChange?(marks: I.Mark[]): void;
 };

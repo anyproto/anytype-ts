@@ -11,7 +11,7 @@
 
 	.head { 
 		padding: 10px 12px 12px 12px; letter-spacing: -0.08px; color: $colorMediumGrey; font-weight: 500;
-		position: absolute; left: 0px; width: 100%;
+		position: absolute; left: 0px; width: 100%; border-top: 1px solid $colorBorderLight; bottom: 0px; padding-bottom: 11px;
 	}
 	.head {
 		.item { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionAllCommon; }
@@ -19,17 +19,15 @@
 		.item:last-child { margin: 0px; }
 	}
 
+	.img { border-radius: 8px 8px 0px 0px; border-top: 0px; }
+
 	.previewObject { width: 100%; border-radius: 0px; }
 	.previewObject {
 		.border { display: none; }
 		.cover { border-radius: 0px; }
 	}
 }
-
-.previewWrapper {
-	.head { border-top: 1px solid $colorBorderLight; bottom: 0px; padding-bottom: 11px; }
-	.img { border-radius: 8px 8px 0px 0px; border-top: 0px; }
-}
+.previewWrapper.passThrough { pointer-events: none; }
 
 .previewWrapper.withHead {
 	.content { padding-bottom: 44px; }

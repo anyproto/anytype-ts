@@ -22,6 +22,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render() {
@@ -292,17 +293,16 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { rootId, block } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
-		const node = $(this.node);
 
 		if (object.isArchived) {
 			return;
 		};
 
 		Preview.previewShow({ 
-			element: node,
 			rect: { x: e.pageX, y: e.pageY, width: 0, height: 10 }, 
 			target: targetBlockId, 
-			noUnlink: true 
+			noUnlink: true,
+			passThrough: true,
 		});
 	};
 
