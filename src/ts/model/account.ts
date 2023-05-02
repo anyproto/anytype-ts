@@ -38,19 +38,7 @@ class AccountInfo implements I.AccountInfo {
 
 class AccountConfig implements I.AccountConfig {
 	
-	allowSpaces = false;
-	allowBeta = false;
-	
 	constructor (props: I.AccountConfig) {
-		this.allowSpaces = Boolean(props.allowSpaces);
-		this.allowBeta = Boolean(props.allowBeta);
-
-		makeObservable(this, {
-			allowSpaces: observable,
-			allowBeta: observable,
-		});
-
-		intercept(this as any, change => Util.intercept(this, change));
 		return this;
 	};
 

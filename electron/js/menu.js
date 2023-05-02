@@ -180,7 +180,7 @@ class MenuManager {
 			},
 		];
 
-		if (config.allowDebug || config.allowBeta) {
+		//if (config.allowDebug || config.allowBeta) {
 			config.debug = config.debug || {};
 
 			const flags = { 
@@ -214,7 +214,7 @@ class MenuManager {
 					{ label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I', click: () => { this.win.webContents.openDevTools(); } },
 				]
 			});
-		};
+		//};
 
 		const channels = ConfigManager.getChannels().map(it => {
 			it.click = () => { 
