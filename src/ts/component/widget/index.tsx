@@ -353,9 +353,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	isCollection (blockId: string) {
-		const target = detailStore.get(blockStore.widgets, blockId);
-
-		return (target.type == Constant.typeId.collection) || Object.values(Constant.widgetId).includes(blockId);
+		return Object.values(Constant.widgetId).includes(blockId);
 	};
 
 });
