@@ -202,7 +202,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const count = ids.length;
-		const ref = this.blockRefs[Constant.blockId.dataview].ref;
+		const ref = this.blockRefs[Constant.blockId.dataview]?.ref;
 		const rootId = this.getRootId();
 
 		if (!ref) {
