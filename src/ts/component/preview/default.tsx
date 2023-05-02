@@ -80,6 +80,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 
 	componentWillUnmount(): void {
 		this._isMounted = false;
+		this.id = '';
 	};
 
 	load () {
@@ -94,10 +95,6 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		this.setState({ loading: true });
 
 		ObjectUtil.getById(rootId, (object) => {
-			if (!this._isMounted) {
-				return;
-			};
-
 			this.setState({ object, loading: false });
 
 			if (setObject) {

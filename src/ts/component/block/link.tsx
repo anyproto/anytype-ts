@@ -184,6 +184,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				onKeyUp={this.onKeyUp} 
 				onFocus={this.onFocus}
 				onMouseEnter={this.onMouseEnter}
+				onMouseLeave={this.onMouseLeave}
 			>
 				{element}
 			</div>
@@ -303,6 +304,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			target: targetBlockId, 
 			noUnlink: true 
 		});
+	};
+
+	onMouseLeave () {
+		Preview.previewHide(true);
 	};
 
 	resize () {
