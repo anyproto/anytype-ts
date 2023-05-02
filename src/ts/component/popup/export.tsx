@@ -25,6 +25,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		const { config } = commonStore;
 		const formats = [
 			{ id: I.ExportFormat.Markdown, name: 'Markdown' },
+			{ id: I.ExportFormat.Protobuf, name: 'Protobuf' },
 			{ id: I.ExportFormat.Pdf, name: 'PDF' },
 		];
 
@@ -91,6 +92,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		let items: any[] = [];
 
 		switch (this.format) {
+			case I.ExportFormat.Protobuf:
 			case I.ExportFormat.Markdown:
 				items = [
 					{ id: 'zip', name: 'Zip archive', control: 'switch' },
@@ -142,6 +144,10 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 
 	componentDidMount () {
 		this.init();
+	};
+
+	componentDidUpdate () {
+		this.props.position();
 	};
 
 	init () {
