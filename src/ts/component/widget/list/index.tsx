@@ -262,6 +262,8 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 		const records = dbStore.getRecords(subId, '');
 		const length = records.length;
 
+		console.log('length', length);
+
 		raf(() => {
 			const node = $(this.node);
 			const body = node.find('#body');
@@ -271,12 +273,18 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			const viewItem = viewSelect.find('.viewItem');
 			const offset = isPreview ? 20 : 8;
 
-			let maxHeight = $('#listWidget').height() - head.outerHeight(true);
-			if (viewSelect.length) {
-				maxHeight -= viewSelect.outerHeight(true);
+			let height = HEIGHT * length + offset;
+			if (isPreview) {
+				let maxHeight = $('#listWidget').height() - head.outerHeight(true);
+				if (viewSelect.length) {
+					maxHeight -= viewSelect.outerHeight(true);
+				};
+
+				height = Math.min(maxHeight, height);
 			};
 
-			const css: any = { height: Math.min(maxHeight, HEIGHT * length + offset), paddingTop: '', paddingBottom: 8 };
+			const css: any = { height, paddingTop: '', paddingBottom: 8 };
+			
 			if (!length) {
 				css.paddingTop = 20;
 				css.paddingBottom = 22;
