@@ -15,7 +15,7 @@ interface Props extends I.ViewComponent {
 const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 	render () {
-		const { rootId, recordId, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onMultiSelect } = this.props;
+		const { rootId, recordId, block, getRecord, style, onContext, onDragRecordStart, getColumnWidths, isInline, getVisibleRelations, isCollection, onSelectToggle } = this.props;
 		const relations = getVisibleRelations();
 		const record = getRecord(recordId);
 		const widths = getColumnWidths('', 0);
@@ -72,10 +72,10 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 					<Icon
 						className="dnd"
 						draggable={true}
-						onClick={() => { onMultiSelect(record.id); }}
-						onDragStart={(e: any) => { onDragRecordStart(e, recordId); }}
-						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
-						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
+						onClick={e => onSelectToggle(e, record.id)}
+						onDragStart={e => onDragRecordStart(e, recordId)}
+						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
+						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}
@@ -89,7 +89,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 				id={'row-' + recordId}
 				className={cn.join(' ')}
 				style={style}
-				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				onContextMenu={e => onContext(e, record.id)}
 			>
 				{content}
 			</div>
