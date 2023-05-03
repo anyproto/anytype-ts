@@ -52,6 +52,11 @@
 			.name { display: none; }
 			.empty { padding: 0px 4px; }
 		}
+
+		.cellContent.c-object, .cellContent.c-file {
+			.element { cursor: default; }
+		}
+
 		.cellContent.c-checkbox { padding: 5px 3px; }
 	}
 
