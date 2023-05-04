@@ -58,7 +58,7 @@
 
 .cellContent.c-file {
 	.inputWithFile { border: 0px; padding: 0px; display: none; }
-	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; cursor: pointer; }
+	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; margin-right: 8px; }
 	.element {
 		.iconObject { flex-shrink: 0; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
@@ -74,7 +74,7 @@
 }
 
 .cellContent.c-object {
-	.element { display: inline-block; margin: 0px 8px 2px 0px; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; cursor: pointer; }
+	.element { display: inline-block; margin: 0px 8px 2px 0px; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
 	.element:last-child { margin-right: 0px; }
 	.element {
 		.flex { align-items: center; }
@@ -83,7 +83,7 @@
 }
 
 .cellContent.isName {
-	.iconObject { z-index: 1; cursor: pointer; }
+	.iconObject { z-index: 1; }
 	.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
 }
 
@@ -128,7 +128,7 @@
 		.element { margin: 0px !important; }
 		.element {
 			.icon.objectRemove { 
-				width: 12px; height: 20px; cursor: pointer; margin: 0px 0px 0px 2px; flex-shrink: 0;
+				width: 12px; height: 20px; margin: 0px 0px 0px 2px; flex-shrink: 0;
 				background-image: url('~img/icon/object/remove.svg'); background-size: 8px;
 			}
 			.icon.objectRemove:hover { opacity: 0.8; }
@@ -144,14 +144,11 @@
 .cellContent.canEdit.c-email, 
 .cellContent.canEdit.c-date { cursor: text; }
 
-.cellContent.canEdit.c-checkbox,
-.cellContent.canEdit.c-select { cursor: pointer; }
-
 .cellContent.c-url, 
 .cellContent.c-email, 
 .cellContent.c-phone 
 {
-	.name { text-decoration: none; transition: $transitionAllCommon; cursor: pointer; width: auto; @include text-overflow-nw; width: 100%; }
+	.name { text-decoration: none; transition: $transitionAllCommon; width: auto; @include text-overflow-nw; width: 100%; }
 }
 
 .cellContent.canEdit.c-url, 
