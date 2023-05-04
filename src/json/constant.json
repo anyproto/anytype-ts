@@ -105,7 +105,8 @@
 		"archive": "archive",
 		"sidebar": "sidebar",
 		"graph": "graph",
-		"space": "space"
+		"space": "space",
+		"files": "files"
 	},
 
 	"typeId": {
