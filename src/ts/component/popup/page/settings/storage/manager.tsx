@@ -191,7 +191,6 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
     componentDidMount () {
         this.getData();
-        this.resize();
     };
 
     componentDidUpdate () {
@@ -213,8 +212,6 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                 check.setValue(this.selected.includes(id));
             };
         });
-
-        this.resize();
 
         if (this.refList) {
             this.refList.recomputeRowHeights();
@@ -384,20 +381,6 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
     getFilterValue () {
         return this.refFilter ? this.refFilter.getValue() : '';
-    };
-
-    resize () {
-        const container = Util.getPageContainer(true);
-        const node = $(ReactDOM.findDOMNode(this));
-        const content = $('#popupPage .content');
-        const body = node.find('.body');
-        const hh = Util.sizeHeader();
-        const wh = container.height();
-
-        node.css({ height: wh });
-
-        body.css({ height: wh - hh });
-        content.css({ minHeight: 'unset', height: '100%' });
     };
 
 });
