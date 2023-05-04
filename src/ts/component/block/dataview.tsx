@@ -1072,8 +1072,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.setSelected(ids);
 		this.selectionCheck();
-
-		window.setTimeout(() => menuStore.closeAll(), Constant.delay.menu);
 	};
 
 	setSelected (ids: string[]) {
