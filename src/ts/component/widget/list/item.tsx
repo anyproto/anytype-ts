@@ -49,6 +49,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					id={`widget-icon-${id}`}
 					object={object} 
 					size={48} 
+					iconSize={24}
 					canEdit={!isReadonly && !isArchived} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
@@ -60,7 +61,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					{descr}
 				</div>
 				<div className="buttons">
-					<Icon className="more" tooltip="Options" onClick={(e) => this.onContext(e, true)} />
+					<Icon className="more" tooltip="Options" onMouseDown={e => this.onContext(e, true)} />
 				</div>
 			</div>
 		);

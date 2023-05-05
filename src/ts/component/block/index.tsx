@@ -225,7 +225,6 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Featured: {
-				canSelect = false;
 				canDrop = false;
 				blockComponent = <BlockFeatured key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;

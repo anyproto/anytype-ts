@@ -6,6 +6,7 @@ import Constant from 'json/constant.json';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
+const DELAY_PREVIEW = 300;
 
 interface TooltipParam {
 	text: string;
@@ -41,13 +42,12 @@ class Preview {
 		const { element } = param;
 		const typeX = Number(param.typeX) || I.MenuDirection.Center;
 		const typeY = Number(param.typeY) || I.MenuDirection.Top;
-		const delay = param.delay || DELAY_TOOLTIP;
+		const delay = Number(param.delay) || DELAY_TOOLTIP;
+		const text = String(param.text || '').replace(/\\n/g, '\n');
 
 		if (!element.length || keyboard.isResizing) {
 			return;
 		};
-
-		const text = String(param.text || '').replace(/\\n/, '\n');
 
 		this.delayTooltip = delay;
 
@@ -65,32 +65,38 @@ class Preview {
 			
 			const ow = node.outerWidth();
 			const oh = node.outerHeight();
+
 			let x = left;
 			let y = top;
 
 			switch (typeX) {
 				default:
-				case I.MenuDirection.Center:
+				case I.MenuDirection.Center: {
 					x += ew / 2 - ow / 2;
 					break;
+				};
 
-				case I.MenuDirection.Left:
+				case I.MenuDirection.Left: {
 					break;
+				};
 
-				case I.MenuDirection.Right:
+				case I.MenuDirection.Right: {
 					x += ow - ew;
 					break;
+				};
 			};
 
 			switch (typeY) {
 				default:
-				case I.MenuDirection.Top:
+				case I.MenuDirection.Top: {
 					y -= oh + 6 + st;
 					break;
+				};
 				
-				case I.MenuDirection.Bottom:
+				case I.MenuDirection.Bottom: {
 					y += eh + 6 - st;
 					break;
+				};
 			};
 			
 			x = Math.max(BORDER, x);
@@ -99,7 +105,6 @@ class Preview {
 			node.css({ left: x, top: y }).addClass('show');
 
 			window.clearTimeout(this.timeout.delay);
-
 			this.timeout.delay = window.setTimeout(() => { this.delayTooltip = delay; }, 500);
 			this.delayTooltip = 100;
 		}, this.delayTooltip);
@@ -117,6 +122,7 @@ class Preview {
 		};
 
 		obj.removeClass('show');
+
 		window.clearTimeout(this.timeout.tooltip);
 		window.clearTimeout(this.timeout.delay);
 	};
@@ -136,21 +142,35 @@ class Preview {
 	 * Display a preview
 	 */
 	previewShow (param: I.Preview) {
-		const { element } = param;
-	
-		if (!element.length || keyboard.isPreviewDisabled) {
+		if (keyboard.isPreviewDisabled) {
+			return;
+		};
+
+		param.type = param.type || I.PreviewType.Default;
+		
+		const { element, rect, passThrough } = param;
+		const obj = $('#preview');
+
+		if (!element && !rect) {
 			return;
 		};
 		
-		const obj = $('#preview');
-		
-		element.off('mouseleave.link').on('mouseleave.link', () => window.clearTimeout(this.timeout.preview) );
-		obj.off('mouseleave.link').on('mouseleave.link', () => this.previewHide(false) );
-		
-		this.previewHide(false);
-		
+		if (element) {
+			element.off('mouseleave.preview').on('mouseleave.preview', () => {
+				window.clearTimeout(this.timeout.preview); 
+				if (rect) {
+					this.previewHide(true);
+				};
+			});
+
+			obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
+		};
+
+		passThrough ? obj.addClass('passThrough') : obj.removeClass('passThrough');
+
+		this.previewHide(true);
 		window.clearTimeout(this.timeout.preview);
-		this.timeout.preview = window.setTimeout(() => commonStore.previewSet({ ...param, element }), 500);
+		this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), DELAY_PREVIEW);
 	};
 
 	/**
@@ -160,17 +180,22 @@ class Preview {
 	previewHide (force?: boolean) {
 		const obj = $('#preview');
 
-		obj.css({ opacity: 0 });
-
-		window.clearTimeout(this.timeout.preview);
-		this.timeout.preview = window.setTimeout(() => {
+		const cb = () => {
 			obj.hide();
-			obj.removeClass('top bottom withImage');
+			obj.removeClass('top bottom withImage').css({ transform: '' });
 
 			commonStore.previewClear();
-
 			$('#graphPreview').remove();
-		}, force ? 0 : 250);
+		};
+
+		window.clearTimeout(this.timeout.preview);
+
+		if (force) {
+			cb();
+		} else {
+			obj.css({ opacity: 0, transform: 'translateY(0%)' });
+			this.timeout.preview = window.setTimeout(() => cb(), DELAY_PREVIEW);
+		};
 	};
 
 	/**
@@ -188,9 +213,9 @@ class Preview {
 		const obj = $('#toast');
 
 		setTimeout();
-		obj.off('mouseenter mouseleave');
-		obj.on('mouseenter', () => { window.clearTimeout(this.timeout.toast); });
-		obj.on('mouseleave', () => { setTimeout(); });
+		obj.off('mouseenter.toast mouseleave.toast');
+		obj.on('mouseenter.toast', () => { window.clearTimeout(this.timeout.toast); });
+		obj.on('mouseleave.toast', () => { setTimeout(); });
 	};
 
 	/**
@@ -208,7 +233,6 @@ class Preview {
 			commonStore.toastClear();
 		}, force ? 0 : 250);
 	};
-
 
 	/**
 	 * This method is used by toast to position itself on the screen

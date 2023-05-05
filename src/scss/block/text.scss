@@ -105,7 +105,11 @@
 		#value { -webkit-user-modify: read-write-plaintext-only; }
 	}
 	.block.blockText.textTitle > .wrapContent > .selectable > .dropTarget { padding: 0px; }
+	.block.blockText.textTitle:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 
+	/* Description */
+
+	.block.blockText.textDescription:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block.blockText.textDescription { padding: 0px 0px 4px 0px; @include text-description; }
 
 	/* Header1 */

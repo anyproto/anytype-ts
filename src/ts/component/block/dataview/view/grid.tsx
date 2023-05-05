@@ -35,7 +35,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, getView, onRecordAdd, isPopup, isInline, getRecords, getLimit, getVisibleRelations, className } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, onRecordAdd, getEmpty, getRecords, getLimit, getVisibleRelations } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const records = getRecords();
@@ -44,6 +44,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
+
+		if (!length) {
+			return getEmpty('view');
+		};
 
 		let content = null;
 
@@ -55,7 +59,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 							key={'grid-row-' + view.id + index} 
 							{...this.props} 
 							readonly={!isAllowedObject}
-							index={index} 
+							recordId={id}
 							cellPosition={this.cellPosition}
 							getColumnWidths={this.getColumnWidths}
 						/>
@@ -90,7 +94,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 															key={'grid-row-' + view.id + index} 
 															{...this.props} 
 															readonly={!isAllowedObject}
-															index={index} 
+															recordId={records[index]}
 															style={{ ...style, top: style.top + 2 }}
 															cellPosition={this.cellPosition}
 															getColumnWidths={this.getColumnWidths}
@@ -207,19 +211,21 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const rh = this.getRowHeight();
 
 		if (isInline) {
-			if (parent.isPage() || parent.isLayoutDiv()) {
-				const wrapper = $('#editorWrapper');
-				const ww = wrapper.width();
-				const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
-				const margin = (cw - ww) / 2;
+			if (parent) {
+				if (parent.isPage() || parent.isLayoutDiv()) {
+					const wrapper = $('#editorWrapper');
+					const ww = wrapper.width();
+					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
+					const margin = (cw - ww) / 2;
 
-				scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
-				wrap.css({ width: vw + margin, paddingRight: margin - 8 });
-			} else {
-				const parentObj = $(`#block-${parent.id}`);
-				const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
+					scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+					wrap.css({ width: vw + margin, paddingRight: margin - 8 });
+				} else {
+					const parentObj = $(`#block-${parent.id}`);
+					const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
 
-				wrap.css({ width: Math.max(vw, width) });
+					wrap.css({ width: Math.max(vw, width) });
+				};
 			};
 		} else {
 			const mw = cw - PADDING * 2;

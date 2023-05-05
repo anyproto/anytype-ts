@@ -63,8 +63,6 @@ export const Mapper = {
 
 		AccountConfig: (obj: any): I.AccountConfig => {
 			return {
-				allowSpaces: obj.getEnablespaces(),
-				allowBeta: obj.getEnableprereleasechannel(),
 			};
 		},
 

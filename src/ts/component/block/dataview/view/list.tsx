@@ -21,7 +21,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { rootId, block, getView, isPopup, onRecordAdd, isInline, getLimit, className, getRecords } = this.props;
+		const { rootId, block, className, isPopup, isInline, getView, onRecordAdd, getLimit, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const records = getRecords();
 		const { offset, total } = dbStore.getMeta(dbStore.getSubId(rootId, block.id), '');
@@ -29,6 +29,10 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 		const length = records.length;
 		const isAllowedObject = this.props.isAllowedObject();
 		const cn = [ 'viewContent', className ];
+
+		if (!length) {
+			return getEmpty('view');
+		};
 
 		let content = null;
 
@@ -41,7 +45,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 							{...this.props}
 							style={{height: HEIGHT}}
 							readonly={!isAllowedObject}
-							index={index}
+							recordId={id}
 						/>
 					))}
 				</div>
@@ -73,7 +77,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 													<div className="listItem" key={'grid-row-' + view.id + index} style={style}>
 														<Row
 															{...this.props}
-															index={index}
+															recordId={records[index]}
 														/>
 													</div>
 												)}

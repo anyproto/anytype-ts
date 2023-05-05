@@ -5,7 +5,7 @@
 
 	.items {
 		.item { 
-			cursor: pointer; transition: $transitionAllCommon; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
+			transition: $transitionAllCommon; position: relative; line-height: 48px; margin-bottom: 16px; padding: 0px; 
 			height: 80px; border: 1px solid $colorBorderLight; border-radius: 8px;
 		}
 		.item {

@@ -37,8 +37,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	render () {
 		const { isEditing } = this.state;
-		const { index, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
-		const record = getRecord(index);
+		const { recordId, relation, getView, getRecord, textLimit, isInline, iconSize, placeholder, shortUrl } = this.props;
+		const record = getRecord(recordId);
 		
 		if (!record) {
 			return null;
@@ -119,6 +119,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					/>
 				);
 			};
+
 			Name = (item: any) => (
 				<EditorComponent 
 					value={item.name} 
@@ -153,22 +154,14 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					const date = day ? day : Util.date(DataUtil.dateFormat(viewRelation.dateFormat), value);
 					const time = Util.date(DataUtil.timeFormat(viewRelation.timeFormat), value);
 					
-					if (viewRelation.includeTime) {
-						value = [ date, time ].join((day ? ', ' : ' '));
-					} else {
-						value = date;
-					};
+					value = viewRelation.includeTime ? [ date, time ].join((day ? ', ' : ' ')) : date;
 				} else {
 					value = '';
 				};
 			};
 
 			if ((relation.format == I.RelationType.Url) && shortUrl) {
-				if (value !== null) {
-					value = Util.shortUrl(value);
-				} else {
-					value = '';
-				};
+				value = value !== null ? Util.shortUrl(value) : '';
 			};
 
 			if (relation.format == I.RelationType.Number) {
@@ -203,7 +196,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				);
 			};
 
-			value = value || ObjectUtil.defaultName('page');
+			value = value || ObjectUtil.defaultName('Page');
 			if (record.layout == I.ObjectLayout.Note) {
 				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};
@@ -218,8 +211,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	componentDidMount () {
-		const { relation, index, getRecord } = this.props;
-		const record = getRecord(index);
+		const { relation, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 
 		this._isMounted = true;
 		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
@@ -358,8 +351,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onBlur (e: any) {
-		const { relation, onChange, index, getRecord } = this.props;
-		const record = getRecord(index);
+		const { relation, onChange, recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 
 		if (!this.ref || keyboard.isBlurDisabled || !record) {
 			return;
@@ -402,24 +395,18 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 	};
 
 	onIconSelect (icon: string) {
-		const { index, getRecord } = this.props;
-		const record = getRecord(index);
-
-		ObjectUtil.setIcon(record.id, icon, '');
+		ObjectUtil.setIcon(this.props.recordId, icon, '');
 	};
 
 	onIconUpload (hash: string) {
-		const { index, getRecord } = this.props;
-		const record = getRecord(index);
-
-		ObjectUtil.setIcon(record.id, '', hash);
+		ObjectUtil.setIcon(this.props.recordId, '', hash);
 	};
 
 	onCheckbox () {
-		const { index, getRecord, onCellChange } = this.props;
-		const record = getRecord(index);
+		const { recordId, getRecord } = this.props;
+		const record = getRecord(recordId);
 
-		onCellChange(record.id, 'done', !record.done);
+		ObjectUtil.setDone(recordId, !record.done, () => this.forceUpdate());
 	};
 
 });

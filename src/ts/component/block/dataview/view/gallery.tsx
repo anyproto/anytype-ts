@@ -31,17 +31,20 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, getView, getKeys, isPopup, isInline, getLimit, getVisibleRelations, getRecords, className } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, getRecords, getEmpty } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = getRecords();
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
-		const allowed = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		const limit = getLimit();
 		const length = records.length;
 		const cn = [ 'viewContent', className ];
+
+		if (!length) {
+			return getEmpty('view');
+		};
 
 		// Subscriptions on dependent objects
 		for (let id of records) {
@@ -71,7 +74,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 						<Card 
 							key={'gallery-card-' + view.id + index} 
 							{...this.props}
-							index={index} 
+							recordId={id}
 						/>
 					))}
 				</React.Fragment>
@@ -107,7 +110,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 														<Card 
 															key={'gallery-card-' + view.id + index} 
 															{...this.props} 
-															index={index} 
+															recordId={records[index]}
 															style={{ ...style, width: this.columnWidth }}
 														/>
 													</CellMeasurer>

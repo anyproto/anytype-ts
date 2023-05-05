@@ -74,7 +74,7 @@
 .widget.widgetList.isPreview { padding: 0px; }
 .widget.widgetList.isPreview {
 	.head { margin: 0px; }
-	.body { height: 100%; padding-bottom: 0px; }
-	.ReactVirtualized__List { padding: 12px 0px; }
+	.body { height: 100%; padding: 0px; }
+	.ReactVirtualized__List { padding: 12px 8px; }
 	.contentWrapper { height: calc(100% - 77px); }
 }

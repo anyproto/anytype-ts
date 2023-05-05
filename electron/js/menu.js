@@ -1,6 +1,8 @@
 const { app, shell, Menu, Tray } = require('electron');
 const { is } = require('electron-util');
 const path = require('path');
+const userPath = app.getPath('userData');
+const logPath = path.join(userPath, 'logs');
 
 const ConfigManager = require('./config.js');
 const Util = require('./util.js');
@@ -52,7 +54,10 @@ class MenuManager {
 			{
 				role: 'fileMenu',
 				submenu: [
-					{ label: 'Show work directory', click: () => { shell.openPath(app.getPath('userData')); } },
+					{ label: 'Show work directory', click: () => { shell.openPath(userPath); } },
+					{ label: 'Show logs', click: () => { shell.openPath(logPath); } },
+
+					Separator,
 					{
 						label: 'Import',
 						click: () => { Util.send(this.win, 'popup', 'settings', { data: { page: 'importIndex' } }); }
@@ -175,7 +180,7 @@ class MenuManager {
 			},
 		];
 
-		if (config.allowDebug || config.allowBeta) {
+		//if (config.allowDebug || config.allowBeta) {
 			config.debug = config.debug || {};
 
 			const flags = { 
@@ -209,7 +214,7 @@ class MenuManager {
 					{ label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I', click: () => { this.win.webContents.openDevTools(); } },
 				]
 			});
-		};
+		//};
 
 		const channels = ConfigManager.getChannels().map(it => {
 			it.click = () => { 

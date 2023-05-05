@@ -198,7 +198,7 @@ class CommonStore {
 	};
 
     filterSetText (text: string) {
-		this.filterObj.text = Util.filterFix(text);
+		this.filterObj.text = text;
 	};
 
     filterSet (from: number, text: string) {

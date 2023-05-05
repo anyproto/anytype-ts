@@ -103,24 +103,11 @@ class DataUtil {
 	};
 
 	linkCardClass (v: I.LinkCardStyle): string {
-		let c = '';
-		switch (v) {
-			default:
-			case I.LinkCardStyle.Text:		 c = 'text'; break;
-			case I.LinkCardStyle.Card:		 c = 'card'; break;
-		};
-		return c;
+		return String(I.LinkCardStyle[v] || 'text').toLowerCase();
 	};
 
 	cardSizeClass (v: I.CardSize) {
-		let c = '';
-		switch (v) {
-			default:
-			case I.CardSize.Small:		 c = 'small'; break;
-			case I.CardSize.Medium:		 c = 'medium'; break;
-			case I.CardSize.Large:		 c = 'large'; break;
-		};
-		return c;
+		return String(I.CardSize[v] || 'small').toLowerCase();
 	};
 
 	dateFormat (v: I.DateFormat): string {
@@ -175,14 +162,7 @@ class DataUtil {
 	};
 	
 	alignIcon (v: I.BlockHAlign): string {
-		let icon = '';
-		switch (v) {
-			default:
-			case I.BlockHAlign.Left:		 icon = 'left'; break;
-			case I.BlockHAlign.Center:	 icon = 'center'; break;
-			case I.BlockHAlign.Right:	 icon = 'right'; break;
-		};
-		return icon;
+		return String(I.BlockHAlign[v] || 'left').toLowerCase();
 	};
 	
 	selectionGet (id: string, withChildren: boolean, save: boolean, props: any): string[] {
@@ -746,7 +726,7 @@ class DataUtil {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), Util.filterFix(param.fullText).replace(/\\/g, ''), offset, limit, callBack);
+		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), Util.filterFix(param.fullText), offset, limit, callBack);
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {

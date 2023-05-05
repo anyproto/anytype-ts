@@ -272,8 +272,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					dataChange: (items: any[]) => {
 						const fixed: any[] = [
 							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
-							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':books:' },
-							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':open_file_folder:' },
+							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':mag:' },
+							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':card_index_dividers:' },
 							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 						];
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
@@ -389,20 +389,26 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		if (coords) {
 			const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
 
-			if (widgetIds.length) {
-				let prevY = 0;
-				for (let id of widgetIds) {
-					const item = $(`#widget-${id}`);
-					const { top } = item.offset();
-					const height = item.outerHeight();
-					
-					if ((coords.y >= prevY) && (coords.y <= top + height + 12)) {
-						targetId = id;
-						break;
-					};
+			if (!widgetIds.length) {
+				return '';
+			};
 
-					prevY = top;
+			let prevY = 0;
+			for (let id of widgetIds) {
+				const item = $(`#widget-${id}`);
+				if (!item) {
+					continue;
 				};
+
+				const { top } = item.offset();
+				const height = item.outerHeight();
+				
+				if ((coords.y >= prevY) && (coords.y <= top + height + 12)) {
+					targetId = id;
+					break;
+				};
+
+				prevY = top;
 			};
 		};
 

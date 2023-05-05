@@ -13,7 +13,8 @@ class Description extends React.Component<Props> {
 	};
 
 	render () {
-		const { object, className } = this.props;
+		const { className } = this.props;
+		const object = this.props.object || {};
 		const description = (object.layout != I.ObjectLayout.Note) ? (object.description || object.snippet) : '';
 
 		return (

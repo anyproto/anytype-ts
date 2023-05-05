@@ -605,9 +605,8 @@ onMouseMove = ({ x, y }) => {
 			isHovering = true;
 		};
 
-		send('onMouseMove', { node: (d ? d.id : ''), x, y, k: transform.k });
 		redraw();
-	}, 300);
+	}, 200);
 };
 
 onContextMenu = ({ x, y }) => {
@@ -748,7 +747,7 @@ const isLayoutBookmark = (d) => {
 };
 
 const isIconCircle = (d) => {
-	return isLayoutHuman(d) || isLayoutBookmark(d);
+	return isLayoutHuman(d);
 };
 
 const getNodeById = (id) => {

@@ -24,7 +24,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 		const { rootId, block, readonly, isPopup } = this.props;
 		const relationKey = block.content.key;
 		const idPrefix = 'blockRelationCell' + block.id;
-		const id = Relation.cellId(idPrefix, relationKey, '0');
+		const id = Relation.cellId(idPrefix, relationKey, rootId);
 		const cn = [ 'wrap', 'focusable', 'c' + block.id ];
 
 		let relation = dbStore.getRelationByKey(relationKey);
@@ -73,9 +73,9 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 							block={block}
 							relationKey={relation.relationKey}
 							getRecord={() => detailStore.get(rootId, rootId, [ relation.relationKey ], true)}
+							recordId={rootId}
 							viewType={I.ViewType.Grid}
 							readonly={readonly || !allowedValue}
-							index={0}
 							idPrefix={idPrefix}
 							menuClassName="fromBlock"
 							onCellChange={this.onCellChange}
@@ -160,10 +160,8 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
 		const { rootId } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
-		const details = [ 
-			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
+		
+		C.ObjectSetDetails(rootId, [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'block' });

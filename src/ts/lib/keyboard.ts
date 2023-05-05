@@ -108,6 +108,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
+		const isMainSet = this.isMainSet();
 
 		this.pressed.push(key);
 
@@ -208,11 +209,13 @@ class Keyboard {
 				};
 			});
 
-			// Create new page
-			this.shortcut(`${cmd}+n`, e, () => {
-				e.preventDefault();
-				this.pageCreate();
-			});
+			if (!isMainSet) {
+				// Create new page
+				this.shortcut(`${cmd}+n`, e, () => {
+					e.preventDefault();
+					this.pageCreate();
+				});
+			};
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {

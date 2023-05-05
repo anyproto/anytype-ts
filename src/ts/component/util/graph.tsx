@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics } from 'Lib';
+import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics, Preview } from 'Lib';
 import { commonStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -33,11 +33,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	images: any = {};
 	subject: any = null;
 	isDragging = false;
-	isPreview = false;
 	isPreviewDisabled = false;
 	ids: string[] = [];
 	timeoutPreview = 0;
 	zoom: any = null;
+	previewId = '';
 
 	constructor (props: Props) {
 		super(props);
@@ -167,7 +167,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
-			d.name = d.name || ObjectUtil.defaultName('page');
+			d.name = d.name || ObjectUtil.defaultName('Page');
 		};
 
 		d.name = SmileUtil.strip(d.name);
@@ -250,13 +250,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			return;
 		};
 
-		this.isPreview = true;
-
 		const win = $(window);
 		const body = $('body');
 		const node = $(this.node);
 		const { left, top } = node.offset();
-
+		
 		let el = $('#graphPreview');
 
 		const position = () => {
@@ -277,10 +275,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	};
 
 	onPreviewHide () {
-		if (this.isPreview) {
-			window.clearTimeout(this.timeoutPreview);
-			$('#graphPreview').remove();
-		};
+		$('#graphPreview').remove();
 	};
 
 	onMessage (e) {
@@ -307,7 +302,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		switch (id) {
 			case 'onClick': {
 				onClick(data.node);
-				window.clearTimeout(this.timeoutPreview);
 				break;
 			};
 
@@ -403,7 +397,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case I.ObjectLayout.Bookmark: {
-				src = commonStore.imageUrl(d.iconImage, 24);
+				if (d.iconImage) {
+					src = commonStore.imageUrl(d.iconImage, 24);
+				};
 				break;
 			};
 				

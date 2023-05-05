@@ -171,7 +171,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 	};
 
 	getSections () {
-		const filter = this.getFilter().replace(/\\/g, '');
+		const filter = this.getFilter();
 		const sections: any[] = [];
 
 		if (this.items.length) {
@@ -272,7 +272,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = commonStore.filter;
 
 		const cb = (id: string, name: string) => {
-			name = String(name || ObjectUtil.defaultName('page'));
+			name = String(name || ObjectUtil.defaultName('Page'));
 			name = Util.shorten(name, 30);
 
 			const to = from + name.length;

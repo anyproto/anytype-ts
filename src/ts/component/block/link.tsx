@@ -22,6 +22,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		this.onCheckbox = this.onCheckbox.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render() {
@@ -132,7 +133,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			cnc.push('c' + n);
 
 			element = (
-				<div className={cnc.join(' ')} onClick={this.onClick}>
+				<div className={cnc.join(' ')} onMouseDown={this.onClick}>
 					<div id="sides" className={cns.join(' ')}>
 						<div key="sideLeft" className={cnl.join(' ')}>
 							<div className="relationItem cardName">
@@ -184,6 +185,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				onKeyUp={this.onKeyUp} 
 				onFocus={this.onFocus}
 				onMouseEnter={this.onMouseEnter}
+				onMouseLeave={this.onMouseLeave}
 			>
 				{element}
 			</div>
@@ -287,7 +289,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		ObjectUtil.setDone(targetBlockId, !object.done);
 	};
 
-	onMouseEnter () {
+	onMouseEnter (e: React.MouseEvent) {
 		const { rootId, block } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
@@ -296,10 +298,16 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 
-		const node = $(this.node);
-		const element = node.find('.name');
+		Preview.previewShow({ 
+			rect: { x: e.pageX, y: e.pageY, width: 0, height: 10 }, 
+			target: targetBlockId, 
+			noUnlink: true,
+			passThrough: true,
+		});
+	};
 
-		Preview.previewShow({ element, target: targetBlockId, type: I.PreviewType.Default, noUnlink: true });
+	onMouseLeave () {
+		Preview.previewHide(true);
 	};
 
 	resize () {

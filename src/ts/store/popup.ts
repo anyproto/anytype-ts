@@ -61,8 +61,8 @@ class PopupStore {
 		if (!item) {
 			return;
 		};
-		
-		set(item, { param: param });
+
+		set(item, { param: Object.assign(item.param, param) });
 	};
 
     updateData (id: string, data: any) {

@@ -49,7 +49,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								ref={ref => this.refName = ref} 
 								value={name} 
 								onKeyUp={this.onName} 
-								placeholder={ObjectUtil.defaultName('page')} 
+								placeholder={ObjectUtil.defaultName('Page')} 
 							/>
 						</div>
 					</div>
@@ -135,7 +135,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	checkName (v: string): string {
-		if ((v == ObjectUtil.defaultName('space')) || (v == ObjectUtil.defaultName('page'))) {
+		if ((v == ObjectUtil.defaultName('Space')) || (v == ObjectUtil.defaultName('Page'))) {
 			v = '';
 		};
 		return v;

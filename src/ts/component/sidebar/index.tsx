@@ -31,6 +31,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
     render() {
         const cn = [ 'sidebar' ];
+		const cmd = keyboard.cmdSymbol();
 
         return (
             <div 
@@ -42,6 +43,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					<Icon
 						className="toggleSidebar"
 						tooltip="Close sidebar"
+						tooltipCaption={`${cmd} + \\`}
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => { sidebar.collapse(); }}
 					/>
