@@ -66,6 +66,7 @@ class Sidebar {
 	initObjects () {
 		this.obj = $('#sidebar');
 		this.page = $('#page.isFull');
+		this.page = $('#page.isFull');
 		this.header = this.page.find('#header');
 		this.footer = this.page.find('#footer');
 		this.loader = this.page.find('#loader');
@@ -294,9 +295,7 @@ class Sidebar {
 	};
 
 	resizePage () {
-		if (!this.page || !this.page.length) {
-			this.initObjects();
-		};
+		this.initObjects();
 
 		const { isSidebarFixed } = commonStore;
 		const { snap } = this.data;
