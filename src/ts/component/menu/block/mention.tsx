@@ -315,6 +315,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	getRowHeight (item: any) {
 		let h = HEIGHT_ITEM;
+		if (!item) {
+			return h;
+		};
+
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};
