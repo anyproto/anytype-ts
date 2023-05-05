@@ -89,7 +89,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	};
 
 	onPathClick (e: any) {
-		Action.openDir(paths => authStore.accountPathSet(paths[0]));
+		Action.openDir({}, paths => authStore.accountPathSet(paths[0]));
 	};
 	
 	onNameChange (e: any) {

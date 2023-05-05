@@ -700,7 +700,7 @@ class App extends React.Component<object, State> {
 				break;
 
 			case 'exportTemplates':
-				Action.openDir(paths => {
+				Action.openDir({}, paths => {
 					C.TemplateExportAll(paths[0], (message: any) => {
 						if (message.error.code) {
 							return;
@@ -712,7 +712,7 @@ class App extends React.Component<object, State> {
 				break;
 
 			case 'exportLocalstore':
-				Action.openDir(paths => {
+				Action.openDir({}, paths => {
 					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
 							Renderer.send('pathOpen', paths[0]);
