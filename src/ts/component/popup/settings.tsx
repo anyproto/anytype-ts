@@ -228,7 +228,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
 					{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-					{ id: 'storageIndex', name: translate('popupSettingsStorageIndexTitle'), icon: 'storage' },
+					{ id: 'storageIndex', name: translate('popupSettingsStorageIndexTitle'), icon: 'storage', subPages: [ 'storageManager' ] },
 				] 
 			},
 			{ 
