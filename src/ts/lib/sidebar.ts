@@ -38,13 +38,7 @@ class Sidebar {
 	timeoutAnim = 0;
 
 	init () {
-		this.obj = $('#sidebar');
-		this.page = $('#page.isFull');
-		this.header = this.page.find('#header');
-		this.footer = this.page.find('#footer');
-		this.loader = this.page.find('#loader');
-		this.dummyLeft = $('#sidebarDummyLeft');
-		this.dummyRight = $('#sidebarDummyRight');
+		this.initObjects();
 
 		const stored = Storage.get('sidebar');
 		if (stored) {
@@ -67,6 +61,16 @@ class Sidebar {
 			commonStore.autoSidebarSet(true);
 			commonStore.isSidebarFixedSet(false);
 		};
+	};
+
+	initObjects () {
+		this.obj = $('#sidebar');
+		this.page = $('#page.isFull');
+		this.header = this.page.find('#header');
+		this.footer = this.page.find('#footer');
+		this.loader = this.page.find('#loader');
+		this.dummyLeft = $('#sidebarDummyLeft');
+		this.dummyRight = $('#sidebarDummyRight');
 	};
 
 	onMouseMove (): void {
@@ -291,7 +295,7 @@ class Sidebar {
 
 	resizePage () {
 		if (!this.page || !this.page.length) {
-			return;
+			this.initObjects();
 		};
 
 		const { isSidebarFixed } = commonStore;
