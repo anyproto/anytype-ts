@@ -84,7 +84,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 				</div>
 
 				<div className="buttons">
-					<Icon className="more" tooltip="Options" onClick={(e) => this.onContext(e, true)} />
+					<Icon className="more" tooltip="Options" onMouseDown={e => this.onContext(e, true)} />
 				</div>
 			</div>
 		);
