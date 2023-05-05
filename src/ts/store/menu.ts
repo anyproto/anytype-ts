@@ -139,7 +139,6 @@ class MenuStore {
     closeAll (ids?: string[], callBack?: () => void) {
 		let items = ids && ids.length ? this.menuList.filter(it => ids.includes(it.id)) : this.menuList;
 
-		items = items.filter(it => !it.param.noClose);
 		items.forEach(it => this.close(it.id));
 
 		this.clearTimeout();
