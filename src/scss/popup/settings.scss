@@ -35,9 +35,9 @@
 				.space:hover, .space.active { background: $colorBorderDark; }
 				.space {
 					.iconObject { flex-shrink: 0; }
-					.txt { width: calc(100% - 40px); }
-					.name { @include text-common; font-weight: 600; }
-					.type { @include text-small; color: $colorDarkGrey; }
+					.txt { width: calc(100% - 52px); }
+					.name { @include text-common; @include text-overflow-nw; font-weight: 600; }
+					.type { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; }
 				}
 
 				.items { display: flex; flex-direction: column; gap: 2px 0px; }
