@@ -137,14 +137,24 @@ class MenuStore {
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
-		let items = ids && ids.length ? this.menuList.filter(it => ids.includes(it.id)) : this.menuList;
+		this.getItems(ids).filter(it => !it.param.noClose).forEach(it => this.close(it.id));
+		this.onCloseAll(callBack);
+	};
 
-		items.forEach(it => this.close(it.id));
+	closeAllForced (ids?: string[], callBack?: () => void) {
+		this.getItems(ids).forEach(it => this.close(it.id));
+		this.onCloseAll(callBack);
+	};
 
+	onCloseAll (callBack?: () => void) {
 		this.clearTimeout();
 		if (callBack) {
 			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
 		};
+	};
+
+	getItems (ids?: string[]) {
+		return ids && ids.length ? this.menuList.filter(it => ids.includes(it.id)) : this.menuList;
 	};
 
 	closeLast () {
