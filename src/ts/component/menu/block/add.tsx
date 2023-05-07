@@ -279,7 +279,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const relationKeys = relations.map(it => it.relationKey);
 		const typeRelations = (type ? type.recommendedRelations || [] : []).
 			map(it => dbStore.getRelationById(it)).
-			filter(it => it.relationKey && !relationKeys.includes(it.relationKey));
+			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
 		const ret = relations.concat(typeRelations).filter(it => !config.debug.ho && it.isHidden ? false : it.isInstalled).sort(DataUtil.sortByName);
 
