@@ -14,7 +14,6 @@ interface Props extends I.WidgetComponent {
 	name?: string;
 	icon?: string;
 	disableContextMenu?: boolean;
-	isPreview?: boolean;
 	className?: string;
 	onDragStart?: (e: React.MouseEvent, blockId: string) => void;
 	onDragOver?: (e: React.MouseEvent, blockId: string) => void;

@@ -42,6 +42,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	render() {
 		const { loading } = this.state;
+		const { isPreview } = this.props;
 		const nodes = this.loadTree();
 		const length = nodes.length;
 
@@ -56,9 +57,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		} else
 		if (!length) {
 			content = <Label className="empty" text="There are no objects here,<br/>create the first one" />;
-		} else {
-			const rowRenderer = ({ index, key, parent, style }) => {
+		} else 
+		if (isPreview) {
+			const rowRenderer = ({ index, parent, style }) => {
 				const node: I.WidgetTreeItem = nodes[index];
+				const key = this.getTreeKey(node);
 
 				return (
 					<CellMeasurer
@@ -110,6 +113,27 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 						</AutoSizer>
 					)}
 				</InfiniteLoader>
+			);
+		} else {
+			content = (
+				<div className="ReactVirtualized__List">
+					{nodes.map((node, i: number) => {
+						const key = this.getTreeKey(node);
+						return (
+							<Item
+								key={key}
+								{...this.props}
+								{...node}
+								index={i}
+								treeKey={key}
+								onClick={this.onClick}
+								onToggle={this.onToggle}
+								setActive={this.setActive}
+								getSubId={this.getSubId}
+							/>
+						);
+					})}
+				</div>
 			);
 		};
 

@@ -9,7 +9,7 @@ interface Props extends I.WidgetTreeItem {
 	block: I.Block;
 	index: number;
 	treeKey: string;
-	style;
+	style?;
 	isEditing?: boolean;
 	onClick?(e: React.MouseEvent, props): void;
 	onToggle?(e: React.MouseEvent, props): void;
