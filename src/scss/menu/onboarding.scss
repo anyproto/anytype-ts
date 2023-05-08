@@ -69,7 +69,7 @@
 		.content { padding: 16px; max-height: unset; }
 		.icon.close { right: 16px; top: 17px; }
 
-		video { margin-top: 12px; }
+		video { margin-top: 12px; border-radius: 4px; border: 1px solid $colorBorderLight; }
 		.confettiCanvas { position: absolute; pointer-events: none; width: 100%;  height: 100%; left: 0; top: 0; }
 		.bottom { position: absolute; bottom: 16px; width: calc(100% - 32px); margin: 0px; }
 	}
