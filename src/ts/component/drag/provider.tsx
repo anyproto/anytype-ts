@@ -65,11 +65,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			return;
 		};
 
-		const node = $(this.node);
+		const isPopup = keyboard.isPopup();
+		const container = Util.getPageContainer(isPopup);
 		const rootId = keyboard.getRootId();
 
 		this.init = true;
-		this.objects = node.find('.dropTarget.isDroppable.root-' + rootId);
+		this.objects = container.find('.dropTarget.isDroppable.root-' + rootId);
 		
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);
