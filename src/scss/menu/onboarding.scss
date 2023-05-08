@@ -14,7 +14,10 @@
 			p:last-child { margin-bottom: 0px; }
 		}
 
-		.highlight { background: $colorBorderLight; white-space: nowrap; border-radius: 2px; padding: 2px 6px; color: $colorMediumGrey; }
+		.highlight { 
+			background: $colorBorderLight; white-space: nowrap; border-radius: 4px; padding: 2px 6px; color: $colorMediumGrey; 
+			font-family: 'Plex'; font-weight: 400; font-size: 14px; line-height: 14px; letter-spacing: -0.12px;
+		}
 		a { color: #fff; text-decoration: underline; }
 
 		.icon.close { 

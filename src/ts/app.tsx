@@ -70,7 +70,6 @@ import 'scss/component/list/object.scss';
 import 'scss/component/list/previewObject.scss';
 
 import 'scss/component/preview/common.scss';
-import 'scss/component/preview/default.scss';
 import 'scss/component/preview/link.scss';
 import 'scss/component/preview/object.scss';
 
