@@ -183,7 +183,9 @@ class Action {
 	};
 
 	export (ids: string[], format: I.ExportFormat, zip: boolean, nested: boolean, files: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
-		this.openDir({}, paths => {
+		this.openDir({
+			buttonLabel: 'Export',
+		}, paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};

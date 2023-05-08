@@ -56,18 +56,11 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		};
 	};
 
-	getItems () {
-		const { config } = commonStore;
-		
-		let items: any[] = [
+	getItems (): any[] {
+		return [
 			{ id: 'markdown', name: 'Markdown' },
 			{ id: 'protobuf', name: 'Protobuf' },
 		];
-		if (!config.experimental) {
-			items = items.filter(it => [ 'html' ].includes(it.id));
-		};
-
-		return items;
 	};
 
 });
