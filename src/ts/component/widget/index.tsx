@@ -285,7 +285,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		window.setTimeout(() => { 
 			node.removeClass('isClosed');
 			wrapper.css({ height: 'auto' });
-		}, 350);
+		}, 450);
 	};
 
 	close () {
@@ -300,7 +300,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			node.addClass('isClosed'); 
 			wrapper.css({ height: 0 });
 		});
-		window.setTimeout(() => { wrapper.css({ height: '' }); }, 350);
+		window.setTimeout(() => { wrapper.css({ height: '' }); }, 450);
 	};
 
 	getData (subId: string, callBack?: () => void) {
