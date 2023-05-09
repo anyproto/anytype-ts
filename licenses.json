@@ -1,0 +1,3332 @@
+{
+  "@amplitude/ua-parser-js@0.7.20": {
+    "licenses": "(GPL-2.0 OR MIT)",
+    "repository": "https://github.com/amplitude/ua-parser-js",
+    "publisher": "Faisal Salman",
+    "email": "f@faisalman.com",
+    "url": "http://faisalman.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@amplitude/ua-parser-js",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@amplitude/ua-parser-js/license.md"
+  },
+  "@babel/runtime@7.18.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/babel/babel",
+    "publisher": "The Babel Team",
+    "url": "https://babel.dev/team",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@babel/runtime",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@babel/runtime/LICENSE"
+  },
+  "@electron/get@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/electron/get",
+    "publisher": "Samuel Attard",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@electron/get",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@electron/get/LICENSE"
+  },
+  "@electron/remote@2.0.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/electron/remote",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@electron/remote",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@electron/remote/LICENSE"
+  },
+  "@gar/promisify@1.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wraithgar/gar-promisify",
+    "publisher": "Gar",
+    "email": "gar+npm@danger.computer",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@gar/promisify",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@gar/promisify/LICENSE.md"
+  },
+  "@jridgewell/gen-mapping@0.3.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jridgewell/gen-mapping",
+    "publisher": "Justin Ridgewell",
+    "email": "justin@ridgewell.name",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/source-map/node_modules/@jridgewell/gen-mapping",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/source-map/node_modules/@jridgewell/gen-mapping/LICENSE"
+  },
+  "@jridgewell/resolve-uri@3.0.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jridgewell/resolve-uri",
+    "publisher": "Justin Ridgewell",
+    "email": "justin@ridgewell.name",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/resolve-uri",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/resolve-uri/LICENSE"
+  },
+  "@jridgewell/set-array@1.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jridgewell/set-array",
+    "publisher": "Justin Ridgewell",
+    "email": "justin@ridgewell.name",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/set-array",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/set-array/LICENSE"
+  },
+  "@jridgewell/source-map@0.3.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jridgewell/source-map",
+    "publisher": "Justin Ridgewell",
+    "email": "justin@ridgewell.name",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/source-map",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/source-map/LICENSE"
+  },
+  "@jridgewell/sourcemap-codec@1.4.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jridgewell/sourcemap-codec",
+    "publisher": "Rich Harris",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/sourcemap-codec",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/sourcemap-codec/LICENSE"
+  },
+  "@jridgewell/trace-mapping@0.3.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jridgewell/trace-mapping",
+    "publisher": "Justin Ridgewell",
+    "email": "justin@ridgewell.name",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/trace-mapping",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@jridgewell/trace-mapping/LICENSE"
+  },
+  "@npmcli/fs@2.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/fs",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@npmcli/fs",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@npmcli/fs/LICENSE.md"
+  },
+  "@npmcli/move-file@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/npm/move-file",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@npmcli/move-file",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@npmcli/move-file/LICENSE.md"
+  },
+  "@sentry/browser@7.39.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/getsentry/sentry-javascript",
+    "publisher": "Sentry",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/browser",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/browser/LICENSE"
+  },
+  "@sentry/core@7.39.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/getsentry/sentry-javascript",
+    "publisher": "Sentry",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/core",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/core/LICENSE"
+  },
+  "@sentry/replay@7.39.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/getsentry/sentry-javascript",
+    "publisher": "Sentry",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/replay",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/replay/LICENSE"
+  },
+  "@sentry/types@7.39.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/getsentry/sentry-javascript",
+    "publisher": "Sentry",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/types",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/types/LICENSE"
+  },
+  "@sentry/utils@7.39.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/getsentry/sentry-javascript",
+    "publisher": "Sentry",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/utils",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sentry/utils/LICENSE"
+  },
+  "@sindresorhus/is@4.6.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/is",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sindresorhus/is",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@sindresorhus/is/license"
+  },
+  "@szmarczak/http-timer@4.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/szmarczak/http-timer",
+    "publisher": "Szymon Marczak",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@szmarczak/http-timer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@szmarczak/http-timer/LICENSE"
+  },
+  "@tootallnate/once@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/once",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@tootallnate/once",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@tootallnate/once/LICENSE"
+  },
+  "@types/cacheable-request@6.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/cacheable-request",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/cacheable-request/LICENSE"
+  },
+  "@types/canvas-confetti@1.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/canvas-confetti",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/canvas-confetti/LICENSE"
+  },
+  "@types/eslint-scope@3.7.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/eslint-scope",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/eslint-scope/LICENSE"
+  },
+  "@types/eslint@8.4.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/eslint",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/eslint/LICENSE"
+  },
+  "@types/estree@0.0.51": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/estree",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/estree/LICENSE"
+  },
+  "@types/http-cache-semantics@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/http-cache-semantics",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/http-cache-semantics/LICENSE"
+  },
+  "@types/json-schema@7.0.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/json-schema",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/json-schema/LICENSE"
+  },
+  "@types/keyv@3.1.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/keyv",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/keyv/LICENSE"
+  },
+  "@types/node@12.20.55": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/node",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/node/LICENSE"
+  },
+  "@types/node@16.11.43": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron/node_modules/@types/node",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron/node_modules/@types/node/LICENSE"
+  },
+  "@types/responselike@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/responselike",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/responselike/LICENSE"
+  },
+  "@types/semver@7.3.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/semver",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/semver/LICENSE"
+  },
+  "@types/yauzl@2.10.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/yauzl",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@types/yauzl/LICENSE"
+  },
+  "@webassemblyjs/ast@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/ast",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/ast/LICENSE"
+  },
+  "@webassemblyjs/floating-point-hex-parser@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Mauro Bringolf",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/floating-point-hex-parser",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/floating-point-hex-parser/LICENSE"
+  },
+  "@webassemblyjs/helper-api-error@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-api-error",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-api-error/LICENSE"
+  },
+  "@webassemblyjs/helper-buffer@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-buffer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-buffer/LICENSE"
+  },
+  "@webassemblyjs/helper-numbers@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-numbers",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-numbers/LICENSE"
+  },
+  "@webassemblyjs/helper-wasm-bytecode@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-wasm-bytecode",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-wasm-bytecode/LICENSE"
+  },
+  "@webassemblyjs/helper-wasm-section@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-wasm-section",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/helper-wasm-section/LICENSE"
+  },
+  "@webassemblyjs/ieee754@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/ieee754",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/ieee754/LICENSE"
+  },
+  "@webassemblyjs/leb128@1.11.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/leb128",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/leb128/LICENSE.txt"
+  },
+  "@webassemblyjs/utf8@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/utf8",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/utf8/LICENSE"
+  },
+  "@webassemblyjs/wasm-edit@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wasm-edit",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wasm-edit/LICENSE"
+  },
+  "@webassemblyjs/wasm-gen@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wasm-gen",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wasm-gen/LICENSE"
+  },
+  "@webassemblyjs/wasm-opt@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wasm-opt",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wasm-opt/LICENSE"
+  },
+  "@webassemblyjs/wasm-parser@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wasm-parser",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wasm-parser/LICENSE"
+  },
+  "@webassemblyjs/wast-printer@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/webassemblyjs",
+    "publisher": "Sven Sauleau",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wast-printer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@webassemblyjs/wast-printer/LICENSE"
+  },
+  "@xtuc/ieee754@1.2.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/feross/ieee754",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "http://feross.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@xtuc/ieee754",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@xtuc/ieee754/LICENSE"
+  },
+  "@xtuc/long@4.2.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/dcodeIO/long.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode@dcode.io",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@xtuc/long",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@xtuc/long/LICENSE"
+  },
+  "abbrev@1.1.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/abbrev-js",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/abbrev",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/abbrev/LICENSE"
+  },
+  "acorn-import-assertions@1.8.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xtuc/acorn-import-assertions",
+    "publisher": "Sven Sauleau",
+    "email": "sven@sauleau.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/acorn-import-assertions",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/acorn-import-assertions/README.md"
+  },
+  "acorn@8.8.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/acornjs/acorn",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/acorn",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/acorn/LICENSE"
+  },
+  "agent-base@6.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/node-agent-base",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/agent-base",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/agent-base/README.md"
+  },
+  "agentkeepalive@4.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/node-modules/agentkeepalive",
+    "publisher": "fengmk2",
+    "email": "fengmk2@gmail.com",
+    "url": "https://fengmk2.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/agentkeepalive",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/agentkeepalive/LICENSE"
+  },
+  "aggregate-error@3.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/aggregate-error",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/aggregate-error",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/aggregate-error/license"
+  },
+  "ajv-keywords@3.5.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/epoberezkin/ajv-keywords",
+    "publisher": "Evgeny Poberezkin",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ajv-keywords",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ajv-keywords/LICENSE"
+  },
+  "ajv@6.12.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ajv-validator/ajv",
+    "publisher": "Evgeny Poberezkin",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ajv",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ajv/LICENSE"
+  },
+  "amplitude-js@5.11.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/amplitude/amplitude-javascript",
+    "publisher": "Amplitude",
+    "email": "support@amplitude.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/amplitude-js",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/amplitude-js/LICENSE"
+  },
+  "ansi-regex@5.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/ansi-regex",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ansi-regex",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ansi-regex/license"
+  },
+  "anytype@0.31.30-alpha": {
+    "licenses": "MIT",
+    "repository": "https://github.com/anytypeio/js-anytype",
+    "publisher": "Anytype",
+    "email": "info@anytype.io",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/LICENSE.md"
+  },
+  "aproba@2.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/iarna/aproba",
+    "publisher": "Rebecca Turner",
+    "email": "me@re-becca.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/aproba",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/aproba/LICENSE"
+  },
+  "are-we-there-yet@3.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/are-we-there-yet",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/are-we-there-yet",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/are-we-there-yet/LICENSE.md"
+  },
+  "argparse@2.0.1": {
+    "licenses": "Python-2.0",
+    "repository": "https://github.com/nodeca/argparse",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/argparse",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/argparse/LICENSE"
+  },
+  "array-move@2.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/array-move",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/array-move",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/array-move/license"
+  },
+  "async@2.6.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/caolan/async",
+    "publisher": "Caolan McMahon",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/async",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/async/LICENSE"
+  },
+  "balanced-match@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/juliangruber/balanced-match",
+    "publisher": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/balanced-match",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/balanced-match/LICENSE.md"
+  },
+  "base64-js@1.5.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/beatgammit/base64-js",
+    "publisher": "T. Jameson Little",
+    "email": "t.jameson.little@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/base64-js",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/base64-js/LICENSE"
+  },
+  "big.js@5.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/MikeMcl/big.js",
+    "publisher": "Michael Mclaughlin",
+    "email": "M8ch88l@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/big.js",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/big.js/LICENCE"
+  },
+  "bl@4.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rvagg/bl",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/bl",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/bl/LICENSE.md"
+  },
+  "blueimp-load-image@2.31.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/blueimp/JavaScript-Load-Image",
+    "publisher": "Sebastian Tschan",
+    "url": "https://blueimp.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/blueimp-load-image",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/blueimp-load-image/LICENSE.txt"
+  },
+  "blueimp-md5@2.19.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/blueimp/JavaScript-MD5",
+    "publisher": "Sebastian Tschan",
+    "url": "https://blueimp.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/blueimp-md5",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/blueimp-md5/LICENSE.txt"
+  },
+  "boolean@3.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/thenativeweb/boolean",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/boolean",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/boolean/LICENSE.txt"
+  },
+  "brace-expansion@1.1.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/juliangruber/brace-expansion",
+    "publisher": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/brace-expansion",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/brace-expansion/LICENSE"
+  },
+  "brace-expansion@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/juliangruber/brace-expansion",
+    "publisher": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache/node_modules/brace-expansion",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache/node_modules/brace-expansion/LICENSE"
+  },
+  "browserslist@4.21.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/browserslist/browserslist",
+    "publisher": "Andrey Sitnik",
+    "email": "andrey@sitnik.ru",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/browserslist",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/browserslist/LICENSE"
+  },
+  "buffer-crc32@0.2.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianloveswords/buffer-crc32",
+    "publisher": "Brian J. Brennan",
+    "email": "brianloveswords@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/buffer-crc32",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/buffer-crc32/LICENSE"
+  },
+  "buffer-from@1.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/LinusU/buffer-from",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/buffer-from",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/buffer-from/LICENSE"
+  },
+  "buffer@5.7.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/buffer",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/buffer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/buffer/LICENSE"
+  },
+  "builder-util-runtime@8.9.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/electron-userland/electron-builder",
+    "publisher": "Vladimir Krivosheev",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/builder-util-runtime",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/builder-util-runtime/LICENSE"
+  },
+  "cacache@16.1.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/cacache",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache/LICENSE.md"
+  },
+  "cacheable-lookup@5.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/szmarczak/cacheable-lookup",
+    "publisher": "Szymon Marczak",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacheable-lookup",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacheable-lookup/LICENSE"
+  },
+  "cacheable-request@7.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lukechilds/cacheable-request",
+    "publisher": "Luke Childs",
+    "email": "lukechilds123@gmail.com",
+    "url": "http://lukechilds.co.uk",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacheable-request",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacheable-request/LICENSE"
+  },
+  "caniuse-lite@1.0.30001363": {
+    "licenses": "CC-BY-4.0",
+    "repository": "https://github.com/browserslist/caniuse-lite",
+    "publisher": "Ben Briggs",
+    "email": "beneb.info@gmail.com",
+    "url": "http://beneb.info",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/caniuse-lite",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/caniuse-lite/LICENSE"
+  },
+  "canvas-confetti@1.5.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/catdad/canvas-confetti",
+    "publisher": "Kiril Vatev",
+    "email": "vatev.1@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/canvas-confetti",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/canvas-confetti/LICENSE"
+  },
+  "charenc@0.0.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/pvorb/node-charenc",
+    "publisher": "Paul Vorbach",
+    "email": "paul@vorb.de",
+    "url": "http://vorb.de",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/charenc",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/charenc/LICENSE.mkd"
+  },
+  "chownr@1.1.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/chownr",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tar-fs/node_modules/chownr",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tar-fs/node_modules/chownr/LICENSE"
+  },
+  "chownr@2.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/chownr",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/chownr",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/chownr/LICENSE"
+  },
+  "chrome-trace-event@1.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/samccone/chrome-trace-event",
+    "publisher": "Trent Mick, Sam Saccone",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/chrome-trace-event",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/chrome-trace-event/LICENSE.txt"
+  },
+  "clean-stack@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/clean-stack",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/clean-stack",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/clean-stack/license"
+  },
+  "clone-response@1.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/clone-response",
+    "publisher": "Luke Childs",
+    "email": "lukechilds123@gmail.com",
+    "url": "http://lukechilds.co.uk",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/clone-response",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/clone-response/LICENSE"
+  },
+  "clsx@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lukeed/clsx",
+    "publisher": "Luke Edwards",
+    "email": "luke.edwards05@gmail.com",
+    "url": "https://lukeed.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/clsx",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/clsx/license"
+  },
+  "color-support@1.1.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/color-support",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/color-support",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/color-support/LICENSE"
+  },
+  "commander@2.20.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tj/commander.js",
+    "publisher": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/terser/node_modules/commander",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/terser/node_modules/commander/LICENSE"
+  },
+  "commander@7.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tj/commander.js",
+    "publisher": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/commander",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/commander/LICENSE"
+  },
+  "commander@8.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tj/commander.js",
+    "publisher": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/katex/node_modules/commander",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/katex/node_modules/commander/LICENSE"
+  },
+  "component-props@1.1.1": {
+    "licenses": "MIT*",
+    "repository": "https://github.com/component/props",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/component-props",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/component-props/Readme.md"
+  },
+  "component-xor@0.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/component/xor",
+    "publisher": "Matthew Mueller",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/component-xor",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/component-xor/Readme.md"
+  },
+  "concat-map@0.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/substack/node-concat-map",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/concat-map",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/concat-map/LICENSE"
+  },
+  "console-control-strings@1.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/iarna/console-control-strings",
+    "publisher": "Rebecca Turner",
+    "email": "me@re-becca.org",
+    "url": "http://re-becca.org/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/console-control-strings",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/console-control-strings/LICENSE"
+  },
+  "crypt@0.0.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/pvorb/node-crypt",
+    "publisher": "Paul Vorbach",
+    "email": "paul@vorb.de",
+    "url": "http://vorb.de",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/crypt",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/crypt/LICENSE.mkd"
+  },
+  "csstype@3.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/frenic/csstype",
+    "publisher": "Fredrik Nicol",
+    "email": "fredrik.nicol@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/csstype",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/csstype/LICENSE"
+  },
+  "d3-array@3.2.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-array",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-array",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-array/LICENSE"
+  },
+  "d3-axis@3.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-axis",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-axis",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-axis/LICENSE"
+  },
+  "d3-brush@3.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-brush",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-brush",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-brush/LICENSE"
+  },
+  "d3-chord@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-chord",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-chord",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-chord/LICENSE"
+  },
+  "d3-color@3.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-color",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-color",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-color/LICENSE"
+  },
+  "d3-contour@4.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-contour",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-contour",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-contour/LICENSE"
+  },
+  "d3-delaunay@6.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-delaunay",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-delaunay",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-delaunay/LICENSE"
+  },
+  "d3-dispatch@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-dispatch",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-dispatch",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-dispatch/LICENSE"
+  },
+  "d3-drag@3.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-drag",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-drag",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-drag/LICENSE"
+  },
+  "d3-dsv@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-dsv",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-dsv",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-dsv/LICENSE"
+  },
+  "d3-ease@3.0.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/d3/d3-ease",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-ease",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-ease/LICENSE"
+  },
+  "d3-fetch@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-fetch",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-fetch",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-fetch/LICENSE"
+  },
+  "d3-force@3.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-force",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-force",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-force/LICENSE"
+  },
+  "d3-format@3.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-format",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-format",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-format/LICENSE"
+  },
+  "d3-geo@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-geo",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-geo",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-geo/LICENSE"
+  },
+  "d3-hierarchy@3.1.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-hierarchy",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-hierarchy",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-hierarchy/LICENSE"
+  },
+  "d3-interpolate@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-interpolate",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-interpolate",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-interpolate/LICENSE"
+  },
+  "d3-path@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-path",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-path",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-path/LICENSE"
+  },
+  "d3-polygon@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-polygon",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-polygon",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-polygon/LICENSE"
+  },
+  "d3-quadtree@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-quadtree",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-quadtree",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-quadtree/LICENSE"
+  },
+  "d3-random@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-random",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-random",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-random/LICENSE"
+  },
+  "d3-scale-chromatic@3.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-scale-chromatic",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-scale-chromatic",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-scale-chromatic/LICENSE"
+  },
+  "d3-scale@4.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-scale",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-scale",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-scale/LICENSE"
+  },
+  "d3-selection@2.0.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/d3/d3-selection",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-selection",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-selection/LICENSE"
+  },
+  "d3-selection@3.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-selection",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-drag/node_modules/d3-selection",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-drag/node_modules/d3-selection/LICENSE"
+  },
+  "d3-shape@3.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-shape",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-shape",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-shape/LICENSE"
+  },
+  "d3-time-format@4.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-time-format",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-time-format",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-time-format/LICENSE"
+  },
+  "d3-time@3.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-time",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-time",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-time/LICENSE"
+  },
+  "d3-timer@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-timer",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-timer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-timer/LICENSE"
+  },
+  "d3-transition@3.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-transition",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-transition",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-transition/LICENSE"
+  },
+  "d3-zoom@3.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-zoom",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-zoom",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3-zoom/LICENSE"
+  },
+  "d3@7.6.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/d3/LICENSE"
+  },
+  "debug@4.3.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/debug-js/debug",
+    "publisher": "Josh Junon",
+    "email": "josh.junon@protonmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/debug",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/debug/LICENSE"
+  },
+  "decode-uri-component@0.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/SamVerschueren/decode-uri-component",
+    "publisher": "Sam Verschueren",
+    "email": "sam.verschueren@gmail.com",
+    "url": "github.com/SamVerschueren",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/decode-uri-component",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/decode-uri-component/license"
+  },
+  "decompress-response@6.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/decompress-response",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/decompress-response",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/decompress-response/license"
+  },
+  "deep-extend@0.6.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unclechu/node-deep-extend",
+    "publisher": "Viacheslav Lotsmanov",
+    "email": "lotsmanov89@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/deep-extend",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/deep-extend/LICENSE"
+  },
+  "defer-to-connect@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/szmarczak/defer-to-connect",
+    "publisher": "Szymon Marczak",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/defer-to-connect",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/defer-to-connect/LICENSE"
+  },
+  "define-properties@1.1.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/define-properties",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/define-properties",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/define-properties/LICENSE"
+  },
+  "delaunator@5.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/mapbox/delaunator",
+    "publisher": "Vladimir Agafonkin",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/delaunator",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/delaunator/LICENSE"
+  },
+  "delegates@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/visionmedia/node-delegates",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/delegates",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/delegates/License"
+  },
+  "depd@1.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dougwilson/nodejs-depd",
+    "publisher": "Douglas Christopher Wilson",
+    "email": "doug@somethingdoug.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/depd",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/depd/LICENSE"
+  },
+  "detect-libc@2.0.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/lovell/detect-libc",
+    "publisher": "Lovell Fuller",
+    "email": "npm@lovell.info",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/detect-libc",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/detect-libc/LICENSE"
+  },
+  "detect-node@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/iliakan/detect-node",
+    "publisher": "Ilya Kantor",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/detect-node",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/detect-node/LICENSE"
+  },
+  "dom-helpers@5.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/react-bootstrap/dom-helpers",
+    "publisher": "Jason Quense",
+    "email": "monastic.panic@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/dom-helpers",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/dom-helpers/LICENSE"
+  },
+  "dom-iterator@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/MatthewMueller/dom-iterator",
+    "publisher": "Matthew Mueller",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/dom-iterator",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/dom-iterator/Readme.md"
+  },
+  "dommatrix@1.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/thednp/dommatrix",
+    "publisher": "thednp",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/dommatrix",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/dommatrix/LICENSE"
+  },
+  "electron-dl@1.14.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/electron-dl",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-dl",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-dl/license"
+  },
+  "electron-is-dev@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/electron-is-dev",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-is-dev",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-is-dev/license"
+  },
+  "electron-json-storage@4.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/electron-userland/electron-json-storage",
+    "publisher": "Juan Cruz Viotti",
+    "email": "jv@jviotti.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-json-storage",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-json-storage/README.md"
+  },
+  "electron-log@3.0.9": {
+    "licenses": "MIT",
+    "repository": "https://github.com/megahertz/electron-log",
+    "publisher": "Alexey Prokhorov",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-log",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-log/LICENSE"
+  },
+  "electron-to-chromium@1.4.179": {
+    "licenses": "ISC",
+    "repository": "https://github.com/kilian/electron-to-chromium",
+    "publisher": "Kilian Valkhof",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-to-chromium",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-to-chromium/LICENSE"
+  },
+  "electron-updater@4.6.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/electron-userland/electron-builder",
+    "publisher": "Vladimir Krivosheev",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater/LICENSE"
+  },
+  "electron-util@0.12.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/electron-util",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-util",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-util/license"
+  },
+  "electron-window-state@5.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mawie81/electron-window-state",
+    "publisher": "Marcel Wiehle",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-window-state",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-window-state/license"
+  },
+  "electron@22.3.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/electron/electron",
+    "publisher": "Electron Community",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron/LICENSE"
+  },
+  "emoji-mart@2.11.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/missive/emoji-mart",
+    "publisher": "Etienne Lemay",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/emoji-mart",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/emoji-mart/LICENSE"
+  },
+  "emoji-regex@8.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mathiasbynens/emoji-regex",
+    "publisher": "Mathias Bynens",
+    "url": "https://mathiasbynens.be/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/emoji-regex",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/emoji-regex/LICENSE-MIT.txt"
+  },
+  "emojis-list@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kikobeats/emojis-list",
+    "publisher": "Kiko Beats",
+    "email": "josefrancisco.verdu@gmail.com",
+    "url": "https://github.com/Kikobeats",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/emojis-list",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/emojis-list/LICENSE.md"
+  },
+  "encoding@0.1.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/andris9/encoding",
+    "publisher": "Andris Reinman",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/encoding",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/encoding/LICENSE"
+  },
+  "end-of-stream@1.4.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/end-of-stream",
+    "publisher": "Mathias Buus",
+    "email": "mathiasbuus@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/end-of-stream",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/end-of-stream/LICENSE"
+  },
+  "enhanced-resolve@5.10.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack/enhanced-resolve",
+    "publisher": "Tobias Koppers @sokra",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/webpack/node_modules/enhanced-resolve",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/webpack/node_modules/enhanced-resolve/LICENSE"
+  },
+  "env-paths@2.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/env-paths",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/env-paths",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/env-paths/license"
+  },
+  "err-code@2.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/IndigoUnited/js-err-code",
+    "publisher": "IndigoUnited",
+    "email": "hello@indigounited.com",
+    "url": "http://indigounited.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/err-code",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/err-code/README.md"
+  },
+  "es-module-lexer@0.9.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/guybedford/es-module-lexer",
+    "publisher": "Guy Bedford",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/es-module-lexer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/es-module-lexer/LICENSE"
+  },
+  "es6-error@4.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bjyoungblood/es6-error",
+    "publisher": "Ben Youngblood",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/es6-error",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/es6-error/LICENSE.md"
+  },
+  "escalade@3.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lukeed/escalade",
+    "publisher": "Luke Edwards",
+    "email": "luke.edwards05@gmail.com",
+    "url": "https://lukeed.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/escalade",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/escalade/license"
+  },
+  "escape-string-regexp@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/escape-string-regexp",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/escape-string-regexp",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/escape-string-regexp/license"
+  },
+  "eslint-scope@5.1.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/eslint/eslint-scope",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/eslint-scope",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/eslint-scope/LICENSE"
+  },
+  "esrecurse@4.3.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/estools/esrecurse",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/esrecurse",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/esrecurse/README.md"
+  },
+  "estraverse@4.3.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/estools/estraverse",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/estraverse",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/estraverse/LICENSE.BSD"
+  },
+  "estraverse@5.3.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/estools/estraverse",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/esrecurse/node_modules/estraverse",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/esrecurse/node_modules/estraverse/LICENSE.BSD"
+  },
+  "events@3.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Gozala/events",
+    "publisher": "Irakli Gozalishvili",
+    "email": "rfobic@gmail.com",
+    "url": "http://jeditoolkit.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/events",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/events/LICENSE"
+  },
+  "expand-template@2.0.3": {
+    "licenses": "(MIT OR WTFPL)",
+    "repository": "https://github.com/ralphtheninja/expand-template",
+    "publisher": "LM",
+    "email": "ralphtheninja@riseup.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/expand-template",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/expand-template/LICENSE"
+  },
+  "ext-list@2.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/ext-list",
+    "publisher": "Kevin Mårtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "https://github.com/kevva",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ext-list",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ext-list/license"
+  },
+  "ext-name@5.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/ext-name",
+    "publisher": "Kevin Mårtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "https://github.com/kevva",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ext-name",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ext-name/license"
+  },
+  "extract-zip@2.0.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/maxogden/extract-zip",
+    "publisher": "max ogden",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/extract-zip",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/extract-zip/LICENSE"
+  },
+  "fast-deep-equal@3.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/epoberezkin/fast-deep-equal",
+    "publisher": "Evgeny Poberezkin",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fast-deep-equal",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fast-deep-equal/LICENSE"
+  },
+  "fast-json-stable-stringify@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/epoberezkin/fast-json-stable-stringify",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fast-json-stable-stringify",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fast-json-stable-stringify/LICENSE"
+  },
+  "fd-slicer@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/andrewrk/node-fd-slicer",
+    "publisher": "Andrew Kelley",
+    "email": "superjoe30@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fd-slicer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fd-slicer/LICENSE"
+  },
+  "file-loader@6.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack-contrib/file-loader",
+    "publisher": "Tobias Koppers @sokra",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/file-loader",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/file-loader/LICENSE"
+  },
+  "file-type@12.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/file-type",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/file-type",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/file-type/license"
+  },
+  "findandreplacedomtext@0.4.6": {
+    "licenses": "Public Domain",
+    "repository": "https://github.com/padolsey/findAndReplaceDOMText",
+    "publisher": "James Padolsey",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/findandreplacedomtext",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/findandreplacedomtext/readme.md"
+  },
+  "fs-constants@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/fs-constants",
+    "publisher": "Mathias Buus",
+    "url": "@mafintosh",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fs-constants",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fs-constants/LICENSE"
+  },
+  "fs-extra@10.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jprichardson/node-fs-extra",
+    "publisher": "JP Richardson",
+    "email": "jprichardson@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater/node_modules/fs-extra",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater/node_modules/fs-extra/LICENSE"
+  },
+  "fs-extra@8.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jprichardson/node-fs-extra",
+    "publisher": "JP Richardson",
+    "email": "jprichardson@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fs-extra",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fs-extra/LICENSE"
+  },
+  "fs-minipass@2.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/fs-minipass",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fs-minipass",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fs-minipass/LICENSE"
+  },
+  "fs.realpath@1.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/fs.realpath",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fs.realpath",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/fs.realpath/LICENSE"
+  },
+  "function-bind@1.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Raynos/function-bind",
+    "publisher": "Raynos",
+    "email": "raynos2@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/function-bind",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/function-bind/LICENSE"
+  },
+  "gauge@4.0.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/gauge",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/gauge",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/gauge/LICENSE.md"
+  },
+  "get-intrinsic@1.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/get-intrinsic",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/get-intrinsic",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/get-intrinsic/LICENSE"
+  },
+  "get-stream@5.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/get-stream",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/get-stream",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/get-stream/license"
+  },
+  "github-from-package@0.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/substack/github-from-package",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/github-from-package",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/github-from-package/LICENSE"
+  },
+  "glob-to-regexp@0.4.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/fitzgen/glob-to-regexp",
+    "publisher": "Nick Fitzgerald",
+    "email": "fitzgen@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/glob-to-regexp",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/glob-to-regexp/README.md"
+  },
+  "glob@7.2.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-glob",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/glob",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/glob/LICENSE"
+  },
+  "glob@8.0.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-glob",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache/node_modules/glob",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache/node_modules/glob/LICENSE"
+  },
+  "global-agent@3.0.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/gajus/global-agent",
+    "publisher": "Gajus Kuizinas",
+    "email": "gajus@gajus.com",
+    "url": "http://gajus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/global-agent",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/global-agent/LICENSE"
+  },
+  "globalthis@1.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/System.global",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/globalthis",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/globalthis/LICENSE"
+  },
+  "google-protobuf@3.20.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/protocolbuffers/protobuf/tree/master/js",
+    "publisher": "Google Protocol Buffers Team",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/google-protobuf",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/google-protobuf/README.md"
+  },
+  "got@11.8.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/got",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/got",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/got/license"
+  },
+  "graceful-fs@4.2.10": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-graceful-fs",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/graceful-fs",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/graceful-fs/LICENSE"
+  },
+  "grpc-web@1.3.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/grpc/grpc-web",
+    "publisher": "Google Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/grpc-web",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/grpc-web/README.md"
+  },
+  "has-flag@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/has-flag",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jest-worker/node_modules/has-flag",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jest-worker/node_modules/has-flag/license"
+  },
+  "has-property-descriptors@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/has-property-descriptors",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/has-property-descriptors",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/has-property-descriptors/LICENSE"
+  },
+  "has-symbols@1.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/has-symbols",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "url": "http://ljharb.codes",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/has-symbols",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/has-symbols/LICENSE"
+  },
+  "has-unicode@2.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/iarna/has-unicode",
+    "publisher": "Rebecca Turner",
+    "email": "me@re-becca.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/has-unicode",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/has-unicode/LICENSE"
+  },
+  "has@1.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tarruda/has",
+    "publisher": "Thiago de Arruda",
+    "email": "tpadilha84@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/has",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/has/LICENSE-MIT"
+  },
+  "history@4.10.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ReactTraining/history",
+    "publisher": "Michael Jackson",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/history",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/history/LICENSE"
+  },
+  "hoist-non-react-statics@3.3.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/mridgway/hoist-non-react-statics",
+    "publisher": "Michael Ridgway",
+    "email": "mcridgway@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/hoist-non-react-statics",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/hoist-non-react-statics/LICENSE.md"
+  },
+  "http-cache-semantics@4.1.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/kornelski/http-cache-semantics",
+    "publisher": "Kornel Lesiński",
+    "email": "kornel@geekhood.net",
+    "url": "https://kornel.ski/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/http-cache-semantics",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/http-cache-semantics/LICENSE"
+  },
+  "http-proxy-agent@5.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/node-http-proxy-agent",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/http-proxy-agent",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/http-proxy-agent/README.md"
+  },
+  "http2-wrapper@1.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/szmarczak/http2-wrapper",
+    "publisher": "Szymon Marczak",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/http2-wrapper",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/http2-wrapper/LICENSE"
+  },
+  "https-proxy-agent@5.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/node-https-proxy-agent",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/https-proxy-agent",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/https-proxy-agent/README.md"
+  },
+  "humanize-ms@1.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/node-modules/humanize-ms",
+    "publisher": "dead-horse",
+    "email": "dead_horse@qq.com",
+    "url": "http://deadhorse.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/humanize-ms",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/humanize-ms/LICENSE"
+  },
+  "iconv-lite@0.6.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ashtuchkin/iconv-lite",
+    "publisher": "Alexander Shtuchkin",
+    "email": "ashtuchkin@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/iconv-lite",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/iconv-lite/LICENSE"
+  },
+  "ieee754@1.2.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/feross/ieee754",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ieee754",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ieee754/LICENSE"
+  },
+  "imurmurhash@0.1.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jensyt/imurmurhash-js",
+    "publisher": "Jens Taylor",
+    "email": "jensyt@gmail.com",
+    "url": "https://github.com/homebrewing",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/imurmurhash",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/imurmurhash/README.md"
+  },
+  "indent-string@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/indent-string",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/indent-string",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/indent-string/license"
+  },
+  "infer-owner@1.0.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/infer-owner",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "https://izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/infer-owner",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/infer-owner/LICENSE"
+  },
+  "inflight@1.0.6": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/inflight",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/inflight",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/inflight/LICENSE"
+  },
+  "inherits@2.0.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/inherits",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/inherits",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/inherits/LICENSE"
+  },
+  "ini@1.3.8": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/ini",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ini",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ini/LICENSE"
+  },
+  "inputmask@5.0.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/RobinHerbots/Inputmask",
+    "publisher": "Robin Herbots",
+    "url": "https://github.com/RobinHerbots",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/inputmask",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/inputmask/LICENSE.txt"
+  },
+  "install@0.13.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/benjamn/install",
+    "publisher": "Ben Newman",
+    "email": "bn@cs.stanford.edu",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/install",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/install/LICENSE"
+  },
+  "internmap@2.0.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/mbostock/internmap",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/internmap",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/internmap/LICENSE"
+  },
+  "invariant@2.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/zertosh/invariant",
+    "publisher": "Andres Suarez",
+    "email": "zertosh@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/invariant",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/invariant/LICENSE"
+  },
+  "ip@1.1.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/indutny/node-ip",
+    "publisher": "Fedor Indutny",
+    "email": "fedor@indutny.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ip",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ip/README.md"
+  },
+  "is-fullwidth-code-point@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/is-fullwidth-code-point",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/is-fullwidth-code-point",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/is-fullwidth-code-point/license"
+  },
+  "is-lambda@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/watson/is-lambda",
+    "publisher": "Thomas Watson Steen",
+    "email": "w@tson.dk",
+    "url": "https://twitter.com/wa7son",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/is-lambda",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/is-lambda/LICENSE"
+  },
+  "is-plain-obj@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/is-plain-obj",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/is-plain-obj",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/is-plain-obj/license"
+  },
+  "isarray@0.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/juliangruber/isarray",
+    "publisher": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/isarray",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/isarray/README.md"
+  },
+  "isexe@2.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/isexe",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/isexe",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/isexe/LICENSE"
+  },
+  "jest-worker@27.5.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/jest",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jest-worker",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jest-worker/LICENSE"
+  },
+  "jquery@3.6.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jquery/jquery",
+    "publisher": "OpenJS Foundation and other contributors",
+    "url": "https://github.com/jquery/jquery/blob/3.6.0/AUTHORS.txt",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jquery",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jquery/LICENSE.txt"
+  },
+  "js-tokens@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lydell/js-tokens",
+    "publisher": "Simon Lydell",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/js-tokens",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/js-tokens/LICENSE"
+  },
+  "js-yaml@4.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodeca/js-yaml",
+    "publisher": "Vladimir Zapparov",
+    "email": "dervus.grim@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/js-yaml",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/js-yaml/LICENSE"
+  },
+  "json-buffer@3.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dominictarr/json-buffer",
+    "publisher": "Dominic Tarr",
+    "email": "dominic.tarr@gmail.com",
+    "url": "http://dominictarr.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json-buffer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json-buffer/LICENSE"
+  },
+  "json-parse-even-better-errors@2.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/npm/json-parse-even-better-errors",
+    "publisher": "Kat Marchán",
+    "email": "kzm@zkat.tech",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json-parse-even-better-errors",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json-parse-even-better-errors/LICENSE.md"
+  },
+  "json-schema-traverse@0.4.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/epoberezkin/json-schema-traverse",
+    "publisher": "Evgeny Poberezkin",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json-schema-traverse",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json-schema-traverse/LICENSE"
+  },
+  "json-stringify-safe@5.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/json-stringify-safe",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json-stringify-safe",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json-stringify-safe/LICENSE"
+  },
+  "json5@2.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/json5/json5",
+    "publisher": "Aseem Kishore",
+    "email": "aseem.kishore@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json5",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/json5/LICENSE.md"
+  },
+  "jsonfile@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jprichardson/node-jsonfile",
+    "publisher": "JP Richardson",
+    "email": "jprichardson@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jsonfile",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jsonfile/LICENSE"
+  },
+  "jsonfile@6.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jprichardson/node-jsonfile",
+    "publisher": "JP Richardson",
+    "email": "jprichardson@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater/node_modules/jsonfile",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater/node_modules/jsonfile/LICENSE"
+  },
+  "katex@0.13.24": {
+    "licenses": "MIT",
+    "repository": "https://github.com/KaTeX/KaTeX",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/katex",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/katex/LICENSE"
+  },
+  "keytar@7.9.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/atom/node-keytar",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/keytar",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/keytar/LICENSE.md"
+  },
+  "keyv@4.5.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jaredwray/keyv",
+    "publisher": "Jared Wray",
+    "email": "me@jaredwray.com",
+    "url": "http://jaredwray.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/keyv",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/keyv/README.md"
+  },
+  "lazy-val@1.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/develar/lazy-val",
+    "publisher": "Vladimir Krivosheev",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lazy-val",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lazy-val/readme.md"
+  },
+  "loader-runner@4.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack/loader-runner",
+    "publisher": "Tobias Koppers @sokra",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/loader-runner",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/loader-runner/LICENSE"
+  },
+  "loader-utils@2.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack/loader-utils",
+    "publisher": "Tobias Koppers @sokra",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/loader-utils",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/loader-utils/LICENSE"
+  },
+  "lockfile@1.0.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/lockfile",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lockfile",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lockfile/LICENSE"
+  },
+  "lodash.escaperegexp@4.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lodash.escaperegexp",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lodash.escaperegexp/LICENSE"
+  },
+  "lodash.isequal@4.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lodash.isequal",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lodash.isequal/LICENSE"
+  },
+  "lodash@4.17.21": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lodash",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lodash/LICENSE"
+  },
+  "loose-envify@1.4.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/zertosh/loose-envify",
+    "publisher": "Andres Suarez",
+    "email": "zertosh@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/loose-envify",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/loose-envify/LICENSE"
+  },
+  "lowercase-keys@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/lowercase-keys",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lowercase-keys",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lowercase-keys/license"
+  },
+  "lru-cache@6.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-lru-cache",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lru-cache",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/lru-cache/LICENSE"
+  },
+  "lru-cache@7.12.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-lru-cache",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache/node_modules/lru-cache",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache/node_modules/lru-cache/LICENSE"
+  },
+  "make-cancellable-promise@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wojtekmaj/make-cancellable-promise",
+    "publisher": "Wojciech Maj",
+    "email": "kontakt@wojtekmaj.pl",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/make-cancellable-promise",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/make-cancellable-promise/LICENSE"
+  },
+  "make-event-props@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wojtekmaj/make-event-props",
+    "publisher": "Wojciech Maj",
+    "email": "kontakt@wojtekmaj.pl",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/make-event-props",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/make-event-props/LICENSE"
+  },
+  "make-fetch-happen@10.1.8": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/make-fetch-happen",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/make-fetch-happen",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/make-fetch-happen/LICENSE"
+  },
+  "matcher@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/matcher",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/matcher",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/matcher/license"
+  },
+  "merge-class-names@1.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wojtekmaj/merge-class-names",
+    "publisher": "Wojciech Maj",
+    "email": "kontakt@wojtekmaj.pl",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/merge-class-names",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/merge-class-names/LICENSE"
+  },
+  "merge-refs@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wojtekmaj/merge-refs",
+    "publisher": "Wojciech Maj",
+    "email": "kontakt@wojtekmaj.pl",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/merge-refs",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/merge-refs/LICENSE"
+  },
+  "merge-stream@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/grncdr/merge-stream",
+    "publisher": "Stephen Sugden",
+    "email": "me@stephensugden.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/merge-stream",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/merge-stream/LICENSE"
+  },
+  "mime-db@1.52.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jshttp/mime-db",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mime-db",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mime-db/LICENSE"
+  },
+  "mime-types@2.1.35": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jshttp/mime-types",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mime-types",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mime-types/LICENSE"
+  },
+  "mimic-response@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/mimic-response",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mimic-response",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mimic-response/license"
+  },
+  "mimic-response@3.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/mimic-response",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/decompress-response/node_modules/mimic-response",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/decompress-response/node_modules/mimic-response/license"
+  },
+  "mini-create-react-context@0.4.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/StringEpsilon/mini-create-react-context",
+    "publisher": "StringEpsilon",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mini-create-react-context",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mini-create-react-context/LICENSE"
+  },
+  "minimatch@3.1.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/minimatch",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minimatch",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minimatch/LICENSE"
+  },
+  "minimatch@5.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/minimatch",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache/node_modules/minimatch",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/cacache/node_modules/minimatch/LICENSE"
+  },
+  "minimist@1.2.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/substack/minimist",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minimist",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minimist/LICENSE"
+  },
+  "minipass-collect@1.0.2": {
+    "licenses": "ISC",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "https://izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-collect",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-collect/LICENSE"
+  },
+  "minipass-fetch@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/npm/minipass-fetch",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-fetch",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-fetch/LICENSE"
+  },
+  "minipass-flush@1.0.5": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/minipass-flush",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "https://izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-flush",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-flush/LICENSE"
+  },
+  "minipass-pipeline@1.2.4": {
+    "licenses": "ISC",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "https://izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-pipeline",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-pipeline/LICENSE"
+  },
+  "minipass-sized@1.0.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/minipass-sized",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "https://izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-sized",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass-sized/LICENSE"
+  },
+  "minipass@3.3.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/minipass",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minipass/LICENSE"
+  },
+  "minizlib@2.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/isaacs/minizlib",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minizlib",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/minizlib/LICENSE"
+  },
+  "mkdirp-classic@0.5.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/mkdirp-classic",
+    "publisher": "Mathias Buus",
+    "url": "@mafintosh",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mkdirp-classic",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mkdirp-classic/LICENSE"
+  },
+  "mkdirp@0.5.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/substack/node-mkdirp",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mkdirp",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mkdirp/LICENSE"
+  },
+  "mkdirp@1.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/isaacs/node-mkdirp",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@npmcli/move-file/node_modules/mkdirp",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@npmcli/move-file/node_modules/mkdirp/LICENSE"
+  },
+  "mobx-logger@0.7.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/winterbe/mobx-logger",
+    "publisher": "Benjamin Winterberg",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mobx-logger",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mobx-logger/LICENSE"
+  },
+  "mobx-react-lite@3.4.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mobxjs/mobx",
+    "publisher": "Daniel K.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mobx-react-lite",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mobx-react-lite/LICENSE"
+  },
+  "mobx-react@7.5.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mobxjs/mobx",
+    "publisher": "Michel Weststrate",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mobx-react",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mobx-react/LICENSE"
+  },
+  "mobx@6.6.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mobxjs/mobx",
+    "publisher": "Michel Weststrate",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mobx",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/mobx/LICENSE"
+  },
+  "modify-filename@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/modify-filename",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/modify-filename",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/modify-filename/license"
+  },
+  "ms@2.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/zeit/ms",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ms",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ms/license.md"
+  },
+  "napi-build-utils@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspiredware/napi-build-utils",
+    "publisher": "Jim Schlight",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/napi-build-utils",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/napi-build-utils/LICENSE"
+  },
+  "negotiator@0.6.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jshttp/negotiator",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/negotiator",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/negotiator/LICENSE"
+  },
+  "neo-async@2.6.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/suguru03/neo-async",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/neo-async",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/neo-async/LICENSE"
+  },
+  "new-github-issue-url@0.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/new-github-issue-url",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/new-github-issue-url",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/new-github-issue-url/license"
+  },
+  "node-abi@3.22.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lgeiger/node-abi",
+    "publisher": "Lukas Geiger",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/node-abi",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/node-abi/LICENSE"
+  },
+  "node-addon-api@4.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/node-addon-api",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/keytar/node_modules/node-addon-api",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/keytar/node_modules/node-addon-api/LICENSE.md"
+  },
+  "node-gyp@9.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/node-gyp",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://tootallnate.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/node-gyp",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/node-gyp/LICENSE"
+  },
+  "node-releases@2.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chicoxyzzy/node-releases",
+    "publisher": "Sergey Rubanov",
+    "email": "chi187@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/node-releases",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/node-releases/LICENSE"
+  },
+  "nopt@5.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/nopt",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/node-gyp/node_modules/nopt",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/node-gyp/node_modules/nopt/LICENSE"
+  },
+  "normalize-url@6.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/normalize-url",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/normalize-url",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/normalize-url/license"
+  },
+  "npmlog@6.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/npmlog",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/npmlog",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/npmlog/LICENSE.md"
+  },
+  "object-assign@4.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/object-assign",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/object-assign",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/object-assign/license"
+  },
+  "object-keys@1.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/object-keys",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "url": "http://ljharb.codes",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/object-keys",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/object-keys/LICENSE"
+  },
+  "once@1.4.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/once",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/once",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/once/LICENSE"
+  },
+  "os@0.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DiegoRBaquero/node-os",
+    "publisher": "Diego Rodríguez Baquero",
+    "email": "diegorbaquero@gmail.com",
+    "url": "https://diegorbaquero.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/os",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/os/README.md"
+  },
+  "p-cancelable@2.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/p-cancelable",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/p-cancelable",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/p-cancelable/license"
+  },
+  "p-finally@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/p-finally",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/p-finally",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/p-finally/license"
+  },
+  "p-map@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/p-map",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/p-map",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/p-map/license"
+  },
+  "p-try@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/p-try",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/p-try",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/p-try/license"
+  },
+  "path-exists@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/path-exists",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/unused-filename/node_modules/path-exists",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/unused-filename/node_modules/path-exists/license"
+  },
+  "path-is-absolute@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/path-is-absolute",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/path-is-absolute",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/path-is-absolute/license"
+  },
+  "path-to-regexp@1.8.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/pillarjs/path-to-regexp",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/path-to-regexp",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/path-to-regexp/LICENSE"
+  },
+  "pdfjs-dist@2.12.313": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/mozilla/pdfjs-dist",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-pdf/node_modules/pdfjs-dist",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-pdf/node_modules/pdfjs-dist/LICENSE"
+  },
+  "pdfjs-dist@2.14.305": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/mozilla/pdfjs-dist",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/pdfjs-dist",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/pdfjs-dist/LICENSE"
+  },
+  "pend@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/andrewrk/node-pend",
+    "publisher": "Andrew Kelley",
+    "email": "superjoe30@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/pend",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/pend/LICENSE"
+  },
+  "performance-now@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/braveg1rl/performance-now",
+    "publisher": "Braveg1rl",
+    "email": "braveg1rl@outlook.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/performance-now",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/performance-now/license.txt"
+  },
+  "picocolors@1.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/alexeyraspopov/picocolors",
+    "publisher": "Alexey Raspopov",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/update-browserslist-db/node_modules/picocolors",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/update-browserslist-db/node_modules/picocolors/LICENSE"
+  },
+  "pify@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/pify",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/read-chunk/node_modules/pify",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/read-chunk/node_modules/pify/license"
+  },
+  "prebuild-install@7.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/prebuild/prebuild-install",
+    "publisher": "Mathias Buus",
+    "url": "@mafintosh",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/prebuild-install",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/prebuild-install/LICENSE"
+  },
+  "prismjs@1.28.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/PrismJS/prism",
+    "publisher": "Lea Verou",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/prismjs",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/prismjs/LICENSE"
+  },
+  "progress@2.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/visionmedia/node-progress",
+    "publisher": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/progress",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/progress/LICENSE"
+  },
+  "promise-inflight@1.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/iarna/promise-inflight",
+    "publisher": "Rebecca Turner",
+    "email": "me@re-becca.org",
+    "url": "http://re-becca.org/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/promise-inflight",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/promise-inflight/LICENSE"
+  },
+  "promise-retry@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/IndigoUnited/node-promise-retry",
+    "publisher": "IndigoUnited",
+    "email": "hello@indigounited.com",
+    "url": "http://indigounited.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/promise-retry",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/promise-retry/LICENSE"
+  },
+  "prop-types@15.8.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/prop-types",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/prop-types",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/prop-types/LICENSE"
+  },
+  "pump@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/pump",
+    "publisher": "Mathias Buus Madsen",
+    "email": "mathiasbuus@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/pump",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/pump/LICENSE"
+  },
+  "punycode@2.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bestiejs/punycode.js",
+    "publisher": "Mathias Bynens",
+    "url": "https://mathiasbynens.be/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/punycode",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/punycode/LICENSE-MIT.txt"
+  },
+  "pupa@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/pupa",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/pupa",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/pupa/license"
+  },
+  "qr.js@0.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/shtylman/qr.js",
+    "publisher": "Roman Shtylman",
+    "email": "shtylman@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/qr.js",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/qr.js/LICENSE"
+  },
+  "qrcode.react@1.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/zpao/qrcode.react",
+    "publisher": "Paul O’Shannessy",
+    "email": "paul@oshannessy.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/qrcode.react",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/qrcode.react/LICENSE"
+  },
+  "query-string@5.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/query-string",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/query-string",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/query-string/license"
+  },
+  "quick-lru@5.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/quick-lru",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/quick-lru",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/quick-lru/license"
+  },
+  "raf@3.4.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chrisdickinson/raf",
+    "publisher": "Chris Dickinson",
+    "email": "chris@neversaw.us",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/raf",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/raf/LICENSE"
+  },
+  "randombytes@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/crypto-browserify/randombytes",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/randombytes",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/randombytes/LICENSE"
+  },
+  "rc@1.2.8": {
+    "licenses": "(BSD-2-Clause OR MIT OR Apache-2.0)",
+    "repository": "https://github.com/dominictarr/rc",
+    "publisher": "Dominic Tarr",
+    "email": "dominic.tarr@gmail.com",
+    "url": "dominictarr.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/rc",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/rc/LICENSE.APACHE2"
+  },
+  "react-canvas-confetti@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ulitcos/react-canvas-confetti",
+    "publisher": "Ruslan Krokhin",
+    "email": "ulitcos@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-canvas-confetti",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-canvas-confetti/LICENSE"
+  },
+  "react-dom@16.14.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-dom",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-dom/LICENSE"
+  },
+  "react-is@16.13.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-is",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-is/LICENSE"
+  },
+  "react-lifecycles-compat@3.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/reactjs/react-lifecycles-compat",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-lifecycles-compat",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-lifecycles-compat/LICENSE.md"
+  },
+  "react-minimal-pie-chart@8.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/toomuchdesign/react-minimal-pie-chart",
+    "publisher": "Andrea Carraro",
+    "email": "me@andreacarraro.it",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-minimal-pie-chart",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-minimal-pie-chart/LICENSE.md"
+  },
+  "react-pdf@5.7.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wojtekmaj/react-pdf",
+    "publisher": "Wojciech Maj",
+    "email": "kontakt@wojtekmaj.pl",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-pdf",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-pdf/LICENSE"
+  },
+  "react-router-dom@5.3.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remix-run/react-router",
+    "publisher": "Remix Software",
+    "email": "hello@remix.run",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-router-dom",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-router-dom/LICENSE"
+  },
+  "react-router@5.3.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remix-run/react-router",
+    "publisher": "Remix Software",
+    "email": "hello@remix.run",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-router",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-router/LICENSE"
+  },
+  "react-sortable-hoc@1.11.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/clauderic/react-sortable-hoc",
+    "publisher": "Clauderic Demers",
+    "email": "me@ced.io",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-sortable-hoc",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-sortable-hoc/LICENSE"
+  },
+  "react-virtualized@9.22.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bvaughn/react-virtualized",
+    "publisher": "Brian Vaughn",
+    "email": "brian.david.vaughn@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-virtualized",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react-virtualized/LICENSE"
+  },
+  "react@16.14.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/react/LICENSE"
+  },
+  "read-chunk@3.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/read-chunk",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/read-chunk",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/read-chunk/license"
+  },
+  "readable-stream@3.6.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/readable-stream",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/bl/node_modules/readable-stream",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/bl/node_modules/readable-stream/LICENSE"
+  },
+  "regenerator-runtime@0.13.9": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/regenerator/tree/master/packages/runtime",
+    "publisher": "Ben Newman",
+    "email": "bn@cs.stanford.edu",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@babel/runtime/node_modules/regenerator-runtime",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/@babel/runtime/node_modules/regenerator-runtime/LICENSE"
+  },
+  "resolve-alpn@1.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/szmarczak/resolve-alpn",
+    "publisher": "Szymon Marczak",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/resolve-alpn",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/resolve-alpn/LICENSE"
+  },
+  "resolve-pathname@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mjackson/resolve-pathname",
+    "publisher": "Michael Jackson",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/resolve-pathname",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/resolve-pathname/LICENSE"
+  },
+  "responselike@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/responselike",
+    "publisher": "lukechilds",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/responselike",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/responselike/LICENSE"
+  },
+  "retry@0.12.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tim-kos/node-retry",
+    "publisher": "Tim Koschützki",
+    "email": "tim@debuggable.com",
+    "url": "http://debuggable.com/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/retry",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/retry/License"
+  },
+  "rimraf@2.7.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/rimraf",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-json-storage/node_modules/rimraf",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-json-storage/node_modules/rimraf/LICENSE"
+  },
+  "rimraf@3.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/rimraf",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/rimraf",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/rimraf/LICENSE"
+  },
+  "roarr@2.15.4": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/gajus/roarr",
+    "publisher": "Gajus Kuizinas",
+    "email": "gajus@gajus.com",
+    "url": "http://gajus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/roarr",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/roarr/LICENSE"
+  },
+  "robust-predicates@3.0.1": {
+    "licenses": "Unlicense",
+    "repository": "https://github.com/mourner/robust-predicates",
+    "publisher": "Vladimir Agafonkin",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/robust-predicates",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/robust-predicates/LICENSE"
+  },
+  "rw@1.3.3": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/mbostock/rw",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/rw",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/rw/LICENSE"
+  },
+  "safe-buffer@5.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/safe-buffer",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "http://feross.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/safe-buffer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/safe-buffer/LICENSE"
+  },
+  "safer-buffer@2.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ChALkeR/safer-buffer",
+    "publisher": "Nikita Skovoroda",
+    "email": "chalkerx@gmail.com",
+    "url": "https://github.com/ChALkeR",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/safer-buffer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/safer-buffer/LICENSE"
+  },
+  "sanitize-filename@1.6.3": {
+    "licenses": "WTFPL OR ISC",
+    "repository": "https://github.com/parshap/node-sanitize-filename",
+    "publisher": "Parsha Pourkhomami",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sanitize-filename",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sanitize-filename/LICENSE.md"
+  },
+  "sax@1.2.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/sax-js",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sax",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sax/LICENSE"
+  },
+  "scheduler@0.19.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/scheduler",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/scheduler/LICENSE"
+  },
+  "schema-utils@3.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack/schema-utils",
+    "publisher": "webpack Contrib",
+    "url": "https://github.com/webpack-contrib",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/file-loader/node_modules/schema-utils",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/file-loader/node_modules/schema-utils/LICENSE"
+  },
+  "selection-ranges@3.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nikku/selection-ranges",
+    "publisher": "Nico Rehwaldt",
+    "email": "git_nikku@nixis.de",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/selection-ranges",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/selection-ranges/LICENSE"
+  },
+  "semver-compare@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/substack/semver-compare",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/semver-compare",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/semver-compare/LICENSE"
+  },
+  "semver@6.3.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/node-semver",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/semver",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/semver/LICENSE"
+  },
+  "semver@7.3.7": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/node-semver",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater/node_modules/semver",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater/node_modules/semver/LICENSE"
+  },
+  "semver@7.3.8": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/node-semver",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/global-agent/node_modules/semver",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/global-agent/node_modules/semver/LICENSE"
+  },
+  "serialize-error@7.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/serialize-error",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/serialize-error",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/serialize-error/license"
+  },
+  "serialize-javascript@6.0.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/yahoo/serialize-javascript",
+    "publisher": "Eric Ferraiuolo",
+    "email": "edf@ericf.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/serialize-javascript",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/serialize-javascript/LICENSE"
+  },
+  "set-blocking@2.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/yargs/set-blocking",
+    "publisher": "Ben Coe",
+    "email": "ben@npmjs.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/set-blocking",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/set-blocking/LICENSE.txt"
+  },
+  "sha1@1.1.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/pvorb/node-sha1",
+    "publisher": "Paul Vorbach",
+    "email": "paul@vorb.de",
+    "url": "http://vorb.de",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sha1",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sha1/LICENSE"
+  },
+  "signal-exit@3.0.7": {
+    "licenses": "ISC",
+    "repository": "https://github.com/tapjs/signal-exit",
+    "publisher": "Ben Coe",
+    "email": "ben@npmjs.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/signal-exit",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/signal-exit/LICENSE.txt"
+  },
+  "simple-concat@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/simple-concat",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/simple-concat",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/simple-concat/LICENSE"
+  },
+  "simple-get@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/simple-get",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/simple-get",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/simple-get/LICENSE"
+  },
+  "smart-buffer@4.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/JoshGlazebrook/smart-buffer",
+    "publisher": "Josh Glazebrook",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/smart-buffer",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/smart-buffer/LICENSE"
+  },
+  "socks-proxy-agent@7.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/node-socks-proxy-agent",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/socks-proxy-agent",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/socks-proxy-agent/README.md"
+  },
+  "socks@2.6.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/JoshGlazebrook/socks",
+    "publisher": "Josh Glazebrook",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/socks",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/socks/LICENSE"
+  },
+  "sort-keys-length@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/sort-keys-length",
+    "publisher": "Kevin Mårtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "https://github.com/kevva",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sort-keys-length",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sort-keys-length/LICENSE.md"
+  },
+  "sort-keys@1.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/sort-keys",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sort-keys",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sort-keys/license"
+  },
+  "source-map-support@0.5.21": {
+    "licenses": "MIT",
+    "repository": "https://github.com/evanw/node-source-map-support",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/source-map-support",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/source-map-support/LICENSE.md"
+  },
+  "source-map@0.6.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/mozilla/source-map",
+    "publisher": "Nick Fitzgerald",
+    "email": "nfitzgerald@mozilla.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/source-map",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/source-map/LICENSE"
+  },
+  "sprintf-js@1.1.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/alexei/sprintf.js",
+    "publisher": "Alexandru Mărășteanu",
+    "email": "hello@alexei.ro",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sprintf-js",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sprintf-js/LICENSE"
+  },
+  "ssri@9.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/ssri",
+    "publisher": "GitHub Inc.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ssri",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/ssri/LICENSE.md"
+  },
+  "strict-uri-encode@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/strict-uri-encode",
+    "publisher": "Kevin Mårtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "github.com/kevva",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/strict-uri-encode",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/strict-uri-encode/license"
+  },
+  "string-width@4.2.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/string-width",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/string-width",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/string-width/license"
+  },
+  "string_decoder@1.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/string_decoder",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/string_decoder",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/string_decoder/LICENSE"
+  },
+  "strip-ansi@6.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/strip-ansi",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/strip-ansi",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/strip-ansi/license"
+  },
+  "strip-json-comments@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/strip-json-comments",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/strip-json-comments",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/strip-json-comments/license"
+  },
+  "sumchecker@3.0.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/malept/sumchecker",
+    "publisher": "Mark Lee",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sumchecker",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/sumchecker/LICENSE"
+  },
+  "supports-color@8.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/supports-color",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jest-worker/node_modules/supports-color",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/jest-worker/node_modules/supports-color/license"
+  },
+  "tapable@2.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack/tapable",
+    "publisher": "Tobias Koppers @sokra",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/webpack/node_modules/tapable",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/webpack/node_modules/tapable/LICENSE"
+  },
+  "tar-fs@2.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/tar-fs",
+    "publisher": "Mathias Buus",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tar-fs",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tar-fs/LICENSE"
+  },
+  "tar-stream@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/tar-stream",
+    "publisher": "Mathias Buus",
+    "email": "mathiasbuus@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tar-stream",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tar-stream/LICENSE"
+  },
+  "tar@6.1.11": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/node-tar",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tar",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tar/LICENSE"
+  },
+  "terser-webpack-plugin@5.3.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack-contrib/terser-webpack-plugin",
+    "publisher": "webpack Contrib Team",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/terser-webpack-plugin",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/terser-webpack-plugin/LICENSE"
+  },
+  "terser@5.14.2": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/terser/terser",
+    "publisher": "Mihai Bazon",
+    "email": "mihai.bazon@gmail.com",
+    "url": "http://lisperator.net/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/terser",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/terser/LICENSE"
+  },
+  "tiny-invariant@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/alexreardon/tiny-invariant",
+    "publisher": "Alex Reardon",
+    "email": "alexreardon@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tiny-invariant",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tiny-invariant/LICENSE"
+  },
+  "tiny-warning@1.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/alexreardon/tiny-warning",
+    "publisher": "Alex Reardon",
+    "email": "alexreardon@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tiny-warning",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tiny-warning/LICENSE"
+  },
+  "truncate-utf8-bytes@1.0.2": {
+    "licenses": "WTFPL",
+    "repository": "https://github.com/parshap/truncate-utf8-bytes",
+    "publisher": "Carl Xiong",
+    "email": "xiongc05@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/truncate-utf8-bytes",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/truncate-utf8-bytes/README.md"
+  },
+  "tslib@1.14.1": {
+    "licenses": "0BSD",
+    "repository": "https://github.com/Microsoft/tslib",
+    "publisher": "Microsoft Corp.",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tslib",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tslib/LICENSE.txt"
+  },
+  "tunnel-agent@0.6.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/mikeal/tunnel-agent",
+    "publisher": "Mikeal Rogers",
+    "email": "mikeal.rogers@gmail.com",
+    "url": "http://www.futurealoof.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tunnel-agent",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/tunnel-agent/LICENSE"
+  },
+  "type-fest@0.13.1": {
+    "licenses": "(MIT OR CC0-1.0)",
+    "repository": "https://github.com/sindresorhus/type-fest",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/type-fest",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/type-fest/license"
+  },
+  "unique-filename@1.1.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/iarna/unique-filename",
+    "publisher": "Rebecca Turner",
+    "email": "me@re-becca.org",
+    "url": "http://re-becca.org/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/unique-filename",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/unique-filename/LICENSE"
+  },
+  "unique-slug@2.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/iarna/unique-slug",
+    "publisher": "Rebecca Turner",
+    "email": "me@re-becca.org",
+    "url": "http://re-becca.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/unique-slug",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/unique-slug/LICENSE"
+  },
+  "universalify@0.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/RyanZim/universalify",
+    "publisher": "Ryan Zimmerman",
+    "email": "opensrc@ryanzim.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/universalify",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/universalify/LICENSE"
+  },
+  "universalify@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/RyanZim/universalify",
+    "publisher": "Ryan Zimmerman",
+    "email": "opensrc@ryanzim.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater/node_modules/universalify",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/electron-updater/node_modules/universalify/LICENSE"
+  },
+  "unused-filename@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/unused-filename",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/unused-filename",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/unused-filename/license"
+  },
+  "update-browserslist-db@1.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/browserslist/update-db",
+    "publisher": "Andrey Sitnik",
+    "email": "andrey@sitnik.ru",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/update-browserslist-db",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/update-browserslist-db/LICENSE"
+  },
+  "uri-js@4.4.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/garycourt/uri-js",
+    "publisher": "Gary Court",
+    "email": "gary.court@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/uri-js",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/uri-js/LICENSE"
+  },
+  "utf8-byte-length@1.0.4": {
+    "licenses": "WTFPL",
+    "repository": "https://github.com/parshap/utf8-byte-length",
+    "publisher": "Carl Xiong",
+    "email": "xiongc05@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/utf8-byte-length",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/utf8-byte-length/README.md"
+  },
+  "util-deprecate@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/util-deprecate",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/util-deprecate",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/util-deprecate/LICENSE"
+  },
+  "value-equal@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mjackson/value-equal",
+    "publisher": "Michael Jackson",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/value-equal",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/value-equal/LICENSE"
+  },
+  "watchpack@2.4.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack/watchpack",
+    "publisher": "Tobias Koppers @sokra",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/watchpack",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/watchpack/LICENSE"
+  },
+  "web-streams-polyfill@3.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/MattiasBuelens/web-streams-polyfill",
+    "publisher": "Mattias Buelens",
+    "email": "mattias@buelens.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/web-streams-polyfill",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/web-streams-polyfill/LICENSE"
+  },
+  "webpack-sources@3.2.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack/webpack-sources",
+    "publisher": "Tobias Koppers @sokra",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/webpack-sources",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/webpack-sources/LICENSE"
+  },
+  "webpack@5.74.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack/webpack",
+    "publisher": "Tobias Koppers @sokra",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/webpack",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/webpack/LICENSE"
+  },
+  "which@2.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-which",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/which",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/which/LICENSE"
+  },
+  "wide-align@1.1.5": {
+    "licenses": "ISC",
+    "repository": "https://github.com/iarna/wide-align",
+    "publisher": "Rebecca Turner",
+    "email": "me@re-becca.org",
+    "url": "http://re-becca.org/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/wide-align",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/wide-align/LICENSE"
+  },
+  "with-open-file@0.1.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/raphinesse/with-open-file",
+    "publisher": "Raphael von der Grün",
+    "email": "raphinesse@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/with-open-file",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/with-open-file/LICENSE"
+  },
+  "wrappy@1.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/wrappy",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/wrappy",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/wrappy/LICENSE"
+  },
+  "write-file-atomic@2.4.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/iarna/write-file-atomic",
+    "publisher": "Rebecca Turner",
+    "email": "me@re-becca.org",
+    "url": "http://re-becca.org",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/write-file-atomic",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/write-file-atomic/LICENSE"
+  },
+  "yallist@4.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/yallist",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/yallist",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/yallist/LICENSE"
+  },
+  "yauzl@2.10.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/thejoshwolfe/yauzl",
+    "publisher": "Josh Wolfe",
+    "email": "thejoshwolfe@gmail.com",
+    "path": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/yauzl",
+    "licenseFile": "/Users/mhlv/Sites/anytype/js-anytype/node_modules/yauzl/LICENSE"
+  }
+}
