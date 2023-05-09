@@ -106,11 +106,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			};
 
 			case 'migration': {
-				popupStore.open('migration', {
-					onClose: () => {
-						analytics.event('ClickMigration', { type: 'exit' });
-					}
-				});
+				popupStore.open('migration', {});
 				Storage.set('migrationHint', { showHint: false });
 				break;
 			};

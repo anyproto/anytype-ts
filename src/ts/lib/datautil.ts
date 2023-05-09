@@ -301,8 +301,6 @@ class DataUtil {
 								Storage.set('migrationHint', { showHint: true });
 								Preview.showMigrationTooltip();
 							};
-
-							analytics.event('ClickMigration', { type: 'exit' });
 						}
 					});
 				}, Constant.delay.popup);

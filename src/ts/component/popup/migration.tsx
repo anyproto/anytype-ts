@@ -171,6 +171,30 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 		};
 	};
 
+	componentWillUnmount () {
+		const { step } = this.state;
+		const eventData: any = { type: 'exit' };
+
+		switch (step) {
+			case 0: {
+				eventData.route = 'MigrationNewAppOffer';
+				break;
+			};
+
+			case 1: {
+				eventData.route = 'MigrationExportOffer';
+				break;
+			};
+
+			case 2: {
+				eventData.route = 'MigrationDownload';
+				break;
+			};
+		};
+
+		analytics.event('ClickMigration', eventData);
+	};
+
 	onExport () {
 		Action.openDir({
 			buttonLabel: 'Export',
