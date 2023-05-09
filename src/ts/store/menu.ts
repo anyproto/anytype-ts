@@ -158,8 +158,9 @@ class MenuStore {
 	};
 
 	closeLast () {
-		if (this.menuList.length) {
-			this.close(this.menuList[this.menuList.length - 1].id);
+		const items = this.getItems(null).filter(it => !it.param.noClose);
+		if (items.length) {
+			this.close(items[items.length - 1].id);
 		};
 	};
 

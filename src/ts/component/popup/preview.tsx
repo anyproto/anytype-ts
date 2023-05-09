@@ -1,9 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader, } from 'Component';
-import { I } from 'Lib';
-import { commonStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, keyboard } from 'Lib';
 
 const BORDER = 16;
 
@@ -52,12 +50,19 @@ class PopupPreview extends React.Component<I.Popup> {
 	};
 
 	unbind () {
-		$(window).off('resize.popupPreview');
+		$(window).off('resize.popupPreview keydown.popupPreview');
 	};
 
 	rebind () {
 		this.unbind();
-		$(window).on('resize.popupPreview', () => { this.resize(); });
+
+		const win = $(window);
+		win.on('resize.popupPreview', () => { this.resize(); });
+		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+	};
+
+	onKeyDown (e: any) {
+		keyboard.shortcut('escape', e, () => this.props.close());
 	};
 	
 	resize () {
