@@ -446,6 +446,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { selection } = dataset || {};
 		const element = $(`#button-block-menu-${block.id}`);
 
+		if (!element.length) {
+			return;
+		};
+
 		selection.set(I.SelectType.Block, this.ids);
 
 		this.menuOpen({

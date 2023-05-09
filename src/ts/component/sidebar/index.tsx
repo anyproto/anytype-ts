@@ -109,10 +109,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 		const win = $(window);
 		const node = $(this.node);
-		const offset = node.offset();
+		const { left, top } = node.offset();
 
-		this.ox = e.pageX - offset.left;
-		this.oy = e.pageY - offset.top;
+		this.ox = e.pageX - left;
+		this.oy = e.pageY - top;
 
 		sidebar.resizePage();
 		sidebar.setDragging(true);
@@ -122,7 +122,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		win.off('mousemove.sidebar mouseup.sidebar');
 		win.on('mousemove.sidebar', throttle(e => this.onDragMove(e), 20));
 		win.on('mouseup.sidebar', e => this.onDragEnd());
-	}
+	};
 
 	onDragMove (e: React.MouseEvent) {
 		const win = $(window);
