@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button } from 'Component';
-import { I, Onboarding } from 'Lib';
+import { analytics, I, Onboarding } from 'Lib';
 import { commonStore } from 'Store';
 import QRCode from 'qrcode.react';
 import Url from 'json/url.json';
@@ -86,14 +86,48 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 		);
 	};
 
+	componentDidMount () {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { type } = data;
+
+		let eventCode = null;
+		switch (type) {
+			case 'onboarding': {
+				eventCode = 'MigrationImportBackupOffer';
+				break;
+			};
+			case 'import': {
+				eventCode = 'MigrationImportBackup';
+				break;
+			};
+		};
+
+		if (!eventCode) {
+			return;
+		};
+		analytics.event(eventCode);
+	}
+
 	componentWillUnmount(): void {
 		const { param } = this.props;
 		const { data } = param;
 		const { type } = data;
+		const eventData: any = { type: 'exit' };
 
-		if (type == 'onboarding') {
-			Onboarding.start('dashboard', false, true);
+		switch (type) {
+			case 'onboarding': {
+				eventData.route = 'MigrationImportBackupOffer';
+				Onboarding.start('dashboard', false, true);
+				break;
+			};
+			case 'import': {
+				eventData.route = 'MigrationImportBackup';
+				break;
+			};
 		};
+
+		analytics.event('ClickMigration', eventData);
 	};
 
 });
