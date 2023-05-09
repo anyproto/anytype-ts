@@ -210,7 +210,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		keyboard.shortcut(`${cmd}+n`, e, () => { 
-			ref.onRecordAdd(e, -1, true); 
+			ref.onRecordAdd(e, 0, true); 
 		});
 
 		if (!keyboard.isFocused) {
