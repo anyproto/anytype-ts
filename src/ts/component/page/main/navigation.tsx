@@ -6,14 +6,12 @@ import { observer } from 'mobx-react';
 import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
 import { I, C, ObjectUtil, Util, keyboard, Key, focus, translate } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
 
 interface State {
 	loading: boolean;
 	info: I.PageInfo;
 	pagesIn: I.PageInfo[];
 	pagesOut: I.PageInfo[];
-	n: number;
 };
 
 const HEIGHT = 96;
@@ -39,9 +37,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		info: null,
 		pagesIn: [] as I.PageInfo[],
 		pagesOut: [] as I.PageInfo[],
-		n: 0,
 	};
 	id = '';
+	n = 0;
 	timeout = 0;
 	panel: Panel = Panel.Left;
 	cacheIn: any = {};
@@ -332,28 +330,24 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const items = this.getItems();
 		const l = items.length;
 
-		let { n } = this.state;
-
 		keyboard.disableMouse(true);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			const dir = pressed.match(Key.up) ? -1 : 1;
 
-			n += dir;
-			if (n < 0) {
-				n = l - 1;
+			this.n += dir;
+			if (this.n < 0) {
+				this.n = l - 1;
 			};
-			if (n > l - 1) {
-				n = 0;
+			if (this.n > l - 1) {
+				this.n = 0;
 			};
-			this.setState({ n });
 			this.setActive();
 		});
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			const dir = pressed.match(Key.left) ? -1 : 1;
 
-			this.setState({ n: 0 });
 			this.panel += dir;
 
 			if (this.panel < Panel.Left) {
@@ -382,7 +376,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		});
 
 		keyboard.shortcut('enter, space', e, (pressed: string) => {
-			const item = items[n];
+			const item = items[this.n];
 			if (!item) {
 				return;
 			};
@@ -411,10 +405,9 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	setActive (item?: any) {
-		const { n } = this.state;
 		if (!item) {
 			const items = this.getItems();
-			item = items[n];
+			item = items[this.n];
 		};
 
 		if (!item) {
@@ -437,11 +430,10 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	onOver (e: any, item: any) {
-		const { n } = this.state;
-		
-		if (!keyboard.isMouseDisabled && ((item.panel != this.panel) || (item.index != n))) {
+		if (!keyboard.isMouseDisabled) {
 			this.panel = item.panel;
-			this.setState({ n: item.index });
+			this.n = item.index;
+			this.setActive();
 		};
 	};
 
@@ -469,7 +461,6 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 			this.panel = Panel.Center;
 			this.setState({ 
-				n: 0,
 				loading: false,
 				info: this.getPage(message.object.info),
 				pagesIn: pagesIn,
