@@ -55,7 +55,13 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 				);
 
 				buttons = buttons.concat([
-					{ text: 'Get started', color: 'black', onClick: () => this.setState({ step: 1 }) },
+					{ text: 'Get started', color: 'black', onClick: () => {
+						analytics.event('ClickMigration', {
+							type: 'GetStarted',
+							route: 'MigrationNewAppOffer'
+						});
+						this.setState({ step: 1 });
+					}},
 					{ text: 'Later', color: 'blank', onClick: close },
 				]);
 				break;
@@ -73,7 +79,13 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 				);
 
 				buttons = buttons.concat([
-					{ text: 'Begin export', color: 'black', onClick: () => this.onExport() },
+					{ text: 'Begin export', color: 'black', onClick: () => {
+						analytics.event('ClickMigration', {
+							type: 'BeginExport',
+							route: 'MigrationExportOffer'
+						});
+						this.onExport();
+					}},
 					{ text: 'Later', color: 'blank', onClick: close },
 				]);
 				break;
@@ -108,7 +120,13 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 				);
 
 				buttons = buttons.concat([
-					{ text: 'Quit and Download', color: 'black', onClick: () => this.onClose() },
+					{ text: 'Quit and Download', color: 'black', onClick: () => {
+						analytics.event('ClickMigration', {
+							type: 'QuitAndDownload',
+							route: 'MigrationDownload'
+						});
+						this.onClose()
+					}},
 				]);
 				break;
 			};
@@ -127,8 +145,56 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 		);
 	};
 
+	componentDidMount () {
+		analytics.event('MigrationNewAppOffer');
+	};
+
 	componentDidUpdate (): void {
-		this.props.position();	
+		const { position } = this.props;
+		const { step } = this.state;
+
+		let event = '';
+		switch (step) {
+			case 1: {
+				event = 'MigrationExportOffer';
+				break;
+			};
+
+			case 2: {
+				event = 'MigrationDownload';
+				break;
+			};
+		};
+
+		if (event) {
+			analytics.event(event);
+		};
+
+		position();
+	};
+
+	componentWillUnmount () {
+		const { step } = this.state;
+		const eventData = { type: 'exit', route: '' };
+
+		switch (step) {
+			case 0: {
+				eventData.route = 'MigrationNewAppOffer';
+				break;
+			};
+
+			case 1: {
+				eventData.route = 'MigrationExportOffer';
+				break;
+			};
+
+			case 2: {
+				eventData.route = 'MigrationDownload';
+				break;
+			};
+		};
+
+		analytics.event('ClickMigration', eventData);
 	};
 
 	onExport () {
