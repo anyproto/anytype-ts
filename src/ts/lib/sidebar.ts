@@ -289,13 +289,6 @@ class Sidebar {
 			set.x = ww - width;
 		};
 
-		if (set.height == height) {
-			delete(set.height);
-		};
-		if (set.x == x) {
-			delete(set.x);
-		};
-
 		if (Util.objectLength(set)) {
 			this.set(set);
 		};
