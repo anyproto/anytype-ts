@@ -155,13 +155,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		this.open();
 		focus.apply();
 
-		if (resizable.length) {
-			resizable.trigger('resizeInit');
-		};
-
 		blockStore.updateNumbers(rootId);
 		this.resizePage();
 		sidebar.resizePage();
+
+		if (resizable.length) {
+			resizable.trigger('resizeInit');
+		};
 
 		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};

@@ -275,7 +275,7 @@ class Sidebar {
 
 	resize (): void {
 		const { isSidebarFixed } = commonStore;
-		const { snap, width } = this.data;
+		const { snap, width, height, x } = this.data;
 		const { ww } = this.getWindowDimensions();
 		const set: Partial<SidebarData> = {};
 
@@ -287,6 +287,13 @@ class Sidebar {
 		};
 		if (snap == I.MenuDirection.Right) {
 			set.x = ww - width;
+		};
+
+		if (set.height == height) {
+			delete(set.height);
+		};
+		if (set.x == x) {
+			delete(set.x);
 		};
 
 		if (Util.objectLength(set)) {
