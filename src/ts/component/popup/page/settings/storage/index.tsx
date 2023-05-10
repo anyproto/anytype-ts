@@ -31,6 +31,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         return (
             <React.Fragment>
                 <Title text={translate('popupSettingsStorageIndexTitle')} />
+                <Title className="sub" text={translate('popupSettingsStorageIndexRemoteStorage')} />
                 <Label className="description" text={Util.sprintf(translate(`popupSettingsStorageIndexText`), storageUsage.of)} />
 
                 <div className="storageUsage">
