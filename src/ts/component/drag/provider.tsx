@@ -66,7 +66,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const container = Util.getPageContainer(isPopup);
+		const container = $(isPopup ? '#popupPage-innerWrap' : '.pageFlex');
 		const rootId = keyboard.getRootId();
 
 		this.init = true;
