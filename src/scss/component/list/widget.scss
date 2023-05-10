@@ -57,6 +57,7 @@
 		.head {
 			> .buttons { display: flex; }
 			.iconWrap.options { display: none; }
+			.clickable { width: calc(100% - 60px); }
 		}
 	}
 

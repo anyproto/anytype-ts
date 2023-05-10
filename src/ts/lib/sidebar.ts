@@ -26,13 +26,19 @@ class Sidebar {
 		snap: I.MenuDirection.Left,
 	};
 	obj: JQuery<HTMLElement> = null;
+	page: JQuery<HTMLElement> = null;
+	header: JQuery<HTMLElement> = null;
+	footer: JQuery<HTMLElement> = null;
+	loader: JQuery<HTMLElement> = null;
+	dummyLeft: JQuery<HTMLElement> = null;
+	dummyRight: JQuery<HTMLElement> = null;
 	isAnimating = false;
 	isDragging = false;
 	timeoutHide = 0;
 	timeoutAnim = 0;
 
 	init () {
-		this.obj = $('#sidebar');
+		this.initObjects();
 
 		const stored = Storage.get('sidebar');
 		if (stored) {
@@ -55,6 +61,17 @@ class Sidebar {
 			commonStore.autoSidebarSet(true);
 			commonStore.isSidebarFixedSet(false);
 		};
+	};
+
+	initObjects () {
+		this.obj = $('#sidebar');
+		this.page = $('#page.isFull');
+		this.page = $('#page.isFull');
+		this.header = this.page.find('#header');
+		this.footer = this.page.find('#footer');
+		this.loader = this.page.find('#loader');
+		this.dummyLeft = $('#sidebarDummyLeft');
+		this.dummyRight = $('#sidebarDummyRight');
 	};
 
 	onMouseMove (): void {
@@ -278,14 +295,10 @@ class Sidebar {
 	};
 
 	resizePage () {
+		this.initObjects();
+
 		const { isSidebarFixed } = commonStore;
 		const { snap } = this.data;
-		const page = $('#page.isFull');
-		const header = page.find('#header');
-		const footer = page.find('#footer');
-		const loader = page.find('#loader');
-		const dummyLeft = $('#sidebarDummyLeft');
-		const dummyRight = $('#sidebarDummyRight');
 
 		let width = 0;
 		let dummy = null;
@@ -301,31 +314,31 @@ class Sidebar {
 		const css: any = { width: '' };
 		const cssLoader: any = { width: pageWidth, left: '', right: '' };
 		
-		header.css(css).removeClass('withSidebar snapLeft snapRight');
-		footer.css(css).removeClass('withSidebar snapLeft snapRight');
+		this.header.css(css).removeClass('withSidebar snapLeft snapRight');
+		this.footer.css(css).removeClass('withSidebar snapLeft snapRight');
 
-		dummyLeft.css({ width: 0 });
-		dummyRight.css({ width: 0 });
+		this.dummyLeft.css({ width: 0 });
+		this.dummyRight.css({ width: 0 });
 
-		css.width = header.outerWidth() - width;
+		css.width = this.header.outerWidth() - width;
 
 		if (isSidebarFixed) {
-			header.addClass('withSidebar');
-			footer.addClass('withSidebar');
+			this.header.addClass('withSidebar');
+			this.footer.addClass('withSidebar');
 		};
 
 		if (snap !== null) {
 			if (snap == I.MenuDirection.Right) {
-				dummy = dummyRight;
-				header.addClass('snapRight');
-				footer.addClass('snapRight');
+				dummy = this.dummyRight;
+				this.header.addClass('snapRight');
+				this.footer.addClass('snapRight');
 
 				cssLoader.left = 0;
 				cssLoader.right = '';
 			} else {
-				dummy = dummyLeft;
-				header.addClass('snapLeft');
-				footer.addClass('snapLeft');
+				dummy = this.dummyLeft;
+				this.header.addClass('snapLeft');
+				this.footer.addClass('snapLeft');
 
 				cssLoader.left = '';
 				cssLoader.right = 0;
@@ -336,10 +349,10 @@ class Sidebar {
 			dummy.css({ width: width ? width : 0 });
 		};
 
-		page.css({ width: pageWidth });
-		loader.css(cssLoader);
-		header.css(css);
-		footer.css(css);
+		this.page.css({ width: pageWidth });
+		this.loader.css(cssLoader);
+		this.header.css(css);
+		this.footer.css(css);
 	};
 
 	private save (): void {
@@ -416,7 +429,6 @@ class Sidebar {
 		commonStore.isSidebarFixedSet(v);
 
 		this.data.snap = this.getSnap(this.data.x, this.data.width);
-
 		this.resizePage();
 		this.save();
 
@@ -494,6 +506,7 @@ class Sidebar {
 		const { min } = Constant.size.sidebar.height;
 		return Math.max(min, Math.min(this.getMaxHeight(), Number(height) || 0));
 	};
+
 };
 
 export const sidebar: Sidebar = new Sidebar();

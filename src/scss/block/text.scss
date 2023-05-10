@@ -181,9 +181,8 @@
 	/* Code */
 
 	.block.blockText.textCode { padding: 6px 0px; }
-	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { 
-		padding: 24px 0px 0px 0px; background: rgba(247,245,240,0.5); border-radius: 6px;
-	}
+	.block.blockText.textCode > .wrapContent > .selectable { background: rgba(247,245,240,0.5); border-radius: 6px; }
+	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 24px 0px 0px 0px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget .placeholder { display: none !important; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget > .flex { position: static; } 

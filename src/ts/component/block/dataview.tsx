@@ -506,7 +506,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const objectId = this.getObjectId();
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
-		const element = $(e.currentTarget);
 		const view = this.getView();
 		const subId = dbStore.getSubId(rootId, block.id);
 		const isCollection = this.isCollection();
@@ -525,6 +524,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (!types.length || isCollection) {
 			flags.push(I.ObjectFlag.SelectType);
+		};
+
+		const menuParam: any = {
+		};
+
+		if (dir) {
+			menuParam.element = $(e.currentTarget);
+		} else {
+			menuParam.horizontal = I.MenuDirection.Center;
+			menuParam.recalcRect = () => {
+				const win = $(window);
+				const ww = win.width();
+				const wh = win.height();
+
+				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
+			};
 		};
 
 		if (relations.length) {
@@ -587,8 +602,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		if (details.type == Constant.typeId.bookmark) {
 			menuStore.open('dataviewCreateBookmark', {
+				...menuParam,
 				type: I.MenuType.Horizontal,
-				element,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 				onClose: () => {
@@ -607,7 +622,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const showMenu = () => {
 			menuStore.open('searchObject', {
-				element: element,
+				...menuParam,
 				className: 'single',
 				subIds: [ 'previewObject' ],
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,

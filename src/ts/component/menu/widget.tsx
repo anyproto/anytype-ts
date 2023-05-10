@@ -396,7 +396,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			let prevY = 0;
 			for (let id of widgetIds) {
 				const item = $(`#widget-${id}`);
-				if (!item) {
+				if (!item || !item.length) {
 					continue;
 				};
 

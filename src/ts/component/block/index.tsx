@@ -433,6 +433,8 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 	
 	onMenuDown (e: any) {
+		e.stopPropagation();
+
 		const { block } = this.props;
 
 		focus.clear(true);
@@ -443,6 +445,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const element = $(`#button-block-menu-${block.id}`);
+
+		if (!element.length) {
+			return;
+		};
 
 		selection.set(I.SelectType.Block, this.ids);
 

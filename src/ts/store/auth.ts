@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, C, Storage, analytics, Renderer } from 'Lib';
-import { blockStore, detailStore, commonStore, dbStore } from 'Store';
+import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'Store';
 import * as Sentry from '@sentry/browser';
 import { keyboard } from 'Lib';
 
@@ -187,6 +187,7 @@ class AuthStore {
 		blockStore.clearAll();
 		detailStore.clearAll();
 		dbStore.clearAll();
+		menuStore.closeAllForced();
 
 		this.clearAll();
 		Storage.logout();

@@ -23,9 +23,9 @@
 
 		.buttons { display: flex; gap: 0px 12px; margin-left: 32px; }
 		.buttons {
-			.button.toastButton { @include text-common; font-weight: 500; line-height: 20px; border: 0 solid; height: auto; padding: 0; background: none; }
-			.button.toastButton:hover { background-color: transparent; }
-			.button.toastButton:hover {
+			.button { @include text-common; font-weight: 500; line-height: 20px; border: 0 solid; height: auto; padding: 0; background: none; color: $colorWhite; }
+			.button:hover { background-color: transparent; }
+			.button:hover {
 				.txt { text-decoration: underline; }
 			}
 		}

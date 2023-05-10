@@ -346,7 +346,14 @@ class Action {
 						};
 
 						DataUtil.onAuth(message.account, () => {
-							popupStore.open('migration', { data: { type: 'import' } });
+							window.setTimeout(() => {
+								popupStore.open('migration', { data: { type: 'import' } });
+							}, Constant.delay.popup);
+
+							const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
+							if (blocks.length) {
+								Storage.setToggle('widget', blocks[0].parentId, true);
+							};
 						});
 					});
 				});

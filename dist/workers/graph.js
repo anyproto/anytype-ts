@@ -755,7 +755,7 @@ const getNodeById = (id) => {
 };
 
 const getNodeByCoords = (x, y) => {
-	return simulation.find(transform.invertX(x), transform.invertY(y), 20 / transform.k);
+	return simulation.find(transform.invertX(x), transform.invertY(y), 10 / transform.k);
 };
 
 const getRadius = (d) => {
