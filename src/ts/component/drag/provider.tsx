@@ -67,10 +67,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		const isPopup = keyboard.isPopup();
 		const container = $(isPopup ? '#popupPage-innerWrap' : '.pageFlex');
-		const rootId = keyboard.getRootId();
 
 		this.init = true;
-		this.objects = container.find('.dropTarget.isDroppable.root-' + rootId);
+		this.objects = container.find('.dropTarget.isDroppable');
 		
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);

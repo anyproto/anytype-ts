@@ -324,8 +324,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	// a composite key for the tree node in the form rootId-parentId-Id-depth
 	getTreeKey (node: I.WidgetTreeItem): string {
+		const { block } = this.props;
 		const { rootId, parentId, id, depth } = node;
-		return [ rootId, parentId, id, depth ].join('-');
+
+		return [ block.id, rootId, parentId, id, depth ].join('-');
 	};
 
 	setActive (id: string): void {
