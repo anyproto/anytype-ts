@@ -11,6 +11,8 @@ import ListWidget from 'Component/list/widget';
 interface Props {
 	dataset?: any;
 };
+
+const THROTTLE = 20;
 	
 const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	
@@ -120,7 +122,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		keyboard.disableSelection(true);
 
 		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', throttle(e => this.onDragMove(e), 20));
+		win.on('mousemove.sidebar', throttle(e => this.onDragMove(e), THROTTLE));
 		win.on('mouseup.sidebar', e => this.onDragEnd());
 	};
 
@@ -171,7 +173,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		body.addClass(dir == I.MenuType.Vertical ? 'rowResize' : 'colResize');
 
 		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', throttle(e => this.onResizeMove(e, dir), 20));
+		win.on('mousemove.sidebar', throttle(e => this.onResizeMove(e, dir), THROTTLE));
 		win.on('mouseup.sidebar', e => this.onResizeEnd());
 	};
 
