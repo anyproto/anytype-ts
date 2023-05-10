@@ -110,6 +110,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const { subId, id } = this.props;
 		const node = $(this.node);
 		const more = node.find('.icon.more');
+		const { x, y } = keyboard.mouse.page;
 		const menuParam: any = {
 			classNameWrap: 'fromSidebar',
 			onOpen: () => {
@@ -129,10 +130,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 			menuParam.vertical = I.MenuDirection.Center;
 			menuParam.offsetX = 32;
 		} else {
-			menuParam.recalcRect = () => {
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			};
+			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
 		};
 
 		menuStore.open('dataviewContext', menuParam);
