@@ -1,4 +1,4 @@
-import { I, C, keyboard, translate, Util, Storage, analytics, dispatcher, Mark, ObjectUtil } from 'Lib';
+import { I, C, keyboard, translate, Util, Storage, analytics, dispatcher, Mark, ObjectUtil, FileUtil } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -785,6 +785,21 @@ class DataUtil {
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
 			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
 		];
+	};
+
+	getStorageUsage () {
+		const mock = {
+			used: 1072520503,
+			of: 1073741824,
+			localUsed: 987654321
+		};
+
+		return {
+			used: FileUtil.size(mock.used, true),
+			of: FileUtil.size(mock.of, true),
+			percentageUsed: Math.floor(Number(Util.getPercent(mock.used, mock.of))),
+			localUsed: FileUtil.size(mock.localUsed, true)
+		};
 	};
 
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, IconObject, ObjectName, Button } from 'Component';
-import { analytics, C, FileUtil, I, translate, Util } from 'Lib';
+import { analytics, C, DataUtil, FileUtil, I, translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore, detailStore, popupStore } from 'Store';
 import Constant from "json/constant.json";
@@ -21,37 +21,31 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
     render () {
         const space = detailStore.get(Constant.subId.space, commonStore.workspace);
-        const mock = {
-            used: 123456789,
-            of: 1073741824,
-            localUsed: 987654321
-        };
+        const storageUsage = DataUtil.getStorageUsage();
+        const isFull = storageUsage.percentageUsed >= 99;
+        const usageCn = [ 'type' ];
 
-        const size = {
-            used: FileUtil.size(mock.used, true),
-            of: FileUtil.size(mock.of, true),
-            localUsed: FileUtil.size(mock.localUsed, true)
+        if (isFull) {
+            usageCn.push('red');
         };
-
-        const percentageUsed = Util.getPercent(mock.used, mock.of);
 
         return (
             <React.Fragment>
                 <Title text={translate('popupSettingsStorageIndexTitle')} />
-                <Label className="description" text={Util.sprintf(translate(`popupSettingsStorageIndexText`), size.of)} />
+                <Label className="description" text={Util.sprintf(translate(`popupSettingsStorageIndexText`), storageUsage.of)} />
 
                 <div className="storageUsage">
                     <div className="space">
                         <IconObject object={space} forceLetter={true} size={44} />
                         <div className="txt">
                             <ObjectName object={space} />
-                            <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexUsage`), size.used, size.of)}</div>
+                            <div className={usageCn.join(' ')}>{Util.sprintf(translate(`popupSettingsStorageIndexUsage`), storageUsage.used, storageUsage.of)}</div>
                         </div>
                     </div>
                     <Button className="c28 blank" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
                 </div>
 
-                <div className="progressBar"><div className="progressBarFill" style={{ width: percentageUsed + '%' }} /></div>
+                <div className="progressBar"><div className="progressBarFill" style={{ width: storageUsage.percentageUsed + '%' }} /></div>
 
                 <Title className="sub" text={translate('popupSettingsStorageIndexLocalStorageTitle')} />
                 <Label className="description" text={translate('popupSettingsStorageIndexLocalStorageText')} />
@@ -61,7 +55,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                         <IconObject className="localStorageIcon" object={{ iconEmoji: ':desktop_computer:' }} size={44} />
                         <div className="txt">
                             <ObjectName object={space} />
-                            <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), size.localUsed)}</div>
+                            <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), storageUsage.localUsed)}</div>
                         </div>
                     </div>
                     <Button className="c28 blank" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onFileOffload} />

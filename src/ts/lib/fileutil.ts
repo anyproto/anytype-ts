@@ -21,12 +21,13 @@ class FileUtil {
 
 		const afterComma = round ? '%0.0' : '%0.2';
 		const l = round ? 0 : 2;
+
 		let unit = 1024;
 		let g = v / (unit * unit * unit);
 		let m = v / (unit * unit);
 		let k = v / unit;
 		if (g >= 1) {
-			v = Util.sprintf(afterComma + 'fGB', Util.round(g, l));
+			v = Util.sprintf('%0.1fGB', Util.round(g, 1));
 		} else if (m > 1) {
 			v = Util.sprintf(afterComma + 'fMB', Util.round(m, l));
 		} else if (k > 1) {
