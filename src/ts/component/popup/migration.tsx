@@ -87,33 +87,33 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 	};
 
 	componentDidMount () {
-		const { param, close } = this.props;
+		const { param } = this.props;
 		const { data } = param;
 		const { type } = data;
 
-		let eventCode = null;
+		let event = '';
 		switch (type) {
 			case 'onboarding': {
-				eventCode = 'MigrationImportBackupOffer';
+				event = 'MigrationImportBackupOffer';
 				break;
 			};
+
 			case 'import': {
-				eventCode = 'MigrationImportBackup';
+				event = 'MigrationImportBackup';
 				break;
 			};
 		};
 
-		if (!eventCode) {
-			return;
+		if (event) {
+			analytics.event(event);
 		};
-		analytics.event(eventCode);
 	}
 
 	componentWillUnmount(): void {
 		const { param } = this.props;
 		const { data } = param;
 		const { type } = data;
-		const eventData: any = { type: 'exit' };
+		const eventData = { type: 'exit', route: '' };
 
 		switch (type) {
 			case 'onboarding': {
