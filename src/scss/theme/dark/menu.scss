@@ -297,8 +297,7 @@
 	.menu.menuOnboarding {
 		a { color: $colorWhite; }
 		.highlight { background: $colorLineSecondary; color: $colorOrange; }
-
-        .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
+        .icon.close { background-color: $colorHoverMedium; }
 
         .bottom {
             .round {
