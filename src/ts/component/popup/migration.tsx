@@ -150,10 +150,10 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 	};
 
 	componentDidUpdate (): void {
+		const { position } = this.props;
 		const { step } = this.state;
 
-		this.props.position();
-		let event = null;
+		let event = '';
 		switch (step) {
 			case 1: {
 				event = 'MigrationExportOffer';
@@ -169,11 +169,13 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 		if (event) {
 			analytics.event(event);
 		};
+
+		position();
 	};
 
 	componentWillUnmount () {
 		const { step } = this.state;
-		const eventData: any = { type: 'exit' };
+		const eventData = { type: 'exit', route: '' };
 
 		switch (step) {
 			case 0: {
