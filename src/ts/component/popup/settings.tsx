@@ -71,6 +71,7 @@ const Components: any = {
 const PopupSettings = observer(class PopupSettings extends React.Component<I.Popup, State> {
 
 	node = null;
+	ref = null;
 	state = {
 		loading: false,
 	};
@@ -105,6 +106,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			const Component = Components[page];
 			content = (
 				<Component 
+					ref={ref => this.ref = ref}
 					{...this.props} 
 					prevPage={this.prevPage}
 					onPage={this.onPage} 
@@ -188,7 +190,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	componentDidUpdate () {
-		this.props.position();
+		this.resize();
 		this.setActive();
 	};
 
@@ -201,7 +203,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const win = $(window);
 
 		this.unbind();
-		win.on('resize.settings', () => { this.props.position(); });
+		win.on('resize.settings', () => { this.resize(); });
 		win.on('keydown.settings', (e: any) => { this.onKeyDown(e); });
 		win.on('mousedown.settings', (e: any) => { this.onMouseDown(e); });
 	};
@@ -347,6 +349,16 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		} else {
 			obj.find(`#item-${active}`).addClass('active');
 		};
+	};
+
+	resize () {
+		const { position } = this.props;
+
+		if (this.ref && this.ref.resize) {
+			this.ref.resize();
+		};
+		
+		position();
 	};
 
 });
