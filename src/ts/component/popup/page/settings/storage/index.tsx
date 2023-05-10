@@ -22,10 +22,9 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
     render () {
         const space = detailStore.get(Constant.subId.space, commonStore.workspace);
         const storageUsage = DataUtil.getStorageUsage();
-        const isFull = storageUsage.percentageUsed >= 99;
         const usageCn = [ 'type' ];
 
-        if (isFull) {
+        if (storageUsage.isFull) {
             usageCn.push('red');
         };
 

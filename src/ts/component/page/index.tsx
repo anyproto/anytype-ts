@@ -176,6 +176,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
+		const storageUsage = DataUtil.getStorageUsage();
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
@@ -217,6 +218,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.onboardingCheck();
 		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
+
+		if (storageUsage.isFull) {
+			Preview.toastShow({ action: I.ToastAction.StorageFull, permanent: true });
+		};
 		
 		if (isPopup) {
 			return;

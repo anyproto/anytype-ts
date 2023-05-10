@@ -794,11 +794,14 @@ class DataUtil {
 			localUsed: 987654321
 		};
 
+		const percentageUsed = Math.floor(Number(Util.getPercent(mock.used, mock.of)));
+
 		return {
 			used: FileUtil.size(mock.used, true),
 			of: FileUtil.size(mock.of, true),
-			percentageUsed: Math.floor(Number(Util.getPercent(mock.used, mock.of))),
-			localUsed: FileUtil.size(mock.localUsed, true)
+			percentageUsed: percentageUsed,
+			localUsed: FileUtil.size(mock.localUsed, true),
+			isFull: percentageUsed >= 99
 		};
 	};
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
-import { commonStore } from 'Store';
+import { commonStore, popupStore } from 'Store';
 import { I, C, Util, ObjectUtil, Preview, analytics, translate, keyboard } from 'Lib';
 
 interface State {
@@ -102,6 +102,12 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 };
                 break;
 			};
+
+            case I.ToastAction.StorageFull: {
+                textAction = 'You exceeded file limit upload';
+
+                buttons = [ { action: 'manageStorage', label: 'Manage files' } ]
+            };
         };
 
         return (
@@ -147,6 +153,10 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 keyboard.onUndo(commonStore.toast.originId, 'Toast');
                 break;
 			};
+
+            case 'manageStorage': {
+                popupStore.open('settings', { data: { page: 'storageManager' }});
+            };
         };
 
 		this.close();

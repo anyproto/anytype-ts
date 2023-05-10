@@ -47,6 +47,7 @@ export interface Toast {
 	origin?: any;
 	count?: number;
 	value?: boolean;
+	permanent?: boolean;
 };
 
 export enum ToastAction {
@@ -54,6 +55,7 @@ export enum ToastAction {
 	Link		 = 2,
 	Lock 		 = 3,
 	Collection	 = 4,
+	StorageFull  = 5,
 };
 
 export interface Option {
