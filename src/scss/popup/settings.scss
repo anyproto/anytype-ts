@@ -18,7 +18,7 @@
 		.sides { display: flex; height: 100%; }
 		.sides {
 			> .side { position: relative; }
-			> .side.left { width: 274px; background: $colorVeryLightGrey; padding: 16px 8px; overflow: auto; }
+			> .side.left { width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow: auto; }
 			> .side.left {
 				.iconObject.withLetter { background-color: $colorBorderDark; }
 
@@ -62,7 +62,7 @@
 				}
 			}
 
-			> .side.right { width: calc(100% - 274px); padding: 44px 54px; }
+			> .side.right { width: 70%; padding: 44px 54px; }
 			> .side.right {
 				.head { width: 100%; margin: 0px 0px 36px 0px; }
 				.head {
@@ -211,7 +211,7 @@
 		.side.right.tabExportIndex {
 			.items { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 			.item { 
-				width: 132px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
+				height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
 				position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
 			}
 			.item:hover { border-color: $colorBlack; }
