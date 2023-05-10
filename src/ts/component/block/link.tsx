@@ -218,7 +218,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		this.unbind();
 
 		const node = $(this.node);
-		node.on('resize resizeInit', e => this.resize());
+		node.on('resizeInit resizeMove', e => this.resize());
 	};
 	
 	unbind () {
@@ -226,7 +226,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 		
-		$(this.node).off('resize resizeInit');
+		$(this.node).off('resizeInit resizeMove');
 	};
 
 	onKeyDown (e: any) {

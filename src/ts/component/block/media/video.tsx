@@ -22,7 +22,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onChangeFile = this.onChangeFile.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
-		this.onResize = this.onResize.bind(this);
+		this.onResizeMove = this.onResizeMove.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
 		this.onResizeInit = this.onResizeInit.bind(this);
 		this.onPlay = this.onPlay.bind(this);
@@ -120,10 +120,10 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		
 		this.unbind();
 		
-		node.on('resizeStart', (e: any, oe: any) => { this.onResizeStart(oe, true); });
-		node.on('resize', (e: any, oe: any) => { this.onResize(oe, true); });
-		node.on('resizeEnd', (e: any, oe: any) => { this.onResizeEnd(oe, true); });
-		node.on('resizeInit', (e: any, oe: any) => { this.onResizeInit(); });
+		node.on('resizeStart', (e: any, oe: any) => this.onResizeStart(oe, true));
+		node.on('resizeMove', (e: any, oe: any) => this.onResizeMove(oe, true));
+		node.on('resizeEnd', (e: any, oe: any) => this.onResizeEnd(oe, true));
+		node.on('resizeInit', (e: any, oe: any) => this.onResizeInit());
 		
 		if (video.length) {
 			this.div = 16 / 9;
@@ -144,7 +144,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 		const node = $(this.node);
 		const video = node.find('video');
 		
-		node.off('resizeInit resizeStart resize resizeEnd');
+		node.off('resizeInit resizeStart resizeMove resizeEnd');
 		video.off('canplay');
 	};
 	
@@ -233,11 +233,11 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 
 		keyboard.disableSelection(true);
 		node.addClass('isResizing');
-		win.on('mousemove.media', (e: any) => { this.onResize(e, checkMax); });
-		win.on('mouseup.media', (e: any) => { this.onResizeEnd(e, checkMax); });
+		win.on('mousemove.media', e => this.onResizeMove(e, checkMax));
+		win.on('mouseup.media', e => this.onResizeEnd(e, checkMax));
 	};
 	
-	onResize (e: any, checkMax: boolean) {
+	onResizeMove (e: any, checkMax: boolean) {
 		e.preventDefault();
 		e.stopPropagation();
 		

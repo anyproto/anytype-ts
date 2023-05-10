@@ -150,7 +150,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		};
 
 		this.unbind();
-		$(this.node).on('resize resizeInit', e => this.resize());
+		$(this.node).on('resizeInit resizeMove', e => this.resize());
 	};
 	
 	unbind () {
@@ -158,7 +158,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			return;
 		};
 		
-		$(this.node).off('resize resizeInit');
+		$(this.node).off('resizeInit resizeMove');
 	};
 	
 	onKeyDown (e: any) {
