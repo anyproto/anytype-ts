@@ -28,9 +28,9 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         };
 
         const size = {
-            used: FileUtil.size(mock.used),
-            of: FileUtil.size(mock.of),
-            localUsed: FileUtil.size(mock.localUsed)
+            used: FileUtil.size(mock.used, true),
+            of: FileUtil.size(mock.of, true),
+            localUsed: FileUtil.size(mock.localUsed, true)
         };
 
         const percentageUsed = Util.getPercent(mock.used, mock.of);

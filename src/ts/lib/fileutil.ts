@@ -16,19 +16,21 @@ class FileUtil {
 		return file;
 	};
 
-	size (v: number) {
+	size (v: number, round?: boolean) {
 		v = Number(v) || 0;
 
+		const afterComma = round ? '%0.0' : '%0.2';
+		const l = round ? 0 : 2;
 		let unit = 1024;
 		let g = v / (unit * unit * unit);
 		let m = v / (unit * unit);
 		let k = v / unit;
 		if (g >= 1) {
-			v = Util.sprintf('%0.2fGB', Util.round(g, 2));
+			v = Util.sprintf(afterComma + 'fGB', Util.round(g, l));
 		} else if (m > 1) {
-			v = Util.sprintf('%0.2fMB', Util.round(m, 2));
+			v = Util.sprintf(afterComma + 'fMB', Util.round(m, l));
 		} else if (k > 1) {
-			v = Util.sprintf('%0.2fKB', Util.round(k, 2));
+			v = Util.sprintf(afterComma + 'fKB', Util.round(k, l));
 		} else {
 			v = Util.sprintf('%dB', Util.round(v, 0));
 		};
