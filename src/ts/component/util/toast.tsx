@@ -156,6 +156,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 
             case 'manageStorage': {
                 popupStore.open('settings', { data: { page: 'storageManager' }});
+                commonStore.toastClear();
             };
         };
 
