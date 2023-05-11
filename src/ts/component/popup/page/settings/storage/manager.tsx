@@ -19,6 +19,9 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
     render () {
         const buttons: I.ButtonComponent[] = [{ icon: 'remove', text: 'Delete immediately', onClick: this.onRemove }];
+        const filters: I.Filter[] = [
+            { operator: I.FilterOperator.And, relationKey: 'fileSyncStatus', condition: I.FilterCondition.Equal, value: 1 },
+        ];
 
         const Info = (item: any) => (
             <React.Fragment>
@@ -39,7 +42,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                     buttons={buttons}
                     Info={Info}
                     iconSize={18}
-                    sources={[ Constant.typeId.file, Constant.typeId.video, Constant.typeId.audio, Constant.typeId.image ]}
+                    filters={filters}
                     textEmpty={translate('popupSettingsStorageEmptyLabel')}
                 />
             </div>
@@ -61,10 +64,12 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                 text: 'These objects will be deleted irrevocably. You can\'t undo this action.',
                 textConfirm: 'Delete',
                 onConfirm: () => {
-                    C.ObjectListDelete(this.manager.selected);
-                    this.manager.selectionClear();
+                    C.ObjectListSetIsArchived(this.manager.selected, true, (message: any) => {
+                        C.ObjectListDelete(this.manager.selected);
+                        this.manager.selectionClear();
 
-                    analytics.event('RemoveCompletely', { count });
+                        analytics.event('RemoveCompletely', { count });
+                    });
                 },
                 onCancel: () => { this.manager.selectionClear(); }
             },
