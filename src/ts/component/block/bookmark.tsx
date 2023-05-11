@@ -191,6 +191,10 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	};
 	
 	onClick (e: any) {
+		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || e.button) {
+			return;
+		};
+
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const ids = selection ? selection.get(I.SelectType.Block) : [];
