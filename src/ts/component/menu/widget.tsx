@@ -170,7 +170,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 		} else 
 		if (this.target) {
-			if ((this.layout == I.WidgetLayout.List) && !setTypes.includes(this.target.type)) {
+			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !setTypes.includes(this.target.type)) {
 				this.layout = I.WidgetLayout.Link;
 			};
 			if ((this.layout == I.WidgetLayout.Tree) && setTypes.includes(this.target.type)) {
@@ -187,19 +187,14 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	getLayoutOptions () {
 		const isCollection = this.isCollection();
-
-		let options = [];
-		if (isCollection) {
-			options = [
-				I.WidgetLayout.List,
-				I.WidgetLayout.Tree,
-			];
-		} else {
-			options = [
-				I.WidgetLayout.Tree,
-				I.WidgetLayout.List,
-				I.WidgetLayout.Link,
-			];
+		
+		let options = [
+			I.WidgetLayout.List,
+			I.WidgetLayout.Compact,
+			I.WidgetLayout.Tree,
+		];
+		if (!isCollection) {
+			options.push(I.WidgetLayout.Link);
 		};
 
 		if (this.target && !isCollection) {
@@ -211,7 +206,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
 			if (!setTypes.includes(this.target.type)) {
-				options = options.filter(it => it != I.WidgetLayout.List);
+				options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
 			};
 		};
 

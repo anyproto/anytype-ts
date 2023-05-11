@@ -137,6 +137,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 					break;
 				};
 
+				case I.WidgetLayout.Compact: {
+					content = <WidgetList key={key} {...this.props} {...props} isCompact={true} />;
+					break;
+				};
+
 			};
 		};
 
