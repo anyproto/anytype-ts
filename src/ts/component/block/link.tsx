@@ -251,7 +251,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 	
 	onClick (e: any) {
-		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) {
+		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || e.button) {
 			return;
 		};
 

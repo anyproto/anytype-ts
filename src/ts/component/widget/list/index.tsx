@@ -8,16 +8,21 @@ import { Dataview, I, C, Util, Relation } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
-type State = {
+interface Props extends I.WidgetComponent {
+	isCompact?: boolean;
+};
+
+interface State {
 	loading: boolean;
 	viewId: string;
 };
 
 const BLOCK_ID = 'dataview';
 const LIMIT = 30;
-const HEIGHT = 64;
+const HEIGHT_COMPACT = 28;
+const HEIGHT_LIST = 64;
 
-const WidgetList = observer(class WidgetList extends React.Component<I.WidgetComponent, State> {
+const WidgetList = observer(class WidgetList extends React.Component<Props, State> {
 
 	node: any = null;
 	state = {
@@ -85,7 +90,7 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 									height={height}
 									deferredMeasurmentCache={this.cache}
 									rowCount={length}
-									rowHeight={HEIGHT}
+									rowHeight={this.getRowHeight()}
 									rowRenderer={rowRenderer}
 									onRowsRendered={onRowsRendered}
 									overscanRowCount={LIMIT}
@@ -198,7 +203,7 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 		if (!this.cache) {
 			this.cache = new CellMeasurerCache({
 				fixedWidth: true,
-				defaultHeight: HEIGHT,
+				defaultHeight: this.getRowHeight(),
 				keyMapper: i => records[i],
 			});
 		};
@@ -226,7 +231,7 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 
 	load = (viewId: string) => {
 		const { widgets } = blockStore;
-		const { block, isPreview } = this.props;
+		const { block, isPreview, isCompact } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);
@@ -237,12 +242,17 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			return;
 		};
 
+		let limit = 0;
+		if (!isPreview) {
+			limit = isCompact ? Constant.limit.widgetRecords.compact : Constant.limit.widgetRecords.list;
+		};
+
 		Dataview.getData({
 			rootId: this.getRootId(),
 			blockId: BLOCK_ID,
 			newViewId: viewId,
 			sources: setOf,
-			limit: isPreview ? 0 : Constant.limit.widgetRecords.list,
+			limit,
 			collectionId: (isCollection ? targetBlockId : ''),
 			keys: Constant.sidebarRelationKeys,
 		}, () => {
@@ -270,7 +280,7 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			const viewItem = viewSelect.find('.viewItem');
 			const offset = isPreview ? 20 : 8;
 
-			let height = HEIGHT * length + offset;
+			let height = this.getRowHeight() * length + offset;
 			if (isPreview) {
 				let maxHeight = $('#listWidget').height() - head.outerHeight(true);
 				if (viewSelect.length) {
@@ -294,6 +304,10 @@ const WidgetList = observer(class WidgetList extends React.Component<I.WidgetCom
 			viewItem.each((i: number, item) => { width += $(item).outerWidth(true); });
 			inner.css({ width });
 		});
+	};
+
+	getRowHeight () {
+		return this.props.isCompact ? HEIGHT_COMPACT : HEIGHT_LIST;
 	};
 
 });

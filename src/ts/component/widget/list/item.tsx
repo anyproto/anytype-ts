@@ -9,8 +9,9 @@ type Props = {
 	block: I.Block;
 	subId: string;
 	id: string;
-	isEditing?: boolean;
 	style?: any;
+	isEditing?: boolean;
+	isCompact?: boolean;
 };
 
 const WidgetListItem = observer(class WidgetListItem extends React.Component<Props> {
@@ -26,7 +27,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	};
 
 	render () {
-		const { subId, id, block, isEditing, style } = this.props;
+		const { subId, id, block, style, isCompact, isEditing } = this.props;
 		const rootId = keyboard.getRootId();
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source, done } = object;
@@ -43,13 +44,17 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 			descr = <ObjectDescription object={object} />;
 		};
 
+		if (isCompact) {
+			descr = null;
+		};
+
 		let inner = (
 			<div className="inner">
 				<IconObject 
 					id={`widget-icon-${id}`}
 					object={object} 
-					size={48} 
-					iconSize={24}
+					size={isCompact ? 18 : 48} 
+					iconSize={isCompact ? 18 : 24}
 					canEdit={!isReadonly && !isArchived} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
