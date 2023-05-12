@@ -54,8 +54,10 @@ class Navigation extends React.Component {
 
 						return <Icon key={item.className} {...item} className={cn.join(' ')} tooltipY={I.MenuDirection.Top} />;
 					})}
+
 					<div className="line" />
-					<IconObject object={profile} size={28} iconSize={20} onClick={this.onProfile} />
+
+					<IconObject object={profile} size={28} iconSize={20} onClick={this.onProfile} tooltip="Settings" tooltipY={I.MenuDirection.Top} />
 				</div>
 			</div>
 		);
@@ -119,6 +121,7 @@ class Navigation extends React.Component {
 			return;
 		};
 
+		const isPopup = keyboard.isPopup();
 		const win = $(window);
 		const node = $(this.node);
 		const coords = Storage.get('navigation') || {};
@@ -127,7 +130,7 @@ class Navigation extends React.Component {
 		const sidebar = $('#sidebar');
 		
 		let sw = 0;
-		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+		if (!isPopup && commonStore.isSidebarFixed && sidebar.hasClass('active')) {
 			sw = sidebar.outerWidth();
 		};
 
