@@ -360,6 +360,7 @@ class Sidebar {
 	};
 
 	set (v: Partial<SidebarData>) {
+		const requestedWidth = v.width;
 		v = Object.assign(this.data, v);
 
 		const width = this.limitWidth(v.width);
