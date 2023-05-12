@@ -787,22 +787,22 @@ class DataUtil {
 		];
 	};
 
-	getStorageUsage () {
-		const mock = {
-			used: 1072520503,
-			of: 1073741824,
-			localUsed: 987654321
-		};
+	updateStorageUsage (callback?: () => void) {
+		C.FileSpaceUsage((message) => {
+			const percentageUsed = Math.floor(Number(Util.getPercent(message.bytesUsed, message.bytesLimit)));
+			const usage = {
+				used: FileUtil.size(message.bytesUsed),
+				limit: FileUtil.size(message.bytesLimit),
+				localUsage: FileUtil.size(message.localUsage),
+				percentageUsed,
+				isFull: percentageUsed >= 99
+			};
 
-		const percentageUsed = Math.floor(Number(Util.getPercent(mock.used, mock.of)));
-
-		return {
-			used: FileUtil.size(mock.used, true),
-			of: FileUtil.size(mock.of, true),
-			percentageUsed: percentageUsed,
-			localUsed: FileUtil.size(mock.localUsed, true),
-			isFull: percentageUsed >= 99
-		};
+			Storage.set('fileSpaceUsage', usage);
+			if (callback) {
+				callback();
+			};
+		});
 	};
 
 };

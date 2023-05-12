@@ -275,7 +275,7 @@
 
 	"popupSettingsStorageIndexTitle": { "en":  "File storage" },
 	"popupSettingsStorageIndexRemoteStorage": { "en":  "Remote storage" },
-	"popupSettingsStorageIndexText": { "en":  "You can store up to 1 GB of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally." },
+	"popupSettingsStorageIndexText": { "en":  "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally." },
 	"popupSettingsStorageIndexUsage": { "en":  "%s of %s used" },
 	"popupSettingsStorageIndexManageFiles": { "en":  "Manage files" },
 	"popupSettingsStorageIndexLocalStorageTitle": { "en":  "Local storage" },

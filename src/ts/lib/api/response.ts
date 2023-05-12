@@ -49,6 +49,18 @@ export const FileListOffload = (response: Rpc.File.ListOffload.Response) => {
 	};
 };
 
+export const FileSpaceUsage = (response: Rpc.File.SpaceUsage.Response) => {
+	const usage = response.getUsage();
+
+	return {
+		bytesUsed: usage.getBytesusage(),
+		bytesLeft: usage.getBytesleft(),
+		bytesLimit: usage.getByteslimit(),
+		filesCount: usage.getFilescount(),
+		localUsage: usage.getLocalbytesusage()
+	};
+};
+
 export const FileUpload = (response: Rpc.File.Upload.Response) => {
 	return {
 		hash: response.getHash(),

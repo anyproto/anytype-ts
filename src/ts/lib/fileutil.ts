@@ -16,22 +16,23 @@ class FileUtil {
 		return file;
 	};
 
-	size (v: number, round?: boolean) {
+	size (v: number) {
 		v = Number(v) || 0;
 
-		const afterComma = round ? '%0.0' : '%0.2';
-		const l = round ? 0 : 2;
+		const trimmer = (n, afterComma) => {
+			return Util.isInt(n) ? 0 : afterComma;
+		};
 
 		let unit = 1024;
 		let g = v / (unit * unit * unit);
 		let m = v / (unit * unit);
 		let k = v / unit;
 		if (g >= 1) {
-			v = Util.sprintf('%0.1fGB', Util.round(g, 1));
+			v = Util.sprintf(`%0.${trimmer(g, 2)}fGB`, Util.round(g, trimmer(g, 2)));
 		} else if (m > 1) {
-			v = Util.sprintf(afterComma + 'fMB', Util.round(m, l));
+			v = Util.sprintf(`%0.${trimmer(m, 1)}fMB`, Util.round(m, trimmer(m, 1)));
 		} else if (k > 1) {
-			v = Util.sprintf(afterComma + 'fKB', Util.round(k, l));
+			v = Util.sprintf(`%0.${trimmer(k, 1)}fKB`, Util.round(k, trimmer(k, 1)));
 		} else {
 			v = Util.sprintf('%dB', Util.round(v, 0));
 		};
