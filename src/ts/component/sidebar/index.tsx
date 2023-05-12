@@ -199,7 +199,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 				const d = w - this.width;
 
 				if (d < 0) {
-					if (w <= Constant.size.sidebar.width.close) {
+					if (commonStore.isSidebarFixed && (w <= Constant.size.sidebar.width.close)) {
 						sidebar.close();
 					} else {
 						sidebar.setWidth(w);
