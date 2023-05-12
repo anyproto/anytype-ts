@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.widget.widgetSpace { padding: 16px; cursor: pointer; overflow: hidden; }
+.widget.widgetSpace { padding: 16px; cursor: pointer; }
 .widget.widgetSpace {
 	.icon.remove { display: none !important; }
 	.icon.options { right: 44px; display: none !important; }

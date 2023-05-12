@@ -82,7 +82,7 @@
 	display: flex; position: relative; gap: 0px 12px; justify-content: flex-start;
 }
 .button.widget {
-	.icon { height: 20px; width: 20px; margin: 0px; flex-shrink: 0; }
+	.icon { height: 20px; width: 20px; margin: 0px; }
 	.icon.library { background-image: url('~img/icon/sidebar/library.svg'); }
 	.icon.bin { background-image: url('~img/icon/sidebar/bin.svg'); }
 }
