@@ -12,7 +12,8 @@ interface State {
 	filter: string;
 };
 
-const HEIGHT = 32;
+const HEIGHT_SECTION = 26;
+const HEIGHT_ITEM = 48;
 const LIMIT_HEIGHT = 14;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
@@ -145,7 +146,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 											height={height}
 											deferredMeasurmentCache={this.cache}
 											rowCount={items.length}
-											rowHeight={HEIGHT}
+											rowHeight={({ index }) => this.getRowHeight(items[index])}
 											rowRenderer={rowRenderer}
 											onRowsRendered={onRowsRendered}
 											onScroll={this.onScroll}
@@ -191,7 +192,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT,
+			defaultHeight: HEIGHT_ITEM,
 			keyMapper: i => (items[i] || {}).id,
 		});
 
@@ -321,7 +322,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	load (clear: boolean, callBack?: (value: any) => void) {
-		const { config } = commonStore;
 		const { filter } = this.state;
 		const skipTypes = [].concat(ObjectUtil.getFileTypes()).concat(ObjectUtil.getSystemTypes());
 
@@ -411,40 +411,20 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 	};
 
+	getRowHeight (item: any) {
+		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+	};
+
 	resize () {
 		if (!this._isMounted) {
 			return;
 		};
 
-		const { getId, param } = this.props;
-		const { data } = param;
-		const { isPopup } = data;
-		const win = $(window);
+		const { getId } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const content = obj.find('.content');
-		const container = Util.getPageContainer(isPopup);
-		const header = container.find('#header');
-		const ww = win.width();
-		const element = header.find('#path');
-		const sidebar = $('#sidebar');
-		const height = HEIGHT * LIMIT_HEIGHT;
+		const height = HEIGHT_ITEM * LIMIT_HEIGHT;
 
-		let width = ww * 0.4;
-		let x = ww / 2 - width / 2;
-		let y = Util.sizeHeader();
-
-		if (element.length) {
-			const { left, top } = element.offset();
-
-			width = element.outerWidth();
-			x = left;
-			y = top - win.scrollTop() + 40;
-		} else {
-			x += sidebar.width() / 2;
-			y -= 1;
-		};
-
-		obj.css({ width, left: x, top: y });
 		content.css({ height });
 	};
 

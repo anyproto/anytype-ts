@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, keyboard, sidebar } from 'Lib';
+import { I, ObjectUtil, sidebar } from 'Lib';
 import { popupStore } from 'Store';
 
 interface Props extends I.HeaderComponent {
@@ -18,8 +18,6 @@ const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<P
 	};
 
 	render () {
-		const { text, onSearch, onForward, onBack, onTooltipShow, onTooltipHide } = this.props;
-		
 		return (
 			<React.Fragment>
 				<div className="side left">
@@ -27,20 +25,7 @@ const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<P
 					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
 				</div>
 
-				<div className="side center">
-					<div 
-						id="path" 
-						className="path" 
-						onClick={onSearch} 
-						onMouseOver={e => onTooltipShow(e, 'Click to search')} 
-						onMouseOut={onTooltipHide}
-					>	
-						<div className="inner">
-							<div className="name">{text}</div>
-						</div>
-					</div>
-				</div>
-
+				<div className="side center" />
 				<div className="side right" />
 			</React.Fragment>
 		);

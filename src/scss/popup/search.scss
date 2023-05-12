@@ -6,23 +6,22 @@
 
 		.content { height: 432px; overflow: visible; transition: none; transform: translate3d(0px,0px,0px); }
 		.wrap { height: 100%; }
-		.innerWrap { margin: 0px; transform: scale3d(1,1,1); transition: none; overflow: visible; border-radius: 6px; }
+		.innerWrap { width: 600px; }
 		.dimmer { transition: none; }
+		#loader { top: 55px; height: calc(100% - 55px); }
 
 		.head { 
-			height: 28px; position: fixed; top: -40px; left: 50%; background: $colorWhite; width: 100%; border-radius: 6px;
-			transform: translateX(-50%); padding: 4px 8px; -webkit-app-region: no-drag;
+			border-bottom: 1px solid $colorBorderLight; padding: 0px 20px; display: flex; align-items: center; flex-direction: row; gap: 0px 12px;
 		}
 		.head {
 			.iconObject { margin-right: 6px; }
 			
-			.icon { width: 18px; height: 18px; vertical-align: top; margin: 2px 6px 0px 0px; }
+			.icon { width: 18px; height: 18px; }
 			.icon.search { background-image: url('~img/icon/popup/search/search.svg'); }
-			.icon.home { background-image: url('~img/icon/popup/search/home.svg'); }
 
 			.input { 
-				padding: 0px; height: 20px; vertical-align: middle; width: calc(100% - 32px); font-size: 14px; line-height: 20px; 
-				vertical-align: top;
+				padding: 0px; height: 54px; vertical-align: middle; width: calc(100% - 32px); font-size: 14px; line-height: 20px; 
+				vertical-align: top; @include text-paragraph; font-weight: 500;
 			}
 		}
 
@@ -30,10 +29,10 @@
 		.items {
 			.pad { height: 12px; }
 
-			.sectionName { @include text-small; height: 32px; line-height: 22px; padding: 5px 16px; font-weight: 500; color: $colorMediumGrey; }
+			.sectionName { @include text-small; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: $colorMediumGrey; }
 
 			.item { 
-				cursor: pointer; transition: $transitionAllCommon; position: relative; height: 32px; line-height: 22px; padding: 7px 16px; white-space: nowrap;
+				cursor: pointer; transition: $transitionAllCommon; position: relative; height: 48px; line-height: 22px; padding: 13px 16px; white-space: nowrap;
 				display: flex; gap: 0px 6px; align-items: center;
 			}
 			.item {

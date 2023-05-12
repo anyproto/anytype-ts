@@ -549,7 +549,6 @@ class Keyboard {
 
 	onSearchPopup () {
 		popupStore.open('search', {
-			preventResize: true, 
 			data: { isPopup: this.isPopup() },
 		});
 	};
