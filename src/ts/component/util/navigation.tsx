@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { Icon, IconObject } from 'Component';
-import { detailStore, blockStore, popupStore } from 'Store';
+import { commonStore, detailStore, blockStore, popupStore } from 'Store';
 import { I, ObjectUtil, keyboard, Storage, Util } from 'Lib';
 import Constant from 'json/constant.json';
 
@@ -77,12 +77,15 @@ class Navigation extends React.Component {
 	};
 
 	unbind () {
-		$(window).off('resize.navigation');
+		$(window).off('resize.navigation updateNavigation');
 	};
 
 	rebind () {
 		this.unbind();
-		$(window).on('resize.navigation', () => this.resize());
+
+		const win = $(window);
+		win.on('resize.navigation', () => this.resize());
+		win.on('updateNavigation', () => this.forceUpdate());
 	};
 
 	onBack () {
@@ -121,7 +124,12 @@ class Navigation extends React.Component {
 		const coords = Storage.get('navigation') || {};
 		const ww = win.width();
 		const wh = win.height();
-		const sw = $('#sidebar').outerWidth();
+		const sidebar = $('#sidebar');
+		
+		let sw = 0;
+		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+			sw = sidebar.outerWidth();
+		};
 
 		this.height = node.outerHeight();
 		this.width = node.outerWidth();
@@ -158,7 +166,7 @@ class Navigation extends React.Component {
 		const coords = this.checkCoords(x, y);
 
 		this.setStyle(coords.x, coords.y);
-		Storage.set('navigation', coords);
+		//Storage.set('navigation', coords);
 	};
 
 	onDragEnd () {

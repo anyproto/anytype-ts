@@ -323,6 +323,7 @@ class App extends React.Component<object, State> {
 						<PreviewIndex />
 						<Progress />
 						<Toast />
+						<Navigation />
 
 						<div id="tooltip" />
 						<div id="drag" />

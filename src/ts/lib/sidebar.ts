@@ -135,7 +135,7 @@ class Sidebar {
 		};
 
 		if (hide && this.obj.hasClass('active')) {
-			this.timeoutHide = window.setTimeout(() => { this.hide(); }, 200);
+			this.timeoutHide = window.setTimeout(() => this.hide(), 200);
 		};
 	};
 
@@ -353,6 +353,8 @@ class Sidebar {
 		this.loader.css(cssLoader);
 		this.header.css(css);
 		this.footer.css(css);
+
+		$(window).trigger('updateNavigation');
 	};
 
 	private save (): void {

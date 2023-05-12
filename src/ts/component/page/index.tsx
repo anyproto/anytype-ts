@@ -101,8 +101,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const wrap = (
 			<div id="page" className={'page ' + this.getClass('page')}>
 				<Component ref={ref => this.refChild = ref} refSidebar={this.refSidebar} {...this.props} />
-
-				<Navigation />
 			</div>
 		);
 
@@ -210,7 +208,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.event();
 		this.unbind();
 
-		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => this.resize());
+		win.trigger('updateNavigation');
 
 		if (!isPopup) {
 			keyboard.setMatch(match);

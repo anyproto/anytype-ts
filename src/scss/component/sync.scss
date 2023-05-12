@@ -1,8 +1,8 @@
 @import "~scss/_vars";
 
-.sync { display: inline-block; vertical-align: middle; color: $colorDarkGrey; height: 20px; }
+.sync { height: 20px; }
 .sync {
-	.icon { width: 20px; height: 20px; border-radius: 100%; }
+	.icon { width: 20px; height: 20px; border-radius: 100%; vertical-align: top; }
 	.icon.green { background-image: url('~img/icon/status/green.svg'); }
 	.icon.orange { background: $colorOrange; }
 	.icon.red { background: $colorRed; }
