@@ -1,9 +1,6 @@
 @import "~scss/_vars";
 
-.sync {
-	padding: 0px 6px; display: inline-block; vertical-align: middle;
-	color: $colorDarkGrey; white-space: nowrap; height: 18px; display: flex; align-items: center; gap: 0px 4px;
-}
+.sync { display: inline-block; vertical-align: middle; color: $colorDarkGrey; height: 20px; }
 .sync {
 	.icon { width: 20px; height: 20px; border-radius: 100%; }
 	.icon.green { background-image: url('~img/icon/status/green.svg'); }
