@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'Component';
+import { Icon, Navigation } from 'Component';
 import { I, keyboard, Preview } from 'Lib';
 
 const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComponent> {
@@ -31,6 +31,8 @@ const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComp
 					<Icon />
 					<div className="bg" />
 				</div>
+
+				<Navigation />
 			</React.Fragment>
 		);
 	};

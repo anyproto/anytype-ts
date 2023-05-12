@@ -60,6 +60,7 @@ import 'scss/component/textarea.scss';
 import 'scss/component/title.scss';
 import 'scss/component/toast.scss';
 import 'scss/component/tooltip.scss';
+import 'scss/component/navigation.scss';
 
 import 'scss/component/widget/common.scss';
 import 'scss/component/widget/space.scss';

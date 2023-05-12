@@ -66,7 +66,7 @@ const Progress = observer(class Progress extends React.Component {
 		node.removeClass('hide');
 		this.resize();
 
-		win.off('resize.progress').on('resize.progress', () => { this.resize(); });
+		win.off('resize.progress').on('resize.progress', () => this.resize());
 		
 		if (total && (current >= total)) {
 			node.addClass('hide');
