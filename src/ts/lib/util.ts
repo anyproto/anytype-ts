@@ -987,10 +987,6 @@ class Util {
 		return Number(part / whole * 100).toFixed(1);
 	};
 
-	isInt (n) {
-		return parseInt(n) === n;
-	};
-
 };
 
 export default new Util();

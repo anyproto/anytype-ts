@@ -20,7 +20,7 @@ class FileUtil {
 		v = Number(v) || 0;
 
 		const trimmer = (n, afterComma) => {
-			return Util.isInt(n) ? 0 : afterComma;
+			return Number.isInteger(n) ? 0 : afterComma;
 		};
 
 		let unit = 1024;
