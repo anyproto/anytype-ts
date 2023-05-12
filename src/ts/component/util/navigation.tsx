@@ -117,15 +117,20 @@ class Navigation extends React.Component<Props> {
 			return;
 		};
 
+		const win = $(window);
 		const node = $(this.node);
-		const coords = Storage.get('navigation');
+		const coords = Storage.get('navigation') || {};
+		const ww = win.width();
+		const wh = win.height();
+		const sw = $('#sidebar').outerWidth();
 
 		this.height = node.outerHeight();
 		this.width = node.outerWidth();
 
-		if (coords) {
-			this.setStyle(coords.x, coords.y);
-		};
+		coords.x = Number(coords.x) || (sw + (ww - sw) / 2 - this.width / 2);
+		coords.y = Number(coords.y) || (wh - 72);
+	
+		this.setStyle(coords.x, coords.y);
 	};
 
 	onDragStart (e: any) {
@@ -151,13 +156,16 @@ class Navigation extends React.Component<Props> {
 		const win = $(window);
 		const x = e.pageX - this.dx - win.scrollLeft();
 		const y = e.pageY - this.dy - win.scrollTop();
+		const coords = this.checkCoords(x, y);
 
-		this.setStyle(x, y);
+		this.setStyle(coords.x, coords.y);
+		Storage.set('navigation', coords);
 	};
 
 	onDragEnd () {
 		keyboard.setDragging(false);
 		keyboard.disableSelection(false);
+
 		$(window).off('mousemove.navigation mouseup.navigation');
 	};
 
@@ -182,7 +190,6 @@ class Navigation extends React.Component<Props> {
 		const coords = this.checkCoords(x, y);
 		
 		node.css({ margin: 0, left: coords.x, top: coords.y });
-		Storage.set('navigation', coords);
 	};
 	
 };
