@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Navigation } from 'Component';
+import { Icon } from 'Component';
 import { I, keyboard, Preview } from 'Lib';
 
 const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComponent> {
@@ -10,17 +10,6 @@ const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComp
 
 		return (
 			<React.Fragment>
-				<div 
-					id="button-add" 
-					className="iconWrap" 
-					onClick={onAdd}
-					onMouseEnter={e => this.onTooltipShow(e, 'Add new object', `${cmd} + N`)}
-					onMouseLeave={e => Preview.tooltipHide(false)}
-				>
-					<Icon />
-					<div className="bg" />
-				</div>
-
 				<div 
 					id="button-help" 
 					className="iconWrap" 
