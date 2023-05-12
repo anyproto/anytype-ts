@@ -59,7 +59,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 							ref={ref => this.ref = ref} 
 							value={name}
 							readonly={readonly}
-							placeholder={translate(`viewName${type}`)}
+							placeholder={this.defaultName(type)}
 							maxLength={32} 
 							onKeyUp={this.onKeyUp} 
 							onFocus={this.onNameFocus}
@@ -89,7 +89,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	};
 
 	componentDidUpdate () {
-		this.ref.setValue(this.param.name);
+		this.setName();
 		this.resize();
 		this.focus();
 		this.props.setActive();
@@ -121,6 +121,19 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	unbind () {
 		$(window).off('keydown.menu');
 	};
+
+	setName () {
+		const { name } = this.param;
+		
+		let n = name;
+		for (const i in I.ViewType) {
+			if (n == this.defaultName(Number(i))) {
+				n = '';
+				break;
+			};
+		};
+		this.ref.setValue(n);
+	};
 	
 	onKeyDown (e: any) {
 		const { param, close } = this.props;
@@ -131,7 +144,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 
 		let ret = false;
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
+		keyboard.shortcut('enter', e, () => {
 			this.save();
 			close();
 			ret = true;
@@ -155,8 +168,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 				return;
 			};
 
-			keyboard.shortcut('space', e, (pressed: string) => {
-				if ([ 'hideIcon', 'coverFit' ].indexOf(item.id) >= 0) {
+			keyboard.shortcut('space', e, () => {
+				if ([ 'hideIcon', 'coverFit' ].includes(item.id)) {
 					e.preventDefault();
 
 					this.onSwitch(e, item.id, !view[item.id]);
@@ -172,7 +185,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		this.props.onKeyDown(e);
 	};
 
-	onNameFocus (e: any) {
+	onNameFocus () {
 		this.n = -1;
 		this.isFocused = true;
 		this.props.setActive();
@@ -180,11 +193,11 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		menuStore.closeAll(Constant.menuIds.viewEdit);
 	};
 	
-	onNameBlur (e: any) {
+	onNameBlur () {
 		this.isFocused = false;
 	};
 
-	onNameEnter (e: any) {
+	onNameEnter () {
 		if (!keyboard.isMouseDisabled) {
 			this.n = -1;
 			this.props.setHover(null, false);
@@ -231,11 +244,6 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		});
 
 		this.forceUpdate();
-	};
-
-	getViewName (name?: string) {
-		const { type } = this.param;
-		return name || this.param.name || translate(`viewName${type}`);
 	};
 
 	getSections () {
@@ -381,12 +389,13 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 				break;
 			};
 
-			case 'pageLimit':
+			case 'pageLimit': {
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
 					options: Relation.getPageLimitOptions(type),
 				});
 				break;
+			};
 
 			case 'cardSize': {
 				menuId = 'select';
@@ -423,8 +432,13 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		};
 
 		if (item.sectionId == 'type') {
+			let withName = false;
+			if (this.param.name == this.defaultName(this.param.type)) {
+				this.param.name = this.defaultName(item.id);
+				withName = true;
+			};
 			this.param.type = item.id;
-			this.save();
+			this.save(withName);
 
 			analytics.event('ChangeViewType', {
 				type: item.id,
@@ -484,6 +498,14 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		if (onSelect) {
 			onSelect();
 		};
+	};
+
+	getViewName (name?: string) {
+		return name || this.param.name || this.defaultName(this.param.type);
+	};
+
+	defaultName (type: I.ViewType): string {
+		return translate(`viewName${type}`);
 	};
 
 	resize () {

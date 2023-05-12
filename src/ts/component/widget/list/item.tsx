@@ -74,7 +74,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		if (canDrop) {
 			inner = (
 				<DropTarget
-					cacheKey={[ block.id, id ].join('-')}
+					cacheKey={[ block.id, object.id ].join('-')}
 					id={object.id}
 					rootId={rootId}
 					targetContextId={object.id}
