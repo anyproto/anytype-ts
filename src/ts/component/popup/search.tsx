@@ -57,7 +57,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		const Item = (item: any) => {
 			const type = dbStore.getType(item.type);
-			const description = (item.layout != I.ObjectLayout.Note) ? (item.description || item.snippet) : '';
 
 			return (
 				<div 
@@ -69,15 +68,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					<IconObject object={item} size={18} />
 					<ObjectName object={item} />
 
-					{div}
 					<div className="type">{!type || type.isDeleted ? translate('commonDeletedType') : type.name}</div>
-
-					{description ? (
-						<React.Fragment>
-							{div}
-							<ObjectDescription object={item} />
-						</React.Fragment>
-					) : ''}
 				</div>
 			);
 		};
