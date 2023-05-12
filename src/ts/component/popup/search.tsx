@@ -49,12 +49,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { filter, loading } = this.state;
 		const items = this.getItems();
 
-		const div = (
-			<div className="div">
-				<div className="inner" />
-			</div>
-		);
-
 		const Item = (item: any) => {
 			const type = dbStore.getType(item.type);
 

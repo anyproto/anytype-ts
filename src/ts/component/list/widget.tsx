@@ -134,7 +134,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						text="Library" 
 						color="" 
 						className="widget" 
-						icon="library" 
+						icon="store" 
 						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store }) : null} 
 					/>
 

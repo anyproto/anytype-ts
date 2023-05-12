@@ -148,8 +148,6 @@ class Sidebar {
 			return;
 		};
 
-		this.isAnimating = true;
-
 		const { autoSidebar } = commonStore;
 		const { x, y, width, height, snap } = this.data;
 		const css: any = { top: 0, height: '100%' };
@@ -166,6 +164,7 @@ class Sidebar {
 			tx = 110;
 		};
 
+		this.setAnimating(true);
 		this.obj.removeClass('anim');
 		this.obj.css(css);
 		this.obj.addClass('anim');
@@ -257,6 +256,28 @@ class Sidebar {
 		this.removeAnimation();
 	};
 
+	close (): void {
+		if (!this.obj || !this.obj.length || this.isAnimating) {
+			return;
+		};
+
+		this.setAnimating(true);
+		this.obj.addClass('anim').removeClass('active');
+		this.setWidth(0, true);
+		this.removeAnimation();
+	};
+
+	open (): void {
+		if (!this.obj || !this.obj.length || this.isAnimating || keyboard.isResizing) {
+			return;
+		};
+
+		this.setAnimating(true);
+		this.obj.addClass('anim').removeClass('active');
+		this.setWidth(Constant.size.sidebar.width.default);
+		this.removeAnimation(() => this.resizePage());
+	};
+
 	private removeAnimation (callBack?: () => void): void {
 		if (!this.obj || !this.obj.length) {
 			return;
@@ -265,7 +286,7 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.obj.removeClass('anim');
-			this.isAnimating = false;
+			this.setAnimating(false);
 
 			if (callBack) {
 				callBack();
@@ -361,12 +382,19 @@ class Sidebar {
 		Storage.set('sidebar', this.data);
 	};
 
-	set (v: Partial<SidebarData>) {
+	set (v: Partial<SidebarData>, force?: boolean): void {
 		v = Object.assign(this.data, v);
 
-		const width = this.limitWidth(v.width);
-		const height = this.limitHeight(v.height);
-		const { x, y } = this.limitCoords(v.x, v.y, width, height);
+		let { width, height, x, y } = v;
+
+		if (!force) {
+			width = this.limitWidth(width);
+			height = this.limitHeight(height);
+
+			const coords = this.limitCoords(v.x, v.y, width, height);
+			x = coords.x;
+			y = coords.y;
+		};
 
 		this.data = Object.assign<SidebarData, Partial<SidebarData>>(this.data, {
 			x,
@@ -381,12 +409,12 @@ class Sidebar {
 		this.setStyle();
 	};
 
-	setWidth (width: number): void {
-		this.set({ width });
+	setWidth (width: number, force?: boolean): void {
+		this.set({ width }, force);
 	};
 
-	setHeight (height: number): void {
-		this.set({ height });
+	setHeight (height: number, force?: boolean): void {
+		this.set({ height }, force);
 	};
 
 	public setAnimating (v: boolean) {

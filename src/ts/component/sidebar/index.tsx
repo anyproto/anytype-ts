@@ -7,6 +7,7 @@ import { Icon } from 'Component';
 import { I, keyboard, Preview, sidebar } from 'Lib';
 import { commonStore } from 'Store';
 import ListWidget from 'Component/list/widget';
+import Constant from 'json/constant.json';
 
 interface Props {
 	dataset?: any;
@@ -22,6 +23,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	oy = 0;
     refFooter: React.Ref<HTMLUnknownElement> = null;
 	frame = 0;
+	width = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -32,6 +34,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onResizeMove = this.onResizeMove.bind(this);
 		this.onResizeEnd = this.onResizeEnd.bind(this);
+		this.onHandleClick = this.onHandleClick.bind(this);
 	};
 
     render() {
@@ -39,11 +42,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		const cmd = keyboard.cmdSymbol();
 
         return (
-            <div 
+            <div
 				ref={node => this.node = node}
-                id="sidebar" 
-                className={cn.join(' ')} 
-            >
+				id="sidebar"
+				className={cn.join(' ')}
+			>
                 <div className="head" draggable={true} onDragStart={this.onDragStart}>
 					<Icon
 						className="toggleSidebar"
@@ -58,7 +61,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					<ListWidget {...this.props} />
 				</div>
 
-				<div className="resize-h" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Horizontal); }} />
+				<div className="resize-h" onMouseDown={e => this.onResizeStart(e, I.MenuType.Horizontal)}>
+					<div className="resize-handle" onClick={this.onHandleClick} />
+				</div>
 				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
             </div>
 		);
@@ -119,6 +124,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		sidebar.resizePage();
 		sidebar.setDragging(true);
 
+		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
 
 		win.off('mousemove.sidebar mouseup.sidebar');
@@ -145,6 +151,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		raf.cancel(this.frame);
 		sidebar.setDragging(false);
 		keyboard.disableSelection(false);
+		keyboard.setDragging(false);
 	};
 
 	onResizeStart (e: React.MouseEvent, dir: I.MenuType) {
@@ -173,18 +180,35 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		body.addClass(dir == I.MenuType.Vertical ? 'rowResize' : 'colResize');
 
 		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', throttle(e => this.onResizeMove(e, dir), THROTTLE));
+		win.on('mousemove.sidebar', e => this.onResizeMove(e, dir));
 		win.on('mouseup.sidebar', e => this.onResizeEnd());
 	};
 
-	onResizeMove (e: React.MouseEvent, dir: I.MenuType) {
+	onResizeMove (e: any, dir: I.MenuType) {
 		const { width, snap } = sidebar.data;
 
 		raf.cancel(this.frame);
 
 		this.frame = raf(() => {
+			if (sidebar.isAnimating) {
+				return;
+			};
+
 			if (dir == I.MenuType.Horizontal) {
-				sidebar.setWidth(snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
+				const w = snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox);
+				const d = w - this.width;
+
+				if (d < 0) {
+					if (w <= Constant.size.sidebar.width.close) {
+						sidebar.close();
+					} else {
+						sidebar.setWidth(w);
+					};
+				} else {
+					sidebar.setWidth(w);
+				};
+
+				this.width = w;
 			};
 
 			if (dir == I.MenuType.Vertical) {
@@ -200,6 +224,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 		$('body').removeClass('rowResize colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
+	};
+
+	onHandleClick () {
+		if (sidebar.isAnimating) {
+			return;
+		};
+
+		sidebar.open();
 	};
 
 });

@@ -164,7 +164,7 @@
 
 		"sidebar": {
 			"height": { "min": 400 },
-			"width": { "min": 240, "max": 500, "default": 336 }
+			"width": { "min": 200, "max": 500, "default": 336, "close": 180 }
 		},
 
 		"table": {
