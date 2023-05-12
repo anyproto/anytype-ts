@@ -31,8 +31,6 @@ const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComp
 					<Icon />
 					<div className="bg" />
 				</div>
-
-				<Navigation />
 			</React.Fragment>
 		);
 	};

@@ -367,6 +367,10 @@ class Keyboard {
 		const isPopup = this.isPopup();
 		const history = Util.history;
 
+		if (!history) {
+			return;
+		};
+
 		let ret = true;
 		if (!isPopup) {
 			ret = history.index - 1 >= 0;
@@ -388,6 +392,10 @@ class Keyboard {
 	checkForward (): boolean {
 		const isPopup = this.isPopup();
 		const history = Util.history;
+
+		if (!history) {
+			return;
+		};
 
 		let ret = true;
 		if (isPopup) {

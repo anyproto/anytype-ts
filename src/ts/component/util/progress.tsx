@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { Icon, Label } from 'Component';
-import { Util, C, Storage } from 'Lib';
+import { Util, C, Storage, keyboard } from 'Lib';
 import { commonStore } from 'Store';
 
 const Progress = observer(class Progress extends React.Component {
@@ -111,6 +111,9 @@ const Progress = observer(class Progress extends React.Component {
 		this.dx = e.pageX - offset.left;
 		this.dy = e.pageY - offset.top;
 
+		keyboard.disableSelection(true);
+		keyboard.setDragging(true);
+
 		win.off('mousemove.progress mouseup.progress');
 		win.on('mousemove.progress', (e: any) => { this.onDragMove(e); });
 		win.on('mouseup.progress', (e: any) => { this.onDragEnd(e); });
@@ -125,6 +128,9 @@ const Progress = observer(class Progress extends React.Component {
 	};
 
 	onDragEnd (e: any) {
+		keyboard.disableSelection(false);
+		keyboard.setDragging(false);
+
 		$(window).off('mousemove.progress mouseup.progress');
 	};
 

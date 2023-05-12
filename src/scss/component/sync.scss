@@ -1,12 +1,12 @@
 @import "~scss/_vars";
 
 .sync {
-	background: $colorVeryLightGrey; border-radius: 4px; @include text-small; padding: 0px 6px; display: inline-block; vertical-align: middle;
+	padding: 0px 6px; display: inline-block; vertical-align: middle;
 	color: $colorDarkGrey; white-space: nowrap; height: 18px; display: flex; align-items: center; gap: 0px 4px;
 }
 .sync {
-	.bullet { width: 8px; height: 8px; border-radius: 100%; background: $colorBorderLight; }
-	.bullet.green { background: $colorGreen; }
-	.bullet.orange { background: $colorOrange; }
-	.bullet.red { background: $colorRed; }
+	.icon { width: 20px; height: 20px; border-radius: 100%; }
+	.icon.green { background-image: url('~img/icon/status/green.svg'); }
+	.icon.orange { background: $colorOrange; }
+	.icon.red { background: $colorRed; }
 }

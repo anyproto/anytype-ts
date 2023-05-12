@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Icon, IconObject } from 'Component';
-import { detailStore, blockStore } from 'Store';
+import { detailStore, blockStore, popupStore } from 'Store';
 import { I, ObjectUtil, keyboard, Storage, Util } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props {
-	rootId?: string;
 };
 
 class Navigation extends React.Component<Props> {
@@ -26,6 +25,8 @@ class Navigation extends React.Component<Props> {
 		this.onAdd = this.onAdd.bind(this);
 		this.onGraph = this.onGraph.bind(this);
 		this.onSearch = this.onSearch.bind(this);
+		this.onProfile = this.onProfile.bind(this);
+		this.onDragStart = this.onDragStart.bind(this);
 	};
 
 	render () {
@@ -42,6 +43,7 @@ class Navigation extends React.Component<Props> {
 			<div 
 				ref={node => this.node = node}
 				className="navigationPanel"
+				onMouseDown={this.onDragStart}
 			>
 				<div className="inner">
 					{buttons.map(item => {
@@ -51,30 +53,37 @@ class Navigation extends React.Component<Props> {
 							cn.push('disabled');
 						};
 
-						return (
-							<Icon key={item.className} {...item} className={cn.join(' ')} tooltipY={I.MenuDirection.Top} />
-						);
+						return <Icon key={item.className} {...item} className={cn.join(' ')} tooltipY={I.MenuDirection.Top} />;
 					})}
 					<div className="line" />
-					<IconObject object={profile} size={28} iconSize={20} />
+					<IconObject object={profile} size={28} iconSize={20} onClick={this.onProfile} />
 				</div>
-				<div className="bg" onMouseDown={this.onDragStart} />
 			</div>
 		);
 	};
 
 	componentDidMount () {
 		this._isMounted = true;
+		this.resize();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
 		this.resize();
-		$(window).off('resize.navigation').on('resize.navigation', () => this.resize());
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+
+	unbind () {
 		$(window).off('resize.navigation');
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.navigation', () => this.resize());
 	};
 
 	onBack () {
@@ -92,11 +101,15 @@ class Navigation extends React.Component<Props> {
 	};
 
 	onGraph () {
-		ObjectUtil.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
+		ObjectUtil.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
 		keyboard.onSearchPopup();
+	};
+
+	onProfile () {
+		popupStore.open('settings', {});
 	};
 
 	resize () {
@@ -105,11 +118,10 @@ class Navigation extends React.Component<Props> {
 		};
 
 		const node = $(this.node);
-		const coords = Storage.get('progress');
+		const coords = Storage.get('navigation');
 
-		this.obj = node.find('#inner');
-		this.height = this.obj.outerHeight();
-		this.width = this.obj.outerWidth();
+		this.height = node.outerHeight();
+		this.width = node.outerWidth();
 
 		if (coords) {
 			this.setStyle(coords.x, coords.y);
@@ -117,15 +129,22 @@ class Navigation extends React.Component<Props> {
 	};
 
 	onDragStart (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const win = $(window);
-		const offset = this.obj.offset();
+		const node = $(this.node);
+		const offset = node.offset();
 
 		this.dx = e.pageX - offset.left;
 		this.dy = e.pageY - offset.top;
 
-		win.off('mousemove.progress mouseup.progress');
-		win.on('mousemove.progress', (e: any) => { this.onDragMove(e); });
-		win.on('mouseup.progress', (e: any) => { this.onDragEnd(e); });
+		keyboard.disableSelection(true);
+		keyboard.setDragging(true);
+
+		win.off('mousemove.navigation mouseup.navigation');
+		win.on('mousemove.navigation', e => this.onDragMove(e));
+		win.on('mouseup.navigation', e => this.onDragEnd());
 	};
 
 	onDragMove (e: any) {
@@ -136,8 +155,10 @@ class Navigation extends React.Component<Props> {
 		this.setStyle(x, y);
 	};
 
-	onDragEnd (e: any) {
-		$(window).off('mousemove.progress mouseup.progress');
+	onDragEnd () {
+		keyboard.setDragging(false);
+		keyboard.disableSelection(false);
+		$(window).off('mousemove.navigation mouseup.navigation');
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
@@ -157,10 +178,11 @@ class Navigation extends React.Component<Props> {
 	};
 
 	setStyle (x: number, y: number) {
+		const node = $(this.node);
 		const coords = this.checkCoords(x, y);
 		
-		this.obj.css({ margin: 0, left: coords.x, top: coords.y });
-		Storage.set('progress', coords);
+		node.css({ margin: 0, left: coords.x, top: coords.y });
+		Storage.set('navigation', coords);
 	};
 	
 };

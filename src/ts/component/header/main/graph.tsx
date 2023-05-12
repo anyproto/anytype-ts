@@ -25,8 +25,6 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
-					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
-					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 				</div>
 
 				<div className="side center">

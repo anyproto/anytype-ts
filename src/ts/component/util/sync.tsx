@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { Icon } from 'Component';
 import { I, Preview, DataUtil, translate } from 'Lib';
 import { authStore } from 'Store';
 
@@ -27,11 +28,8 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, className, rootId, onClick } = this.props;
-		const { account } = authStore;
-		const thread = authStore.threadGet(rootId);
-		const disabled = account?.status?.type != I.AccountStatusType.Active;
-		const status = disabled ? I.ThreadStatus.Disabled : ((thread.summary || {}).status || I.ThreadStatus.Unknown);
+		const { id, className, onClick } = this.props;
+		const status = this.getStatus();
 		const cn = [ 'sync' ];
 
 		if (className) {
@@ -47,25 +45,36 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
-				<div className={[ 'bullet', DataUtil.threadColor(status) ].join(' ')} />
-				{translate('syncStatus' + status)}
+				<Icon className={[ DataUtil.threadColor(status) ].join(' ')} />
 			</div>
 		);
 	};
 
 	onMouseEnter () {
-		const { rootId } = this.props;
 		const node = $(this.node);
-		const thread = authStore.threadGet(rootId);
-		const { summary } = thread;
+		const status = this.getStatus();
 
-		if (summary) {
-			Preview.tooltipShow({ text: translate('tooltip' + summary.status), element: node, typeY: I.MenuDirection.Bottom });
+		if (status) {
+			Preview.tooltipShow({ text: translate(`tooltip${status}`), element: node, typeY: I.MenuDirection.Bottom });
 		};
 	};
 	
 	onMouseLeave () {
 		Preview.tooltipHide(false);
+	};
+
+	getStatus () {
+		const { rootId } = this.props;
+		const { account } = authStore;
+		const thread = authStore.threadGet(rootId);
+		const { summary } = thread;
+
+		if (!summary) {
+			return I.ThreadStatus.Unknown;
+		};
+
+		const disabled = account?.status?.type != I.AccountStatusType.Active;
+		return disabled ? I.ThreadStatus.Disabled : ((summary || {}).status || I.ThreadStatus.Unknown);
 	};
 	
 });
