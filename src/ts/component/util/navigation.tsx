@@ -1,13 +1,11 @@
 import * as React from 'react';
+import raf from 'raf';
 import { Icon, IconObject } from 'Component';
 import { detailStore, blockStore, popupStore } from 'Store';
 import { I, ObjectUtil, keyboard, Storage, Util } from 'Lib';
 import Constant from 'json/constant.json';
 
-interface Props {
-};
-
-class Navigation extends React.Component<Props> {
+class Navigation extends React.Component {
 
 	_isMounted = false;
 	node: any = null;
@@ -16,8 +14,9 @@ class Navigation extends React.Component<Props> {
 	dy = 0;
 	width = 0;
 	height = 0;
+	frame = 0;
 
-	constructor (props: Props) {
+	constructor (props: object) {
 		super(props);
 
 		this.onBack = this.onBack.bind(this);
@@ -186,10 +185,16 @@ class Navigation extends React.Component<Props> {
 	};
 
 	setStyle (x: number, y: number) {
-		const node = $(this.node);
-		const coords = this.checkCoords(x, y);
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			const node = $(this.node);
+			const coords = this.checkCoords(x, y);
 		
-		node.css({ margin: 0, left: coords.x, top: coords.y });
+			node.css({ margin: 0, left: coords.x, top: coords.y });
+		});
 	};
 	
 };
