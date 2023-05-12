@@ -101,7 +101,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 	rebind (): void {
 		this.unbind();
-		$(window).on('resize.sidebar', (e: any) => { sidebar.resize(); });
+		$(window).on('resize.sidebar', () => sidebar.resize());
 	};
 
 	unbind (): void {

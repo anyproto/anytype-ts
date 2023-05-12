@@ -264,7 +264,7 @@ class Sidebar {
 		this.setAnimating(true);
 		this.obj.addClass('anim').removeClass('active');
 		this.setWidth(0, true);
-		this.removeAnimation();
+		this.removeAnimation(() => this.resizePage());
 	};
 
 	open (): void {
@@ -311,7 +311,7 @@ class Sidebar {
 		};
 
 		if (Util.objectLength(set)) {
-			this.set(set);
+			this.set(set, true);
 		};
 	};
 
