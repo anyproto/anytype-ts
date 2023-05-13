@@ -209,6 +209,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				return;
 			};
 
+			const object = detailStore.get(rootId, rootId, []);
+			if (object.isArchived || object.isDeleted) {
+				this.isDeleted = true;
+				this.forceUpdate();
+				return;
+			};
+
 			this.scrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.focusTitle();
 			this.setLoading(false);
