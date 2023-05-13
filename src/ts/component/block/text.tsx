@@ -479,7 +479,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			let icon = null;
 			if (_empty_) {
-				icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
+				icon = <Loader type="loader" className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {
 				icon = <IconObject size={size} object={object} />;
 			};

@@ -296,7 +296,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
 
-		if (object.isArchived) {
+		if (object.isArchived || object.isDeleted) {
 			return;
 		};
 
