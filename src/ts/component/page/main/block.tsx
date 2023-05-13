@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
 import { I, C, Util, Action, ObjectUtil } from 'Lib';
-import { blockStore } from 'Store';
+import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
 interface State {
@@ -98,6 +98,12 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 				} else {
 					ObjectUtil.openHome('route');
 				};
+				return;
+			};
+
+			const object = detailStore.get(rootId, rootId, []);
+			if (object.isArchived || object.isDeleted) {
+				this.setState({ isDeleted: true });
 				return;
 			};
 
