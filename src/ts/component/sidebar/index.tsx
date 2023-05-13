@@ -42,11 +42,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		const cmd = keyboard.cmdSymbol();
 
         return (
-            <div
+            <div 
 				ref={node => this.node = node}
-				id="sidebar"
-				className={cn.join(' ')}
-			>
+                id="sidebar" 
+                className={cn.join(' ')} 
+            >
                 <div className="head" draggable={true} onDragStart={this.onDragStart}>
 					<Icon
 						className="toggleSidebar"
