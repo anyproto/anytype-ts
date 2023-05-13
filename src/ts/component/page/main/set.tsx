@@ -145,6 +145,12 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				return;
 			};
 
+			const object = detailStore.get(rootId, rootId, []);
+			if (object.isArchived || object.isDeleted) {
+				this.setState({ isDeleted: true });
+				return;
+			};
+
 			this.loading = false;
 			this.forceUpdate();
 
