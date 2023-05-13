@@ -13,7 +13,6 @@ interface Props {
 	onCoverClose?: () => void;
 	onCoverSelect?: (item: any) => void;
 	onLayout?: (e: any) => void;
-	onRelation?: (e: any) => void;
 	onEdit?: (e: any) => void;
 	onUploadStart?: (e: any) => void;
 	onUpload?: (type: I.CoverType, hash: string) => void;
@@ -29,7 +28,6 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		this.onIcon = this.onIcon.bind(this);
 		this.onCover = this.onCover.bind(this);
 		this.onLayout = this.onLayout.bind(this);
-		this.onRelation = this.onRelation.bind(this);
 	};
 
 	render (): any {
@@ -43,7 +41,6 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		let checkType = blockStore.checkBlockTypeExists(rootId);
 		let allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		let allowedLayout = !checkType && allowedDetails && !root.isObjectSet() && !root.isObjectCollection();
-		let allowedRelation = !checkType;
 		let allowedIcon = !checkType && allowedDetails && !root.isObjectTask() && !root.isObjectNote() && !root.isObjectBookmark();
 		let allowedCover = !checkType && allowedDetails && !root.isObjectNote();
 
@@ -56,7 +53,6 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		if (root.isObjectType()) {
 			allowedLayout = false;
 			allowedCover = false;
-			allowedRelation = false;
 		};
 
 		return (
@@ -81,13 +77,6 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 						<div className="txt">{translate('editorControlLayout')}</div>
 					</div>
 				) : ''}
-
-				{allowedRelation ? (
-					<div id="button-relation" className="btn white withIcon" onClick={this.onRelation}>
-						<Icon className="relation" />
-						<div className="txt">{translate('editorControlRelation')}</div>
-					</div>
-				) : ''}
 			</div>
 		);
 	};
@@ -106,14 +95,6 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 
 		focus.clear(true);
 		this.props.onLayout(e);
-	};
-
-	onRelation (e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		focus.clear(true);
-		this.props.onRelation(e);
 	};
 
 	onCover (e: any) {
