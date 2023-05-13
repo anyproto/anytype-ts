@@ -11,7 +11,7 @@
 	.dots {
 		.dot { 
 			width: 4px; height: 4px; border-radius: 50%; animation: fill 0.6s cubic-bezier(0.22, 1, 0.36, 1) infinite; 
-			display: inline-block; vertical-align: top; background-color: red; margin-right: 8px;
+			display: inline-block; vertical-align: top; background-color: rgba(0,0,0,0); margin-right: 8px;
 		}
 		.dot:last-child { margin: 0px; }
         .dot:nth-child(2) { animation-delay: 0.2s; }

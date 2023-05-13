@@ -67,8 +67,15 @@ html.themeDark {
     /* Components */
     /* ---------------------------------------------------------------- */
 
+	@keyframes fill {
+		0% { background-color: $colorPrimary; }
+		32% { background-color: $colorPrimary; }
+		100% { background-color: rgba(0,0,0,0); }
+	}
+
     .loaderWrapper {
         .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+		.dot { animation-name: fill; }
     }
 
     .mediaAudio {

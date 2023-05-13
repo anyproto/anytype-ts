@@ -13,7 +13,7 @@
     /* PopupSearch */
 
     .popup.popupSearch {
-        .head { background: $colorBlack; }
+        .head { border-color: $colorLinePrimary; }
         .item {
             .descr { color: $colorSecondary; }
         }
