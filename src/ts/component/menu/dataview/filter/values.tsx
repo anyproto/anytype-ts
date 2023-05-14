@@ -356,24 +356,27 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		let key = item.id;
 
 		switch (item.id) {
-			case 'relation':
+			case 'relation': {
 				options = this.getRelationOptions();
 				key = 'relationKey';
 				break;
+			};
 
-			case 'condition':
+			case 'condition': {
 				options = Relation.filterConditionsByType(item.format);	
 				break;
+			};
 
-			case 'quickOption':
+			case 'quickOption': {
 				options = Relation.filterQuickOptions(item.format, item.condition);	
 				break;
+			};
 		};
 
 		menuStore.open('select', {
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
-			offsetY: -36,
+			vertical: I.MenuDirection.Center,
 			isSub: true,
 			noFlipY: true,
 			data: {
