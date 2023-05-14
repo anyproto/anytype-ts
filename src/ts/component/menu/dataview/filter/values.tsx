@@ -562,6 +562,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					blockId: blockId,
 					value: item.value || [], 
 					relation: observable.box(relation),
+					canAdd: true,
 					onChange: (value: any) => {
 						this.onChange('value', value);
 					},
@@ -590,6 +591,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					value: item.value, 
 					types: relation.objectTypes,
 					relation: observable.box(relation),
+					canAdd: true,
 					onChange: (value: any, callBack?: () => void) => {
 						this.onChange('value', value);
 
