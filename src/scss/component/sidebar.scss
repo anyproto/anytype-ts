@@ -46,6 +46,8 @@
 }
 
 .sidebar {
+	.over { width: 100%; overflow: hidden; }
+
 	.resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: -5px; cursor: col-resize; }
 	.resize-h {
 		.resize-handle {
