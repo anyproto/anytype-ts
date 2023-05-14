@@ -127,18 +127,32 @@ class Navigation extends React.Component {
 		const coords = Storage.get('navigation') || {};
 		const ww = win.width();
 		const wh = win.height();
-		const sidebar = $('#sidebar');
 		
-		let sw = 0;
-		if (!isPopup && commonStore.isSidebarFixed && sidebar.hasClass('active')) {
-			sw = sidebar.outerWidth();
-		};
-
 		this.height = node.outerHeight();
 		this.width = node.outerWidth();
 
-		coords.x = Number(coords.x) || (sw + (ww - sw) / 2 - this.width / 2);
-		coords.y = Number(coords.y) || (wh - 72);
+		coords.x = Number(coords.x) || 0;
+		coords.y = Number(coords.y) || 0;
+
+		if (!coords.x) {
+			const sidebar = $('#sidebar');
+			const isRight = sidebar.hasClass('right');
+
+			let sw = 0;
+			if (!isPopup && commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+				sw = sidebar.outerWidth();
+			};
+
+			coords.x = (ww - sw) / 2 - this.width / 2;
+
+			if (!isRight) {
+				coords.x += sw;
+			};
+		};
+
+		if (!coords.y) {
+			coords.y = wh - 72;
+		};
 	
 		this.setStyle(coords.x, coords.y);
 	};
