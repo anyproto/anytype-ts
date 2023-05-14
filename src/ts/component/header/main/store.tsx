@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, sidebar, ObjectUtil } from 'Lib';
+import { I, ObjectUtil } from 'Lib';
 
 const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent, object> {
 
@@ -12,13 +12,12 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 	};
 
 	render () {
-		const { tabs, tab, onTab, onForward, onBack, onTooltipShow, onTooltipHide } = this.props;
+		const { tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
 		
 		return (
 			<React.Fragment>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
 				</div>
 
 				<div className="side center">

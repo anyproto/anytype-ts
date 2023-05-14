@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, Util, DataUtil, ObjectUtil, keyboard, sidebar } from 'Lib';
+import { I, DataUtil, ObjectUtil, keyboard } from 'Lib';
 import { blockStore, detailStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -28,9 +28,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			<React.Fragment>
 				<div className="side left">
 					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
-
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
 				</div>
 
 				<div className="side center">

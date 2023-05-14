@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, DataUtil, keyboard, sidebar } from 'Lib';
+import { I, ObjectUtil, DataUtil } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
@@ -18,13 +18,12 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	render () {
-		const { onForward, onBack, tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const { tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
 
 		return (
 			<React.Fragment>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
 				</div>
 
 				<div className="side center">

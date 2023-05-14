@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, sidebar } from 'Lib';
+import { I, ObjectUtil } from 'Lib';
 import { popupStore } from 'Store';
 
 interface Props extends I.HeaderComponent {
@@ -22,7 +22,6 @@ const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<P
 			<React.Fragment>
 				<div className="side left">
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
 				</div>
 
 				<div className="side center" />

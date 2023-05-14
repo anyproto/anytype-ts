@@ -64,9 +64,9 @@
 	> .top { display: flex; flex-direction: row-reverse; }
 	> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overscroll-behavior: none; }
 
-	> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 12px; cursor: grab; }
+	> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 52px; cursor: grab; }
 	> .head {
-		.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; display: none; }
+		.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
 		.icon:hover { background-color: $colorHoverMedium; }
 	}
 }
