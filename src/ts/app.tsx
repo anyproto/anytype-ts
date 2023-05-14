@@ -374,28 +374,26 @@ class App extends React.Component<object, State> {
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => { Util.route(route); });
+		Renderer.on('route', (e: any, route: string) => Util.route(route));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => { commonStore.progressClear(); });
+		Renderer.on('update-downloaded', () => commonStore.progressClear());
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('command', this.onCommand);
 		Renderer.on('spellcheck', this.onSpellcheck);
-		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
-		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
+		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
+		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
 		Renderer.on('shutdownStart', () => { 
 			this.setState({ loading: true }); 
 
 			Storage.delete('menuSearchText');
 		});
 
-		Renderer.on('config', (e: any, config: any) => { 
-			commonStore.configSet(config, true);
-		});
+		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
 			commonStore.nativeThemeSet(isDark);

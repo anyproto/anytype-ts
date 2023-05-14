@@ -168,7 +168,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isInline) {
 			head = (
 				<Head 
-					ref={(ref: any) => { this.refHead = ref; }} 
+					ref={ref => this.refHead = ref} 
 					{...this.props}
 					{...dataviewProps}
 					onSourceSelect={this.onSourceSelect}
@@ -191,7 +191,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					<ViewComponent 
 						key={'view' + view.id}
 						ref={ref => this.refView = ref} 
-						onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
+						onRef={(ref: any, id: string) => this.refCells.set(id, ref)} 
 						{...this.props}
 						{...dataviewProps}
 						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}

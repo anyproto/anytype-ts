@@ -149,7 +149,7 @@ class MenuStore {
 	onCloseAll (callBack?: () => void) {
 		this.clearTimeout();
 		if (callBack) {
-			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+			this.timeout = window.setTimeout(() => callBack(), Constant.delay.menu);
 		};
 	};
 

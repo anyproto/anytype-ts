@@ -660,7 +660,7 @@ class Util {
 		const links = obj.find('a');
 
 		links.off('click auxclick');
-		links.on('auxclick', (e: any) => { e.preventDefault(); });
+		links.on('auxclick', e => e.preventDefault());
 		links.click((e: any) => {
 			const el = $(e.currentTarget);
 

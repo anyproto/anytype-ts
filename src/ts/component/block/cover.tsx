@@ -165,7 +165,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.resize();
 
 		Util.renderLinks($(this.node));
-		$(window).off('resize.cover').on('resize.cover', () => { this.resize(); });
+		$(window).off('resize.cover').on('resize.cover', () => this.resize());
 	};
 	
 	componentDidUpdate () {

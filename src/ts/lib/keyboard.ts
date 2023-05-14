@@ -38,10 +38,10 @@ class Keyboard {
 		this.unbind();
 		
 		const win = $(window);
-		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
-		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
-		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
-		win.on('scroll.common', () => { this.onScroll(); });
+		win.on('keydown.common', e => this.onKeyDown(e));
+		win.on('keyup.common', e => this.onKeyUp(e));
+		win.on('mousedown.common', e => this.onMouseDown(e));
+		win.on('scroll.common', () => this.onScroll());
 		win.off('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', (e: any) => {
@@ -58,7 +58,7 @@ class Keyboard {
 		});
 
 		Renderer.remove('commandGlobal');
-		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
 	unbind () {
@@ -119,8 +119,8 @@ class Keyboard {
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => { this.onBack(); });
-			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => { this.onForward(); });
+			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
+			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
 		};
 
 		// Close popups and menus
