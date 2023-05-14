@@ -36,7 +36,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 				<div className="inputWrapper flex">
 					<div className="errorWrapper">
 						<Input 
-							ref={(ref: any) => { this.ref = ref; }} 
+							ref={ref => this.ref = ref} 
 							type="password"
 							placeholder="Paste your integration token"
 						/>

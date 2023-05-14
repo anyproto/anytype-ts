@@ -59,7 +59,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const Editor = (item: any) => {
 			return (
 				<Editable
-					ref={(ref: any) => { this.refEditable[item.id] = ref; }}
+					ref={ref => this.refEditable[item.id] = ref}
 					id={'editor-' + item.id}
 					placeholder={placeholder[item.id]}
 					readonly={!allowDetails}

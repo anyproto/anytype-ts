@@ -62,7 +62,7 @@ class Filter extends React.Component<Props> {
 
 					<div className="filterInputWrap">
 						<Input 
-							ref={(ref: any) => { this.ref = ref; }}
+							ref={ref => this.ref = ref}
 							id="input"
 							className={inputClassName}
 							value={value}

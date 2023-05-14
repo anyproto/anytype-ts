@@ -49,7 +49,7 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 				ref={node => this.node = node}
 				className="setWrapper"
 			>
-				<Header component="mainObject" ref={(ref: any) => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
 					{block ? <Block 
