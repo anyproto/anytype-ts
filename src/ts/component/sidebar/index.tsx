@@ -49,8 +49,8 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
             >
                 <div className="head" draggable={true} onDragStart={this.onDragStart}>
 					<Icon
-						className="toggleSidebar"
-						tooltip="Close sidebar"
+						className="toggle"
+						tooltip="Toggle sidebar fixed mode"
 						tooltipCaption={`${cmd} + \\`}
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggle()}

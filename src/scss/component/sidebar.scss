@@ -66,8 +66,10 @@
 
 	> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 52px; cursor: grab; }
 	> .head {
-		.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
+		.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; }
 		.icon:hover { background-color: $colorHoverMedium; }
+		.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
+		.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
 	}
 }
 .sidebar:hover {

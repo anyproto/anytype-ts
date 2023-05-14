@@ -33,19 +33,11 @@
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon.big.expand, .icon.big.toggleSidebar { margin-right: 12px; }
-	.icon.big.nav, .icon.big.graph { margin-left: 12px; }
 	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
 
-	.icon.back { background-image: url('~img/icon/header/back.svg'); }
-	.icon.forward { background-image: url('~img/icon/header/back.svg'); }
-	.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
-	.icon.plus { background-image: url('~img/icon/header/plus.svg'); }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
-	.icon.add { background-image: url('~img/icon/header/add.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
-	.icon.graph { background-image: url('~img/icon/header/graph.svg'); }
 	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
 }
@@ -85,10 +77,6 @@
 }
 .header.mainHistory.snapLeft { right: 254px; }
 
-.header.mainObject {
-	.icon.nav { display: none; }
-}
-
 .header.isCommon { background: $colorWhite; height: 38px; }
 .header.isCommon {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; }
@@ -117,10 +105,6 @@
 	.icon.search { background-image: url('~img/icon/header/search.svg'); }
 	.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 	.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
-}
-
-.header.withSidebar {
-	.icon.toggleSidebar { display: none; }
 }
 
 .popup {
