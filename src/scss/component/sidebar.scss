@@ -24,8 +24,8 @@
 	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px rgba(0, 0, 0, 0); transform: translate3d(0px, 0px, 0px);
 }
 .sidebar.fixed {
-	> .head { height: 52px; cursor: default; }
-	> .head {
+	.over > .head { height: 52px; cursor: default; }
+	.over > .head {
 		.icon { display: block; }
 		.icon:hover { background-color: $colorHoverMedium; }
 	}
@@ -47,6 +47,18 @@
 
 .sidebar {
 	.over { width: 100%; overflow: hidden; }
+	.over {
+		> .top { display: flex; flex-direction: row-reverse; }
+		> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overscroll-behavior: none; }
+
+		> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 52px; cursor: grab; }
+		> .head {
+			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; }
+			.icon:hover { background-color: $colorHoverMedium; }
+			.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
+			.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
+		}
+	}
 
 	.resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: -5px; cursor: col-resize; }
 	.resize-h {
@@ -62,28 +74,17 @@
 	.resize-v { height: 10px; width: 100%; position: absolute; bottom: -5px; left: 0px; cursor: row-resize; }
 
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
-
-	> .top { display: flex; flex-direction: row-reverse; }
-	> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overscroll-behavior: none; }
-
-	> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 52px; cursor: grab; }
-	> .head {
-		.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; }
-		.icon:hover { background-color: $colorHoverMedium; }
-		.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
-		.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
-	}
 }
 .sidebar:hover {
-	> .body { overflow-y: auto; }
+	.over > .body { overflow-y: auto; }
 }
 
 html.platformWindows {
 	.sidebar.fixed {
-		> .head { height: 38px; }
+		.over > .head { height: 38px; }
 	}
 
 	.sidebar:hover {
-		> .body { overflow-y: overlay; }
+		.over > .body { overflow-y: overlay; }
 	}
 }	

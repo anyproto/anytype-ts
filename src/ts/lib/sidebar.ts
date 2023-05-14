@@ -343,7 +343,7 @@ class Sidebar {
 
 		css.width = this.header.outerWidth() - width;
 
-		if (isSidebarFixed) {
+		if (isSidebarFixed && width) {
 			this.header.addClass('withSidebar');
 			this.footer.addClass('withSidebar');
 		};
