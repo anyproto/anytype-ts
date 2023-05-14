@@ -248,6 +248,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	onArrow (dir: number) {
+		if (!this.refList) {
+			return;
+		};
+
 		const items = this.getItems();
 		const l = items.length;
 
