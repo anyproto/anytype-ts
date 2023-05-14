@@ -227,11 +227,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	};
 
 	onHandleClick () {
-		if (sidebar.isAnimating) {
-			return;
+		if (!sidebar.isAnimating) {
+			sidebar.open();
 		};
-
-		sidebar.open();
 	};
 
 });

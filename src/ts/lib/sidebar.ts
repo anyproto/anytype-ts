@@ -274,7 +274,7 @@ class Sidebar {
 
 		this.setAnimating(true);
 		this.obj.addClass('anim').removeClass('active');
-		this.setWidth(Constant.size.sidebar.width.default);
+		this.setWidth(Constant.size.sidebar.width.min);
 		this.removeAnimation(() => this.resizePage());
 	};
 
