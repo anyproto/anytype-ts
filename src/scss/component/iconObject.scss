@@ -20,6 +20,7 @@
 	.iconGradient.c40, .iconCommon.c40, .smileImage.c40, .iconImage.c40, .iconFile.c40, .iconCheckbox.c40 { @include pos-abs-mid; width: 40px; height: 40px; margin: -20px 0px 0px -20px; }
 	.iconGradient.c48, .iconCommon.c48, .smileImage.c48, .iconImage.c48, .iconFile.c48, .iconCheckbox.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
 	.iconGradient.c64, .iconCommon.c64, .smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
+	.iconGradient.c112 { @include pos-abs-mid; width: 112px; height: 112px; margin: -56px 0px 0px -56px; }
 
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
 	.iconGradient { background-image: radial-gradient(50% 50% at 50% 50%, var(--color-from) 22.92%, var(--color-to) 100%); }

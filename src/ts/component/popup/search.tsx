@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Input, Loader, IconObject, ObjectName, ObjectDescription, EmptySearch } from 'Component';
+import { Icon, Input, Loader, IconObject, ObjectName, EmptySearch } from 'Component';
 import { I, Util, DataUtil, ObjectUtil, keyboard, Key, focus, translate, analytics } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
