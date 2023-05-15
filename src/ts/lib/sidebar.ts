@@ -264,7 +264,7 @@ class Sidebar {
 		this.setAnimating(true);
 		this.obj.addClass('anim').removeClass('active');
 		this.setWidth(0, true);
-		this.removeAnimation(() => this.resizePage());
+		this.removeAnimation(() => $(window).trigger('resize'));
 	};
 
 	open (width?: number): void {
@@ -275,7 +275,7 @@ class Sidebar {
 		this.setAnimating(true);
 		this.obj.addClass('anim').removeClass('active');
 		this.setWidth(width);
-		this.removeAnimation(() => this.resizePage());
+		this.removeAnimation(() => $(window).trigger('resize'));
 	};
 
 	private removeAnimation (callBack?: () => void): void {
