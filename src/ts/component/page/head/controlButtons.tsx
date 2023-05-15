@@ -202,7 +202,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const win = $(window);
 		const node = $(this.node);
 
-		win.width() <= 1125 ? node.addClass('small') : node.removeClass('small');
+		win.width() <= 900 ? node.addClass('small') : node.removeClass('small');
 	};
 	
 });
