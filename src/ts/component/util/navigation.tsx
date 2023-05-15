@@ -42,7 +42,6 @@ class Navigation extends React.Component {
 			<div 
 				ref={node => this.node = node}
 				className="navigationPanel"
-				onMouseDown={this.onDragStart}
 			>
 				<div className="inner">
 					{buttons.map(item => {
