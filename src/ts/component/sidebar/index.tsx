@@ -181,9 +181,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 		body.addClass(dir == I.MenuType.Vertical ? 'rowResize' : 'colResize');
 
-		win.off('mousemove.sidebar mouseup.sidebar');
+		win.off('mousemove.sidebar mouseup.sidebar blur.sidebar');
 		win.on('mousemove.sidebar', e => this.onResizeMove(e, dir));
-		win.on('mouseup.sidebar', e => this.onResizeEnd());
+		win.on('mouseup.sidebar blur.sidebar', e => this.onResizeEnd());
 	};
 
 	onResizeMove (e: any, dir: I.MenuType) {
@@ -197,7 +197,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 			};
 
 			if (dir == I.MenuType.Horizontal) {
-				const w = snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox);
+				const w = Math.max(0, snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
 				const d = w - this.width;
 
 				if (d < 0) {
@@ -206,8 +206,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					} else {
 						sidebar.setWidth(w);
 					};
-				} else {
-					sidebar.setWidth(w);
+				};
+
+				if (d > 0) {
+					if ((w >= 0) && (w <= Constant.size.sidebar.width.close)) {
+						sidebar.open();
+					} else 
+					if (w > Constant.size.sidebar.width.close) {
+						sidebar.setWidth(w);
+					};
 				};
 
 				this.width = w;

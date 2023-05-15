@@ -268,7 +268,7 @@ class Sidebar {
 	};
 
 	open (): void {
-		if (!this.obj || !this.obj.length || this.isAnimating || keyboard.isResizing) {
+		if (!this.obj || !this.obj.length || this.isAnimating) {
 			return;
 		};
 
