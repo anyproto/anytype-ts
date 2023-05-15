@@ -38,8 +38,8 @@
 			.sectionName { @include text-small; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: $colorDarkGrey; }
 
 			.item { 
-				cursor: pointer; transition: $transitionAllCommon; position: relative; height: 48px; line-height: 22px; padding: 13px 20px; white-space: nowrap;
-				display: flex; gap: 0px 10px; align-items: center;
+				cursor: pointer; position: relative; height: 48px; line-height: 22px; padding: 13px 20px; white-space: nowrap; display: flex; gap: 0px 10px; 
+				align-items: center;
 			}
 			.item {
 				.icon { width: 20px; height: 20px; flex-shrink: 0; }

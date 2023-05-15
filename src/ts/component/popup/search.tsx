@@ -9,7 +9,6 @@ import Constant from 'json/constant.json';
 
 interface State {
 	loading: boolean;
-	filter: string;
 };
 
 const HEIGHT_SECTION = 26;
@@ -22,7 +21,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	node: any = null;
 	state = {
 		loading: false,
-		filter: '',
 	};
 	refFilter: any = null;
 	refList: any = null;
@@ -32,21 +30,23 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	n = -1;
 	top = 0;
 	offset = 0;
+	filter = '';
 	
 	constructor (props: I.Popup) {
 		super (props);
 
-		this.onKeyUpSearch = this.onKeyUpSearch.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onOver = this.onOver.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.onFilterChange = this.onFilterChange.bind(this);
+		this.onFilterClear = this.onFilterClear.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
 	};
 	
 	render () {
-		const { filter, loading } = this.state;
+		const { loading } = this.state;
+		const filter = this.getFilter();
 		const items = this.getItems();
 
 		const Item = (item: any) => {
@@ -124,15 +124,16 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			>
 				{loading ? <Loader id="loader" /> : ''}
 				
-				<form id="head" className="head" onSubmit={this.onSubmit}>
+				<div className="head">
 					<Filter 
 						icon="search"
 						value={filter}
 						ref={ref => this.refFilter = ref} 
 						placeholder={translate('popupSearchPlaceholder')} 
-						onKeyUp={(e: any) => this.onKeyUpSearch(e, false)}
+						onKeyUp={this.onFilterChange}
+						onClear={this.onFilterClear}
 					/>
-				</form>
+				</div>
 
 				{!items.length && !loading ? (
 					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
@@ -184,14 +185,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		$('#header').addClass('active');
 	};
 	
-	componentDidUpdate (prevProps: any, prevState: any) {
-		const { filter } = this.state;
+	componentDidUpdate () {
 		const items = this.getItems();
+		const filter = this.getFilter();
 
-		if (filter != prevState.filter) {
+		if (filter != this.filter) {
 			this.n = -1;
 			this.offset = 0;
 			this.top = 0;
+			this.filter = filter;
 			this.load(true);
 			return;
 		};
@@ -237,11 +239,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		$(window).off('keydown.search resize.search');
 	};
 	
-	onSubmit (e: any) {
-		e.preventDefault();
-		this.onKeyUpSearch(e, true);
-	};
-
 	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
@@ -320,11 +317,13 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		node.find('.active').removeClass('active');
 	};
 
-	onKeyUpSearch (e: any, force: boolean) {
+	onFilterChange () {
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { 
-			this.setState({ filter: this.refFilter.getValue() }); 
-		}, force ? 0 : 50);
+		this.timeout = window.setTimeout(() => this.forceUpdate(), 500);
+	};
+
+	onFilterClear () {
+		this.forceUpdate();
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
@@ -335,7 +334,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	load (clear: boolean, callBack?: (value: any) => void) {
-		const { filter } = this.state;
+		const filter = this.getFilter();
 		const skipTypes = [].concat(ObjectUtil.getFileTypes()).concat(ObjectUtil.getSystemTypes());
 
 		const filters: any[] = [
@@ -354,7 +353,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			sorts,
 			fullText: filter,
 			offset: this.offset,
-			limit: Constant.limit.menuRecords,
+			limit: !filter ? 8 : Constant.limit.menuRecords,
 		}, (message: any) => {
 			if (message.error.code) {
 				this.setState({ loading: false });
@@ -381,7 +380,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	getItems () {
 		const cmd = keyboard.cmdSymbol();
-		const isEditor = keyboard.isMainEditor();
+		const hasRelations = keyboard.isMainEditor() || keyboard.isMainSet();
 
 		let items = this.items.filter(this.filterMapper);
 		if (items.length) {
@@ -399,7 +398,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		});
 
 		items.push({ id: 'add', name: 'Create object', icon: 'plus', shortcut: [ cmd, 'N' ] });
-		if (isEditor) {
+		if (hasRelations) {
 			items.push({ id: 'relation', name: 'Add relation', icon: 'relation', shortcut: [ cmd, 'N' ] });
 		};
 		return items;
@@ -437,7 +436,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.props.close();
 
 		if (item.isObject) {
-			const filter = Util.filterFix(this.refFilter.getValue());
+			const filter = Util.filterFix(this.getFilter());
 
 			ObjectUtil.openEvent(e, { ...item, id: item.id });
 			analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
@@ -461,6 +460,10 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	getRowHeight (item: any) {
 		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
+	};
+
+	getFilter () {
+		return this.refFilter ? this.refFilter.getValue() : '';
 	};
 
 	resize () {
