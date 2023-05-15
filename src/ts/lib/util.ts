@@ -983,6 +983,10 @@ class Util {
 		return Number((num / 100 * percent).toFixed(3));
 	};
 
+	getEventNamespace (isPopup: boolean): string {
+		return isPopup ? '-popup' : '';
+	};
+
 };
 
 export default new Util();

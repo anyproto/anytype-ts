@@ -213,7 +213,12 @@ class Keyboard {
 				// Create new page
 				this.shortcut(`${cmd}+n`, e, () => {
 					e.preventDefault();
-					this.pageCreate();
+
+					if (this.isMainSet()) {
+						$(window).trigger('createNewObject.set' + Util.getEventNamespace(this.isPopup()));
+					} else {
+						this.pageCreate();
+					};
 				});
 			};
 
