@@ -405,6 +405,7 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 };
 
 drawNode = (d) => {
+	const root = getNodeById(data.rootId);
 	const radius = getRadius(d);
 	const img = images[d.src];
 	const diameter = radius * 2;
@@ -429,6 +430,10 @@ drawNode = (d) => {
 				};
 			};
 		};
+	};
+
+	if (d.id == root.id) {
+		colorNode = Color.highlight;
 	};
 
 	if (d.isOver) {
