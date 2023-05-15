@@ -1,4 +1,5 @@
 import * as React from 'react';
+import $ from 'jquery';
 import { Icon } from 'Component';
 import { I, DataUtil, ObjectUtil, translate, analytics, focus } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
@@ -20,6 +21,7 @@ interface Props {
 
 const ControlButtons = observer(class ControlButtons extends React.Component<Props> {
 	
+	node = null;
 	timeout = 0;
 
 	constructor (props: Props) {
@@ -56,7 +58,10 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		};
 
 		return (
-			<div className="controlButtons">
+			<div 
+				ref={ref => this.node = ref}
+				className="controlButtons"
+			>
 				{allowedIcon ? (
 					<div id="button-icon" className="btn white withIcon" onClick={this.onIcon}>
 						<Icon className="icon" />
@@ -79,6 +84,24 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				) : ''}
 			</div>
 		);
+	};
+
+	componentDidMount (): void {
+		this.rebind();
+	};
+
+	componentWillUnmount (): void {
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+
+		$(window).on('resize.controlButtons', () => this.resize());
+	};
+
+	unbind () {
+		$(window).off('resize.controlButtons');
 	};
 
 	onIcon (e: any) {
@@ -173,6 +196,13 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 				onSelect: onCoverSelect
 			},
 		});
+	};
+
+	resize () {
+		const win = $(window);
+		const node = $(this.node);
+
+		win.width() <= 1125 ? node.addClass('small') : node.removeClass('small');
 	};
 	
 });
