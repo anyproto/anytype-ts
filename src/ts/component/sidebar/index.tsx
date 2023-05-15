@@ -210,7 +210,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 				if (d > 0) {
 					if ((w >= 0) && (w <= Constant.size.sidebar.width.close)) {
-						sidebar.open();
+						sidebar.open(Constant.size.sidebar.width.min);
 					} else 
 					if (w > Constant.size.sidebar.width.close) {
 						sidebar.setWidth(w);
@@ -237,7 +237,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 	onHandleClick () {
 		if (!sidebar.isAnimating) {
-			sidebar.open();
+			sidebar.open(Constant.size.sidebar.width.default);
 		};
 	};
 

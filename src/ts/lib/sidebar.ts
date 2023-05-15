@@ -267,14 +267,14 @@ class Sidebar {
 		this.removeAnimation(() => this.resizePage());
 	};
 
-	open (): void {
+	open (width?: number): void {
 		if (!this.obj || !this.obj.length || this.isAnimating) {
 			return;
 		};
 
 		this.setAnimating(true);
 		this.obj.addClass('anim').removeClass('active');
-		this.setWidth(Constant.size.sidebar.width.min);
+		this.setWidth(width);
 		this.removeAnimation(() => this.resizePage());
 	};
 

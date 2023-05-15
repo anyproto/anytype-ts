@@ -446,9 +446,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					if (keyboard.isMainSet()) {
 						$(window).trigger('createNewObject.set' + Util.getEventNamespace(keyboard.isPopup()));
 					} else {
-						ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-							ObjectUtil.openAuto({ id: message.targetId });
-						});
+						keyboard.pageCreate();
 					};
 					break;
 				};
