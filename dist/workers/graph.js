@@ -72,6 +72,7 @@ let edgeMap = new Map();
 let hoverAlpha = 0.2;
 let fontFamily = 'Helvetica';
 let timeoutHover = 0;
+let root = null;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -105,7 +106,7 @@ init = (param) => {
 
 	// Center initially on root node
 	setTimeout(() => {
-		const root = getNodeById(data.rootId);
+		root = getNodeById(data.rootId);
 
 		let x = width / 2;
 		let y = height / 2;
@@ -405,7 +406,6 @@ drawLine = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 };
 
 drawNode = (d) => {
-	const root = getNodeById(data.rootId);
 	const radius = getRadius(d);
 	const img = images[d.src];
 	const diameter = radius * 2;
@@ -432,14 +432,11 @@ drawNode = (d) => {
 		};
 	};
 
-	if (d.id == root.id) {
-		colorNode = Color.highlight;
-	};
-
-	if (d.isOver) {
+	if (d.isOver || (root && (d.id == root.id))) {
 		colorNode = Color.highlight;
 		colorText = Color.highlight;
 		colorLine = Color.highlight;
+		lineWidth = getLineWidth() * 3;
 		ctx.globalAlpha = 1;
 	};
 
