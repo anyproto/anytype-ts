@@ -4,6 +4,6 @@
 .sync {
 	.icon { width: 20px; height: 20px; border-radius: 100%; vertical-align: top; }
 	.icon.green { background-image: url('~img/icon/status/green.svg'); }
-	.icon.orange { background: $colorOrange; }
-	.icon.red { background: $colorRed; }
+	.icon.orange { background-image: url('~img/icon/status/orange.svg'); }
+	.icon.red { background-image: url('~img/icon/status/red.svg'); }
 }
