@@ -35,7 +35,7 @@
 		.items {
 			.pad { height: 12px; }
 
-			.sectionName { @include text-small; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: $colorDarkGrey; }
+			.sectionName { @include text-small; height: 26px; line-height: 18px; padding: 5px 20px; font-weight: 500; color: $colorDarkGrey; }
 
 			.item { 
 				cursor: pointer; position: relative; height: 48px; line-height: 22px; padding: 13px 20px; white-space: nowrap; display: flex; gap: 0px 10px; 
