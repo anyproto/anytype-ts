@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Input, Loader, IconObject, ObjectName, EmptySearch } from 'Component';
+import { Icon, Input, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
 import { I, Util, DataUtil, ObjectUtil, keyboard, Key, focus, translate, analytics } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -14,7 +14,7 @@ interface State {
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 48;
-const LIMIT_HEIGHT = 14;
+const LIMIT_HEIGHT = 12;
 
 const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, State> {
 	
@@ -50,7 +50,33 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const items = this.getItems();
 
 		const Item = (item: any) => {
-			const type = dbStore.getType(item.type);
+			let content = null;
+			if (item.isObject) {
+				content = (
+					<React.Fragment>
+						<IconObject object={item} size={18} />
+						<ObjectName object={item} />
+						<div className="caption">{item.caption}</div>
+					</React.Fragment>
+				);
+			} else {
+				let caption = '';
+				if (item.shortcut) {
+					caption = item.shortcut.map(it => <div className="key">{it}</div>).join('');
+				};
+
+				content = (
+					<React.Fragment>
+						<Icon className={item.icon} />
+						<div className="name">{item.name}</div>
+						<div className="caption">
+							{item.shortcut.map((item, i) => (
+								<Label key={i} text={item} />
+							))}
+						</div>
+					</React.Fragment>
+				);
+			};
 
 			return (
 				<div 
@@ -59,10 +85,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 					onMouseOver={(e: any) => { this.onOver(e, item); }} 
 					onClick={(e: any) => { this.onClick(e, item); }}
 				>
-					<IconObject object={item} size={18} />
-					<ObjectName object={item} />
-
-					<div className="type">{!type || type.isDeleted ? translate('commonDeletedType') : type.name}</div>
+					{content}
 				</div>
 			);
 		};
@@ -102,11 +125,12 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				{loading ? <Loader id="loader" /> : ''}
 				
 				<form id="head" className="head" onSubmit={this.onSubmit}>
-					<Icon key="icon-search" className="search" />
-					<Input 
-						ref={ref => { this.refFilter = ref; }} 
+					<Filter 
+						icon="search"
+						value={filter}
+						ref={ref => this.refFilter = ref} 
 						placeholder={translate('popupSearchPlaceholder')} 
-						onKeyUp={(e: any) => { this.onKeyUpSearch(e, false); }} 
+						onKeyUp={(e: any) => this.onKeyUpSearch(e, false)}
 					/>
 				</form>
 
@@ -117,9 +141,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				{this.cache && items.length && !loading ? (
 					<div key="items" className="items left">
 						<InfiniteLoader
-							rowCount={this.items.length + 1}
+							rowCount={items.length + 1}
 							loadMoreRows={this.loadMoreRows}
-							isRowLoaded={({ index }) => !!this.items[index]}
+							isRowLoaded={({ index }) => !!items[index]}
 							threshold={LIMIT_HEIGHT}
 						>
 							{({ onRowsRendered, registerChild }) => (
@@ -356,9 +380,27 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 	};
 
 	getItems () {
-		const items = this.items.filter(this.filterMapper);
+		const cmd = keyboard.cmdSymbol();
+		const isEditor = keyboard.isMainEditor();
+
+		let items = this.items.filter(this.filterMapper);
 		if (items.length) {
 			items.unshift({ name: 'Recent objects', isSection: true });
+		};
+
+		items = items.map(it => {
+			const type = dbStore.getType(it.type);
+
+			return { 
+				...it,
+				caption: !type || type.isDeleted ? translate('commonDeletedType') : type.name,
+				isObject: true,
+			}
+		});
+
+		items.push({ id: 'add', name: 'Create object', icon: 'plus', shortcut: [ cmd, 'N' ] });
+		if (isEditor) {
+			items.push({ id: 'relation', name: 'Add relation', icon: 'relation', shortcut: [ cmd, 'N' ] });
 		};
 		return items;
 	};
@@ -394,10 +436,27 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		e.stopPropagation();
 		this.props.close();
 
-		const filter = Util.filterFix(this.refFilter.getValue());
+		if (item.isObject) {
+			const filter = Util.filterFix(this.refFilter.getValue());
 
-		ObjectUtil.openEvent(e, { ...item, id: item.id });
-		analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
+			ObjectUtil.openEvent(e, { ...item, id: item.id });
+			analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
+		} else {
+			switch (item.id) {
+				case 'add': {
+					ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
+						ObjectUtil.openAuto({ id: message.targetId });
+					});
+					break;
+				};
+
+				case 'relation': {
+					$('#button-header-relation').trigger('click');
+					window.setTimeout(() => { $('#menuBlockRelationView #item-add').trigger('click'); }, Constant.delay.menu);
+					break;
+				};
+			};
+		};
 	};
 
 	getRowHeight (item: any) {
