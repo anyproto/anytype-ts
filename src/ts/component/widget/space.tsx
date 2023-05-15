@@ -12,6 +12,8 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 		this.onOpenSpace = this.onOpenSpace.bind(this);
 		this.onOpenSettings = this.onOpenSettings.bind(this);
+		this.onSelect = this.onSelect.bind(this);
+		this.onUpload = this.onUpload.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -20,7 +22,15 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		return (
 			<div className="body">
 				<div className="side left" onClick={this.onOpenSpace}>
-					<IconObject object={{ ...space, layout: I.ObjectLayout.Space }} forceLetter={true} size={48} />
+					<IconObject 
+						id="widget-space-icon" 
+						object={{ ...space, layout: I.ObjectLayout.Space }} 
+						forceLetter={true} 
+						size={40} 
+						canEdit={true} 
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload}
+					/>
 					<div className="txt">
 						<ObjectName object={space} />
 						<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
@@ -42,6 +52,14 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		e.stopPropagation();
 
 		popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true } });
+	};
+
+	onSelect (icon: string) {
+		ObjectUtil.setIcon(commonStore.workspace, icon, '');
+	};
+
+	onUpload (hash: string) {
+		ObjectUtil.setIcon(commonStore.workspace, '', hash);
 	};
 
 });
