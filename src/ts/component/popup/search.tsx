@@ -468,12 +468,14 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			return;
 		};
 
-		const { getId } = this.props;
+		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const content = obj.find('.content');
-		const height = HEIGHT_ITEM * LIMIT_HEIGHT;
+		const wh = $(window).height();
+		const height = Math.min(wh - 64, HEIGHT_ITEM * LIMIT_HEIGHT);
 
 		content.css({ height });
+		position();
 	};
 
 });

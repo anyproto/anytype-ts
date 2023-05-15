@@ -24,9 +24,9 @@
 			.filter {
 				.inner { height: auto; }
 				.input { 
-					padding: 0px; height: 54px; vertical-align: middle; width: calc(100% - 32px); font-size: 14px; line-height: 20px; 
-					vertical-align: top; @include text-paragraph; font-weight: 500;
+					padding: 0px; height: 54px; vertical-align: middle; width: calc(100% - 32px); vertical-align: top; @include text-paragraph; font-weight: 500;
 				}
+				.placeholder { @include text-paragraph; font-weight: 500; }
 				.line { display: none; }
 			}
 		}
