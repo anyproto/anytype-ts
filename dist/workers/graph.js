@@ -687,13 +687,13 @@ onSetSelected = ({ ids }) => {
 };
 
 onSetRootId = ({ rootId }) => {
-	const d = nodes.find(d => d.id == rootId);
-	if (!d) {
+	root = nodes.find(d => d.id == rootId);
+	if (!root) {
 		return;
 	};
 
 	const coords = { x: transform.x, y: transform.y };
-	const to = getCenter(d.x, d.y);
+	const to = getCenter(root.x, root.y);
 
 	new TWEEN.Tween(coords)
 	.to(to, 500)
