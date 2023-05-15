@@ -61,7 +61,7 @@ class CommonStore {
 
 	public graphObj: Graph = { 
 		icon: true,
-		orphan: false,
+		orphan: true,
 		marker: true,
 		label: true,
 		relation: true,
