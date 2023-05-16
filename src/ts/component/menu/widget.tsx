@@ -197,18 +197,25 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			options.push(I.WidgetLayout.Link);
 		};
 
-		if (this.target && !isCollection) {
-			const setTypes = ObjectUtil.getSetTypes();
-			const treeSkipTypes = setTypes.concat(ObjectUtil.getSystemTypes()).concat(ObjectUtil.getFileTypes());
+		if (this.target) {
+			if (!isCollection) {
+				const setTypes = ObjectUtil.getSetTypes();
+				const treeSkipTypes = setTypes.concat(ObjectUtil.getSystemTypes()).concat(ObjectUtil.getFileTypes());
 
-			// Sets can only become Link and List layouts, non-sets can't become List
-			if (treeSkipTypes.includes(this.target.type)) {
+				// Sets can only become Link and List layouts, non-sets can't become List
+				if (treeSkipTypes.includes(this.target.type)) {
+					options = options.filter(it => it != I.WidgetLayout.Tree);
+				};
+				if (!setTypes.includes(this.target.type)) {
+					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
+				};
+			};
+
+			if (this.target.id == Constant.widgetId.set) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
-			if (!setTypes.includes(this.target.type)) {
-				options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
-			};
 		};
+
 
 		return options.map(id => ({
 			id,
