@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, keyboard, Preview } from 'Lib';
+import { I, Preview } from 'Lib';
 
 const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComponent> {
 	
 	render () {
-		const { onHelp, onAdd } = this.props;
-		const cmd = keyboard.cmdSymbol();
+		const { onHelp } = this.props;
 
 		return (
 			<React.Fragment>
