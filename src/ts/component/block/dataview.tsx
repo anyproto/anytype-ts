@@ -526,8 +526,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			flags.push(I.ObjectFlag.SelectType);
 		};
 
-		const menuParam: any = {
-		};
+		const menuParam: any = {};
 
 		if (dir) {
 			menuParam.element = $(e.currentTarget);
@@ -714,11 +713,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		value = Relation.formatValue(relation, value, true);
 
-		/*
 		let details: any = {};
 		details[relationKey] = value;
 		detailStore.update(subId, { id, details }, false);
-		*/
 
 		C.ObjectSetDetails(id, [ { key: relationKey, value } ], callBack);
 
