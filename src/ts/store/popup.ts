@@ -1,5 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
+import raf from 'raf';
 import { I, Util, focus } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -104,9 +105,10 @@ class PopupStore {
 		};
 		
 		const el = $(`#${Util.toCamelCase(`popup-${id}`)}`);
-		
 		if (el.length) {
-			el.css({ transform: '' }).removeClass('show');
+			raf(() => {
+				el.css({ transform: '' }).removeClass('show');
+			});
 		};
 		
 		window.setTimeout(() => {

@@ -7,7 +7,6 @@
 		.content { height: 432px; overflow: visible; transition: none; transform: translate3d(0px,0px,0px); }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.innerWrap { width: 600px; overflow: hidden; }
-		.dimmer { transition: none; }
 		#loader { top: 55px; height: calc(100% - 55px); }
 
 		.head { 

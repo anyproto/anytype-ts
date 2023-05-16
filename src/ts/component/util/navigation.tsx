@@ -225,7 +225,7 @@ class Navigation extends React.Component {
 			const node = $(this.node);
 			const coords = this.checkCoords(x, y);
 		
-			node.css({ margin: 0, left: coords.x, top: coords.y });
+			node.css({ transform: `translate3d(${coords.x}px, ${coords.y}px, 0px)` });
 		});
 	};
 	

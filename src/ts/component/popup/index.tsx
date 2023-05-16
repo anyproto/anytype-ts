@@ -148,7 +148,7 @@ class Popup extends React.Component<I.Popup> {
 	};
 
 	close () {
-		const { param } = this.props;
+		const { id, param } = this.props;
 		const { preventMenuClose } = param;
 
 		Preview.previewHide(true);
@@ -157,7 +157,7 @@ class Popup extends React.Component<I.Popup> {
 		if (!preventMenuClose) {
 			menuStore.closeAll();
 		};
-		popupStore.close(this.props.id);
+		popupStore.close(id);
 	};
 
 	storageGet () {
