@@ -319,6 +319,8 @@ class CommonStore {
 		if (c == 'dark') {
 			head.append(`<link id="link-prism" rel="stylesheet" href="./css/theme/${c}/prism.css" />`);
 		};
+
+		$(window).trigger('updateTheme');
 	};
 
 	nativeThemeSet (isDark: boolean) {

@@ -68,9 +68,9 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 					<Button
 						key={i}
 						text={button.text}
-						color={i == buttons.length - 1 ? 'black' : 'blank'}
+						color={(i == buttons.length - 1) ? 'black' : 'blank'}
 						className="c28"
-						onClick={(e: any) => { this.onButton(e, button.action); }}
+						onClick={e => this.onButton(e, button.action)}
 					/>
 				))}
 			</div>

@@ -392,7 +392,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (view) {
 			keys = keys.concat((view.relations || []).map(it => it.relationKey));
 
-			if (view.coverRelationKey) {
+			if (view.coverRelationKey && (view.coverRelationKey != 'pageCover')) {
 				keys.push(view.coverRelationKey);
 			};
 

@@ -49,7 +49,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	render () {
 		const { isPopup } = this.props;
-		const { theme } = commonStore;
 		const id = [ 'graph' ];
 
 		if (isPopup) {
@@ -70,10 +69,6 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.rebind();
 	};
 
-	componentDidUpdate (): void {
-		this.send('updateTheme', { theme: commonStore.getThemeClass() });
-	};
-
 	componentWillUnmount () {
 		if (this.worker) {
 			this.worker.terminate();
@@ -89,10 +84,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		this.unbind();
 		win.on('updateGraphSettings.graph', () => { this.updateSettings(); });
 		win.on('updateGraphRoot.graph', (e: any, data: any) => { this.setRootId(data.id); });
+		win.on('updateTheme.graph', () => { this.send('updateTheme', { theme: commonStore.getThemeClass() }); });
 	};
 
 	unbind () {
-		$(window).off('updateGraphSettings.graph updateGraphRoot.graph');
+		const events = [ 'updateGraphSettings', 'updateGraphRoot', 'updateTheme' ];
+
+		$(window).off(events.map(it => `${it}.graph`).join(' '));
 	};
 
 	init () {

@@ -47,7 +47,7 @@
 	}
 }
 
-.widget.widgetList {
+.widget.widgetList, .widget.widgetCompact {
 	#viewSelect { border-color: $colorLineSecondary; }
 	#viewSelect {
 		.viewList {
@@ -61,14 +61,21 @@
 	}
 
 	.body {
-		.item:hover { background: $colorHoverMedium; }
+		.item:hover::before { background: $colorHoverMedium; }
 		.item {
-			.iconObject { background: $colorBgIcon; }
 			.iconObject.isTask, .iconObject.isBookmark { background: none; }
 
 			.buttons {
 				.icon:hover { background-color: $colorHoverMedium; }
 			}
+		}
+	}
+}
+
+.widget.widgetList {
+	.body {
+		.item {
+			.iconObject { background: $colorBgIcon; }
 		}
 	}
 }

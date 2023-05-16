@@ -582,7 +582,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		prevNode.css({ width: w1 * 100 + '%' });
 		currentNode.css({ width: w2 * 100 + '%' });
 		
-		node.find('.resizable').trigger('resize', [ e ]);
+		node.find('.resizable').trigger('resizeMove', [ e ]);
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {

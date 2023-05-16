@@ -567,6 +567,8 @@
 	"widget1Description": { "en": "Hierarchical structure of objects" },
 	"widget2Name": { "en": "List" },
 	"widget2Description": { "en": "Widget with list view of set object" },
+	"widget3Name": { "en": "Compact list" },
+	"widget3Description": { "en": "Widget with list view of set object" },
 
 	"widgetFavorite": { "en": "Favorites" },
 	"widgetRecent": { "en": "Recent" },

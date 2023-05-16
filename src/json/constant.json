@@ -21,7 +21,8 @@
 		"widgets": 20,
 		"widgetRecords": {
 			"tree": 20,
-			"list": 10
+			"list": 10,
+			"compact": 20
 		}
 	},
 

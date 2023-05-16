@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
 import { I, Util, DataUtil, ObjectUtil, translate, keyboard, focus, Preview } from 'Lib';
@@ -10,6 +11,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	
 	_isMounted = false;
 	node: any = null;
+	frame = 0;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -214,8 +216,9 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		};
 		
 		this.unbind();
+
 		const node = $(this.node);
-		node.on('resize', (e: any) => { this.resize(); });
+		node.on('resizeInit resizeMove', e => this.resize());
 	};
 	
 	unbind () {
@@ -223,8 +226,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			return;
 		};
 		
-		const node = $(this.node);
-		node.off('resize');
+		$(this.node).off('resizeInit resizeMove');
 	};
 
 	onKeyDown (e: any) {
@@ -249,7 +251,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	};
 	
 	onClick (e: any) {
-		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) {
+		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || e.button) {
 			return;
 		};
 
@@ -310,19 +312,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		Preview.previewHide(true);
 	};
 
-	resize () {
-		const { getWrapperWidth } = this.props;
-		const node = $(this.node);
-		const card = node.find('.linkCard');
-		const icon = node.find('.iconObject');
-		const rect = (node.get(0) as Element).getBoundingClientRect();
-		const width = rect.width;
-		const mw = getWrapperWidth();
-
-		icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
-		width <= mw / 2 ? card.addClass('vertical') : card.removeClass('vertical');
-	};
-
 	getIconSize () {
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
@@ -343,6 +332,28 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		};
 
 		return { size, iconSize: is };
+	};
+
+	resize () {
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
+
+			const { getWrapperWidth } = this.props;
+			const node = $(this.node);
+			const card = node.find('.linkCard');
+			const icon = node.find('.iconObject');
+			const rect = (node.get(0) as Element).getBoundingClientRect();
+			const mw = getWrapperWidth();
+
+			icon.length ? card.addClass('withIcon') : card.removeClass('withIcon');
+			rect.width <= mw / 2 ? card.addClass('vertical') : card.removeClass('vertical');
+		});
 	};
 
 });

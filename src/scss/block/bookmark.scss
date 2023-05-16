@@ -49,7 +49,7 @@
 			@include text-small; height: 18px; line-height: 18px; color: $colorDarkGrey; @include text-overflow-nw; display: flex; gap: 0px 6px;
 			align-items: center; 
 		}
-		.img { position: absolute; width: 100%; height: 100%; object-fit: cover; display: block; }
+		.img { position: absolute; width: calc(100% + 4px); top: 0px; left: -2px; height: 100%; object-fit: cover; display: block; }
 		.fav { width: 14px; height: 14px; object-fit: cover; }
 	}
 	
