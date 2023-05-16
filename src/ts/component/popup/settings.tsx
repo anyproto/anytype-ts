@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Loader, IconObject, ObjectName, Icon } from 'Component';
+import { Loader, IconObject, Icon } from 'Component';
 import { I, C, Storage, Util, analytics, Action, keyboard, translate } from 'Lib';
-import { popupStore, detailStore, commonStore, blockStore, authStore } from 'Store';
+import { popupStore, detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PageAccount from './page/settings/account';
@@ -95,10 +95,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { page } = data;
 		const { loading } = this.state;
-		const { account } = authStore;
 		const sections = this.getSections().filter(it => !it.isHidden);
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
 		const cnr = [ 'side', 'right', Util.toCamelCase('tab-' + page) ];
 		const length = sections.length;
 
@@ -178,7 +176,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
-		const { page, isSpace } = data;
+		const { page } = data;
 		const items = this.getItems();
 
 		this.onPage(page || items[0].id);

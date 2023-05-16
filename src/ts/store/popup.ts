@@ -48,7 +48,7 @@ class PopupStore {
 		if (item) {
 			this.update(id, param);
 		} else {
-			this.popupList.push({ id: id, param: param });
+			this.popupList.push({ id, param });
 		};
 	};
 
@@ -62,6 +62,7 @@ class PopupStore {
 			return;
 		};
 
+		param.data = Object.assign(item.param.data, param.data);
 		set(item, { param: Object.assign(item.param, param) });
 	};
 

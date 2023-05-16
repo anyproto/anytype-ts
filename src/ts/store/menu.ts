@@ -45,7 +45,7 @@ class MenuStore {
 		if (item) {
 			this.update(id, param);
 		} else {
-			this.menuList.push({ id: id, param: param });
+			this.menuList.push({ id, param });
 		};
 
 		Preview.previewHide(true);
@@ -55,6 +55,7 @@ class MenuStore {
 		const item = this.get(id);
 
 		if (item) {
+			param.data = Object.assign(item.param.data, param.data);
 			set(item, { param: Object.assign(item.param, param) });
 		};
 	};

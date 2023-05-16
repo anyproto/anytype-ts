@@ -106,15 +106,17 @@ class Navigation extends React.Component {
 	};
 
 	onGraph () {
-		ObjectUtil.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
+		popupStore.closeAll(null, () => {
+			ObjectUtil.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
+		});
 	};
 
 	onSearch () {
-		keyboard.onSearchPopup();
+		popupStore.closeAll(null, () => keyboard.onSearchPopup());
 	};
 
 	onProfile () {
-		popupStore.open('settings', {});
+		popupStore.closeAll(null, () => popupStore.open('settings', {}));
 	};
 
 	resize () {
