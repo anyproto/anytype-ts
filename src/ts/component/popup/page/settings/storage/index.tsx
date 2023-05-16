@@ -71,7 +71,6 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
     componentDidMount () {
         DataUtil.updateStorageUsage();
-        analytics.event('ScreenSettingsStorage');
     };
 
     onManageFiles () {
