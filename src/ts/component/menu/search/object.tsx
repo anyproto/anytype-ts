@@ -26,7 +26,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	_isMounted = false;	
 	filter = '';
 	index: any = null;
-	cache: any = null;
+	cache: any = {};
 	items: any = [];
 	refFilter: any = null;
 	refList: any = null;
@@ -43,10 +43,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	render () {
-		if (!this.cache) {
-			return null;
-		};
-
 		const { loading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
@@ -306,7 +302,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (clear) {
-			//this.setState({ loading: true });
+			this.setState({ loading: true });
 		};
 
 		console.log('request');
@@ -346,14 +342,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				this.items.sort(dataSort);
 			};
 
-			/*
 			if (clear) {
 				this.setState({ loading: false });
 			} else {
 				this.forceUpdate();
 			};
-			*/
-			this.forceUpdate();
 		});
 	};
 
