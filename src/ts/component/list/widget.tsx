@@ -280,6 +280,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	};
 
 	onContextMenu () {
+		const { previewId } = this.state;
+		if (previewId) {
+			return;
+		};
+
 		const win = $(window);
 		const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
 		const options: any[] = [

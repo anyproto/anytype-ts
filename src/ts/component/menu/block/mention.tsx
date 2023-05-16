@@ -272,7 +272,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = commonStore.filter;
 
 		const cb = (id: string, name: string) => {
-			name = String(name || ObjectUtil.defaultName('page'));
+			name = String(name || ObjectUtil.defaultName('Page'));
 			name = Util.shorten(name, 30);
 
 			const to = from + name.length;
@@ -315,6 +315,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 	getRowHeight (item: any) {
 		let h = HEIGHT_ITEM;
+		if (!item) {
+			return h;
+		};
+
 		if (item.isDiv) h = HEIGHT_DIV;
 		return h;
 	};

@@ -51,6 +51,7 @@ export interface Toast {
 };
 
 export enum ToastAction {
+	None		 = 0,
 	Move		 = 1,
 	Link		 = 2,
 	Lock 		 = 3,

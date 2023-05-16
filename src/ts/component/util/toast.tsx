@@ -124,7 +124,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                     {buttons.length ? (
 						<div className="buttons">
 							{buttons.map((item: any, i: number) => (
-								<Button text={item.label} onClick={(e: any) => { this.onClick(e, item.action); }} key={i} className="toastButton" />
+								<Button key={i} text={item.label} onClick={e => this.onClick(e, item.action)} />
 							))}
 						</div>
 					) : ''}

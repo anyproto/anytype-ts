@@ -37,7 +37,6 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		const object = this.props.object || this.state.object || {};
 
 		let typeObj = null;
-
 		if (object) {
 			const type = dbStore.getType(object.type);
 			if (type) {
@@ -63,23 +62,30 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 
 	componentDidMount (): void {
 		this._isMounted = true;
-
-		const { object } = this.props;
-		if (!object) {
-			this.load();
-		};
+		this.init();
 	};
 
 	componentDidUpdate (): void {
 		const { position } = this.props;
+
+		this.init();
 
 		if (position) {
 			position();
 		};
 	};
 
+	init () {
+		const { object } = this.props;
+
+		if (!object) {
+			this.load();
+		};
+	};
+
 	componentWillUnmount(): void {
 		this._isMounted = false;
+		this.id = '';
 	};
 
 	load () {
@@ -98,6 +104,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 				return;
 			};
 
+			this.state.object = object;
 			this.setState({ object, loading: false });
 
 			if (setObject) {

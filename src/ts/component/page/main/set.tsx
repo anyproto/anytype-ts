@@ -64,7 +64,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 				<div className="blocks wrapper">
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-					<HeadSimple ref={ref => { this.refHead = ref;}} type={isCollection ? 'collection' : 'set'} rootId={rootId} />
+					<HeadSimple ref={ref => this.refHead = ref} type={isCollection ? 'Collection' : 'Set'} rootId={rootId} />
 
 					{children.map((block: I.Block, i: number) => (
 						<Block 
@@ -202,7 +202,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const count = ids.length;
-		const ref = this.blockRefs[Constant.blockId.dataview].ref;
+		const ref = this.blockRefs[Constant.blockId.dataview]?.ref;
 		const rootId = this.getRootId();
 
 		if (!ref) {
@@ -210,7 +210,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		keyboard.shortcut(`${cmd}+n`, e, () => { 
-			ref.onRecordAdd(e, -1, true); 
+			ref.onRecordAdd(e, 0, true); 
 		});
 
 		if (!keyboard.isFocused) {

@@ -196,7 +196,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				);
 			};
 
-			value = value || ObjectUtil.defaultName('page');
+			value = value || ObjectUtil.defaultName('Page');
 			if (record.layout == I.ObjectLayout.Note) {
 				value = record.snippet || `<span class="emptyText">${translate('commonEmpty')}</span>`;
 			};

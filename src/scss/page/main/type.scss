@@ -10,7 +10,6 @@
 	}
 
 	.wrapper {
-
 		.block {
 			.wrapMenu { display: none; }
 			.wrapContent { width: 100%; }
@@ -29,7 +28,7 @@
 		.section.template {
 			.btn { 
 				position: absolute; right: 0px; top: 50%; margin-top: -10px; @include text-common; line-height: 20px; font-weight: normal; color: $colorDarkGrey; 
-				cursor: pointer; transition: $transitionAllCommon;
+				transition: $transitionAllCommon;
 			}
 			.btn {
 				.icon.plus { vertical-align: top; width: 20px; height: 20px; background-image: url('~img/icon/plus/template0.svg'); }
@@ -64,18 +63,19 @@
 			.item.add {
 				.icon { transition: $transitionAllCommon; }
 				.name { color: $colorDarkGrey; transition: $transitionAllCommon; }
-			}
-			.item.add:hover { 
-				.name { color: $colorBlack; } 
-				.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+
+				.clickable:hover {
+					.name { color: $colorBlack; } 
+					.icon.plus { background-image: url('~img/icon/plus/menu1.svg'); }
+				}
 			}
 		}
 
 		.section.layout {
 			.title { margin-bottom: 10px; }
 			.content { line-height: 20px; color: $colorDarkGrey; }
-			.select { border: 0px; padding: 3px 20px 3px 0px; }
-			.select:hover, .select.active { background: none; }
+			.select { border: 0px; padding: 3px 20px 3px 4px; cursor: default; }
+			.select:hover, .select.active { background: $colorHoverLight; }
 
 			.icon { width: 20px; height: 20px; margin-right: 6px; }
 			.name { display: inline-block; vertical-align: middle; }

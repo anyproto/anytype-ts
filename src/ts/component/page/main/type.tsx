@@ -122,7 +122,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
-					<HeadSimple ref={ref => this.refHead = ref} type="type" rootId={rootId} onCreate={this.onCreate} />
+					<HeadSimple ref={ref => this.refHead = ref} type="Type" rootId={rootId} onCreate={this.onCreate} />
 
 					{showTemplates ? (
 						<div className="section template">
@@ -480,7 +480,9 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onLayout (layout: string) {
 		const rootId = this.getRootId();
 
-		C.ObjectSetDetails(rootId, [ { key: 'recommendedLayout', value: layout } ]);
+		C.ObjectSetDetails(rootId, [ 
+			{ key: 'recommendedLayout', value: Number(layout) || I.ObjectLayout.Page } 
+		]);
 		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });
 	};
 

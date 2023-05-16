@@ -17,6 +17,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	constructor (props: I.Menu) {
 		super(props);
 
+		this.scrollTo = this.scrollTo.bind(this);
 		this.onFav = this.onFav.bind(this);
 		this.onEdit = this.onEdit.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
@@ -54,7 +55,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				</div>
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
-						const id = Relation.cellId(PREFIX, item.relationKey, rootId);
+						const id = Relation.cellId(PREFIX, item.relationKey, '');
 						return (
 							<Item 
 								key={id} 
@@ -63,7 +64,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								rootId={rootId}
 								block={root}
 								onEdit={this.onEdit}
-								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
+								onRef={(id: string, ref: any) => this.cellRefs.set(id, ref)}
 								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
 								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
@@ -280,7 +281,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		});
 	};
 
-	onCellClick (e: any, relationKey: string, recordId: string) {
+	onCellClick (e: any, relationKey: string) {
 		const { param } = this.props;
 		const { data } = param;
 		const { readonly } = data;
@@ -290,7 +291,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return;
 		};
 
-		const id = Relation.cellId(PREFIX, relationKey, recordId);
+		const id = Relation.cellId(PREFIX, relationKey, '');
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {
@@ -308,6 +309,21 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
 		analytics.event(key, { type: 'menu' });
+	};
+
+	scrollTo (relationKey: string) {
+		const { getId } = this.props;
+		const id = Relation.cellId(PREFIX, relationKey, '');
+		const obj = $(`#${getId()}`);
+		const container = obj.find('.content');
+		const cell = obj.find(`#${id}`);
+
+		if (!container.length || !cell.length) {
+			return;
+		};
+
+		const y = Math.max(0, cell.offset().top - container.offset().top);
+		container.scrollTop(y);
 	};
 
 	resize () {

@@ -53,7 +53,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
-					<HeadSimple ref={ref => { this.refHead = ref;}} type="relation" rootId={rootId} onCreate={this.onCreate} />
+					<HeadSimple ref={ref => { this.refHead = ref;}} type="Relation" rootId={rootId} onCreate={this.onCreate} />
 
 					{object.isInstalled ? (
 						<div className="section set">

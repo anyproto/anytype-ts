@@ -65,11 +65,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			return;
 		};
 
-		const node = $(this.node);
-		const rootId = keyboard.getRootId();
+		const isPopup = keyboard.isPopup();
+		const container = $(isPopup ? '#popupPage-innerWrap' : '.pageFlex');
 
 		this.init = true;
-		this.objects = node.find('.dropTarget.isDroppable.root-' + rootId);
+		this.objects = container.find('.dropTarget.isDroppable');
 		
 		this.objects.each((i: number, el: any) => {
 			const item = $(el);
@@ -349,27 +349,24 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			case I.DropType.Block: {
 				const target = blockStore.getLeaf(targetContextId, targetId);
 				
-				if (!target) {
-					console.log('[DragProvider].onDrop No target', target);
-					break;
-				};
-
-				isToggle = target.isTextToggle();
+				if (target) {
+					isToggle = target.isTextToggle();
 		
-				if ((target.isLink() || target.isBookmark()) && (position == I.BlockPosition.InnerFirst)) {
-					targetContextId = target.getTargetObjectId();
-					targetId = '';
+					if ((target.isLink() || target.isBookmark()) && (position == I.BlockPosition.InnerFirst)) {
+						targetContextId = target.getTargetObjectId();
+						targetId = '';
 
-					if (contextId == targetContextId) {
-						console.log('[DragProvider].onDrop Contexts are equal');
-						return;
-					};
-				} else {
-					const element = blockStore.getMapElement(targetContextId, targetId);
-					const parent = blockStore.getLeaf(targetContextId, element.parentId);
+						if (contextId == targetContextId) {
+							console.log('[DragProvider].onDrop Contexts are equal');
+							return;
+						};
+					} else {
+						const element = blockStore.getMapElement(targetContextId, targetId);
+						const parent = blockStore.getLeaf(targetContextId, element.parentId);
 
-					if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
-						targetId = parent.id;
+						if (parent && parent.isLayoutColumn() && ([ I.BlockPosition.Left, I.BlockPosition.Right ].indexOf(position) >= 0)) {
+							targetId = parent.id;
+						};
 					};
 				};
 
