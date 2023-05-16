@@ -99,6 +99,10 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 
 	onClick (e: React.MouseEvent) {
+		if (e.button) {
+			return;
+		};
+
 		const { preview } = commonStore;
 		const { type, target } = preview;
 		const { object } = this.state;
