@@ -402,18 +402,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Move:
-					Action.move(rootId, target.id, '', blockIds, I.BlockPosition.Bottom, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						Preview.toastShow({
-							action: I.ToastAction.Move,
-							targetId: target.id,
-							count: blockIds.length,
-							originId: rootId,
-						});
-					});
+					Action.move(rootId, target.id, '', blockIds, I.BlockPosition.Bottom);
 					break;
 
 				case I.NavigationType.Link:
