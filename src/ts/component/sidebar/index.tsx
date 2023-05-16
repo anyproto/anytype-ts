@@ -54,7 +54,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 							tooltip="Toggle sidebar fixed mode"
 							tooltipCaption={`${cmd} + \\`}
 							tooltipY={I.MenuDirection.Bottom}
-							onClick={() => sidebar.toggle()}
+							onClick={() => sidebar.toggleExpandCollapse()}
 						/>
 					</div>
 
@@ -236,12 +236,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	};
 
 	onHandleClick () {
-		const { width } = sidebar.data;
-		const dw = Constant.size.sidebar.width.default;
-
-		if (!sidebar.isAnimating) {
-			width == dw ? sidebar.close() : sidebar.open(dw);
-		};
+		sidebar.toggleOpenClose();
 	};
 
 });

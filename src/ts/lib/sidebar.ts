@@ -139,10 +139,6 @@ class Sidebar {
 		};
 	};
 
-	toggle () {
-		commonStore.isSidebarFixed ? this.collapse() : this.expand();
-	};
-
 	collapse (): void {
 		if (!this.obj || !this.obj.length) {
 			return;
@@ -276,6 +272,21 @@ class Sidebar {
 		this.obj.addClass('anim').removeClass('active');
 		this.setWidth(width);
 		this.removeAnimation(() => $(window).trigger('resize'));
+	};
+
+	toggleOpenClose () {
+		if (this.isAnimating) {
+			return;
+		};
+
+		const { width } = this.data;
+		const dw = Constant.size.sidebar.width.default;
+
+		width == 0 ? this.open(dw) : this.close();
+	};
+
+	toggleExpandCollapse () {
+		commonStore.isSidebarFixed ? this.collapse() : this.expand();
 	};
 
 	private removeAnimation (callBack?: () => void): void {

@@ -108,19 +108,23 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
-		const isMainSet = this.isMainSet();
 
 		this.pressed.push(key);
 
-		this.shortcut(`${cmd}+\\`, e, () => {
+		this.shortcut(`${cmd}+\\, ${cmd}+.`, e, () => {
 			e.preventDefault();
-			sidebar.toggle();
+			sidebar.toggleOpenClose();
 		});
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
 			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
+
+			if (!this.isFocused && isMac) {
+				keyboard.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
+				keyboard.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
+			};
 		};
 
 		// Close popups and menus
@@ -181,6 +185,19 @@ class Keyboard {
 				};
 
 				this.onSearchPopup();
+			});
+
+			this.shortcut(`${cmd}+l`, e, (pressed: string) => {
+				if (popupStore.isOpen('search') || !this.isPinChecked) {
+					return;
+				};
+
+				// Check if smth is selected to prevent search from opening
+				if (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+					return;
+				};
+
+				ObjectUtil.openAuto({ layout: I.ObjectLayout.Store });
 			});
 
 			// Text search

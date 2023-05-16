@@ -115,7 +115,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 						{ com: 'Shift + Click',		 name: 'On page link will open it in modal view' },
 						{ mac: `${cmd} + Click`,		 com: 'Ctrl + Click',		 name: 'On page link will open it in new window' },
 						{ mac: `Ctrl + Space`,			 com: 'Ctrl + Space',		 name: 'Shortcuts to launch shortcuts view' },
-						{ mac: `${cmd} + \\`,			 com: 'Ctrl + \\',			 name: 'Toggle sidebar' },
+						{ mac: `${cmd} + \\, ${cmd} + .`, com: 'Ctrl + \\, Ctrl + .', name: 'Toggle sidebar' },
 						{ mac: `${cmd} + =`,			 com: 'Ctrl + =',		 name: 'Zoom in' },
 						{ mac: `${cmd} + Minus`,		 com: 'Ctrl + Minus',		 name: 'Zoom out' },
 						{ mac: `${cmd} + 0`,			 com: 'Ctrl + 0',			 name: 'Default zoom' },
@@ -173,13 +173,14 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 			navigation: [
 				{
 					name: 'Basics', children: [
-						{ mac: `${cmd} + ,(comma)`,			 com: 'Ctrl + ,(comma)',			 name: 'Open settings' },
+						{ mac: `${cmd} + ,(comma)`,		 com: 'Ctrl + ,(comma)',	 name: 'Open settings' },
 						{ mac: `${cmd} + O`,			 com: 'Ctrl + O',			 name: 'Open the navigation pane' },
 						{ mac: `${cmd} + Option + O`,	 com: 'Ctrl + Alt + O',		 name: 'Open the graph pane' },
 						{ mac: `${cmd} + S`,			 com: 'Ctrl + S',			 name: 'Open the search pane' },
+						{ mac: `${cmd} + L`,			 com: 'Ctrl + L',			 name: 'Open the library pane' },
 						{ com: 'Alt + H',				 name: 'Return to the home screen' },
-						{ mac: `${cmd} + [`,			 com: 'Alt + ←',			 name: 'Show the previous page from history' },
-						{ mac: `${cmd} + ]`,			 com: 'Alt + →',			 name: 'Show the next page from history' },
+						{ mac: `${cmd} + [, ${cmd} + ←`, com: 'Alt + ←',			 name: 'Show the previous page from history' },
+						{ mac: `${cmd} + ], ${cmd} + →`, com: 'Alt + →',			 name: 'Show the next page from history' },
 					]
 				},
 
