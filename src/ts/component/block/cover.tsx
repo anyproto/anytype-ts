@@ -196,6 +196,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				elements.addClass('hover');
 			},
@@ -238,6 +239,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		
 		menuStore.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				elements.addClass('hover');
 			},

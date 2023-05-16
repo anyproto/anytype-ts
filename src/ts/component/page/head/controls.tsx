@@ -107,6 +107,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 
 		menuStore.open('smile', { 
 			element: '.editorControls #button-icon',
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				node.addClass('hover');
 			},
@@ -172,6 +173,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		
 		menuStore.open('blockLayout', { 
 			element: '.editorControls #button-layout',
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				node.addClass('hover');
 			},
@@ -210,7 +212,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { rootId, dataset } = this.props;
+		const { dataset } = this.props;
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
