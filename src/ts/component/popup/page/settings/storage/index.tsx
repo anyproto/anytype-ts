@@ -27,6 +27,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
         const space = detailStore.get(Constant.subId.space, commonStore.workspace);
         const usageCn = [ 'type' ];
+        const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
 
         if (usage.isRed) {
             usageCn.push('red');
@@ -56,9 +57,9 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
                 <div className="storageUsage">
                     <div className="space">
-                        <IconObject className="localStorageIcon" object={{ iconEmoji: ':desktop_computer:' }} size={44} />
+                        <IconObject className="localStorageIcon" object={localStorage} size={44} />
                         <div className="txt">
-                            <ObjectName object={space} />
+                            <ObjectName object={localStorage} />
                             <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), usage.localUsage)}</div>
                         </div>
                     </div>
