@@ -51,12 +51,18 @@ class Navigation extends React.Component {
 							cn.push('disabled');
 						};
 
-						return <Icon key={item.className} {...item} className={cn.join(' ')} tooltipY={I.MenuDirection.Top} />;
+						return (
+							<div key={item.className} onClick={item.onClick} className="iconWrap">
+								<Icon className={cn.join(' ')} tooltip={item.tooltip} tooltipY={I.MenuDirection.Top} />
+							</div>
+						);
 					})}
 
 					<div className="line" />
 
-					<IconObject object={profile} size={28} iconSize={20} onClick={this.onProfile} tooltip="Settings" tooltipY={I.MenuDirection.Top} />
+					<div className="iconWrap">
+						<IconObject object={profile} onClick={this.onProfile} tooltip="Settings" tooltipY={I.MenuDirection.Top} />
+					</div>
 				</div>
 			</div>
 		);

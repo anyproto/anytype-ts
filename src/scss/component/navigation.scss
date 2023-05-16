@@ -7,9 +7,13 @@
 .navigationPanel {
 	.inner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: center; position: relative; z-index: 1; }
 
-	.icon { width: 32px; height: 32px; background-size: 20px; border-radius: 4px; cursor: pointer; }
-	.icon:hover { background-color: $colorHoverMedium; }
+	.iconWrap { 
+		width: 32px; height: 32px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+		transition: $transitionAllCommon;
+	}
+	.iconWrap:hover { background-color: $colorHoverMedium; }
 
+	.icon { width: 20px; height: 20px;  }
 	.icon.back, .icon.forward { background-image: url('~img/icon/navigation/back.svg'); }
 	.icon.forward { transform: rotateZ('180deg'); }
 	.icon.plus { background-image: url('~img/icon/navigation/plus.svg'); }
