@@ -209,24 +209,28 @@ class Keyboard {
 				};
 			});
 
-			if (!isMainSet) {
-				// Create new page
-				this.shortcut(`${cmd}+n`, e, () => {
-					e.preventDefault();
+			// Create new page
+			this.shortcut(`${cmd}+n`, e, () => {
+				e.preventDefault();
 
-					if (this.isMainSet()) {
-						$(window).trigger('createNewObject.set' + Util.getEventNamespace(this.isPopup()));
-					} else {
-						this.pageCreate();
-					};
-				});
-			};
+				if (this.isMainSet()) {
+					$(window).trigger('createNewObject.set' + Util.getEventNamespace(this.isPopup()));
+				} else {
+					this.pageCreate();
+				};
+			});
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
 				if (!popupStore.isOpen('settings')) {
 					popupStore.open('settings', {});
 				};
+			});
+
+			// Create relation
+			this.shortcut(`${cmd}+shift+r`, e, () => {
+				$('#button-header-relation').trigger('click');
+				window.setTimeout(() => { $('#menuBlockRelationView #item-add').trigger('click'); }, Constant.delay.menu * 2);
 			});
 
 			// Store

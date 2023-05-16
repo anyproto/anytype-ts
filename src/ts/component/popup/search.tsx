@@ -399,7 +399,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		items.push({ id: 'add', name: 'Create object', icon: 'plus', shortcut: [ cmd, 'N' ] });
 		if (hasRelations) {
-			items.push({ id: 'relation', name: 'Add relation', icon: 'relation', shortcut: [ cmd, 'N' ] });
+			items.push({ id: 'relation', name: 'Add relation', icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
 		};
 		return items;
 	};
