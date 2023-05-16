@@ -513,11 +513,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const obj = $(`#${getId()} .content`);
 
 		let height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
-		if (loading) {
-			height += 40;
-		};
-		if (!loading && !items.length) {
-			height = 300;
+		if (!items.length) {
+			height = loading ? height + 40 : 160;
 		};
 
 		obj.css({ height });
