@@ -246,12 +246,6 @@ class Dispatcher {
 					break;
 				};
 
-				case 'fileSpaceUsage':
-				case 'fileLocalUsage': {
-					DataUtil.updateStorageUsage();
-					break;
-				};
-
 				case 'fileLimitReached': {
 					DataUtil.updateStorageUsage(() => {
 						const usage = Storage.get('fileSpaceUsage');
