@@ -795,11 +795,13 @@ class DataUtil {
 				limit: FileUtil.size(message.bytesLimit),
 				localUsage: FileUtil.size(message.localUsage),
 				percentageUsed,
+				isRed: percentageUsed >= 90,
 				isFull: percentageUsed >= 99,
 				localStorageExceedsLimit: message.localUsage > message.bytesLimit
 			};
 
 			Storage.set('fileSpaceUsage', usage);
+
 			if (callback) {
 				callback();
 			};

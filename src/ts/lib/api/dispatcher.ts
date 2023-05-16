@@ -2,7 +2,7 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, translate, analytics, Renderer, Action, Dataview, Preview } from 'Lib';
+import { Util, I, M, translate, analytics, Renderer, Action, Dataview, Preview, DataUtil, Storage } from 'Lib';
 import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
@@ -144,6 +144,10 @@ class Dispatcher {
 		if (v == V.OBJECTRELATIONSREMOVE)		 t = 'objectRelationsRemove';
 		if (v == V.OBJECTRESTRICTIONSSET)		 t = 'objectRestrictionsSet';
 
+		if (v == V.FILESPACEUSAGE)				 t = 'fileSpaceUsage';
+		if (v == V.FILELOCALUSAGE)				 t = 'fileLocalUsage';
+		if (v == V.FILELIMITREACHED)			 t = 'fileLimitReached';
+
 		return t;
 	};
 
@@ -239,6 +243,26 @@ class Dispatcher {
 
 				case 'objectRestrictionsSet': {
 					blockStore.restrictionsSet(rootId, Mapper.From.Restrictions(data.getRestrictions()));
+					break;
+				};
+
+				case 'fileSpaceUsage':
+				case 'fileLocalUsage': {
+					DataUtil.updateStorageUsage();
+					break;
+				};
+
+				case 'fileLimitReached': {
+					DataUtil.updateStorageUsage(() => {
+						const usage = Storage.get('fileSpaceUsage');
+
+						if (usage.isFull) {
+							Preview.toastShow({ action: I.ToastAction.StorageFull });
+						} else
+						if (usage.localStorageExceedsLimit) {
+							Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
+						};
+					});
 					break;
 				};
 

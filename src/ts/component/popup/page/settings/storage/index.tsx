@@ -28,7 +28,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         const space = detailStore.get(Constant.subId.space, commonStore.workspace);
         const usageCn = [ 'type' ];
 
-        if (usage.isFull) {
+        if (usage.isRed) {
             usageCn.push('red');
         };
 
