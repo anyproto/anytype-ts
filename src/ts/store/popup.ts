@@ -103,7 +103,7 @@ class PopupStore {
 			item.param.onClose();
 		};
 		
-		const el = $('#' + Util.toCamelCase('popup-' + id));
+		const el = $(`#${Util.toCamelCase(`popup-${id}`)}`);
 		
 		if (el.length) {
 			el.css({ transform: '' }).removeClass('show');
@@ -115,6 +115,8 @@ class PopupStore {
 			if (callBack) {
 				callBack();
 			};
+
+			$(window).trigger('resize');
 		}, Constant.delay.popup);
 	};
 
@@ -126,7 +128,11 @@ class PopupStore {
 		this.clearTimeout();
 
 		if (callBack) {
-			this.timeout = window.setTimeout(() => callBack(), Constant.delay.popup);
+			this.timeout = window.setTimeout(() => {
+				if (callBack) {
+					callBack();
+				};
+			}, Constant.delay.popup);
 		};
 	};
 
