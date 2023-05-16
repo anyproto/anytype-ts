@@ -269,7 +269,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
-		console.log('LOAD');
 		if (!this._isMounted) {
 			return;
 		};
@@ -304,8 +303,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		if (clear) {
 			this.setState({ loading: true });
 		};
-
-		console.log('request');
 
 		DataUtil.search({
 			filters,
