@@ -121,7 +121,7 @@ class Keyboard {
 			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
 
-			if (!this.isFocused && isMac) {
+			if (!Util.selectionRange() && isMac) {
 				keyboard.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
 				keyboard.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
 			};
