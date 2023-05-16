@@ -175,7 +175,7 @@
 		.side.right.tabStorageManager {
 			.objectManagerWrapper {
 				.items {
-					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; }
 					.item {
 						.iconObject { flex-shrink: 0; margin: 0 13px 0 18px; }
 						.name { @include text-overflow-nw; @include text-common; width: 100%; }
