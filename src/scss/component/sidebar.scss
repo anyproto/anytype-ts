@@ -60,7 +60,7 @@
 	.resize-h {
 		.resize-handle {
 			position: absolute; left: 100%; top: 50%; margin: -16px 0px 0px -1px; transition: $transitionAllCommon;
-			width: 6px; height: 32px; border-radius: 3px; background-color: $colorBorderLight; opacity: 0;
+			width: 6px; height: 32px; border-radius: 3px; background-color: $colorBorderLight; opacity: 0; cursor: pointer;
 		}
 	}
 	.resize-h:hover .resize-handle,

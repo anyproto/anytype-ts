@@ -236,8 +236,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	};
 
 	onHandleClick () {
+		const { width } = sidebar.data;
+		const dw = Constant.size.sidebar.width.default;
+
 		if (!sidebar.isAnimating) {
-			sidebar.open(Constant.size.sidebar.width.default);
+			width == dw ? sidebar.close() : sidebar.open(dw);
 		};
 	};
 
