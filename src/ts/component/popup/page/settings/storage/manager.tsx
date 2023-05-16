@@ -49,6 +49,10 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
         );
     };
 
+    componentDidMount () {
+        analytics.event('ScreenSettingsStorageManage');
+    };
+
     onRemove () {
         if (!this.manager.selected) {
             return;

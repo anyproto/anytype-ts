@@ -798,7 +798,6 @@ class DataUtil {
 				isFull: percentageUsed >= 99,
 				localStorageExceedsLimit: message.localUsage > message.bytesLimit
 			};
-			console.log('LOCAL USAGE: ', usage.localUsage)
 
 			Storage.set('fileSpaceUsage', usage);
 			if (callback) {

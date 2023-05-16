@@ -71,6 +71,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
     componentDidMount () {
         DataUtil.updateStorageUsage();
+        analytics.event('ScreenSettingsStorage');
     };
 
     onManageFiles () {
@@ -91,6 +92,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                 textConfirm: 'Yes',
                 onConfirm: () => {
                     setLoading(true);
+                    analytics.event('SettingsStorageOffload');
 
                     C.FileListOffload([], false, (message: any) => {
                         setLoading(false);
