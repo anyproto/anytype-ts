@@ -56,7 +56,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
         const count = this.manager.selected.length;
 
-        analytics.event('ShowDeletionWarning');
+        analytics.event('ShowDeletionWarning', { route: 'Settings' });
 
         popupStore.open('confirm', {
             data: {
@@ -68,7 +68,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                         C.ObjectListDelete(this.manager.selected);
                         this.manager.selectionClear();
 
-                        analytics.event('RemoveCompletely', { count });
+                        analytics.event('RemoveCompletely', { count, route: 'Settings' });
                     });
                 },
                 onCancel: () => { this.manager.selectionClear(); }
