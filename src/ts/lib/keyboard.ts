@@ -299,7 +299,7 @@ class Keyboard {
 			};
 		};
 
-		if (!targetId) {
+		if (!rootId) {
 			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 		};
 		
