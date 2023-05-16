@@ -319,6 +319,8 @@ html.themeDark {
 		> .head {
 			.icon:hover { background-color: $colorHoverMedium; }
 		}
+
+		.resize-h .resize-handle::after { background-color: $colorBgIcon; }
     }
 
     @import "./menu.scss";

@@ -13,13 +13,13 @@
 
 .sidebar.left { left: 0px; transform: translate3d(-110%, 0px, 0px); }
 .sidebar.left {
-	.resize-h .resize-handle { left: 100%; right: auto; }
+	.resize-h .resize-handle { left: 6px; right: auto; }
 }
 .sidebar.right { right: 0px; transform: translate3d(110%, 0px, 0px); }
 .sidebar.right {
 	.resize-h { right: auto; left: -5px; }
 	.resize-h {
-		.resize-handle { right: 100%; left: auto; }
+		.resize-handle { left: -6px; }
 	}
 
 	.sidebarHeader {
@@ -59,12 +59,16 @@
 	.resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: -5px; cursor: col-resize; }
 	.resize-h {
 		.resize-handle {
-			position: absolute; left: 100%; top: 50%; margin: -16px 0px 0px -1px; transition: $transitionAllCommon;
-			width: 6px; height: 32px; border-radius: 3px; background-color: $colorBorderLight; opacity: 0; cursor: pointer;
+			position: absolute; left: 6px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;
+			width: 12px; height: 32px;
+		}
+		.resize-handle::after {
+			content: ''; position: absolute; left: 6px; top: 0px; width: 6px; height: 100%; background-color: $colorBorderLight;
+			border-radius: 3px; opacity: 0; transition: $transitionAllCommon;
 		}
 	}
-	.resize-h:hover .resize-handle,
-	.resize-h:active .resize-handle { background-color: $colorBorderDark; opacity: 1; }
+	.resize-h:hover .resize-handle::after,
+	.resize-h:active .resize-handle::after { background-color: $colorBorderDark; opacity: 1; }
 	.resize-h:active .resize-handle { height: 64px; margin-top: -32px; }
 
 	.resize-v { height: 10px; width: 100%; position: absolute; bottom: -5px; left: 0px; cursor: row-resize; }
