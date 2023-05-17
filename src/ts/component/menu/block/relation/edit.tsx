@@ -39,7 +39,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
 		const allowed = root ? !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) : true;
-		const canDelete = allowed && relation && !ObjectUtil.getSystemRelationKeys().includes(relation.relationKey);
+		const canDelete = allowed && relation && !Relation.systemKeys().includes(relation.relationKey);
 		const isReadonly = this.isReadonly();
 
 		let opts: any = null;
