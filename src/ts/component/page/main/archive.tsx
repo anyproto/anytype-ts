@@ -12,7 +12,7 @@ interface Props extends I.PageComponent {
 
 const PageMainArchive = observer(class PageMainArchive extends React.Component<Props, {}> {
 
-	manager: any = null;
+	refManager: any = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -49,7 +49,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 					</div>
 
 					<ListObjectManager
-						ref={ref => { this.manager = ref; }}
+						ref={ref => { this.refManager = ref; }}
 						subId={Constant.subId.archive}
 						filters={filters}
 						rowLength={3}
@@ -68,24 +68,24 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 	};
 
 	onRestore () {
-		if (!this.manager.selected) {
+		if (!this.refManager) {
 			return;
 		};
 
-		const count = this.manager.selected.length;
+		const count = this.refManager.selected.length;
 
-		C.ObjectListSetIsArchived(this.manager.selected, false, () => {
+		C.ObjectListSetIsArchived(this.refManager.selected, false, () => {
 			analytics.event('RestoreFromBin', { count });
 		});
-		this.manager.selectionClear();
+		this.refManager.selectionClear();
 	};
 
 	onRemove () {
-		if (!this.manager.selected) {
+		if (!this.refManager) {
 			return;
 		};
 
-		const count = this.manager.selected.length;
+		const count = this.refManager.selected.length;
 
 		analytics.event('ShowDeletionWarning', { route: 'Bin' });
 
@@ -95,12 +95,12 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 				text: 'These objects will be deleted irrevocably. You can\'t undo this action.',
 				textConfirm: 'Delete',
 				onConfirm: () => { 
-					C.ObjectListDelete(this.manager.selected);
-					this.manager.selectionClear();
+					C.ObjectListDelete(this.refManager.selected);
+					this.refManager.selectionClear();
 
 					analytics.event('RemoveCompletely', { count, route: 'Bin' });
 				},
-				onCancel: () => { this.manager.selectionClear(); }
+				onCancel: () => { this.refManager.selectionClear(); }
 			},
 		});
 	};

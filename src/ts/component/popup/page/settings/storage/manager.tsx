@@ -50,7 +50,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
     };
 
     onRemove () {
-        if (!this.refManager.selected) {
+        if (!this.refManager) {
             return;
         };
 
