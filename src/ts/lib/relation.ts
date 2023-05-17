@@ -439,6 +439,10 @@ class Relation {
 
 		return ret;
 	};
+
+	systemKeys () {
+		return require('lib/json/systemRelations.json');
+	};
 	
 };
 
