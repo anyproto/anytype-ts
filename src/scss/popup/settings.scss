@@ -184,9 +184,11 @@
 		.side.right.tabStorageManager {
 			.objectManagerWrapper {
 				.items {
-					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; }
+					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }
+					.item { gap: 0 12px; margin-bottom: 0px; }
 					.item {
-						.iconObject { flex-shrink: 0; margin: 0 13px 0 18px; }
+						.checkbox { margin-right: 6px; }
+						.iconObject { flex-shrink: 0; }
 						.name { @include text-overflow-nw; @include text-common; width: 100%; }
 						.label { @include text-overflow-nw; @include text-small; width: 100%; color: $colorDarkGrey; margin-bottom: 0px; }
 					}
