@@ -49,7 +49,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                     <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
                 </div>
 
-                <ProgressBar width={percentageUsed} />
+                <ProgressBar percent={percentageUsed} />
 
                 <Title className="sub" text={translate('popupSettingsStorageIndexLocalStorageTitle')} />
                 <Label className="description" text={translate('popupSettingsStorageIndexLocalStorageText')} />
