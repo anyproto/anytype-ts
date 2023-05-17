@@ -163,7 +163,7 @@
 
 		.side.right.tabStorageIndex {
 			.title { margin-bottom:  32px; }
-			.button { font-size: 14px; line-height: 22px; color: $colorBlack; }
+
 			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
 			.storageUsage {
 				.space { margin-bottom: 16px; }
@@ -171,10 +171,13 @@
 					.txt .type.red { color: $colorRed; }
 				}
 			}
-			.progressBar { position: relative; overflow: hidden; height: 6px; border-radius: 8px;  margin-bottom: 54px; background-color: $colorVeryLightGrey;}
-			.progressBar .progressBarFill { height: 6px; background-color: $colorBlack; }
 
-			.localStorageIcon { background-color: $colorVeryLightGrey; border-radius: 4px; }
+			.progressBar { position: relative; overflow: hidden; height: 6px; border-radius: 8px;  margin-bottom: 54px; background-color: $colorVeryLightGrey;}
+			.progressBar {
+				.progressBarFill { height: 6px; background-color: $colorBlack; }
+			}
+
+			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
 
 		.side.right.tabStorageManager > div { height: calc(100% - 108px); }

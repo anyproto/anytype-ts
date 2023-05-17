@@ -47,23 +47,25 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                             <div className={usageCn.join(' ')}>{Util.sprintf(translate(`popupSettingsStorageIndexUsage`), usage.used, usage.limit)}</div>
                         </div>
                     </div>
-                    <Button className="c28 blank" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
+                    <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
                 </div>
 
-                <div className="progressBar"><div className="progressBarFill" style={{ width: usage.percentageUsed + '%' }} /></div>
+                <div className="progressBar">
+					<div className="progressBarFill" style={{ width: usage.percentageUsed + '%' }} />
+				</div>
 
                 <Title className="sub" text={translate('popupSettingsStorageIndexLocalStorageTitle')} />
                 <Label className="description" text={translate('popupSettingsStorageIndexLocalStorageText')} />
 
                 <div className="storageUsage">
                     <div className="space">
-                        <IconObject className="localStorageIcon" object={localStorage} size={44} />
+                        <IconObject object={localStorage} size={44} />
                         <div className="txt">
                             <ObjectName object={localStorage} />
                             <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), usage.localUsage)}</div>
                         </div>
                     </div>
-                    <Button className="c28 blank" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onFileOffload} />
+                    <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onFileOffload} />
                 </div>
 
             </React.Fragment>

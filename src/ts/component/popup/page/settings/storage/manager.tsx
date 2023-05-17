@@ -9,7 +9,7 @@ import Head from '../head';
 
 const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageManager extends React.Component<I.PopupSettings, {}> {
 
-    manager: any = null;
+    refManager: any = null;
 
     constructor (props: I.PopupSettings) {
         super(props);
@@ -35,7 +35,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                 <Title text={translate('popupSettingsStorageManagerTitle')} />
 
                 <ListObjectManager
-                    ref={ref => { this.manager = ref; }}
+                    ref={ref => this.refManager = ref}
                     subId={Constant.subId.files}
                     rowLength={2}
                     withArchived={true}
@@ -50,11 +50,11 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
     };
 
     onRemove () {
-        if (!this.manager.selected) {
+        if (!this.refManager.selected) {
             return;
         };
 
-        const count = this.manager.selected.length;
+        const count = this.refManager.selected.length;
 
         analytics.event('ShowDeletionWarning', { route: 'Settings' });
 
@@ -64,22 +64,20 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                 text: 'These objects will be deleted irrevocably. You can\'t undo this action.',
                 textConfirm: 'Delete',
                 onConfirm: () => {
-                    C.ObjectListSetIsArchived(this.manager.selected, true, (message: any) => {
-                        C.ObjectListDelete(this.manager.selected);
-                        this.manager.selectionClear();
+					C.ObjectListSetIsArchived(this.refManager.selected, true, (message: any) => {
+						C.ObjectListDelete(this.refManager.selected);
 
-                        analytics.event('RemoveCompletely', { count, route: 'Settings' });
-                    });
+						this.refManager.selectionClear();
+						analytics.event('RemoveCompletely', { count, route: 'Settings' });
+					});
                 },
-                onCancel: () => { this.manager.selectionClear(); }
+                onCancel: () => this.refManager.selectionClear()
             },
         });
     };
 
     onBack = () => {
-        const { onPage } = this.props;
-
-        onPage('storageIndex');
+        this.props.onPage('storageIndex');
     };
 });
 
