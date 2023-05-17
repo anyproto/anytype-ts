@@ -16,7 +16,7 @@ const Row = observer(class Row extends React.Component<Props> {
 	node: any = null;
 
 	render () {
-		const { rootId, block, recordId, getView, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onMultiSelect } = this.props;
+		const { rootId, block, recordId, getView, onRef, style, getRecord, onContext, getIdPrefix, isInline, isCollection, onDragRecordStart, onSelectToggle } = this.props;
 		const view = getView();
 		const relations = view.getVisibleRelations();
 		const idPrefix = getIdPrefix();
@@ -46,7 +46,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							relationKey={relation.relationKey}
 							viewType={I.ViewType.List}
 							idPrefix={idPrefix}
-							onClick={(e: any) => { this.onCellClick(e, relation); }}
+							onClick={e => this.onCellClick(e, relation)}
 							isInline={true}
 							showTooltip={true}
 							arrayLimit={2}
@@ -75,10 +75,10 @@ const Row = observer(class Row extends React.Component<Props> {
 					<Icon
 						className="dnd"
 						draggable={true}
-						onClick={(e: any) => { onMultiSelect(record.id); }}
-						onDragStart={(e: any) => { onDragRecordStart(e, recordId); }}
-						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
-						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
+						onClick={e => onSelectToggle(e, record.id)}
+						onDragStart={e => onDragRecordStart(e, recordId)}
+						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
+						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 					/>
 					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
 						{content}
@@ -92,8 +92,8 @@ const Row = observer(class Row extends React.Component<Props> {
 				ref={node => this.node = node} 
 				className={cn.join(' ')} 
 				style={style}
-				onClick={(e: any) => { this.onClick(e); }}
-				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				onClick={e => this.onClick(e)}
+				onContextMenu={e => onContext(e, record.id)}
 			>
 				{content}
 			</div>

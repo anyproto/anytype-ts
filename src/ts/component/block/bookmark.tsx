@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
 import { I, C, focus, Util, translate, analytics, Renderer, keyboard } from 'Lib';
@@ -9,6 +10,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 
 	_isMounted = false;
 	node: any = null;
+	frame = 0;
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -64,7 +66,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 				};
 					
 				case I.BookmarkState.Done: {
-					const cn = [ 'inner', 'resizable' ];
+					const cn = [ 'inner' ];
 					const cnl = [ 'side', 'left' ];
 					
 					let archive = null;
@@ -115,7 +117,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		return (
 			<div 
 				ref={node => this.node = node}
-				className={[ 'focusable', 'c' + block.id ].join(' ')} 
+				className={[ 'focusable', 'c' + block.id, 'resizable' ].join(' ')} 
 				tabIndex={0} 
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp} 
@@ -140,6 +142,23 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+	};
+
+	rebind () {
+		if (!this._isMounted) {
+			return;
+		};
+
+		this.unbind();
+		$(this.node).on('resizeInit resizeMove', e => this.resize());
+	};
+	
+	unbind () {
+		if (!this._isMounted) {
+			return;
+		};
+		
+		$(this.node).off('resizeInit resizeMove');
 	};
 	
 	onKeyDown (e: any) {
@@ -172,6 +191,10 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 	};
 	
 	onClick (e: any) {
+		if (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || e.button) {
+			return;
+		};
+
 		const { dataset } = this.props;
 		const { selection } = dataset || {};
 		const ids = selection ? selection.get(I.SelectType.Block) : [];
@@ -208,36 +231,24 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		C.BlockBookmarkFetch(rootId, block.id, url);
 	};
 	
-	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(this.node);
-		node.off('resize').on('resize', (e: any) => { this.resize(); });
-	};
-	
-	unbind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
-		const node = $(this.node);
-		node.off('resize');
-	};
-	
 	resize () {
-		if (!this._isMounted) {
-			return;
+		if (this.frame) {
+			raf.cancel(this.frame);
 		};
 
-		const { getWrapperWidth } = this.props;
-		const node = $(this.node);
-		const inner = node.find('.inner');
-		const rect = (node.get(0) as Element).getBoundingClientRect();
-		const mw = getWrapperWidth();
+		this.frame = raf(() => {
+			if (!this._isMounted) {
+				return;
+			};
 
-		rect.width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
+			const { getWrapperWidth } = this.props;
+			const node = $(this.node);
+			const inner = node.find('.inner');
+			const rect = (node.get(0) as Element).getBoundingClientRect();
+			const mw = getWrapperWidth();
+
+			rect.width <= mw / 2 ? inner.addClass('vertical') : inner.removeClass('vertical');
+		});
 	};
 
 });

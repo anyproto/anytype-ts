@@ -19,9 +19,10 @@
 		.icon.textNumbered { background-image: url('#{$themePath}/icon/menu/action/block/numbered0.svg'); }
 		.icon.textToggle { background-image: url('#{$themePath}/icon/menu/action/block/toggle0.svg'); }
 
-		.icon.widget-0 { background-image: url('#{$themePath}/icon/widget/link.svg'); }
-		.icon.widget-1 { background-image: url('#{$themePath}/icon/widget/tree.svg'); }
-		.icon.widget-2 { background-image: url('#{$themePath}/icon/widget/list.svg'); }
+		.icon.widget-0 { background-image: url('#{$themePath}/icon/menu/widget/link.svg'); }
+		.icon.widget-1 { background-image: url('#{$themePath}/icon/menu/widget/tree.svg'); }
+		.icon.widget-2 { background-image: url('#{$themePath}/icon/menu/widget/list.svg'); }
+		.icon.widget-3 { background-image: url('#{$themePath}/icon/menu/widget/compact.svg'); }
 
         .icon.color {
             .inner.textColor-default { background-color: $colorPrimary; }
@@ -297,8 +298,7 @@
 	.menu.menuOnboarding {
 		a { color: $colorWhite; }
 		.highlight { background: $colorLineSecondary; color: $colorOrange; }
-
-        .icon.close:hover { background-image: url('#{$themePath}/icon/menu/onboarding/close1.svg'); }
+        .icon.close { background-color: $colorHoverMedium; }
 
         .bottom {
             .round {

@@ -107,6 +107,13 @@
             .item.canEdit, .item.add {
 				.clickable:hover { background: $colorHoverMedium; }
 			}
+
+			.item.add {
+				.clickable:hover {
+					.icon.plus { background-image: url('~img/icon/plus/menu0.svg'); }
+					.name { color: $colorSecondary; }
+				}
+			}
         }
 
         table { border-color: $colorLineSecondary; }

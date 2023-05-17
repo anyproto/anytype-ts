@@ -419,7 +419,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { getId, param } = this.props;
 		const { data } = param;
 		const { isPopup } = data;
-		const items = this.getItems();
 		const win = $(window);
 		const obj = $(`#${getId()}-innerWrap`);
 		const content = obj.find('.content');

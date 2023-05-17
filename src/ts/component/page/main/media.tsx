@@ -113,7 +113,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 									<ObjectName className="title" object={object} />
 									<div className="descr">{object.description}</div>
 
-									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} />
+									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} isSelectionDisabled={true} />
 
 									<div className="buttons">
 										<Button text="Open" color="blank" onClick={this.onOpen} />

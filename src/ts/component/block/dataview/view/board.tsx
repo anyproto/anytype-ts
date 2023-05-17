@@ -24,6 +24,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	isDraggingColumn = false;
 	isDraggingCard = false;
 	ox = 0;
+	creating = false;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
@@ -180,6 +181,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onRecordAdd (groupId: string, dir: number) {
+		if (this.creating) {
+			return;
+		};
+
 		const { rootId, block, getView, isInline, isCollection, objectOrderUpdate } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
@@ -228,8 +233,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			};
 		};
 
+		this.creating = true;
+
 		const create = (template: any) => {
 			C.ObjectCreate(details, flags, template?.id, (message: any) => {
+				this.creating = false;
+
 				if (message.error.code) {
 					return;
 				};
@@ -263,6 +272,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				element,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				onClose: () => {
+					this.creating = false;
+				},
 				data: {
 					details,
 				},

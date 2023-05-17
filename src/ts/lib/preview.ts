@@ -148,7 +148,7 @@ class Preview {
 
 		param.type = param.type || I.PreviewType.Default;
 		
-		const { element, rect } = param;
+		const { element, rect, passThrough } = param;
 		const obj = $('#preview');
 
 		if (!element && !rect) {
@@ -162,10 +162,12 @@ class Preview {
 					this.previewHide(true);
 				};
 			});
+
+			obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
 		};
 
-		obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
-		
+		passThrough ? obj.addClass('passThrough') : obj.removeClass('passThrough');
+
 		this.previewHide(true);
 		window.clearTimeout(this.timeout.preview);
 		this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), DELAY_PREVIEW);
@@ -181,8 +183,8 @@ class Preview {
 		const cb = () => {
 			obj.hide();
 			obj.removeClass('top bottom withImage').css({ transform: '' });
-			commonStore.previewClear();
 
+			commonStore.previewClear();
 			$('#graphPreview').remove();
 		};
 

@@ -14,7 +14,6 @@ interface Props extends I.WidgetComponent {
 	name?: string;
 	icon?: string;
 	disableContextMenu?: boolean;
-	isPreview?: boolean;
 	className?: string;
 	onDragStart?: (e: React.MouseEvent, blockId: string) => void;
 	onDragOver?: (e: React.MouseEvent, blockId: string) => void;
@@ -135,6 +134,11 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 				case I.WidgetLayout.List: {
 					content = <WidgetList key={key} {...this.props} {...props} />;
+					break;
+				};
+
+				case I.WidgetLayout.Compact: {
+					content = <WidgetList key={key} {...this.props} {...props} isCompact={true} />;
 					break;
 				};
 
@@ -286,7 +290,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		window.setTimeout(() => { 
 			node.removeClass('isClosed');
 			wrapper.css({ height: 'auto' });
-		}, 350);
+		}, 450);
 	};
 
 	close () {
@@ -301,7 +305,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			node.addClass('isClosed'); 
 			wrapper.css({ height: 0 });
 		});
-		window.setTimeout(() => { wrapper.css({ height: '' }); }, 350);
+		window.setTimeout(() => { wrapper.css({ height: '' }); }, 450);
 	};
 
 	getData (subId: string, callBack?: () => void) {
@@ -322,6 +326,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
+				limit = 0;
 				break;
 			};
 
@@ -352,9 +357,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	isCollection (blockId: string) {
-		const target = detailStore.get(blockStore.widgets, blockId);
-
-		return (target.type == Constant.typeId.collection) || Object.values(Constant.widgetId).includes(blockId);
+		return Object.values(Constant.widgetId).includes(blockId);
 	};
 
 });
