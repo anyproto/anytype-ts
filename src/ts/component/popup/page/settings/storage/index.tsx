@@ -3,7 +3,7 @@ import { Title, Label, IconObject, ObjectName, Button } from 'Component';
 import { analytics, C, DataUtil, FileUtil, Storage, I, translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore, detailStore, popupStore } from 'Store';
-import Constant from "json/constant.json";
+import Constant from 'json/constant.json';
 
 interface Props extends I.PopupSettings {
     onPage: (id: string) => void;
