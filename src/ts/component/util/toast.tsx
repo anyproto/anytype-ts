@@ -106,7 +106,9 @@ const Toast = observer(class Toast extends React.Component<object, State> {
             case I.ToastAction.StorageFull: {
                 textAction = 'You exceeded file limit upload';
 
-                buttons = [ { action: 'manageStorage', label: 'Manage files' } ]
+                buttons = buttons.concat([ 
+					{ action: 'manageStorage', label: 'Manage files' } 
+				]);
             };
         };
 
