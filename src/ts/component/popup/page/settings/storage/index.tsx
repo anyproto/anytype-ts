@@ -12,8 +12,6 @@ interface Props extends I.PopupSettings {
 
 const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageIndex extends React.Component<Props, {}> {
 
-    usage: any = null;
-
     constructor (props: Props) {
         super(props);
 
@@ -22,14 +20,16 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
     };
 
     render () {
-        if (!this.usage) {
+        const usage = Storage.get('fileSpaceUsage');
+        if (!usage) {
             return null;
         };
 
         const space = detailStore.get(Constant.subId.space, commonStore.workspace);
         const usageCn = [ 'type' ];
+        const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
 
-        if (this.usage.isFull) {
+        if (usage.isRed) {
             usageCn.push('red');
         };
 
@@ -37,30 +37,30 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
             <React.Fragment>
                 <Title text={translate('popupSettingsStorageIndexTitle')} />
                 <Title className="sub" text={translate('popupSettingsStorageIndexRemoteStorage')} />
-                <Label className="description" text={Util.sprintf(translate(`popupSettingsStorageIndexText`), this.usage.limit)} />
+                <Label className="description" text={Util.sprintf(translate(`popupSettingsStorageIndexText`), usage.limit)} />
 
                 <div className="storageUsage">
                     <div className="space">
                         <IconObject object={space} forceLetter={true} size={44} />
                         <div className="txt">
                             <ObjectName object={space} />
-                            <div className={usageCn.join(' ')}>{Util.sprintf(translate(`popupSettingsStorageIndexUsage`), this.usage.used, this.usage.limit)}</div>
+                            <div className={usageCn.join(' ')}>{Util.sprintf(translate(`popupSettingsStorageIndexUsage`), usage.used, usage.limit)}</div>
                         </div>
                     </div>
                     <Button className="c28 blank" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
                 </div>
 
-                <div className="progressBar"><div className="progressBarFill" style={{ width: this.usage.percentageUsed + '%' }} /></div>
+                <div className="progressBar"><div className="progressBarFill" style={{ width: usage.percentageUsed + '%' }} /></div>
 
                 <Title className="sub" text={translate('popupSettingsStorageIndexLocalStorageTitle')} />
                 <Label className="description" text={translate('popupSettingsStorageIndexLocalStorageText')} />
 
                 <div className="storageUsage">
                     <div className="space">
-                        <IconObject className="localStorageIcon" object={{ iconEmoji: ':desktop_computer:' }} size={44} />
+                        <IconObject className="localStorageIcon" object={localStorage} size={44} />
                         <div className="txt">
-                            <ObjectName object={space} />
-                            <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), this.usage.localUsage)}</div>
+                            <ObjectName object={localStorage} />
+                            <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), usage.localUsage)}</div>
                         </div>
                     </div>
                     <Button className="c28 blank" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onFileOffload} />
@@ -71,10 +71,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
     };
 
     componentDidMount () {
-        DataUtil.updateStorageUsage(() => {
-            this.usage = Storage.get('fileSpaceUsage');
-            this.forceUpdate();
-        });
+        DataUtil.updateStorageUsage();
     };
 
     onManageFiles () {
@@ -95,6 +92,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                 textConfirm: 'Yes',
                 onConfirm: () => {
                     setLoading(true);
+                    analytics.event('SettingsStorageOffload');
 
                     C.FileListOffload([], false, (message: any) => {
                         setLoading(false);

@@ -87,7 +87,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 
 		const count = this.manager.selected.length;
 
-		analytics.event('ShowDeletionWarning');
+		analytics.event('ShowDeletionWarning', { route: 'Bin' });
 
 		popupStore.open('confirm', {
 			data: {
@@ -98,7 +98,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 					C.ObjectListDelete(this.manager.selected);
 					this.manager.selectionClear();
 
-					analytics.event('RemoveCompletely', { count });
+					analytics.event('RemoveCompletely', { count, route: 'Bin' });
 				},
 				onCancel: () => { this.manager.selectionClear(); }
 			},
