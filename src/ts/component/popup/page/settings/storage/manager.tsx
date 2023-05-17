@@ -18,7 +18,9 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
     };
 
     render () {
-        const buttons: I.ButtonComponent[] = [{ icon: 'remove', text: 'Delete immediately', onClick: this.onRemove }];
+        const buttons: I.ButtonComponent[] = [
+            { icon: 'remove', text: 'Delete immediately', onClick: this.onRemove }
+        ];
         const filters: I.Filter[] = [
             { operator: I.FilterOperator.And, relationKey: 'fileSyncStatus', condition: I.FilterCondition.Equal, value: 1 },
         ];

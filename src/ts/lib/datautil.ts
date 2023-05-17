@@ -222,6 +222,8 @@ class DataUtil {
 		analytics.profile(account);
 		analytics.event('OpenAccount');
 
+		this.updateStorageUsage();
+
 		const subscriptions = [
 			{
 				subId: Constant.subId.deleted,
@@ -787,24 +789,15 @@ class DataUtil {
 		];
 	};
 
-	updateStorageUsage (callback?: () => void) {
+	updateStorageUsage () {
 		C.FileSpaceUsage((message) => {
-			const percentageUsed = Math.floor(Number(Util.getPercent(message.bytesUsed, message.bytesLimit)));
-			const usage = {
-				used: FileUtil.size(message.bytesUsed),
-				limit: FileUtil.size(message.bytesLimit),
-				localUsage: FileUtil.size(message.localUsage),
-				percentageUsed,
-				isRed: percentageUsed >= 90,
-				isFull: percentageUsed >= 99,
-				localStorageExceedsLimit: message.localUsage > message.bytesLimit
+			if (message.error.code) {
+				return;
 			};
 
-			Storage.set('fileSpaceUsage', usage);
+			const { bytesUsed, bytesLimit, localUsage } = message;
 
-			if (callback) {
-				callback();
-			};
+			commonStore.spaceStorageSet({ bytesUsed, bytesLimit, localUsage });
 		});
 	};
 

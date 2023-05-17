@@ -447,7 +447,6 @@ class App extends React.Component<object, State> {
 					keyboard.setPinChecked(isPinChecked);
 
 					DataUtil.onAuth(account, cb);
-					DataUtil.updateStorageUsage();
 				});
 
 				win.off('unload').on('unload', (e: any) => {

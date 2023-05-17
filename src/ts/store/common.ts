@@ -25,6 +25,12 @@ interface Graph {
 	filter: string;
 };
 
+interface SpaceStorage {
+	bytesUsed: number;
+	bytesLimit: number;
+	localUsage: number;
+};
+
 class CommonStore {
 
     public progressObj: I.Progress = null;
@@ -69,6 +75,12 @@ class CommonStore {
 		filter: '',
 	};
 
+	public spaceStorageObj: SpaceStorage = {
+		bytesUsed: 0,
+		bytesLimit: 0,
+		localUsage: 0,
+	};
+
     constructor() {
         makeObservable(this, {
             coverObj: observable,
@@ -78,6 +90,7 @@ class CommonStore {
             previewObj: observable,
 			toastObj: observable,
             configObj: observable,
+			spaceStorageObj: observable,
 			themeId: observable,
 			nativeThemeIsDark: observable,
 			typeId: observable,
@@ -108,7 +121,10 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			workspaceSet: action,
-        });
+			spaceUsedSet: action,
+			spaceLocalUsageSet: action,
+			spaceStorageSet: action,
+		});
     };
 
     get config(): any {
@@ -395,6 +411,18 @@ class CommonStore {
 
 		this.configObj.debug = this.configObj.debug || {};
 		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
+	};
+
+	spaceUsedSet (bytesUsed: number) {
+		this.spaceStorageObj.bytesUsed = bytesUsed;
+	};
+
+	spaceLocalUsageSet (localUsage: number) {
+		this.spaceStorageObj.localUsage = localUsage;
+	};
+
+	spaceStorageSet (storageUsage: SpaceStorage) {
+		this.spaceStorageObj = storageUsage;
 	};
 
 };

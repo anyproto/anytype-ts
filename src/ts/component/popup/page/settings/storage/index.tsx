@@ -20,16 +20,15 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
     };
 
     render () {
-        const usage = Storage.get('fileSpaceUsage');
-        if (!usage) {
-            return null;
-        };
+        const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorageObj;
+        const percentageUsed = Math.floor(Number(Util.getPercent(bytesUsed, bytesLimit)));
+        const isRed = percentageUsed >= 90;
 
         const space = detailStore.get(Constant.subId.space, commonStore.workspace);
         const usageCn = [ 'type' ];
         const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
 
-        if (usage.isRed) {
+        if (isRed) {
             usageCn.push('red');
         };
 
@@ -37,21 +36,21 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
             <React.Fragment>
                 <Title text={translate('popupSettingsStorageIndexTitle')} />
                 <Title className="sub" text={translate('popupSettingsStorageIndexRemoteStorage')} />
-                <Label className="description" text={Util.sprintf(translate(`popupSettingsStorageIndexText`), usage.limit)} />
+                <Label className="description" text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
 
                 <div className="storageUsage">
                     <div className="space">
                         <IconObject object={space} forceLetter={true} size={44} />
                         <div className="txt">
                             <ObjectName object={space} />
-                            <div className={usageCn.join(' ')}>{Util.sprintf(translate(`popupSettingsStorageIndexUsage`), usage.used, usage.limit)}</div>
+                            <div className={usageCn.join(' ')}>{Util.sprintf(translate(`popupSettingsStorageIndexUsage`), FileUtil.size(bytesUsed), FileUtil.size(bytesLimit))}</div>
                         </div>
                     </div>
                     <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
                 </div>
 
                 <div className="progressBar">
-					<div className="progressBarFill" style={{ width: usage.percentageUsed + '%' }} />
+					<div className="progressBarFill" style={{ width: percentageUsed + '%' }} />
 				</div>
 
                 <Title className="sub" text={translate('popupSettingsStorageIndexLocalStorageTitle')} />
@@ -62,7 +61,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                         <IconObject object={localStorage} size={44} />
                         <div className="txt">
                             <ObjectName object={localStorage} />
-                            <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), usage.localUsage)}</div>
+                            <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), FileUtil.size(localUsage))}</div>
                         </div>
                     </div>
                     <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onFileOffload} />
@@ -70,10 +69,6 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
             </React.Fragment>
         );
-    };
-
-    componentDidMount () {
-        DataUtil.updateStorageUsage();
     };
 
     onManageFiles () {

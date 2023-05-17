@@ -244,17 +244,26 @@ class Dispatcher {
 					break;
 				};
 
-				case 'fileLimitReached': {
-					DataUtil.updateStorageUsage(() => {
-						const usage = Storage.get('fileSpaceUsage');
+				case 'fileSpaceUsage': {
+					commonStore.spaceUsedSet(data.getBytesusage());
+					break;
+				};
 
-						if (usage.isFull) {
-							Preview.toastShow({ action: I.ToastAction.StorageFull });
-						} else
-						if (usage.localStorageExceedsLimit) {
-							Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
-						};
-					});
+				case 'fileLocalUsage': {
+					commonStore.spaceLocalUsageSet(data.getLocalbytesusage());
+					break;
+				};
+
+				case 'fileLimitReached': {
+					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorageObj;
+					const percentageUsed = Math.floor(Number(Util.getPercent(bytesUsed, bytesLimit)));
+
+					if (percentageUsed >= 99) {
+						Preview.toastShow({ action: I.ToastAction.StorageFull });
+					} else
+					if (localUsage > bytesLimit) {
+						Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
+					};
 					break;
 				};
 
