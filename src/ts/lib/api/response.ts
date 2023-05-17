@@ -57,7 +57,7 @@ export const FileSpaceUsage = (response: Rpc.File.SpaceUsage.Response) => {
 		bytesLeft: usage.getBytesleft(),
 		bytesLimit: usage.getByteslimit(),
 		filesCount: usage.getFilescount(),
-		localUsage: usage.getLocalbytesusage()
+		localUsage: usage.getLocalbytesusage(),
 	};
 };
 
