@@ -172,11 +172,6 @@
 				}
 			}
 
-			.progressBar { position: relative; overflow: hidden; height: 6px; border-radius: 8px;  margin-bottom: 54px; background-color: $colorVeryLightGrey;}
-			.progressBar {
-				.progressBarFill { height: 6px; background-color: $colorBlack; }
-			}
-
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
 

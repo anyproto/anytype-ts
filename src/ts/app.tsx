@@ -78,6 +78,7 @@ import 'scss/component/media/audio.scss';
 import 'scss/component/media/video.scss';
 
 import 'scss/component/hightlight.scss';
+import 'scss/component/progressBar.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/edit.scss';

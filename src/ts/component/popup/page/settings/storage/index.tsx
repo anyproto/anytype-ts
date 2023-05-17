@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Label, IconObject, ObjectName, Button } from 'Component';
+import { Title, Label, IconObject, ObjectName, Button, ProgressBar } from 'Component';
 import { analytics, C, DataUtil, FileUtil, Storage, I, translate, Util } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore, detailStore, popupStore } from 'Store';
@@ -49,9 +49,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                     <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
                 </div>
 
-                <div className="progressBar">
-					<div className="progressBarFill" style={{ width: percentageUsed + '%' }} />
-				</div>
+                <ProgressBar width={percentageUsed} />
 
                 <Title className="sub" text={translate('popupSettingsStorageIndexLocalStorageTitle')} />
                 <Label className="description" text={translate('popupSettingsStorageIndexLocalStorageText')} />
