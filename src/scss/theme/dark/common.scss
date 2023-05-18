@@ -166,6 +166,8 @@ html.themeDark {
                 .line { background: $colorSecondary; }
 
                 .inner {
+					.icon.hl { background-image: url('#{$themePath}/icon/object/preview/hl.svg'); }
+
                     .bookmark {
                         .side.left { border-color: $colorLinePrimary; }
                     }

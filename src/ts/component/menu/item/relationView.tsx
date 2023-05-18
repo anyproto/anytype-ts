@@ -50,7 +50,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 		const { rootId, block, id, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
 		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
 		const object = detailStore.get(rootId, rootId, [ relationKey ]);
-		const cellId = Relation.cellId(PREFIX, relationKey, object.id);
+		const cellId = Relation.cellId(PREFIX, relationKey, '');
 		const value = object[relationKey];
 
 		const cn = [ 'item', 'sides' ];
@@ -86,13 +86,13 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 				</div>
 				<div id={cellId} className={ccn.join(' ')}>
 					<Cell 
-						ref={ref => { onRef(cellId, ref); }} 
+						ref={ref => onRef(cellId, ref)} 
 						rootId={rootId}
 						subId={rootId}
 						block={block}
 						relationKey={relationKey}
 						getRecord={() => object}
-						recordId={object.id}
+						recordId=""
 						viewType={I.ViewType.Grid}
 						idPrefix={PREFIX}
 						menuClassName="fromBlock"
@@ -100,11 +100,11 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 						bodyContainer={Util.getBodyContainer('menuBlockRelationView')}
 						pageContainer={Util.getCellContainer('menuBlockRelationView')}
 						readonly={readonly}
-						onClick={(e: any) => { onCellClick(e, relationKey, object.id); }}
+						onClick={e => onCellClick(e, relationKey, object.id)}
 						onCellChange={onCellChange}
 					/>
 					{canFav ? (
-						<Icon className={fcn.join(' ')} onClick={(e: any) => { onFav(e, relationKey); }} tooltip={tooltip} />
+						<Icon className={fcn.join(' ')} tooltip={tooltip} onClick={e => onFav(e, relationKey)} />
 					) : ''}
 				</div>
 			</div>

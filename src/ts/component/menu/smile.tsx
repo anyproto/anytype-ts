@@ -384,7 +384,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.id = id;
 		window.clearTimeout(this.timeoutMenu);
 
-		if (e.button == 2) {
+		if (e.button) {
 			return;
 		};
 

@@ -53,13 +53,13 @@ class PopupSettingsPageImportMarkdown extends React.Component<I.PopupSettings> {
 		};
 
 		window.Electron.showOpenDialog(options).then((result: any) => {
-			const files = result.filePaths;
-			if ((files == undefined) || !files.length) {
+			const paths = result.filePaths;
+			if ((paths == undefined) || !paths.length) {
 				return;
 			};
 
 			close();
-			onImport(I.ImportType.Markdown, { path: files[0] });
+			onImport(I.ImportType.Markdown, { paths });
 		});
 	};
 

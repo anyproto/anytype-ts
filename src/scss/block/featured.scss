@@ -52,8 +52,14 @@
 			.name { display: none; }
 			.empty { padding: 0px 4px; }
 		}
+
+		.cellContent.c-object, .cellContent.c-file {
+			.element { cursor: default; }
+		}
+
 		.cellContent.c-checkbox { padding: 5px 3px; }
 	}
+	.block.blockFeatured:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 
 	.block.blockFeatured.align0 {
 		.cell.first { margin-left: -6px; }

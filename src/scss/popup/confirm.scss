@@ -11,5 +11,13 @@
 
 		.icon { width: 32px; height: 32px; margin: 0px 0px 16px 0px; }
 		.icon.update { background-image: url('~img/icon/update.svg'); }
-	}	
+	}
+
+	.popup.popupConfirm.isWide {
+		.innerWrap { width: 640px; }
+	}
+
+	.popup.popupConfirm.isLeft {
+		.innerWrap { text-align: left; }
+	}
 }

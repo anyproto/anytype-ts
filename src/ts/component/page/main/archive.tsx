@@ -358,7 +358,6 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		];
 
 		if (filter) {
-			console.log('FILTER: ', filter)
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
 		};
 

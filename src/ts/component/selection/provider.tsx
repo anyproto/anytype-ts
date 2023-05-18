@@ -233,10 +233,12 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		if (!this.moved) {
 			if (!keyboard.isShift() && !keyboard.isAlt() && !keyboard.isCtrlOrMeta()) {
-				this.initIds();
-				this.renderSelection();
+				if (!keyboard.isSelectionClearDisabled) {
+					this.initIds();
+					this.renderSelection();
 
-				$(window).trigger('selectionClear');
+					$(window).trigger('selectionClear');
+				};
 			} else {
 				let needCheck = false;
 				if (keyboard.isCtrlOrMeta()) {

@@ -155,13 +155,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		this.open();
 		focus.apply();
 
-		if (resizable.length) {
-			resizable.trigger('resizeInit');
-		};
-
 		blockStore.updateNumbers(rootId);
 		this.resizePage();
 		sidebar.resizePage();
+
+		if (resizable.length) {
+			resizable.trigger('resizeInit');
+		};
 
 		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};
@@ -319,12 +319,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		win.on('focus.editor' + namespace, () => {
 			const isPopupOpen = popupStore.isOpen();
 			const isMenuOpen = menuStore.isOpen();
+			const isMenuContextOpen = menuStore.isOpen('blockContext');
 
 			let ids: string[] = [];
 			if (selection) {
 				ids = selection.get(I.SelectType.Block, true);
 			};
-			if (!ids.length && !isMenuOpen && !isPopupOpen) {
+			if (!ids.length && (!isMenuOpen || isMenuContextOpen) && !isPopupOpen) {
 				focus.restore();
 				focus.apply(); 
 			};

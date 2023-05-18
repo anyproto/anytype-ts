@@ -9,7 +9,7 @@ interface Props extends I.WidgetTreeItem {
 	block: I.Block;
 	index: number;
 	treeKey: string;
-	style;
+	style?;
 	isEditing?: boolean;
 	onClick?(e: React.MouseEvent, props): void;
 	onToggle?(e: React.MouseEvent, props): void;
@@ -60,7 +60,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 
 		if (arrow) {
 			arrow = (
-				<div className="arrowWrap" onClick={onArrowClick}>{arrow}</div>
+				<div className="arrowWrap" onMouseDown={onArrowClick}>{arrow}</div>
 			);
 		};
 
@@ -84,7 +84,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 				</div>
 
 				<div className="buttons">
-					<Icon className="more" tooltip="Options" onClick={(e) => this.onContext(e, true)} />
+					<Icon className="more" tooltip="Options" onMouseDown={e => this.onContext(e, true)} />
 				</div>
 			</div>
 		);
@@ -125,6 +125,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const subId = getSubId(parentId);
 		const node = $(this.node);
 		const more = node.find('.icon.more');
+		const { x, y } = keyboard.mouse.page;
 		const menuParam: any = {
 			classNameWrap: 'fromSidebar',
 			onOpen: () => { node.addClass('active'); },
@@ -140,10 +141,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			menuParam.vertical = I.MenuDirection.Center;
 			menuParam.offsetX = 32;
 		} else {
-			menuParam.recalcRect = () => {
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			};
+			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
 		};
 
 		menuStore.open('dataviewContext', menuParam);

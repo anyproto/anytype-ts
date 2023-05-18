@@ -225,7 +225,6 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 
 			case I.BlockType.Featured: {
-				canSelect = false;
 				canDrop = false;
 				blockComponent = <BlockFeatured key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
@@ -434,6 +433,8 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 	
 	onMenuDown (e: any) {
+		e.stopPropagation();
+
 		const { block } = this.props;
 
 		focus.clear(true);
@@ -444,6 +445,10 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { dataset, block } = this.props;
 		const { selection } = dataset || {};
 		const element = $(`#button-block-menu-${block.id}`);
+
+		if (!element.length) {
+			return;
+		};
 
 		selection.set(I.SelectType.Block, this.ids);
 
@@ -577,7 +582,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		prevNode.css({ width: w1 * 100 + '%' });
 		currentNode.css({ width: w2 * 100 + '%' });
 		
-		node.find('.resizable').trigger('resize', [ e ]);
+		node.find('.resizable').trigger('resizeMove', [ e ]);
 	};
 
 	onResizeEnd (e: any, index: number, offset: number) {

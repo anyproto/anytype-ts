@@ -59,13 +59,12 @@ export const Mapper = {
 				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
 				widgetsId: obj.getWidgetsid(),
+				analyticsId: obj.getAnalyticsid(),
 			};
 		},
 
 		AccountConfig: (obj: any): I.AccountConfig => {
 			return {
-				allowSpaces: obj.getEnablespaces(),
-				allowBeta: obj.getEnableprereleasechannel(),
 			};
 		},
 

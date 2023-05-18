@@ -24,7 +24,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getView, getRecord, onRef, style, onContext, onCellClick, getIdPrefix, getVisibleRelations, isInline, isCollection, onMultiSelect } = this.props;
+		const { rootId, block, recordId, getView, getRecord, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, onSelectToggle } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -100,9 +100,9 @@ const Card = observer(class Card extends React.Component<Props> {
 				>
 					<Icon
 						className="checkbox"
-						onClick={(e: any) => { onMultiSelect(record.id); }}
-						onMouseEnter={() => { keyboard.setSelectionClearDisabled(true); }}
-						onMouseLeave={() => { keyboard.setSelectionClearDisabled(false); }}
+						onClick={e => onSelectToggle(e, record.id)}
+						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
+						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 					/>
 					{content}
 				</div>

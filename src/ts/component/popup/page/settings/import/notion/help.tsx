@@ -51,21 +51,22 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 		);
 	};
 
-	componentDidMount(): void {
-		const { getId, position } = this.props;
-		const obj = $(`#${getId()}-innerWrap`);
-		const wh = $(window).height();
-
-		obj.css({ width: 864, height: wh - 96 }).addClass('scroll');
-		position();
-	};
-
-	componentWillUnmount(): void {
-		const { getId, position } = this.props;
+	componentWillUnmount (): void {
+		const { getId } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 
 		obj.css({ width: '', height: '' }).removeClass('scroll');
-		position();
+	};
+
+	resize () {
+		const { getId } = this.props;
+		const obj = $(`#${getId()}-innerWrap`);
+		const win = $(window);
+		const ww = win.width();
+		const wh = win.height();
+		const width = Math.min(888, ww - 32);
+
+		obj.css({ width, height: wh - 96 }).addClass('scroll');
 	};
 
 };

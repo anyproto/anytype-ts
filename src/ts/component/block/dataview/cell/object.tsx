@@ -39,7 +39,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 	render () {
 		const { isEditing } = this.state;
-		const { getRecord, recordId, relation, iconSize, elementMapper, arrayLimit } = this.props;
+		const { getRecord, recordId, relation, iconSize, elementMapper, arrayLimit, readonly } = this.props;
 		const record = getRecord(recordId);
 		const cn = [ 'wrap' ];
 
@@ -116,6 +116,8 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 								iconSize={iconSize} 
 								relation={relation} 
 								elementMapper={elementMapper} 
+								canEdit={!readonly}
+								onClick={e => this.onClick(e, item.id)}
 							/>
 						))}
 						{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
@@ -405,7 +407,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 	};
 
 	blur () {
-			if (!this._isMounted) {
+		if (!this._isMounted) {
 			return;
 		};
 

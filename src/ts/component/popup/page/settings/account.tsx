@@ -43,7 +43,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const { account, walletPath, accountPath } = authStore;
 		const { config } = commonStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const canDelete = account.status.type == I.AccountStatusType.Active;
+		const canDelete = account?.status?.type == I.AccountStatusType.Active;
 		const canMove = config.experimental;
 
 		return (
@@ -69,7 +69,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 								ref={ref => this.refName = ref} 
 								value={profile.name} 
 								onKeyUp={this.onName} 
-								placeholder={ObjectUtil.defaultName('page')} 
+								placeholder={ObjectUtil.defaultName('Page')} 
 							/>
 						</div>
 					</div>

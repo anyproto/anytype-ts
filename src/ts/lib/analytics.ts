@@ -51,13 +51,13 @@ class Analytics {
 		this.isInit = true;
 	};
 	
-	profile (account: any) {
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug()) || !account) {
+	profile (id: string) {
+		if (!this.instance || (!window.Electron.isPackaged && !this.debug())) {
 			return;
 		};
 
-		this.instance.setUserId(account.id);
-		this.log(`[Analytics].profile: ${account.id}`);	
+		this.instance.setUserId(id);
+		this.log(`[Analytics].profile: ${id}`);	
 	};
 
 	device (id: string) {
