@@ -6,7 +6,7 @@
 
 		.title { @include text-header3; margin-bottom: 4px; }
 		.label { margin-bottom: 20px; user-select: text !important; word-wrap: break-word; }
-		.buttons { display: flex; flex-direction: column; gap: 8px 0px; align-items: center; }
+		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 		.iconObject { margin-bottom: 12px; }
 
 		.icon { width: 32px; height: 32px; margin: 0px 0px 16px 0px; }
