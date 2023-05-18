@@ -339,7 +339,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		if (!typeIsDeleted && (object.type === Constant.typeId.set)) {
-			options.push({ id: 'turnCollection', name: 'Turn into collection' });
+			options.push({ id: 'turnCollection', name: 'Turn set into collection' });
 		};
 
 		const showMenu = () => {
@@ -367,13 +367,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			DataUtil.checkSetCnt([ object.type ], (message: any) => {
 				if (message.records.length == 1) {
 					this.setId = message.records[0].id;
-					options.push({ id: 'setOpen', name: 'Open set' });
+					options.push({ id: 'setOpen', name: `Open set of ${type.name}` });
 				} else
 				if (message.records.length == 2) {
 					options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
 				} else
 				if (type && !type.isDeleted) {
-					options.push({ id: 'setCreate', name: 'Create set' });
+					options.push({ id: 'setCreate', name: `Create set of ${type.name}` });
 				};
 
 				showMenu();

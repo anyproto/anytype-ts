@@ -279,10 +279,6 @@ class ObjectUtil {
 		return this.getStoreTypes().includes(type);
 	};
 
-	getSystemRelationKeys () {
-		return require('lib/json/systemRelations.json');
-	};
-
 	getFileTypes () {
 		return [
 			Constant.typeId.file, 

@@ -66,20 +66,28 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
+		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		const systemRelations = Relation.systemKeys();
 
 		const allowedObject = object.isInstalled && ObjectUtil.getPageLayouts().includes(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 
-		const relations = (object.recommendedRelations || []).map(id => dbStore.getRelationById(id)).filter(it => {
+		if (!recommendedRelations.includes('rel-description')) {
+			recommendedRelations.push('rel-description');
+		};
+
+		console.log(recommendedRelations);
+
+		const relations = recommendedRelations.map(id => dbStore.getRelationById(id)).filter(it => {
 			if (!it) {
 				return false;
 			};
 			if ([ 'tag', 'description' ].includes(it.relationKey)) {
 				return true;
 			};
-			if (ObjectUtil.getSystemRelationKeys().includes(it.relationKey)) {
+			if (systemRelations.includes(it.relationKey)) {
 				return false;
 			};
 			return config.debug.ho ? true : !it.isHidden;
@@ -436,7 +444,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				rootId,
 				ref: 'type',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: recommendedRelations.concat(ObjectUtil.getSystemRelationKeys()),
+				skipKeys: recommendedRelations.concat(Relation.systemKeys()),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectTypeRelationAdd(rootId, [ relation.relationKey ], (message: any) => { 
 						menuStore.close('relationSuggest'); 
