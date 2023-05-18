@@ -27,7 +27,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	node: any = null;
 	state = {
-		loading: false,
+		loading: false
 	};
 
 	constructor (props: Props) {
@@ -37,6 +37,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		this.onClick = this.onClick.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onToggle = this.onToggle.bind(this);
+		this.onDragEnd = this.onDragEnd.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 		this.getData = this.getData.bind(this);
 	};
@@ -121,6 +122,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 						blockId = block.id;
 						eventName = 'SelectHomeTab';
 						eventData.tab = object.name;
+
+						if (Constant.widgetId[object.id]) {
+							eventData.tab = object.name;
+						}
+						else {
+							const obj = detailStore.get(Constant.subId.type, object.type);
+							eventData.tab = obj.sourceObject ? obj.id : 'custom';
+						};
 					};
 
 					setPreview(blockId);
@@ -176,6 +185,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				draggable={isEditing}
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
+				onDragEnd={this.onDragEnd}
 			>
 				<Icon className="remove" inner={<div className="inner" />} onClick={this.onRemove} />
 
@@ -238,9 +248,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		return object;
 	};
 
+	onDragEnd () {
+		const target = this.getObject();
+		analytics.event('ReorderWidget', { target });
+	};
+
 	onRemove (e: React.MouseEvent): void {
 		e.stopPropagation();
-		Action.removeWidget(this.props.block.id);
+		Action.removeWidget(this.props.block.id, this.getObject());
 	};
 
 	onClick (e: React.MouseEvent): void {
@@ -274,7 +289,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				target: object,
 				isEditing: true,
 				blockId: block.id,
-				setEditing,
+				setEditing
 			}
 		});
 	};
