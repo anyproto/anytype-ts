@@ -47,7 +47,6 @@ export interface Toast {
 	origin?: any;
 	count?: number;
 	value?: boolean;
-	permanent?: boolean;
 };
 
 export enum ToastAction {

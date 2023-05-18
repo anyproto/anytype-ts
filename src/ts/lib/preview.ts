@@ -204,10 +204,6 @@ class Preview {
 	 */
 	toastShow (param: I.Toast) {
 		const setTimeout = () => {
-			if (param.permanent) {
-				return;
-			};
-
 			window.clearTimeout(this.timeout.toast);
 			this.timeout.toast = window.setTimeout(() => { this.toastHide(false); }, Constant.delay.toast);
 		};
@@ -228,10 +224,6 @@ class Preview {
 	 */
 	toastHide (force: boolean) {
 		const obj = $('#toast');
-
-		if (commonStore.toastObj && commonStore.toastObj.permanent) {
-			return;
-		};
 
 		obj.css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
 
