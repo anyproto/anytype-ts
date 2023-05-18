@@ -1,8 +1,11 @@
 @import "~scss/_vars";
 
-.sync { height: 20px; }
+.sync { 
+	height: 18px; display: flex; flex-direction: row; align-items: center; @include text-small; color: $colorDarkGrey; background: $colorVeryLightGrey; 
+	border-radius: 4px; padding: 0px 6px; gap: 0px 4px;
+}
 .sync {
-	.icon { width: 20px; height: 20px; border-radius: 100%; vertical-align: top; }
+	.icon { width: 8px; height: 8px; }
 	.icon.green { background-image: url('~img/icon/status/green.svg'); }
 	.icon.orange { background-image: url('~img/icon/status/orange.svg'); }
 	.icon.red { background-image: url('~img/icon/status/red.svg'); }
