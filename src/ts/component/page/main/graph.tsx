@@ -7,8 +7,9 @@ import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ctrl = keyboard.cmdSymbol();
+const alt = keyboard.altSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltipCaption: `${ctrl} + Alt + O` },
+	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltipCaption: `${ctrl} + ${alt} + O` },
 	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltipCaption: `${ctrl} + O` },
 ];
 

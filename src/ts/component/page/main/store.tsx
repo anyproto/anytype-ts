@@ -22,9 +22,10 @@ enum View {
 };
 
 const cmd = keyboard.cmdSymbol();
+const alt = keyboard.altSymbol();
 const Tabs = [
 	{ id: Tab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
-	{ id: Tab.Relation, name: 'Relations', tooltipCaption: `${cmd} + Alt + T` },
+	{ id: Tab.Relation, name: 'Relations', tooltipCaption: `${cmd} + ${alt} + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {

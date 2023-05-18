@@ -843,6 +843,10 @@ class Keyboard {
 		return Util.getPlatform() == I.Platform.Mac ? '&#8984;' : 'Ctrl';
 	};
 
+	altSymbol () {
+		return Util.getPlatform() == I.Platform.Mac ? '&#8997;' : 'Alt';
+	};
+
 	cmdKey () {
 		return Util.getPlatform() == I.Platform.Mac ? 'cmd' : 'ctrl';
 	};

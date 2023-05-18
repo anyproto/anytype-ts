@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { Icon, IconObject } from 'Component';
 import { commonStore, detailStore, blockStore, popupStore } from 'Store';
-import { I, ObjectUtil, keyboard, Storage, Util } from 'Lib';
+import { I, ObjectUtil, keyboard, Storage, Util, Preview } from 'Lib';
 import Constant from 'json/constant.json';
 
 class Navigation extends React.Component {
@@ -29,13 +29,20 @@ class Navigation extends React.Component {
 	};
 
 	render () {
+		const cmd = keyboard.cmdSymbol();
+		const alt = keyboard.altSymbol();
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
+		const platform = Util.getPlatform();
+		const isWin = platform == I.Platform.Windows;
+		const cb = isWin ? `${alt} + ←` : `${cmd} + ←`;
+		const cf = isWin ? `${alt} + →` : `${cmd} + →`;
+
 		const buttons: any[] = [
-			{ className: 'back', tooltip: 'Back', onClick: this.onBack, disabled: !keyboard.checkBack() },
-			{ className: 'forward', tooltip: 'Forward', onClick: this.onForward, disabled: !keyboard.checkForward() },
-			{ className: 'plus', tooltip: 'Create new object', onClick: this.onAdd },
-			{ className: 'graph', tooltip: 'Graph', onClick: this.onGraph },
-			{ className: 'search', tooltip: 'Search', onClick: this.onSearch },
+			{ className: 'back', tooltip: 'Back', caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
+			{ className: 'forward', tooltip: 'Forward', caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
+			{ className: 'plus', tooltip: 'Create new object', caption: `${cmd} + N`, onClick: this.onAdd },
+			{ className: 'graph', tooltip: 'Graph', caption: `${cmd}+${alt} + O`, onClick: this.onGraph },
+			{ className: 'search', tooltip: 'Search', caption: `${cmd} + S`, onClick: this.onSearch },
 		];
 
 		return (
@@ -52,16 +59,27 @@ class Navigation extends React.Component {
 						};
 
 						return (
-							<div key={item.className} onClick={item.onClick} className="iconWrap">
-								<Icon className={cn.join(' ')} tooltip={item.tooltip} tooltipY={I.MenuDirection.Top} />
+							<div 
+								key={item.className} 
+								onClick={item.onClick} 
+								className="iconWrap"
+								onMouseEnter={e => this.onTooltipShow(e, item.tooltip, item.caption)}
+								onMouseLeave={e => Preview.tooltipHide(false)}
+							>
+								<Icon className={cn.join(' ')} />
 							</div>
 						);
 					})}
 
 					<div className="line" />
 
-					<div className="iconWrap">
-						<IconObject object={profile} onClick={this.onProfile} tooltip="Settings" tooltipY={I.MenuDirection.Top} />
+					<div 
+						className="iconWrap"
+						onClick={this.onProfile}
+						onMouseEnter={e => this.onTooltipShow(e, 'Settings')}
+						onMouseLeave={e => Preview.tooltipHide(false)}
+					>
+						<IconObject object={profile} />
 					</div>
 				</div>
 			</div>
@@ -227,6 +245,13 @@ class Navigation extends React.Component {
 		
 			node.css({ transform: `translate3d(${coords.x}px, ${coords.y}px, 0px)` });
 		});
+	};
+
+	onTooltipShow (e: any, text: string, caption?: string) {
+		const t = Preview.tooltipCaption(text, caption);
+		if (t) {
+			Preview.tooltipShow({ text: t, element: $(e.currentTarget), typeY: I.MenuDirection.Top });
+		};
 	};
 	
 };
