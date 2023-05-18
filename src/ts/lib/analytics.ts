@@ -1,8 +1,7 @@
 import * as amplitude from 'amplitude-js';
 import { I, C, Util, Storage } from 'Lib';
-import { commonStore, detailStore } from 'Store';
+import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
-import target from 'Component/drag/target';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
@@ -249,13 +248,11 @@ class Analytics {
 			case 'ChangeWidgetLayout':
 			case 'ReorderWidget':
 			case 'DeleteWidget': {
-				if (Constant.widgetId[data.target.id]) {
-					data.type = data.target.name;
-				} else {
-					const object = detailStore.get(Constant.subId.type, data.target.type);
-					data.type = object.sourceObject ? object.id : 'custom';
+				if (!data.target) {
+					break;
 				};
 
+				data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
 				delete data.target;
 				break;
 			};
@@ -289,13 +286,11 @@ class Analytics {
 		};
 
 		if (converted.objectType) {
-			const object = detailStore.get(Constant.subId.type, converted.objectType);
-			converted.objectType = object.sourceObject ? object.sourceObject : 'custom';
+			converted.objectType = this.typeMapper(converted.objectType);
 		};
 
 		if (converted.relationKey) {
-			const object = detailStore.get(Constant.subId.relation, converted.relationKey);
-			converted.relationKey = object.sourceObject ? object.sourceObject : 'custom';
+			converted.relationKey = this.relationMapper(converted.relationKey);
 		};
 
 		if (undefined !== converted.layout) {
@@ -371,6 +366,16 @@ class Analytics {
 
 		const code = (undefined !== map[id]) ? map[id] : id;
 		return code ? Util.toUpperCamelCase([ prefix, code ].join('-')) : '';
+	};
+
+	typeMapper (id: string) {
+		const type = dbStore.getType(id);
+		return type ? (type.sourceObject ? type.sourceObject : 'custom') : '';
+	};
+
+	relationMapper (key: string) {
+		const relation = dbStore.getRelationByKey(key);
+		return relation ? (relation.sourceObject ? relation.sourceObject : 'custom') : '';
 	};
 
 	embedType (isInline: boolean): string {

@@ -378,14 +378,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		if (!isPreview) {
 			blockId = block.id;
 			eventName = 'SelectHomeTab';
-			eventData.tab = object.name;
-
-			if (Constant.widgetId[object.id]) {
-				eventData.tab = object.name;
-			} else {
-				const obj = detailStore.get(Constant.subId.type, object.type);
-				eventData.tab = obj.sourceObject ? obj.id : 'custom';
-			};
+			eventData.tab = this.isCollection(block.id) ? object.name : analytics.typeMapper(object.type);
 		};
 
 		setPreview(blockId);
