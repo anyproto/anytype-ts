@@ -72,7 +72,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			{ id: 'community', name: 'Anytype Community' },
 			{ isDiv: true },
 			{ id: 'hints', name: 'Show Hints' },
-			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' },
+			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl + Space' },
 			{ id: 'tutorial', name: 'Help & Tutorials' }
 		];
 	};
