@@ -200,6 +200,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		this.resize();
 		this.setActive(items[this.n]);
+		this.refFilter.setValue(this.filter);
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -260,7 +261,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.onArrow(pressed.match(Key.up) ? -1 : 1);
 		});
 
-		keyboard.shortcut(`enter, space, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
+		keyboard.shortcut(`enter, shift+enter, ${cmd}+enter`, e, (pressed: string) => {
 			const item = items[this.n];
 			if (item) {
 				this.onClick(e, item);
@@ -314,7 +315,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	unsetActive () {
 		const node = $(this.node);
-		node.find('.active').removeClass('active');
+		node.find('.item.active').removeClass('active');
 	};
 
 	onFilterChange () {

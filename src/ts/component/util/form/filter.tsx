@@ -96,13 +96,11 @@ class Filter extends React.Component<Props> {
 	};
 
 	focus () {
-		this.addFocusedClass();
 		this.ref.focus();
 		this.checkButton();
 	};
 
 	blur () {
-		this.removeFocusedClass();
 		this.ref.blur();
 	};
 
