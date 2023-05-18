@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget } from 'Component';
-import {C, I, M, keyboard, ObjectUtil, analytics} from 'Lib';
+import { C, I, M, keyboard, ObjectUtil, analytics } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
