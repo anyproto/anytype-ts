@@ -2,10 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
-import { C, I, keyboard, MenuUtil, translate, Action, ObjectUtil, analytics, Util } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { C, I, keyboard, MenuUtil, translate, Action, ObjectUtil, analytics } from 'Lib';
+import { blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
-import target from 'ts/component/drag/target';
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 

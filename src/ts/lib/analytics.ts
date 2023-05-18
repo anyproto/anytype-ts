@@ -251,15 +251,14 @@ class Analytics {
 			case 'DeleteWidget': {
 				if (Constant.widgetId[data.target.id]) {
 					data.type = data.target.name;
-				}
-				else {
+				} else {
 					const object = detailStore.get(Constant.subId.type, data.target.type);
 					data.type = object.sourceObject ? object.id : 'custom';
 				};
 
 				delete data.target;
 				break;
-			}
+			};
 
 			case 'SurveyShow':
 			case 'SurveyOpen':
