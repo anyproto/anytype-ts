@@ -71,9 +71,6 @@ class ConfigManager {
 		let channels = ChannelSettings.map((it) => {
 			return { id: it.id, label: it.name, type: 'radio', checked: (this.config.channel == it.id) };
 		});
-		if (!this.config.sudo && !this.config.allowBeta) {
-			channels = channels.filter(it => it.id != 'beta');
-		};
 		if (!this.config.sudo) {
 			channels = channels.filter(it => it.id != 'alpha');
 		};

@@ -168,8 +168,7 @@ class InputWithFile extends React.Component<Props, State> {
 			return;
 		};
 		
-		const node = $(this.node);
-		node.off('resize').on('resize', (e: any) => { this.resize(); });
+		$(this.node).off('resizeMove').on('resizeMove', (e: any) => this.resize());
 	};
 	
 	unbind () {
@@ -178,8 +177,7 @@ class InputWithFile extends React.Component<Props, State> {
 			return;
 		};
 		
-		const node = $(this.node);
-		node.off('resize');
+		$(this.node).off('resizeMove');
 	};
 	
 	resize () {

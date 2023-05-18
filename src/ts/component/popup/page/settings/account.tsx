@@ -69,7 +69,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 								ref={ref => this.refName = ref} 
 								value={profile.name} 
 								onKeyUp={this.onName} 
-								placeholder={ObjectUtil.defaultName('page')} 
+								placeholder={ObjectUtil.defaultName('Page')} 
 							/>
 						</div>
 					</div>

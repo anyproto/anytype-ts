@@ -3,8 +3,8 @@
 .button { 
 	display: inline-flex; border: 0px; font-weight: 500; text-decoration: none; cursor: pointer;
 	height: 40px; padding: 0px 16px; border-radius: 8px; transition: $transitionAllCommon;
-	font-size: 16px; vertical-align: middle; position: relative; overflow: hidden; letter-spacing: -0.2px;
-	align-items: center; justify-content: center;
+	vertical-align: middle; position: relative; overflow: hidden; align-items: center; justify-content: center; 
+	@include text-paragraph;
 }
 
 .button.orange { background: $colorOrange; color: $colorWhite; }
@@ -25,11 +25,8 @@
 .button.blank { background: none; border: solid 1px $colorBorderDark; font-weight: 400; }
 .button.blank:not(.disabled):hover { background: $colorHoverMedium; }
 
-.button.outlined { background: none; border: solid 1px $colorBorderDark; color: $colorBlack; }
-.button.outlined:not(.disabled):hover { background: $colorHoverMedium; }
-
 .button.c36 { @include text-common; height: 36px; border-radius: 6px; padding: 0px 12px; }
-.button.c28 { @include text-small; height: 28px; border-radius: 6px; padding: 0px 10px; }
+.button.c28 { @include text-common; height: 28px; border-radius: 6px; padding: 0px 10px; }
 .button.c16 { @include text-9; height: 16px; border-radius: 4px; padding: 0px 4px; }
 
 input.button { line-height: 1; }

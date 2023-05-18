@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-.widget.widgetList { display: flex; flex-direction: column; };
-.widget.widgetList {
+.widget.widgetList, .widget.widgetCompact { display: flex; flex-direction: column; };
+.widget.widgetList, .widget.widgetCompact {
 	.loaderWrapper { position: relative; }
 	.innerWrap { height: 100%; }
 	.contentWrapper { flex-grow: 1; }
@@ -31,11 +31,10 @@
 		}
 	}
 
-	.body { display: flex; flex-direction: column; padding: 0px 8px 8px 8px; }
+	.body { display: flex; flex-direction: column; padding-bottom: 8px; }
 	.body {
-		.item { cursor: pointer; height: 64px; border-radius: 8px; position: relative; }
+		.item { cursor: pointer; position: relative; }
 		.item:hover, .item.active {
-			.info { width: calc(100% - 96px); }
 			.buttons { display: flex; }
 			.icon.more { opacity: 1; }
 		}
@@ -46,17 +45,16 @@
 
 		.item::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: $colorHoverMedium; z-index: 1; pointer-events: none;
-			border-radius: 8px; opacity: 0;
+			opacity: 0;
 		}
 		.item:hover::before { opacity: 1; }
 
 		.item { 
-			.inner { display: flex; flex-direction: row; gap: 0px 12px; align-items: center; padding: 8px 8px; height: 100%; justify-content: space-between; }
+			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; }
 			.dropTarget { border-radius: 6px; height: 100%; }
-			.iconObject { flex-shrink: 0; background: $colorVeryLightGrey; border-radius: 10px; }
+			.iconObject { flex-shrink: 0; }
 			.iconObject.isTask { background: none; }
 
-			.info { width: calc(100% - 60px); }
 			.name { @include text-overflow-nw; }
 			.descr { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
 
@@ -71,10 +69,50 @@
 	}
 };
 
-.widget.widgetList.isPreview { padding: 0px; }
-.widget.widgetList.isPreview {
+.widget.widgetList.isPreview, .widget.widgetCompact.isPreview { padding: 0px; }
+.widget.widgetList.isPreview, .widget.widgetCompact.isPreview {
 	.head { margin: 0px; }
-	.body { height: 100%; padding-bottom: 0px; }
-	.ReactVirtualized__List { padding: 12px 0px; }
+	.body { height: 100%; padding: 0px; }
+	.ReactVirtualized__List { padding: 12px 8px; }
 	.contentWrapper { height: calc(100% - 77px); }
+}
+
+.widget.widgetList {
+	.body { padding: 0px 8px 8px 8px; }
+	.body {
+		.item { height: 64px; }
+		.item {
+			.info { width: 100%; }
+			.inner { padding: 8px; gap: 0px 12px; }
+			.iconObject { background: $colorVeryLightGrey; border-radius: 10px; }
+		}
+		.item:hover, .item.active {
+			.info { width: calc(100% - 36px); }
+		}
+
+		.item.withIcon {
+			.info { width: calc(100% - 60px); }
+		}
+		.item.withIcon:hover, .item.withIcon.active {
+			.info { width: calc(100% - 96px); }
+		}
+
+		.item::before { border-radius: 8px; }
+	}
+}
+
+.widget.widgetCompact {
+	.body { padding: 0px 4px 8px 4px; }
+	.body {
+		.item { height: 28px; }
+		.item {
+			.inner { gap: 0px 6px; padding: 0px 8px 0px 12px; }
+			.info { width: calc(100% - 28px); }
+			.iconObject { background: none; border-radius: 0px; }
+		}
+		.item:hover, .item.active {
+			.info { width: calc(100% - 54px); }
+		}
+		.item::before { border-radius: 4px; }
+	}
 }

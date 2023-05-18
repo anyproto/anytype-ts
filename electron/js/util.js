@@ -62,7 +62,7 @@ class Util {
 		let theme = this.getTheme();
 		let bg = {
 			'': '#fff',
-			dark: '#2c2b27',
+			dark: '#171717',
 		};
 		return bg[theme];
 	};

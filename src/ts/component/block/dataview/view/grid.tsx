@@ -211,19 +211,21 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 		const rh = this.getRowHeight();
 
 		if (isInline) {
-			if (parent.isPage() || parent.isLayoutDiv()) {
-				const wrapper = $('#editorWrapper');
-				const ww = wrapper.width();
-				const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
-				const margin = (cw - ww) / 2;
+			if (parent) {
+				if (parent.isPage() || parent.isLayoutDiv()) {
+					const wrapper = $('#editorWrapper');
+					const ww = wrapper.width();
+					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
+					const margin = (cw - ww) / 2;
 
-				scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
-				wrap.css({ width: vw + margin, paddingRight: margin - 8 });
-			} else {
-				const parentObj = $(`#block-${parent.id}`);
-				const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
+					scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
+					wrap.css({ width: vw + margin, paddingRight: margin - 8 });
+				} else {
+					const parentObj = $(`#block-${parent.id}`);
+					const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
 
-				wrap.css({ width: Math.max(vw, width) });
+					wrap.css({ width: Math.max(vw, width) });
+				};
 			};
 		} else {
 			const mw = cw - PADDING * 2;

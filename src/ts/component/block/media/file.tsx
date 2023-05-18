@@ -32,7 +32,6 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 
 		let { name, sizeInBytes } = object;
 		let element = null;
-		let cn = [ 'focusable', 'c' + id ];
 
 		switch (state) {
 			default:
@@ -69,7 +68,13 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 		};
 
 		return (
-			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
+			<div 
+				className={[ 'focusable', 'c' + id ].join(' ')} 
+				tabIndex={0} 
+				onKeyDown={this.onKeyDown} 
+				onKeyUp={this.onKeyUp} 
+				onFocus={this.onFocus}
+			>
 				{element}
 			</div>
 		);

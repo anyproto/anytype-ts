@@ -155,7 +155,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">New relation</div>
+							<div className="name">Add relation</div>
 						</div>
 					</div>
 				) : ''}

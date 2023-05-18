@@ -1,11 +1,12 @@
 import { I } from 'Lib';
 
 export enum WidgetLayout { 
-	Link	 	= 0,
-	Tree	 	= 1,
-	List		= 2,
+	Link	 	 = 0,
+	Tree	 	 = 1,
+	List		 = 2,
+	Compact		 = 3,
 
-	Space	 	= 100,
+	Space	 	 = 100,
 };
 
 export interface WidgetComponent {

@@ -160,7 +160,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			this.placeholderCheck(item.blockId);
 		};
 
-		if (!focused && !object._empty_ && (object.name == ObjectUtil.defaultName('page'))) {
+		if (!focused && !object._empty_ && (object.name == ObjectUtil.defaultName('Page'))) {
 			focus.set('title', { from: 0, to: 0 });
 		};
 
@@ -242,7 +242,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 
 			let text = String(object[item.relationKey] || '');
-			if (text == ObjectUtil.defaultName('page')) {
+			if (text == ObjectUtil.defaultName('Page')) {
 				text = '';
 			};
 
