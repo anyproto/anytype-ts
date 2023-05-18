@@ -43,7 +43,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const { account, walletPath, accountPath } = authStore;
 		const { config } = commonStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const canDelete = account.status.type == I.AccountStatusType.Active;
+		const canDelete = account?.status?.type == I.AccountStatusType.Active;
 		const canMove = config.experimental;
 
 		return (
