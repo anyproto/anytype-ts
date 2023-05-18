@@ -245,12 +245,12 @@ class Dispatcher {
 				};
 
 				case 'fileSpaceUsage': {
-					commonStore.spaceUsedSet(data.getBytesusage());
+					commonStore.spaceStorageSet({ bytesUsed: data.getBytesusage() });
 					break;
 				};
 
 				case 'fileLocalUsage': {
-					commonStore.spaceLocalUsageSet(data.getLocalbytesusage());
+					commonStore.spaceStorageSet({ localUsage: data.getLocalbytesusage() });
 					break;
 				};
 

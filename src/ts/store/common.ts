@@ -121,8 +121,6 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			workspaceSet: action,
-			spaceUsedSet: action,
-			spaceLocalUsageSet: action,
 			spaceStorageSet: action,
 		});
     };
@@ -413,16 +411,8 @@ class CommonStore {
 		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
 	};
 
-	spaceUsedSet (bytesUsed: number) {
-		this.spaceStorageObj.bytesUsed = bytesUsed;
-	};
-
-	spaceLocalUsageSet (localUsage: number) {
-		this.spaceStorageObj.localUsage = localUsage;
-	};
-
-	spaceStorageSet (storageUsage: SpaceStorage) {
-		this.spaceStorageObj = storageUsage;
+	spaceStorageSet (usage: any) {
+		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, usage));
 	};
 
 };
