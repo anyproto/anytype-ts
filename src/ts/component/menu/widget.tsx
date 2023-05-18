@@ -2,9 +2,10 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
-import { C, I, keyboard, MenuUtil, translate, Action, ObjectUtil, analytics } from 'Lib';
-import { blockStore, menuStore } from 'Store';
+import { C, I, keyboard, MenuUtil, translate, Action, ObjectUtil, analytics, Util } from 'Lib';
+import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
+import target from 'ts/component/drag/target';
 
 const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
@@ -294,6 +295,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						if (isEditing) {
 							this.save();
 						};
+
+						analytics.event('ChangeWidgetSource', {
+							route: isEditing ? 'Inner' : 'AddWidget',
+							target: target
+						});
 					},
 				});
 				break;
@@ -312,6 +318,12 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						if (isEditing) {
 							this.save();
 						};
+
+						analytics.event('ChangeWidgetSource', {
+							layout: I.WidgetLayout[this.layout],
+							route: isEditing ? 'Inner' : 'AddWidget',
+							target: this.target
+						});
 					},
 				});
 				break;
@@ -331,11 +343,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, setEditing } = data;
+		const { blockId, setEditing, target } = data;
 
 		switch (item.itemId) {
 			case 'remove':
-				Action.removeWidget(blockId);
+				Action.removeWidget(blockId, target);
 				break;
 
 			case 'edit':

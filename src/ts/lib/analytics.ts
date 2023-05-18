@@ -2,6 +2,7 @@ import * as amplitude from 'amplitude-js';
 import { I, C, Util, Storage } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
+import target from 'Component/drag/target';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
@@ -243,6 +244,22 @@ class Analytics {
 				data.type = I.WidgetLayout[data.type];
 				break;
 			};
+
+			case 'ChangeWidgetSource':
+			case 'ChangeWidgetLayout':
+			case 'ReorderWidget':
+			case 'DeleteWidget': {
+				if (Constant.widgetId[data.target.id]) {
+					data.type = data.target.name;
+				}
+				else {
+					const object = detailStore.get(Constant.subId.type, data.target.type);
+					data.type = object.sourceObject ? object.id : 'custom';
+				};
+
+				delete data.target;
+				break;
+			}
 
 			case 'SurveyShow':
 			case 'SurveyOpen':
