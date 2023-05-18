@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { analytics, I, Storage, Util, ObjectUtil } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
+import * as Sentry from '@sentry/browser';
 
 interface Filter {
 	from: number;
@@ -375,6 +376,8 @@ class CommonStore {
 		this.workspaceSet(info.accountSpaceId);
 
 		analytics.device(info.deviceId);
+		analytics.profile(info.analyticsId);
+		Sentry.setUser({ id: info.analyticsId });
 	};
 
 	configSet (config: any, force: boolean) {

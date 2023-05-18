@@ -218,8 +218,6 @@ class DataUtil {
 		};
 
 		keyboard.initPinCheck();
-
-		analytics.profile(account);
 		analytics.event('OpenAccount');
 
 		const subscriptions = [
