@@ -240,16 +240,25 @@ class Preview {
 	toastPosition () {
 		const win = $(window);
 		const obj = $('#toast');
+		const sidebar = $('#sidebar');
+		const isRight = sidebar.hasClass('right');
+		const isPopup = keyboard.isPopup();
+		const y = win.height() - obj.outerHeight() - BORDER * 2;
+
+		let sw = 0;
+		if (!isPopup && commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+			sw = sidebar.outerWidth();
+		};
+
+		let x = (win.width() - sw) / 2 - obj.outerWidth() / 2;
+		if (!isRight) {
+			x += sw;
+		};
 
 		obj.show().css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
 
 		raf(() => {
-			obj.css({ 
-				left: win.width() / 2 - obj.outerWidth() / 2, 
-				top: win.height() - obj.outerHeight() - BORDER * 2,
-				opacity: 1,
-				transform: 'scale3d(1,1,1)',
-			});
+			obj.css({ left: x, top: y, opacity: 1, transform: 'scale3d(1,1,1)' });
 		});
 	};
 
