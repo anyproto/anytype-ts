@@ -983,8 +983,8 @@ class Util {
 		return Number((num / 100 * percent).toFixed(3));
 	};
 
-	getPercent (part: number, whole: number) {
-		return Number(part / whole * 100).toFixed(1);
+	getPercent (part: number, whole: number): number {
+		return Number((part / whole * 100).toFixed(1));
 	};
 
 };

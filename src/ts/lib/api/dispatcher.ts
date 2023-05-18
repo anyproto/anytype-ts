@@ -256,7 +256,7 @@ class Dispatcher {
 
 				case 'fileLimitReached': {
 					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorageObj;
-					const percentageUsed = Math.floor(Number(Util.getPercent(bytesUsed, bytesLimit)));
+					const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
 
 					if (percentageUsed >= 99) {
 						Preview.toastShow({ action: I.ToastAction.StorageFull });
