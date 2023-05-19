@@ -55,7 +55,7 @@ const LAYOUT_EMOJI = [
 
 const IconSize = {
 	16: 16,
-	18: 18,
+	18: 16,
 	20: 18,
 	22: 18,
 	24: 20,

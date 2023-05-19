@@ -27,7 +27,7 @@
 				.cellContent.last { margin: 0px; }
 				.cellContent.c-description { color: $colorBlack; }
 				.cellContent {
-					.more { margin-top: 0px; vertical-align: top; }
+					.more { margin-top: 1px; vertical-align: top; height: 18px; }
 				}
 
 				.cellContent.isName { @include text-paragraph; color: $colorBlack; display: flex; gap: 0px 6px; position: relative; }
