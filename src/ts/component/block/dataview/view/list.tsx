@@ -7,7 +7,7 @@ import { Icon, LoadMore } from 'Component';
 import { I, translate } from 'Lib';
 import Row from './list/row';
 
-const HEIGHT = 32;
+const HEIGHT = 34;
 
 const ViewList = observer(class ViewList extends React.Component<I.ViewComponent> {
 

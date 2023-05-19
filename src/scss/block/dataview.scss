@@ -84,7 +84,7 @@
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: $colorBorderLight; position: absolute; bottom: 0px; }
 
-		.dataviewControls.viewGrid::after { display: block; }
+		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
 
 		.dataviewControls {
 			.sides { gap: 0px 16px; }
