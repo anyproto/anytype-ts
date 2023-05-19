@@ -526,7 +526,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			flags.push(I.ObjectFlag.SelectType);
 		};
 
-		const menuParam: any = {};
+		const menuParam: any = {
+			onClose: () => { this.creating = false; },
+		};
 
 		if (dir) {
 			menuParam.element = $(e.currentTarget);
@@ -605,9 +607,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				type: I.MenuType.Horizontal,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-				onClose: () => {
-					this.creating = false;
-				},
 				data: {
 					details,
 				},
