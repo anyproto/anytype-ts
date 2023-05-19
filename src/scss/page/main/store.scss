@@ -62,7 +62,7 @@
 			.item { height: 48px; line-height: 48px; display: flex; position: relative; justify-content: space-between; }
 			.item {
 				.flex { 
-					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 700;
+					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 600;
 					gap: 0px 8px; transition: $transitionAllCommon; max-width: calc(100% - 70px);
 				}
 				.flex:hover { background: $colorHoverMedium; }

@@ -2,6 +2,7 @@ import { I } from 'Lib';
 
 export interface PopupParam {
 	data?: any;
+	className?: string;
 	preventResize?: boolean;
 	preventMenuClose?: boolean;
 	onClose?(): void;

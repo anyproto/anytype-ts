@@ -428,9 +428,12 @@ class Keyboard {
 				};
 
 				popupStore.open('confirm', {
+					className: 'isWide isLeft',
 					data: {
-						title: 'Anytype ID',
-						text: account.id,
+						text: [
+							`<b>Account ID:</b> ${account.id}`,
+							`<b>Analytics ID:</b> ${account.info.analyticsId}`,
+						].join('<br/>'),
 						textConfirm: 'Copy',
 						textCancel: 'Close',
 						canConfirm: true,

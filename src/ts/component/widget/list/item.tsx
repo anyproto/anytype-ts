@@ -1,4 +1,6 @@
 import * as React from 'react';
+import raf from 'raf';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget } from 'Component';
 import { blockStore, menuStore, detailStore } from 'Store';
@@ -17,6 +19,7 @@ type Props = {
 const WidgetListItem = observer(class WidgetListItem extends React.Component<Props> {
 
 	node = null;
+	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -100,6 +103,14 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		);
 	};
 
+	componentDidMount (): void {
+		this.resize();
+	};
+
+	componentDidUpdate (): void {
+		this.resize();
+	};
+
 	onClick = (e: React.MouseEvent, item: unknown): void => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -158,6 +169,19 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 
 		ObjectUtil.setDone(id, !object.done);
+	};
+
+	resize () {
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			const node = $(this.node);
+			const icon = node.find('.iconObject');
+
+			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+		});
 	};
 
 });

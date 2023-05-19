@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Loader } from 'Component';
-import { I, Util, ObjectUtil, DataUtil, translate, Storage, Action } from 'Lib';
+import { I, Util, ObjectUtil, DataUtil, translate, Storage, Action, analytics } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -27,16 +27,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	node: any = null;
 	state = {
-		loading: false,
+		loading: false
 	};
 
 	constructor (props: Props) {
 		super(props);
 
+		this.onSetPreview = this.onSetPreview.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onOptions = this.onOptions.bind(this);
 		this.onToggle = this.onToggle.bind(this);
+		this.onDragEnd = this.onDragEnd.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 		this.getData = this.getData.bind(this);
 	};
@@ -83,7 +85,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		};
 
 		if (isPreview) {
-			back = <Icon className="back" onClick={() => setPreview('')} />
+			back = (
+				<Icon
+					className="back"
+					onClick={() => {
+						setPreview('');
+						analytics.event('ScreenHome', { view: 'Widget' });
+					}}
+				/>
+			);
 		} else {
 			buttons = (
 				<div className="buttons">
@@ -102,7 +112,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			if (!this.isCollection(targetBlockId)) {
 				onClick = e => ObjectUtil.openEvent(e, object);
 			} else {
-				onClick = () => setPreview(isPreview ? '' : block.id);
+				onClick = () => this.onSetPreview();
 			};
 
 			head = (
@@ -153,6 +163,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				draggable={isEditing}
 				onDragStart={e => onDragStart(e, block.id)}
 				onDragOver={e => onDragOver ? onDragOver(e, block.id) : null}
+				onDragEnd={this.onDragEnd}
 			>
 				<Icon className="remove" inner={<div className="inner" />} onClick={this.onRemove} />
 
@@ -217,7 +228,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	onRemove (e: React.MouseEvent): void {
 		e.stopPropagation();
-		Action.removeWidget(this.props.block.id);
+		Action.removeWidget(this.props.block.id, this.getObject());
 	};
 
 	onClick (e: React.MouseEvent): void {
@@ -354,6 +365,29 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			limit,
 			keys: Constant.sidebarRelationKeys,
 		}, callBack);
+	};
+
+	onSetPreview () {
+		const { block, isPreview, setPreview } = this.props;
+		const object = this.getObject();
+
+		let blockId = '';
+		let eventName = 'ScreenHome';
+		let eventData: any = { view: 'Widget' };
+
+		if (!isPreview) {
+			blockId = block.id;
+			eventName = 'SelectHomeTab';
+			eventData.tab = this.isCollection(block.id) ? object.name : analytics.typeMapper(object.type);
+		};
+
+		setPreview(blockId);
+		analytics.event(eventName, eventData);
+	};
+
+	onDragEnd () {
+		const target = this.getObject();
+		analytics.event('ReorderWidget', { target });
 	};
 
 	isCollection (blockId: string) {

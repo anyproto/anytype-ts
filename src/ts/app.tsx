@@ -387,6 +387,7 @@ class App extends React.Component<object, State> {
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('command', this.onCommand);
 		Renderer.on('spellcheck', this.onSpellcheck);
+		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
 		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
 		Renderer.on('shutdownStart', () => {
@@ -395,8 +396,17 @@ class App extends React.Component<object, State> {
 			Storage.delete('menuSearchText');
 		});
 
+<<<<<<< HEAD
 		Renderer.on('config', (e: any, config: any) => {
 			commonStore.configSet(config, true);
+=======
+		Renderer.on('zoom', () => {
+			const resizable = $('.resizable');
+
+			if (resizable.length) {
+				resizable.trigger('resizeInit');
+			};
+>>>>>>> master
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {

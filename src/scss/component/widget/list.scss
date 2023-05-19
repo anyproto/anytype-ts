@@ -82,13 +82,21 @@
 	.body {
 		.item { height: 64px; }
 		.item {
+			.info { width: 100%; }
 			.inner { padding: 8px; gap: 0px 12px; }
-			.info { width: calc(100% - 60px); }
 			.iconObject { background: $colorVeryLightGrey; border-radius: 10px; }
 		}
 		.item:hover, .item.active {
+			.info { width: calc(100% - 36px); }
+		}
+
+		.item.withIcon {
+			.info { width: calc(100% - 60px); }
+		}
+		.item.withIcon:hover, .item.withIcon.active {
 			.info { width: calc(100% - 96px); }
 		}
+
 		.item::before { border-radius: 8px; }
 	}
 }

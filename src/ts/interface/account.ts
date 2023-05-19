@@ -20,6 +20,7 @@ export interface AccountInfo {
 	localStoragePath: string;
 	accountSpaceId: string;
 	widgetsId: string;
+	analyticsId: string;
 };
 
 export interface AccountConfig {

@@ -58,6 +58,7 @@ export const Mapper = {
 				localStoragePath: obj.getLocalstoragepath(),
 				accountSpaceId: obj.getAccountspaceid(),
 				widgetsId: obj.getWidgetsid(),
+				analyticsId: obj.getAnalyticsid(),
 			};
 		},
 
