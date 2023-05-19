@@ -1,11 +1,9 @@
 @import "~scss/_vars";
 @import "~scss/theme/dark/_vars";
 
-/*@media (prefers-color-scheme: dark) {*/
 html.themeDark {
 
     /* Common */
-    /* ---------------------------------------------------------------- */
 
     body { background: $colorBlack; color: $colorPrimary; }
 
@@ -65,7 +63,6 @@ html.themeDark {
 	}
 
     /* Components */
-    /* ---------------------------------------------------------------- */
 
 	@keyframes fill {
 		0% { background-color: $colorPrimary; }
@@ -152,6 +149,8 @@ html.themeDark {
     }
 
     .deleteWrapper { background: $colorBlack; }
+
+	.sync { background-color: $colorLineSecondary; color: $colorSecondary; }
 
     /* PreviewObject */
 
@@ -269,7 +268,6 @@ html.themeDark {
     }
 
     /* Header */
-    /* ---------------------------------------------------------------- */
 
     .header.isCommon { background: $colorBlack; }
     .header.isCommon {
@@ -304,14 +302,12 @@ html.themeDark {
     }
 
     /* Footer */
-    /* ---------------------------------------------------------------- */
 
     .footer {
         .iconWrap .bg { background-color: $colorBgIcon; }
     }
 
     /* Sidebar */
-    /* ---------------------------------------------------------------- */
 
     .sidebar { background-color: $colorBgLight; color: $colorPrimary; box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
@@ -324,9 +320,11 @@ html.themeDark {
     }
 
 	/* Navigation */
-    /* ---------------------------------------------------------------- */
 
 	.navigationPanel { background: rgba(255,255,255,0.15); }
+	.navigationPanel {
+		.iconWrap:hover { background-color: $colorHoverMedium; }
+	}
 
     @import "./menu.scss";
     @import "./popup.scss";
@@ -335,7 +333,6 @@ html.themeDark {
 	@import "./widget.scss";
 
     /* Cells */
-    /* ---------------------------------------------------------------- */
 
     .cellContent {
         .more { background-color: $colorBgIcon; color: $colorSecondary; }
