@@ -103,7 +103,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 							onContextMenu={(e: any) => { this.onViewEdit(e, `#block-${block.id} #view-selector`, view); }}
 						>
 							<div className="name">{view.name}</div>
-							<Icon className="arrow light" />
+							<Icon className="arrow dark" />
 						</div>
 
 						<Views 
@@ -129,7 +129,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 								className="addRecord c28" 
 								tooltip="Create new object" 
 								text="New" 
-								onClick={(e: any) => { onRecordAdd(e, -1); }} 
+								onClick={(e: any) => onRecordAdd(e, -1)} 
 							/>
  						) : ''}
 					</div>
@@ -217,7 +217,6 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const { rootId, block, getSources, getTarget, isInline } = this.props;
 		const sources = getSources();
 		const object = getTarget();
-
 		const newView = {
 			name: translate(`viewName${I.ViewType.Grid}`),
 			type: I.ViewType.Grid,
@@ -235,7 +234,13 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				return;
 			};
 
-			this.onViewEdit(e, `#views #view-item-${block.id}-${message.viewId}`, view);
+			this.resize();
+
+			const node = $(this.node);
+			const sideLeft = node.find('#sideLeft');
+			const element = sideLeft.hasClass('small') ? '#view-selector' : `#views #view-item-${block.id}-${message.viewId}`;
+
+			this.onViewEdit(e, element, view);
 
 			analytics.event('AddView', {
 				type: view.type,
@@ -337,7 +342,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			offset = container.offset().left;
 		};
 
-		if (left + width - offset - sw >= container.width()) {
+		if (left + width - offset - sw + 50 >= container.width()) {
 			sideLeft.addClass('small');
 		};
 

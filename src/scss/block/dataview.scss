@@ -88,7 +88,7 @@
 
 		.dataviewControls {
 			.sides { gap: 0px 16px; }
-			.side { padding: 10px 0px; white-space: nowrap; line-height: 28px; }
+			.side { padding: 15px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
 
 			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionAllCommon; }
@@ -106,7 +106,7 @@
 			}
 
 			.viewItem { 
-				transition: color $transitionCommon; cursor: pointer; @include text-paragraph; font-weight: 700; @include text-overflow-nw; 
+				transition: color $transitionCommon; cursor: pointer; @include text-header3; font-weight: 700; @include text-overflow-nw; 
 				max-width: 300px; color: $colorMediumGrey;
 			}
 			.viewItem { 
@@ -116,7 +116,7 @@
 			.viewItem:hover, .viewItem.active { color: $colorBlack; }
 			.viewItem.isDragging { background: rgba(255,255,255,0.5); padding: 0px 4px; border-radius: 4px; width: auto !important; }
 
-			.viewSelect { display: none; border: 0px; padding-left: 0px; }
+			.viewSelect { display: none; border: 0px; padding-left: 0px; color: $colorBlack; }
 			.viewSelect {
 				.icon:hover, .icon.active { background-color: transparent !important; }
 			}
@@ -178,6 +178,7 @@
 			.side.left { padding-left: 0px; }
 			.side.right { transition: opacity $transitionCommon; opacity: 0; }
 			.line { display: none; }
+			.viewItem { @include text-paragraph; }
 		}
 		.dataviewControls.active {
 			.side.right { opacity: 1; }
