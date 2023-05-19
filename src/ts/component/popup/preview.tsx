@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader, } from 'Component';
-import { I, keyboard } from 'Lib';
+import { I, keyboard, Util } from 'Lib';
 
 const BORDER = 16;
 
@@ -70,11 +70,11 @@ class PopupPreview extends React.Component<I.Popup> {
 		const { data } = param;
 		const { src, type } = data;
 		const obj = $(`#${getId()}-innerWrap`);
-		const win = $(window);
 		const wrap = obj.find('#wrap');
 		const loader = obj.find('#loader');
-		const mw = win.width() - BORDER * 2;
-		const mh = win.height() - BORDER * 2;
+		const { ww, wh } = Util.getWindowDimensions();
+		const mw = ww - BORDER * 2;
+		const mh = wh - BORDER * 2;
 
 		wrap.css({ height: 450, width: 300 });
 

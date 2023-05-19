@@ -535,10 +535,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			menuParam.horizontal = I.MenuDirection.Center;
 			menuParam.recalcRect = () => {
-				const win = $(window);
-				const ww = win.width();
-				const wh = win.height();
-
+				const { ww, wh } = Util.getWindowDimensions();
 				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
 			};
 		};

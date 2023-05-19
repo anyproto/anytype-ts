@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Icon } from 'Component';
-import { I, translate } from 'Lib';
+import { I, translate, Util } from 'Lib';
 import Head from '../../head';
 
 class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings> {
@@ -61,9 +61,7 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 	resize () {
 		const { getId } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
-		const win = $(window);
-		const ww = win.width();
-		const wh = win.height();
+		const { ww, wh } = Util.getWindowDimensions();
 		const width = Math.min(888, ww - 32);
 
 		obj.css({ width, height: wh - 96 }).addClass('scroll');

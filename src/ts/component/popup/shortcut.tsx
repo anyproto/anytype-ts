@@ -314,11 +314,11 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 		const { getId } = this.props;
 
 		raf(() => {
-			const win = $(window);
+			const { ww } = Util.getWindowDimensions();
 			const obj = $(`#${getId()}-innerWrap`);
-			const width = Math.max(732, Math.min(960, win.width() - 128));
+			const width = Math.max(732, Math.min(960, ww - 128));
 
-			obj.css({ width: width, marginLeft: -width / 2, marginTop: 0 });
+			obj.css({ width, marginLeft: -width / 2, marginTop: 0 });
 		});
 	};
 

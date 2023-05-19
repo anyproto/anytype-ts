@@ -147,11 +147,9 @@ class Navigation extends React.Component {
 		};
 
 		const isPopup = keyboard.isPopup();
-		const win = $(window);
 		const node = $(this.node);
 		const coords = Storage.get('navigation') || {};
-		const ww = win.width();
-		const wh = win.height();
+		const { ww, wh } = Util.getWindowDimensions();
 		
 		this.height = node.outerHeight();
 		this.width = node.outerWidth();
@@ -219,9 +217,7 @@ class Navigation extends React.Component {
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
-		const win = $(window);
-		const ww = win.width();
-		const wh = win.height();
+		const { ww, wh } = Util.getWindowDimensions();
 
 		x = Number(x) || 0;
 		x = Math.max(0, x);

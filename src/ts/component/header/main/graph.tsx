@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, DataUtil } from 'Lib';
+import { I, ObjectUtil, DataUtil, keyboard, sidebar } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
@@ -19,10 +19,18 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 
 	render () {
 		const { tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const cmd = keyboard.cmdSymbol();
 
 		return (
 			<React.Fragment>
 				<div className="side left">
+					<Icon
+						className="toggle big"
+						tooltip="Toggle sidebar fixed mode"
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 				</div>
 

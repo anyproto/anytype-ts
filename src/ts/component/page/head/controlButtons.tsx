@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon } from 'Component';
-import { I, DataUtil, ObjectUtil, translate, analytics, focus } from 'Lib';
+import { I, DataUtil, ObjectUtil, Util, translate, analytics, focus } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -199,10 +199,10 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	};
 
 	resize () {
-		const win = $(window);
+		const { ww } = Util.getWindowDimensions();
 		const node = $(this.node);
 
-		win.width() <= 900 ? node.addClass('small') : node.removeClass('small');
+		ww <= 900 ? node.addClass('small') : node.removeClass('small');
 	};
 	
 });

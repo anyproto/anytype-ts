@@ -601,7 +601,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getLimit () {
-		const ww = $(window).width();
+		const { ww } = Util.getWindowDimensions();
 		const size = Constant.size.store;
 		const maxWidth = ww - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));

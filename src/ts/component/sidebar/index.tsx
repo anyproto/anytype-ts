@@ -47,20 +47,18 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
                 id="sidebar" 
                 className={cn.join(' ')} 
             >
-				<div className="over">
-					<div className="head" draggable={true} onDragStart={this.onDragStart}>
-						<Icon
-							className="toggle"
-							tooltip="Toggle sidebar fixed mode"
-							tooltipCaption={`${cmd} + \\`}
-							tooltipY={I.MenuDirection.Bottom}
-							onClick={() => sidebar.toggleExpandCollapse()}
-						/>
-					</div>
+				<div className="head" draggable={true} onDragStart={this.onDragStart}>
+					<Icon
+						className="toggle"
+						tooltip="Toggle sidebar fixed mode"
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
+				</div>
 
-					<div className="body">
-						<ListWidget {...this.props} />
-					</div>
+				<div className="body">
+					<ListWidget {...this.props} />
 				</div>
 
 				<div className="resize-h" onMouseDown={e => this.onResizeStart(e, I.MenuType.Horizontal)}>

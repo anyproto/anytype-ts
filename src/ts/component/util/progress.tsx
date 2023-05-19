@@ -135,9 +135,7 @@ const Progress = observer(class Progress extends React.Component {
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
-		const win = $(window);
-		const ww = win.width();
-		const wh = win.height();
+		const { ww, wh } = Util.getWindowDimensions();
 
 		x = Number(x) || 0;
 		x = Math.max(0, x);

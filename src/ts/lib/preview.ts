@@ -58,6 +58,7 @@ class Preview {
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
+			const { ww } = Util.getWindowDimensions();
 			const node = $('<div class="tooltip anim"><div class="txt"></div></div>');
 
 			node.find('.txt').html(Util.lbBr(text));
@@ -100,7 +101,7 @@ class Preview {
 			};
 			
 			x = Math.max(BORDER, x);
-			x = Math.min(win.width() - ow - BORDER, x);
+			x = Math.min(ww - ow - BORDER, x);
 
 			node.css({ left: x, top: y }).addClass('show');
 
@@ -238,19 +239,19 @@ class Preview {
 	 * This method is used by toast to position itself on the screen
 	 */
 	toastPosition () {
-		const win = $(window);
 		const obj = $('#toast');
 		const sidebar = $('#sidebar');
 		const isRight = sidebar.hasClass('right');
 		const isPopup = keyboard.isPopup();
-		const y = win.height() - obj.outerHeight() - BORDER * 2;
+		const { ww, wh } = Util.getWindowDimensions();
+		const y = wh - obj.outerHeight() - BORDER * 2;
 
 		let sw = 0;
 		if (!isPopup && commonStore.isSidebarFixed && sidebar.hasClass('active')) {
 			sw = sidebar.outerWidth();
 		};
 
-		let x = (win.width() - sw) / 2 - obj.outerWidth() / 2;
+		let x = (ww - sw) / 2 - obj.outerWidth() / 2;
 		if (!isRight) {
 			x += sw;
 		};

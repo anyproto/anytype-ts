@@ -7,8 +7,8 @@
 }
 
 .sidebar {
-	position: fixed; background-color: $colorVeryLightGrey; z-index: 21; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); display: flex;
-	flex-direction: column; user-select: none; transition: none;
+	position: fixed; background-color: $colorVeryLightGrey; z-index: 21; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 
+	user-select: none; transition: none;
 }
 
 .sidebar.left { left: 0px; transform: translate3d(-110%, 0px, 0px); }
@@ -31,30 +31,27 @@
 	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px rgba(0, 0, 0, 0); transform: translate3d(0px, 0px, 0px);
 }
 .sidebar.fixed {
-	.over > .head { height: 52px; cursor: default; }
-	.over > .head {
+	> .head { height: 52px; cursor: default; }
+	> .head {
 		.icon { display: block; }
 		.icon:hover { background-color: $colorHoverMedium; }
 	}
+	> .body { height: calc(100% - 52px); }
 	.resize-v { display: none; }
 }
 .sidebar.anim { transition-property: left, top, width, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease-in-out; }
 .sidebar.active { transform: translate3d(0px, 0px, 0px); }
 
 .sidebar {
-	.over { width: 100%; overflow: hidden; }
-	.over {
-		> .top { display: flex; flex-direction: row-reverse; }
-		> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overscroll-behavior: none; }
-
-		> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 52px; cursor: grab; }
-		> .head {
-			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; }
-			.icon:hover { background-color: $colorHoverMedium; }
-			.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
-			.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
-		}
+	> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 12px; cursor: grab; }
+	> .head {
+		.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; display: none; }
+		.icon:hover { background-color: $colorHoverMedium; }
+		.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
+		.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
 	}
+
+	> .body { height: calc(100% - 12px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overscroll-behavior: none; }
 
 	.resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: -5px; cursor: col-resize; }
 	.resize-h {
@@ -67,24 +64,27 @@
 			border-radius: 3px; opacity: 0; transition: $transitionAllCommon;
 		}
 	}
-	.resize-h:hover .resize-handle::after,
-	.resize-h:active .resize-handle::after { background-color: $colorBorderDark; opacity: 1; }
-	.resize-h:active .resize-handle { height: 64px; margin-top: -32px; }
+	.resize-h:hover, .resize-h:active {
+		.resize-handle::after { opacity: 1; }
+	}
+	.resize-h:active {
+		.resize-handle { height: 64px; margin-top: -32px; }
+	}
+	.resize-handle:hover::after, .resize-handle:active::after { background-color: $colorBorderDark; }
 
 	.resize-v { height: 10px; width: 100%; position: absolute; bottom: -5px; left: 0px; cursor: row-resize; }
-
 	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 }
 .sidebar:hover {
-	.over > .body { overflow-y: auto; }
+	> .body { overflow-y: auto; }
 }
 
 html.platformWindows {
 	.sidebar.fixed {
-		.over > .head { height: 38px; }
+		> .head { height: 38px; }
 	}
 
 	.sidebar:hover {
-		.over > .body { overflow-y: overlay; }
+		> .body { overflow-y: overlay; }
 	}
 }	

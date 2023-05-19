@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, ObjectUtil } from 'Lib';
+import { I, ObjectUtil, keyboard, sidebar } from 'Lib';
 
 const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent, object> {
 
@@ -13,10 +13,18 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 
 	render () {
 		const { tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const cmd = keyboard.cmdSymbol();
 		
 		return (
 			<React.Fragment>
 				<div className="side left">
+					<Icon
+						className="toggle big"
+						tooltip="Toggle sidebar fixed mode"
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
 				</div>
 

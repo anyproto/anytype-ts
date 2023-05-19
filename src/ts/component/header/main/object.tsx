@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, DataUtil, ObjectUtil, keyboard } from 'Lib';
+import { I, DataUtil, ObjectUtil, keyboard, sidebar } from 'Lib';
 import { blockStore, detailStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -23,12 +23,20 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !ObjectUtil.isStoreType(object.type);
 		const canSync = showMenu && !object.templateIsBundled;
+		const cmd = keyboard.cmdSymbol();
 
 		return (
 			<React.Fragment>
 				<div className="side left">
-					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
+					<Icon
+						className="toggle big"
+						tooltip="Toggle sidebar fixed mode"
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
 				</div>
 
 				<div className="side center">

@@ -44,7 +44,7 @@ class Sidebar {
 		if (stored) {
 			this.set(stored);
 		} else {
-			const { wh } = this.getWindowDimensions();
+			const { wh } = Util.getWindowDimensions();
 			const height = this.getMaxHeight();
 			const y = wh / 2 - height / 2;
 
@@ -96,7 +96,7 @@ class Sidebar {
 
 		const { x } = keyboard.mouse.page;
 		const { width, snap } = this.data;
-		const { ww } = this.getWindowDimensions();
+		const { ww } = Util.getWindowDimensions();
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview', 'widget' ]);
 		const popupOpen = popupStore.isOpen();
 
@@ -308,7 +308,7 @@ class Sidebar {
 	resize (): void {
 		const { isSidebarFixed } = commonStore;
 		const { snap, width } = this.data;
-		const { ww } = this.getWindowDimensions();
+		const { ww } = Util.getWindowDimensions();
 		const set: Partial<SidebarData> = {};
 
 		if (!isSidebarFixed) {
@@ -341,7 +341,7 @@ class Sidebar {
 			};
 		};
 
-		const { ww } = this.getWindowDimensions();
+		const { ww } = Util.getWindowDimensions();
 		const pageWidth = ww - width;
 		const css: any = { width: '' };
 		const cssLoader: any = { width: pageWidth, left: '', right: '' };
@@ -477,28 +477,19 @@ class Sidebar {
 	};
 
 	/**
-	 * Get width and height of window DOM node
-	 */
-	private getWindowDimensions (): { ww: number; wh: number } {
-		const win = $(window);
-		const ww = win.width();
-		const wh = win.height();
-
-		return { ww, wh };
-	};
-
-	/**
 	 * Get the side to snap the sidebar to
 	 */
 	private getSnap (x: number, width: number): I.MenuDirection.Left | I.MenuDirection.Right | null {
-		const { ww } = this.getWindowDimensions();
+		const { ww } = Util.getWindowDimensions();
 
 		if (x <= SNAP_THRESHOLD) {
 			return I.MenuDirection.Left;
 		} else 
+		/*
 		if (x + width >= ww - SNAP_THRESHOLD) {
 			return I.MenuDirection.Right;
 		} else 
+		*/
 		if (commonStore.isSidebarFixed) {
 			return I.MenuDirection.Left;
 		} else {
@@ -510,7 +501,7 @@ class Sidebar {
 	 * Get max height allowed
 	 */
 	private getMaxHeight (): number {
-		const { wh } = this.getWindowDimensions();
+		const { wh } = Util.getWindowDimensions();
 		return wh - Util.sizeHeader() - 52 - 10;
 	};
 
@@ -518,7 +509,7 @@ class Sidebar {
 	 * Limit the sidebar coordinates to the max and min bounds
 	 */
 	private limitCoords (x: number, y: number, width: number, height: number ): { x: number; y: number } {
-		const { ww, wh } = this.getWindowDimensions();
+		const { ww, wh } = Util.getWindowDimensions();
 		const hh = Util.sizeHeader();
 
 		x = Number(x);

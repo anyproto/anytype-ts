@@ -987,6 +987,14 @@ class Util {
 		return isPopup ? '-popup' : '';
 	};
 
+	/**
+	 * Get width and height of window DOM node
+	 */
+	getWindowDimensions (): { ww: number; wh: number } {
+		const win = $(window);
+		return { ww: win.width(), wh: win.height() };
+	};
+
 };
 
 export default new Util();
