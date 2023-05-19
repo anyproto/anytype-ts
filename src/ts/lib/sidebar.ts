@@ -275,17 +275,17 @@ class Sidebar {
 	};
 
 	toggleOpenClose () {
-		if (this.isAnimating) {
-			return;
+		if (!this.isAnimating) {
+			this.data.width ? this.close() : this.open(Constant.size.sidebar.width.default);
 		};
-
-		const { width } = this.data;
-		const dw = Constant.size.sidebar.width.default;
-
-		width == 0 ? this.open(dw) : this.close();
 	};
 
 	toggleExpandCollapse () {
+		if (!this.data.width) {
+			this.setWidth(Constant.size.sidebar.width.default);
+			$(window).trigger('resize');
+		};
+
 		commonStore.isSidebarFixed ? this.collapse() : this.expand();
 	};
 
