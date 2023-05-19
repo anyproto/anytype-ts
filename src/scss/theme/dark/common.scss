@@ -246,7 +246,7 @@ html.themeDark {
     .iconObject.withLetter
     { background-color: $colorBgIcon; }
 
-	.iconObject.withOption.isSpace { background: #fff; }
+	.iconObject.withOption.isSpace { background: $colorHoverMedium; }
 
     /* EditorControls */
 
@@ -313,7 +313,7 @@ html.themeDark {
     /* Sidebar */
     /* ---------------------------------------------------------------- */
 
-    .sidebar { background-color: $colorBlack; color: $colorPrimary; box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
+    .sidebar { background-color: $colorBgLight; color: $colorPrimary; box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
     .sidebar {
 		> .head {
@@ -322,6 +322,11 @@ html.themeDark {
 
 		.resize-h .resize-handle::after { background-color: $colorBgIcon; }
     }
+
+	/* Navigation */
+    /* ---------------------------------------------------------------- */
+
+	.navigationPanel { background: rgba(255,255,255,0.15); }
 
     @import "./menu.scss";
     @import "./popup.scss";

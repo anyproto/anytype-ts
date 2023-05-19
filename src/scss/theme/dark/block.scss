@@ -107,12 +107,6 @@
             .viewItem.isDragging { background: $colorHoverMedium; }
 
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
-			/*
-            .icon.search { background-image: url('#{$themePath}/icon/dataview/button/search0.svg'); }
-			.icon.manager { background-image: url('#{$themePath}/icon/dataview/button/manager0.svg'); }
-			.icon.plus { background-image: url('#{$themePath}/icon/dataview/button/plus0.svg'); }
-			*/
-
 			.icon.filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
 			.icon.sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
@@ -169,7 +163,7 @@
 		}
 
         .viewContent.viewGallery {
-            .card { background: $colorBlack; border-color: $colorLinePrimary; }
+            .card { background: $colorBlack; border-color: rgba(229, 229, 229, 0.1); }
             .card {
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
@@ -177,7 +171,7 @@
 
         .viewContent.viewBoard {
 			.ghost { border-color: $colorOrange; }
-            .cardContent { background: $colorBgLight; border-color: $colorLineSecondary; }
+            .cardContent { background: $colorBgLight; border-color: rgba(229, 229, 229, 0.1); }
 			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
 
 			.column {
