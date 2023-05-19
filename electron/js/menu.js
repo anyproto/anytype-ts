@@ -299,7 +299,7 @@ class MenuManager {
 			Separator,
 
 			{ label: 'Settings', click: () => { show(); Util.send(this.win, 'popup', 'settings', {}, true); } },
-			{ label: 'Check for updates', click: () => { show(); UpdateManager.checkUpdate(false); } },
+			{ label: 'Check for updates', click: () => { show(); Api.updateCheck(this.win); } },
 
 			Separator,
 
