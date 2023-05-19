@@ -294,6 +294,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						if (isEditing) {
 							this.save();
 						};
+
+						analytics.event('ChangeWidgetSource', {
+							route: isEditing ? 'Inner' : 'AddWidget',
+							target: target
+						});
 					},
 				});
 				break;
@@ -312,6 +317,12 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						if (isEditing) {
 							this.save();
 						};
+
+						analytics.event('ChangeWidgetSource', {
+							layout: I.WidgetLayout[this.layout],
+							route: isEditing ? 'Inner' : 'AddWidget',
+							target: this.target
+						});
 					},
 				});
 				break;
@@ -331,15 +342,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, setEditing } = data;
+		const { blockId, setEditing, target } = data;
 
 		switch (item.itemId) {
 			case 'remove':
-				Action.removeWidget(blockId);
+				Action.removeWidget(blockId, target);
 				break;
 
 			case 'edit':
 				setEditing(true);
+				analytics.event('EditWidget');
 				break;
 		};
 

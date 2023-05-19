@@ -159,7 +159,7 @@
 		}
 
 		.side.right.tabAppearance {
-			.buttons { display: flex; gap: 0px 34px; margin: 0px 0px 32px 0px; }
+			.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 32px 0px; flex-wrap: wrap; }
 			.label.section { margin-bottom: 8px; }
 
 			.btn { text-align: center; @include text-small; color: $colorDarkGrey; cursor: pointer; }
@@ -198,11 +198,17 @@
 
 		.side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
-			.items { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+			.items { display: flex; gap: 16px; flex-wrap: wrap; }
 			.item { 
-				height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
+				width: 164px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
 				position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
 			}
+
+			@media (max-width: 700px) {
+				.items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+				.item { width: auto; }
+			}
+
 			.item:hover { border-color: $colorBlack; }
 
 			.item {

@@ -10,7 +10,6 @@ import Url from 'json/url.json';
 
 interface State {
 	isEditing: boolean;
-	justUploaded: boolean;
 };
 
 const BlockCover = observer(class BlockCover extends React.Component<I.BlockComponent, State> {
@@ -19,7 +18,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	node: any = null;
 	state = {
 		isEditing: false,
-		justUploaded: false,
 	};
 	cover: any = null;
 	refDrag: any = null;
@@ -31,7 +29,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	loaded = false;
 	scale = 0;
 	coords: { x: number, y: number } = { x: 0, y: 0 };
-	old: any = null;
 	
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -310,14 +307,12 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	onUpload (type: I.CoverType, hash: string) {
 		const { rootId } = this.props;
 
-		this.old = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		this.coords.x = 0;
 		this.coords.y = -0.25;
 		this.scale = 0;
 
 		ObjectUtil.setCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
-			this.setState({ justUploaded: true });
 			this.setLoading(false);
 		});
 	};
@@ -330,8 +325,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
 		ObjectUtil.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
-			this.old = null;
-			this.setState({ isEditing: false, justUploaded: false });
+			this.setState({ isEditing: false });
 		});
 	};
 	
@@ -339,15 +333,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId } = this.props;
-		const { justUploaded } = this.state;
-
-		if (justUploaded && this.old) {
-			ObjectUtil.setCover(rootId, this.old.coverType, this.old.coverId, this.old.coverX, this.old.coverY, this.old.coverScale);
-		};
-		
-		this.old = null;
-		this.setState({ isEditing: false, justUploaded: false });
+		this.setState({ isEditing: false });
 	};
 	
 	resize () {

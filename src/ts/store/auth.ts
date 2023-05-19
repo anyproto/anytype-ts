@@ -1,7 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import { I, M, C, Storage, analytics, Renderer } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore } from 'Store';
-import * as Sentry from '@sentry/browser';
 import { keyboard } from 'Lib';
 
 class AuthStore {
@@ -124,8 +123,6 @@ class AuthStore {
 		if (account.id) {
 			Storage.set('accountId', account.id);
 			Renderer.send('setAccount', this.accountItem);
-
-			Sentry.setUser({ id: account.id });
 		};
     };
 
@@ -178,7 +175,7 @@ class AuthStore {
 		});
 
 		analytics.event('LogOut');
-		analytics.profile({ id: '' });
+		analytics.profile('');
 
 		keyboard.setPinChecked(false);
 

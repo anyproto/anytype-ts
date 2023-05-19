@@ -35,7 +35,8 @@ class Popup extends React.Component<I.Popup> {
 	};
 
 	render () {
-		const { id } = this.props;
+		const { id, param } = this.props;
+		const { className } = param;
 
 		const Components: any = {
 			settings:	 PopupSettings,
@@ -54,6 +55,10 @@ class Popup extends React.Component<I.Popup> {
 		const popupId = this.getId();
 		const Component = Components[id];
 		const cn = [ 'popup', popupId ];
+
+		if (className) {
+			cn.push(className);
+		};
 		
 		if (!Component) {
 			return <div>Component {id} not found</div>

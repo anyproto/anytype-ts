@@ -387,13 +387,22 @@ class App extends React.Component<object, State> {
 		Renderer.on('spellcheck', this.onSpellcheck);
 		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
+		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
+		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
+		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
 		Renderer.on('shutdownStart', () => { 
 			this.setState({ loading: true }); 
 
 			Storage.delete('menuSearchText');
 		});
 
-		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
+		Renderer.on('zoom', () => {
+			const resizable = $('.resizable');
+
+			if (resizable.length) {
+				resizable.trigger('resizeInit');
+			};
+		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
 			commonStore.nativeThemeSet(isDark);

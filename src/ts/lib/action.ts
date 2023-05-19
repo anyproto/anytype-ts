@@ -142,7 +142,7 @@ class Action {
 		});
 	};
 
-	removeWidget (id: string) {
+	removeWidget (id: string, target: any) {
 		const { widgets } = blockStore;
 		const block = blockStore.getLeaf(widgets, id);
 
@@ -159,7 +159,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget');
+		analytics.event('DeleteWidget', { target });
 	};
 
 	focusToEnd (rootId: string, id: string) {
