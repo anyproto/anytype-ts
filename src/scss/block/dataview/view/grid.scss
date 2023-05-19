@@ -3,8 +3,8 @@
 .blocks {
 	.block.blockDataview {
 		.cellHead { 
-			text-align: left; color: $colorDarkGrey; font-weight: 400; line-height: 20px; position: relative; height: 38px;
-			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon;
+			@include text-small; text-align: left; color: $colorDarkGrey; font-weight: 400; line-height: 20px; position: relative; height: 38px;
+			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
 		}
 		.cellHead {
 			.cellContent { cursor: grab; height: 36px !important; overflow: visible !important; }
