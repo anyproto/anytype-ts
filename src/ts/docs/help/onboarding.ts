@@ -100,7 +100,7 @@ export default {
                 name: 'Connect your Objects',
                 description: `Use the <span class="highlight">@</span> key to reference other Objects as you're writing.`,
                 param: {
-                    element: '#block-featuredRelations #blockFeatured-type-0',
+                    element: '#block-featuredRelations',
                     offsetY: 10,
                 }
             },
@@ -108,7 +108,7 @@ export default {
                 name: 'Did you know?',
                 description: `You can drag &amp; drop files from your computer into the editor window to create new blocks. Give it a try!`,
                 param: {
-                    element: '#block-featuredRelations #blockFeatured-type-0',
+                    element: '#block-featuredRelations',
                     offsetY: 10,
                 }
             },
@@ -140,7 +140,7 @@ export default {
 				name: 'This Type has been deleted',
 				description: 'If you want to keep using this Object, change this Object Type.',
 				param: {
-					element: '#block-featuredRelations #blockFeatured-type-0',
+					element: '#block-featuredRelations',
 					offsetY: 10,
 				}
 			},
@@ -153,7 +153,7 @@ export default {
 				name: 'Please check your Installed Types & Relations',
 				description: 'Some Objects in this Set use Types or Relations that have been removed from your Space. Visit the Marketplace to re-install these entities and continue using your Set.',
 				param: {
-					element: '#block-featuredRelations #blockFeatured-setOf-0',
+					element: '#block-featuredRelations',
 					offsetY: 10,
 				}
 			},

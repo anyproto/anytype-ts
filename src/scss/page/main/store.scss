@@ -7,13 +7,13 @@
 
 	.body { width: 100%; height: 100%; display: flex; flex-direction: column; }
 	.body {
-		.mid { text-align: center; padding: 60px 0px 52px 0px; margin: 0px auto; width: 640px; }
+		.mid { text-align: center; padding: 60px 0px 52px 0px; margin: 0px auto; max-width: 640px; }
 		.mid {
 			.title { margin-bottom: 25px; line-height: 40px; }
-			.label { @include text-paragraph; margin: 0px auto 24px auto; width: 610px; }
+			.label { @include text-paragraph; margin: 0px auto 24px auto; max-width: 610px; }
 
 			.filter { 
-				width: 512px; height: 48px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 10px; padding: 0px; text-align: center; 
+				max-width: 512px; height: 48px; margin: 0px auto; border: 1px solid $colorBorderDark; border-radius: 10px; padding: 0px; text-align: center;
 				cursor: pointer;
 			}
 			.filter {
@@ -29,6 +29,10 @@
 				.input { display: block; }
 				.placeholder { position: absolute; }
 				.filterInputWrap { width: 100%; }
+			}
+
+			@media (max-width: 960px) {
+				.title { @include text-header1; }
 			}
 		}
 
@@ -58,7 +62,7 @@
 			.item { height: 48px; line-height: 48px; display: flex; position: relative; justify-content: space-between; }
 			.item {
 				.flex { 
-					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 700;
+					flex-direction: row; align-items: center; padding: 14px 16px 14px 14px; border: 1px solid $colorBorderDark; border-radius: 10px; font-weight: 600;
 					gap: 0px 8px; transition: $transitionAllCommon; max-width: calc(100% - 70px);
 				}
 				.flex:hover { background: $colorHoverMedium; }

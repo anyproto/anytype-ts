@@ -170,7 +170,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 		} else 
 		if (this.target) {
-			if ((this.layout == I.WidgetLayout.List) && !setTypes.includes(this.target.type)) {
+			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !setTypes.includes(this.target.type)) {
 				this.layout = I.WidgetLayout.Link;
 			};
 			if ((this.layout == I.WidgetLayout.Tree) && setTypes.includes(this.target.type)) {
@@ -187,33 +187,35 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	getLayoutOptions () {
 		const isCollection = this.isCollection();
-
-		let options = [];
-		if (isCollection) {
-			options = [
-				I.WidgetLayout.List,
-				I.WidgetLayout.Tree,
-			];
-		} else {
-			options = [
-				I.WidgetLayout.Tree,
-				I.WidgetLayout.List,
-				I.WidgetLayout.Link,
-			];
+		
+		let options = [
+			I.WidgetLayout.List,
+			I.WidgetLayout.Compact,
+			I.WidgetLayout.Tree,
+		];
+		if (!isCollection) {
+			options.push(I.WidgetLayout.Link);
 		};
 
-		if (this.target && !isCollection) {
-			const setTypes = ObjectUtil.getSetTypes();
-			const treeSkipTypes = setTypes.concat(ObjectUtil.getSystemTypes()).concat(ObjectUtil.getFileTypes());
+		if (this.target) {
+			if (!isCollection) {
+				const setTypes = ObjectUtil.getSetTypes();
+				const treeSkipTypes = setTypes.concat(ObjectUtil.getSystemTypes()).concat(ObjectUtil.getFileTypes());
 
-			// Sets can only become Link and List layouts, non-sets can't become List
-			if (treeSkipTypes.includes(this.target.type)) {
+				// Sets can only become Link and List layouts, non-sets can't become List
+				if (treeSkipTypes.includes(this.target.type)) {
+					options = options.filter(it => it != I.WidgetLayout.Tree);
+				};
+				if (!setTypes.includes(this.target.type)) {
+					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
+				};
+			};
+
+			if (this.target.id == Constant.widgetId.set) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
-			if (!setTypes.includes(this.target.type)) {
-				options = options.filter(it => it != I.WidgetLayout.List);
-			};
 		};
+
 
 		return options.map(id => ({
 			id,
@@ -272,8 +274,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					dataChange: (items: any[]) => {
 						const fixed: any[] = [
 							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
-							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':books:' },
-							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':open_file_folder:' },
+							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':mag:' },
+							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':card_index_dividers:' },
 							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 						];
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
@@ -282,7 +284,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						this.target = target;
 						
 						const options = this.getLayoutOptions();
-						if (options.length) {
+						if (options.length && !this.layout) {
 							this.layout = options[0].id;
 						};
 
@@ -292,6 +294,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						if (isEditing) {
 							this.save();
 						};
+
+						analytics.event('ChangeWidgetSource', {
+							route: isEditing ? 'Inner' : 'AddWidget',
+							target: target
+						});
 					},
 				});
 				break;
@@ -310,6 +317,12 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						if (isEditing) {
 							this.save();
 						};
+
+						analytics.event('ChangeWidgetSource', {
+							layout: I.WidgetLayout[this.layout],
+							route: isEditing ? 'Inner' : 'AddWidget',
+							target: this.target
+						});
 					},
 				});
 				break;
@@ -329,15 +342,16 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const { param, close } = this.props;
 		const { data } = param;
-		const { blockId, setEditing } = data;
+		const { blockId, setEditing, target } = data;
 
 		switch (item.itemId) {
 			case 'remove':
-				Action.removeWidget(blockId);
+				Action.removeWidget(blockId, target);
 				break;
 
 			case 'edit':
 				setEditing(true);
+				analytics.event('EditWidget');
 				break;
 		};
 
@@ -389,20 +403,26 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		if (coords) {
 			const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
 
-			if (widgetIds.length) {
-				let prevY = 0;
-				for (let id of widgetIds) {
-					const item = $(`#widget-${id}`);
-					const { top } = item.offset();
-					const height = item.outerHeight();
-					
-					if ((coords.y >= prevY) && (coords.y <= top + height + 12)) {
-						targetId = id;
-						break;
-					};
+			if (!widgetIds.length) {
+				return '';
+			};
 
-					prevY = top;
+			let prevY = 0;
+			for (let id of widgetIds) {
+				const item = $(`#widget-${id}`);
+				if (!item || !item.length) {
+					continue;
 				};
+
+				const { top } = item.offset();
+				const height = item.outerHeight();
+				
+				if ((coords.y >= prevY) && (coords.y <= top + height + 12)) {
+					targetId = id;
+					break;
+				};
+
+				prevY = top;
 			};
 		};
 

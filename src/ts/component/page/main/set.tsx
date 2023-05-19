@@ -3,8 +3,8 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, DataUtil, Util, Action, ObjectUtil } from 'Lib';
-import { blockStore, detailStore } from 'Store';
+import { I, M, C, DataUtil, Util, Action, ObjectUtil, keyboard, analytics } from 'Lib';
+import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
 import Errors from 'json/error.json';
@@ -24,6 +24,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	loading = false;
 	composition = false;
 	timeout = 0;
+	blockRefs: any = {};
 
 	state = {
 		isDeleted: false,
@@ -63,11 +64,12 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 				<div className="blocks wrapper">
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-					<HeadSimple ref={ref => { this.refHead = ref;}} type={isCollection ? 'collection' : 'set'} rootId={rootId} />
+					<HeadSimple ref={ref => this.refHead = ref} type={isCollection ? 'Collection' : 'Set'} rootId={rootId} />
 
 					{children.map((block: I.Block, i: number) => (
 						<Block 
 							{...this.props} 
+							ref={ref => this.blockRefs[block.id] = ref}
 							key={block.id} 
 							rootId={rootId} 
 							iconSize={20} 
@@ -85,6 +87,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	componentDidMount () {
 		this._isMounted = true;
 		this.open();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -95,6 +98,30 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.close();
+		this.unbind();
+	};
+
+	unbind () {
+		const namespace = this.getNamespace();
+		const events = [ 'keydown', 'scroll' ];
+
+		$(window).off(events.map(it => `${it}.set${namespace}`).join(' '));
+	};
+
+	rebind () {
+		const { isPopup } = this.props;
+		const win = $(window);
+		const namespace = this.getNamespace();
+		const container = Util.getScrollContainer(isPopup);
+
+		this.unbind();
+
+		win.on('keydown.set' + namespace, e => this.onKeyDown(e));
+		container.on('scroll.set' + namespace, e => this.onScroll());
+	};
+
+	getNamespace () {
+		return this.props.isPopup ? '-popup' : '';
 	};
 
 	open () {
@@ -149,6 +176,61 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	getRootId () {
 		const { rootId, match } = this.props;
 		return rootId ? rootId : match.params.id;
+	};
+
+	onScroll () {
+		const { dataset, isPopup } = this.props;
+
+		if (!isPopup && popupStore.isOpen('page')) {
+			return;
+		};
+
+		const { selection } = dataset || {};
+		if (selection) {
+			selection.renderSelection();
+		};
+	};
+
+	onKeyDown (e: any): void {
+		const { dataset, isPopup } = this.props;
+
+		if (!isPopup && popupStore.isOpen('page')) {
+			return;
+		};
+
+		const { selection } = dataset || {};
+		const cmd = keyboard.cmdKey();
+		const ids = selection ? selection.get(I.SelectType.Record) : [];
+		const count = ids.length;
+		const ref = this.blockRefs[Constant.blockId.dataview]?.ref;
+		const rootId = this.getRootId();
+
+		if (!ref) {
+			return;
+		};
+
+		keyboard.shortcut(`${cmd}+n`, e, () => { 
+			ref.onRecordAdd(e, 0, true); 
+		});
+
+		if (!keyboard.isFocused) {
+			keyboard.shortcut(`${cmd}+a`, e, () => {
+				const subId = dbStore.getSubId(rootId, Constant.blockId.dataview);
+				const records = dbStore.getRecords(subId, '');
+
+				selection.set(I.SelectType.Record, records);
+			});
+		};
+
+		if (count) {
+			keyboard.shortcut('backspace, delete', e, () => {
+				e.preventDefault();
+				C.ObjectListSetIsArchived(ids, true);
+				
+				selection.clear();
+				analytics.event('MoveToBin', { count });
+			});
+		};
 	};
 
 	resize () {

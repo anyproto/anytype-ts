@@ -112,7 +112,7 @@ export interface ViewComponent {
 	onRef?(ref: any, id: string): void;
 	loadData(viewId: string, offset: number, clear: boolean, callBack?: (message: any) => void): void;
 	getRecords?(): string[];
-	getRecord(index: number): any;
+	getRecord(id: string): any;
 	getView?(): View;
 	getSources?(): string[];
 	getTarget?(): any;
@@ -122,11 +122,12 @@ export interface ViewComponent {
 	getVisibleRelations?(): I.ViewRelation[];
 	getEmpty?(type: string): any;
 	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
-	onCellClick?(e: any, key: string, index: number): void;
+	onCellClick?(e: any, key: string, id?: string): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
-	onDragRecordStart?: (e: any, index: number) => void;
-	onMultiSelect?: (id: string) => void;
+	onDragRecordStart?: (e: any, id?: string) => void;
+	onSelectToggle?: (e: React.MouseEvent, id: string) => void;
+	onSelectEnd?: () => void;
 	isAllowedObject?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
 	applyObjectOrder?: (records: any[], groupId?: string) => any[];
@@ -173,7 +174,7 @@ export interface Cell {
 	idPrefix?: string;
 	relation?: any;
 	relationKey?: string;
-	index?: number;
+	recordId: string;
 	viewType: I.ViewType;
 	readonly?: boolean;
 	canOpen?: boolean;
@@ -188,7 +189,7 @@ export interface Cell {
 	arrayLimit?: number;
 	shortUrl?: boolean;
 	getView?(): View;
-	getRecord(index: number): any;
+	getRecord(id: string): any;
 	onChange?(value: any, callBack?: (message: any) => void): void;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;

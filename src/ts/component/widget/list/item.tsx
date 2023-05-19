@@ -1,4 +1,6 @@
 import * as React from 'react';
+import raf from 'raf';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget } from 'Component';
 import { blockStore, menuStore, detailStore } from 'Store';
@@ -9,13 +11,15 @@ type Props = {
 	block: I.Block;
 	subId: string;
 	id: string;
-	isEditing?: boolean;
 	style?: any;
+	isEditing?: boolean;
+	isCompact?: boolean;
 };
 
 const WidgetListItem = observer(class WidgetListItem extends React.Component<Props> {
 
 	node = null;
+	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -26,7 +30,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	};
 
 	render () {
-		const { subId, id, block, isEditing, style } = this.props;
+		const { subId, id, block, style, isCompact, isEditing } = this.props;
 		const rootId = keyboard.getRootId();
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source, done } = object;
@@ -43,12 +47,17 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 			descr = <ObjectDescription object={object} />;
 		};
 
+		if (isCompact) {
+			descr = null;
+		};
+
 		let inner = (
 			<div className="inner">
 				<IconObject 
 					id={`widget-icon-${id}`}
 					object={object} 
-					size={48} 
+					size={isCompact ? 18 : 48} 
+					iconSize={isCompact ? 18 : 24}
 					canEdit={!isReadonly && !isArchived} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
@@ -60,7 +69,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					{descr}
 				</div>
 				<div className="buttons">
-					<Icon className="more" tooltip="Options" onClick={(e) => this.onContext(e, true)} />
+					<Icon className="more" tooltip="Options" onMouseDown={e => this.onContext(e, true)} />
 				</div>
 			</div>
 		);
@@ -68,7 +77,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		if (canDrop) {
 			inner = (
 				<DropTarget
-					cacheKey={[ block.id, id ].join('-')}
+					cacheKey={[ block.id, object.id ].join('-')}
 					id={object.id}
 					rootId={rootId}
 					targetContextId={object.id}
@@ -94,6 +103,14 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		);
 	};
 
+	componentDidMount (): void {
+		this.resize();
+	};
+
+	componentDidUpdate (): void {
+		this.resize();
+	};
+
 	onClick = (e: React.MouseEvent, item: unknown): void => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -109,6 +126,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const { subId, id } = this.props;
 		const node = $(this.node);
 		const more = node.find('.icon.more');
+		const { x, y } = keyboard.mouse.page;
 		const menuParam: any = {
 			classNameWrap: 'fromSidebar',
 			onOpen: () => {
@@ -128,10 +146,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 			menuParam.vertical = I.MenuDirection.Center;
 			menuParam.offsetX = 32;
 		} else {
-			menuParam.recalcRect = () => {
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			};
+			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
 		};
 
 		menuStore.open('dataviewContext', menuParam);
@@ -154,6 +169,19 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 
 		ObjectUtil.setDone(id, !object.done);
+	};
+
+	resize () {
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
+
+		this.frame = raf(() => {
+			const node = $(this.node);
+			const icon = node.find('.iconObject');
+
+			icon.length ? node.addClass('withIcon') : node.removeClass('withIcon');
+		});
 	};
 
 });

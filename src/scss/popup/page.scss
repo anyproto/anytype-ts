@@ -76,6 +76,11 @@
 			.footer #button-expand { display: none !important; }
 		}
 
+		.pageMainHistory { height: 100%; overflow: hidden; }
+		.pageMainHistory {
+			.header { position: absolute; }
+		}
+
 	}	
 }
 

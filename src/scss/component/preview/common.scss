@@ -2,7 +2,7 @@
 
 .previewWrapper {
 	position: absolute; left: 0px; top: 0px; width: 320px; z-index: 1000; display: none; opacity: 0;
-	transition: opacity $transitionCommon;
+	transition-duration: 0.3s; transition-timing-function: $easeInQuint; transition-property: opacity, transform;
 }
 .previewWrapper {
 	.content { background: $colorWhite; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px; position: relative; height: 100%; overflow: hidden; }
@@ -11,7 +11,7 @@
 
 	.head { 
 		padding: 10px 12px 12px 12px; letter-spacing: -0.08px; color: $colorMediumGrey; font-weight: 500;
-		position: absolute; left: 0px; width: 100%;
+		position: absolute; left: 0px; width: 100%; border-top: 1px solid $colorBorderLight; bottom: 0px; padding-bottom: 11px;
 	}
 	.head {
 		.item { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionAllCommon; }
@@ -19,18 +19,32 @@
 		.item:last-child { margin: 0px; }
 	}
 
+	.img { border-radius: 8px 8px 0px 0px; border-top: 0px; }
+
 	.previewObject { width: 100%; border-radius: 0px; }
 	.previewObject {
 		.border { display: none; }
 		.cover { border-radius: 0px; }
 	}
 }
-
-.previewWrapper {
-	.head { border-top: 1px solid $colorBorderLight; bottom: 0px; padding-bottom: 11px; }
-	.img { border-radius: 8px 8px 0px 0px; border-top: 0px; }
-}
+.previewWrapper.passThrough { pointer-events: none; }
 
 .previewWrapper.withHead {
 	.content { padding-bottom: 44px; }
+}
+
+.previewGraph {
+	background: $colorWhite; height: auto; padding: 8px 12px; border: 1px solid $colorBorderLight; border-radius: 8px; width: 320px;
+	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.previewDefault { padding: 8px 12px; }
+.previewDefault {
+    .previewHeader { display: flex; gap: 0px 2px; align-items: top; }
+	.previewHeader {
+		.iconObject { flex-shrink: 0; }
+	}
+    .name { @include text-common; text-overflow: unset; @include clamp2; white-space: normal; font-weight: 500; width: calc(100% - 22px); }
+    .descr { @include text-small; text-overflow: unset; @include clamp2; white-space: normal; }
+    .featured { @include text-very-small; color: $colorMediumGrey; }
 }

@@ -13,7 +13,8 @@ class Name extends React.Component<Props> {
 	};
 
 	render () {
-		const { object, className } = this.props;
+		const { className } = this.props;
+		const object = this.props.object || {};
 		const { layout, snippet, isDeleted } = object;
 	
 		let name = String(object.name || '');

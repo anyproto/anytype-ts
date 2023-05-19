@@ -18,9 +18,11 @@
 
 	"limit": {
 		"menuRecords": 100,
+		"widgets": 20,
 		"widgetRecords": {
 			"tree": 20,
-			"list": 4
+			"list": 10,
+			"compact": 20
 		}
 	},
 

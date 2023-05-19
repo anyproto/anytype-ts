@@ -92,7 +92,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				{featuredRelations.includes('type') ? (
 					<span className="cell canEdit">
 						<div
-							id={Relation.cellId(PREFIX, 'type', 0)}
+							id={Relation.cellId(PREFIX, 'type', object.id)}
 							className="cellContent type"
 							onClick={this.onType}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
@@ -109,11 +109,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					</span>
 				) : ''}
 
-				{featuredRelations.includes('setOf') && (object.layout == I.ObjectLayout.Set) ? (
+				{featuredRelations.includes('setOf') ? (
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
 						{bullet}
 						<div
-							id={Relation.cellId(PREFIX, 'setOf', 0)}
+							id={Relation.cellId(PREFIX, 'setOf', object.id)}
 							className="cellContent setOf"
 							onClick={this.onSource}
 							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'setOf', 'Query'); }}
@@ -133,7 +133,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				) : ''}
 
 				{items.map((relationKey: any, i: any) => {
-					const id = Relation.cellId(PREFIX + block.id, relationKey, 0);
+					const id = Relation.cellId(PREFIX + block.id, relationKey, object.id);
 					const relation = dbStore.getRelationByKey(relationKey);
 					const canEdit = allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
@@ -165,8 +165,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								block={block}
 								relationKey={relationKey}
 								getRecord={() => object}
+								recordId={object.id}
 								viewType={I.ViewType.Grid}
-								index={0}
 								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
 								pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
 								iconSize={iconSize}
@@ -283,14 +283,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 	};
 
-	onCellClick (e: any, relationKey: string, index: number) {
+	onCellClick (e: any, relationKey: string, recordId: string) {
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation || relation.isReadonlyValue) {
 			return;
 		};
 
-		const id = Relation.cellId(PREFIX, relationKey, index);
+		const id = Relation.cellId(PREFIX, relationKey, recordId);
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {
@@ -299,7 +299,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onMouseEnter (e: any, relationKey: string, text?: string) {
-		const cell = $(`#${Relation.cellId(PREFIX, relationKey, 0)}`);
+		const { rootId } = this.props;
+		const cell = $(`#${Relation.cellId(PREFIX, relationKey, rootId)}`);
 		const relation = dbStore.getRelationByKey(relationKey);
 		const show = (text: string) => {
 			Preview.tooltipShow({ text, element: cell });
@@ -338,12 +339,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		if (!typeIsDeleted && (object.type === Constant.typeId.set)) {
-			options.push({ id: 'turnCollection', name: 'Turn into collection' });
+			options.push({ id: 'turnCollection', name: 'Turn set into collection' });
 		};
 
 		const showMenu = () => {
 			menuStore.open('select', {
-				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', 0)}`,
+				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'type', rootId)}`,
 				offsetY: 8,
 				subIds: Constant.menuIds.featuredType,
 				onOpen: (context: any) => {
@@ -366,13 +367,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			DataUtil.checkSetCnt([ object.type ], (message: any) => {
 				if (message.records.length == 1) {
 					this.setId = message.records[0].id;
-					options.push({ id: 'setOpen', name: 'Open set' });
+					options.push({ id: 'setOpen', name: `Open set of ${type.name}` });
 				} else
 				if (message.records.length == 2) {
 					options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
 				} else
 				if (type && !type.isDeleted) {
-					options.push({ id: 'setCreate', name: 'Create set' });
+					options.push({ id: 'setCreate', name: `Create set of ${type.name}` });
 				};
 
 				showMenu();
@@ -515,7 +516,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		menuStore.closeAll(null, () => {
 			menuStore.open('dataviewSource', {
-				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', 0)}`,
+				element: `#block-${block.id} #${Relation.cellId(PREFIX, 'setOf', rootId)}`,
 				className: 'big single',
 				horizontal: I.MenuDirection.Center,
 				data: {
@@ -559,8 +560,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			subIds: Constant.menuIds.cell,
 			onOpen: (component: any) => {
 				if (component && component.ref) {
-					component.ref.onCellClick(e, relationKey, 0);
-					component.ref.scrollTo(relationKey, 0);
+					component.ref.onCellClick(e, relationKey);
+					component.ref.scrollTo(relationKey);
 				};
 			},
 			onClose: () => {

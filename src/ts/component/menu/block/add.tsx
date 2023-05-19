@@ -63,9 +63,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				content = <div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={param.style}>{item.name}</div>;
 			} else
 			if (item.isRelation) {
-				const id = Relation.cellId(idPrefix, item.relationKey, '0');
-				const record = detailStore.get(rootId, rootId, [ item.relationKey ]);
-
 				content = (
 					<div 
 						id={'item-' + item.id}
@@ -78,7 +75,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							{item.name}
 						</div>
 						<div
-							id={id} 
+							id={Relation.cellId(idPrefix, item.relationKey, rootId)} 
 							className={[ 'cell', Relation.className(item.format) ].join(' ')} 
 						>
 							<Cell 
@@ -86,9 +83,9 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								subId={rootId}
 								block={block}
 								relationKey={item.relationKey}
-								getRecord={() => record}
+								getRecord={() => detailStore.get(rootId, rootId, [ item.relationKey ])}
+								recordId={rootId}
 								viewType={I.ViewType.Grid}
-								index={0}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
 								bodyContainer={Util.getBodyContainer('menuBlockAdd')}
@@ -282,7 +279,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const relationKeys = relations.map(it => it.relationKey);
 		const typeRelations = (type ? type.recommendedRelations || [] : []).
 			map(it => dbStore.getRelationById(it)).
-			filter(it => it.relationKey && !relationKeys.includes(it.relationKey));
+			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
 		const ret = relations.concat(typeRelations).filter(it => !config.debug.ho && it.isHidden ? false : it.isInstalled).sort(DataUtil.sortByName);
 

@@ -51,6 +51,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		const { isPopup } = this.props;
 		const { loading } = this.state;
 		const items = this.getItems();
+		const cnControls = [ 'controls' ];
 		
 		let buttons: I.ButtonComponent[] = [];
 		if (this.selected.length) {
@@ -59,6 +60,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 				{ icon: 'restore', text: 'Restore', onClick: this.onRestore },
 				{ icon: 'remove', text: 'Delete immediately', onClick: this.onRemove },
 			]);
+			cnControls.push('withSelected');
 		} else {
 			buttons.push({ icon: 'checkbox', text: 'Select all', onClick: this.onSelectAll });
 		};
@@ -107,10 +109,34 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			);
 		};
 
-		let controls = null;
+		let controls = (
+			<div className={cnControls.join(' ')}>
+				<div className="side left">
+					{buttons.map((item: any, i: number) => (
+						<Button key={i} {...item} />
+					))}
+				</div>
+				<div className="side right">
+					<Icon className="search" onClick={this.onFilterShow} />
+
+					<div id="filterWrapper" className="filterWrapper">
+						<Filter
+							ref={ref => { this.refFilter = ref; }}
+							onChange={this.onFilterChange}
+							onClear={this.onFilterClear}
+							placeholder="Type to search..."
+						/>
+					</div>
+				</div>
+			</div>
+		);
 		let content = null;
 
 		if (!items.length) {
+			if (!this.getFilterValue()) {
+				controls = null;
+			};
+
 			content = (
 				<div className="archiveEmpty">
 					<div className="inner">
@@ -119,28 +145,6 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 				</div>
 			);
 		} else {
-			controls = (
-				<div className="controls">
-					<div className="side left">
-						{buttons.map((item: any, i: number) => (
-							<Button key={i} {...item} />
-						))}
-					</div>
-					<div className="side right">
-						<Icon className="search" onClick={this.onFilterShow} />
-
-						<div id="filterWrapper" className="filterWrapper">
-							<Filter
-								ref={ref => { this.refFilter = ref; }}
-								onChange={this.onFilterChange}
-								onClear={this.onFilterClear}
-								placeholder="Type to search..."
-							/>
-						</div>
-					</div>
-				</div>
-			);
-
 			content = (
 				<div className="items">
 					{loading ? <Loader id="loader" /> : (
@@ -340,8 +344,12 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		this.forceUpdate();
 	};
 
+	getFilterValue () {
+		return this.refFilter ? this.refFilter.getValue() : '';
+	};
+
 	getData () {
-		const filter = this.refFilter ? this.refFilter.getValue() : '';
+		const filter = this.getFilterValue();
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
 		];

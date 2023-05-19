@@ -59,7 +59,7 @@ class DetailStore {
 		if (!map) {
 			map = observable.map(new Map());
 			createMap = true;
-		}
+		};
 
 		if (clear) {
 			map.delete(item.id);
@@ -81,15 +81,15 @@ class DetailStore {
 				makeObservable(el, { value: observable });
 
 				list.push(el);
-			};
 
-			intercept(el as any, (change: any) => { 
-				return (change.newValue === el[change.name] ? null : change); 
-			});
-
-			if (createList) {
-				map.set(item.id, list);
+				intercept(el as any, (change: any) => { 
+					return (change.newValue === el[change.name] ? null : change); 
+				});
 			};
+		};
+
+		if (createList) {
+			map.set(item.id, list);
 		};
 
 		// Update relationKeyMap in dbStore to keep consistency
@@ -129,20 +129,17 @@ class DetailStore {
 	};
 
 	/** gets the object. if no keys are provided, all properties are returned. if force keys is set, Constant.defaultRelationKeys are included */
-    public get (rootId: string, id: string, keys?: string[], forceKeys?: boolean): any {
+    public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean): any {
 		let list = this.getDetailList(rootId, id);		
 		if (!list.length) {
 			return { id, _empty_: true };
 		};
 		
-		if (keys) {
-			keys = [ ...new Set(keys) ];
-			keys.push('id');
-
+		if (withKeys) {
+			let keys = [ 'id', ...withKeys ];
 			if (!forceKeys) {
 				keys = keys.concat(Constant.defaultRelationKeys);
 			};
-
 			list = list.filter(it => keys.includes(it.relationKey));
 		};
 
@@ -155,9 +152,7 @@ class DetailStore {
 	/** Mutates object provided and also returns a new object. Sets defaults.
 	 * This Function contains domain logic which should be encapsulated in a model */
 	public mapper (object: any): any {
-		object.name = object.name || ObjectUtil.defaultName('page');
-		object.layout = object.layout || I.ObjectLayout.Page;
-		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
+		object = this.mapCommon(object);
 
 		if (object.layout == I.ObjectLayout.Note) {
 			object.coverType = I.CoverType.None;
@@ -205,24 +200,27 @@ class DetailStore {
 			};
 		};
 
-		return this.mapCommon(object);
+		return object;
 	};
 
 	private mapCommon (object: any) {
-		return {
-			...object,
-			type: Relation.getStringValue(object.type),
-			iconImage: Relation.getStringValue(object.iconImage),
-			iconEmoji: Relation.getStringValue(object.iconEmoji),
-			layoutAlign: Number(object.layoutAlign) || I.BlockHAlign.Left,
-			coverX: Number(object.coverX) || 0,
-			coverY: Number(object.coverY) || 0,
-			coverScale: Number(object.coverScale) || 0,
-			coverType: Number(object.coverType) || I.CoverType.None,
-			isArchived: Boolean(object.isArchived),
-			isFavorite: Boolean(object.isFavorite),
-			isHidden: Boolean(object.isHidden),
-		};
+		object.name = Relation.getStringValue(object.name) || ObjectUtil.defaultName('Page');
+		object.snippet = Relation.getStringValue(object.snippet).replace(/\n/g, ' ');
+		object.type = Relation.getStringValue(object.type);
+		object.layout = Number(object.layout) || I.ObjectLayout.Page;
+		object.iconImage = Relation.getStringValue(object.iconImage);
+		object.iconEmoji = Relation.getStringValue(object.iconEmoji);
+		object.layoutAlign = Number(object.layoutAlign) || I.BlockHAlign.Left;
+		object.coverX = Number(object.coverX) || 0;
+		object.coverY = Number(object.coverY) || 0;
+		object.coverScale = Number(object.coverScale) || 0;
+		object.coverType = Number(object.coverType) || I.CoverType.None;
+		object.isArchived = Boolean(object.isArchived);
+		object.isFavorite = Boolean(object.isFavorite);
+		object.isHidden = Boolean(object.isHidden);
+		object.isReadonly = Boolean(object.isReadonly);
+		object.isDeleted = Boolean(object.isDeleted);
+		return object;
 	};
 
 	private mapObjectType (object: any) {

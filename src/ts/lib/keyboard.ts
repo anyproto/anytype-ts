@@ -108,6 +108,7 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
+		const isMainSet = this.isMainSet();
 
 		this.pressed.push(key);
 
@@ -208,11 +209,13 @@ class Keyboard {
 				};
 			});
 
-			// Create new page
-			this.shortcut(`${cmd}+n`, e, () => {
-				e.preventDefault();
-				this.pageCreate();
-			});
+			if (!isMainSet) {
+				// Create new page
+				this.shortcut(`${cmd}+n`, e, () => {
+					e.preventDefault();
+					this.pageCreate();
+				});
+			};
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
@@ -423,9 +426,12 @@ class Keyboard {
 				};
 
 				popupStore.open('confirm', {
+					className: 'isWide isLeft',
 					data: {
-						title: 'Anytype ID',
-						text: account.id,
+						text: [
+							`<b>Account ID:</b> ${account.id}`,
+							`<b>Analytics ID:</b> ${account.info.analyticsId}`,
+						].join('<br/>'),
 						textConfirm: 'Copy',
 						textCancel: 'Close',
 						canConfirm: true,

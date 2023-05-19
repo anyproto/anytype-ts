@@ -10,6 +10,7 @@ class AccountInfo implements I.AccountInfo {
 	localStoragePath = '';
 	accountSpaceId = '';
 	widgetsId = '';
+	analyticsId = '';
 	
 	constructor (props: I.AccountInfo) {
 		this.homeObjectId = String(props.homeObjectId || '');
@@ -19,6 +20,7 @@ class AccountInfo implements I.AccountInfo {
 		this.localStoragePath = String(props.localStoragePath || '');
 		this.accountSpaceId = String(props.accountSpaceId || '');
 		this.widgetsId = String(props.widgetsId || '');
+		this.analyticsId = String(props.analyticsId || '');
 
 		makeObservable(this, {
 			homeObjectId: observable,
@@ -28,6 +30,7 @@ class AccountInfo implements I.AccountInfo {
 			localStoragePath: observable,
 			accountSpaceId: observable,
 			widgetsId: observable,
+			analyticsId: observable,
 		});
 
 		intercept(this as any, change => Util.intercept(this, change));
@@ -38,19 +41,7 @@ class AccountInfo implements I.AccountInfo {
 
 class AccountConfig implements I.AccountConfig {
 	
-	allowSpaces = false;
-	allowBeta = false;
-	
 	constructor (props: I.AccountConfig) {
-		this.allowSpaces = Boolean(props.allowSpaces);
-		this.allowBeta = Boolean(props.allowBeta);
-
-		makeObservable(this, {
-			allowSpaces: observable,
-			allowBeta: observable,
-		});
-
-		intercept(this as any, change => Util.intercept(this, change));
 		return this;
 	};
 

@@ -148,6 +148,10 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 		this.init();
 	};
 
+	componentDidUpdate () {
+		this.props.position();
+	};
+
 	init () {
 		const { storageGet } = this.props;
 		const options = storageGet();

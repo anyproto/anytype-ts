@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget } from 'Component';
-import { C, I, M, keyboard, ObjectUtil } from 'Lib';
+import { C, I, M, keyboard, ObjectUtil, analytics } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
@@ -15,8 +15,6 @@ type State = {
 	isEditing: boolean;
 	previewId: string;
 };
-
-const LIMIT = 10;
 
 const ListWidget = observer(class ListWidget extends React.Component<Props, State> {
 		
@@ -99,7 +97,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			};
 
 			if (isEditing) {
-				if (blocks.length <= LIMIT) {
+				if (blocks.length <= Constant.limit.widgets) {
 					buttons.push({ id: 'widget-list-add', text: 'Add', onClick: this.addWidget });
 				};
 
@@ -176,6 +174,9 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	};
 
 	toggleEditMode (): void {
+		if (!this.state.isEditing) {
+			analytics.event('EditWidget');
+		};
 		this.setState({ isEditing: !this.state.isEditing });
 	};
 
@@ -282,13 +283,18 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	};
 
 	onContextMenu () {
+		const { previewId } = this.state;
+		if (previewId) {
+			return;
+		};
+
 		const win = $(window);
 		const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
 		const options: any[] = [
 			{ id: 'edit', name: 'Edit widgets' },
 		];
 
-		if (widgetIds.length < LIMIT) {
+		if (widgetIds.length < Constant.limit.widgets) {
 			options.unshift({ id: 'add', name: 'Add widget', arrow: true });
 		};
 

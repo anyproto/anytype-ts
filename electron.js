@@ -1,7 +1,6 @@
 'use strict';
 
-const electron = require('electron');
-const { app, BrowserWindow, session, nativeTheme, ipcMain } = require('electron');
+const { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog } = require('electron');
 const { is, fixPathForAsarUnpack } = require('electron-util');
 const path = require('path');
 const os = require('os');
@@ -32,6 +31,16 @@ if (process.defaultApp) {
 } else {
 	app.setAsDefaultProtocolClient(protocol);
 };
+
+powerMonitor.on('suspend', () => {
+	Util.log('info', '[PowerMonitor] suspend');
+});
+
+powerMonitor.on('resume', () => {
+	BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
+
+	Util.log('info', '[PowerMonitor] resume');
+});
 
 let deeplinkingUrl = '';
 let waitLibraryPromise = null;
@@ -77,7 +86,7 @@ function waitForLibraryAndCreateWindows () {
 		global.serverAddress = Server.getAddress();
 		createWindow();
 	}, (err) => {
-		electron.dialog.showErrorBox('Error: failed to run server', err.toString());
+		dialog.showErrorBox('Error: failed to run server', err.toString());
 	});
 };
 

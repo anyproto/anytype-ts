@@ -20,11 +20,10 @@ export interface AccountInfo {
 	localStoragePath: string;
 	accountSpaceId: string;
 	widgetsId: string;
+	analyticsId: string;
 };
 
 export interface AccountConfig {
-	allowSpaces: boolean;
-	allowBeta: boolean;
 };
 
 export interface AccountStatus {

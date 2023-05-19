@@ -136,7 +136,7 @@ class Action {
 		});
 	};
 
-	removeWidget (id: string) {
+	removeWidget (id: string, target: any) {
 		const { widgets } = blockStore;
 		const block = blockStore.getLeaf(widgets, id);
 
@@ -153,7 +153,7 @@ class Action {
 			Storage.deleteToggle(`widget${childrenIds[0]}`);
 		};
 
-		analytics.event('DeleteWidget');
+		analytics.event('DeleteWidget', { target });
 	};
 
 	focusToEnd (rootId: string, id: string) {
@@ -346,7 +346,14 @@ class Action {
 						};
 
 						DataUtil.onAuth(message.account, () => {
-							popupStore.open('migration', { data: { type: 'import' } });
+							window.setTimeout(() => {
+								popupStore.open('migration', { data: { type: 'import' } });
+							}, Constant.delay.popup);
+
+							const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
+							if (blocks.length) {
+								Storage.setToggle('widget', blocks[0].parentId, true);
+							};
 						});
 					});
 				});

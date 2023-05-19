@@ -55,7 +55,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				</div>
 				<div className="items">
 					{section.children.map((item: any, i: number) => {
-						const id = Relation.cellId(PREFIX, item.relationKey, '0');
+						const id = Relation.cellId(PREFIX, item.relationKey, '');
 						return (
 							<Item 
 								key={id} 
@@ -64,7 +64,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 								rootId={rootId}
 								block={root}
 								onEdit={this.onEdit}
-								onRef={(id: string, ref: any) => { this.cellRefs.set(id, ref); }}
+								onRef={(id: string, ref: any) => this.cellRefs.set(id, ref)}
 								onFav={this.onFav}
 								readonly={!(allowedValue && !item.isReadonlyValue && !readonly)}
 								canEdit={allowedRelation && !item.isReadonlyRelatione && !readonly}
@@ -232,7 +232,6 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { param, getId } = this.props;
 		const { data, classNameWrap } = param;
 		const { rootId } = data;
-		const relations = dbStore.getObjectRelations(rootId, rootId);
 
 		menuStore.open('relationSuggest', { 
 			element: `#${getId()} #item-add .info`,
@@ -244,7 +243,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: relations.map(it => it.relationKey),
+				skipKeys: dbStore.getObjectRelationsKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},
@@ -282,7 +281,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		});
 	};
 
-	onCellClick (e: any, relationKey: string, index: number) {
+	onCellClick (e: any, relationKey: string) {
 		const { param } = this.props;
 		const { data } = param;
 		const { readonly } = data;
@@ -292,7 +291,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			return;
 		};
 
-		const id = Relation.cellId(PREFIX, relationKey, index);
+		const id = Relation.cellId(PREFIX, relationKey, '');
 		const ref = this.cellRefs.get(id);
 
 		if (ref) {
@@ -300,33 +299,31 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 	};
 
-	scrollTo (relationKey: string, index: number) {
+	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const relation = dbStore.getRelationByKey(relationKey);
+
+		C.ObjectSetDetails(rootId, [ { key: relationKey, value: Relation.formatValue(relation, value, true) } ], callBack);
+
+		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
+		analytics.event(key, { type: 'menu' });
+	};
+
+	scrollTo (relationKey: string) {
 		const { getId } = this.props;
-		const id = Relation.cellId(PREFIX, relationKey, index);
+		const id = Relation.cellId(PREFIX, relationKey, '');
 		const obj = $(`#${getId()}`);
 		const container = obj.find('.content');
 		const cell = obj.find(`#${id}`);
-		
+
 		if (!container.length || !cell.length) {
 			return;
 		};
 
 		const y = Math.max(0, cell.offset().top - container.offset().top);
 		container.scrollTop(y);
-	};
-
-	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
-		const { param } = this.props;
-		const { data } = param;
-		const { rootId } = data;
-		const relation = dbStore.getRelationByKey(relationKey);
-		const details = [ 
-			{ key: relationKey, value: Relation.formatValue(relation, value, true) },
-		];
-		C.ObjectSetDetails(rootId, details, callBack);
-
-		const key = Relation.checkRelationValue(relation, value) ? 'ChangeRelationValue' : 'DeleteRelationValue';	
-		analytics.event(key, { type: 'menu' });
 	};
 
 	resize () {

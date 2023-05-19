@@ -96,7 +96,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		switch (style) {
 			case I.TextStyle.Title: {
-				placeholder = ObjectUtil.defaultName('page');
+				placeholder = ObjectUtil.defaultName('Page');
 
 				if (root && root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
@@ -344,7 +344,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				const object = detailStore.get(rootId, routeParam.id, []);
 
 				target = object.id;
-				type = I.PreviewType.Default;
 			} else {
 				target = Util.urlFix(url);
 				type = I.PreviewType.Link;
@@ -436,7 +435,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
-				type: I.PreviewType.Default,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,
@@ -521,7 +519,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			Preview.previewShow({
 				target: object.id,
-				type: I.PreviewType.Default,
 				element,
 				range: { 
 					from: Number(range[0]) || 0,
@@ -648,6 +645,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `${cmd}+a`, preventDefault: true },
 			{ key: `${cmd}+[`, preventDefault: false },
 			{ key: `${cmd}+]`, preventDefault: false },
+			{ key: `${cmd}+z`, preventDefault: true },
+			{ key: `${cmd}+shift+z`, preventDefault: true },
 			{ key: `tab`, preventDefault: true },
 			{ key: `shift+tab`, preventDefault: true },
 			{ key: `shift+space`, preventDefault: false },

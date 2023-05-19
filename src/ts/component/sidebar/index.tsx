@@ -1,5 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
+import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import { I, keyboard, Preview, sidebar } from 'Lib';
@@ -9,6 +11,8 @@ import ListWidget from 'Component/list/widget';
 interface Props {
 	dataset?: any;
 };
+
+const THROTTLE = 20;
 	
 const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	
@@ -17,6 +21,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
     ox = 0;
 	oy = 0;
     refFooter: React.Ref<HTMLUnknownElement> = null;
+	frame = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -31,6 +36,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
     render() {
         const cn = [ 'sidebar' ];
+		const cmd = keyboard.cmdSymbol();
 
         return (
             <div 
@@ -42,6 +48,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					<Icon
 						className="toggleSidebar"
 						tooltip="Close sidebar"
+						tooltipCaption={`${cmd} + \\`}
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => { sidebar.collapse(); }}
 					/>
@@ -104,10 +111,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 		const win = $(window);
 		const node = $(this.node);
-		const offset = node.offset();
+		const { left, top } = node.offset();
 
-		this.ox = e.pageX - offset.left;
-		this.oy = e.pageY - offset.top;
+		this.ox = e.pageX - left;
+		this.oy = e.pageY - top;
 
 		sidebar.resizePage();
 		sidebar.setDragging(true);
@@ -115,21 +122,27 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		keyboard.disableSelection(true);
 
 		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', (e: any) => { this.onDragMove(e); });
-		win.on('mouseup.sidebar', (e: any) => { this.onDragEnd(e); });
-	}
+		win.on('mousemove.sidebar', throttle(e => this.onDragMove(e), THROTTLE));
+		win.on('mouseup.sidebar', e => this.onDragEnd());
+	};
 
 	onDragMove (e: React.MouseEvent) {
 		const win = $(window);
 
-		sidebar.set({
-			x: e.pageX - this.ox - win.scrollLeft(),
-			y: e.pageY - this.oy - win.scrollTop(),
+		raf.cancel(this.frame);
+
+		this.frame = raf(() => {
+			sidebar.set({
+				x: e.pageX - this.ox - win.scrollLeft(),
+				y: e.pageY - this.oy - win.scrollTop(),
+			});
 		});
 	};
 
-	onDragEnd (e: React.MouseEvent) {
+	onDragEnd () {
 		$(window).off('mousemove.sidebar mouseup.sidebar');
+
+		raf.cancel(this.frame);
 		sidebar.setDragging(false);
 		keyboard.disableSelection(false);
 	};
@@ -160,32 +173,30 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		body.addClass(dir == I.MenuType.Vertical ? 'rowResize' : 'colResize');
 
 		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', (e: any) => { this.onResizeMove(e, dir); });
-		win.on('mouseup.sidebar', (e: any) => { this.onResizeEnd(e); });
+		win.on('mousemove.sidebar', throttle(e => this.onResizeMove(e, dir), THROTTLE));
+		win.on('mouseup.sidebar', e => this.onResizeEnd());
 	};
 
 	onResizeMove (e: React.MouseEvent, dir: I.MenuType) {
 		const { width, snap } = sidebar.data;
 
-		if (dir == I.MenuType.Horizontal) {
-			sidebar.setWidth(
-				snap == I.MenuDirection.Right
-					? (this.ox - e.pageX + width)
-					: (e.pageX - this.ox)
-			);
-		};
+		raf.cancel(this.frame);
 
-		if (dir == I.MenuType.Vertical) {
-			sidebar.setHeight(e.pageY - this.oy);
-		};
+		this.frame = raf(() => {
+			if (dir == I.MenuType.Horizontal) {
+				sidebar.setWidth(snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
+			};
 
-		sidebar.resizePage();
-		$(window).trigger('resize');
+			if (dir == I.MenuType.Vertical) {
+				sidebar.setHeight(e.pageY - this.oy);
+			};
+		});
 	};
 
-	onResizeEnd (e: React.MouseEvent) {
+	onResizeEnd () {
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
+		raf.cancel(this.frame);
 
 		$('body').removeClass('rowResize colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');

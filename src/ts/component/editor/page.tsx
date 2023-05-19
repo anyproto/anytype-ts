@@ -139,47 +139,12 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	};
 	
 	componentDidMount () {
-		const { dataset, isPopup } = this.props;
-		const { selection } = dataset || {};
-		const win = $(window);
-		const namespace = isPopup ? '-popup' : '';
-		const container = Util.getScrollContainer(isPopup);
-
 		this._isMounted = true;
 		this.resizePage();
-		this.unbind();
+		this.rebind();
 		this.open();
 
 		keyboard.disableClose(false);
-
-		win.on('mousemove.editor' + namespace, throttle((e: any) => { this.onMouseMove(e); }, THROTTLE));
-		win.on('keydown.editor' + namespace, (e: any) => { this.onKeyDownEditor(e, isPopup); });
-		win.on('paste.editor' + namespace, (e: any) => {
-			if (!keyboard.isFocused) {
-				this.onPaste(e, {});
-			};
-		});
-
-		win.on('focus.editor' + namespace, (e: any) => {
-			const isPopupOpen = popupStore.isOpen();
-			const isMenuOpen = menuStore.isOpen();
-
-			let ids: string[] = [];
-			if (selection) {
-				ids = selection.get(I.SelectType.Block, true);
-			};
-			if (!ids.length && !isMenuOpen && !isPopupOpen) {
-				focus.restore();
-				focus.apply(); 
-			};
-			container.scrollTop(this.scrollTop);
-		});
-
-		win.on('resize.editor' + namespace, (e: any) => { this.resizePage(); });
-		container.on('scroll.editor' + namespace, (e: any) => { this.onScroll(e); });
-
-		Renderer.remove('commandEditor');
-		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
 	};
 
 	componentDidUpdate () {
@@ -190,13 +155,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		this.open();
 		focus.apply();
 
-		if (resizable.length) {
-			resizable.trigger('resizeInit');
-		};
-
 		blockStore.updateNumbers(rootId);
 		this.resizePage();
 		sidebar.resizePage();
+
+		if (resizable.length) {
+			resizable.trigger('resizeInit');
+		};
 
 		Util.getScrollContainer(isPopup).scrollTop(this.scrollTop);
 	};
@@ -325,11 +290,51 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	
 	unbind () {
 		const { isPopup } = this.props;
-		const namespace = isPopup ? '-popup' : '';
-		const events = 'keydown.editor mousemove.editor scroll.editor paste.editor resize.editor focus.editor';
-		const a = events.split(' ').map(it => it + namespace);
+		const namespace = this.getNamespace();
+		const container = Util.getScrollContainer(isPopup);
+		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
 
-		$(window).off(a.join(' '));
+		$(window).off(events.map(it => `${it}.editor${namespace}`).join(' '));
+		container.off(`scroll.editor${namespace}`);
+		Renderer.remove('commandEditor');
+	};
+
+	rebind () {
+		const { dataset, isPopup } = this.props;
+		const { selection } = dataset || {};
+		const win = $(window);
+		const namespace = this.getNamespace();
+		const container = Util.getScrollContainer(isPopup);
+
+		this.unbind();
+
+		win.on('mousemove.editor' + namespace, throttle(e => this.onMouseMove(e), THROTTLE));
+		win.on('keydown.editor' + namespace, e => this.onKeyDownEditor(e));
+		win.on('paste.editor' + namespace, (e: any) => {
+			if (!keyboard.isFocused) {
+				this.onPaste(e, {});
+			};
+		});
+
+		win.on('focus.editor' + namespace, () => {
+			const isPopupOpen = popupStore.isOpen();
+			const isMenuOpen = menuStore.isOpen();
+			const isMenuContextOpen = menuStore.isOpen('blockContext');
+
+			let ids: string[] = [];
+			if (selection) {
+				ids = selection.get(I.SelectType.Block, true);
+			};
+			if (!ids.length && (!isMenuOpen || isMenuContextOpen) && !isPopupOpen) {
+				focus.restore();
+				focus.apply(); 
+			};
+			container.scrollTop(this.scrollTop);
+		});
+
+		win.on('resize.editor' + namespace, () => this.resizePage());
+		container.on('scroll.editor' + namespace, e => this.onScroll(e));
+		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
 	onMouseMove (e: any) {
@@ -464,12 +469,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		});
 	};
 	
-	onKeyDownEditor (e: any, isPopup: boolean) {
+	onKeyDownEditor (e: any) {
+		const { dataset, rootId, isPopup } = this.props;
+
 		if (!isPopup && popupStore.isOpen('page')) {
 			return;
 		};
 
-		const { dataset, rootId } = this.props;
 		const { selection } = dataset || {};
 		const menuOpen = menuStore.isOpen();
 		const popupOpen = popupStore.isOpenList([ 'search' ]);
@@ -2197,6 +2203,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	setLoading (v: boolean): void {
 		this.loading = v;
 		this.forceUpdate();
+	};
+
+	getNamespace () {
+		return this.props.isPopup ? '-popup' : '';
 	};
 
 });

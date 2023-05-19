@@ -37,10 +37,6 @@ class Api {
 
 	setConfig (win, config) {
 		ConfigManager.set(config, (err) => { Util.send(win, 'config', ConfigManager.config); });
-
-		if (undefined !== config.allowBeta) {
-			MenuManager.initMenu();
-		};
 	};
 
 	setAccount (win, account) {
@@ -69,6 +65,7 @@ class Api {
 		zoom = Math.max(-5, Math.min(5, zoom));
 
 		win.webContents.setZoomLevel(zoom);
+		Util.send(win, 'zoom');
 		this.setConfig(win, { zoom });
 	};
 
