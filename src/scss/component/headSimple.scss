@@ -25,12 +25,7 @@
 .headSimple.isSet, .headSimple.isCollection { padding: 0px 14px; }
 .headSimple.isSet, .headSimple.isCollection {
 	.side.left {
-		.titleWrap { display: block; }
-		.titleWrap { 
-			> .iconObject { display: inline; margin: 0px 8px 0px 0px; }
-			> .title { @include text-header1; display: inline; }
-			> .title > .editable { display: inline; }
-		}
+		.titleWrap { align-items: start; }
 	}
 }
 
