@@ -33,7 +33,7 @@
 
 	.body { display: flex; flex-direction: column; padding-bottom: 8px; }
 	.body {
-		.item { cursor: pointer; position: relative; }
+		.item { position: relative; }
 		.item:hover, .item.active {
 			.buttons { display: flex; }
 			.icon.more { opacity: 1; }
@@ -97,7 +97,7 @@
 			.info { width: calc(100% - 96px); }
 		}
 
-		.item::before { border-radius: 8px; }
+		.item::before { border-radius: 12px; }
 	}
 }
 
