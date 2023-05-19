@@ -4,7 +4,6 @@ import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
 import { I, M, C, Util, DataUtil, ObjectUtil } from 'Lib';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 interface State {
@@ -57,9 +56,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const check = DataUtil.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
-		
-		let cn = [ 'editorWrapper', check.className ];
-		let icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
+		const cn = [ 'editorWrapper', check.className ];
+		const icon: any = new M.Block({ id: rootId + '-icon', type: I.BlockType.IconPage, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		
 		if (root && root.isObjectHuman()) {
 			icon.type = I.BlockType.IconUser;
@@ -72,9 +70,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				</div>
 				
 				<div className="items">
-					{item.list.map((item: any, i: number) => {
-						return <Version key={i} {...item} />
-					})}
+					{item.list.map((item: any, i: number) => (
+						<Version key={i} {...item} />
+					))}
 				</div>
 			</React.Fragment>
 		);
@@ -83,8 +81,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			const withChildren = item.list && item.list.length;
 			return (
 				<React.Fragment>
-					<div id={'item-' + item.id} className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} onClick={(e: any) => { this.loadVersion(item.id); }}>
-						{withChildren ? <Icon className="arrow" onClick={(e: any) => { this.toggleChildren(e, item.id); }} /> : ''}
+					<div 
+						id={'item-' + item.id} 
+						className={[ 'item', (withChildren ? 'withChildren' : '') ].join(' ')} 
+						onClick={e => this.loadVersion(item.id)}
+					>
+						{withChildren ? <Icon className="arrow" onClick={e => this.toggleChildren(e, item.id)} /> : ''}
 						<div className="date">{Util.date('d F, H:i', item.time)}</div>
 						{item.authorName ? <div className="name">{item.authorName}</div> : ''}
 					</div>
@@ -101,7 +103,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 		
 		return (
-			<div ref={node => this.node = node}>
+			<div 
+				ref={node => this.node = node}
+			>
 				<Header component="mainHistory" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div id="body" className="flex">
@@ -130,9 +134,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 					<div id="sideRight" className="list">
 						<div className="wrap">
-							{groups.map((item: any, i: number) => {
-								return <Section key={i} {...item} />
-							})}
+							{groups.map((item: any, i: number) => (
+								<Section key={i} {...item} />
+							))}
 						</div>
 					</div>
 				</div>
@@ -174,7 +178,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	onScrollLeft () {
 		const node = $(this.node);
-		const sideLeft = node.find('#sideLeft');
+		const sideLeft = node.find('#body > #sideLeft');
 		
 		this.scrollLeft = sideLeft.scrollTop();
 	};
@@ -183,7 +187,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const { versions } = this.state;
 		const win = $(window);
 		const node = $(this.node);
-		const sideRight = node.find('#sideRight');
+		const sideRight = node.find('#body > #sideRight');
 		const wrap = sideRight.find('.wrap');
 		const sections = wrap.find('.section');
 
@@ -229,7 +233,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		const group = month.list.find(it => it.groupId == version.groupId);
 		const node = $(this.node);
-		const sideRight = node.find('#sideRight');
+		const sideRight = node.find('#body > #sideRight');
 		const item = sideRight.find(`#item-${version.id}`);
 
 		sideRight.find('.active').removeClass('active');
@@ -248,9 +252,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		e.stopPropagation();
 
 		const node = $(this.node);
-		const sideRight = node.find('#sideRight');
-		const item = sideRight.find('#item-' + id);
-		const children = sideRight.find('#children-' + id);
+		const sideRight = node.find('#body > #sideRight');
+		const item = sideRight.find(`#item-${id}`);
+		const children = sideRight.find(`#children-${id}`);
 		const isActive = item.hasClass('expanded');
 
 		let height = 0;
@@ -260,8 +264,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			height = children.height();
 			children.css({ overflow: 'hidden', height: height });
 
-			setTimeout(() => { children.css({ height: 0 }); }, 15);
-			setTimeout(() => { children.hide(); }, 215);
+			window.setTimeout(() => { children.css({ height: 0 }); }, 15);
+			window.setTimeout(() => { children.hide(); }, 215);
 		} else {
 			item.addClass('expanded');
 			children.show();
@@ -269,8 +273,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			height = children.height();
 
 			children.css({ overflow: 'hidden', height: 0 });
-			setTimeout(() => { children.css({ height: height }); }, 15);
-			setTimeout(() => { children.css({ overflow: 'visible', height: 'auto' }); }, 215);
+			window.setTimeout(() => { children.css({ height: height }); }, 15);
+			window.setTimeout(() => { children.css({ overflow: 'visible', height: 'auto' }); }, 215);
 		};
 	};
 	
@@ -381,7 +385,6 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	resize () {
 		const { isPopup } = this.props;
 
-		const win = $(window);
 		const node = $(this.node);
 		const sideLeft = node.find('#body > #sideLeft');
 		const sideRight = node.find('#body > #sideRight');
@@ -389,11 +392,10 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const cover = node.find('.block.blockCover');
 		const container = Util.getPageContainer(isPopup);
 		const header = container.find('#header');
-		const wrapper = $('.pageMainHistory .wrapper');
-		const height = win.height();
+		const height = container.height();
 		const hh = isPopup ? header.height() : Util.sizeHeader();
+		const cssl: any = { height };
 
-		sideLeft.css({ height });
 		sideRight.css({ height });
 
 		if (cover.length) {
@@ -401,9 +403,12 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		};
 
 		if (isPopup) {
-			wrapper.css({ paddingTop: hh });
+			const page = $('.pageMainHistory.isPopup');
+			page.css({ height });
+			cssl.paddingTop = hh;
 		};
 
+		sideLeft.css(cssl);
 		editorWrapper.css({ width: this.getWrapperWidth() });
 	};
 
