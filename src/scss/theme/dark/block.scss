@@ -163,7 +163,7 @@
 		}
 
         .viewContent.viewGallery {
-            .card { background: $colorBlack; border-color: rgba(229, 229, 229, 0.1); }
+            .card { background: $colorBlack; border-color: $colorLineTertiary; }
             .card {
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
@@ -171,7 +171,7 @@
 
         .viewContent.viewBoard {
 			.ghost { border-color: $colorOrange; }
-            .cardContent { background: $colorBgLight; border-color: rgba(229, 229, 229, 0.1); }
+            .cardContent { background: $colorBgLight; border-color: $colorLineTertiary; }
 			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
 
 			.column {
@@ -220,7 +220,7 @@
         .loading, .deleted { color: $colorSecondary; }
 
 		.linkCard.text {
-			.cardName .name { border-color: $colorLinePrimary; }
+			.cardName .name { border-color: $colorLineTertiary; }
 		}
 
 		.linkCard.c48.withIcon {
@@ -228,7 +228,7 @@
 		}
 
 		.linkCard.card {
-			.side.left, .side.right { border-color: $colorLineSecondary; }
+			.side.left, .side.right { border-color: $colorLineTertiary; }
 		}
     }
 
@@ -268,7 +268,7 @@
     	    .descr { color: $colorSecondary; }
 	        .link { color: $colorSecondary; }
 
-            .side.right { border-color: $colorLinePrimary; }
+            .side.right { border-color: $colorLineTertiary; }
         }
     }
 
