@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
-import { I, Relation, DataUtil } from 'Lib';
-import { dbStore, detailStore, blockStore } from 'Store';
+import { I, Relation, DataUtil, Util } from 'Lib';
+import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
 import Constant from 'json/constant.json';
@@ -31,11 +31,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, getRecords, getEmpty } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const records = getRecords();
+		const records = this.getRecords();
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
@@ -65,18 +65,34 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			};
 		};
 
+		const CardAdd = (item: any) => (
+			<div 
+				className="card add" 
+				style={item.style} 
+				onClick={e => onRecordAdd(e, 1)}
+			>
+				<div className="inner" />
+			</div>
+		);
+
 		let content = null;
 
 		if (isInline) {
 			content = (
 				<React.Fragment>
-					{records.map((id: string, index: number) => (
-						<Card 
-							key={'gallery-card-' + view.id + index} 
-							{...this.props}
-							recordId={id}
-						/>
-					))}
+					{records.map((id: string, index: number) => {
+						if (id == 'add-record') {
+							return <CardAdd key={'gallery-card-' + view.id + index} />;
+						} else {
+							return (
+								<Card 
+									key={'gallery-card-' + view.id + index} 
+									{...this.props}
+									recordId={id}
+								/>
+							);
+						};
+					})}
 				</React.Fragment>
 			);
 		} else {
@@ -105,16 +121,30 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 												cellCount={records.length}
 												cellMeasurerCache={this.cache}
 												cellPositioner={this.cellPositioner}
-												cellRenderer={({ key, index, parent, style }) => (
-													<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
-														<Card 
-															key={'gallery-card-' + view.id + index} 
-															{...this.props} 
-															recordId={records[index]}
-															style={{ ...style, width: this.columnWidth }}
-														/>
-													</CellMeasurer>
-												)}
+												cellRenderer={({ key, index, parent, style }) => {
+													const id = records[index];
+
+													if (id == 'add-record') {
+														style.height = 118;
+													};
+
+													style.width = this.columnWidth;
+
+													return (
+														<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
+															{id == 'add-record' ? (
+																<CardAdd style={style} />
+															) : (
+																<Card 
+																	key={'gallery-card-' + view.id + index} 
+																	{...this.props} 
+																	recordId={id}
+																	style={style}
+																/>
+															)}
+														</CellMeasurer>
+													);
+												}}
 												scrollTop={scrollTop}
 											/>
 										</div>
@@ -219,6 +249,15 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			loadData(view.id, offset, false, resolve);
 			dbStore.metaSet(subId, '', { offset });
 		});
+	};
+
+	getRecords () {
+		const { getRecords } = this.props;
+		const records = Util.objectCopy(getRecords());
+		
+		records.push('add-record');
+
+		return records;
 	};
 
 });
