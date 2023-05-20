@@ -70,9 +70,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 				className="card add" 
 				style={item.style} 
 				onClick={e => onRecordAdd(e, 1)}
-			>
-				<div className="inner" />
-			</div>
+			/>
 		);
 
 		let content = null;

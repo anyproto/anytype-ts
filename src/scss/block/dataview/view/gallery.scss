@@ -13,12 +13,9 @@
 			}
 
 			.card.add { box-shadow: 0px 0px; }
-			.card.add {
-				.inner { height: 118px; }
-				.inner::after {
-					content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg');
-					margin: -10px 0px 0px -10px;
-				}
+			.card.add::after {
+				content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg');
+				margin: -10px 0px 0px -10px;
 			}
 
 			.card {
