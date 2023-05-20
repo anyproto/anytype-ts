@@ -131,11 +131,17 @@
 
 		.dataviewSelection { font-weight: 400; display: none; }
 		.dataviewSelection {
-			.side.left { @include text-paragraph; color: $colorBlack;  }
+			.side.left { @include text-header3; color: $colorBlack;  }
 			.side.right {
 				.element {
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; cursor: pointer;
 					transition: $transitionAllCommon;
+				}
+				.element {
+					.icon { width: 20px; height: 20px; }
+					.icon.unlink { background-image: url('~img/icon/dataview/selection/unlink.svg'); }
+					.icon.archive { background-image: url('~img/icon/menu/action/remove0.svg'); }
+					.icon.done { background-image: url('~img/icon/dataview/selection/done.svg'); }
 				}
 				.element.black { color: $colorBlack; }
 				.element.orange { color: #f09c0e; font-weight: 500; }
@@ -182,6 +188,10 @@
 		}
 		.dataviewControls.active {
 			.side.right { opacity: 1; }
+		}
+
+		.dataviewSelection {
+			.side.left { @include text-paragraph; }
 		}
 
 		.content {

@@ -52,16 +52,6 @@
 				.cover.coverVideo {
 					.mediaVideo video { width: 100%; }
 				}
-
-				.icon.checkbox {
-					width: 40px; height: 40px; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: pointer;
-					background-image: url('~img/icon/selection/checkbox0.svg'); opacity: 0; transition: none; background-size: 20px;
-				}
-
-				.selectable.isSelectionSelected {
-					.icon.checkbox { background-image: url('~img/icon/selection/checkbox1.svg'); opacity: 1; }
-				}
-				.selectable.isSelectionSelected::after { display: none; }
 			}
 			.card:hover { border: 1px solid $colorBorderDark; background: rgba(166, 166, 166, 0.04); }
 			.card:hover {

@@ -79,8 +79,6 @@
 
             .card { width: 224px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
-				.selectable.isSelectionSelected::after { display: none; }
-
 				.cellContent.isName {
 					.name { @include clamp2; white-space: normal; }
 				}
@@ -101,14 +99,7 @@
 					.tagItem { margin: 0px 8px 0px 0px; }
 				}
 
-				.icon.checkbox {
-					width: 40px; height: 40px; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: pointer;
-					background-image: url('~img/icon/selection/checkbox0.svg'); opacity: 0; transition: none; background-size: 20px;
-				}
-
-				.isSelectionSelected {
-					.icon.checkbox { background-image: url('~img/icon/selection/checkbox1.svg'); opacity: 1; }
-				}
+				.selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 12px; }
 			}
 			.card:last-child { margin: 0px; }
 
