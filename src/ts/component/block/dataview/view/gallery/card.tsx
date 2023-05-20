@@ -31,34 +31,15 @@ const Card = observer(class Card extends React.Component<Props> {
 		const idPrefix = getIdPrefix();
 		const record = getRecord(recordId);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
-		const readonly = true;
 		const subId = dbStore.getSubId(rootId, block.id);
+		const cover = this.getCover();
 
 		if (coverFit) {
 			cn.push('coverFit');
 		};
 
-		const BlankCover = (item: any) => (
-			<div className={[ 'cover', 'type0', (!readonly ? 'canEdit' : '') ].join(' ')}>
-				<div className="inner">
-					{!readonly ? (
-						<div className="add">
-							<Icon className="plus" />
-							Add picture
-						</div>
-					) : ''}
-				</div>
-			</div>
-		);
-
-		let cover = null;
-		if (view.coverRelationKey) {
-			cover = <BlankCover />;
-
-			const coverNode = this.getCover();
-			if (coverNode) {
-				cover = coverNode;
-			};
+		if (cover) {
+			cn.push('withCover');
 		};
 
 		let content = (
