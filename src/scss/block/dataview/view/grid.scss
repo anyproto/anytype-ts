@@ -133,9 +133,6 @@
 		.viewContent.viewGrid {
 			.row { height: 40px; }
 
-			.cellHead {
-				.flex { @include text-small; }
-			}
 			.cellHead:first-child {
 				.flex { padding-left: 0px; }
 			}

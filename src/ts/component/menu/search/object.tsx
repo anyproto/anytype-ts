@@ -495,6 +495,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { isBig } = data;
 
 		let h = HEIGHT_ITEM;
+		if (!item) {
+			return h;
+		};
+
 		if ((isBig || item.isBig) && !item.isAdd)	 h = HEIGHT_ITEM_BIG;
 		if (item.isSection)							 h = HEIGHT_SECTION;
 		if (item.isDiv)								 h = HEIGHT_DIV;

@@ -48,7 +48,7 @@
 
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
 		.dataviewHead {
-			.side.left { gap: 0px 6px; }
+			.side.left { gap: 0px 6px; width: 100%; }
 			.side.right { opacity: 0; transition: $transitionAllCommon; }
 
 			.iconWrap { 
@@ -62,7 +62,7 @@
 				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
 			}
 
-			.editableWrap { @include text-header3; height: 26px; cursor: pointer; max-width: 50%; @include text-overflow-nw; }
+			.editableWrap { @include text-header3; height: 26px; cursor: pointer; max-width: calc(100% - 60px); @include text-overflow-nw; }
 			.editableWrap.isEmpty { min-width: 70px; }
 
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
