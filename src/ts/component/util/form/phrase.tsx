@@ -166,6 +166,7 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onPaste = (e) => {
+		e.preventDefault();
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = this.normalizeWhiteSpace(cb.getData('text/plain'));
 
