@@ -20,9 +20,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	constructor (props: I.ViewComponent) {
 		super(props);
 
+		const { width, height } = Constant.size.dataview.gallery;
+
 		this.cache = new CellMeasurerCache({
-			defaultHeight: Constant.size.dataview.gallery.height,
-			defaultWidth: Constant.size.dataview.gallery.width,
+			defaultHeight: height,
+			defaultWidth: width,
 			fixedWidth: true,
 		});
 
