@@ -297,7 +297,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	
 	unbind () {
 		const { isPopup } = this.props;
-		const namespace = this.getNamespace();
+		const namespace = Util.getEventNamespace(isPopup);
 		const container = Util.getScrollContainer(isPopup);
 		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
 
@@ -310,7 +310,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { dataset, isPopup } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
-		const namespace = this.getNamespace();
+		const namespace = Util.getEventNamespace(isPopup);
 		const container = Util.getScrollContainer(isPopup);
 
 		this.unbind();
@@ -2210,10 +2210,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	setLoading (v: boolean): void {
 		this.loading = v;
 		this.forceUpdate();
-	};
-
-	getNamespace () {
-		return this.props.isPopup ? '-popup' : '';
 	};
 
 });

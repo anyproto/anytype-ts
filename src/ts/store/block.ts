@@ -393,7 +393,7 @@ class BlockStore {
 		Storage.setToggle(rootId, blockId, v);
 		
 		$(window).trigger('resize.editor');
-		element.find('.resizable').trigger('resize', [ $.Event('resize') ]);
+		element.find('.resizable').trigger('resizeInit');
 	};
 
 	updateMarkup (rootId: string) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, DataUtil, ObjectUtil, analytics, keyboard } from 'Lib';
+import { I, M, C, DataUtil, ObjectUtil, Util, analytics, keyboard } from 'Lib';
 import { Block, Drag } from 'Component';
 import { blockStore, detailStore } from 'Store';
 
@@ -111,11 +111,12 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 	};
 
 	init () {
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const check = DataUtil.checkDetails(rootId);
+		const namespace = Util.getEventNamespace(isPopup);
 
 		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
-		$(window).trigger('resize.editor');
+		$(window).trigger('resize.editor' + namespace);
 	};
 
 	onScaleStart (e: any, v: number) {
@@ -137,7 +138,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 		C.BlockListSetFields(rootId, [
 			{ blockId: rootId, fields: { width: v } },
 		], () => {
-			$('.resizable').trigger('resize', [ e ]);
+			$('.resizable').trigger('resizeInit');
 		});
 	};
 
