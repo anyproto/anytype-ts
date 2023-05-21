@@ -1,16 +1,16 @@
 @import "~scss/_vars";
 
 .phraseWrapper {
-	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: 100%; position: relative; padding: 36px 48px;
+	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: 100%; position: relative; padding: 26px 48px;
 	font-size: 18px; line-height: 18px; transition: $transitionAllCommon; text-align: center; letter-spacing: -0.12px;
 }
 .phraseWrapper {
-	.phraseInnerWrapper { overflow-x: scroll; height: 18px; }
+	.phraseInnerWrapper { overflow-x: scroll; display: flex; justify-content: center; align-items: center; padding-left:10px; min-height: 38px; }
 	.phraseInnerWrapper::-webkit-scrollbar { width: 0; height: 0; }
 	* { user-select: text !important; }
-	.item { font-size: 18px; line-height: 18px; height: 18px; margin: 0px 20px 0px 0px; user-select: text !important; }
+	.item { font-size: 18px; line-height: 18px; height: 18px; margin: 10px 10px 10px 0px; user-select: text !important; }
 
-	.bgColor { border-radius: 6px; filter: blur(4px); }
+	.bgColor { border-radius: 6px; filter: blur(5px); }
 	.bgColor-orange { background: $colorOrange !important; user-select: none !important; }
 	.bgColor-red { background: $colorRed !important; }
 	.bgColor-pink { background: $colorPink !important; }
@@ -20,7 +20,7 @@
 	.bgColor-lime { background: $colorLime !important; }
 	.bgColor-green { background: $colorGreen !important; }
 
-	.placeholder { color: #5c5a54; padding: 36px 48px; }
+	.placeholder { color: #5c5a54; padding: 36px 48px; top: 0; }
 	#entry { display: inline; font-size: 18px; line-height: 18px; height: 18px; -webkit-user-modify: read-write-plaintext-only; }
 
 	.icon { 

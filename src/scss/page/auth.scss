@@ -1,13 +1,22 @@
 @import "~scss/_vars";
 
+$colorPrimary: #d4d4d4;
 $colorSecondary: #8d8d8d;
+$colorGrey: #393933;
+$colorTwo: #cbc9bd;
+$colorBackground: #060606;
+$colorBorder: #1e1e1c;
+$colorBorderHover: #272723;
+$colorWithError: #240e07;
+$colorPlaceholder: #5c5a54;
+$colorInput: rgba(44, 43, 39, 0.3);
 
 html.bodyIndex, html.bodyAuth {
-	body { background: #060606 !important; color: $colorSecondary; overflow: hidden; }
+	body { background: $colorBackground !important; color: $colorSecondary; overflow: hidden; }
 }
 
 html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
-	#popupConfirm-innerWrap { background: #252525; min-width: 700px }
+	#popupConfirm-innerWrap { background: $colorBlack; min-width: 700px }
 	#popupConfirm-innerWrap {
 		.content { text-align: left; }
 
@@ -18,10 +27,10 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	}
 
 	.menus {
-		.menu.menuAccountPath { background: #252525; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; } 
+		.menu.menuAccountPath { background: $colorBlack; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px $colorGrey inset; } 
 		.menu.menuAccountPath {
 			.label { color: $colorSecondary; }
-			.label.path { color: #d4d4d4; }
+			.label.path { color: $colorPrimary; }
 		}
 	}
 
@@ -64,16 +73,16 @@ html.bodyAuthDeleted {
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { width: 192px; }
-	.button.blank { border-color: #1e1e1c; }
-	.button.blank:hover { border-color: #272723; background: none; }
+	.button.blank { border-color: $colorBorder; }
+	.button.blank:hover { border-color: $colorBorderHover; background: none; }
 
-	.withError { background: #240e07; }
+	.withError { background: $colorWithError; }
 }
 
 .pageIndexIndex, .pageAuthSelect {
 	.frame { width: 830px; }
-	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 24px; }
-	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; }
+	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 24px; color: $colorPrimary; }
+	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; color: $colorSecondary; }
 }
 
 .pageAuthLogin {
@@ -82,7 +91,7 @@ html.bodyAuthDeleted {
 	.phraseWrapper { margin: 0px 0px 20px 0px; }
 
 	.small { color: $colorSecondary; cursor: pointer; }
-	.small:hover { color: #cbc9bd; }
+	.small:hover { color: $colorTwo; }
 
 	.bottom { 
 		position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px;
@@ -103,7 +112,7 @@ html.bodyAuthDeleted {
 
 .pageAuthPinCheck {
 	.title { font-size: 22px; margin-bottom: 20px; }
-	.input { width: 86px; height: 86px; border: none; border-radius: 24px; background: rgba(44, 43, 39, 0.3); margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
+	.input { width: 86px; height: 86px; border: none; border-radius: 24px; background: $colorInput; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
 	.input:last-child { margin: 0px; }
 }
 
@@ -125,8 +134,8 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted {
 	.frame { width: 866px; margin-top: -150px !important; display: flex; flex-direction: column; gap: 12px 0px; align-items: center; }
-	.title { font-size: 18px; line-height: 26px; color: #d4d4d4; }
-	.label { color: #8d8d8d; }
+	.title { font-size: 18px; line-height: 26px; color: $colorPrimary; }
+	.label { color: $colorSecondary; }
 }
 
 .pageAuthOnboard {
@@ -145,19 +154,19 @@ html.bodyAuthDeleted {
 
 	.icon.gear { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; }
 	.small { color: $colorSecondary; cursor: pointer; }
-	.small:hover { color: #cbc9bd; }
+	.small:hover { color: $colorTwo; }
 
 	#accountPath { display: flex; align-items: center; flex-direction: row; gap: 0px 6px; }
-	#accountPath:hover { color: #cbc9bd; }
+	#accountPath:hover { color: $colorTwo; }
 	#accountPath:hover {
 		.icon.gear { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
-	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: #5c5a54; color: black; }
-	.input { border-radius: 26px; border: none; background: rgba(44, 43, 39, 0.3); font-size: 18px; padding: 32px 48px 32px 48px; width: 392px; height: auto; }
-	.input:hover { cursor: pointer; background: rgba(44, 43, 39, 0.5); }
-	.input::placeholder { color: #5c5a54 !important; }
+	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: $colorPlaceholder; color: black; }
+	.input { border-radius: 26px; border: none; background: $colorInput; font-size: 18px; padding: 32px 48px 32px 48px; width: 392px; height: auto; }
+	.input:hover { cursor: pointer; filter: brightness(1.2) }
+	.input::placeholder { color: $colorPlaceholder !important; }
 
 	.phraseWrapper {
 		.icon { display: none; }
@@ -169,17 +178,17 @@ html.bodyAuthDeleted {
 		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
 		.account { z-index: 2; }
 		.space { transition: all 600ms ease-in, opacity 200ms ease-in; z-index: 1; opacity: 0; }
-		.iconObject.withOption.isSpace { background: #252525; border-radius: 8px; }
+		.iconObject.withOption.isSpace { background: $colorBlack; border-radius: 8px; }
 		
-		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: white; }
+		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: $colorWhite; }
 		.line.left { right: 50%; }
 		.line.right { left: 50%; }
 		.iconObject { margin: 0; }
-		.accountName, .spaceName { text-overflow: ellipsis; overflow: hidden; width: 120px; color: #d4d4d4; }
+		.accountName, .spaceName { text-overflow: ellipsis; overflow: hidden; width: 120px; color: $colorPrimary; }
 	}
 
 	.soulContent.soulCreating {
-		.iconObject { background: white; box-shadow: 0px 0px 0px 0px white; animation: pulse 2s infinite; }
+		.iconObject { background: $colorWhite; box-shadow: 0px 0px 0px 0px $colorWhite; animation: pulse 2s infinite; }
 
 		@keyframes pulse {
 			0% { transform: scale(1); }
@@ -197,15 +206,15 @@ html.bodyAuthDeleted {
 
 .pageAuthDeleted {
 	canvas { height: 100vh; width: 100vw; }
-	.title { color: #cbc9bd }
+	.title { color: $colorTwo }
 	.frame { width: 500px; }
 	.label { font-size: 16px;}
 	.pie {
-		.inner { display: inline-block; padding: 8px; border: 1px solid #5c5a54; border-radius: 100%; width: 64px; height: 64px; }
+		.inner { display: inline-block; padding: 8px; border: 1px solid $colorPlaceholder; border-radius: 100%; width: 64px; height: 64px; }
 	}
 
 	.buttons { margin: 16px;}
-	.button { color: #cbc9bd }
+	.button { color: $colorTwo }
 	.remove { color: $colorRed; font-weight: 500; font-size: 16px; cursor: pointer; }
 
 	.row { 
