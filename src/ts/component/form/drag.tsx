@@ -19,7 +19,7 @@ class Drag extends React.Component<Props> {
 		className: '',
 	};
 	
-	value = 0;
+	value = null;
 	ox = 0;
 	nw = 0;
 	iw = 0;
@@ -130,7 +130,12 @@ class Drag extends React.Component<Props> {
 			x = Math.max(0, x);
 			x = Math.min(mw, x);
 
+			console.log(x);
+
 			this.value = this.checkValue(x / mw);
+
+			console.log(this.value);
+
 			if (snap && (this.value > snap - 0.025) && (this.value < snap + 0.025)) {
 				this.value = snap;
 			};
