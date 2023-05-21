@@ -74,7 +74,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 					rowCount={total}
 					threshold={10}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
 							{({ height, isScrolling, registerChild, scrollTop }) => (
 								<AutoSizer disableHeight={true}>
