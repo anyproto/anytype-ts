@@ -125,8 +125,8 @@ html.bodyAuthDeleted {
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted {
 	.frame { width: 866px; margin-top: -150px !important; display: flex; flex-direction: column; gap: 12px 0px; align-items: center; }
-	.title { font-size: 18px; line-height: 26px; }
-	.label { color: #5c5a54; }
+	.title { font-size: 18px; line-height: 26px; color: #d4d4d4; }
+	.label { color: #8d8d8d; }
 }
 
 .pageAuthOnboard {
@@ -163,19 +163,19 @@ html.bodyAuthDeleted {
 		.icon { display: none; }
 	}
 
-	.soulContent { position: relative; width: 100px; padding-top: 5px; }
+	.soulContent { position: relative; width: 100px; margin-top: 28px; }
 	.soulContent {
 		.account, .space, .line { transition: all 600ms ease-in; position: absolute; display: flex; flex-direction: column; }
 		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
 		.account { z-index: 2; }
 		.space { transition: all 600ms ease-in, opacity 200ms ease-in; z-index: 1; opacity: 0; }
-		.iconObject.withOption.isSpace { background: white }
+		.iconObject.withOption.isSpace { background: #252525; border-radius: 8px; }
 		
-		.line { z-index: 0; height: 1px; top: 25px; width: 0; background: white; }
+		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: white; }
 		.line.left { right: 50%; }
 		.line.right { left: 50%; }
 		.iconObject { margin: 0; }
-		.accountName, .spaceName { text-overflow: ellipsis; overflow: hidden; width: 100px; }
+		.accountName, .spaceName { text-overflow: ellipsis; overflow: hidden; width: 120px; color: #d4d4d4; }
 	}
 
 	.soulContent.soulCreating {
@@ -189,9 +189,9 @@ html.bodyAuthDeleted {
 	}
 
 	.soulContent.spaceCreating {
-		.account { transform: translateX(-100px); }
-		.space { transform: translateX(100px); opacity: 1; }
-		.line { width: 100px; }
+		.account { transform: translateX(-70px); }
+		.space { transform: translateX(70px); opacity: 1; }
+		.line { width: 70px; }
 	}
 }
 

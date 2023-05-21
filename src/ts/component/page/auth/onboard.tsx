@@ -148,7 +148,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					// https://legacy.reactjs.org/docs/reconciliation.html
 					<section className={cn.join(' ')}>
 						<div className="account">
-							<IconObject object={{ iconOption, layout: I.ObjectLayout.Human }} size={48} />
+							<IconObject object={{ iconOption, layout: I.ObjectLayout.Human }} size={64} />
 							<span className="accountName">
 								{authStore.name}
 							</span>
@@ -158,7 +158,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						<div className="line right" />
 
 						<div className="space">
-							<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={48} />
+							<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={64} />
 							<span className="spaceName">Personal Space</span>
 						</div>
 					</section>
