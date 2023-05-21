@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, M, Util, Storage, Mark, translate } from 'Lib';
+import { I, M, Util, Storage, Mark, translate, keyboard } from 'Lib';
 import { detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -392,7 +392,7 @@ class BlockStore {
 		v ? element.addClass('isToggled') : element.removeClass('isToggled');
 		Storage.setToggle(rootId, blockId, v);
 		
-		$(window).trigger('resize.editor');
+		Util.triggerResizeEditor(keyboard.isPopup());
 		element.find('.resizable').trigger('resizeInit');
 	};
 

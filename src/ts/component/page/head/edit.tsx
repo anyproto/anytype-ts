@@ -113,10 +113,9 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 	init () {
 		const { rootId, isPopup } = this.props;
 		const check = DataUtil.checkDetails(rootId);
-		const namespace = Util.getEventNamespace(isPopup);
 
 		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
-		$(window).trigger('resize.editor' + namespace);
+		Util.triggerResizeEditor(isPopup);
 	};
 
 	onScaleStart (e: any, v: number) {

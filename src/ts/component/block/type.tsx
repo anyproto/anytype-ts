@@ -288,7 +288,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	onBlock (id: string) {
 		const { rootId, isPopup } = this.props;
 		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
-		const namespace = Util.getEventNamespace(isPopup);
 
 		if (block) {
 			const l = block.getLength();
@@ -297,7 +296,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			focus.apply();
 		};
 
-		$(window).trigger('resize.editor' + namespace);
+		Util.triggerResizeEditor(isPopup);
 	};
 
 	onTemplate () {

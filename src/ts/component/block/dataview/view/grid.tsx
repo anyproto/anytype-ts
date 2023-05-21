@@ -159,13 +159,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	componentDidUpdate () {
-		const win = $(window);
-
 		this.rebind();
 		this.resize();
 		this.onScroll();
 
-		win.trigger('resize.editor');
+		Util.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
