@@ -35,7 +35,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		const { config } = commonStore;
 		
         return (
-			<div ref={ref => this.node = ref}>
+			<div ref={ref => this.node = ref} onKeyDown={this.onKeyDown}>
 				<Header {...this.props} component="authIndex" />
 				<Icon className="arrow back animation" onClick={this.onCancel} />
 				

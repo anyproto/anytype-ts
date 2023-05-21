@@ -156,10 +156,11 @@ class Phrase extends React.Component<Props, State> {
 		const value = this.getEntryValue();
 
 		keyboard.shortcut('space, enter', e, () => {
-			e.preventDefault();
-
-			this.clear();
-			this.setState(({ phrase }) => ({ phrase: value.length ? phrase.concat([ value ]) : [] }));
+			if (value.length) {
+				e.preventDefault();
+				this.clear();
+				this.setState(({ phrase }) => ({ phrase: phrase.concat([ value ]) }));
+			}
 		});
 
 		this.placeholderCheck();
