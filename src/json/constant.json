@@ -175,7 +175,8 @@
 
 		"dataview": {
 			"gallery": {
-				"card": 224,
+				"width": 224,
+				"height": 72,
 				"margin": 16
 			},
 

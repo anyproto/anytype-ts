@@ -21,8 +21,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		super(props);
 
 		this.cache = new CellMeasurerCache({
-			defaultHeight: 118,
-			defaultWidth: Constant.size.dataview.gallery.card,
+			defaultHeight: Constant.size.dataview.gallery.height,
+			defaultWidth: Constant.size.dataview.gallery.width,
 			fixedWidth: true,
 		});
 
