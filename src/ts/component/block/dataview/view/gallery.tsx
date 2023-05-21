@@ -51,6 +51,9 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		// Subscriptions on dependent objects
 		for (let id of records) {
 			const item = detailStore.get(subId, id, getKeys(view.id));
+			if (item._empty_) {
+				continue;
+			};
 		
 			for (let k in item) {
 				const relation = dbStore.getRelationByKey(k);
@@ -101,11 +104,12 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		let content = null;
 
 		if (isInline) {
+			const records = this.getRecords();
 			content = (
 				<React.Fragment>
 					{records.map((id: string) => {
 						if (id == 'add-record') {
-							return <CardAdd key={'gallery-card-' + view.id + id}  />;
+							return <CardAdd key={'gallery-card-' + view.id + id} />;
 						} else {
 							return <Card key={'gallery-card-' + view.id + id} {...this.props} recordId={id} />;
 						};
