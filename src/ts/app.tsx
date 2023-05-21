@@ -396,17 +396,12 @@ class App extends React.Component<object, State> {
 			Storage.delete('menuSearchText');
 		});
 
-<<<<<<< HEAD
-		Renderer.on('config', (e: any, config: any) => {
-			commonStore.configSet(config, true);
-=======
 		Renderer.on('zoom', () => {
 			const resizable = $('.resizable');
 
 			if (resizable.length) {
 				resizable.trigger('resizeInit');
 			};
->>>>>>> master
 		});
 
 		Renderer.on('native-theme', (e: any, isDark: boolean) => {
