@@ -36,6 +36,7 @@ class Sidebar {
 	isDragging = false;
 	timeoutHide = 0;
 	timeoutAnim = 0;
+	timeoutResize = 0;
 
 	init () {
 		this.initObjects();
@@ -386,7 +387,8 @@ class Sidebar {
 		this.header.css(css);
 		this.footer.css(css);
 
-		$(window).trigger('updateNavigation');
+		window.clearTimeout(this.timeoutResize);
+		this.timeoutResize = window.setTimeout(() => { $(window).trigger('updateNavigation'); }, 40);
 	};
 
 	private save (): void {
