@@ -22,7 +22,8 @@
 	}
 }
 
-.headSimple.isSet, .headSimple.isCollection { padding: 0px 14px; }
+.headSimple.isSet { padding: 0px 14px; }
+.headSimple.isCollection { padding: 0px 20px; }
 .headSimple.isSet, .headSimple.isCollection {
 	.side.left {
 		.titleWrap { align-items: start; }

@@ -119,7 +119,10 @@
 		}
 
 		.viewContent.viewGrid.isCollection {
-			.row .icon.dnd { left: 0; height: 32px; top: 8px; z-index: 1; }
+			.row, .rowHead { padding-left: 6px; }
+			.row:hover {
+				.icon.drag { opacity: 1; }
+			}
 		}
     }
 

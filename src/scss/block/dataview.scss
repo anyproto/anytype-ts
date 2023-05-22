@@ -128,6 +128,9 @@
 
 			.button { padding: 0px 8px; @include text-common; }
 		}
+		.dataviewControls.isCollection {
+			.side.left { padding-left: 20px; }
+		}
 
 		.dataviewSelection { font-weight: 400; display: none; }
 		.dataviewSelection {
@@ -154,8 +157,11 @@
 			.scrollWrap { background: #fff; padding-bottom: 14px; }
 		}
 
-		.dataviewControls.isCollection.viewList {
-			.line { width: 100%; margin: 0px; }
+		.viewContent {
+			.icon.drag { 
+				z-index: 1; width: 7px; height: 12px; background-image: url('~img/icon/dataview/dnd.svg'); 
+				position: absolute; top: 50%; margin: -6px 0px 0px 0px; left: 6px; opacity: 0; transition: opacity $transitionCommon;
+			}
 		}
 
 		.hoverArea:hover {

@@ -77,12 +77,12 @@
 			.loadMore { margin-top: 2px; }
         }
 
-		.viewContent.viewList.isCollection { padding-left: 2px; }
+		.viewContent.viewList.isCollection { padding-left: 0px; }
 		.viewContent.viewList.isCollection {
-			.row.add { padding-left: 20px; }
-			.row .icon.dnd { left: 1px; height: 22px; top: 1px; z-index: 1; }
-
-			.cellContent:first-child { padding-left: 20px; }
+			.row { padding-left: 20px; }
+			.row:hover {
+				.icon.drag { opacity: 1; }
+			}
 		}
     }
 	.block.blockDataview.isInline {
