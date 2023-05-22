@@ -144,9 +144,11 @@ class Dispatcher {
 		if (v == V.OBJECTRELATIONSREMOVE)		 t = 'objectRelationsRemove';
 		if (v == V.OBJECTRESTRICTIONSSET)		 t = 'objectRestrictionsSet';
 
+		/*
 		if (v == V.FILESPACEUSAGE)				 t = 'fileSpaceUsage';
 		if (v == V.FILELOCALUSAGE)				 t = 'fileLocalUsage';
 		if (v == V.FILELIMITREACHED)			 t = 'fileLimitReached';
+		*/
 
 		return t;
 	};
