@@ -33,7 +33,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
 		this.onLogout = this.onLogout.bind(this);
-		this.onFileOffload = this.onFileOffload.bind(this);
 		this.onLocationMove = this.onLocationMove.bind(this);
 	};
 
@@ -74,12 +73,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						</div>
 					</div>
 
-					<Label className="section" text="Data" />
-
-					<div className="row cp" onClick={this.onFileOffload}>
-						<Label text="Clear file cache" />
-					</div>
-
 					<Label className="section" text="Account" />
 
 					{canMove ? (
@@ -109,42 +102,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 	onLogout (e: any) {
 		this.props.onPage('logout');
-	};
-
-	onFileOffload (e: any) {
-		const { setLoading } = this.props;
-
-		analytics.event('ScreenFileOffloadWarning');
-
-		popupStore.open('confirm',{
-			data: {
-				title: 'Are you sure?',
-				text: 'All media files will be deleted from your current device. They can be downloaded again from a backup node or another device.',
-				textConfirm: 'Yes',
-				onConfirm: () => {
-					setLoading(true);
-
-					C.FileListOffload([], false, (message: any) => {
-						setLoading(false);
-
-						if (message.error.code) {
-							return;
-						};
-
-						popupStore.open('confirm',{
-							data: {
-								title: 'Files offloaded',
-								//text: Util.sprintf('Files: %s, Size: %s', message.files, FileUtil.size(message.bytes)),
-								textConfirm: 'Ok',
-								canCancel: false,
-							}
-						});
-
-						analytics.event('FileOffload', { middleTime: message.middleTime });
-					});
-				},
-			}
-		});
 	};
 
 	onLocationMove () {

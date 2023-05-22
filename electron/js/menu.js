@@ -188,6 +188,7 @@ class MenuManager {
 				ho: 'Hidden objects', 
 				mw: 'Middleware', 
 				th: 'Threads', 
+				fi: 'Files', 
 				an: 'Analytics', 
 				js: 'JSON',
 			};

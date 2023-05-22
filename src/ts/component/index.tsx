@@ -15,6 +15,7 @@ import ListMenu from './list/menu';
 import ListChildren from './list/children';
 import ListObjectPreview from './list/previewObject';
 import ListObject from './list/object';
+import ListObjectManager from './list/objectManager';
 
 import Header from './header';
 import Footer from './footer';
@@ -74,6 +75,8 @@ import ObjectDescription from './util/object/description';
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
 
+import ProgressBar from './util/progressBar';
+
 export {
 	Page,
 	EditorPage,
@@ -89,6 +92,7 @@ export {
 	ListChildren,
 	ListObjectPreview,
 	ListObject,
+	ListObjectManager,
 
 	Header,
 	Footer,
@@ -144,5 +148,7 @@ export {
 	MenuItemVertical,
 
 	MediaAudio,
-	MediaVideo
+	MediaVideo,
+
+	ProgressBar
 };

@@ -55,6 +55,7 @@ export enum ToastAction {
 	Link		 = 2,
 	Lock 		 = 3,
 	Collection	 = 4,
+	StorageFull  = 5,
 };
 
 export interface Option {
