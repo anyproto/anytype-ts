@@ -21,6 +21,7 @@
 			}
 
 			.card {
+				.selectable { height: 100%; }
 				.itemContent > .inner { padding: 16px; }
 
 				.cover { 
