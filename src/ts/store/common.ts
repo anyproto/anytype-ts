@@ -202,6 +202,15 @@ class CommonStore {
 		return Object.assign(this.graphObj, Storage.get('graph') || {});
 	};
 
+	get spaceStorage (): SpaceStorage {
+		let { bytesUsed } = this.spaceStorageObj;
+		if (bytesUsed <= 1024) {
+			bytesUsed = 0;
+		};
+
+		return { ...this.spaceStorageObj, bytesUsed };
+	};
+
     coverSet (id: string, image: string, type: I.CoverType) {
 		this.coverObj = { id, image, type };
 	};

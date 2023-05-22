@@ -20,7 +20,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
     };
 
     render () {
-        const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorageObj;
+        const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
         const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
         const isRed = percentageUsed >= 90;
 

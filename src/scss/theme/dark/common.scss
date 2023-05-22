@@ -65,7 +65,7 @@ html.themeDark {
 	}
 
 	.objectManagerWrapper {
-		.controls { border-color: $colorLinePrimary; }
+		.controls, .managerEmpty { border-color: $colorLinePrimary; }
 	}
 
     /* Components */

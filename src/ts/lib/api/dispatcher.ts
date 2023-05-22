@@ -255,7 +255,7 @@ class Dispatcher {
 				};
 
 				case 'fileLimitReached': {
-					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorageObj;
+					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
 					const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
 
 					if (percentageUsed >= 99) {
