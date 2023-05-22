@@ -1,6 +1,6 @@
 const fs = require('fs');
 const https = require('https');
-const remoteConfigUrl = 'https://raw.githubusercontent.com/anytypeio/open/main/compliance/licenses-config.json';
+const remoteConfigUrl = 'https://raw.githubusercontent.com/anyproto/open/main/compliance/licenses-config.json';
 
 function processLicenses(licenses, allowedLicenses) {
 	const disallowedPackages = Object.keys(licenses).filter(pkg => {
@@ -12,8 +12,8 @@ function processLicenses(licenses, allowedLicenses) {
 			pkgLicenses = "LGPL"
 		}
 
-		// Solutions developed by Anytype are allowed
-		if (licenses[pkg].publisher == "Anytype") {
+		// Solutions developed by Anytype or Any Association are allowed
+		if (licenses[pkg].publisher == "Anytype" || licenses[pkg].publisher == "Any" || licenses[pkg].publisher == "Any Association") {
 			return false;
 		}
 		

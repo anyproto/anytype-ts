@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.31.45-beta",
+	"version": "0.31.47-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -29,15 +29,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/anytypeio/js-anytype.git"
+		"url": "git+https://github.com/anyproto/anytype-ts.git"
 	},
 	"author": {
-		"name": "Anytype",
+		"name": "Any Association",
 		"email": "info@anytype.io"
 	},
-	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/anytypeio/js-anytype/issues"
+		"url": "https://github.com/anyproto/anytype-ts/issues"
 	},
 	"homepage": "https://anytype.io",
 	"devDependencies": {
