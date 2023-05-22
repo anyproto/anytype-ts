@@ -21,9 +21,11 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	node: any = null;
     ox = 0;
 	oy = 0;
+	sx = 0;
     refFooter: React.Ref<HTMLUnknownElement> = null;
 	frame = 0;
 	width = 0;
+	movedX = false;
 
 	constructor (props: Props) {
 		super(props);
@@ -63,7 +65,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					</div>
 				</div>
 
-				<div className="resize-h" onMouseDown={e => this.onResizeStart(e, I.MenuType.Horizontal)}>
+				<div className="resize-h" draggable={true} onDragStart={e => this.onResizeStart(e, I.MenuType.Horizontal)}>
 					<div className="resize-handle" onClick={this.onHandleClick} />
 				</div>
 				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
@@ -167,14 +169,15 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		const node = $(this.node);
 		const win = $(window);
 		const body = $('body');
-		const offset = node.offset();
+		const { left, top } = node.offset();
 
 		if (commonStore.isSidebarFixed && (dir == I.MenuType.Vertical)) {
 			return;
 		};
 
-		this.ox = offset.left;
-		this.oy = offset.top;
+		this.ox = left;
+		this.oy = top;
+		this.sx = e.pageX;
 
 		keyboard.disableSelection(true);
 		keyboard.setResize(true);
@@ -189,7 +192,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 	onResizeMove (e: any, dir: I.MenuType) {
 		const { width, snap } = sidebar.data;
 
-		raf.cancel(this.frame);
+		if (this.frame) {
+			raf.cancel(this.frame);
+		};
 
 		this.frame = raf(() => {
 			if (sidebar.isAnimating) {
@@ -197,6 +202,10 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 			};
 
 			if (dir == I.MenuType.Horizontal) {
+				if (Math.abs(this.sx - e.pageX) >= 10) {
+					this.movedX = true;
+				};
+
 				const w = Math.max(0, snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
 				const d = w - this.width;
 
@@ -233,10 +242,14 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 
 		$('body').removeClass('rowResize colResize');
 		$(window).off('mousemove.sidebar mouseup.sidebar');
+
+		window.setTimeout(() => { this.movedX = false; }, 15);
 	};
 
 	onHandleClick () {
-		sidebar.toggleOpenClose();
+		if (!this.movedX) {
+			sidebar.toggleOpenClose();
+		};
 	};
 
 });
