@@ -185,7 +185,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 		const options: any = { 
 			properties: [ 'openFile' ],
 			filters: [
-				{ name: '', extensions: [ 'csv' ] }
+				{ name: '', extensions: [ 'csv', 'zip' ] }
 			]
 		};
 
