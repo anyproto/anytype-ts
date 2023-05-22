@@ -56,7 +56,7 @@
 					.mediaVideo video { width: 100%; }
 				}
 			}
-			.card:hover { border: 1px solid $colorBorderDark; background: rgba(166, 166, 166, 0.04); }
+			.card:hover { border: 1px solid $colorBorderLight; background: $colorHoverLight; }
 			.card:hover {
 				.cover {
 					.inner { color: $colorBlack; }
