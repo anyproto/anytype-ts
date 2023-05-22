@@ -119,7 +119,7 @@
 		}
 
 		.viewContent.viewGrid.isCollection {
-			.row, .rowHead { padding-left: 6px; }
+			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
 			.row:hover {
 				.icon.drag { opacity: 1; }
 			}
