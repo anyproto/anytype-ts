@@ -52,7 +52,7 @@ class Navigation extends React.Component {
 			>
 				<div className="inner">
 					{buttons.map(item => {
-						const cn = [ item.className ];
+						const cn = [ 'iconWrap' ];
 
 						if (item.disabled) {
 							cn.push('disabled');
@@ -62,11 +62,11 @@ class Navigation extends React.Component {
 							<div 
 								key={item.className} 
 								onClick={item.onClick} 
-								className="iconWrap"
-								onMouseEnter={e => this.onTooltipShow(e, item.tooltip, item.caption)}
+								className={cn.join(' ')}
+								onMouseEnter={e => item.disabled ? null : this.onTooltipShow(e, item.tooltip, item.caption)}
 								onMouseLeave={e => Preview.tooltipHide(false)}
 							>
-								<Icon className={cn.join(' ')} />
+								<Icon className={item.className} />
 							</div>
 						);
 					})}
