@@ -163,11 +163,11 @@ class Preview {
 					this.previewHide(true);
 				};
 			});
-
-			obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
 		};
 
 		passThrough ? obj.addClass('passThrough') : obj.removeClass('passThrough');
+
+		obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
 
 		this.previewHide(true);
 		window.clearTimeout(this.timeout.preview);
