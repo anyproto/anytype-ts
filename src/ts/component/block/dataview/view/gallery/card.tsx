@@ -63,7 +63,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								showTooltip={true}
 								onClick={(e: any) => { this.onCellClick(e, relation); }}
 								tooltipX={I.MenuDirection.Left}
-								iconSize={18}
+								iconSize={relation.relationKey == 'name' ? 20 : 18}
 								shortUrl={true}
 							/>
 						);

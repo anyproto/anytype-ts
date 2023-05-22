@@ -50,7 +50,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							isInline={true}
 							showTooltip={true}
 							arrayLimit={2}
-							iconSize={relation.relationKey == 'name' ? 24 : 20}
+							iconSize={relation.relationKey == 'name' ? 24 : 18}
 						/>
 					);
 				})}
