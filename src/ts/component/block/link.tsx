@@ -294,9 +294,13 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	onMouseEnter (e: React.MouseEvent) {
 		const { rootId, block } = this.props;
 		const { targetBlockId } = block.content;
-		const object = detailStore.get(rootId, targetBlockId, []);
 
-		if (object.isArchived || object.isDeleted) {
+		if (!targetBlockId) {
+			return;
+		};
+
+		const object = detailStore.get(rootId, targetBlockId, []);
+		if (object._empty_ || object.isArchived || object.isDeleted) {
 			return;
 		};
 
