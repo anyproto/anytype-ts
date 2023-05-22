@@ -35,7 +35,6 @@
 		"name": "Anytype",
 		"email": "info@anytype.io"
 	},
-	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/anyproto/anytype-ts/issues"
 	},
