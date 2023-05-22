@@ -68,6 +68,11 @@ html.themeDark {
 		.controls, .managerEmpty { border-color: $colorLinePrimary; }
 	}
 
+	.progressBar { background: $colorBgLight; }
+	.progressBar {
+		.progressBarFill { background: $colorOrange; }
+	}
+
     /* Components */
     /* ---------------------------------------------------------------- */
 
