@@ -81,8 +81,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			recommendedRelations.push('rel-description');
 		};
 
-		console.log(recommendedRelations);
-
 		const relations = recommendedRelations.map(id => dbStore.getRelationById(id)).filter(it => {
 			if (!it) {
 				return false;

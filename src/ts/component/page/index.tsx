@@ -209,7 +209,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.unbind();
 
 		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => this.resize());
-		win.trigger('updateNavigation');
 
 		if (!isPopup) {
 			keyboard.setMatch(match);

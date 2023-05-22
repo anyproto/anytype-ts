@@ -601,24 +601,23 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getLimit () {
-		const { ww } = Util.getWindowDimensions();
+		const container = Util.getPageContainer(this.props.isPopup);
 		const size = Constant.size.store;
-		const maxWidth = ww - size.border * 2;
+		const maxWidth = container.width() - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
 
 		return Math.max(1, Math.min(5, limit));
 	};
 
 	resize () {
-		const win = $(window);
 		const container = Util.getPageContainer(this.props.isPopup);
 		const node = $(this.node);
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = Util.sizeHeader();
-		const isPopup = this.props.isPopup && !container.hasClass('full');
+		const isPopup = this.isPopup();
 		const limit = this.getLimit();
-		const wh = isPopup ? container.height() : win.height();
+		const wh = container.height();
 		const midHeight = node.find('.mid').outerHeight();
 
 		node.css({ height: wh });
@@ -638,6 +637,13 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			raf.cancel(this.frame);
 			this.frame = raf(() => { this.forceUpdate(); });
 		};
+	};
+
+	isPopup () {
+		const { isPopup } = this.props;
+		const container = Util.getPageContainer(isPopup);
+
+		return isPopup && !container.hasClass('full');
 	};
 
 });

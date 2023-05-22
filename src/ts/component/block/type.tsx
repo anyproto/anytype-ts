@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, Util, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -288,7 +288,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	onBlock (id: string) {
 		const { rootId, isPopup } = this.props;
 		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
-		const namespace = isPopup ? '-popup' : '';
 
 		if (block) {
 			const l = block.getLength();
@@ -297,7 +296,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			focus.apply();
 		};
 
-		$(window).trigger('resize.editor' + namespace);
+		Util.triggerResizeEditor(isPopup);
 	};
 
 	onTemplate () {

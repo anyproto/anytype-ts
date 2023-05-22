@@ -35,17 +35,17 @@ import Deleted from './util/deleted';
 import Progress from './util/progress';
 import EmptySearch from './util/emptySearch';
 
-import Input from './util/form/input';
-import InputWithFile from './util/form/inputWithFile';
-import Switch from './util/form/switch';
-import Editable from './util/form/editable';
-import Checkbox from './util/form/checkbox';
-import Textarea from './util/form/textarea';
-import Button from './util/form/button';
-import Select from './util/form/select';
-import Drag from './util/form/drag';
-import Pin from './util/form/pin';
-import Filter from './util/form/filter';
+import Input from './form/input';
+import InputWithFile from './form/inputWithFile';
+import Switch from './form/switch';
+import Editable from './form/editable';
+import Checkbox from './form/checkbox';
+import Textarea from './form/textarea';
+import Button from './form/button';
+import Select from './form/select';
+import Drag from './form/drag';
+import Pin from './form/pin';
+import Filter from './form/filter';
 
 import Pager from './util/pager';
 import Dimmer from './util/dimmer';
