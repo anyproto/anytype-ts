@@ -29,7 +29,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/anytypeio/js-anytype.git"
+		"url": "git+https://github.com/anyproto/anytype-ts.git"
 	},
 	"author": {
 		"name": "Anytype",
@@ -37,7 +37,7 @@
 	},
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/anytypeio/js-anytype/issues"
+		"url": "https://github.com/anyproto/anytype-ts/issues"
 	},
 	"homepage": "https://anytype.io",
 	"devDependencies": {
