@@ -121,11 +121,12 @@ class MenuHelp extends React.Component<I.Menu> {
 			};
 
 			case 'hints': {
+				let key = 'dashboard';
 				if (isGraph) {
-					Onboarding.start('mainGraph', keyboard.isPopup(), true);
-				} else {
-					popupStore.open('migration', { data: { type: 'onboarding' } });
+					key = 'mainGraph';
 				};
+
+				Onboarding.start(key, keyboard.isPopup(), true);
 				break;
 			};
 
