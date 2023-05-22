@@ -277,7 +277,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		const events = [ 'resize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
+		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
@@ -288,7 +288,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.unbind();
 
-		win.on(`resize.${block.id}`, throttle(() => this.resize(), 20));
+		win.on(`resize.${block.id} sidebarResize.${block.id}`, throttle(() => this.resize(), 20));
 		win.on(`updateDataviewData.${block.id}`, () => this.loadData(this.getView().id, 0, true));
 		win.on(`setDataviewSource.${block.id}`, () => this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}));
 		win.on(`selectionEnd.${block.id}`, () => this.onSelectEnd());

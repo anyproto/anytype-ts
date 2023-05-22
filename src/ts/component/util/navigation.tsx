@@ -102,7 +102,7 @@ class Navigation extends React.Component {
 	};
 
 	unbind () {
-		$(window).off('resize.navigation updateNavigation');
+		$(window).off('resize.navigation sidebarResize.navigation');
 	};
 
 	rebind () {
@@ -110,7 +110,7 @@ class Navigation extends React.Component {
 
 		const win = $(window);
 		win.on('resize.navigation', () => this.resize());
-		win.on('updateNavigation', () => this.forceUpdate());
+		win.on('sidebarResize.navigation', () => this.forceUpdate());
 	};
 
 	onBack () {

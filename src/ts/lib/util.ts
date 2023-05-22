@@ -987,6 +987,10 @@ class Util {
 		return isPopup ? '-popup' : '';
 	};
 
+	triggerResizeEditor (isPopup: boolean) {
+		$(window).trigger('resize.editor' + this.getEventNamespace(isPopup));
+	};
+
 	/**
 	 * Get width and height of window DOM node
 	 */

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { AutoSizer, WindowScroller, Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized';
+import { InfiniteLoader, AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { I, Relation, DataUtil, Util } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
@@ -20,9 +20,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	constructor (props: I.ViewComponent) {
 		super(props);
 
+		const { width, height } = Constant.size.dataview.gallery;
+
 		this.cache = new CellMeasurerCache({
-			defaultHeight: 250,
-			defaultWidth: Constant.size.dataview.gallery.card,
+			defaultHeight: height,
+			defaultWidth: width,
 			fixedWidth: true,
 		});
 
@@ -31,11 +33,11 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	render () {
-		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty } = this.props;
+		const { rootId, block, isPopup, isInline, className, getView, getKeys, getLimit, getVisibleRelations, onRecordAdd, getEmpty, getRecords } = this.props;
 		const view = getView();
 		const relations = getVisibleRelations();
 		const subId = dbStore.getSubId(rootId, block.id);
-		const records = this.getRecords();
+		const records = getRecords();
 		const { coverRelationKey, cardSize, hideIcon } = view;
 		const { offset, total } = dbStore.getMeta(subId, '');
 		const limit = getLimit();
@@ -46,9 +48,14 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return getEmpty('view');
 		};
 
+		const items = this.getItems();
+
 		// Subscriptions on dependent objects
 		for (let id of records) {
 			const item = detailStore.get(subId, id, getKeys(view.id));
+			if (item._empty_) {
+				continue;
+			};
 		
 			for (let k in item) {
 				const relation = dbStore.getRelationByKey(k);
@@ -65,93 +72,90 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			};
 		};
 
-		const CardAdd = (item: any) => (
-			<div 
-				className="card add" 
-				style={item.style} 
-				onClick={e => onRecordAdd(e, 1)}
-			/>
+		const CardAdd = () => (
+			<div className="card add" onClick={e => onRecordAdd(e, 1)} />
 		);
+
+		const rowRenderer = (param: any) => {
+			const item = items[param.index];
+			const style = { ...param.style, gridTemplateColumns: `repeat(${this.columnCount}, minmax(0, 1fr))` };
+
+			return (
+				<CellMeasurer
+					key={param.key}
+					parent={param.parent}
+					cache={this.cache}
+					columnIndex={0}
+					rowIndex={param.index}
+				>
+					{({ measure }) => (
+						<div key={'gallery-card-' + view.id + param.index} className="row" style={style}>
+							{item.children.map((id: string) => {
+								if (id == 'add-record') {
+									return <CardAdd key={'gallery-card-' + view.id + id} />;
+								} else {
+									return <Card key={'gallery-card-' + view.id + id} {...this.props} recordId={id} />;
+								};
+							})}
+						</div>
+					)}
+				</CellMeasurer>
+			);
+		};
 
 		let content = null;
 
 		if (isInline) {
+			const records = this.getRecords();
 			content = (
 				<React.Fragment>
-					{records.map((id: string, index: number) => {
+					{records.map((id: string) => {
 						if (id == 'add-record') {
-							return <CardAdd key={'gallery-card-' + view.id + index} />;
+							return <CardAdd key={'gallery-card-' + view.id + id} />;
 						} else {
-							return (
-								<Card 
-									key={'gallery-card-' + view.id + index} 
-									{...this.props}
-									recordId={id}
-								/>
-							);
+							return <Card key={'gallery-card-' + view.id + id} {...this.props} recordId={id} />;
 						};
 					})}
 				</React.Fragment>
 			);
 		} else {
 			content = (
-				<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-					{({ height, isScrolling, registerChild, scrollTop }) => {
-						return (
-							<AutoSizer 
-								disableHeight={true}
-								onResize={this.onResize} 
-								overscanByPixels={200}
-							>
-								{({ width }) => {
-									this.width = width;
-									this.setDimensions();
-									this.initPositioner();
-
-									return (
-										<div ref={registerChild}>
-											<Masonry
-												ref={ref => { this.ref = ref; }}
-												autoHeight={true}
-												height={Number(height) || 0}
-												width={Number(width) || 0}
-												isScrolling={isScrolling}
-												cellCount={records.length}
-												cellMeasurerCache={this.cache}
-												cellPositioner={this.cellPositioner}
-												cellRenderer={({ key, index, parent, style }) => {
-													const id = records[index];
-
-													if (id == 'add-record') {
-														style.height = 118;
-													};
-
-													style.width = this.columnWidth;
-
-													return (
-														<CellMeasurer cache={this.cache} index={index} key={'gallery-card-measurer-' + view.id + index} parent={parent}>
-															{id == 'add-record' ? (
-																<CardAdd style={style} />
-															) : (
-																<Card 
-																	key={'gallery-card-' + view.id + index} 
-																	{...this.props} 
-																	recordId={id}
-																	style={style}
-																/>
-															)}
-														</CellMeasurer>
-													);
-												}}
-												scrollTop={scrollTop}
-											/>
-										</div>
-									);
-								}}
-							</AutoSizer>
-						);
-					}}
-				</WindowScroller>
+				<InfiniteLoader
+					loadMoreRows={() => {}}
+					isRowLoaded={({ index }) => !!records[index]}
+					rowCount={total}
+					threshold={10}
+				>
+					{({ onRowsRendered }) => (
+						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+							{({ height, isScrolling, registerChild, scrollTop }) => {
+								return (
+									<AutoSizer disableHeight={true} onResize={this.onResize}>
+										{({ width }) => {
+											return (
+												<div ref={registerChild}>
+													<List
+														autoHeight={true}
+														ref={ref => this.ref = ref}
+														width={width}
+														height={height}
+														deferredMeasurmentCache={this.cache}
+														rowCount={items.length}
+														rowHeight={this.cache.rowHeight}
+														rowRenderer={rowRenderer}
+														onRowsRendered={onRowsRendered}
+														overscanRowCount={20}
+														scrollToAlignment="start"
+													/>
+												</div>
+											);
+										}}
+									</AutoSizer>
+								);
+							}}
+						</WindowScroller>
+					)}
+				</InfiniteLoader>
 			);
 		};
 
@@ -170,6 +174,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		);
 	};
 
+	componentDidMount () {
+		this.reset();
+	};
+
 	componentDidUpdate () {
 		this.reset();
 	};
@@ -182,8 +190,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		this.setDimensions();
 		this.cache.clearAll();
-		this.resetPositioner();
-		this.ref.clearCellPositions();
+		this.ref.recomputeRowHeights(0);
 	};
 
 	getSize (): number {
@@ -206,29 +213,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		this.columnCount = Math.max(1, Math.floor((this.width - margin) / this.getSize()));
 		this.columnWidth = (this.width - (this.columnCount - 1) * margin) / this.columnCount;
-	};
-
-	initPositioner () {
-		if (!this.cellPositioner) {
-			this.cellPositioner = createMasonryCellPositioner({
-				cellMeasurerCache: this.cache,
-				columnCount: this.columnCount,
-				columnWidth: this.columnWidth,
-				spacer: Constant.size.dataview.gallery.margin,
-			});
-		};
-	};
-
-	resetPositioner () {
-		if (!this.cellPositioner) {
-			return;
-		};
-
-		this.cellPositioner.reset({
-			columnCount: this.columnCount,
-			columnWidth: this.columnWidth,
-			spacer: Constant.size.dataview.gallery.margin,
-    	});
 	};
 
 	onResize ({ width }) {
@@ -256,6 +240,37 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		records.push('add-record');
 
 		return records;
+	};
+
+	getItems () {
+		this.setDimensions();
+
+		const records = this.getRecords();
+		const ret: any[] = [];
+
+		let n = 0;
+		let row = { children: [] };
+
+		for (let item of records) {
+			row.children.push(item);
+
+			n++;
+			if (n == this.columnCount) {
+				ret.push(row);
+				row = { children: [] };
+				n = 0;
+			};
+		};
+
+		if (row.children.length < this.columnCount) {
+			ret.push(row);
+		};
+
+		return ret.filter(it => it.children.length > 0);
+	};
+
+	resize () {
+		this.forceUpdate();
 	};
 
 });
