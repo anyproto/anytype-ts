@@ -25,7 +25,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
             { operator: I.FilterOperator.And, relationKey: 'fileSyncStatus', condition: I.FilterCondition.Equal, value: 1 },
         ];
 		const sorts: I.Sort[] = [
-			{ type: I.SortType.Desc, relationKey: 'fileSize' },
+			{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
 		];
 
         const Info = (item: any) => (
@@ -48,6 +48,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                     Info={Info}
                     iconSize={18}
                     filters={filters}
+					sorts={sorts}
                     textEmpty={translate('popupSettingsStorageEmptyLabel')}
                 />
             </div>
