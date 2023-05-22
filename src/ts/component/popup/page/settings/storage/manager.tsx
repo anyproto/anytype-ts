@@ -24,6 +24,9 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
         const filters: I.Filter[] = [
             { operator: I.FilterOperator.And, relationKey: 'fileSyncStatus', condition: I.FilterCondition.Equal, value: 1 },
         ];
+		const sorts: I.Sort[] = [
+			{ type: I.SortType.Desc, relationKey: 'fileSize' },
+		];
 
         const Info = (item: any) => (
             <React.Fragment>

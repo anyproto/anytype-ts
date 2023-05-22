@@ -64,6 +64,10 @@ html.themeDark {
 		img:before { background: $colorBgLight; }
 	}
 
+	.objectManagerWrapper {
+		.controls { border-color: $colorLinePrimary; }
+	}
+
     /* Components */
     /* ---------------------------------------------------------------- */
 

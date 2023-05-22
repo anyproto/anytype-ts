@@ -26,6 +26,9 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
 		];
+		const sorts: I.Sort[] = [
+			{ type: I.SortType.Desc, relationKey: 'lastModifiedDate' },
+		];
 
 		const buttons: I.ButtonComponent[] = [
 			{ icon: 'restore', text: 'Restore', onClick: this.onRestore },
@@ -52,6 +55,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 						ref={ref => { this.refManager = ref; }}
 						subId={Constant.subId.archive}
 						filters={filters}
+						sorts={sorts}
 						rowLength={3}
 						withArchived={true}
 						buttons={buttons}

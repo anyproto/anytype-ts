@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { Checkbox, Filter, Icon, IconObject, Label, Loader, ObjectDescription, ObjectName, Title } from 'Component';
-import { analytics, C, DataUtil, FileUtil, I, translate, Util } from 'Lib';
-import { dbStore, detailStore, menuStore, popupStore } from 'Store';
+import { Checkbox, Filter, Icon, IconObject, Label, Loader, ObjectName } from 'Component';
+import { DataUtil, I, Util } from 'Lib';
+import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
     iconSize: number;
     textEmpty: string;
     filters?: I.Filter[];
+	sorts?: I.Sort[];
     rowHeight?: number;
     resize?: () => void;
     sources?: string[];
@@ -57,7 +58,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         };
 
         const { loading } = this.state;
-        const { buttons, rowLength, rowHeight, Info, iconSize, textEmpty } = this.props;
+        const { buttons, rowHeight, Info, iconSize, textEmpty } = this.props;
         const items = this.getItems();
         const cnControls = [ 'controls' ];
 
@@ -324,16 +325,13 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
     };
 
     getData () {
-        const { subId, filters, sources, withArchived } = this.props;
+        const { subId, sources, withArchived } = this.props;
         const filter = this.getFilterValue();
-        const sorts: I.Sort[] = [
-            { type: I.SortType.Desc, relationKey: 'lastModifiedDate' },
-        ];
-
-        const f = [].concat(filters || []);
+        const filters = [].concat(this.props.filters || []);
+		const sorts = [].concat(this.props.sorts || []);
 
         if (filter) {
-            f.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
+            filters.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
         };
 
         this.setState({ loading: true });
@@ -341,7 +339,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         DataUtil.searchSubscribe({
             subId,
             sorts,
-            filters: f,
+            filters,
             withArchived,
             sources: sources || []
         }, () => {
