@@ -189,8 +189,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const isCollection = this.isCollection();
 		
 		let options = [
-			I.WidgetLayout.List,
 			I.WidgetLayout.Compact,
+			I.WidgetLayout.List,
 			I.WidgetLayout.Tree,
 		];
 		if (!isCollection) {
@@ -211,11 +211,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 				};
 			};
 
-			if (this.target.id == Constant.widgetId.set) {
+			if ([ Constant.widgetId.set, Constant.widgetId.collection ].includes(this.target.id)) {
 				options = options.filter(it => it != I.WidgetLayout.Tree);
 			};
 		};
-
 
 		return options.map(id => ({
 			id,

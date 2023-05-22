@@ -5,8 +5,8 @@ Official Anytype client for desktop usage on MacOS, Linux, and Windows.
 ### Installation
 
 ```shell
-git clone git@github.com:anytypeio/js-anytype.git
-cd js-anytype
+git clone git@github.com:anyproto/anytype-ts.git
+cd anytype-ts
 npm install -D
 ```
 
