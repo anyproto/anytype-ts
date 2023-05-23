@@ -111,6 +111,9 @@
 			.iconObject { background: none; border-radius: 0px; }
 		}
 		.item:hover, .item.active {
+			.info { width: calc(100% - 30px); }
+		}
+		.item.withIcon:hover, .item.withIcon.active {
 			.info { width: calc(100% - 54px); }
 		}
 		.item::before { border-radius: 4px; }
