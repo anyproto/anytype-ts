@@ -182,7 +182,8 @@
 			},
 
 			"board": {
-				"card": 262
+				"card": 262,
+				"margin": 8
 			},
 
 			"cell": {
