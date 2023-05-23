@@ -167,18 +167,37 @@ class MenuManager {
 			{
 				label: 'Help',
 				submenu: [
-					{ label: 'Anytype ID', click: () => { Util.send(this.win, 'commandGlobal', 'id'); } },
+					{
+						label: `What's new (${app.getVersion()})`,
+						click: () => { Util.send(this.win, 'popup', 'help', { data: { document: 'whatsNew' } }); }
+					},
 					{
 						label: 'Shortcuts', accelerator: 'Ctrl+Space',
 						click: () => { Util.send(this.win, 'popup', 'shortcut'); }
 					},
-					{
-						label: 'What\'s new',
-						click: () => { Util.send(this.win, 'popup', 'help', { data: { document: 'whatsNew' } }); }
-					},
+
+					Separator,
+
+					{ label: 'Anytype Community', click: () => { Util.send(this.win, 'commandGlobal', 'community'); } },
+					{ label: 'Help & Tutorials', click: () => { Util.send(this.win, 'commandGlobal', 'tutorial'); } },
+					{ label: 'Contact Us', click: () => { Util.send(this.win, 'commandGlobal', 'contact'); } },
+					{ label: 'Technical Information', click: () => { Util.send(this.win, 'commandGlobal', 'tech'); } },
+
+					Separator,
+
+					{ label: 'Terms of Use', click: () => { Util.send(this.win, 'commandGlobal', 'terms'); } },
+					{ label: 'Privacy Policy', click: () => { Util.send(this.win, 'commandGlobal', 'privacy'); } },
+
 				]
 			},
 		];
+
+		/*
+			{ isDiv: true },
+			{ id: 'terms', name: 'Terms of Use' },
+			{ id: 'privacy', name: 'Privacy Policy' },
+		];
+		*/
 
 		//if (config.allowDebug || config.allowBeta) {
 			config.debug = config.debug || {};
