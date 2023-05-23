@@ -444,11 +444,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		} else {
 			switch (item.id) {
 				case 'add': {
-					if (keyboard.isMainSet()) {
-						$(window).trigger('createNewObject.set' + Util.getEventNamespace(keyboard.isPopup()));
-					} else {
-						keyboard.pageCreate();
-					};
+					keyboard.pageCreate();
 					break;
 				};
 

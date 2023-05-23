@@ -136,6 +136,8 @@
 
         .viewContent.viewGrid {
             .row { box-shadow: 0px 1px $colorLineSecondary inset; }
+			.row:hover { background-color: rgba(223, 221, 208, 0.04); }
+
 			.loadMore { box-shadow: 0px 1px $colorLineSecondary inset; border-color: $colorLineSecondary; }
 
 			.cellHead .resize .line { background-color: $colorLineSecondary; }
