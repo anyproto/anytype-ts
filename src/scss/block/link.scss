@@ -1,6 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
+	.block.blockLink { padding: 6px 0px; }
 	.block.blockLink {
 		.focusable { border-radius: 4px; }
 
@@ -92,7 +93,6 @@
 			.cardType { max-width: 10%; }
 		}
 
-		.linkCard.card { margin: 8px 0px; }
 		.linkCard.card {
 			.side.left { padding: 16px; border: 1px solid $colorBorderLight; border-radius: 12px; flex-direction: column; justify-content: center; }
 			.side.right { border-radius: 0px 12px 12px 0px; }
