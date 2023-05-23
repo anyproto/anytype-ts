@@ -161,6 +161,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				id="listWidget"
 				className={cn.join(' ')}
 				onDrop={this.onDrop}
+				onDragOver={e => e.preventDefault()}
 				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
 			>
@@ -250,7 +251,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onDrop (e: React.DragEvent): void {
 		const { isEditing } = this.state;
-
 		if (!isEditing) {
 			return;
 		};
@@ -258,7 +258,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		e.stopPropagation();
 
 		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset;
+		const { preventCommonDrop } = dataset;
 		const { widgets } = blockStore;
 		const blockId = e.dataTransfer.getData('text');
 
