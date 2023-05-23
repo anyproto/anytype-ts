@@ -30,8 +30,9 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		const { id, className, rootId, onClick } = this.props;
 		const { account } = authStore;
 		const thread = authStore.threadGet(rootId);
-		const disabled = account?.status?.type != I.AccountStatusType.Active;
-		const status = disabled ? I.ThreadStatus.Disabled : ((thread.summary || {}).status || I.ThreadStatus.Unknown);
+		//const disabled = account?.status?.type != I.AccountStatusType.Active;
+		//const status = disabled ? I.ThreadStatus.Disabled : ((thread.summary || {}).status || I.ThreadStatus.Unknown);
+		const status = (thread.summary || {}).status || I.ThreadStatus.Unknown;
 		const cn = [ 'sync' ];
 
 		if (className) {
