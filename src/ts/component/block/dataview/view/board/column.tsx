@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, translate, Relation, DataUtil, Util } from 'Lib';
+import { I, Relation, DataUtil, Util } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -29,6 +29,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		super(props);
 
 		this.onLoadMore = this.onLoadMore.bind(this);
+		this.onAdd = this.onAdd.bind(this);
 		this.onMore = this.onMore.bind(this);
 	};
 
@@ -66,12 +67,13 @@ const Column = observer(class Column extends React.Component<Props> {
 				className={cn.join(' ')}
 				{...Util.dataProps({ id })}
 			>
-				<div className="head">
+				<div id={`column-${id}-head`} className="head">
 					<div className="sides">
 						<div 
 							className="side left"
 							draggable={true}
-							onDragStart={(e: any) => { onDragStartColumn(e, id); }}
+							onDragStart={e => onDragStartColumn(e, id)}
+							onClick={this.onMore}
 						>
 							<Cell 
 								id={'board-head-' + id} 
@@ -91,7 +93,7 @@ const Column = observer(class Column extends React.Component<Props> {
 
 						<div className="side right">
 							<Icon id={`button-${id}-more`} className="more" tooltip="Column settings" onClick={this.onMore} />
-							<Icon className="add" tooltip="Create new object" onClick={() => { onRecordAdd(id, -1); }} />
+							<Icon className="add" tooltip="Create new object" onClick={this.onAdd} />
 						</div>
 					</div>
 
@@ -218,17 +220,28 @@ const Column = observer(class Column extends React.Component<Props> {
 		this.load(false);
 	};
 
-	onMore () {
+	onAdd (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { id, onRecordAdd } = this.props;
+
+		onRecordAdd(id, -1);
+	};
+
+	onMore (e: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { rootId, block, id, getView } = this.props;
 		const node = $(this.node);
 
 		node.addClass('active');
 
 		menuStore.open('dataviewGroupEdit', {
-			element: `#button-${id}-more`,
-			onClose: () => {
-				node.removeClass('active');
-			},
+			element: `#column-${id}-head`,
+			horizontal: I.MenuDirection.Center,
+			onClose: () => { node.removeClass('active'); },
 			data: {
 				rootId,
 				blockId: block.id,
