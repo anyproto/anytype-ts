@@ -148,7 +148,7 @@ class Popup extends React.Component<I.Popup> {
 			inner.css({ 
 				marginTop: -inner.outerHeight() / 2,
 				marginLeft: -inner.outerWidth() / 2
-			});			
+			});
 		});
 	};
 
