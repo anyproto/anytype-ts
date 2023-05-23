@@ -20,6 +20,17 @@
 	.pie .inner { border-color: $colorLineSecondary; }
 }
 
+.pageAuthUsecase {
+    .frame { background: $colorBgLight; }
+    .frame {
+        .usecaseList {
+            .case { border-color: $colorLineSecondary; }
+            .case:hover { border-color: $colorLinePrimary; }
+        }
+        .loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); }
+    }
+}
+
 /* PageMainGraph */
 
 .pageMainGraph {

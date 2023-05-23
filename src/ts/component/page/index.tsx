@@ -17,6 +17,7 @@ import PageAuthAccountSelect from './auth/account/select';
 import PageAuthRegister from './auth/register';
 import PageAuthSuccess from './auth/success';
 import PageAuthDeleted from './auth/deleted';
+import PageAuthUsecase from './auth/usecase';
 
 import PageMainEmpty from './main/empty';
 import PageMainEdit from './main/edit';
@@ -43,6 +44,7 @@ const Components: any = {
 	'auth/account-select':	 PageAuthAccountSelect,
 	'auth/success':			 PageAuthSuccess,
 	'auth/deleted':			 PageAuthDeleted,
+	'auth/usecase':			 PageAuthUsecase,
 
 	'main/empty':			 PageMainEmpty,		
 	'main/edit':			 PageMainEdit,

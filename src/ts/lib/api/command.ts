@@ -1274,6 +1274,14 @@ const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any
 	dispatcher.request(ObjectImportNotionValidateToken.name, request, callBack);
 };
 
+const ObjectImportUseCase = (usecase: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ImportUseCase.Request();
+
+	request.setUsecase(usecase);
+
+	dispatcher.request(ObjectImportUseCase.name, request, callBack);
+};
+
 const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetObjectType.Request();
 	
@@ -1816,6 +1824,8 @@ export {
 	ObjectImportList,
 	ObjectImport,
 	ObjectImportNotionValidateToken,
+
+	ObjectImportUseCase,
 
 	ObjectCreate,
 	ObjectCreateSet,
