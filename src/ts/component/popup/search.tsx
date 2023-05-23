@@ -473,7 +473,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const content = obj.find('.content');
-		const wh = $(window).height();
+		const { wh } = Util.getWindowDimensions();
 		const height = Math.min(wh - 64, HEIGHT_ITEM * LIMIT_HEIGHT);
 
 		content.css({ height });
