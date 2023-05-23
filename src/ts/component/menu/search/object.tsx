@@ -501,6 +501,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	getRowHeight (item: any) {
+		if (!item) {
+			return HEIGHT_ITEM;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { isBig } = data;
