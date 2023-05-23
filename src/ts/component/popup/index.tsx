@@ -148,21 +148,25 @@ class Popup extends React.Component<I.Popup> {
 
 			const sidebar = $('#sidebar');
 			const isRight = sidebar.hasClass('right');
+			const width = inner.outerWidth();
+			const height = inner.outerHeight();
 
 			let sw = 0;
 			if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
 				sw = sidebar.outerWidth();
 			};
 
-			let x = (ww - sw) / 2 - inner.outerWidth() / 2;
-
+			let x = (ww - sw) / 2 - width / 2;
 			if (!isRight) {
 				x += sw;
+			};
+			if (width >= ww - sw) {
+				x -= sw / 2;
 			};
 
 			inner.css({ 
 				left: x, 
-				marginTop: -inner.outerHeight() / 2,
+				marginTop: -height / 2,
 			});
 		});
 	};
