@@ -319,7 +319,7 @@ class Relation {
 
 		return [
 			{ id: '', icon: '', name: 'None' },
-			{ id: 'pageCover', icon: 'image', name: 'Page cover' },
+			{ id: Constant.pageCoverRelationKey, icon: 'image', name: 'Page cover' },
 		].concat(options);
 	};
 

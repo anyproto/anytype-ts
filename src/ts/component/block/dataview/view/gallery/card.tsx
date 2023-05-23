@@ -177,29 +177,10 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	getCover (): any {
-		const { rootId, block, recordId, getView, getRecord } = this.props;
-		const view = getView();
+		const { recordId, getCoverObject } = this.props;
+		const cover = getCoverObject(recordId);
 
-		if (!view.coverRelationKey) {
-			return null;
-		};
-
-		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(recordId);
-		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-
-		let cover = null;
-		if (view.coverRelationKey == 'pageCover') {
-			cover = this.mediaCover(record);
-		} else {
-			for (const id of value) {
-				const f = detailStore.get(subId, id, []);
-				if (!f._empty_) {
-					cover = this.mediaCover(f);
-				};
-			};
-		};
-		return cover;
+		return cover ? this.mediaCover(cover) : null;
 	};
 
 	mediaCover (item: any) {

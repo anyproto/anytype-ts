@@ -14,7 +14,6 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	cellPositioner: any = null;
 	ref: any = null;
 	width = 0;
-	columnWidth = 0;
 	columnCount = 0;
 
 	constructor (props: I.ViewComponent) {
@@ -30,6 +29,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 		this.onResize = this.onResize.bind(this);
 		this.loadMoreCards = this.loadMoreCards.bind(this);
+		this.getCoverObject = this.getCoverObject.bind(this);
 	};
 
 	render () {
@@ -43,6 +43,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const limit = getLimit();
 		const length = records.length;
 		const cn = [ 'viewContent', className ];
+		const cardHeight = this.getCardHeight();
 
 		if (!length) {
 			return getEmpty('view');
@@ -76,6 +77,14 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			<div className="card add" onClick={e => onRecordAdd(e, 1)} />
 		);
 
+		const row = (id: string) => {
+			if (id == 'add-record') {
+				return <CardAdd key={'gallery-card-' + view.id + id} />;
+			} else {
+				return <Card key={'gallery-card-' + view.id + id} {...this.props} recordId={id} getCoverObject={this.getCoverObject} />;
+			};
+		};
+
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
 			const style = { ...param.style, gridTemplateColumns: `repeat(${this.columnCount}, minmax(0, 1fr))` };
@@ -90,13 +99,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 				>
 					{({ measure }) => (
 						<div key={'gallery-card-' + view.id + param.index} className="row" style={style}>
-							{item.children.map((id: string) => {
-								if (id == 'add-record') {
-									return <CardAdd key={'gallery-card-' + view.id + id} />;
-								} else {
-									return <Card key={'gallery-card-' + view.id + id} {...this.props} recordId={id} />;
-								};
-							})}
+							{item.children.map((id: string) => row(id))}
 						</div>
 					)}
 				</CellMeasurer>
@@ -109,13 +112,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			const records = this.getRecords();
 			content = (
 				<React.Fragment>
-					{records.map((id: string) => {
-						if (id == 'add-record') {
-							return <CardAdd key={'gallery-card-' + view.id + id} />;
-						} else {
-							return <Card key={'gallery-card-' + view.id + id} {...this.props} recordId={id} />;
-						};
-					})}
+					{records.map((id: string) => row(id))}
 				</React.Fragment>
 			);
 		} else {
@@ -141,7 +138,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 														height={height}
 														deferredMeasurmentCache={this.cache}
 														rowCount={items.length}
-														rowHeight={this.cache.rowHeight}
+														rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
 														rowRenderer={rowRenderer}
 														onRowsRendered={onRowsRendered}
 														overscanRowCount={20}
@@ -193,26 +190,19 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		this.ref.recomputeRowHeights(0);
 	};
 
-	getSize (): number {
+	setDimensions () {
 		const { getView } = this.props;
 		const view = getView();
-		
+		const { margin } = Constant.size.dataview.gallery;
+
 		let size = 0;
 		switch (view.cardSize) {
-			default:
-			case I.CardSize.Small:	 size = 224; break;
+			default:				 size = 224; break;
 			case I.CardSize.Medium:	 size = 284; break;
 			case I.CardSize.Large:	 size = 360; break;
 		};
 
-		return size;
-	};
-
-	setDimensions () {
-		const { margin } = Constant.size.dataview.gallery;
-
-		this.columnCount = Math.max(1, Math.floor((this.width - margin) / this.getSize()));
-		this.columnWidth = (this.width - (this.columnCount - 1) * margin) / this.columnCount;
+		this.columnCount = Math.max(1, Math.floor((this.width - margin) / size));
 	};
 
 	onResize ({ width }) {
@@ -267,6 +257,79 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		};
 
 		return ret.filter(it => it.children.length > 0);
+	};
+
+	getCardHeight (): number {
+		const { getVisibleRelations } = this.props;
+		const relations = getVisibleRelations();
+		const size = Constant.size.dataview.gallery;
+
+		let height = size.padding * 2 + size.margin - 4;
+
+		relations.forEach(it => {
+			const relation = dbStore.getRelationByKey(it.relationKey);
+
+			if (!relation) {
+				return;
+			};
+
+			if (it.relationKey == 'name') {
+				height += 24;
+			} else {
+				switch (relation.format) {
+					default: {
+						height += 22; break;
+					};
+
+					case I.RelationType.LongText: {
+						height += 40; 
+						break;
+					};
+
+					case I.RelationType.Object:
+					case I.RelationType.File: {
+						height += 24; 
+						break;
+					};
+				};
+			};
+		});
+
+		return Math.max(size.height, height);
+	};
+
+	getCoverObject (id: string): any {
+		const { rootId, block, getView, getRecord } = this.props;
+		const view = getView();
+
+		if (!view.coverRelationKey) {
+			return null;
+		};
+
+		const subId = dbStore.getSubId(rootId, block.id);
+		const record = getRecord(id);
+		const value = Relation.getArrayValue(record[view.coverRelationKey]);
+
+		let object = null;
+		if (view.coverRelationKey == Constant.pageCoverRelationKey) {
+			object = record;
+		} else {
+			for (const id of value) {
+				const file = detailStore.get(subId, id, []);
+				if (file._empty_) {
+					continue;
+				};
+
+				object = file;
+				break;
+			};
+		};
+
+		if (!object.coverId && !object.coverType && ![ Constant.typeId.image, Constant.typeId.audio, Constant.typeId.video ].includes(object.type)) {
+			return null;
+		};
+
+		return object;
 	};
 
 	resize () {

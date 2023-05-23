@@ -94,6 +94,8 @@
 	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject" ],
 	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 
+	"pageCoverRelationKey": "pageCover",
+
 	"subId": {
 		"index": "index",
 		"search": "search",
@@ -178,7 +180,8 @@
 			"gallery": {
 				"width": 224,
 				"height": 72,
-				"margin": 16
+				"margin": 16,
+				"padding": 16
 			},
 
 			"board": {
