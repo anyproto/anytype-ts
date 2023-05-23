@@ -230,12 +230,7 @@ class Keyboard {
 			// Create new page
 			this.shortcut(`${cmd}+n`, e, () => {
 				e.preventDefault();
-
-				if (this.isMainSet()) {
-					$(window).trigger('createNewObject.set' + Util.getEventNamespace(this.isPopup()));
-				} else {
-					this.pageCreate();
-				};
+				this.pageCreate();
 			});
 
 			// Settings

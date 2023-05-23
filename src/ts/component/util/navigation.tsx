@@ -122,11 +122,7 @@ class Navigation extends React.Component {
 	};
 
 	onAdd () {
-		if (keyboard.isMainSet()) {
-			$(window).trigger('createNewObject.set' + Util.getEventNamespace(keyboard.isPopup()));
-		} else {
-			keyboard.pageCreate();
-		};
+		keyboard.pageCreate();
 	};
 
 	onGraph () {
