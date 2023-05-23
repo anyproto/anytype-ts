@@ -120,8 +120,8 @@ search.active { background: orange !important; }
 .selectable.isSelectionSelected::after, 
 .block.isSelectionSelected > .wrapContent > .selectable::after 
 { 
-	display: block; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; background-color: rgba(42, 167, 238, 0.1);
-	pointer-events: none; z-index: 10; content: "";
+	display: block; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; background-color: rgba(42, 167, 238, 0.15);
+	pointer-events: none; z-index: 10; content: ""; border-radius: 2px;
 }
 
 .textColor-default { color: $colorBlack !important; }

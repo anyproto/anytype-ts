@@ -26,6 +26,12 @@ interface Graph {
 	filter: string;
 };
 
+interface SpaceStorage {
+	bytesUsed: number;
+	bytesLimit: number;
+	localUsage: number;
+};
+
 class CommonStore {
 
     public progressObj: I.Progress = null;
@@ -70,6 +76,12 @@ class CommonStore {
 		filter: '',
 	};
 
+	public spaceStorageObj: SpaceStorage = {
+		bytesUsed: 0,
+		bytesLimit: 0,
+		localUsage: 0,
+	};
+
     constructor() {
         makeObservable(this, {
             coverObj: observable,
@@ -79,6 +91,7 @@ class CommonStore {
             previewObj: observable,
 			toastObj: observable,
             configObj: observable,
+			spaceStorageObj: observable,
 			themeId: observable,
 			nativeThemeIsDark: observable,
 			typeId: observable,
@@ -109,7 +122,8 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			workspaceSet: action,
-        });
+			spaceStorageSet: action,
+		});
     };
 
     get config(): any {
@@ -186,6 +200,15 @@ class CommonStore {
 
 	get graph(): Graph {
 		return Object.assign(this.graphObj, Storage.get('graph') || {});
+	};
+
+	get spaceStorage (): SpaceStorage {
+		let { bytesUsed } = this.spaceStorageObj;
+		if (bytesUsed <= 1024) {
+			bytesUsed = 0;
+		};
+
+		return { ...this.spaceStorageObj, bytesUsed };
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -399,6 +422,10 @@ class CommonStore {
 
 		this.configObj.debug = this.configObj.debug || {};
 		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
+	};
+
+	spaceStorageSet (usage: any) {
+		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, usage));
 	};
 
 };

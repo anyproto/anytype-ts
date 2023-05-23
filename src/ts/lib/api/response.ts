@@ -2,6 +2,13 @@ import { Rpc } from 'protobuf/pb/protos/commands_pb';
 import { Decode } from './struct';
 import { Mapper } from './mapper';
 
+export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
+	return {
+		details: response.getDetails(),
+		version: response.getVersion(),
+	};
+};
+
 export const AccountCreate = (response: Rpc.Account.Create.Response) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),
@@ -46,6 +53,18 @@ export const FileListOffload = (response: Rpc.File.ListOffload.Response) => {
 	return {
 		files: response.getFilesoffloaded(),
 		bytes: response.getBytesoffloaded(),
+	};
+};
+
+export const FileSpaceUsage = (response: Rpc.File.SpaceUsage.Response) => {
+	const usage = response.getUsage();
+
+	return {
+		bytesUsed: usage.getBytesusage(),
+		bytesLeft: usage.getBytesleft(),
+		bytesLimit: usage.getByteslimit(),
+		filesCount: usage.getFilescount(),
+		localUsage: usage.getLocalbytesusage(),
 	};
 };
 

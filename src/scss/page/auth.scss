@@ -77,10 +77,10 @@
 	.advanced:hover { color: $colorBlack; }
 
 	.frame { padding-bottom: 36px; }
-	.fileWrap { background-color: $colorBorderDark; display: block; margin: 0 auto 24px; }
+	.fileWrap { background-color: $colorBorderDark; display: block; margin: 0px auto 24px; }
 
 	.label { margin-bottom: 0; }
-	.input-text { display: block; text-align: center; padding-bottom: 9px; width: 360px; margin: 0 auto 32px; font-size: 28px; line-height: 32px; font-weight: 700; border: solid 0px; border-bottom: solid 1px $colorBorderDark; }
+	.input-text { display: block; text-align: center; padding-bottom: 9px; width: 360px; margin: 0px auto 32px; font-size: 28px; line-height: 32px; font-weight: 700; border: solid 0px; border-bottom: solid 1px $colorBorderDark; }
 	.button { vertical-align: middle; width: 134px; padding: 0px; }
 	.iconObject { background-image: url('~img/icon/camera.svg'); background-size: 40px 30px; background-repeat: no-repeat; background-position: center; }
 	.iconObject.active {

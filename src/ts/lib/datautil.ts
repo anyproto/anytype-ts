@@ -1,4 +1,4 @@
-import { I, C, keyboard, translate, Util, Storage, analytics, dispatcher, Mark, ObjectUtil } from 'Lib';
+import { I, C, keyboard, translate, Util, Storage, analytics, dispatcher, Mark, ObjectUtil, FileUtil } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -217,6 +217,8 @@ class DataUtil {
 
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
+
+		this.updateStorageUsage();
 
 		const subscriptions = [
 			{
@@ -781,6 +783,18 @@ class DataUtil {
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
 			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
 		];
+	};
+
+	updateStorageUsage () {
+		C.FileSpaceUsage((message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			const { bytesUsed, bytesLimit, localUsage } = message;
+
+			commonStore.spaceStorageSet({ bytesUsed, bytesLimit, localUsage });
+		});
 	};
 
 };

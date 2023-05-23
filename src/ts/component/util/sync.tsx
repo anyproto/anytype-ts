@@ -74,8 +74,9 @@ const Sync = observer(class Sync extends React.Component<Props> {
 			return I.ThreadStatus.Unknown;
 		};
 
-		const disabled = account?.status?.type != I.AccountStatusType.Active;
-		return disabled ? I.ThreadStatus.Disabled : ((summary || {}).status || I.ThreadStatus.Unknown);
+		//const disabled = account?.status?.type != I.AccountStatusType.Active;
+		//return disabled ? I.ThreadStatus.Disabled : ((summary || {}).status || I.ThreadStatus.Unknown);
+		return (thread.summary || {}).status || I.ThreadStatus.Unknown;
 	};
 	
 });

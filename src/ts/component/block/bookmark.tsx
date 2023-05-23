@@ -31,6 +31,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		const object = detailStore.get(rootId, targetObjectId, [ 'picture' ]);
 		const { iconImage, picture, isArchived, isDeleted } = object;
 		const url = this.getUrl();
+		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
 
 		let element = null;
 
@@ -68,17 +69,17 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 				};
 					
 				case I.BookmarkState.Done: {
-					const cn = [ 'inner' ];
+					const cni = [ 'inner' ];
 					const cnl = [ 'side', 'left' ];
 					
 					let archive = null;
 						
 					if (picture) {
-						cn.push('withImage');
+						cni.push('withImage');
 					};
 
 					if (isArchived) {
-						cn.push('isArchived');
+						cni.push('isArchived');
 					};
 
 					if (block.bgColor) {
@@ -91,7 +92,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 
 					element = (
 						<div 
-							className={cn.join(' ')} 
+							className={cni.join(' ')} 
 							onClick={this.onClick} 
 							onMouseDown={this.onMouseDown}
 							{...Util.dataProps({ href: url })}
@@ -119,7 +120,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		return (
 			<div 
 				ref={node => this.node = node}
-				className={[ 'focusable', 'c' + block.id, 'resizable' ].join(' ')} 
+				className={cn.join(' ')} 
 				tabIndex={0} 
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp} 

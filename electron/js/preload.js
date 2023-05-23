@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('Electron', {
 		app: app.getVersion(),
 		os: os.release(),
 		system: process.getSystemVersion(),
+		device: os.hostname(),
 	},
 	platform: os.platform(),
 	arch: process.arch,

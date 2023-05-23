@@ -62,6 +62,15 @@ html.themeDark {
 		img:before { background: $colorBgLight; }
 	}
 
+	.objectManagerWrapper {
+		.controls, .managerEmpty { border-color: $colorLinePrimary; }
+	}
+
+	.progressBar { background: $colorBgLight; }
+	.progressBar {
+		.progressBarFill { background: $colorOrange; }
+	}
+
     /* Components */
 
 	@keyframes fill {

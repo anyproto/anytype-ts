@@ -20,6 +20,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 		super(props);
 
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onCancel = this.onCancel.bind(this);
 	};
 	
 	render () {
@@ -76,8 +77,10 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 		Util.route('/auth/setup/' + match.params.id);	
 	};
 
-	onCancel (e: any) {
-		Util.route('/auth/register');
+	onCancel () {
+		const { match } = this.props;
+
+		Util.route('/auth/register/' + match.params.id);
 	};
 	
 });

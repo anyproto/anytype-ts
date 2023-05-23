@@ -46,6 +46,7 @@ import 'scss/component/input.scss';
 import 'scss/component/inputWithFile.scss';
 import 'scss/component/list/previewObject.scss';
 import 'scss/component/list/widget.scss';
+import 'scss/component/list/objectManager.scss';
 import 'scss/component/loader.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/pin.scss';
@@ -78,6 +79,7 @@ import 'scss/component/media/audio.scss';
 import 'scss/component/media/video.scss';
 
 import 'scss/component/hightlight.scss';
+import 'scss/component/progressBar.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/edit.scss';

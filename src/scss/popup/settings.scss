@@ -15,6 +15,17 @@
 		}
 		.content { height: 100%; }
 
+		.space {
+			display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px;
+			border-radius: 8px; transition: $transitionAllCommon;
+		}
+		.space {
+			.iconObject { flex-shrink: 0; }
+			.txt { width: calc(100% - 40px); }
+			.name { @include text-common; font-weight: 600; }
+			.type { @include text-small; color: $colorDarkGrey; }
+		}
+
 		.sides { display: flex; height: 100%; }
 		.sides {
 			> .side { position: relative; height: 100%; }
@@ -35,7 +46,7 @@
 				.item {
 					.icon { width: 22px; height: 22px; flex-shrink: 0; }
 					.icon.personal { background-image: url('~img/icon/popup/settings/personal.svg'); }
-					.icon.cloud { background-image: url('~img/icon/popup/settings/cloud.svg'); }
+					.icon.storage { background-image: url('~img/icon/popup/settings/storage.svg'); }
 					.icon.appearance { background-image: url('~img/icon/popup/settings/appearance.svg'); }
 					.icon.wallpaper { background-image: url('~img/icon/popup/settings/wallpaper.svg'); }
 					.icon.phrase { background-image: url('~img/icon/popup/settings/phrase.svg'); }
@@ -65,6 +76,7 @@
 				}
 
 				.title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
+				.title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
 				.description { margin: 0px 0px 24px 0px; }
 				b { font-weight: 500; }
 
@@ -123,7 +135,8 @@
 		.side.right.tabImportMarkdown,
 		.side.right.tabImportCsv,
 		.side.right.tabExportMarkdown,
-		.side.right.tabExportProtobuf
+		.side.right.tabExportProtobuf,
+		.side.right.tabStorageManager
 		{ padding-top: 22px; }
 
 		.side.right.tabSpaceIndex {
@@ -132,7 +145,6 @@
 
 		.side.right.tabPhrase {
 			.inputs { margin: 0px 0px 54px 0px; }
-			.title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
 
 			.qrWrap { 
 				padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; 
@@ -140,6 +152,36 @@
 			}
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
+			}
+		}
+
+		.side.right.tabStorageIndex {
+			.title { margin-bottom:  32px; }
+
+			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
+			.storageUsage {
+				.space { margin-bottom: 16px; }
+				.space {
+					.txt .type.red { color: $colorRed; }
+				}
+			}
+
+			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
+		}
+
+		.side.right.tabStorageManager > div { height: calc(100% - 108px); }
+		.side.right.tabStorageManager {
+			.objectManagerWrapper {
+				.items {
+					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }
+					.item { gap: 0px 12px; margin-bottom: 0px; }
+					.item {
+						.checkbox { margin-right: 6px; }
+						.iconObject { flex-shrink: 0; }
+						.name { @include text-overflow-nw; @include text-common; width: 100%; }
+						.label { @include text-overflow-nw; @include text-small; width: 100%; color: $colorDarkGrey; margin-bottom: 0px; }
+					}
+				}
 			}
 		}
 

@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 import KeyCode from 'json/key.json';
 
 class Keyboard {
@@ -433,7 +434,7 @@ class Keyboard {
 	};
 
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'graph', 'print', 'workspace' ].includes(cmd)) {
+		if (!this.isMain() && [ 'search', 'print' ].includes(cmd)) {
 			return;
 		};
 
@@ -443,42 +444,90 @@ class Keyboard {
 				break;
 			};
 
-			case 'graph': {
-				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
-				break;
-			};
-
 			case 'print': {
 				this.onPrint('MenuSystem');
 				break;
 			};
 
-			case 'id': {
-				const { account } = authStore;
-				if (!account) {
-					break;
-				};
-
-				popupStore.open('confirm', {
-					className: 'isWide isLeft',
-					data: {
-						text: [
-							`<b>Account ID:</b> ${account.id}`,
-							`<b>Analytics ID:</b> ${account.info.analyticsId}`,
-						].join('<br/>'),
-						textConfirm: 'Copy',
-						textCancel: 'Close',
-						canConfirm: true,
-						canCancel: true,
-						onConfirm: () => {
-							Util.clipboardCopy({ text: account.id });
-							Preview.toastShow({ text: 'Anytype ID copied to clipboard' });
-						},
-					}
-				});
+			case 'tech': {
+				this.onTechInfo();
 				break;
 			};
+
+			case 'terms':
+			case 'tutorial':
+			case 'privacy':
+			case 'community': {
+				Renderer.send('urlOpen', Url[cmd]);
+				break;
+			};
+
+			case 'contact': {
+				this.onContactUrl();
+				break;
+			};
+
+			case 'tech': {
+				this.onTechInfo();
+				break;
+			};
+
 		};
+	};
+
+	onContactUrl () {
+		const { account } = authStore;
+		if (!account) {
+			return;
+		};
+
+		C.AppGetVersion((message: any) => {
+			let url = Url.contact;
+
+			url = url.replace('%device%', window.Electron.version.device);
+			url = url.replace('%os%', window.Electron.version.os);
+			url = url.replace('%version%', window.Electron.version.app);
+			url = url.replace('%build%', message.details);
+			url = url.replace('%middleware%', message.version);
+			url = url.replace('%accountId%', account.id);
+			url = url.replace('%analyticsId%', account.info.analyticsId);
+
+			Renderer.send('urlOpen', url);
+		});
+	};
+
+	onTechInfo () {
+		const { account } = authStore;
+		if (!account) {
+			return;
+		};
+
+		C.AppGetVersion((message: any) => {
+			const data = [
+				[ 'Device', window.Electron.version.device ],
+				[ 'OS version', window.Electron.version.os ],
+				[ 'App version', window.Electron.version.app ],
+				[ 'Build number', message.details ],
+				[ 'Library version', message.version ],
+				[ 'Account ID', account.id ],
+				[ 'Analytics ID', account.info.analyticsId ],
+			];
+
+			popupStore.open('confirm', {
+				className: 'isWide isLeft',
+				data: {
+					text: data.map(it => `<b>${it[0]}</b>: ${it[1]}`).join('<br/>'),
+					textConfirm: 'Copy',
+					textCancel: 'Close',
+					canConfirm: true,
+					canCancel: true,
+					onConfirm: () => {
+						Util.clipboardCopy({ text: data.map(it => `${it[0]}: ${it[1]}`).join('\n') });
+						Preview.toastShow({ text: 'Tech information copied to clipboard' });
+					},
+				}
+			});
+		});
 	};
 
 	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
