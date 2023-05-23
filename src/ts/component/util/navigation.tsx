@@ -146,7 +146,6 @@ class Navigation extends React.Component {
 			return;
 		};
 
-		const isPopup = keyboard.isPopup();
 		const node = $(this.node);
 		const coords = Storage.get('navigation') || {};
 		const { ww, wh } = Util.getWindowDimensions();
@@ -162,7 +161,7 @@ class Navigation extends React.Component {
 			const isRight = sidebar.hasClass('right');
 
 			let sw = 0;
-			if (!isPopup && commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+			if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
 				sw = sidebar.outerWidth();
 			};
 
