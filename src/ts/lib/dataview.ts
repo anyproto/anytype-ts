@@ -129,6 +129,11 @@ class Dataview {
 			if (vr) {
 				it.includeTime = vr.includeTime;
 			};
+
+			// TODO: Hack until we implement proper logic on Middleware
+			if ([ 'lastModifiedDate', 'lastOpenedDate' ].includes(it.relationKey)) {
+				it.includeTime = true;
+			};
 			return it;
 		};
 
