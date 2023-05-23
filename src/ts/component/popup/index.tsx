@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, Util, analytics, Storage, Preview } from 'Lib';
 import { Dimmer } from 'Component';
-import { menuStore, popupStore } from 'Store';
+import { menuStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PopupSettings from './settings';
@@ -144,10 +144,25 @@ class Popup extends React.Component<I.Popup> {
 					
 			const node = $(this.node);
 			const inner = node.find('.innerWrap');
+			const { ww } = Util.getWindowDimensions();
+
+			const sidebar = $('#sidebar');
+			const isRight = sidebar.hasClass('right');
+
+			let sw = 0;
+			if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+				sw = sidebar.outerWidth();
+			};
+
+			let x = (ww - sw) / 2 - inner.outerWidth() / 2;
+
+			if (!isRight) {
+				x += sw;
+			};
 
 			inner.css({ 
+				left: x, 
 				marginTop: -inner.outerHeight() / 2,
-				marginLeft: -inner.outerWidth() / 2
 			});
 		});
 	};
