@@ -35,6 +35,51 @@ export default {
         },
     },
 
+    mainSet: {
+        category: 'Set & Collection',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Anytype has two basic formats: Sets and Collections.</b> As in computer science, a Set is a data structure that contains only unique elements, while a Collection is any group of objects that are stored together. You can convert any set into a collection, but not the other way around.
+					</p>
+				`,
+                video: './img/help/onboarding/set-1-to-collection.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>Sets</b> contain no duplicates and can be used to filter specific objects or relation types, such as all my bookmarks. <b>Collections</b>, however, can contain duplicates and are used for more general-purpose data storage; they can store anything.
+					</p>
+				`,
+                video: './img/help/onboarding/set-2-new-object.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>View sets or collections as an entire object, or place them inline in documents.</b> The first column will contain the collecting objects, and the others will show their relations.
+					</p>
+					<p>Filter and adjust objects by any relation, such as today’s notes (filter by date) or project documents (filter by project).</p>
+				`,
+                noButton: true,
+                buttons: [
+                    { text: 'Great! I will try', action: 'close' }
+                ],
+            }
+        ],
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4,
+        },
+    },
+
     dashboard: {
         category: 'Onboarding',
         showConfetti: true,
