@@ -190,6 +190,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 			};
 
 			case 'dashboard': {
+				this.onClose();
 				ObjectUtil.openHome('route');
 				break;
 			};
