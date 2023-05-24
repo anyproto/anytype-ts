@@ -43,6 +43,8 @@ class PageMainEdit extends React.Component<Props> {
 		const home = ObjectUtil.getSpaceDashboard();
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
+		console.log('HERE')
+
 		if (this.refHeader) {
 			this.refHeader.forceUpdate();
 		};

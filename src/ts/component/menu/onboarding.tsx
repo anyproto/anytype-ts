@@ -38,7 +38,17 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 		let buttons = [];
 
 		if (!item.noButton) {
-			buttons.push({ text: current == l - 1 ? 'Finish' : 'Next', action: 'next' });
+			let buttonText = 'Next';
+
+			if (current == l - 1) {
+				buttonText = 'Finish';
+			};
+
+			if (item.buttonText) {
+				buttonText = item.buttonText;
+			};
+
+			buttons.push({ text: buttonText, action: 'next' });
 		};
 
 		if (item.buttons) {

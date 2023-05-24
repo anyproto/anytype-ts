@@ -61,11 +61,68 @@ export default {
 					</p>
 					<p>Filter and adjust objects by any relation, such as today’s notes (filter by date) or project documents (filter by project).</p>
 				`,
-                noButton: true,
-                buttons: [
-                    { text: 'Great! I will try', action: 'close' }
-                ],
+                buttonText: 'Great! I will try',
             }
+        ],
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    },
+
+    mainCreate: {
+        category: 'Creating objects',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Let’s create an object from scratch.</b> The default object type is now ‘Note’, meaning that each new object is referred to as a Note unless you choose a different type. You can change the default object type anytime in the settings menu.
+					</p>
+				`,
+                video: './img/help/onboarding/object-1-default-object-type.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu, which shows all object types installed from the Library.
+					</p>
+				`,
+                video: './img/help/onboarding/object-2-type-menu.mp4',
+                buttonText: 'I got it!',
+            },
+        ],
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4,
+        },
+    },
+
+    objectCreated: {
+        category: 'Creating objects',
+        items: [
+            {
+                description: `
+					<p>
+						<b>For the object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.
+					</p>
+				`,
+                video: './img/help/onboarding/object-layout.mp4',
+                buttonText: 'Ok! I like it',
+            },
         ],
         param: {
             element: '#footer #button-help',
