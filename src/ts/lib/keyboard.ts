@@ -479,13 +479,13 @@ class Keyboard {
 		C.AppGetVersion((message: any) => {
 			let url = Url.contact;
 
-			url = url.replace('%device%', window.Electron.version.device);
-			url = url.replace('%os%', window.Electron.version.os);
-			url = url.replace('%version%', window.Electron.version.app);
-			url = url.replace('%build%', message.details);
-			url = url.replace('%middleware%', message.version);
-			url = url.replace('%accountId%', account.id);
-			url = url.replace('%analyticsId%', account.info.analyticsId);
+			url = url.replace(/\%25device\%25/g, window.Electron.version.device);
+			url = url.replace(/\%25os\%25/g, window.Electron.version.os);
+			url = url.replace(/\%25version\%25/g, window.Electron.version.app);
+			url = url.replace(/\%25build\%25/g, message.details);
+			url = url.replace(/\%25middleware\%25/g, message.version);
+			url = url.replace(/\%25accountId\%25/g, account.id);
+			url = url.replace(/\%25analyticsId\%25/g, account.info.analyticsId);
 
 			Renderer.send('urlOpen', url);
 		});
