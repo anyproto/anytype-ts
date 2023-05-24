@@ -611,13 +611,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	resize () {
 		const container = Util.getPageContainer(this.props.isPopup);
+		const win = $(window);
 		const node = $(this.node);
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = Util.sizeHeader();
 		const isPopup = this.isPopup();
 		const limit = this.getLimit();
-		const wh = container.height();
+		const wh = isPopup ? container.height() : win.height();
 		const midHeight = node.find('.mid').outerHeight();
 
 		node.css({ height: wh });
