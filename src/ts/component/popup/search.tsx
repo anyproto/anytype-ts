@@ -182,7 +182,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.resize();
 
 		focus.clear(true);
-		$('#header').addClass('active');
 	};
 	
 	componentDidUpdate () {
@@ -221,7 +220,6 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.unbind();
 
 		window.clearTimeout(this.timeout);
-		$('#header').removeClass('active');
 	};
 
 	rebind () {

@@ -92,9 +92,6 @@
 	}
 	.path:hover { border-color: $colorBorderLight; }
 }
-.header.isCommon.active {
-	.path { border-color: $colorBorderLight; }
-}
 
 .header.mainGraph {
 	.side.right { gap: 0px 12px; }
