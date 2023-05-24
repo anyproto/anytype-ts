@@ -67,7 +67,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 				Storage.setToggle('widget', blocks[0].parentId, true);
 			};
 
-			Util.route('/auth/usecase');
+			Util.route('/main/usecase');
 		});
 	};
 
