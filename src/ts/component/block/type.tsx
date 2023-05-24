@@ -62,7 +62,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		this._isMounted = true;
 
 		if (!isPopup) {
-			Onboarding.start('mainCreate', false);
+			Onboarding.start('objectCreation', false);
 		};
 	};
 

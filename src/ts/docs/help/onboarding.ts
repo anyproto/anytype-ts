@@ -77,7 +77,7 @@ export default {
         },
     },
 
-    mainCreate: {
+    objectCreation: {
         category: 'Creating objects',
         items: [
             {
