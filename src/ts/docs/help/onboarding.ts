@@ -15,7 +15,10 @@ export default {
                 noButton: true,
                 buttons: [
                     { text: 'Next', action: 'dashboard' }
-                ]
+                ],
+                forceButtons: [
+                    { text: 'Close', action: 'close' }
+                ],
             }
         ],
 

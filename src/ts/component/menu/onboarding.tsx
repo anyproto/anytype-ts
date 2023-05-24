@@ -28,7 +28,7 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 
 	render () {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, force } = param;
 		const { key, current } = data;
 		const section = Docs.Help.Onboarding[key] || {};
 		const { items, category, showConfetti } = section;
@@ -43,6 +43,10 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 
 		if (item.buttons) {
 			buttons = buttons.concat(item.buttons);
+		};
+
+		if (force && item.forceButtons) {
+			buttons = item.forceButtons;
 		};
 
 		const Steps = () => (
@@ -179,6 +183,11 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 
 	onButton (e: any, action: string) {
 		switch (action) {
+			case 'close': {
+				this.onClose();
+				break;
+			};
+
 			case 'next': {
 				this.onArrow(e, 1);
 				break;
