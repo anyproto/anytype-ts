@@ -103,7 +103,8 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const node = $(this.node);
 		const object = detailStore.get(rootId, rootId, []);
-		const { iconEmoji, iconImage } = object;
+		const { iconEmoji, iconImage, layout } = object;
+		const noUpload = layout == I.ObjectLayout.Type;
 
 		menuStore.open('smile', { 
 			element: '.editorControls #button-icon',
@@ -115,6 +116,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				node.removeClass('hover');
 			},
 			data: {
+				noUpload,
 				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					ObjectUtil.setIcon(rootId, icon, '', () => {
