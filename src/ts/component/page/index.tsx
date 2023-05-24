@@ -217,9 +217,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		this.onboardingCheck();
-		window.setTimeout(() => {
-			Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
-		}, 100);
+		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
 		if (isPopup) {

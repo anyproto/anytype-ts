@@ -77,7 +77,7 @@ export default {
         },
     },
 
-    objectCreation: {
+    objectCreationStart: {
         category: 'Creating objects',
         items: [
             {
@@ -111,7 +111,7 @@ export default {
         },
     },
 
-    objectCreated: {
+    objectCreationFinish: {
         category: 'Creating objects',
         items: [
             {
