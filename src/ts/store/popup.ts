@@ -1,5 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
+import raf from 'raf';
 import { I, Util, focus } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -48,7 +49,7 @@ class PopupStore {
 		if (item) {
 			this.update(id, param);
 		} else {
-			this.popupList.push({ id: id, param: param });
+			this.popupList.push({ id, param });
 		};
 	};
 
@@ -62,6 +63,7 @@ class PopupStore {
 			return;
 		};
 
+		param.data = Object.assign(item.param.data, param.data);
 		set(item, { param: Object.assign(item.param, param) });
 	};
 
@@ -102,10 +104,11 @@ class PopupStore {
 			item.param.onClose();
 		};
 		
-		const el = $('#' + Util.toCamelCase('popup-' + id));
-		
+		const el = $(`#${Util.toCamelCase(`popup-${id}`)}`);
 		if (el.length) {
-			el.css({ transform: '' }).removeClass('show');
+			raf(() => {
+				el.css({ transform: '' }).removeClass('show');
+			});
 		};
 		
 		window.setTimeout(() => {
@@ -114,18 +117,24 @@ class PopupStore {
 			if (callBack) {
 				callBack();
 			};
+
+			$(window).trigger('resize');
 		}, Constant.delay.popup);
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
 
-		items.forEach(it => { this.close(it.id); });
+		items.forEach(it => this.close(it.id));
 
 		this.clearTimeout();
 
 		if (callBack) {
-			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.popup);
+			this.timeout = window.setTimeout(() => {
+				if (callBack) {
+					callBack();
+				};
+			}, Constant.delay.popup);
 		};
 	};
 

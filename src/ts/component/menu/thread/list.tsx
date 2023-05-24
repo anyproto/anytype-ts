@@ -74,7 +74,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 
 	componentDidMount () {
 		const { getId } = this.props;
-		const obj = $('#' + getId());
+		const obj = $(`#${getId()}`);
 		
 		const clear = () => {
 			window.clearTimeout(this.timeoutClose);
@@ -118,7 +118,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 		const { param, getId, getSize } = this.props;
 		const { data, classNameWrap } = param;
 		const node = $(this.node);
-		const item = node.find('#item-' + id);
+		const item = node.find(`#item-${id}`);
 
 		if (!item.length) {
 			return;
@@ -136,7 +136,6 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 				menuStore.open(MENU_ID, {
 					menuKey: id,
 					element: `#${getId()} #item-${id}`,
-					horizontal: I.MenuDirection.Right,
 					offsetX: getSize().width,
 					fixedY: top,
 					classNameWrap: cnw.join(' '),

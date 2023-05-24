@@ -114,7 +114,13 @@ class Action {
 				callBack(message);
 			};
 
-			analytics.event((contextId == targetContextId ? 'ReorderBlock' : 'MoveBlock'), { count: blockIds.length });
+			const count = blockIds.length;
+
+			if (contextId != targetContextId) {
+				Preview.toastShow({ action: I.ToastAction.Move, originId: contextId, targetId: targetContextId, count });
+			};
+
+			analytics.event(contextId != targetContextId ? 'MoveBlock' : 'ReorderBlock', { count });
 		});
 	};
 

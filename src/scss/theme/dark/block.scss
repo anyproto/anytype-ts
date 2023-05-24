@@ -107,12 +107,6 @@
             .viewItem.isDragging { background: $colorHoverMedium; }
 
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
-			/*
-            .icon.search { background-image: url('#{$themePath}/icon/dataview/button/search0.svg'); }
-			.icon.manager { background-image: url('#{$themePath}/icon/dataview/button/manager0.svg'); }
-			.icon.plus { background-image: url('#{$themePath}/icon/dataview/button/plus0.svg'); }
-			*/
-
 			.icon.filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
 			.icon.sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
@@ -142,6 +136,8 @@
 
         .viewContent.viewGrid {
             .row { box-shadow: 0px 1px $colorLineSecondary inset; }
+			.row:hover { background-color: rgba(223, 221, 208, 0.04); }
+
 			.loadMore { box-shadow: 0px 1px $colorLineSecondary inset; border-color: $colorLineSecondary; }
 
 			.cellHead .resize .line { background-color: $colorLineSecondary; }
@@ -169,7 +165,8 @@
 		}
 
         .viewContent.viewGallery {
-            .card { background: $colorBlack; border-color: $colorLinePrimary; }
+            .card { background: $colorBlack; border-color: $colorLineTertiary; }
+			.card:hover { border-color: $colorLineSecondary; background: rgba(166, 166, 166, 0.04); }
             .card {
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
@@ -177,7 +174,7 @@
 
         .viewContent.viewBoard {
 			.ghost { border-color: $colorOrange; }
-            .cardContent { background: $colorBgLight; border-color: $colorLineSecondary; }
+            .cardContent { background: $colorBgLight; border-color: $colorLineTertiary; }
 			.card.add { background: $colorBgLight; border-color: $colorLineSecondary; }
 
 			.column {
@@ -226,7 +223,7 @@
         .loading, .deleted { color: $colorSecondary; }
 
 		.linkCard.text {
-			.cardName .name { border-color: $colorLinePrimary; }
+			.cardName .name { border-color: $colorLineTertiary; }
 		}
 
 		.linkCard.c48.withIcon {
@@ -234,7 +231,7 @@
 		}
 
 		.linkCard.card {
-			.side.left, .side.right { border-color: $colorLineSecondary; }
+			.side.left, .side.right { border-color: $colorLineTertiary; }
 		}
     }
 
@@ -274,7 +271,7 @@
     	    .descr { color: $colorSecondary; }
 	        .link { color: $colorSecondary; }
 
-            .side.right { border-color: $colorLinePrimary; }
+            .side.right { border-color: $colorLineTertiary; }
         }
     }
 

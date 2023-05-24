@@ -131,8 +131,6 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	text?: string;
 	layout?: I.ObjectLayout;
 	onTab?: (id: string) => void;
-	onForward?: () => void;
-	onBack?: () => void;
 	onSearch?: () => void;
 	onNavigation?: () => void;
 	onGraph?: () => void;

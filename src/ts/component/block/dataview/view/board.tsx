@@ -90,7 +90,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	componentDidUpdate () {
 		this.resize();
-		$(window).trigger('resize.editor');
+		Util.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -704,7 +704,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = groups.length * size.card;
+		const width = groups.length * (size.card + size.margin) - size.margin;
 
 		if (!isInline) {
 			const maxWidth = cw - PADDING * 2;

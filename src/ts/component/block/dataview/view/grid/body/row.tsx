@@ -70,7 +70,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			content = (
 				<React.Fragment>
 					<Icon
-						className="dnd"
+						className="drag"
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
 						onDragStart={e => onDragRecordStart(e, recordId)}
