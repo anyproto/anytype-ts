@@ -12,6 +12,7 @@ import Constant from 'json/constant.json';
 
 interface State {
 	isDeleted: boolean;
+	isLoading: boolean;
 };
 
 const PageMainSet = observer(class PageMainSet extends React.Component<I.PageComponent, State> {
@@ -28,6 +29,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 	state = {
 		isDeleted: false,
+		isLoading: false,
 	};
 
 	constructor (props: I.PageComponent) {
@@ -37,21 +39,49 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	render () {
-		if (this.state.isDeleted) {
+		const { isLoading, isDeleted } = this.state;
+		const rootId = this.getRootId();
+		const check = DataUtil.checkDetails(rootId);
+
+		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
-		if (this.loading) {
-			return <Loader id="loader" />;
+		let content = null;
+
+		if (isLoading) {
+			content = <Loader id="loader" />;
+		}
+		else {
+			const object = detailStore.get(rootId, rootId, []);
+			const isCollection = object.type === Constant.typeId.collection;
+
+			const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
+			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
+
+			content = (
+				<React.Fragment>
+					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
+
+					<div className="blocks wrapper">
+						<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
+						<HeadSimple ref={ref => this.refHead = ref} type={isCollection ? 'Collection' : 'Set'} rootId={rootId} />
+
+						{children.map((block: I.Block, i: number) => (
+							<Block
+								{...this.props}
+								ref={ref => this.blockRefs[block.id] = ref}
+								key={block.id}
+								rootId={rootId}
+								iconSize={20}
+								block={block}
+								className="noPlus"
+							/>
+						))}
+					</div>
+				</React.Fragment>
+			);
 		};
-
-		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId, []);
-		const isCollection = object.type === Constant.typeId.collection;
-
-		const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 
 		return (
 			<div 
@@ -60,24 +90,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			>
 				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
-				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
-
-				<div className="blocks wrapper">
-					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-					<HeadSimple ref={ref => this.refHead = ref} type={isCollection ? 'Collection' : 'Set'} rootId={rootId} />
-
-					{children.map((block: I.Block, i: number) => (
-						<Block 
-							{...this.props} 
-							ref={ref => this.blockRefs[block.id] = ref}
-							key={block.id} 
-							rootId={rootId} 
-							iconSize={20} 
-							block={block} 
-							className="noPlus" 
-						/>
-					))}
-				</div>
+				{content}
 
 				<Footer component="mainObject" {...this.props} />
 			</div>
@@ -132,8 +145,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		this.id = rootId;
-		this.loading = true;
-		this.forceUpdate();
+		this.setState({ isLoading: true });
 
 		C.ObjectOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
@@ -145,8 +157,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				return;
 			};
 
-			this.loading = false;
-			this.forceUpdate();
+			this.setState({ isLoading: false });
 
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
@@ -234,7 +245,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	resize () {
-		if (this.loading || !this._isMounted) {
+		if (this.state.isLoading || !this._isMounted) {
 			return;
 		};
 
