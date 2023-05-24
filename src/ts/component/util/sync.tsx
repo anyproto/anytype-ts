@@ -46,7 +46,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				onMouseLeave={this.onMouseLeave}
 			>
 				<Icon className={DataUtil.threadColor(status)} />
-				{translate(`syncStatus${status}`)}
+				<div className="name">{translate(`syncStatus${status}`)}</div>
 			</div>
 		);
 	};

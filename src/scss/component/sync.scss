@@ -9,4 +9,6 @@
 	.icon.green { background-image: url('~img/icon/status/green.svg'); }
 	.icon.orange { background-image: url('~img/icon/status/orange.svg'); }
 	.icon.red { background-image: url('~img/icon/status/red.svg'); }
+
+	.name { @include text-overflow-nw; }
 }
