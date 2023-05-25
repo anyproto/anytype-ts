@@ -51,8 +51,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 		if (isLoading) {
 			content = <Loader id="loader" />;
-		}
-		else {
+		} else {
 			const object = detailStore.get(rootId, rootId, []);
 			const isCollection = object.type === Constant.typeId.collection;
 
