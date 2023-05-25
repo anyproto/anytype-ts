@@ -213,7 +213,7 @@ export interface Dataset {
 };
 
 export enum FileSyncStatus {
-	Unknown = 0,
-	Synced = 1,
-	NotSynced = 2,
+	Unknown		 = 0,
+	Synced		 = 1,
+	NotSynced	 = 2,
 };
