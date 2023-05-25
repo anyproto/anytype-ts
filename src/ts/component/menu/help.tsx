@@ -1,7 +1,8 @@
 import * as React from 'react';
+import * as Docs from 'Docs';
 import { MenuItemVertical, Button } from 'Component';
 import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight } from 'Lib';
-import { popupStore } from 'Store';
+import { popupStore, detailStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 
 class MenuHelp extends React.Component<I.Menu> {
@@ -127,10 +128,35 @@ class MenuHelp extends React.Component<I.Menu> {
 			};
 
 			case 'hints': {
+				const isPopup = keyboard.isPopup();
+				const rootId = keyboard.getRootId();
+				const object = detailStore.get(rootId, rootId, []);
+				const match = keyboard.getMatch();
+				const { page, action } = match.params;
+				const isEditor = (page == 'main') && (action == 'edit');
+				const isSet =  (page == 'main') && (action == 'set');
+
+				let key = '';
+
+				if (isSet) {
+					key = 'mainSet';
+				} else
+				if (isEditor) {
+					key = blockStore.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'editor';
+				} else
 				if (isGraph) {
-					Onboarding.start('mainGraph', keyboard.isPopup(), true);
+					key = 'mainGraph';
 				} else {
-					popupStore.open('migration', { data: { type: 'onboarding' } });
+					key = Util.toCamelCase([ page, action ].join('-'));
+
+					if (!Docs.Help.Onboarding[key]) {
+						popupStore.open('migration', { data: { type: 'onboarding' } });
+						return;
+					};
+				};
+
+				if (key) {
+					Onboarding.start(key, keyboard.isPopup(), true);
 				};
 				break;
 			};
