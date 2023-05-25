@@ -548,68 +548,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		for (let filter of view.filters) {
-			console.log(filter);
-
 			if (!conditions.includes(filter.condition)) {
 				continue;
 			};
 
-			let value = filter.value;
-
-			switch (filter.quickOption) {
-				case I.FilterQuickOption.Yesterday: {
-					value = time - 86400;
-					break;
-				};
-
-				case I.FilterQuickOption.CurrentWeek:
-				case I.FilterQuickOption.CurrentMonth:
-				case I.FilterQuickOption.Today: {
-					value = time;
-					break;
-				};
-
-				case I.FilterQuickOption.Tomorrow: {
-					value = time + 86400;
-					break;
-				};
-
-				case I.FilterQuickOption.LastWeek: {
-					value = time - 86400 * 7;
-					break;
-				};
-
-				case I.FilterQuickOption.LastMonth: {
-					value = time - 86400 * 30;
-					break;
-				};
-
-				case I.FilterQuickOption.NextWeek: {
-					value = time + 86400 * 7;
-					break;
-				};
-
-				case I.FilterQuickOption.NextMonth: {
-					value = time + 86400 * 30;
-					break;
-				};
-
-				case I.FilterQuickOption.NumberOfDaysAgo: {
-					value = time - 86400 * value;
-					break;
-				};
-
-				case I.FilterQuickOption.NumberOfDaysNow: {
-					value = time + 86400 * value;
-					break;
-				};
-			};
-
+			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
 			if (!value) {
 				continue;
 			};
-
-			console.log(value);
 
 			const relation = dbStore.getRelationByKey(filter.relationKey);
 			if (relation && !relation.isReadonlyValue) {

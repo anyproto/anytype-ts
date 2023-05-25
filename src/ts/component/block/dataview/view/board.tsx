@@ -223,7 +223,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		for (let filter of view.filters) {
-			if (!conditions.includes(filter.condition) || !filter.value) {
+			if (!conditions.includes(filter.condition)) {
+				continue;
+			};
+
+			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
+			if (!value) {
 				continue;
 			};
 			

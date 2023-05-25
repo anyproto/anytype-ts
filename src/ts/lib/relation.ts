@@ -309,12 +309,10 @@ class Relation {
 		const formats = [ I.RelationType.File ];
 		const options: any[] = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
 			return it.isInstalled && !it.isHidden && formats.includes(it.format);
-		}).map((it: any) => {
-			return { 
-				id: it.relationKey, 
-				icon: 'relation ' + this.className(it.format),
-				name: it.name, 
-			};
+		}).map(it => ({
+			id: it.relationKey, 
+			icon: 'relation ' + this.className(it.format),
+			name: it.name, 
 		});
 
 		return [
@@ -345,13 +343,11 @@ class Relation {
 			return 0;
 		});
 
-		options = options.map((it: any) => {
-			return { 
-				id: it.relationKey, 
-				icon: 'relation ' + this.className(it.format),
-				name: it.name, 
-			};
-		});
+		options = options.map(it => ({
+			id: it.relationKey, 
+			icon: 'relation ' + this.className(it.format),
+			name: it.name, 
+		}));
 
 		return options;
 	};
@@ -438,6 +434,61 @@ class Relation {
 		});
 
 		return ret;
+	};
+
+	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
+		const time = Util.time();
+
+		switch (option) {
+			case I.FilterQuickOption.Yesterday: {
+				value = time - 86400;
+				break;
+			};
+
+			case I.FilterQuickOption.CurrentWeek:
+			case I.FilterQuickOption.CurrentMonth:
+			case I.FilterQuickOption.Today: {
+				value = time;
+				break;
+			};
+
+			case I.FilterQuickOption.Tomorrow: {
+				value = time + 86400;
+				break;
+			};
+
+			case I.FilterQuickOption.LastWeek: {
+				value = time - 86400 * 7;
+				break;
+			};
+
+			case I.FilterQuickOption.LastMonth: {
+				value = time - 86400 * 30;
+				break;
+			};
+
+			case I.FilterQuickOption.NextWeek: {
+				value = time + 86400 * 7;
+				break;
+			};
+
+			case I.FilterQuickOption.NextMonth: {
+				value = time + 86400 * 30;
+				break;
+			};
+
+			case I.FilterQuickOption.NumberOfDaysAgo: {
+				value = time - 86400 * value;
+				break;
+			};
+
+			case I.FilterQuickOption.NumberOfDaysNow: {
+				value = time + 86400 * value;
+				break;
+			};
+		};
+
+		return value;
 	};
 
 	systemKeys () {
