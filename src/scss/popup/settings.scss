@@ -169,8 +169,10 @@
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
 
-		.side.right.tabStorageManager > div { height: calc(100% - 108px); }
+		.side.right.tabStorageManager { padding-bottom: 0px; }
 		.side.right.tabStorageManager {
+			> .wrap { height: 100%; display: flex; flex-direction: column; }
+
 			.objectManagerWrapper {
 				.items {
 					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }

@@ -35,7 +35,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
         );
 
         return (
-            <div>
+            <div className="wrap">
                 <Head onPage={this.onBack} name={translate('commonBack')} />
                 <Title text={translate('popupSettingsStorageManagerTitle')} />
 
