@@ -242,12 +242,11 @@ class Preview {
 		const obj = $('#toast');
 		const sidebar = $('#sidebar');
 		const isRight = sidebar.hasClass('right');
-		const isPopup = keyboard.isPopup();
 		const { ww, wh } = Util.getWindowDimensions();
 		const y = wh - obj.outerHeight() - BORDER * 2;
 
 		let sw = 0;
-		if (!isPopup && commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
 			sw = sidebar.outerWidth();
 		};
 
