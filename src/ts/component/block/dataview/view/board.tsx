@@ -248,7 +248,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 					return;
 				};
 
-				const object = detailStore.get(subId, message.objectId, []);
+				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
 				const oldIndex = records.indexOf(message.objectId);
 				const newIndex = dir > 0 ? records.length : 0;
@@ -257,6 +257,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				if (isCollection) {
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
+
+				detailStore.update(subId, { id: object.id, details: object }, true);
 
 				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
 					dbStore.recordsSet(subId, '', update);
