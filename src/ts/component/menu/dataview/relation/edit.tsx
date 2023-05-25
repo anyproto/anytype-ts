@@ -558,10 +558,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { rootId, blockId } = data;
 		const relation = this.getRelation();
 
-		return (
-			blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) && 
-			blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ])
-		);
+		let ret = relation ? blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
+		if (ret) {
+			ret = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+		};
+
+		return ret;
 	};
 
 	isReadonly () {

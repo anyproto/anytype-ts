@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { Checkbox, Filter, Icon, IconObject, Label, Loader, ObjectName } from 'Component';
-import { DataUtil, I, Util } from 'Lib';
+import { Checkbox, Filter, Icon, IconObject, Label, Loader, ObjectName, EmptySearch } from 'Component';
+import { DataUtil, I, Util, translate } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -58,10 +58,16 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         };
 
         const { loading } = this.state;
-        const { buttons, rowHeight, Info, iconSize, textEmpty } = this.props;
+        const { buttons, rowHeight, Info, iconSize } = this.props;
         const items = this.getItems();
         const cnControls = [ 'controls' ];
+		const filter = this.getFilterValue();
 
+		if (filter) {
+			cnControls.push('withFilter');
+		};
+
+		let textEmpty = String(this.props.textEmpty || '');
         let buttonsList: I.ButtonComponent[] = [];
         if (this.selected.length) {
             buttonsList.push({ icon: 'checkbox active', text: 'Deselect all', onClick: this.onSelectAll });
@@ -137,19 +143,17 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
                 </div>
             </div>
         );
-        let content = null;
 
+        let content = null;
         if (!items.length) {
-            if (!this.getFilterValue()) {
+            if (!filter) {
                 controls = null;
-            };
+            } else {
+				textEmpty = Util.sprintf(translate('popupSearchEmptyFilter'), filter);
+			};
 
             content = (
-                <div className="managerEmpty">
-                    <div className="inner">
-                        <Label className="name" text={textEmpty} />
-                    </div>
-                </div>
+				<EmptySearch text={textEmpty} />
             );
         } else {
             content = (

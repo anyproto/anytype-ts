@@ -488,7 +488,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const root = blockStore.getLeaf(rootId, rootId);
 		const relation = this.getRelation();
 
-		let ret = blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]);
+		let ret = relation ? blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
 		if (ret && root) {
 			ret = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		};
