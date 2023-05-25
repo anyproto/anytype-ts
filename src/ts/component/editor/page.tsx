@@ -485,7 +485,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 		const { selection } = dataset || {};
 		const menuOpen = menuStore.isOpen();
-		const popupOpen = popupStore.isOpenList([ 'search' ]);
+		const popupOpen = popupStore.isOpenKeyboard();
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (keyboard.isFocused || !selection || !root) {

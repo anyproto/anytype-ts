@@ -73,7 +73,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			{ id: 'hints', name: 'Show Hints' },
 			{ isDiv: true },
 			{ id: 'community', name: 'Anytype Community' },
-			{ id: 'tutorial', name: 'Help & Tutorials' },
+			{ id: 'tutorial', name: 'Help and Tutorials' },
 			{ id: 'contact', name: 'Contact Us' },
 			{ id: 'tech', name: 'Technical Information' },
 			{ isDiv: true },

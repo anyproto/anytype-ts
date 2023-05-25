@@ -91,6 +91,10 @@ class PopupStore {
 		return false;
 	};
 
+	isOpenKeyboard () {
+		return this.isOpenList([ 'search', 'template' ]);
+	};
+
     close (id: string, callBack?: () => void) {
 		const item = this.get(id);
 		if (!item) {

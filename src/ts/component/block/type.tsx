@@ -78,7 +78,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onKeyDown (e: any) {
-		if (menuStore.isOpen() || popupStore.isOpen('template')) {
+		if (menuStore.isOpen() || popupStore.isOpenKeyboard()) {
 			return;
 		};
 
