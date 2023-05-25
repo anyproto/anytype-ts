@@ -211,3 +211,9 @@ export interface Dataset {
 	onDragStart: (e: React.DragEvent, dropType: I.DropType, ids: string[], component: unknown) => void;
 	preventCommonDrop: (value: boolean) => void;
 };
+
+export enum FileSyncStatus {
+	Unknown		 = 0,
+	Synced		 = 1,
+	NotSynced	 = 2,
+};
