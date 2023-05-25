@@ -78,7 +78,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onKeyDown (e: any) {
-		if (menuStore.isOpen()) {
+		if (menuStore.isOpen() || popupStore.isOpen('template')) {
 			return;
 		};
 
@@ -88,7 +88,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowleft', e, (pressed: string) => {
+		keyboard.shortcut('arrowup, arrowleft', e, () => {
 			e.preventDefault();
 			e.key = 'arrowup';
 
@@ -106,7 +106,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 		});
 
-		keyboard.shortcut('arrowdown, arrowright', e, (pressed: string) => {
+		keyboard.shortcut('arrowdown, arrowright', e, () => {
 			e.preventDefault();
 			e.key = 'arrowdown';
 
@@ -124,7 +124,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 		});
 
-		keyboard.shortcut('enter, space', e, (pressed: string) => {
+		keyboard.shortcut('enter, space', e, () => {
 			e.preventDefault();
 
 			if (items[this.n]) {
@@ -133,7 +133,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		});
 
 		for (let i = 1; i <= 4; ++i) {
-			keyboard.shortcut(`${cmd}+${i}`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+${i}`, e, () => {
 				const item = items[(i - 1)];
 				if (item) {
 					this.onClick(e, item);
