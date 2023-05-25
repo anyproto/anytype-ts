@@ -201,6 +201,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 		const conditions = [
 			I.FilterCondition.Equal,
+			I.FilterCondition.GreaterOrEqual,
+			I.FilterCondition.LessOrEqual,
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
 		]; 
