@@ -22,7 +22,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
             { icon: 'remove', text: 'Delete immediately', onClick: this.onRemove }
         ];
         const filters: I.Filter[] = [
-            { operator: I.FilterOperator.And, relationKey: 'fileSyncStatus', condition: I.FilterCondition.Equal, value: 1 },
+            { operator: I.FilterOperator.And, relationKey: 'fileSyncStatus', condition: I.FilterCondition.Equal, value: I.FileSyncStatus.Synced },
         ];
 		const sorts: I.Sort[] = [
 			{ type: I.SortType.Desc, relationKey: 'sizeInBytes' },
