@@ -511,6 +511,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const isCollection = this.isCollection();
 		const conditions = [
 			I.FilterCondition.Equal,
+			I.FilterCondition.GreaterOrEqual,
+			I.FilterCondition.LessOrEqual,
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
 		]; 
