@@ -313,7 +313,7 @@ class Relation {
 			id: it.relationKey, 
 			icon: 'relation ' + this.className(it.format),
 			name: it.name, 
-		});
+		}));
 
 		return [
 			{ id: '', icon: '', name: 'None' },
