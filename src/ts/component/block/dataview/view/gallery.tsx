@@ -325,6 +325,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			};
 		};
 
+		if (!object || object._empty_) {
+			return null;
+		};
+
 		if (!object.coverId && !object.coverType && ![ Constant.typeId.image, Constant.typeId.audio, Constant.typeId.video ].includes(object.type)) {
 			return null;
 		};
