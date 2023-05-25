@@ -107,7 +107,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					{!isReadonly ? (
 						<div className="inputWrap">
 							<Input 
-								ref={ref => { this.ref = ref; }} 
+								ref={ref => this.ref = ref} 
 								value={relation ? relation.name : ''} 
 								onChange={this.onChange}
 								onMouseEnter={this.menuClose}
@@ -552,14 +552,26 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		button.removeClass('black blank').addClass(canSave ? 'black' : 'blank');
 	};
 
+	isAllowed () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId, blockId } = data;
+		const relation = this.getRelation();
+
+		return (
+			blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) && 
+			blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ])
+		);
+	};
+
 	isReadonly () {
 		const { param } = this.props;
 		const { data } = param;
-		const { readonly, rootId, blockId } = data;
+		const { readonly } = data;
 		const relation = this.getRelation();
-		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
+		const isAllowed = this.isAllowed();
 
-		return readonly || !allowed || (relation && relation.isReadonlyRelation);
+		return readonly || !isAllowed || (relation && relation.isReadonlyRelation);
 	};
 
 	save () {
