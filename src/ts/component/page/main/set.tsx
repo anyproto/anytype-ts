@@ -30,7 +30,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	state = {
 		isLoading: false,
 		isDeleted: false,
-		isLoading: false,
 	};
 
 	constructor (props: I.PageComponent) {
