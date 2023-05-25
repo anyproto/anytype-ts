@@ -514,7 +514,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
 		]; 
-		const time = Util.time();
 
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
@@ -576,11 +575,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const object = message.details;
 				const records = this.getRecords();
 				const oldIndex = records.indexOf(message.objectId);
-				const newIndex = dir > 0 ? records.length - 1 : 0;
+				const newIndex = dir > 0 ? records.length : 0;
 
 				if (isCollection) {
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
+
+				detailStore.update(subId, { id: object.id, details: object }, true);
 
 				if (oldIndex < 0) {
 					dbStore.recordAdd(subId, '', object.id, newIndex);
