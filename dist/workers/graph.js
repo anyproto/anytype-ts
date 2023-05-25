@@ -72,6 +72,7 @@ let edgeMap = new Map();
 let hoverAlpha = 0.2;
 let fontFamily = 'Helvetica';
 let timeoutHover = 0;
+let root = null;
 
 addEventListener('message', ({ data }) => { 
 	if (this[data.id]) {
@@ -105,7 +106,7 @@ init = (param) => {
 
 	// Center initially on root node
 	setTimeout(() => {
-		const root = getNodeById(data.rootId);
+		root = getNodeById(data.rootId);
 
 		let x = width / 2;
 		let y = height / 2;
@@ -431,10 +432,11 @@ drawNode = (d) => {
 		};
 	};
 
-	if (d.isOver) {
+	if (d.isOver || (root && (d.id == root.id))) {
 		colorNode = Color.highlight;
 		colorText = Color.highlight;
 		colorLine = Color.highlight;
+		lineWidth = getLineWidth() * 3;
 		ctx.globalAlpha = 1;
 	};
 
@@ -685,13 +687,13 @@ onSetSelected = ({ ids }) => {
 };
 
 onSetRootId = ({ rootId }) => {
-	const d = nodes.find(d => d.id == rootId);
-	if (!d) {
+	root = nodes.find(d => d.id == rootId);
+	if (!root) {
 		return;
 	};
 
 	const coords = { x: transform.x, y: transform.y };
-	const to = getCenter(d.x, d.y);
+	const to = getCenter(root.x, root.y);
 
 	new TWEEN.Tween(coords)
 	.to(to, 500)

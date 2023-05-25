@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
+import { I, C, DataUtil, ObjectUtil, Util, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -81,7 +81,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	};
 
 	onKeyDown (e: any) {
-		if (menuStore.isOpen()) {
+		if (menuStore.isOpen() || popupStore.isOpenKeyboard()) {
 			return;
 		};
 
@@ -91,7 +91,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowleft', e, (pressed: string) => {
+		keyboard.shortcut('arrowup, arrowleft', e, () => {
 			e.preventDefault();
 			e.key = 'arrowup';
 
@@ -109,7 +109,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 		});
 
-		keyboard.shortcut('arrowdown, arrowright', e, (pressed: string) => {
+		keyboard.shortcut('arrowdown, arrowright', e, () => {
 			e.preventDefault();
 			e.key = 'arrowdown';
 
@@ -127,7 +127,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 		});
 
-		keyboard.shortcut('enter, space', e, (pressed: string) => {
+		keyboard.shortcut('enter, space', e, () => {
 			e.preventDefault();
 
 			if (items[this.n]) {
@@ -136,7 +136,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		});
 
 		for (let i = 1; i <= 4; ++i) {
-			keyboard.shortcut(`${cmd}+${i}`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+${i}`, e, () => {
 				const item = items[(i - 1)];
 				if (item) {
 					this.onClick(e, item);
@@ -295,7 +295,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	onBlock (id: string) {
 		const { rootId, isPopup } = this.props;
 		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
-		const namespace = isPopup ? '-popup' : '';
 
 		if (block) {
 			const l = block.getLength();
@@ -304,7 +303,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			focus.apply();
 		};
 
-		$(window).trigger('resize.editor' + namespace);
+		Util.triggerResizeEditor(isPopup);
 	};
 
 	onTemplate () {

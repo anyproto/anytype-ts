@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
 import { I, DataUtil, ObjectUtil, keyboard, sidebar } from 'Lib';
-import { blockStore, detailStore, popupStore } from 'Store';
+import { blockStore, detailStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
@@ -10,29 +10,33 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	constructor (props: I.HeaderComponent) {
 		super(props);
 		
+		this.onRelation = this.onRelation.bind(this);
 		this.onMore = this.onMore.bind(this);
 		this.onSync = this.onSync.bind(this);
 		this.onOpen = this.onOpen.bind(this);
 	};
 
 	render () {
-		const { rootId, onForward, onBack, onGraph, onSearch, onTooltipShow, onTooltipHide } = this.props;
+		const { rootId, onSearch, onTooltipShow, onTooltipHide } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled' ]);
 		const isLocked = root ? root.isLocked() : false;
-		const showGraph = !ObjectUtil.isSystemType(object.type);
 		const showMenu = !ObjectUtil.isStoreType(object.type);
 		const canSync = showMenu && !object.templateIsBundled;
+		const cmd = keyboard.cmdSymbol();
 
 		return (
 			<React.Fragment>
 				<div className="side left">
+					<Icon
+						className="toggle big"
+						tooltip="Toggle sidebar fixed mode"
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
-					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
-					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
-					
-					{showGraph ? <Icon className="graph big" tooltip="Open as graph" onClick={onGraph} /> : ''}
+					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
 				</div>
 
 				<div className="side center">
@@ -52,7 +56,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				</div>
 
 				<div className="side right">
-					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
+					<Icon id="button-header-relation" tooltip="Relations" className="relation big" onClick={this.onRelation} />
 					{showMenu ? <Icon id="button-header-more" tooltip="Menu" className="more big" onClick={this.onMore} /> : ''}
 				</div>
 			</React.Fragment>
@@ -95,11 +99,38 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const { rootId, menuOpen } = this.props;
 
 		menuOpen('threadList', '#button-header-sync', {
-			horizontal: I.MenuDirection.Right,
+			horizontal: I.MenuDirection.Left,
 			data: {
 				rootId,
 			}
 		});
+	};
+
+	onRelation () {
+		const { isPopup, rootId } = this.props;
+		const cnw = [ 'fixed' ];
+		const root = blockStore.getLeaf(rootId, rootId);
+		const isLocked = root ? root.isLocked() : false;
+
+		if (!isPopup) {
+			cnw.push('fromHeader');
+		};
+
+		const param: any = {
+			element: '#button-header-relation',
+			noFlipX: true,
+			noFlipY: true,
+			horizontal: I.MenuDirection.Right,
+			subIds: Constant.menuIds.cell,
+			classNameWrap: cnw.join(' '),
+			data: {
+				isPopup,
+				rootId,
+				readonly: isLocked,
+			},
+		};
+
+		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
 	};
 
 	setTitle () {

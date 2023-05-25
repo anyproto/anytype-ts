@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, focus, ObjectUtil, Util, Action } from 'Lib';
+import { I, C, focus, ObjectUtil, Action } from 'Lib';
 import { menuStore, blockStore, detailStore } from 'Store';
 import ControlButtons  from './controlButtons';
 import Constant from 'json/constant.json';
@@ -33,7 +33,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		this.onCoverClose = this.onCoverClose.bind(this);
 		this.onCoverSelect = this.onCoverSelect.bind(this)
 		this.onLayout = this.onLayout.bind(this);
-		this.onRelation = this.onRelation.bind(this);
 		
 		this.onDragOver = this.onDragOver.bind(this);
 		this.onDragLeave = this.onDragLeave.bind(this);
@@ -73,7 +72,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 					onCoverClose={this.onCoverClose}
 					onCoverSelect={this.onCoverSelect}
 					onLayout={this.onLayout}
-					onRelation={this.onRelation}
 					onUploadStart={this.onUploadStart}
 					onUpload={this.onUpload}
 				/>
@@ -105,10 +103,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		const { rootId } = this.props;
 		const node = $(this.node);
 		const object = detailStore.get(rootId, rootId, []);
-		const { iconEmoji, iconImage } = object;
+		const { iconEmoji, iconImage, layout } = object;
+		const noUpload = layout == I.ObjectLayout.Type;
 
 		menuStore.open('smile', { 
 			element: '.editorControls #button-icon',
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				node.addClass('hover');
 			},
@@ -116,6 +116,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				node.removeClass('hover');
 			},
 			data: {
+				noUpload,
 				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					ObjectUtil.setIcon(rootId, icon, '', () => {
@@ -174,6 +175,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		
 		menuStore.open('blockLayout', { 
 			element: '.editorControls #button-layout',
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				node.addClass('hover');
 			},
@@ -189,48 +191,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		});
 	};
 
-	onRelation (e: any) {
-		const { isPopup, rootId, readonly } = this.props;
-		const node = $(this.node);
-		const cnw = [ 'fixed' ];
-
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		const param: any = {
-			recalcRect: () => {
-				const container = Util.getScrollContainer(isPopup);
-				const rect = { x: container.width() / 2 , y: Util.sizeHeader() + container.scrollTop(), width: 1, height: 1 };
-
-				if (isPopup) {
-					const offset = container.offset();
-					rect.x += offset.left;
-					rect.y += offset.top;
-				};
-				return rect;
-			},
-			noFlipX: true,
-			noFlipY: true,
-			subIds: Constant.menuIds.cell,
-			classNameWrap: cnw.join(' '),
-			onOpen: () => {
-				node.addClass('hover');
-			},
-			onClose: () => {
-				node.removeClass('hover');
-				menuStore.closeAll();
-			},
-			data: {
-				isPopup,
-				rootId,
-				readonly,
-			},
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
-	};
-	
 	onDragOver (e: any) {
 		if (!this._isMounted || !e.dataTransfer.files || !e.dataTransfer.files.length) {
 			return;
@@ -254,7 +214,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			return;
 		};
 		
-		const { rootId, dataset } = this.props;
+		const { dataset } = this.props;
 		const { preventCommonDrop } = dataset || {};
 		const file = e.dataTransfer.files[0].path;
 		const node = $(this.node);
@@ -284,7 +244,6 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 			this.setState({ loading: false });
 		});
 	};
-
 
 });
 

@@ -1,5 +1,9 @@
 @import "~scss/_vars";
 
+html.bodyAuth, html.bodyIndex {
+	.navigationPanel { display: none; }
+}
+
 .pageAuth, .pageIndex {
 	.frame { width: 672px; padding: 60px 48px 48px 48px; text-align: center; }
 	.title { margin-bottom: 22px; }

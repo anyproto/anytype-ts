@@ -479,7 +479,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			let icon = null;
 			if (_empty_) {
-				icon = <Loader className={[ 'c' + size, 'inline' ].join(' ')} />;
+				icon = <Loader type="loader" className={[ 'c' + size, 'inline' ].join(' ')} />;
 			} else {
 				icon = <IconObject size={size} object={object} />;
 			};
@@ -898,16 +898,25 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		// Parse markdown commands
 		if (block.canHaveMarks() && !isInsideTable) {
 			for (let k in Markdown) {
-				const reg = new RegExp(`^(${k} )`);
+				const reg = new RegExp(`^(${k}\\s)`);
 				const newStyle = Markdown[k];
 
 				if ((newStyle == content.style) || !value.match(reg) || ((newStyle == I.TextStyle.Numbered) && block.isTextHeader())) {
 					continue;
 				};
 
-				value = value.replace(reg, (s: string, p: string) => s.replace(p, ''));
+				// If emoji markup is first do not count one space character in mark adjustment
+				const isFirstEmoji = Mark.getInRange(this.marks, I.MarkType.Emoji, { from: 1, to: 2 });
+				const offset = isFirstEmoji ? 0 : 1;
 
-				this.marks = newStyle == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + 1));
+				value = value.replace(reg, (s: string, p: string) => {
+					if (isFirstEmoji) {
+						p = p.trim();
+					};
+					return s.replace(p, '');
+				});
+
+				this.marks = newStyle == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
 				this.setValue(value);
 
 				DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {

@@ -11,5 +11,5 @@
 	"download": "https://download.anytype.io",
 	"terms": "https://anytype.io/terms.pdf",
 	"privacy": "https://anytype.io/Anytype_Privacy_Statement.pdf",
-	"contact": "mailto:support@anytype.io?subject=Support%20request&body=%0D%0A%0D%0ATechnical%20information%0D%0A----------------------------------------------%0D%0ADevice%3A%20%25device%25%0D%0AOS%20version%3A%20%25os%25%0D%0AApp%20version%3A%20%25version%25%0D%0ABuild%20number%3A%20%25build%25%0D%0ALibrary%20version%3A%20%25middleware%25%0D%0AAccount%20ID%3A%20%25accountId%25%0D%0AAnalytics%20ID%3A%20%25analyticsId%25"
+	"contact": "mailto:support@anytype.io?subject=Support%20request%2C%20account%20%25accountId%25&body=%0A%0ATechnical%20information%0A----------------------------------------------%0ADevice%3A%20%25device%25%0AOS%20version%3A%20%25os%25%0AApp%20version%3A%20%25version%25%0ABuild%20number%3A%20%25build%25%0ALibrary%20version%3A%20%25middleware%25%0AAccount%20ID%3A%20%25accountId%25%0AAnalytics%20ID%3A%20%25analyticsId%25"
 }

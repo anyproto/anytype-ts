@@ -57,8 +57,8 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -74,7 +74,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			{ id: 'hints', name: 'Show Hints' },
 			{ isDiv: true },
 			{ id: 'community', name: 'Anytype Community' },
-			{ id: 'tutorial', name: 'Help & Tutorials' },
+			{ id: 'tutorial', name: 'Help and Tutorials' },
 			{ id: 'contact', name: 'Contact Us' },
 			{ id: 'tech', name: 'Technical Information' },
 			{ isDiv: true },

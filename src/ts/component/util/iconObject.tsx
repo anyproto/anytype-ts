@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, Preview, SmileUtil, DataUtil, FileUtil, ObjectUtil } from 'Lib';
 import { commonStore, menuStore } from 'Store';
@@ -23,11 +23,11 @@ interface Props {
 	tooltip?: string;
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	color?: string;
-	getObject?(): any;
 	forceLetter?: boolean;
 	noRemove?: boolean;
 	noClick?: boolean;
 	menuParam?: Partial<I.MenuParam>;
+	getObject?(): any;
 	onSelect?(id: string): void;
 	onUpload?(hash: string): void;
 	onClick?(e: any): void;
@@ -55,7 +55,7 @@ const LAYOUT_EMOJI = [
 
 const IconSize = {
 	16: 16,
-	18: 18,
+	18: 16,
 	20: 18,
 	22: 18,
 	24: 20,
@@ -223,8 +223,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			} as React.CSSProperties;
 
 			cn.push(`withImage withOption`);
-			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-			icon = <div className="optionGradient" style={style} />;
+			icn = icn.concat([ 'iconGradient', 'c' + iconSize ]);
+			icon = <div className={icn.join(' ')} style={style} />;
 		};
 
 		switch (layout) {
@@ -414,7 +414,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			offsetX,
 			offsetY,
 			data: {
-				noUpload: noUpload,
+				noUpload,
 				noRemove: noRemove || !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
 					if (onSelect) {

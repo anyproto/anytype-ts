@@ -56,25 +56,23 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			canEditIcon = false;
 		};
 
-		const Editor = (item: any) => {
-			return (
-				<Editable
-					ref={(ref: any) => { this.refEditable[item.id] = ref; }}
-					id={'editor-' + item.id}
-					placeholder={placeholder[item.id]}
-					readonly={!allowDetails}
-					classNameWrap={item.className}
-					classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
-					classNamePlaceholder={'c' + item.id}
-					onFocus={(e: any) => { this.onFocus(e, item); }}
-					onBlur={(e: any) => { this.onBlur(e, item); }}
-					onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
-					onKeyUp={() => { this.onKeyUp(); }}
-					onSelect={(e: any) => { this.onSelectText(e, item); }}
-					onCompositionStart={this.onCompositionStart}
-				/>
-			);
-		};
+		const Editor = (item: any) => (
+			<Editable
+				ref={ref => this.refEditable[item.id] = ref}
+				id={'editor-' + item.id}
+				placeholder={placeholder[item.id]}
+				readonly={!allowDetails}
+				classNameWrap={item.className}
+				classNameEditor={[ 'focusable', 'c' + item.id ].join(' ')}
+				classNamePlaceholder={'c' + item.id}
+				onFocus={(e: any) => { this.onFocus(e, item); }}
+				onBlur={(e: any) => { this.onBlur(e, item); }}
+				onKeyDown={(e: any) => { this.onKeyDown(e, item); }}
+				onKeyUp={() => { this.onKeyUp(); }}
+				onSelect={(e: any) => { this.onSelectText(e, item); }}
+				onCompositionStart={this.onCompositionStart}
+			/>
+		);
 
 		let button = null;
 		let descr = null;

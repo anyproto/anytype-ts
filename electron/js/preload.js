@@ -12,7 +12,7 @@ const logPath = path.join(userPath, 'logs');
 contextBridge.exposeInMainWorld('Electron', {
 	version: {
 		app: app.getVersion(),
-		os: os.release(),
+		os: [ os.platform(), process.arch, process.getSystemVersion() ].join(' '),
 		system: process.getSystemVersion(),
 		device: os.hostname(),
 	},

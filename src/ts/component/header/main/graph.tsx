@@ -18,15 +18,20 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	render () {
-		const { onForward, onBack, tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const { tab, tabs, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const cmd = keyboard.cmdSymbol();
 
 		return (
 			<React.Fragment>
 				<div className="side left">
+					<Icon
+						className="toggle big"
+						tooltip="Toggle sidebar fixed mode"
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
-					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
-					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 				</div>
 
 				<div className="side center">
@@ -35,7 +40,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 							<div 
 								key={i}
 								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
-								onClick={() => { onTab(item.id); }}
+								onClick={() => onTab(item.id)}
 								onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
 								onMouseOut={onTooltipHide}
 							>

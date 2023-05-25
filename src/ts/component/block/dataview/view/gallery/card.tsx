@@ -31,34 +31,15 @@ const Card = observer(class Card extends React.Component<Props> {
 		const idPrefix = getIdPrefix();
 		const record = getRecord(recordId);
 		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
-		const readonly = true;
 		const subId = dbStore.getSubId(rootId, block.id);
+		const cover = this.getCover();
 
 		if (coverFit) {
 			cn.push('coverFit');
 		};
 
-		const BlankCover = (item: any) => (
-			<div className={[ 'cover', 'type0', (!readonly ? 'canEdit' : '') ].join(' ')}>
-				<div className="inner">
-					{!readonly ? (
-						<div className="add">
-							<Icon className="plus" />
-							Add picture
-						</div>
-					) : ''}
-				</div>
-			</div>
-		);
-
-		let cover = null;
-		if (view.coverRelationKey) {
-			cover = <BlankCover />;
-
-			const coverNode = this.getCover();
-			if (coverNode) {
-				cover = coverNode;
-			};
+		if (cover) {
+			cn.push('withCover');
 		};
 
 		let content = (
@@ -82,7 +63,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								showTooltip={true}
 								onClick={(e: any) => { this.onCellClick(e, relation); }}
 								tooltipX={I.MenuDirection.Left}
-								iconSize={18}
+								iconSize={relation.relationKey == 'name' ? 20 : 18}
 								shortUrl={true}
 							/>
 						);
@@ -98,12 +79,6 @@ const Card = observer(class Card extends React.Component<Props> {
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
 					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
-					<Icon
-						className="checkbox"
-						onClick={e => onSelectToggle(e, record.id)}
-						onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
-						onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
-					/>
 					{content}
 				</div>
 			);
@@ -202,29 +177,10 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	getCover (): any {
-		const { rootId, block, recordId, getView, getRecord } = this.props;
-		const view = getView();
+		const { recordId, getCoverObject } = this.props;
+		const cover = getCoverObject(recordId);
 
-		if (!view.coverRelationKey) {
-			return null;
-		};
-
-		const subId = dbStore.getSubId(rootId, block.id);
-		const record = getRecord(recordId);
-		const value = Relation.getArrayValue(record[view.coverRelationKey]);
-
-		let cover = null;
-		if (view.coverRelationKey == 'pageCover') {
-			cover = this.mediaCover(record);
-		} else {
-			for (const id of value) {
-				const f = detailStore.get(subId, id, []);
-				if (!f._empty_) {
-					cover = this.mediaCover(f);
-				};
-			};
-		};
-		return cover;
+		return cover ? this.mediaCover(cover) : null;
 	};
 
 	mediaCover (item: any) {

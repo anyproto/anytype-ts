@@ -209,6 +209,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 				return;
 			};
 
+			const object = detailStore.get(rootId, rootId, []);
+			if (object.isArchived || object.isDeleted) {
+				this.isDeleted = true;
+				this.forceUpdate();
+				return;
+			};
+
 			this.scrollTop = Storage.getScroll('editor' + (isPopup ? 'Popup' : ''), rootId);
 			this.focusTitle();
 			this.setLoading(false);
@@ -290,7 +297,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	
 	unbind () {
 		const { isPopup } = this.props;
-		const namespace = this.getNamespace();
+		const namespace = Util.getEventNamespace(isPopup);
 		const container = Util.getScrollContainer(isPopup);
 		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
 
@@ -303,7 +310,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { dataset, isPopup } = this.props;
 		const { selection } = dataset || {};
 		const win = $(window);
-		const namespace = this.getNamespace();
+		const namespace = Util.getEventNamespace(isPopup);
 		const container = Util.getScrollContainer(isPopup);
 
 		this.unbind();
@@ -478,7 +485,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 		const { selection } = dataset || {};
 		const menuOpen = menuStore.isOpen();
-		const popupOpen = popupStore.isOpenList([ 'search' ]);
+		const popupOpen = popupStore.isOpenKeyboard();
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (keyboard.isFocused || !selection || !root) {
@@ -2203,10 +2210,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	setLoading (v: boolean): void {
 		this.loading = v;
 		this.forceUpdate();
-	};
-
-	getNamespace () {
-		return this.props.isPopup ? '-popup' : '';
 	};
 
 });

@@ -164,6 +164,5 @@
 	}
 
 	.block.blockLink > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
-
-	.block.blockLink > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 12px; }
+	.block.blockLink > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; }
 }
