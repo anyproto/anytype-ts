@@ -270,6 +270,7 @@ class Keyboard {
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
 		
+		/*
 		if (this.isMainEditor()) {
 			rootId = this.getRootId();
 			root = blockStore.getLeaf(rootId, rootId);
@@ -294,6 +295,7 @@ class Keyboard {
 				};
 			};
 		};
+		*/
 
 		if (!rootId) {
 			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
@@ -311,6 +313,7 @@ class Keyboard {
 	getRootId (): string {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
+
 		return isPopup ? popupMatch.params.id : (this.match?.params?.id || blockStore.root);
 	};
 
