@@ -313,7 +313,6 @@ class Analytics {
 		const map = {
 			'index/index':		 'ScreenIndex',
 
-			'auth/notice':		 'ScreenDisclaimer',
 			'auth/login':		 'ScreenLogin',
 			'auth/register':	 'ScreenAuthRegistration',
 			'auth/invite':		 'ScreenAuthInvitation',
