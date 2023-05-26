@@ -75,7 +75,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				cn.push('cp');
 			};
 
-			const cnc = [ 'linkCard', DataUtil.layoutClass(object.id, layout), 'c' + size, DataUtil.linkCardClass(cardStyle) ];
+			const cnc = [ 'linkCard', DataUtil.layoutClass(object.id, layout), 'c' + size ];
 			const cns = [ 'sides' ];
 			const cnl = [ 'side', 'left' ];
 			

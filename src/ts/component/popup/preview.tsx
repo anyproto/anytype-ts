@@ -1,7 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Loader, } from 'Component';
+import { Loader } from 'Component';
 import { I, keyboard, Util } from 'Lib';
+import { commonStore } from 'Store';
 
 const BORDER = 16;
 
@@ -66,17 +67,23 @@ class PopupPreview extends React.Component<I.Popup> {
 	};
 	
 	resize () {
-		const { param, getId } = this.props;
+		const { param, getId, position } = this.props;
 		const { data } = param;
 		const { src, type } = data;
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find('#wrap');
 		const loader = obj.find('#loader');
 		const { ww, wh } = Util.getWindowDimensions();
-		const mw = ww - BORDER * 2;
 		const mh = wh - BORDER * 2;
+		const sidebar = $('#sidebar');
+
+		let mw = ww - BORDER * 2;
+		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+			mw -= sidebar.outerWidth();
+		};
 
 		wrap.css({ height: 450, width: 300 });
+		position();
 
 		const onError = () => {
 			wrap.addClass('brokenMedia');
@@ -102,6 +109,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 					wrap.css({ height, width });
 					loader.remove();
+					position();
 				};
 
 				img.onerror = onError;
@@ -120,6 +128,7 @@ class PopupPreview extends React.Component<I.Popup> {
 					wrap.css({ height, width });
 					$(video).css({ height, width });
 					loader.remove();
+					position();
 				};
 
 				video.onerror = onError;

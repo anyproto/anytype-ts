@@ -56,5 +56,6 @@
 	.block.blockBookmark > .wrapContent { border-radius: 6px; }
 	.block.blockBookmark > .wrapContent > .selectable > .dropTarget { padding-top: 0px; padding-bottom: 0px; }
 
-	.block.blockBookmark > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 12px; }
+	.block.blockBookmark > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
+	.block.blockBookmark.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 12px; }
 }
