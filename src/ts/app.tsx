@@ -8,7 +8,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, ListPopup, ListMenu } from './component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
 	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
@@ -42,6 +42,7 @@ import 'scss/component/icon.scss';
 import 'scss/component/iconObject.scss';
 import 'scss/component/list/previewObject.scss';
 import 'scss/component/list/widget.scss';
+import 'scss/component/list/objectManager.scss';
 import 'scss/component/loader.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/progress.scss';
@@ -52,6 +53,7 @@ import 'scss/component/tag.scss';
 import 'scss/component/title.scss';
 import 'scss/component/toast.scss';
 import 'scss/component/tooltip.scss';
+import 'scss/component/navigation.scss';
 
 import 'scss/component/form/button.scss';
 import 'scss/component/form/drag.scss';
@@ -80,6 +82,7 @@ import 'scss/component/media/audio.scss';
 import 'scss/component/media/video.scss';
 
 import 'scss/component/hightlight.scss';
+import 'scss/component/progressBar.scss';
 
 import 'scss/page/auth.scss';
 import 'scss/page/main/edit.scss';
@@ -327,6 +330,7 @@ class App extends React.Component<object, State> {
 						<PreviewIndex />
 						<Progress />
 						<Toast />
+						<Navigation />
 
 						<div id="tooltip" />
 						<div id="drag" />
@@ -376,17 +380,19 @@ class App extends React.Component<object, State> {
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => { Util.route(route); });
+		Renderer.on('route', (e: any, route: string) => Util.route(route));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => { commonStore.progressClear(); });
+		Renderer.on('update-downloaded', () => commonStore.progressClear());
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('command', this.onCommand);
 		Renderer.on('spellcheck', this.onSpellcheck);
+		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
+		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
 		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });

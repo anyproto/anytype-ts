@@ -58,8 +58,7 @@ class Util {
 		};
 	};
 
-	getBgColor () {
-		let theme = this.getTheme();
+	getBgColor (theme) {
 		let bg = {
 			'': '#fff',
 			dark: '#171717',

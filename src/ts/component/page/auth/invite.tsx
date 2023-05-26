@@ -28,7 +28,7 @@ const PageAuthInvite = observer(class PageAuthInvite extends React.Component<I.P
 
         return (
 			<div>
-				<Icon className="animation arrow back" onClick={this.onCancel} />
+				<Icon className="arrow back" onClick={this.onCancel} />
 				<Frame>
 
 					<Title className="animation" text={translate('authInviteTitle')} />

@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 import KeyCode from 'json/key.json';
 
 class Keyboard {
@@ -38,10 +39,10 @@ class Keyboard {
 		this.unbind();
 		
 		const win = $(window);
-		win.on('keydown.common', (e: any) => { this.onKeyDown(e); });
-		win.on('keyup.common', (e: any) => { this.onKeyUp(e); });
-		win.on('mousedown.common', (e: any) => { this.onMouseDown(e); });
-		win.on('scroll.common', () => { this.onScroll(); });
+		win.on('keydown.common', e => this.onKeyDown(e));
+		win.on('keyup.common', e => this.onKeyUp(e));
+		win.on('mousedown.common', e => this.onMouseDown(e));
+		win.on('scroll.common', () => this.onScroll());
 		win.off('mousemove.common beforeunload.common blur.common');
 		
 		win.on('mousemove.common', (e: any) => {
@@ -58,7 +59,7 @@ class Keyboard {
 		});
 
 		Renderer.remove('commandGlobal');
-		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => { this.onCommand(cmd, arg); });
+		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
 	unbind () {
@@ -108,19 +109,23 @@ class Keyboard {
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
-		const isMainSet = this.isMainSet();
 
 		this.pressed.push(key);
 
-		this.shortcut(`${cmd}+\\`, e, () => {
+		this.shortcut(`${cmd}+\\, ${cmd}+.`, e, () => {
 			e.preventDefault();
-			sidebar.toggle();
+			sidebar.toggleOpenClose();
 		});
 
 		// Navigation
 		if (!this.isNavigationDisabled) {
-			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => { this.onBack(); });
-			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => { this.onForward(); });
+			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
+			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
+
+			if (!Util.selectionRange() && isMac) {
+				keyboard.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
+				keyboard.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
+			};
 		};
 
 		// Close popups and menus
@@ -183,6 +188,19 @@ class Keyboard {
 				this.onSearchPopup();
 			});
 
+			this.shortcut(`${cmd}+l`, e, (pressed: string) => {
+				if (popupStore.isOpen('search') || !this.isPinChecked) {
+					return;
+				};
+
+				// Check if smth is selected to prevent search from opening
+				if (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+					return;
+				};
+
+				ObjectUtil.openAuto({ layout: I.ObjectLayout.Store });
+			});
+
 			// Text search
 			this.shortcut(`${cmd}+f`, e, () => {
 				if (!this.isFocused) {
@@ -209,19 +227,23 @@ class Keyboard {
 				};
 			});
 
-			if (!isMainSet) {
-				// Create new page
-				this.shortcut(`${cmd}+n`, e, () => {
-					e.preventDefault();
-					this.pageCreate();
-				});
-			};
+			// Create new page
+			this.shortcut(`${cmd}+n`, e, () => {
+				e.preventDefault();
+				this.pageCreate();
+			});
 
 			// Settings
 			this.shortcut(`${cmd}+comma`, e, () => {
 				if (!popupStore.isOpen('settings')) {
 					popupStore.open('settings', {});
 				};
+			});
+
+			// Create relation
+			this.shortcut(`${cmd}+shift+r`, e, () => {
+				$('#button-header-relation').trigger('click');
+				window.setTimeout(() => { $('#menuBlockRelationView #item-add').trigger('click'); }, Constant.delay.menu * 2);
 			});
 
 			// Store
@@ -248,6 +270,7 @@ class Keyboard {
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
 		
+		/*
 		if (this.isMainEditor()) {
 			rootId = this.getRootId();
 			root = blockStore.getLeaf(rootId, rootId);
@@ -272,8 +295,9 @@ class Keyboard {
 				};
 			};
 		};
+		*/
 
-		if (!targetId) {
+		if (!rootId) {
 			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 		};
 		
@@ -289,9 +313,7 @@ class Keyboard {
 	getRootId (): string {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
-		const home = ObjectUtil.getSpaceDashboard();
-
-		return isPopup ? popupMatch.params.id : (this.match?.params?.id || home?.id || '');
+		return isPopup ? popupMatch.params.id : (this.match?.params?.id);
 	};
 
 	onKeyUp (e: any) {
@@ -369,6 +391,10 @@ class Keyboard {
 		const isPopup = this.isPopup();
 		const history = Util.history;
 
+		if (!history) {
+			return;
+		};
+
 		let ret = true;
 		if (!isPopup) {
 			ret = history.index - 1 >= 0;
@@ -391,6 +417,10 @@ class Keyboard {
 		const isPopup = this.isPopup();
 		const history = Util.history;
 
+		if (!history) {
+			return;
+		};
+
 		let ret = true;
 		if (isPopup) {
 			ret = historyPopup.checkForward();
@@ -401,7 +431,7 @@ class Keyboard {
 	};
 
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'graph', 'print', 'workspace' ].includes(cmd)) {
+		if (!this.isMain() && [ 'search', 'print' ].includes(cmd)) {
 			return;
 		};
 
@@ -411,42 +441,90 @@ class Keyboard {
 				break;
 			};
 
-			case 'graph': {
-				ObjectUtil.openPopup({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
-				break;
-			};
-
 			case 'print': {
 				this.onPrint('MenuSystem');
 				break;
 			};
 
-			case 'id': {
-				const { account } = authStore;
-				if (!account) {
-					break;
-				};
-
-				popupStore.open('confirm', {
-					className: 'isWide isLeft',
-					data: {
-						text: [
-							`<b>Account ID:</b> ${account.id}`,
-							`<b>Analytics ID:</b> ${account.info.analyticsId}`,
-						].join('<br/>'),
-						textConfirm: 'Copy',
-						textCancel: 'Close',
-						canConfirm: true,
-						canCancel: true,
-						onConfirm: () => {
-							Util.clipboardCopy({ text: account.id });
-							Preview.toastShow({ text: 'Anytype ID copied to clipboard' });
-						},
-					}
-				});
+			case 'tech': {
+				this.onTechInfo();
 				break;
 			};
+
+			case 'terms':
+			case 'tutorial':
+			case 'privacy':
+			case 'community': {
+				Renderer.send('urlOpen', Url[cmd]);
+				break;
+			};
+
+			case 'contact': {
+				this.onContactUrl();
+				break;
+			};
+
+			case 'tech': {
+				this.onTechInfo();
+				break;
+			};
+
 		};
+	};
+
+	onContactUrl () {
+		const { account } = authStore;
+		if (!account) {
+			return;
+		};
+
+		C.AppGetVersion((message: any) => {
+			let url = Url.contact;
+
+			url = url.replace(/\%25device\%25/g, window.Electron.version.device);
+			url = url.replace(/\%25os\%25/g, window.Electron.version.os);
+			url = url.replace(/\%25version\%25/g, window.Electron.version.app);
+			url = url.replace(/\%25build\%25/g, message.details);
+			url = url.replace(/\%25middleware\%25/g, message.version);
+			url = url.replace(/\%25accountId\%25/g, account.id);
+			url = url.replace(/\%25analyticsId\%25/g, account.info.analyticsId);
+
+			Renderer.send('urlOpen', url);
+		});
+	};
+
+	onTechInfo () {
+		const { account } = authStore;
+		if (!account) {
+			return;
+		};
+
+		C.AppGetVersion((message: any) => {
+			const data = [
+				[ 'Device', window.Electron.version.device ],
+				[ 'OS version', window.Electron.version.os ],
+				[ 'App version', window.Electron.version.app ],
+				[ 'Build number', message.details ],
+				[ 'Library version', message.version ],
+				[ 'Account ID', account.id ],
+				[ 'Analytics ID', account.info.analyticsId ],
+			];
+
+			popupStore.open('confirm', {
+				className: 'isWide isLeft',
+				data: {
+					text: data.map(it => `<b>${it[0]}</b>: ${it[1]}`).join('<br/>'),
+					textConfirm: 'Copy',
+					textCancel: 'Close',
+					canConfirm: true,
+					canCancel: true,
+					onConfirm: () => {
+						Util.clipboardCopy({ text: data.map(it => `${it[0]}: ${it[1]}`).join('\n') });
+						Preview.toastShow({ text: 'Tech information copied to clipboard' });
+					},
+				}
+			});
+		});
 	};
 
 	onUndo (rootId: string, route?: string, callBack?: (message: any) => void) {
@@ -546,7 +624,6 @@ class Keyboard {
 
 	onSearchPopup () {
 		popupStore.open('search', {
-			preventResize: true, 
 			data: { isPopup: this.isPopup() },
 		});
 	};
@@ -813,6 +890,10 @@ class Keyboard {
 
 	cmdSymbol () {
 		return Util.getPlatform() == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+	};
+
+	altSymbol () {
+		return Util.getPlatform() == I.Platform.Mac ? '&#8997;' : 'Alt';
 	};
 
 	cmdKey () {

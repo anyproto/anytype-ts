@@ -94,6 +94,8 @@
 	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject" ],
 	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 
+	"pageCoverRelationKey": "pageCover",
+
 	"subId": {
 		"index": "index",
 		"search": "search",
@@ -106,7 +108,8 @@
 		"archive": "archive",
 		"sidebar": "sidebar",
 		"graph": "graph",
-		"space": "space"
+		"space": "space",
+		"files": "files"
 	},
 
 	"typeId": {
@@ -164,7 +167,7 @@
 
 		"sidebar": {
 			"height": { "min": 400 },
-			"width": { "min": 240, "max": 500, "default": 336 }
+			"width": { "min": 240, "max": 500, "default": 336, "close": 180 }
 		},
 
 		"table": {
@@ -175,12 +178,15 @@
 
 		"dataview": {
 			"gallery": {
-				"card": 224,
-				"margin": 16
+				"width": 224,
+				"height": 72,
+				"margin": 16,
+				"padding": 16
 			},
 
 			"board": {
-				"card": 240
+				"card": 262,
+				"margin": 8
 			},
 
 			"cell": {

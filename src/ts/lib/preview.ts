@@ -59,6 +59,7 @@ class Preview {
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
+			const { ww } = Util.getWindowDimensions();
 			const node = $(`<div class="tooltip anim"><div class="txt">${Util.lbBr(text)}</div></div>`);
 
 			obj.html('').append(node);
@@ -100,7 +101,7 @@ class Preview {
 			};
 			
 			x = Math.max(BORDER, x);
-			x = Math.min(win.width() - ow - BORDER, x);
+			x = Math.min(ww - ow - BORDER, x);
 
 			node.css({ left: x, top: y }).addClass('show');
 
@@ -162,11 +163,11 @@ class Preview {
 					this.previewHide(true);
 				};
 			});
-
-			obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
 		};
 
 		passThrough ? obj.addClass('passThrough') : obj.removeClass('passThrough');
+
+		obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
 
 		this.previewHide(true);
 		window.clearTimeout(this.timeout.preview);
@@ -238,18 +239,26 @@ class Preview {
 	 * This method is used by toast to position itself on the screen
 	 */
 	toastPosition () {
-		const win = $(window);
 		const obj = $('#toast');
+		const sidebar = $('#sidebar');
+		const isRight = sidebar.hasClass('right');
+		const { ww, wh } = Util.getWindowDimensions();
+		const y = wh - obj.outerHeight() - BORDER * 2;
+
+		let sw = 0;
+		if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+			sw = sidebar.outerWidth();
+		};
+
+		let x = (ww - sw) / 2 - obj.outerWidth() / 2;
+		if (!isRight) {
+			x += sw;
+		};
 
 		obj.show().css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
 
 		raf(() => {
-			obj.css({ 
-				left: win.width() / 2 - obj.outerWidth() / 2, 
-				top: win.height() - obj.outerHeight() - BORDER * 2,
-				opacity: 1,
-				transform: 'scale3d(1,1,1)',
-			});
+			obj.css({ left: x, top: y, opacity: 1, transform: 'scale3d(1,1,1)' });
 		});
 	};
 

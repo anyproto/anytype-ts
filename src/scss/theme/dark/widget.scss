@@ -4,7 +4,7 @@
 	}
 }
 
-.widget { background-color: $colorHoverMedium; color: $colorPrimary; border-color: $colorLineSecondary !important;  }
+.widget { background-color: $colorBlack; color: $colorPrimary; border-color: $colorLineSecondary !important;  }
 .widget {
 	.iconWrap:hover, .iconWrap.active { background-color: $colorHoverMedium; }
 	.icon.back { background-image: url('#{$themePath}/icon/widget/back.svg'); }
@@ -24,6 +24,9 @@
 }
 
 .widget.widgetSpace {
+	.side.left {
+		.iconObject:not(.withOption) { background-color: $colorBgIcon; }
+	}
 	.icon:hover { background-color: $colorHoverMedium; }
 }
 
@@ -75,12 +78,12 @@
 .widget.widgetList {
 	.body {
 		.item {
-			.iconObject { background: $colorBgIcon; }
+			.iconObject { background: $colorHoverMedium; }
 		}
 	}
 }
 
 .button.widget {
-	.icon.library { background-image: url('#{$themePath}/icon/sidebar/library.svg'); }
+	.icon.store { background-image: url('#{$themePath}/icon/sidebar/store.svg'); }
 	.icon.bin { background-image: url('#{$themePath}/icon/sidebar/bin.svg'); }
 }

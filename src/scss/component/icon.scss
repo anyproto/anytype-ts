@@ -13,9 +13,6 @@
 .icon.back, .icon.forward { background-image: url('~img/icon/back.svg'); }
 .icon.forward { transform: rotateZ(180deg); }
 
-.icon.toggleSidebar { background-image: url('~img/icon/sidebar/toggle0.svg'); }
-.icon.toggleSidebar:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
-
 .icon.lock { width: 8px !important; height: 20px !important; background-image: url('~img/icon/lock.svg'); }
 
 .icon.checkbox { width: 24px; height: 24px; background-image: url('~img/icon/checkbox0.svg'); }

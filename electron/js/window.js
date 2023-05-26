@@ -27,7 +27,7 @@ class WindowManager {
 		const { languages, zoom } = ConfigManager.config;
 
 		param = Object.assign({
-			backgroundColor: Util.getBgColor(),
+			backgroundColor: Util.getBgColor(Util.getTheme()),
 			icon: path.join(Util.imagePath(), 'icon.png'),
 			show: false,
 			titleBarStyle: 'hidden-inset',

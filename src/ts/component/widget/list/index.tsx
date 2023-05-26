@@ -216,6 +216,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 
 		dbStore.recordsClear(subId, '');
+		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 
 	getTraceId = (): string => {

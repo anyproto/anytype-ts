@@ -6,11 +6,22 @@
 		.viewContent.viewGallery {
 			.galleryWrap { margin-left: 14px; }
 
+			.row { display: grid; grid-column-gap: 16px; padding: 0px 0px 16px 0px; }
+
 			.card { 
-				width: 260px; border: 1px solid $colorHoverMedium; transition: border-color $transitionCommon; border-radius: 12px; display: inline-block; 
-				cursor: pointer; background: $colorWhite; overflow: hidden;
+				width: 100%; border: 1px solid $colorHoverMedium; transition-property: border-color, background; transition-duration: 0.1s; 
+				transition-timing-function: $easeInQuint; border-radius: 12px; display: inline-block; cursor: pointer; background: $colorWhite; overflow: hidden;
+				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative;
 			}
+
+			.card.add { box-shadow: 0px 0px; }
+			.card.add::after {
+				content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg');
+				margin: -10px 0px 0px -10px;
+			}
+
 			.card {
+				.selectable { height: 100%; }
 				.itemContent > .inner { padding: 16px; }
 
 				.cover { 
@@ -44,18 +55,8 @@
 				.cover.coverVideo {
 					.mediaVideo video { width: 100%; }
 				}
-
-				.icon.checkbox {
-					width: 40px; height: 40px; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: pointer;
-					background-image: url('~img/icon/index/checkbox0.svg'); opacity: 0; transition: none; background-size: 20px;
-				}
-
-				.selectable.isSelectionSelected {
-					.icon.checkbox { background-image: url('~img/icon/index/checkbox1.svg'); opacity: 1; }
-				}
-				.selectable.isSelectionSelected::after { display: none; }
 			}
-			.card:hover { border: 1px solid $colorBorderDark; }
+			.card:hover { border: 1px solid $colorBorderLight; background: $colorHoverLight; }
 			.card:hover {
 				.cover {
 					.inner { color: $colorBlack; }
@@ -70,10 +71,13 @@
 				.cover img { width: auto; height: auto; max-height: 100%; max-width: 100%; object-fit: contain; }
 			}
 
+			.card.withCover {
+				.itemContent > .inner { padding-top: 12px; }
+			}
+
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
 			}
-
 		}
 
 		.viewContent.viewGallery.isCollection {

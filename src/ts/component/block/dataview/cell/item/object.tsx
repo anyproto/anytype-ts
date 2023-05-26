@@ -24,7 +24,8 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	render () {
 		let { object, iconSize, relation, elementMapper, canEdit } = this.props;
 		let cn = [ 'element' ];
-		let icon = null;
+		let iconObject = null;
+		let iconRemove = null;
 		
 		if (elementMapper) {
 			object = elementMapper(relation, object);
@@ -34,15 +35,18 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 		};
 		if (canEdit) {
 			cn.push('canEdit');
-			icon = <Icon className="objectRemove" onClick={this.onRemove} />;
+			iconRemove = <Icon className="objectRemove" onClick={this.onRemove} />;
+		};
+		if (relation.relationKey != 'type') {
+			iconObject = <IconObject object={object} size={iconSize} />;
 		};
 
 		return (
 			<div className={cn.join(' ')} onClick={this.onClick}>
 				<div className="flex">
-					<IconObject object={object} size={iconSize} />
+					{iconObject}
 					<ObjectName object={object} />
-					{icon}
+					{iconRemove}
 				</div>
 			</div>
 		);

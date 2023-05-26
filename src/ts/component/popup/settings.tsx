@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Loader, IconObject, ObjectName, Icon } from 'Component';
+import { Loader, IconObject, Icon } from 'Component';
 import { I, C, Storage, Util, analytics, Action, keyboard, translate } from 'Lib';
-import { popupStore, detailStore, commonStore, blockStore, authStore } from 'Store';
+import { popupStore, detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PageAccount from './page/settings/account';
@@ -16,6 +16,9 @@ import PageLogout from './page/settings/logout';
 import PagePinIndex from './page/settings/pin/index';
 import PagePinSelect from './page/settings/pin/select';
 import PagePinConfirm from './page/settings/pin/confirm';
+
+import PageStorageIndex from './page/settings/storage/index';
+import PageStorageManager from './page/settings/storage/manager';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
@@ -49,6 +52,9 @@ const Components: any = {
 	pinIndex:			 PagePinIndex,
 	pinSelect:			 PagePinSelect,
 	pinConfirm:			 PagePinConfirm,
+
+	storageIndex: 		 PageStorageIndex,
+	storageManager: 	 PageStorageManager,
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
@@ -95,10 +101,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { data } = param;
 		const { page } = data;
 		const { loading } = this.state;
-		const { account } = authStore;
 		const sections = this.getSections().filter(it => !it.isHidden);
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const cnr = [ 'side', 'right', Util.toCamelCase('tab-' + page) ];
+		const length = sections.length;
+
+		if (!length) {
+			cnr.push('isFull');
+		};
 
 		let content = null;
 
@@ -138,7 +148,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 								key={i} 
 								id={`item-${action.id}`} 
 								className="item" 
-								onClick={() => { this.onPage(action.id); }}
+								onClick={() => this.onPage(action.id)}
 							>
 								{icon}
 								<div className="name">{action.name}</div>
@@ -154,23 +164,14 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				ref={node => this.node = node}
 				className="sides"
 			>
-				<div id="sideLeft" className="side left">
-
-					{account ? (
-						<div className="space" onClick={() => this.onPage('spaceIndex')}>
-							<IconObject object={space} forceLetter={true} size={40} />
-							<div className="txt">
-								<ObjectName object={space} />
-								<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
-							</div>
-						</div>
-					) : ''}
-
-					{sections.map((item: any, i: number) => (
-						<Section key={i} {...item} />
-					))}
-				</div>
-				<div id="sideRight" className={[ 'side', 'right', Util.toCamelCase('tab-' + page) ].join(' ')}>
+				{sections.length ? (
+					<div id="sideLeft" className="side left">
+						{sections.map((item: any, i: number) => (
+							<Section key={i} {...item} />
+						))}
+					</div>
+				) : ''}
+				<div id="sideRight" className={cnr.join(' ')}>
 					{loading ? <Loader id="loader" /> : ''}
 					{content}
 				</div>
@@ -182,8 +183,9 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { page } = data;
+		const items = this.getItems();
 
-		this.onPage(page || 'spaceIndex');
+		this.onPage(page || items[0].id);
 		this.rebind();
 
 		keyboard.disableNavigation(true);
@@ -212,34 +214,43 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		$(window).off('resize.settings keydown.settings mousedown.settings');
 	};
 
-	getSections () {
-		return [
-			{ 
-				name: 'Space', isHidden: true, children: [
-					{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
-				]
-			},
-			{ 
-				name: 'Account & data', children: [
-					{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
-					{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
-					{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-					//{ id: 'cloud', name: 'Cloud storage' },
-				] 
-			},
-			{ 
-				name: 'Customization', children: [
-					{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
-					{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
-				] 
-			},
-			{ 
-				name: 'Integrations', children: [
-					{ id: 'importIndex', name: translate('popupSettingsImportTitle'), icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
-					{ id: 'exportIndex', name: translate('popupSettingsExportTitle'), icon: 'export', subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
-				] 
-			}
-		];
+	getSections (): any[] {
+		const { param } = this.props;
+		const { data } = param;
+		const { isSpace } = data;
+
+		if (isSpace) {
+			return [
+				{ 
+					name: 'Space', isHidden: true, children: [
+						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
+					]
+				},
+			];
+		} else {
+			return [
+				{ 
+					name: 'Account & data', children: [
+						{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
+						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+						{ id: 'storageIndex', name: translate('popupSettingsStorageIndexTitle'), icon: 'storage', subPages: [ 'storageManager' ] },
+					] 
+				},
+				{ 
+					name: 'Customization', children: [
+						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
+						{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
+					] 
+				},
+				{ 
+					name: 'Integrations', children: [
+						{ id: 'importIndex', name: translate('popupSettingsImportTitle'), icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
+						{ id: 'exportIndex', name: translate('popupSettingsExportTitle'), icon: 'export', subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
+					] 
+				}
+			];
+		};
 	};
 
 	getItems () {

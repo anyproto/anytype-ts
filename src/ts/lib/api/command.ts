@@ -210,6 +210,11 @@ const FileListOffload = (ids: string[], notPinned: boolean, callBack?: (message:
 	dispatcher.request(FileListOffload.name, request, callBack);
 };
 
+const FileSpaceUsage = (callBack?: (message: any) => void) => {
+	const request = new Rpc.File.SpaceUsage.Request();
+	dispatcher.request(FileSpaceUsage.name, request, callBack);
+};
+
 const NavigationGetObjectInfoWithLinks = (pageId: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Navigation.GetObjectInfoWithLinks.Request();
 
@@ -1691,6 +1696,7 @@ export {
 	FileDownload,
 	FileDrop,
 	FileListOffload,
+	FileSpaceUsage,
 
 	NavigationGetObjectInfoWithLinks,
 

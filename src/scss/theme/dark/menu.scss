@@ -132,7 +132,8 @@
 		}
 
         .item.add:hover { 
-            .info { background: $colorHoverMedium; }
+            .info { background: $colorHoverMedium; color: $colorPrimary; }
+			.icon.plus { background-image: url('#{$themePath}/icon/plus/menu1.svg'); }
         }
     }
 

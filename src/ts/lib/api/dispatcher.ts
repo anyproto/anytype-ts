@@ -142,6 +142,10 @@ class Dispatcher {
 		if (v == V.OBJECTRELATIONSREMOVE)		 t = 'objectRelationsRemove';
 		if (v == V.OBJECTRESTRICTIONSSET)		 t = 'objectRestrictionsSet';
 
+		if (v == V.FILESPACEUSAGE)				 t = 'fileSpaceUsage';
+		if (v == V.FILELOCALUSAGE)				 t = 'fileLocalUsage';
+		if (v == V.FILELIMITREACHED)			 t = 'fileLimitReached';
+
 		return t;
 	};
 
@@ -156,8 +160,6 @@ class Dispatcher {
 
 		const rootId = ctx.join('-');
 		const messages = event.getMessagesList() || [];
-		const debugCommon = config.debug.mw && !skipDebug;
-		const debugThread = config.debug.th && !skipDebug;
 		const log = (rootId: string, type: string, data: any, valueCase: any) => { 
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId);
 			if (!type) {
@@ -188,7 +190,7 @@ class Dispatcher {
 			const type = this.eventType(message.getValueCase());
 			const fn = 'get' + Util.ucFirst(type);
 			const data = message[fn] ? message[fn]() : {};
-			const needLog = (debugThread && (type == 'threadStatus')) || (debugCommon && (type != 'threadStatus'));
+			const needLog = this.checkLog(type) && !skipDebug;
 
 			switch (type) {
 
@@ -237,6 +239,29 @@ class Dispatcher {
 
 				case 'objectRestrictionsSet': {
 					blockStore.restrictionsSet(rootId, Mapper.From.Restrictions(data.getRestrictions()));
+					break;
+				};
+
+				case 'fileSpaceUsage': {
+					commonStore.spaceStorageSet({ bytesUsed: data.getBytesusage() });
+					break;
+				};
+
+				case 'fileLocalUsage': {
+					commonStore.spaceStorageSet({ localUsage: data.getLocalbytesusage() });
+					break;
+				};
+
+				case 'fileLimitReached': {
+					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
+					const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
+
+					if (percentageUsed >= 99) {
+						Preview.toastShow({ action: I.ToastAction.StorageFull });
+					} else
+					if (localUsage > bytesLimit) {
+						Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
+					};
 					break;
 				};
 
@@ -1139,6 +1164,25 @@ class Dispatcher {
 		} catch (err) {
 			console.error(err);
 		};
+	};
+
+	checkLog (type: string) {
+		const { config } = commonStore;
+		const debugCommon = config.debug.mw;
+		const debugThread = config.debug.th;
+		const debugFile = config.debug.fi;
+
+		let check = false;
+		if (debugCommon && ![ 'threadStatus', 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
+			check = true;
+		};
+		if (debugThread && [ 'threadStatus' ].includes(type)) {
+			check = true;
+		};
+		if (debugFile && [ 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
+			check = true;
+		};
+		return check;
 	};
 
 };

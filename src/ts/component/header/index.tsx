@@ -55,8 +55,6 @@ class Header extends React.Component<Props> {
 				<Component 
 					ref={ref => this.refChild = ref} 
 					{...this.props} 
-					onBack={() => { keyboard.onBack(); }}
-					onForward={() => { keyboard.onForward(); }}
 					onSearch={this.onSearch}
 					onNavigation={this.onNavigation}
 					onGraph={this.onGraph}

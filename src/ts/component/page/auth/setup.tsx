@@ -16,7 +16,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	node = null;
 	refFrame = null;
 	i = 0;
-	t = 0;
 	state = {
 		index: 0,
 		error: null,
@@ -101,12 +100,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidMount () {
 		const { match } = this.props;
-		const node = $(this.node);
-		const label = node.find('#label');
-		
-		this.clear();
-		this.t = window.setTimeout(() => { label.show(); }, 10000);
-		
+
 		switch (match.params.id) {
 			case 'init': 
 				this.init(); 
@@ -121,10 +115,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidUpdate (): void {
 		this.refFrame.resize();
-	};
-	
-	componentWillUnmount () {
-		this.clear();
 	};
 	
 	init () {
@@ -181,11 +171,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			return false;
 		};
 
-		this.clear();
 		this.setState({ error });
-
 		Util.checkError(error.code);
-
 		return true;
 	};
 
@@ -197,10 +184,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		Util.route('/auth/select');
 	};
 	
-	clear () {
-		window.clearTimeout(this.t);
-	};
-
 });
 
 export default PageAuthSetup;

@@ -48,7 +48,7 @@ class MediaAudio extends React.Component<Props> {
 
                     <Drag
                         id="time"
-                        ref={(ref: any) => { this.refTime = ref; }}
+                        ref={ref => this.refTime = ref}
                         value={0}
                         onStart={(e: any, v: number) => { this.onTime(v); }}
                         onMove={(e: any, v: number) => { this.onTime(v); }}
@@ -63,7 +63,7 @@ class MediaAudio extends React.Component<Props> {
                     <Icon className="volume" onClick={this.onMute} />
                     <Drag
                         id="volume"
-                        ref={(ref: any) => { this.refVolume = ref; }}
+                        ref={ref => this.refVolume = ref}
                         value={1}
                         onMove={(e: any, v: number) => { this.onVolume(v); }}
                     />

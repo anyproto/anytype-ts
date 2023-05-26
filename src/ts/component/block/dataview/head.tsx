@@ -77,7 +77,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 					/>
 
 					<Editable
-						ref={(ref: any) => { this.ref = ref; }}
+						ref={ref => this.ref = ref}
 						id="value"
 						readonly={readonly || !isEditing}
 						placeholder={ObjectUtil.defaultName(isCollection ? 'Collection' : 'Set')}

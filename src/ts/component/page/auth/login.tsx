@@ -37,7 +37,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
         return (
 			<div ref={ref => this.node = ref} onKeyDown={this.onKeyDown}>
 				<Header {...this.props} component="authIndex" />
-				<Icon className="arrow back animation" onClick={this.onCancel} />
+				<Icon className="arrow back" onClick={this.onCancel} />
 				
 				<Frame>
 					<Title text={translate('authLoginTitle')} className="animation" />	

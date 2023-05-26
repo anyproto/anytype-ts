@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, Util, ObjectUtil } from 'Lib';
+import { analytics, I, Storage, Util, ObjectUtil, Renderer } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -18,6 +18,12 @@ interface Graph {
 	relation: boolean;
 	link: boolean;
 	filter: string;
+};
+
+interface SpaceStorage {
+	bytesUsed: number;
+	bytesLimit: number;
+	localUsage: number;
 };
 
 class CommonStore {
@@ -50,12 +56,18 @@ class CommonStore {
 
 	public graphObj: Graph = { 
 		icon: true,
-		orphan: false,
+		orphan: true,
 		marker: true,
 		label: true,
 		relation: true,
 		link: true,
 		filter: '',
+	};
+
+	public spaceStorageObj: SpaceStorage = {
+		bytesUsed: 0,
+		bytesLimit: 0,
+		localUsage: 0,
 	};
 
     constructor() {
@@ -66,6 +78,7 @@ class CommonStore {
             previewObj: observable,
 			toastObj: observable,
             configObj: observable,
+			spaceStorageObj: observable,
 			themeId: observable,
 			nativeThemeIsDark: observable,
 			typeId: observable,
@@ -94,7 +107,8 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			workspaceSet: action,
-        });
+			spaceStorageSet: action,
+		});
     };
 
     get config(): any {
@@ -167,6 +181,15 @@ class CommonStore {
 
 	get graph(): Graph {
 		return Object.assign(this.graphObj, Storage.get('graph') || {});
+	};
+
+	get spaceStorage (): SpaceStorage {
+		let { bytesUsed } = this.spaceStorageObj;
+		if (bytesUsed <= 1024) {
+			bytesUsed = 0;
+		};
+
+		return { ...this.spaceStorageObj, bytesUsed };
 	};
 
     gatewaySet (v: string) {
@@ -315,6 +338,7 @@ class CommonStore {
 		const c = this.getThemeClass();
 
 		Util.addBodyClass('theme', c);
+		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
 		if (c == 'dark') {
@@ -364,6 +388,10 @@ class CommonStore {
 
 		this.configObj.debug = this.configObj.debug || {};
 		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
+	};
+
+	spaceStorageSet (usage: any) {
+		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, usage));
 	};
 
 };

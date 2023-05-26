@@ -13,6 +13,7 @@ $colorInput: rgba(44, 43, 39, 0.3);
 
 html.bodyIndex, html.bodyAuth {
 	body { background: $colorBackground !important; color: $colorSecondary; overflow: hidden; }
+	.navigationPanel { display: none; }
 }
 
 html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
@@ -54,10 +55,11 @@ html.bodyAuthDeleted {
 	.footer { width: 100% !important; }
 
 	.icon.arrow.back {
-		position: fixed; top: 50%; left: 46px; width: 16px; height: 44px; cursor: pointer; margin-top: -22px; background: url('~img/arrow/auth0.svg');
+		position: fixed; top: 50%; left: 46px; width: 28px; height: 56px; cursor: pointer; margin-top: -22px; background-image: url('~img/arrow/auth0.svg');
+		background-position: center; background-repeat: no-repeat; background-size: 16px;
 		z-index: 1;
 	}
-	.icon.arrow.back:hover { background: url('~img/arrow/auth1.svg'); }
+	.icon.arrow.back:hover { background-image: url('~img/arrow/auth1.svg'); }
 	
 	.authBackWrap { 
 		position: absolute; top: 4px; left: 4px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; 

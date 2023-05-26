@@ -55,6 +55,7 @@ export enum ToastAction {
 	Link		 = 2,
 	Lock 		 = 3,
 	Collection	 = 4,
+	StorageFull  = 5,
 };
 
 export interface Option {
@@ -130,8 +131,6 @@ export interface HeaderComponent extends RouteComponentProps<any> {
 	text?: string;
 	layout?: I.ObjectLayout;
 	onTab?: (id: string) => void;
-	onForward?: () => void;
-	onBack?: () => void;
 	onSearch?: () => void;
 	onNavigation?: () => void;
 	onGraph?: () => void;
@@ -211,4 +210,10 @@ export interface Dataset {
 	};
 	onDragStart: (e: React.DragEvent, dropType: I.DropType, ids: string[], component: unknown) => void;
 	preventCommonDrop: (value: boolean) => void;
+};
+
+export enum FileSyncStatus {
+	Unknown		 = 0,
+	Synced		 = 1,
+	NotSynced	 = 2,
 };

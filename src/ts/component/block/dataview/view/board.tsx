@@ -90,7 +90,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	componentDidUpdate () {
 		this.resize();
-		$(window).trigger('resize.editor');
+		Util.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -201,6 +201,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 		const conditions = [
 			I.FilterCondition.Equal,
+			I.FilterCondition.GreaterOrEqual,
+			I.FilterCondition.LessOrEqual,
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
 		]; 
@@ -223,7 +225,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		for (let filter of view.filters) {
-			if (!conditions.includes(filter.condition) || !filter.value) {
+			if (!conditions.includes(filter.condition)) {
+				continue;
+			};
+
+			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
+			if (!value) {
 				continue;
 			};
 			
@@ -243,7 +250,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 					return;
 				};
 
-				const object = detailStore.get(subId, message.objectId, []);
+				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
 				const oldIndex = records.indexOf(message.objectId);
 				const newIndex = dir > 0 ? records.length : 0;
@@ -252,6 +259,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				if (isCollection) {
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
+
+				detailStore.update(subId, { id: object.id, details: object }, true);
 
 				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
 					dbStore.recordsSet(subId, '', update);
@@ -704,7 +713,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = groups.length * size.card;
+		const width = groups.length * (size.card + size.margin) - size.margin;
 
 		if (!isInline) {
 			const maxWidth = cw - PADDING * 2;

@@ -7,62 +7,87 @@
 }
 
 .sidebar {
-	position: fixed; background-color: $colorVeryLightGrey; z-index: 21; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); display: flex;
-	flex-direction: column; user-select: none; transition: none;
+	position: fixed; background-color: $colorVeryLightGrey; z-index: 21; border-radius: 12px; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); 
+	user-select: none; transition: none;
 }
+
 .sidebar.left { left: 0px; transform: translate3d(-110%, 0px, 0px); }
-.sidebar.right { right: 0px; transform: translate3d(110%, 0px, 0px); }
-.sidebar.fixed {
-	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px rgba(0, 0, 0, 0); border-right: 1px solid $colorBorderLight;
-	transform: translate3d(0px, 0px, 0px);
-}
-.sidebar.fixed {
-	> .head { height: 52px; cursor: default; }
-	> .head {
-		.icon { display: block; }
-		.icon:hover { background-color: $colorHoverMedium; }
+.sidebar.left {
+	.resize-h {
+		.resize-handle { left: 6px; right: auto; }
 	}
 }
-.sidebar.anim { transition-property: left, top, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease-in-out; }
-.sidebar.active { transform: translate3d(0px, 0px, 0px); }
-
+.sidebar.right { right: 0px; transform: translate3d(110%, 0px, 0px); }
 .sidebar.right {
 	.resize-h { right: auto; left: -5px; }
-	.sidebarHeader {
-		.icon.collapse { transform: rotateZ(180deg); }
+	.resize-h {
+		.resize-handle { left: -6px; }
 	}
 }
 
-.sidebar.fixed.right { border-left: 1px solid $colorBorderLight; border-right: 0px; }
 .sidebar.fixed {
+	height: 100% !important; top: 0px !important; border-radius: 0px; box-shadow: 0px 0px rgba(0, 0, 0, 0); transform: translate3d(0px, 0px, 0px);
+}
+.sidebar.fixed {
+	.over {
+		> .head { height: 52px; cursor: default; }
+		> .head {
+			.icon { display: block; }
+			.icon:hover { background-color: $colorHoverMedium; }
+		}
+		> .body { height: calc(100% - 52px); }
+	}
 	.resize-v { display: none; }
 }
+.sidebar.anim { transition-property: left, top, width, box-shadow, transform; transition-duration: 0.2s; transition-timing-function: ease-in-out; }
+.sidebar.active { transform: translate3d(0px, 0px, 0px); }
 
 .sidebar {
-	.resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: -5px; cursor: col-resize; }
-	.resize-v { height: 10px; width: 100%; position: absolute; bottom: -5px; left: 0px; cursor: row-resize; }
+	.over { width: 100%; height: 100%; overflow: hidden; display: flex; flex-direction: column; }
+	.over {
+		> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 12px; cursor: grab; }
+		> .head {
+			.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; cursor: default; display: none; }
+			.icon:hover { background-color: $colorHoverMedium; }
+			.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
+			.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
+		}
 
-	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
-
-	> .top { display: flex; flex-direction: row-reverse; }
-	> .body { height: calc(100% - 52px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overscroll-behavior: none; }
-
-	> .head { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0px 16px 0px 0px; height: 12px; cursor: grab; }
-	> .head {
-		.icon { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; display: none; }
-		.icon:hover { background-color: $colorHoverMedium; }
+		> .body { height: calc(100% - 12px); padding: 0px 12px 12px 12px; position: relative; flex-grow: 1; overflow: hidden; overscroll-behavior: none; }
 	}
+
+	.resize-h { width: 10px; height: 100%; position: absolute; top: 0px; right: -5px; cursor: col-resize; }
+	.resize-h {
+		.resize-handle {
+			position: absolute; left: 6px; top: 50%; margin: -16px 0px 0px 0px; transition: $transitionAllCommon;
+			width: 12px; height: 32px;
+		}
+		.resize-handle::after {
+			content: ''; position: absolute; left: 6px; top: 0px; width: 6px; height: 100%; background-color: $colorBorderLight;
+			border-radius: 3px; opacity: 0; transition: $transitionAllCommon;
+		}
+	}
+	.resize-h:hover, .resize-h:active {
+		.resize-handle::after { opacity: 1; }
+	}
+	.resize-h:active {
+		.resize-handle { height: 64px; margin-top: -32px; }
+	}
+	.resize-handle:hover::after, .resize-handle:active::after { background-color: $colorBorderDark; }
+
+	.resize-v { height: 10px; width: 100%; position: absolute; bottom: -5px; left: 0px; cursor: row-resize; }
+	.loaderWrapper { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; }
 }
 .sidebar:hover {
-	> .body { overflow-y: auto; }
+	.over > .body { overflow-y: auto; }
 }
 
 html.platformWindows {
 	.sidebar.fixed {
-		> .head { height: 38px; }
+		.over > .head { height: 38px; }
 	}
 
 	.sidebar:hover {
-		> .body { overflow-y: overlay; }
+		.over > .body { overflow-y: overlay; }
 	}
 }	

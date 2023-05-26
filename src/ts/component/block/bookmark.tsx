@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
-import { I, C, focus, Util, translate, analytics, Renderer, keyboard } from 'Lib';
+import { I, C, focus, Util, translate, analytics, Renderer, keyboard, Preview } from 'Lib';
 import { commonStore, detailStore } from 'Store';
 
 const BlockBookmark = observer(class BlockBookmark extends React.Component<I.BlockComponent> {
@@ -21,6 +21,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		this.onChangeUrl = this.onChangeUrl.bind(this);
 		this.onClick = this.onClick.bind(this);
 		this.onMouseDown = this.onMouseDown.bind(this);
+		this.onMouseEnter = this.onMouseEnter.bind(this);
+		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
 
 	render () {
@@ -29,6 +31,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		const object = detailStore.get(rootId, targetObjectId, [ 'picture' ]);
 		const { iconImage, picture, isArchived, isDeleted } = object;
 		const url = this.getUrl();
+		const cn = [ 'focusable', 'c' + block.id, 'resizable' ];
 
 		let element = null;
 
@@ -66,17 +69,17 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 				};
 					
 				case I.BookmarkState.Done: {
-					const cn = [ 'inner' ];
+					const cni = [ 'inner' ];
 					const cnl = [ 'side', 'left' ];
 					
 					let archive = null;
 						
 					if (picture) {
-						cn.push('withImage');
+						cni.push('withImage');
 					};
 
 					if (isArchived) {
-						cn.push('isArchived');
+						cni.push('isArchived');
 					};
 
 					if (block.bgColor) {
@@ -89,7 +92,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 
 					element = (
 						<div 
-							className={cn.join(' ')} 
+							className={cni.join(' ')} 
 							onClick={this.onClick} 
 							onMouseDown={this.onMouseDown}
 							{...Util.dataProps({ href: url })}
@@ -117,11 +120,13 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		return (
 			<div 
 				ref={node => this.node = node}
-				className={[ 'focusable', 'c' + block.id, 'resizable' ].join(' ')} 
+				className={cn.join(' ')} 
 				tabIndex={0} 
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp} 
 				onFocus={this.onFocus}
+				onMouseEnter={this.onMouseEnter}
+				onMouseLeave={this.onMouseLeave}
 			>
 				{element}
 			</div>
@@ -202,6 +207,31 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		if (!(keyboard.withCommand(e) && ids.length)) {
 			this.open();
 		};
+	};
+
+	onMouseEnter (e: React.MouseEvent) {
+		const { rootId, block } = this.props;
+		const { targetObjectId } = block.content;
+
+		if (!targetObjectId) {
+			return;
+		};
+
+		const object = detailStore.get(rootId, targetObjectId, []);
+		if (object._empty_ || object.isArchived || object.isDeleted) {
+			return;
+		};
+
+		Preview.previewShow({ 
+			rect: { x: e.pageX, y: e.pageY, width: 0, height: 10 }, 
+			target: targetObjectId, 
+			noUnlink: true,
+			passThrough: true,
+		});
+	};
+
+	onMouseLeave () {
+		Preview.previewHide(true);
 	};
 
 	onMouseDown (e: any) {
