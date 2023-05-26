@@ -11,6 +11,7 @@ import Errors from 'json/error.json';
 import Constant from 'json/constant.json';
 
 interface State {
+	isLoading: boolean;
 	isDeleted: boolean;
 };
 
@@ -27,6 +28,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	blockRefs: any = {};
 
 	state = {
+		isLoading: false,
 		isDeleted: false,
 	};
 
@@ -37,11 +39,13 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	};
 
 	render () {
-		if (this.state.isDeleted) {
+		const { isLoading, isDeleted } = this.state;
+
+		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
-		if (this.loading) {
+		if (isLoading) {
 			return <Loader id="loader" />;
 		};
 
@@ -117,6 +121,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		this.unbind();
 
 		win.on('keydown.set' + namespace, e => this.onKeyDown(e));
+		win.on('createNewObject.set' + namespace, e => this.onRecordAdd(e));
 		container.on('scroll.set' + namespace, e => this.onScroll());
 	};
 
@@ -132,21 +137,25 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		this.id = rootId;
-		this.loading = true;
-		this.forceUpdate();
+		this.setState({ isLoading: true });
 
 		C.ObjectOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
+					this.setState({ isDeleted: true, isLoading: false });
 				} else {
 					ObjectUtil.openHome('route');
 				};
 				return;
 			};
 
-			this.loading = false;
-			this.forceUpdate();
+			const object = detailStore.get(rootId, rootId, []);
+			if (object.isArchived || object.isDeleted) {
+				this.setState({ isDeleted: true, isLoading: false });
+				return;
+			};
+
+			this.setState({ isLoading: false });
 
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
@@ -202,16 +211,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const cmd = keyboard.cmdKey();
 		const ids = selection ? selection.get(I.SelectType.Record) : [];
 		const count = ids.length;
-		const ref = this.blockRefs[Constant.blockId.dataview]?.ref;
 		const rootId = this.getRootId();
-
-		if (!ref) {
-			return;
-		};
-
-		keyboard.shortcut(`${cmd}+n`, e, () => { 
-			ref.onRecordAdd(e, 0, true); 
-		});
 
 		if (!keyboard.isFocused) {
 			keyboard.shortcut(`${cmd}+a`, e, () => {
@@ -233,15 +233,24 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 	};
 
+	onRecordAdd (e: any) {
+		const ref = this.blockRefs[Constant.blockId.dataview]?.ref;
+
+		if (ref) {
+			ref.onRecordAdd(e, 0, true); 
+		};
+	};
+
 	resize () {
-		if (this.loading || !this._isMounted) {
+		const { isLoading } = this.state;
+		const { isPopup } = this.props;
+
+		if (!this._isMounted || isLoading) {
 			return;
 		};
 
-		const win = $(window);
-		const { isPopup } = this.props;
-		
 		raf(() => {
+			const win = $(window);
 			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
 			const container = Util.getPageContainer(isPopup);

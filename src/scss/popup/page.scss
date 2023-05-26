@@ -3,7 +3,7 @@
 .popups {
 	.popup.popupPage {
 		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
-		.innerWrap.full { width: 100% !important; height: 100% !important; border-radius: 0px; margin: 0px !important; left: 0px; top: 0px; }
+		.innerWrap.full { width: 100% !important; height: 100% !important; border-radius: 0px; margin: 0px !important; left: 0px !important; top: 0px !important; }
 		.innerWrap.full {
 			.header { position: fixed; }
 			.header {
@@ -37,7 +37,7 @@
 
 		.page { padding: 0px; }
 		.header {
-			.icon.toggleSidebar { display: none; }
+			.icon.toggle { display: none; }
 		}
 		.footer { display: none; }
 

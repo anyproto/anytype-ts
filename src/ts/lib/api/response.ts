@@ -2,6 +2,13 @@ import { Rpc } from 'protobuf/pb/protos/commands_pb';
 import { Decode } from './struct';
 import { Mapper } from './mapper';
 
+export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
+	return {
+		details: response.getDetails(),
+		version: response.getVersion(),
+	};
+};
+
 export const AccountCreate = (response: Rpc.Account.Create.Response) => {
 	return {
 		account: Mapper.From.Account(response.getAccount()),

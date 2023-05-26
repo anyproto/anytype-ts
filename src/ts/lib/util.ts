@@ -660,7 +660,7 @@ class Util {
 		const links = obj.find('a');
 
 		links.off('click auxclick');
-		links.on('auxclick', (e: any) => { e.preventDefault(); });
+		links.on('auxclick', e => e.preventDefault());
 		links.click((e: any) => {
 			const el = $(e.currentTarget);
 
@@ -981,6 +981,22 @@ class Util {
 
 	getPercentage (num: number, percent: number) {
 		return Number((num / 100 * percent).toFixed(3));
+	};
+
+	getEventNamespace (isPopup: boolean): string {
+		return isPopup ? '-popup' : '';
+	};
+
+	triggerResizeEditor (isPopup: boolean) {
+		$(window).trigger('resize.editor' + this.getEventNamespace(isPopup));
+	};
+
+	/**
+	 * Get width and height of window DOM node
+	 */
+	getWindowDimensions (): { ww: number; wh: number } {
+		const win = $(window);
+		return { ww: win.width(), wh: win.height() };
 	};
 
 	getPercent (part: number, whole: number): number {

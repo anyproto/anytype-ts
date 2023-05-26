@@ -45,9 +45,9 @@ class DbStore {
 
     relationsSet (rootId: string, blockId: string, list: any[]) {
 		const key = this.getId(rootId, blockId);
-		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).concat(list.map((it: any) => {
-			return { relationKey: it.relationKey, format: it.format };
-		}));
+		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).
+			concat(list.map(it => ({ relationKey: it.relationKey, format: it.format })));
+
 		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
@@ -55,9 +55,7 @@ class DbStore {
 		const key = this.getId(rootId, blockId);
 		const relations = this.getObjectRelations(rootId, blockId).filter(it => !keys.includes(it.relationKey));
 		
-		this.relationMap.set(key, relations.map((it: any) => { 
-			return { relationKey: it.relationKey, format: it.format };
-		}));
+		this.relationMap.set(key, relations.map(it => ({ relationKey: it.relationKey, format: it.format })));
 	};
 
     viewsSet (rootId: string, blockId: string, list: I.View[]) {

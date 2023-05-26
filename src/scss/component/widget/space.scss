@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-.widget.widgetSpace { padding: 16px; cursor: pointer; }
+.widget.widgetSpace { padding: 12px 12px 12px 16px; cursor: pointer; }
 .widget.widgetSpace {
 	.icon.remove { display: none !important; }
 	.icon.options { right: 44px; display: none !important; }
@@ -10,6 +10,7 @@
 	.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
 	.side.left {
 		.iconObject { flex-shrink: 0; }
+		.iconObject:not(.withOption) { background-color: $colorVeryLightGrey; }
 		.txt { width: calc(100% - 64px); }
 		.name { @include text-paragraph; @include text-overflow-nw; font-weight: 600; }
 		.type { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }

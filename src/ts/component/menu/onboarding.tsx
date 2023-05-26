@@ -1,8 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import * as Docs from 'Docs';
+import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard, Action, ObjectUtil } from 'Lib';
+import { I, Onboarding, Util, analytics, keyboard, ObjectUtil } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -10,7 +11,7 @@ interface State {
 	error: { description: string, code: number };
 };
 
-class MenuOnboarding extends React.Component<I.Menu, State> {
+const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu, State> {
 
 	node: any = null;
 	confetti: any = null;
@@ -295,6 +296,6 @@ class MenuOnboarding extends React.Component<I.Menu, State> {
 		this.confetti({ particleCount: 150, spread: 60, origin: { x: 0.5, y: 1 } });
 	};
 
-};
+});
 
 export default MenuOnboarding;

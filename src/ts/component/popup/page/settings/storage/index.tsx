@@ -83,7 +83,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         popupStore.open('confirm',{
             data: {
                 title: 'Are you sure?',
-                text: 'All media files will be deleted from your current device. They can be downloaded again from a backup node or another device.',
+                text: 'All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.',
                 textConfirm: 'Yes',
                 onConfirm: () => {
                     setLoading(true);

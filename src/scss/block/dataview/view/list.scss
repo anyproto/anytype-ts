@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewList { padding: 0px 0px 0px 14px; }
+		.viewContent.viewList { padding: 14px 0px 0px 14px; }
 		.viewContent.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
 
@@ -18,7 +18,7 @@
 			.cellContent:empty::before, .cellContent.isEmpty::before { display: none; }
 
 			.cellContent::before { 
-				content: ""; width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; 
+				content: ""; width: 2px; height: 2px; border-radius: 50%; background: $colorDarkGrey; display: inline-block; 
 				vertical-align: middle; margin: 0px 6px; 
 			}
 			.cellContent.first::before { display: none; }
@@ -77,15 +77,15 @@
 			.loadMore { margin-top: 2px; }
         }
 
-		.viewContent.viewList.isCollection { padding-left: 2px; }
+		.viewContent.viewList.isCollection { padding-left: 0px; }
 		.viewContent.viewList.isCollection {
-			.row.add { padding-left: 20px; }
-			.row .icon.dnd { left: 1px; height: 22px; top: 1px; z-index: 1; }
-
-			.cellContent:first-child { padding-left: 20px; }
+			.row { padding-left: 20px; }
+			.row:hover {
+				.icon.drag { opacity: 1; }
+			}
 		}
     }
 	.block.blockDataview.isInline {
-		.viewContent.viewList { padding: 0px; }
+		.viewContent.viewList { padding: 9px 0px 0px 0px; }
 	}
 }

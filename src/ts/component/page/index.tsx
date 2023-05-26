@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, DataUtil, ObjectUtil } from 'Lib';
-import { Sidebar } from 'Component';
+import { Sidebar, Navigation } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -202,7 +202,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		this.event();
 		this.unbind();
 
-		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => { this.resize(); });
+		win.on('resize.page' + (isPopup ? 'Popup' : ''), () => this.resize());
 
 		if (!isPopup) {
 			keyboard.setMatch(match);

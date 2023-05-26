@@ -38,6 +38,13 @@
 
 	.elements {
 		.controlButtons { position: absolute; left: 0px; bottom: 18px; width: 100%; }
+		.controlButtons.small {
+			.btn { padding: 0px 6px; }
+			.btn {
+				.icon { margin: 0px; }
+				.txt { display: none; }
+			}
+		}
 		
 		.dragWrap { width: 160px; position: absolute; left: 50%; top: 8px; margin-left: -80px; display: flex; z-index: 1; }
 		.dragWrap {

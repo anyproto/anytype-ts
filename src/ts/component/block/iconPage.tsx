@@ -17,16 +17,14 @@ const BlockIconPage = observer(class BlockIconPage extends React.Component<I.Blo
 		const { rootId, readonly } = this.props;
 		
 		return (
-			<React.Fragment>
-				<IconObject 
-					id={`block-icon-${rootId}`} 
-					canEdit={!readonly} 
-					getObject={() => detailStore.get(rootId, rootId, [])} 
-					onSelect={this.onSelect} 
-					onUpload={this.onUpload} 
-					size={96} 
-				/>
-			</React.Fragment>
+			<IconObject 
+				id={`block-icon-${rootId}`} 
+				canEdit={!readonly} 
+				getObject={() => detailStore.get(rootId, rootId, [])} 
+				onSelect={this.onSelect} 
+				onUpload={this.onUpload} 
+				size={96} 
+			/>
 		);
 	};
 

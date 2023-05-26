@@ -91,7 +91,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
 
                 {length > FILTER_LIMIT ? (
 					<Filter
-                    	ref={(ref: any) => { this.refFilter = ref; }}
+                    	ref={ref => this.refFilter = ref}
                     	value={this.filter}
                     	onChange={() => { this.load(); }}
                 	/>
@@ -109,7 +109,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
                                 <AutoSizer className="scrollArea">
                                     {({ width, height }) => (
                                         <List
-                                            ref={(ref: any) => { this.refList = ref; }}
+                                            ref={ref => this.refList = ref}
                                             height={Number(height) || 0}
                                             width={Number(width) || 0}
                                             deferredMeasurmentCache={this.cache}

@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.31.48",
+	"version": "0.31.52",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -488,7 +488,7 @@
 					"arm64"
 				]
 			},
-			"identity": "6SFR4648FW",
+			"identity": "J3NXTX3T5S",
 			"category": "public.app-category.productivity",
 			"artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
 			"publish": [

@@ -44,7 +44,7 @@ class Sidebar {
 		if (stored) {
 			this.set(stored);
 		} else {
-			const { wh } = this.getWindowDimensions();
+			const { wh } = Util.getWindowDimensions();
 			const height = this.getMaxHeight();
 			const y = wh / 2 - height / 2;
 
@@ -96,7 +96,7 @@ class Sidebar {
 
 		const { x } = keyboard.mouse.page;
 		const { width, snap } = this.data;
-		const { ww } = this.getWindowDimensions();
+		const { ww } = Util.getWindowDimensions();
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview', 'widget' ]);
 		const popupOpen = popupStore.isOpen();
 
@@ -135,20 +135,14 @@ class Sidebar {
 		};
 
 		if (hide && this.obj.hasClass('active')) {
-			this.timeoutHide = window.setTimeout(() => { this.hide(); }, 200);
+			this.timeoutHide = window.setTimeout(() => this.hide(), 200);
 		};
-	};
-
-	toggle () {
-		commonStore.isSidebarFixed ? this.collapse() : this.expand();
 	};
 
 	collapse (): void {
 		if (!this.obj || !this.obj.length) {
 			return;
 		};
-
-		this.isAnimating = true;
 
 		const { autoSidebar } = commonStore;
 		const { x, y, width, height, snap } = this.data;
@@ -166,6 +160,7 @@ class Sidebar {
 			tx = 110;
 		};
 
+		this.setAnimating(true);
 		this.obj.removeClass('anim');
 		this.obj.css(css);
 		this.obj.addClass('anim');
@@ -257,6 +252,43 @@ class Sidebar {
 		this.removeAnimation();
 	};
 
+	close (): void {
+		if (!this.obj || !this.obj.length || this.isAnimating) {
+			return;
+		};
+
+		this.setAnimating(true);
+		this.obj.addClass('anim').removeClass('active');
+		this.setWidth(0, true);
+		this.removeAnimation(() => $(window).trigger('resize'));
+	};
+
+	open (width?: number): void {
+		if (!this.obj || !this.obj.length || this.isAnimating) {
+			return;
+		};
+
+		this.setAnimating(true);
+		this.obj.addClass('anim').removeClass('active');
+		this.setWidth(width);
+		this.removeAnimation(() => $(window).trigger('resize'));
+	};
+
+	toggleOpenClose () {
+		if (!this.isAnimating) {
+			this.data.width ? this.close() : this.open(Constant.size.sidebar.width.default);
+		};
+	};
+
+	toggleExpandCollapse () {
+		if (!this.data.width) {
+			this.setWidth(Constant.size.sidebar.width.default);
+			$(window).trigger('resize');
+		};
+
+		commonStore.isSidebarFixed ? this.collapse() : this.expand();
+	};
+
 	private removeAnimation (callBack?: () => void): void {
 		if (!this.obj || !this.obj.length) {
 			return;
@@ -265,7 +297,7 @@ class Sidebar {
 		window.clearTimeout(this.timeoutAnim);
 		this.timeoutAnim = window.setTimeout(() => {
 			this.obj.removeClass('anim');
-			this.isAnimating = false;
+			this.setAnimating(false);
 
 			if (callBack) {
 				callBack();
@@ -275,8 +307,8 @@ class Sidebar {
 
 	resize (): void {
 		const { isSidebarFixed } = commonStore;
-		const { snap, width, height, x } = this.data;
-		const { ww } = this.getWindowDimensions();
+		const { snap, width } = this.data;
+		const { ww } = Util.getWindowDimensions();
 		const set: Partial<SidebarData> = {};
 
 		if (!isSidebarFixed) {
@@ -290,7 +322,7 @@ class Sidebar {
 		};
 
 		if (Util.objectLength(set)) {
-			this.set(set);
+			this.set(set, true);
 		};
 	};
 
@@ -309,7 +341,7 @@ class Sidebar {
 			};
 		};
 
-		const { ww } = this.getWindowDimensions();
+		const { ww } = Util.getWindowDimensions();
 		const pageWidth = ww - width;
 		const css: any = { width: '' };
 		const cssLoader: any = { width: pageWidth, left: '', right: '' };
@@ -322,7 +354,7 @@ class Sidebar {
 
 		css.width = this.header.outerWidth() - width;
 
-		if (isSidebarFixed) {
+		if (isSidebarFixed && width) {
 			this.header.addClass('withSidebar');
 			this.footer.addClass('withSidebar');
 		};
@@ -353,18 +385,27 @@ class Sidebar {
 		this.loader.css(cssLoader);
 		this.header.css(css);
 		this.footer.css(css);
+
+		$(window).trigger('sidebarResize');
 	};
 
 	private save (): void {
 		Storage.set('sidebar', this.data);
 	};
 
-	set (v: Partial<SidebarData>) {
+	set (v: Partial<SidebarData>, force?: boolean): void {
 		v = Object.assign(this.data, v);
 
-		const width = this.limitWidth(v.width);
-		const height = this.limitHeight(v.height);
-		const { x, y } = this.limitCoords(v.x, v.y, width, height);
+		let { width, height, x, y } = v;
+
+		if (!force) {
+			width = this.limitWidth(width);
+			height = this.limitHeight(height);
+
+			const coords = this.limitCoords(v.x, v.y, width, height);
+			x = coords.x;
+			y = coords.y;
+		};
 
 		this.data = Object.assign<SidebarData, Partial<SidebarData>>(this.data, {
 			x,
@@ -379,12 +420,12 @@ class Sidebar {
 		this.setStyle();
 	};
 
-	setWidth (width: number): void {
-		this.set({ width });
+	setWidth (width: number, force?: boolean): void {
+		this.set({ width }, force);
 	};
 
-	setHeight (height: number): void {
-		this.set({ height });
+	setHeight (height: number, force?: boolean): void {
+		this.set({ height }, force);
 	};
 
 	public setAnimating (v: boolean) {
@@ -436,28 +477,19 @@ class Sidebar {
 	};
 
 	/**
-	 * Get width and height of window DOM node
-	 */
-	private getWindowDimensions (): { ww: number; wh: number } {
-		const win = $(window);
-		const ww = win.width();
-		const wh = win.height();
-
-		return { ww, wh };
-	};
-
-	/**
 	 * Get the side to snap the sidebar to
 	 */
 	private getSnap (x: number, width: number): I.MenuDirection.Left | I.MenuDirection.Right | null {
-		const { ww } = this.getWindowDimensions();
+		const { ww } = Util.getWindowDimensions();
 
 		if (x <= SNAP_THRESHOLD) {
 			return I.MenuDirection.Left;
 		} else 
+		/*
 		if (x + width >= ww - SNAP_THRESHOLD) {
 			return I.MenuDirection.Right;
 		} else 
+		*/
 		if (commonStore.isSidebarFixed) {
 			return I.MenuDirection.Left;
 		} else {
@@ -469,7 +501,7 @@ class Sidebar {
 	 * Get max height allowed
 	 */
 	private getMaxHeight (): number {
-		const { wh } = this.getWindowDimensions();
+		const { wh } = Util.getWindowDimensions();
 		return wh - Util.sizeHeader() - 52 - 10;
 	};
 
@@ -477,7 +509,7 @@ class Sidebar {
 	 * Limit the sidebar coordinates to the max and min bounds
 	 */
 	private limitCoords (x: number, y: number, width: number, height: number ): { x: number; y: number } {
-		const { ww, wh } = this.getWindowDimensions();
+		const { ww, wh } = Util.getWindowDimensions();
 		const hh = Util.sizeHeader();
 
 		x = Number(x);

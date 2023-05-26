@@ -96,7 +96,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: typeId },
 		];
 		const sorts = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true },
 		];
 
 		this.setState({ loading: true });

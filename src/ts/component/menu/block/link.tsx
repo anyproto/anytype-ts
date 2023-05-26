@@ -240,6 +240,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		let items = [].concat(this.items);
 
 		items = items.filter((it: any) => {
+			if (!it) {
+				return false;
+			};
+
 			let ret = false;
 			if (it.name && it.name.match(reg)) {
 				ret = true;
@@ -298,7 +302,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes(), },
 		];
 		const sorts = [
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true },
 		];
 
 		if (skipIds && skipIds.length) {

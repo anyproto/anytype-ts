@@ -1,11 +1,10 @@
-const { app, shell, nativeTheme } = require('electron');
+const { app, shell, BrowserWindow } = require('electron');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 
 const ConfigManager = require('./config.js');
 const WindowManager = require('./window.js');
 const UpdateManager = require('./update.js');
-const MenuManager = require('./menu.js');
 const Server = require('./server.js');
 const Util = require('./util.js');
 
@@ -47,6 +46,10 @@ class Api {
 
 	setTheme (win, theme) {
 		this.setConfig(win, { theme });
+	};
+
+	setBackground (win, theme) {
+		BrowserWindow.getAllWindows().forEach(win => win.setBackgroundColor(Util.getBgColor(theme)));
 	};
 
 	setLanguage (win, languages) {

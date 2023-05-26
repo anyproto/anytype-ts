@@ -531,6 +531,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					param.content.style = item.itemId;
 
 					if (param.content.style == I.TextStyle.Code) {
+						param.hAlign = I.BlockHAlign.Left;
 						param.fields = { 
 							lang: (Storage.get('codeLang') || Constant.default.codeLang),
 						};

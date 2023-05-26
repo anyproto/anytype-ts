@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
 import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight } from 'Lib';
-import { popupStore, blockStore, detailStore } from 'Store';
+import { popupStore } from 'Store';
 import Url from 'json/url.json';
 
 class MenuHelp extends React.Component<I.Menu> {
@@ -56,8 +56,8 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -69,11 +69,16 @@ class MenuHelp extends React.Component<I.Menu> {
 
 		return [
 			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn },
-			{ id: 'community', name: 'Anytype Community' },
-			{ isDiv: true },
-			{ id: 'hints', name: 'Show Hints' },
 			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' },
-			{ id: 'tutorial', name: 'Help & Tutorials' }
+			{ id: 'hints', name: 'Show Hints' },
+			{ isDiv: true },
+			{ id: 'community', name: 'Anytype Community' },
+			{ id: 'tutorial', name: 'Help and Tutorials' },
+			{ id: 'contact', name: 'Contact Us' },
+			{ id: 'tech', name: 'Technical Information' },
+			{ isDiv: true },
+			{ id: 'terms', name: 'Terms of Use' },
+			{ id: 'privacy', name: 'Privacy Policy' },
 		];
 	};
 
@@ -85,9 +90,7 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
-		const match = keyboard.getMatch();
-		const { page, action } = match.params;
-		const isGraph = (page == 'main') && (action == 'graph');
+		const isGraph = keyboard.isMainGraph();
 
 		close();
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
@@ -105,18 +108,21 @@ class MenuHelp extends React.Component<I.Menu> {
 				break;
 			};
 
-			case 'feedback': {
-				Renderer.send('urlOpen', Url.feedback);
-				break;
-			};
-
+			case 'terms':
+			case 'tutorial':
+			case 'privacy':
 			case 'community': {
-				Renderer.send('urlOpen', Url.community);
+				Renderer.send('urlOpen', Url[item.id]);
 				break;
 			};
 
-			case 'tutorial': {
-				Renderer.send('urlOpen', Url.docs);
+			case 'contact': {
+				keyboard.onContactUrl();
+				break;
+			};
+
+			case 'tech': {
+				keyboard.onTechInfo();
 				break;
 			};
 

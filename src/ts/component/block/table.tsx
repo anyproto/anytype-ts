@@ -160,8 +160,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		this.unbind();
 
-		win.on('resize.' + block.id, () => { this.resize(); });
-		node.on('resize', () => { this.resize(); });
+		win.on('resize.' + block.id, () => this.resize());
+		node.on('resizeInit', () => this.resize());
 	};
 
 	getData () {

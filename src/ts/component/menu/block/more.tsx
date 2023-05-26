@@ -113,14 +113,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let pageInstall = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
-		let undo = { id: 'undo', name: 'Undo', caption: `${cmd}+Z` };
-		let redo = { id: 'redo', name: 'Redo', caption: `${cmd}+Shift+Z` };
-		let print = { id: 'print', name: 'Print', caption: `${cmd}+P` };
-		let search = { id: 'search', name: 'Search on page', caption: `${cmd}+F` };
+		let undo = { id: 'undo', name: 'Undo', caption: `${cmd} + Z` };
+		let redo = { id: 'redo', name: 'Redo', caption: `${cmd} + Shift + Z` };
+		let print = { id: 'print', name: 'Print', caption: `${cmd} + P` };
+		let search = { id: 'search', name: 'Search on page', caption: `${cmd} + F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let history = { id: 'history', name: 'Version history', caption: (platform == I.Platform.Mac ? `${cmd}+Y` : `Ctrl+H`) };
+		let history = { id: 'history', name: 'Version history', caption: (platform == I.Platform.Mac ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
@@ -148,9 +148,9 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		};
 
 		if (block.isLocked()) {
-			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page', caption: `Ctrl+Shift+L` };
+			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page', caption: `Ctrl + Shift + L` };
 		} else {
-			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page', caption: `Ctrl+Shift+L` };
+			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page', caption: `Ctrl + Shift + L` };
 		};
 
 		if (object.isInstalled) {

@@ -392,18 +392,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.Move:
-					Action.move(rootId, target.id, '', blockIds, I.BlockPosition.Bottom, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						Preview.toastShow({
-							action: I.ToastAction.Move,
-							targetId: target.id,
-							count: blockIds.length,
-							originId: rootId,
-						});
-					});
+					Action.move(rootId, target.id, '', blockIds, I.BlockPosition.Bottom);
 					break;
 
 				case I.NavigationType.Link:
@@ -501,11 +490,19 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 
 	getRowHeight (item: any) {
+		if (!item) {
+			return HEIGHT_ITEM;
+		};
+
 		const { param } = this.props;
 		const { data } = param;
 		const { isBig } = data;
 
 		let h = HEIGHT_ITEM;
+		if (!item) {
+			return h;
+		};
+
 		if ((isBig || item.isBig) && !item.isAdd)	 h = HEIGHT_ITEM_BIG;
 		if (item.isSection)							 h = HEIGHT_SECTION;
 		if (item.isDiv)								 h = HEIGHT_DIV;
@@ -521,11 +518,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const obj = $(`#${getId()} .content`);
 
 		let height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
-		if (loading) {
-			height += 40;
-		};
-		if (!loading && !items.length) {
-			height = 300;
+		if (!items.length) {
+			height = loading ? height + 40 : 160;
 		};
 
 		obj.css({ height });

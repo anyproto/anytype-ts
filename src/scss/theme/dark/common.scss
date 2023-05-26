@@ -1,11 +1,9 @@
 @import "~scss/_vars";
 @import "~scss/theme/dark/_vars";
 
-/*@media (prefers-color-scheme: dark) {*/
 html.themeDark {
 
     /* Common */
-    /* ---------------------------------------------------------------- */
 
     body { background: $colorBlack; color: $colorPrimary; }
 
@@ -74,10 +72,16 @@ html.themeDark {
 	}
 
     /* Components */
-    /* ---------------------------------------------------------------- */
+
+	@keyframes fill {
+		0% { background-color: $colorPrimary; }
+		32% { background-color: $colorPrimary; }
+		100% { background-color: rgba(0,0,0,0); }
+	}
 
     .loaderWrapper {
         .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
+		.dot { animation-name: fill; }
     }
 
     .mediaAudio {
@@ -126,8 +130,6 @@ html.themeDark {
 
     .switch { background: $colorLineSecondary; }
 
-    .sync { background: $colorBgIcon; }
-
 	.textareaWrap { background-color: $colorBgLight; }
 
     .select { border-color: $colorLinePrimary; }
@@ -156,6 +158,8 @@ html.themeDark {
     }
 
     .deleteWrapper { background: $colorBlack; }
+
+	.sync { background-color: $colorLineSecondary; color: $colorSecondary; }
 
     /* PreviewObject */
 
@@ -250,7 +254,7 @@ html.themeDark {
     .iconObject.withLetter
     { background-color: $colorBgIcon; }
 
-	.iconObject.withOption.isSpace { background: #fff; }
+	.iconObject.withOption.isSpace { background: $colorHoverMedium; }
 
     /* EditorControls */
 
@@ -273,7 +277,6 @@ html.themeDark {
     }
 
     /* Header */
-    /* ---------------------------------------------------------------- */
 
     .header.isCommon { background: $colorBlack; }
     .header.isCommon {
@@ -308,25 +311,29 @@ html.themeDark {
     }
 
     /* Footer */
-    /* ---------------------------------------------------------------- */
 
     .footer {
         .iconWrap .bg { background-color: $colorBgIcon; }
     }
 
     /* Sidebar */
-    /* ---------------------------------------------------------------- */
 
-    .sidebar { 
-        background-color: $colorBlack; color: $colorPrimary; border-color: $colorLineSecondary !important; 
-        box-shadow: 0px 4px 16px rgba(0,0,0,0.2);
-    }
+    .sidebar { background-color: $colorBgLight; color: $colorPrimary; box-shadow: 0px 4px 16px rgba(0,0,0,0.2); }
     .sidebar.fixed { box-shadow: 0px 0px rgba(0,0,0,0); }
     .sidebar {
 		> .head {
 			.icon:hover { background-color: $colorHoverMedium; }
 		}
+
+		.resize-h .resize-handle::after { background-color: $colorBgIcon; }
     }
+
+	/* Navigation */
+
+	.navigationPanel { background: rgba(255,255,255,0.15); }
+	.navigationPanel {
+		.iconWrap:hover { background-color: $colorHoverMedium; }
+	}
 
     @import "./menu.scss";
     @import "./popup.scss";
@@ -335,7 +342,6 @@ html.themeDark {
 	@import "./widget.scss";
 
     /* Cells */
-    /* ---------------------------------------------------------------- */
 
     .cellContent {
         .more { background-color: $colorBgIcon; color: $colorSecondary; }

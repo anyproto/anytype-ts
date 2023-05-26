@@ -36,9 +36,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		];
 
 		const Info = (item: any) => (
-			<React.Fragment>
-				<ObjectDescription object={item} />
-			</React.Fragment>
+			<ObjectDescription object={item} />
 		);
 
 		return (
@@ -52,7 +50,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 					</div>
 
 					<ListObjectManager
-						ref={ref => { this.refManager = ref; }}
+						ref={ref => this.refManager = ref}
 						subId={Constant.subId.archive}
 						filters={filters}
 						sorts={sorts}
