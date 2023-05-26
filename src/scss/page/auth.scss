@@ -59,7 +59,7 @@ html.bodyAuthDeleted {
 	.icon.arrow.back {
 		position: fixed; top: 50%; left: 46px; width: 28px; height: 56px; cursor: pointer; margin-top: -22px; background-image: url('~img/arrow/auth0.svg');
 		background-position: center; background-repeat: no-repeat; background-size: 16px;
-		z-index: 1;
+		z-index: 2;
 	}
 	.icon.arrow.back:hover { background-image: url('~img/arrow/auth1.svg'); }
 	
@@ -122,6 +122,7 @@ html.bodyAuthDeleted {
 
 .pageAuthInvite {
 	.frame { padding: 64px; }
+	.label { width: 500px; }
 	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
 }
 
@@ -175,6 +176,10 @@ html.bodyAuthDeleted {
 	}
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
+	
+	@media screen and (max-height: 520px) {
+		.bottom { position: relative; margin: 15px; }
+	}
 	
 	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: $colorSecondary; color: black; }
 	.questionMark:hover { background-color: $colorPrimary; }
