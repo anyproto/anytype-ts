@@ -1,7 +1,11 @@
 @import "~scss/_vars";
 
+$colorTertiary: #505050;
+$colorInputOpaque: #17171799;
+$colorErrorBackground: #240e07;
+
 .phraseWrapper {
-	border-radius: 24px; background: rgba(44, 43, 39, 0.3); width: 100%; position: relative; padding: 26px 48px;
+	border-radius: 24px; background: $colorInputOpaque; width: 100%; position: relative; padding: 23px 48px;
 	font-size: 18px; line-height: 18px; transition: $transitionAllCommon; text-align: center; letter-spacing: -0.12px;
 }
 .phraseWrapper {
@@ -20,7 +24,7 @@
 	.bgColor-lime { background: $colorLime !important; }
 	.bgColor-green { background: $colorGreen !important; }
 
-	.placeholder { color: #5c5a54; padding: 36px 48px; top: 0; }
+	.placeholder { color: $colorTertiary; padding: 33px 48px; top: 0; }
 	#entry { display: inline; font-size: 18px; line-height: 18px; height: 18px; -webkit-user-modify: read-write-plaintext-only; }
 
 	.icon { 
@@ -38,3 +42,4 @@
 .phraseWrapper.isReadonly {
 	#entry { display: none; }
 }
+.phraseWrapper.hasError { background: $colorErrorBackground; }
