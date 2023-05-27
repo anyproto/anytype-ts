@@ -8,7 +8,7 @@ class Renderer {
 		const cmd = args[0];
 		args.shift();
 
-		window.Electron.Api(window.Electron.currentWindow().windowId, cmd, Util.objectCopy(args));
+		window.Electron.Api(Number(window.Electron.currentWindow().windowId) || 0, cmd, Util.objectCopy(args));
 	};
 
 	on (event: string, callBack: any) {
