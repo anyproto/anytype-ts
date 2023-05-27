@@ -20,7 +20,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	timeout = 0;
 	cache: any = {};
 	refList: any = null;
-	n = -1;
+	n = 0;
 	filter = '';
 	
 	constructor (props: I.Menu) {
