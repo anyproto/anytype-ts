@@ -22,7 +22,7 @@ class PopupPreview extends React.Component<I.Popup> {
 			};
 
 			case I.FileType.Video: {
-				content = <video id="videoElement" src={src} controls={true} autoPlay={true} loop={true} />;
+				content = <video src={src} controls={true} autoPlay={true} loop={true} />;
 				break
 			};
 		};
@@ -82,9 +82,6 @@ class PopupPreview extends React.Component<I.Popup> {
 			mw -= sidebar.outerWidth();
 		};
 
-		wrap.css({ height: 450, width: 300 });
-		position();
-
 		const onError = () => {
 			wrap.addClass('brokenMedia');
 			loader.remove();
@@ -92,8 +89,10 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		switch (type) {
 			case I.FileType.Image: {
-				const img = new Image();
+				wrap.css({ height: 450, width: 300 });
+				position();
 
+				const img = new Image();
 				img.onload = () => {
 					const cw = img.width;
 					const ch = img.height;
@@ -119,19 +118,16 @@ class PopupPreview extends React.Component<I.Popup> {
 			};
 
 			case I.FileType.Video: {
-				const video = document.getElementById('videoElement');
+				const video = obj.find('video').get(0);
+				const width = 672;
+				const height = 382;
 
-				video.oncanplay = () => {
-					const width = 672;
-					const height = 372;
-
-					wrap.css({ height, width });
-					$(video).css({ height, width });
-					loader.remove();
-					position();
-				};
-
+				video.oncanplay = () => { loader.remove(); };
 				video.onerror = onError;
+
+				wrap.css({ height, width });
+				$(video).css({ height, width });
+				position();
 			};
 		};
 

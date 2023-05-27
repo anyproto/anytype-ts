@@ -12,7 +12,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as Prev
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
 	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
-	focus, Preview, Mark, Animation
+	focus, Preview, Mark, Animation, Onboarding
 } from 'Lib';
 
 configure({ enforceActions: 'never' });
@@ -232,6 +232,7 @@ window.Lib = {
 	Preview,
 	Storage,
 	Animation,
+	Onboarding,
 };
 
 /*
