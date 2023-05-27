@@ -2113,7 +2113,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			if (blocks.length && last.length) {
 				const ct = isPopup ? container.offset().top : 0;
 				const ch = container.height();
-				const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct);
+				const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct - 2);
 
 				last.css({ height: Math.max(Constant.size.lastBlock, height) });
 			};
