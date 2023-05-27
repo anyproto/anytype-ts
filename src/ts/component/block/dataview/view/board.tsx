@@ -460,7 +460,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
 
-				this.newIndex = isLeft ? rect.index : rect.index + 1;
+				this.newIndex = rect.index;
+
+				if (isLeft && (rect.index > current.index)) {
+					this.newIndex--;
+				};
+
+				if (!isLeft && (rect.index < current.index)) {
+					this.newIndex++;
+				};
 				break;
 			};
 		};
