@@ -137,9 +137,7 @@
 		.linkCard.vertical {
 			.sides { flex-direction: column-reverse; }
 			.side.left { width: 100%; border-right-width: 1px; }
-			.side.right { 
-				aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px; border: 1px solid $colorBorderLight; border-bottom: 0px;
-			}
+			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px; border: 1px solid $colorBorderLight; border-bottom: 0px; }
 		}
 
 		.linkCard.withCover.vertical {
