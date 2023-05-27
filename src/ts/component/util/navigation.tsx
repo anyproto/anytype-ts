@@ -215,10 +215,12 @@ class Navigation extends React.Component {
 		const { ww, wh } = Util.getWindowDimensions();
 
 		x = Number(x) || 0;
+		x = Math.floor(x);
 		x = Math.max(0, x);
 		x = Math.min(ww - this.width, x);
 
 		y = Number(y) || 0;
+		y = Math.floor(y);
 		y = Math.max(Util.sizeHeader(), y);
 		y = Math.min(wh - this.height, y);
 
@@ -234,7 +236,7 @@ class Navigation extends React.Component {
 			const node = $(this.node);
 			const coords = this.checkCoords(x, y);
 		
-			node.css({ transform: `translate3d(${coords.x}px, ${coords.y}px, 0px)` });
+			node.css({ left: coords.x, top: coords.y });
 		});
 	};
 
