@@ -586,7 +586,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			};
 
 			// Duplicate
-			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+d`, e, () => {
 				if (readonly) {
 					return;
 				};
@@ -598,7 +598,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			for (const item of styleParam) {
 				let style = null;
 
-				keyboard.shortcut(item.key, e, (pressed: string) => {
+				keyboard.shortcut(item.key, e, () => {
 					style = item.style;
 				});
 
@@ -608,7 +608,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			};
 
 			// Open action menu
-			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, () => {
 				menuStore.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					menuStore.open('blockAction', { 
 						element: '#block-' + ids[0],
@@ -634,7 +634,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		// Remove blocks
-		keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+		keyboard.shortcut('backspace, delete', e, () => {
 			if (!readonly) {
 				e.preventDefault();
 				this.blockRemove();
@@ -658,7 +658,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		});
 
 		// Enter
-		keyboard.shortcut('enter', e, (pressed: string) => {
+		keyboard.shortcut('enter', e, () => {
 			if (menuOpen || popupOpen || readonly) {
 				return;
 			};
