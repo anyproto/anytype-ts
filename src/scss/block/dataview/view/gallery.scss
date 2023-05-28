@@ -4,13 +4,12 @@
 	.block.blockDataview {
 		.viewContent.viewGallery { padding: 0px; }
 		.viewContent.viewGallery {
-			.galleryWrap { margin-left: 14px; }
-
+			.ReactVirtualized__Grid { padding-left: 14px; }
 			.row { display: grid; grid-column-gap: 16px; padding: 0px 0px 16px 0px; }
 
 			.card { 
 				width: 100%; border: 1px solid $colorHoverMedium; transition-property: border-color, background; transition-duration: 0.1s; 
-				transition-timing-function: $easeInQuint; border-radius: 12px; display: inline-block; cursor: pointer; background: $colorWhite; overflow: hidden;
+				transition-timing-function: $easeInQuint; border-radius: 12px; display: inline-block; cursor: pointer; background: $colorWhite;
 				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative;
 			}
 
@@ -81,7 +80,8 @@
 		}
 
 		.viewContent.viewGallery.isCollection {
-			.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 4px; height: 100%; border-radius: 2px; top: 0px; left: 0px; }
+			.dropTarget.isOver { box-shadow: 0px 0px; }
+			.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 2px; height: 100%; border-radius: 2px; top: 0px; left: -10px; }
 		}
 	}
 }
