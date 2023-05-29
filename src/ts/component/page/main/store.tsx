@@ -46,6 +46,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	frame = 0;
 	limit = 0;
 	midHeight = 0;
+	filter: string = '';
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -352,6 +353,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onFilterChange (v: string) {
+		this.filter = v;
 		menuStore.updateData(this.getMenuId(), { filter: v });
 	};
 
@@ -620,6 +622,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const limit = this.getLimit();
 		const wh = isPopup ? container.height() : win.height();
 		const midHeight = node.find('.mid').outerHeight();
+		const filter = node.find('#store-filter');
 
 		node.css({ height: wh });
 		
@@ -637,6 +640,14 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 			raf.cancel(this.frame);
 			this.frame = raf(() => { this.forceUpdate(); });
+		};
+
+		if (menuStore.get(this.getMenuId())) {
+			if (this.refFilter && this.filter.length) {
+				this.refFilter.setValue(this.filter);
+				this.refFilter.focus();
+			};
+			menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
 		};
 	};
 
