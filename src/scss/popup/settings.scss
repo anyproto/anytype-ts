@@ -159,8 +159,8 @@
 			.title { margin-bottom:  32px; }
 
 			.description {
-				.label, .extendStorageButton { display: inline; }
-				.extendStorageButton { cursor: pointer; color: $colorRed; }
+				.label { display: inline; }
+				.label.extend { cursor: pointer; color: $colorRed; }
 			}
 
 			.storageUsage { display: flex; justify-content: space-between; align-items: center; }

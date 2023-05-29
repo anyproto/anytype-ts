@@ -16,24 +16,23 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
     constructor (props: Props) {
         super(props);
 
-        this.onManageFiles = this.onManageFiles.bind(this);
-        this.onFileOffload = this.onFileOffload.bind(this);
+        this.onManage = this.onManage.bind(this);
+        this.onOffload = this.onOffload.bind(this);
+		this.onExtend = this.onExtend.bind(this);
     };
 
     render () {
         const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
         const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
         const isRed = percentageUsed >= 90;
-
         const space = detailStore.get(Constant.subId.space, commonStore.workspace);
         const usageCn = [ 'type' ];
         const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
 
-        let extendStorageButton = null;
-
+        let extend = null;
         if (isRed) {
             usageCn.push('red');
-            extendStorageButton = <div onClick={this.onExtendStorageUrl} className="extendStorageButton">Get more space.</div>;
+            extend = <Label text="Get more space." onClick={this.onExtend} className="extend" />;
         };
 
         return (
@@ -43,7 +42,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                 <div className="description">
                     <Label text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
                     &nbsp;
-                    {extendStorageButton}
+                    {extend}
                 </div>
 
 
@@ -55,7 +54,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                             <div className={usageCn.join(' ')}>{Util.sprintf(translate(`popupSettingsStorageIndexUsage`), FileUtil.size(bytesUsed), FileUtil.size(bytesLimit))}</div>
                         </div>
                     </div>
-                    <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManageFiles} />
+                    <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManage} />
                 </div>
 
                 <ProgressBar percent={percentageUsed} />
@@ -71,20 +70,20 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                             <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), FileUtil.size(localUsage))}</div>
                         </div>
                     </div>
-                    <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onFileOffload} />
+                    <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onOffload} />
                 </div>
 
             </React.Fragment>
         );
     };
 
-    onManageFiles () {
+    onManage () {
         const { onPage } = this.props;
 
         onPage('storageManager');
     };
 
-    onFileOffload (e: any) {
+    onOffload (e: any) {
         const { setLoading } = this.props;
 
         analytics.event('ScreenFileOffloadWarning');
@@ -121,7 +120,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         });
     };
 
-    onExtendStorageUrl () {
+    onExtend () {
         const { account } = authStore;
         const space = detailStore.get(Constant.subId.space, commonStore.workspace);
 
