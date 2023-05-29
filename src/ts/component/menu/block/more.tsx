@@ -215,7 +215,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			sections.push({ children: [
 				turn,
 				move,
-				linkTo,
 				align,
 				blockRemove,
 			]});
