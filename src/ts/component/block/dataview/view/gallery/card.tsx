@@ -94,13 +94,13 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		return (
 			<div
-				id={'record-' + record.id}
+				id={`record-${record.id}`}
 				ref={node => this.node = node}
 				className={cn.join(' ')} 
 				style={style}
 				draggable={isCollection}
-				onClick={this.onClick}
-				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				onMouseDown={this.onClick}
+				onContextMenu={(e: any) => onContext(e, record.id)}
 				onDragStart={this.onDragStart}
 			>
 				{content}
