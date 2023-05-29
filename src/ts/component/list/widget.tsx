@@ -243,7 +243,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.frame = raf(() => {
 			this.clear();
 			this.dropTargetId = blockId;
-			this.position = this.getPosition(y, target.get(0));
+
+			const { top } = target.offset();
+			const height = target.height();
+
+			this.position = y <= top + height / 2 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
 			target.addClass([ 'isOver', (this.position == I.BlockPosition.Top ? 'top' : 'bottom') ].join(' '));
 		});
@@ -360,12 +364,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.position = null;
 
 		raf.cancel(this.frame);
-	};
-
-	getPosition (y: number, target): I.BlockPosition {
-		const { top, height } = target.getBoundingClientRect();
-
-		return y <= top + height / 2 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 	};
 
 	setPreview (previewId: string) {
