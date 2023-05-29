@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Title, Label, IconObject, ObjectName, Button, ProgressBar } from 'Component';
-import { analytics, C, DataUtil, FileUtil, Storage, I, translate, Util } from 'Lib';
+import { analytics, C, DataUtil, FileUtil, Storage, I, translate, Util, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { commonStore, detailStore, popupStore } from 'Store';
+import { authStore, commonStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 
 interface Props extends I.PopupSettings {
     onPage: (id: string) => void;
@@ -28,15 +29,23 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         const usageCn = [ 'type' ];
         const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
 
+        let extendStorageButton = null;
+
         if (isRed) {
             usageCn.push('red');
+            extendStorageButton = <div onClick={this.onExtendStorageUrl} className="extendStorageButton">Get more space.</div>;
         };
 
         return (
             <React.Fragment>
                 <Title text={translate('popupSettingsStorageIndexTitle')} />
                 <Title className="sub" text={translate('popupSettingsStorageIndexRemoteStorage')} />
-                <Label className="description" text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
+                <div className="description">
+                    <Label text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
+                    &nbsp;
+                    {extendStorageButton}
+                </div>
+
 
                 <div className="storageUsage">
                     <div className="space">
@@ -110,6 +119,22 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                 },
             }
         });
+    };
+
+    onExtendStorageUrl () {
+        const { account } = authStore;
+        const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+
+        if (!account || !space) {
+            return;
+        };
+
+        let url = Url.extendStorage;
+
+        url = url.replace(/\%25accountId\%25/g, account.id);
+        url = url.replace(/\%25username\%25/g, space.name);
+
+        Renderer.send('urlOpen', url);
     };
 
 });
