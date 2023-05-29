@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, keyboard } from 'Lib';
+import { I, keyboard, ObjectUtil } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import { commonStore } from 'Store';
 
@@ -77,6 +77,11 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 	onClick (e: any, item: any) {
 		const { graph } = commonStore;
 
+		if (item.id === 'popup') {
+			ObjectUtil.openPopup({ layout: I.ObjectLayout.Graph });
+			return;
+		};
+
 		graph[item.id] = !graph[item.id];
 		commonStore.graphSet(graph);
 
@@ -100,7 +105,12 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 					{ id: 'relation', name: 'Relations' },
 					{ id: 'orphan', name: 'Orphans' },
 				] 
-			}
+			},
+			// {
+			// 	name: 'Helper', children: [
+			// 		{ id: 'popup', name: 'Open in popup'}
+			// 	]
+			// }
 		];
 
 		sections = sections.map(s => {
