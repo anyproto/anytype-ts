@@ -104,24 +104,19 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		
 		const object = detailStore.get(rootId, blockId);
 		const cmd = keyboard.cmdSymbol();
-		const isTemplate = object.type == Constant.typeId.template;
-		
-		let template = null;
+
 		let archive = null;
 		let fav = null;
 		let pageLock = null;
 		let pageInstall = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
-		let undo = { id: 'undo', name: 'Undo', caption: `${cmd} + Z` };
-		let redo = { id: 'redo', name: 'Redo', caption: `${cmd} + Shift + Z` };
 		let print = { id: 'print', name: 'Print', caption: `${cmd} + P` };
 		let search = { id: 'search', name: 'Search on page', caption: `${cmd} + F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', caption: (platform == I.Platform.Mac ? `${cmd} + Y` : `Ctrl + H`) };
-		let pageRemove = { id: 'pageRemove', icon: 'remove', name: 'Delete' };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
 		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };
@@ -132,12 +127,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			fav = { id: 'unfav', name: 'Remove from Favorites' };
 		} else {
 			fav = { id: 'fav', name: 'Add to Favorites' };
-		};
-
-		if (isTemplate) {	
-			template = { id: 'pageCreate', icon: 'template', name: 'Create object' };
-		} else {
-			template = { id: 'templateCreate', icon: 'template', name: 'Use as a template' };
 		};
 
 		if (object.isArchived) {
@@ -177,15 +166,12 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const hasShortMenu = block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectCollection() || block.isObjectSpace();
 
 		if (!allowedArchive)	 archive = null;
-		if (!allowedDelete)		 pageRemove = null;
 		if (!allowedLock)		 pageLock = null;
 		if (!allowedLink)		 pageLink = null;
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedReload)		 pageReload = null;
 		if (!allowedSearch)		 search = null;
 		if (!allowedHistory)	 history = null;
-		if (!allowedBlock)		 undo = redo = null;
-		if (!allowedTemplate)	 template = null;
 		if (!allowedFav)		 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
 		if (allowedUninstall)	 archive = null;
@@ -197,7 +183,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			sections = [
-				{ children: [ archive, pageRemove, pageInstall ] },
+				{ children: [ archive, pageInstall ] },
 				{ children: [ fav, pageLink, linkTo, pageCopy ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
@@ -205,8 +191,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		} else
 		if (block.isPage()) {
 			sections = [
-				{ children: [ undo, redo, history, archive, pageRemove ] },
-				{ children: [ fav, pageLink, linkTo, pageCopy, template, pageLock ] },
+				{ children: [ fav, archive, history ] },
+				{ children: [ pageCopy, linkTo, pageLink, pageLock ] },
 				{ children: [ search ] },
 				{ children: [ print, pageExport, pageReload ] },
 			];
@@ -396,16 +382,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		focus.clear(false);
 		
 		switch (item.id) {
-
-			case 'undo':
-				keyboard.onUndo(rootId, route);
-				close = false;
-				break;
-				
-			case 'redo':
-				keyboard.onRedo(rootId, route);
-				close = false;
-				break;
 				
 			case 'print':
 				keyboard.onPrint(route);
@@ -476,13 +452,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				});
 				break;
 
-			case 'pageRemove':
-				C.ObjectListDelete([ object.id ], () => {
-					onBack();
-					analytics.event('RemoveCompletely', { count: 1, route });
-				});
-				break;
-
 			case 'pageLink':
 				Util.clipboardCopy({ text: Url.protocol + ObjectUtil.route(object) });
 				analytics.event('CopyLink', { route });
@@ -519,14 +488,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'blockRemove':
 				C.BlockListDelete(rootId, [ blockId ], () => {
 					isPopup ? popupStore.close('page') : onBack();
-				});
-				break;
-
-			case 'templateCreate':
-				C.TemplateCreateFromObject(rootId, (message: any) => {
-					ObjectUtil.openPopup({ id: message.id, layout: object.layout });
-
-					analytics.event('CreateTemplate', { objectType: object.type, route });
 				});
 				break;
 		};
