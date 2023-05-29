@@ -328,7 +328,7 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: 'New object', click: () => { show(); Util.send(this.win, 'command', 'create'); } },
+			{ label: 'New object', accelerator: 'CmdOrCtrl+N', click: () => { show(); Util.send(this.win, 'command', 'create'); } },
 			{ label: 'Search object', click: () => { show(); Util.send(this.win, 'popup', 'search', { preventResize: true }, true); } },
 			
 			Separator,
