@@ -267,11 +267,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const blockId = e.dataTransfer.getData('text');
 
 		if (blockId != this.dropTargetId) {
-			const childrenIds = blockStore.getChildrenIds(widgets, widgets);
-			const oldIndex = childrenIds.indexOf(blockId);
-			const newIndex = childrenIds.indexOf(this.dropTargetId);
-
-			blockStore.updateStructure(widgets, widgets, arrayMove(childrenIds, oldIndex, newIndex));
 			C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
 		};
 
