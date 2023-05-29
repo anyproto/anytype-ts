@@ -31,7 +31,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				<div className="iconWrapper">
 					<IconObject
 						id="spaceIcon"
-						size={112}
+						size={96}
 						object={space}
 						forceLetter={true}
 						canEdit={true}
