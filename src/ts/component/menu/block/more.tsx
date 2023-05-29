@@ -183,8 +183,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			sections = [
-				{ children: [ archive, pageInstall ] },
-				{ children: [ fav, pageLink, linkTo, pageCopy ] },
+				{ children: [ fav, archive, pageInstall ] },
+				{ children: [ pageCopy, linkTo, pageLink ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
