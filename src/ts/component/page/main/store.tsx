@@ -642,13 +642,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.frame = raf(() => { this.forceUpdate(); });
 		};
 
-		if (menuStore.get(this.getMenuId())) {
-			if (this.refFilter && this.filter.length) {
-				this.refFilter.setValue(this.filter);
-				this.refFilter.focus();
-			};
-			menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
+		if (!menuStore.get(this.getMenuId())) {
+			return;
+		}
+
+		if (this.refFilter && this.filter.length) {
+			this.refFilter.setValue(this.filter);
+			this.refFilter.focus();
 		};
+		menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
 	};
 
 	isPopup () {
