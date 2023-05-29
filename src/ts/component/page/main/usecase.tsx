@@ -17,8 +17,8 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
     render () {
         const cases: any[] = [
             { id: 1, img: 'img/usecase/personal-projects.png' },
+            { id: 3, img: 'img/usecase/notes-or-diary.png' },
             { id: 2, img: 'img/usecase/knowledge-base.png' },
-            { id: 3, img: 'img/usecase/notes-or-diary.png' }
         ];
 
         const Case = (el) => (
