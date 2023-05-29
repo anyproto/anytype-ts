@@ -131,7 +131,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         let url = Url.extendStorage;
 
         url = url.replace(/\%25accountId\%25/g, account.id);
-        url = url.replace(/\%25username\%25/g, space.name);
+        url = url.replace(/\%25spaceName\%25/g, space.name);
 
         Renderer.send('urlOpen', url);
     };
