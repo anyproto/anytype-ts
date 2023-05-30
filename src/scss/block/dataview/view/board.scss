@@ -105,7 +105,7 @@
 			.card:last-child { margin: 0px; }
 
 			.card.add:hover, .card:hover {
-				.cardContent { border-color: $colorBorderLight; background: $colorHoverLight; }
+				.cardContent { border-color: $colorBorderLight; }
 				.icon.checkbox { opacity: 1; }
 			}
 

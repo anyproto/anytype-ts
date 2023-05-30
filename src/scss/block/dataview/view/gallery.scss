@@ -54,7 +54,7 @@
 					}
 				}
 			}
-			.card:hover { border-color: $colorBorderLight; }
+			.card:hover { border-color: $colorBorderLight; background: $colorHoverLight; }
 			.card:hover {
 				.cover {
 					.inner { color: $colorBlack; }
