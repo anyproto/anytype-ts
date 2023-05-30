@@ -82,6 +82,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 		
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}

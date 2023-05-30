@@ -20,6 +20,8 @@
 		.block:last-child { margin: 0px; }
 
 		.block.blockDataview {
+			.dropTarget { padding: 0px !important; }
+
 			.viewItem {
 				.record { left: 0px !important; top: 0px !important; overflow: hidden; }
 			}

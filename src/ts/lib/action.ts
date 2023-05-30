@@ -193,10 +193,12 @@ class Action {
 		});
 	};
 
-	openDir (callBack?: (paths: string[]) => void) {
-		const options = { 
+	openDir (param: any, callBack?: (paths: string[]) => void) {
+		param = Object.assign({}, param);
+
+		const options = Object.assign(param, { 
 			properties: [ 'openDirectory' ],
-		};
+		});
 
 		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
 			if ((filePaths == undefined) || !filePaths.length) {
@@ -210,7 +212,7 @@ class Action {
 	};
 
 	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
-		this.openDir(paths => {
+		this.openDir({ buttonLabel: 'Export' }, paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};

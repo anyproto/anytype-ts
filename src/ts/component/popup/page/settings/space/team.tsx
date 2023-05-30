@@ -86,7 +86,6 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
             <div ref={node => this.node = node}>
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
                 <Title text={Util.sprintf(translate('popupSettingsSpaceTeam'), space.name)} />
-
                 <Label className="counter" text={Util.sprintf(translate('popupSettingsSpaceTeamMembers'), length)} />
 
                 {length > FILTER_LIMIT ? (
