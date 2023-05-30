@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Title, Label, Input, IconObject } from 'Component';
+import { Icon, Label, Input, IconObject } from 'Component';
 import { C, ObjectUtil, DataUtil, I, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore } from 'Store';
@@ -8,7 +8,6 @@ import Constant from 'json/constant.json';
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
 
 	refName: any = null;
-	refDescription: any = null;
 	dashboardId = '';
 
 	constructor (props: any) {
@@ -29,70 +28,31 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		return (
 			<React.Fragment>
 
-				<div className="spaceSettingsIndexHeader">
-					<div className="iconWrapper">
-						<IconObject
-							id="spaceIcon"
-							size={96}
-							object={space}
-							forceLetter={true}
-							canEdit={true}
-							menuParam={{ horizontal: I.MenuDirection.Center }}
-							onSelect={this.onSelect}
-							onUpload={this.onUpload}
-						/>
-					</div>
-
-					<div className="headerContent">
-						<div className="name">
-							<Input
-								ref={ref => this.refName = ref}
-								value={name}
-								onKeyUp={this.onName}
-								placeholder={ObjectUtil.defaultName('Page')}
-							/>
-						</div>
-
-						<div className="description">
-							<Input
-								ref={ref => this.refDescription = ref}
-								value={''}
-								placeholder={'Add a few words about the space...'}
-							/>
-						</div>
-
-						<div className="spaceType">Personal</div>
-					</div>
+				<div className="iconWrapper">
+					<IconObject
+						id="spaceIcon"
+						size={96}
+						object={space}
+						forceLetter={true}
+						canEdit={true}
+						menuParam={{ horizontal: I.MenuDirection.Center }}
+						onSelect={this.onSelect} 
+						onUpload={this.onUpload} 
+					/>
 				</div>
-
-				<div className="sections">
-					<div className="section sectionSpaceManager">
-						<Title text={'Manage Space'} />
-						<div className="sectionContent">
-							<div className="item">1</div>
-							<div className="item">1</div>
-						</div>
-					</div>
-
-					<div className="section sectionIntegrations">
-						<Title text={'Integrations'} />
-						<div className="sectionContent">
-							<div className="item">1</div>
-							<div className="item">1</div>
-						</div>
-					</div>
-
-					<div className="section sectionInfo">
-						<Title text={'Space information'} />
-						<div className="sectionContent">
-							<div className="item">1</div>
-							<div className="item">1</div>
-						</div>
-					</div>
-				</div>
-
 	
 				<div className="rows">
+					<div className="row">
+						<div className="name">
+							<Label className="small" text="Space name" />
+							<Input 
+								ref={ref => this.refName = ref} 
+								value={name} 
+								onKeyUp={this.onName} 
+								placeholder={ObjectUtil.defaultName('Page')} 
+							/>
+						</div>
+					</div>
 
 					<Label className="section" text="Settings" />
 

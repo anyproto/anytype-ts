@@ -140,7 +140,41 @@
 		{ padding-top: 22px; }
 
 		.side.right.tabSpaceIndex {
-			> .iconObject { margin: 0px 0px 12px 0px; }
+			.spaceSettingsIndexHeader { display: flex; align-items: center; margin-bottom: 32px; }
+			.spaceSettingsIndexHeader {
+				.iconWrapper { margin-bottom: 0; }
+
+				.headerContent { margin-left: 24px; }
+				.headerContent {
+					.input { padding: 0; }
+
+					.name { margin-bottom: 4px; }
+					.name .input { @include text-header1; }
+
+					.description { margin-bottom: 8px; }
+					.description .input { color: $colorSecondary; }
+
+					.spaceType {
+						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
+						background: $colorHoverLight url('~img/icon/space/personal.svg') 4px 2px no-repeat;
+						@include text-small; color: $colorDarkGrey;
+					}
+				}
+			}
+
+			.sections {
+				.section { margin-bottom: 32px; }
+				.section {
+					.title { @include text-header3; margin-bottom: 12px; }
+
+					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; }
+					.sectionContent .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
+					.sectionContent .item:last-child { border-bottom: 0; }
+					.sectionContent .item {
+						
+					}
+				}
+			}
 		}
 
 		.side.right.tabPhrase {
