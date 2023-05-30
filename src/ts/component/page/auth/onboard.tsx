@@ -40,32 +40,16 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (this.canMoveBackward()) {
 			back = <Icon className="arrow back" onClick={this.onBack} />;
-		}
+		};
 
 		if (![Stage.SoulCreating, Stage.SpaceCreating].includes(stage)) {
-			indicator = (
-				<DotIndicator
-					className="animation"
-					index={stage}
-					count={4}
-				/>
-			);
-			label = (
-				<Label
-					id="label"
-					className="animation"
-					text={this.getText('Label')}
-				/>
-			);
+			indicator = <DotIndicator className="animation" index={stage} count={4} />;
+			label = <Label id="label" className="animation" text={this.getText('Label')} />;
 		};
 
 		if ( [Stage.Phrase, Stage.Offline].includes(stage) && config.experimental ) {
 			footer = (
-				<div
-					id="accountPath"
-					className="animation small bottom"
-					onClick={this.onAccountPath}
-				>
+				<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
 					<Icon className="gear" />
 					Account data location
 				</div>
@@ -228,9 +212,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		this.unbind();
 
-		$(window).on('keydown.onboarding', (e) => {
-			this.onKeyDown(e);
-		});
+		$(window).on('keydown.onboarding', (e) => this.onKeyDown(e));
 
 		question.off('mouseenter mouseleave');
 		question.on('mouseenter', () => this.onPhraseTooltip());
@@ -316,7 +298,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			if (stage == Stage.Soul) {
 				const DURATION_ONE = 1200; // time until "creating soul" appears
 				const DURATION_TWO = 3000; // time until "creating space appears"
-				delay(incrementOnboarding(delay(incrementOnboarding(this.createAccount), DURATION_ONE)), DURATION_TWO)();
+				delay(incrementOnboarding(delay(incrementOnboarding(this.accountCreate), DURATION_ONE)), DURATION_TWO)();
 				return;
 			};
 		});
@@ -369,7 +351,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		});
 	};
 
-	createAccount = () => {
+	accountCreate = () => {
 		const { accountPath, name, code, phrase } = authStore;
 		const { iconOption } = this.state;
 
