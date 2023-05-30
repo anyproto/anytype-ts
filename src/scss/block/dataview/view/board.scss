@@ -85,6 +85,7 @@
 
 				.cardContent { 
 					border: 1px solid $colorHoverMedium; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color $transitionCommon;
+					box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 				}
 
 				.cellContent {
@@ -104,7 +105,7 @@
 			.card:last-child { margin: 0px; }
 
 			.card.add:hover, .card:hover {
-				.cardContent { border-color: $colorBorderDark; }
+				.cardContent { border-color: $colorBorderLight; background: $colorHoverLight; }
 				.icon.checkbox { opacity: 1; }
 			}
 

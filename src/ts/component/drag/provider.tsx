@@ -81,7 +81,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				type: item.attr('data-type'),
 				style: item.attr('data-style'),
 				targetContextId: item.attr('data-target-context-id'),
-				dropMiddle: item.attr('data-drop-middle'),
 			};
 			const offset = item.offset();
 			const rect = el.getBoundingClientRect() as DOMRect;
@@ -499,12 +498,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		let type: any = '';
 		let style = 0;
 		let canDropMiddle = 0;
+		let isReversed = false;
 		let col1 = 0; 
 		let col2 = 0;
-
-		let isText = false;
-		let isFeatured = false;
-		let isType = false;
 
 		if (this.hoverData) {
 			this.canDrop = true;
@@ -526,13 +522,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				type = obj.attr('data-type');
 				style = Number(obj.attr('data-style')) || 0;
 				canDropMiddle = Number(obj.attr('data-drop-middle')) || 0;
+				isReversed = Boolean(obj.attr('data-reversed'));
 
 				col1 = x - Constant.size.blockMenu / 4;
 				col2 = x + width;
-
-				isText = type == I.BlockType.Text;
-				isFeatured = type == I.BlockType.Featured;
-				isType = type == I.BlockType.Type;
 			};
 
 			initVars();
@@ -564,12 +557,12 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 			// canDropMiddle flag for restricted objects
 			if ((this.position == I.BlockPosition.InnerFirst) && !canDropMiddle) {
-				this.recalcPosition(ey, y, height);
+				this.recalcPositionY(ey, y, height);
 			};
 
 			// Recalc position if dataTransfer items are dragged
 			if (isItemDrag && (this.position != I.BlockPosition.None)) {
-				this.recalcPosition(ey, y, height);
+				this.recalcPositionY(ey, y, height);
 			};
 
 			// You can drop vertically on Layout.Row
@@ -580,19 +573,6 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				if (isTargetBot) {
 					this.setPosition(I.BlockPosition.Bottom);
 				};
-			};
-
-			// You can only drop inside of menu items
-			if ((this.hoverData.dropType == I.DropType.Menu) && (this.position != I.BlockPosition.None)) {
-				this.setPosition(I.BlockPosition.InnerFirst);
-
-				if (rootId == this.hoverData.targetContextId) {
-					this.setPosition(I.BlockPosition.None);
-				};
-			};
-
-			if ((this.hoverData.id == 'blockLast') && (this.position != I.BlockPosition.None)) {
-				this.setPosition(I.BlockPosition.Top);
 			};
 
 			if (!isTargetBot &&
@@ -610,16 +590,27 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				this.setPosition(I.BlockPosition.None);
 			};
 
-			if (isTargetTop && (this.position != I.BlockPosition.None)) {
-				this.setPosition(I.BlockPosition.Top);
-			};
+			if (this.position != I.BlockPosition.None) {
+				// You can only drop inside of menu items
+				if (this.hoverData.dropType == I.DropType.Menu) {
+					this.setPosition(I.BlockPosition.InnerFirst);
 
-			if ((isTargetBot || isTargetCol) && (this.position != I.BlockPosition.None)) {
-				this.setPosition(I.BlockPosition.Bottom);
+					if (rootId == this.hoverData.targetContextId) {
+						this.setPosition(I.BlockPosition.None);
+					};
+				};
+
+				if (isTargetTop || (this.hoverData.id == 'blockLast')) {
+					this.setPosition(I.BlockPosition.Top);
+				};
+
+				if (isTargetBot || isTargetCol) {
+					this.setPosition(I.BlockPosition.Bottom);
+				};
 			};
 
 			if ((dropType == I.DropType.Record) && (this.hoverData.dropType == I.DropType.Record) && !canDropMiddle) {
-				this.setPosition(I.BlockPosition.Top);
+				isReversed ? this.recalcPositionX(ex, x, width) : this.recalcPositionY(ey, y, height);
 			};
 		};
 
@@ -635,11 +626,20 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		});
 	};
 
-	recalcPosition = (ey: number, y: number, height: number) => {
+	recalcPositionY = (ey: number, y: number, height: number) => {
 		if (ey <= y + height * 0.5) {
 			this.setPosition(I.BlockPosition.Top);
 		} else
 		if (ey >= y + height * 0.5) {
+			this.setPosition(I.BlockPosition.Bottom);
+		};
+	};
+
+	recalcPositionX = (ex: number, x: number, width: number) => {
+		if (ex <= x + width * 0.5) {
+			this.setPosition(I.BlockPosition.Top);
+		} else
+		if (ex >= x + width * 0.5) {
 			this.setPosition(I.BlockPosition.Bottom);
 		};
 	};

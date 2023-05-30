@@ -4,8 +4,7 @@
 	.block.blockDataview {
 		.viewContent.viewGallery { padding: 0px; }
 		.viewContent.viewGallery {
-			.ReactVirtualized__Grid { padding-left: 14px; }
-			.row { display: grid; grid-column-gap: 16px; padding: 0px 0px 16px 0px; }
+			.row { display: grid; grid-column-gap: 16px; padding: 0px 0px 16px 14px; }
 
 			.card { 
 				width: 100%; border: 1px solid $colorHoverMedium; transition-property: border-color, background; transition-duration: 0.1s; 
@@ -55,7 +54,7 @@
 					}
 				}
 			}
-			.card:hover { border: 1px solid $colorBorderLight; background: $colorHoverLight; }
+			.card:hover { border-color: $colorBorderLight; }
 			.card:hover {
 				.cover {
 					.inner { color: $colorBlack; }
@@ -87,7 +86,9 @@
 
 		.viewContent.viewGallery.isCollection {
 			.dropTarget.isOver { box-shadow: 0px 0px; }
-			.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 2px; height: 100%; border-radius: 2px; top: 0px; left: -10px; }
+			.dropTarget.isOver::before { content: ""; position: absolute; background: $colorOrange; width: 2px; height: 100%; border-radius: 2px; top: 0px; }
+			.dropTarget.isOver.top::before { left: -10px; }
+			.dropTarget.isOver.bottom::before { right: -10px; }
 		}
 	}
 }
