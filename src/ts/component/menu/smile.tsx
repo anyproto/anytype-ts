@@ -84,6 +84,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		
 		const rowRenderer = (param: any) => {
 			const item = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -99,9 +100,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 							</div>
 						) : (
 							<div className="row">
-								{item.children.map((smile: any, i: number) => {
-									return <Item key={i} id={smile.smile} {...smile} />;
-								})}
+								{item.children.map((smile: any, i: number) => (
+									<Item key={i} id={smile.smile} {...smile} />
+								))}
 							</div>
 						)}
 					</div>
