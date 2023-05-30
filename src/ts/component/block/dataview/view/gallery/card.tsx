@@ -98,7 +98,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				ref={node => this.node = node}
 				className={cn.join(' ')} 
 				style={style}
-				draggable={isCollection}
+				draggable={isCollection && !isInline}
 				onClick={this.onClick}
 				onContextMenu={(e: any) => onContext(e, record.id)}
 				onDragStart={this.onDragStart}
