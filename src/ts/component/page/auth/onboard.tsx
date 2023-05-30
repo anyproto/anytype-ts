@@ -78,7 +78,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{this.renderButtons()}
 					{footer}
 				</Frame>
-				{/*<CanvasWorkerBridge state={animationStage} />*/}
+				<CanvasWorkerBridge state={animationStage} />
 				<div className="fadeInOverlay" />
 			</div>
 		);
