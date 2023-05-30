@@ -294,7 +294,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
 					] 
 				},
-			])
+			]);
 		};
 
 		sections = sections.filter((section: any) => {

@@ -304,7 +304,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
 					] 
 				},
-			])
+			]);
 		};
 
 		sections = sections.filter((section: any) => {
