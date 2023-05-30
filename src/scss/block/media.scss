@@ -93,6 +93,12 @@
 		.icon.play { display: none; }
 	}
 
-	.block.blockMedia.isAudio.withFile > .wrapContent { background-color: $colorVeryLightGrey; }
+	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorVeryLightGrey; }
 	.block.blockMedia.isAudio > .wrapContent > .selectable > .dropTarget > .focusable > .wrap { width: 100%; padding: 16px; border-radius: 6px; overflow: hidden; }
+
+	.block.blockMedia > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
+	.block.blockMedia.isPdf.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
+	.block.blockMedia.isImage.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
+	.block.blockMedia.isVideo.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 0px; }
+	.block.blockMedia.isAudio.withContent > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 6px; }
 }

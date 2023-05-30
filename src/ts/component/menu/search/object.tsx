@@ -60,6 +60,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};
+
 			const type = dbStore.getType(item.type);
 			const checkbox = value && value.length && value.includes(item.id);
 			const cn = [];

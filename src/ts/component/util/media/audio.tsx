@@ -40,7 +40,7 @@ class MediaAudio extends React.Component<Props> {
                 <audio id="audio" preload="auto" src={this.current.src} />
 
                 <div className="controls">
-                    <Icon className="play" onClick={this.onPlayClick} />
+                    <Icon className="play" onMouseDown={this.onPlayClick} />
 
                     <div className="name">
                         <span>{this.current.name}</span>
@@ -50,9 +50,9 @@ class MediaAudio extends React.Component<Props> {
                         id="time"
                         ref={ref => this.refTime = ref}
                         value={0}
-                        onStart={(e: any, v: number) => { this.onTime(v); }}
-                        onMove={(e: any, v: number) => { this.onTime(v); }}
-                        onEnd={(e: any, v: number) => { this.onTimeEnd(v); }}
+                        onStart={(e: any, v: number) => this.onTime(v)}
+                        onMove={(e: any, v: number) => this.onTime(v)}
+                        onEnd={(e: any, v: number) => this.onTimeEnd(v)}
                     />
 
                     <div className="time">
@@ -60,12 +60,12 @@ class MediaAudio extends React.Component<Props> {
                         <span id="timeTotal" className="total">0:00</span>
                     </div>
 
-                    <Icon className="volume" onClick={this.onMute} />
+                    <Icon className="volume" onMouseDown={this.onMute} />
                     <Drag
                         id="volume"
                         ref={ref => this.refVolume = ref}
                         value={1}
-                        onMove={(e: any, v: number) => { this.onVolume(v); }}
+                        onMove={(e: any, v: number) => this.onVolume(v)}
                     />
                 </div>
             </div>
@@ -125,7 +125,10 @@ class MediaAudio extends React.Component<Props> {
         };
     };
 
-    onPlayClick () {
+    onPlayClick (e: React.MouseEvent) {
+		e.preventDefault();
+		e.stopPropagation();
+
         const el = this.audioNode;
         const paused = el.paused;
 
@@ -165,7 +168,10 @@ class MediaAudio extends React.Component<Props> {
         this.audioNode.pause();
     };
 
-    onMute () {
+    onMute (e: React.MouseEvent) {
+		e.preventDefault();
+		e.stopPropagation();
+
         this.audioNode.volume = this.audioNode.volume ? 0 : (this.volume || 1);
         this.refVolume.setValue(this.audioNode.volume);
         this.setVolumeIcon();

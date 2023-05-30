@@ -53,6 +53,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};
+
 			const type = dbStore.getType(item.type);
 			const cn = [];
 

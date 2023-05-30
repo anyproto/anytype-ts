@@ -61,7 +61,7 @@ const Card = observer(class Card extends React.Component<Props> {
 								idPrefix={idPrefix}
 								arrayLimit={2}
 								showTooltip={true}
-								onClick={(e: any) => { this.onCellClick(e, relation); }}
+								onClick={e => this.onCellClick(e, relation)}
 								tooltipX={I.MenuDirection.Left}
 								iconSize={relation.relationKey == 'name' ? 20 : 18}
 								shortUrl={true}
@@ -94,13 +94,13 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		return (
 			<div
-				id={'record-' + record.id}
+				id={`record-${record.id}`}
 				ref={node => this.node = node}
 				className={cn.join(' ')} 
 				style={style}
-				draggable={isCollection}
+				draggable={isCollection && !isInline}
 				onClick={this.onClick}
-				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				onContextMenu={(e: any) => onContext(e, record.id)}
 				onDragStart={this.onDragStart}
 			>
 				{content}

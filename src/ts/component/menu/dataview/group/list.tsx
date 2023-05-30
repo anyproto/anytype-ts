@@ -93,6 +93,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}

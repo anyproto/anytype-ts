@@ -76,6 +76,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
+		const allowedLayout = rootId != Constant.typeId.bookmark;
 
 		if (!recommendedRelations.includes('rel-description')) {
 			recommendedRelations.push('rel-description');
@@ -171,25 +172,27 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 					{allowedObject ? (
 						<React.Fragment>
-							<div className="section layout">
-								<div className="title">Recommended layout</div>
-								<div className="content">
-									{allowedDetails ? (
-										<Select 
-											id="recommendedLayout" 
-											value={object.recommendedLayout} 
-											options={MenuUtil.turnLayouts()} 
-											arrowClassName="light" 
-											onChange={this.onLayout} 
-										/>
-									) : (
-										<React.Fragment>
-											<Icon className={layout.icon} />
-											<div className="name">{layout.name}</div>
-										</React.Fragment>
-									)}
+							{allowedLayout ? (
+								<div className="section layout">
+									<div className="title">Recommended layout</div>
+									<div className="content">
+										{allowedDetails ? (
+											<Select 
+												id="recommendedLayout" 
+												value={object.recommendedLayout} 
+												options={MenuUtil.turnLayouts()} 
+												arrowClassName="light" 
+												onChange={this.onLayout} 
+											/>
+										) : (
+											<React.Fragment>
+												<Icon className={layout.icon} />
+												<div className="name">{layout.name}</div>
+											</React.Fragment>
+										)}
+									</div>
 								</div>
-							</div>
+							) : ''}
 
 							<div className="section relation">
 								<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
@@ -307,9 +310,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		const details: any = { 
 			type: Constant.typeId.template, 
 			targetObjectType: rootId,
+			layout: object.recommendedLayout,
 		};
 
 		C.ObjectCreate(details, [], '', (message) => {
