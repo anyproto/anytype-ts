@@ -9,8 +9,6 @@ class AuthStore {
 	public accountPathValue = '';
 	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
-	public icon = '';
-	public preview = '';
 	public name = '';
 	public phrase = '';
 	public code = '';
@@ -23,8 +21,6 @@ class AuthStore {
 			accountPathValue: observable,
 			accountItem: observable,
 			accountList: observable,
-			icon: observable,
-			preview: observable,
 			name: observable,
 			phrase: observable,
 			code: observable,
@@ -37,8 +33,6 @@ class AuthStore {
 			accountPathSet: action,
 			phraseSet: action,
 			codeSet: action,
-			iconSet: action,
-			previewSet: action,
 			nameSet: action,
 			accountAdd: action,
 			accountSet: action,
@@ -79,14 +73,6 @@ class AuthStore {
 
 	codeSet (v: string) {
 		this.code = v;
-    };
-
-	iconSet (v: string) {
-		this.icon = v;
-    };
-
-	previewSet (v: string) {
-		this.preview = v;
     };
 
 	nameSet (v: string) {
@@ -161,8 +147,6 @@ class AuthStore {
 		this.accountItem = null;
 
 		this.accountListClear();
-		this.iconSet('');
-		this.previewSet('');
 		this.nameSet('');
 		this.phraseSet('');
 		this.codeSet('');

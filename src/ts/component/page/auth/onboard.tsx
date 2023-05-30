@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Error, Icon, IconObject, Input } from 'Component';
-import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview, keyboard } from 'Lib';
-import { authStore, commonStore, popupStore, menuStore } from 'Store';
+import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview, keyboard, ObjectUtil } from 'Lib';
+import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
@@ -78,7 +78,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{this.renderButtons()}
 					{footer}
 				</Frame>
-				<CanvasWorkerBridge state={animationStage} />
+				{/*<CanvasWorkerBridge state={animationStage} />*/}
 				<div className="fadeInOverlay" />
 			</div>
 		);
@@ -185,7 +185,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	componentDidMount (): void {
 		Animation.to();
 
-		this.walletCreate();
+		this.accountCreate();
 		this.rebind();
 	};
 
@@ -237,7 +237,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if ([Stage.Void, Stage.Phrase, Stage.Offline].includes(stage)) {
 			ret = true;
 		};
-		if (stage == Stage.Soul && authStore.name) {
+		if ((stage == Stage.Soul) && authStore.name) {
 			ret = true;
 		};
 		return ret;
@@ -259,9 +259,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Phrase && !phraseCopied) {
 			this.refPhrase.toggleVisibility();
-
-			authStore.phraseSet(this.refPhrase.getValue());
-
 			this.setState({ phraseCopied: true });
 			this.onCopy();
 			return;
@@ -298,7 +295,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			if (stage == Stage.Soul) {
 				const DURATION_ONE = 1200; // time until "creating soul" appears
 				const DURATION_TWO = 3000; // time until "creating space appears"
-				delay(incrementOnboarding(delay(incrementOnboarding(this.accountCreate), DURATION_ONE)), DURATION_TWO)();
+				delay(incrementOnboarding(delay(incrementOnboarding(this.accountUpdate), DURATION_ONE)), DURATION_TWO)();
 				return;
 			};
 		});
@@ -340,7 +337,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		});
 	};
 
-	walletCreate = () => {
+	accountCreate = () => {
 		C.WalletCreate(authStore.walletPath, (message) => {
 			if (message.error.code) {
 				this.showErrorAndExit(message);
@@ -348,48 +345,53 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			};
 
 			authStore.phraseSet(message.mnemonic);
-		});
-	};
 
-	accountCreate = () => {
-		const { accountPath, name, code, phrase } = authStore;
-		const { iconOption } = this.state;
-
-		DataUtil.createSession((message) => {
-			if (message.error.code) {
-				this.showErrorAndExit(message);
-				return;
-			};
-
-			C.AccountCreate(name, '', accountPath, code, iconOption, (message) => {
+			DataUtil.createSession((message) => {
 				if (message.error.code) {
 					this.showErrorAndExit(message);
 					return;
 				};
 
-				if (message.config) {
-					commonStore.configSet(message.config, false);
-				};
+				const { iconOption } = this.state;
+				const { accountPath, name, code, phrase } = authStore;
 
-				Renderer.send('keytarSet', message.account.id, phrase);
-				authStore.previewSet('');
+				C.AccountCreate('', '', accountPath, code, iconOption, (message) => {
+					if (message.error.code) {
+						this.showErrorAndExit(message);
+						return;
+					};
 
-				Storage.set('timeRegister', Util.time());
+					commonStore.infoSet(message.account.info);
+					commonStore.configSet(message.account.config, false);
 
-				// Animate and route to the post-auth page
-				DataUtil.onAuth(message.account, () => {
-					this.setState(
-						(prev) => ({
-							...prev,
-							animationStage: prev.animationStage + 1,
-						}),
-						() => {
-							Util.route('/main/usecase');
-						}
-					);
+					authStore.accountSet(message.account);
+
+					Renderer.send('keytarSet', message.account.id, phrase);
+					Storage.set('timeRegister', Util.time());
+					analytics.event('CreateAccount');
 				});
+			});
+		});
+	};
 
-				analytics.event('CreateAccount');
+	accountUpdate = () => {
+		const { profile } = blockStore;
+		const { workspace } = commonStore;
+		const { name, account } = authStore;
+
+		ObjectUtil.setName(profile, name, () => {
+			ObjectUtil.setName(workspace, name);
+
+			DataUtil.onAuth(account, () => {
+				this.setState(
+					(prev) => ({
+						...prev,
+						animationStage: prev.animationStage + 1,
+					}),
+					() => {
+						Util.route('/main/usecase');
+					}
+				);
 			});
 		});
 	};

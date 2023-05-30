@@ -3,11 +3,11 @@ import $ from 'jquery';
 import { I } from 'Lib';
 
 const Duration = {
-	Normal: 0.25,
-	Word: 0.07,
+	Normal: 0.2,
+	Word: 0.05,
 };
 
-const WORD_DELAY_COEF = 0.75;
+const WORD_DELAY_COEF = 0.5;
 
 class Animation {
 
