@@ -310,9 +310,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		const details: any = { 
 			type: Constant.typeId.template, 
 			targetObjectType: rootId,
+			layout: object.recommendedLayout,
 		};
 
 		C.ObjectCreate(details, [], '', (message) => {
