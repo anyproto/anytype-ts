@@ -17,7 +17,7 @@ const MenuAccountPath = observer(class MenuAccountPath extends React.Component<I
 
         return (
             <React.Fragment>
-                <Label className="small" text="Your key files will be stored here.<br/>Click to change the path" />
+                <Label className="small" text="Your key files will be stored here. Click to change the path" />
                 <Label className="path" text={accountPath} onClick={this.onClick} />
             </React.Fragment>
         );

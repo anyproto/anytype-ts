@@ -2,6 +2,6 @@
 
 .dotIndicator { display: flex; justify-content: center; align-items: center; }
 .dotIndicator {
-    span { display: inline-block; width: 4px; height: 4px; border-radius: 50%; margin: 0 2px; background-color: $colorDarkGrey; }
-    span.active { background-color: $colorWhite; }
+    span { display: inline-block; width: 4px; height: 4px; border-radius: 50%; margin: 0 2px; background-color: #252525; }
+    span.active { background-color: #D4D4D4; }
   }

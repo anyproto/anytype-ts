@@ -12,7 +12,7 @@ $colorErrorBackground: #240e07;
 	.phraseInnerWrapper { overflow-x: scroll; display: flex; justify-content: center; align-items: center; padding-left:10px; min-height: 38px; }
 	.phraseInnerWrapper::-webkit-scrollbar { width: 0; height: 0; }
 	* { user-select: text !important; }
-	.item { font-size: 18px; line-height: 18px; height: 18px; margin: 10px 10px 10px 0px; user-select: text !important; }
+	.item { font-size: 18px; line-height: 18px; height: 18px; margin: 10px; user-select: text !important; }
 
 	.bgColor { border-radius: 6px; filter: blur(5px); }
 	.bgColor-orange { background: $colorOrange !important; user-select: none !important; }
@@ -36,9 +36,8 @@ $colorErrorBackground: #240e07;
 	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
 	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
 }
-.phraseWrapper:hover { cursor: text !important; background: rgba(44, 43, 39, 0.5); }
+.phraseWrapper:hover { cursor: text !important; }
 .phraseWrapper.isHidden:hover { cursor: pointer !important; }
-.phraseWrapper.isReadonly:hover { background: rgba(44, 43, 39, 0.3); }
 .phraseWrapper.isReadonly {
 	#entry { display: none; }
 }

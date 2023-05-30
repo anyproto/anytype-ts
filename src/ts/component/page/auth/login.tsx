@@ -135,6 +135,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		popupStore.open('confirm', {
             data: {
                 text: translate('authLoginLostPhrasePopupContent'),
+				textConfirm: 'Okay',
 				canConfirm: true,
 				canCancel: false,
             },
