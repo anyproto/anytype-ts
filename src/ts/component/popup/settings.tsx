@@ -223,7 +223,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			return [
 				{ 
 					name: 'Space', isHidden: true, children: [
-						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
+						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'importIndex', 'exportIndex' ] },
 					]
 				},
 			];

@@ -21,6 +21,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	render () {
+		const { onPage } = this.props;
 		const subId = Constant.subId.space;
 		const space = detailStore.get(subId, commonStore.workspace);
 		const name = this.checkName(space.name);
@@ -69,24 +70,38 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					<div className="section sectionSpaceManager">
 						<Title text={'Manage Space'} />
 						<div className="sectionContent">
-							<div className="item">1</div>
-							<div className="item">1</div>
+							<div className="item">
+								<Title text={'Remote storage'} />
+							</div>
+							<div className="item">
+								<Title text={'Homepage'} />
+							</div>
 						</div>
 					</div>
 
 					<div className="section sectionIntegrations">
 						<Title text={'Integrations'} />
 						<div className="sectionContent">
-							<div className="item">1</div>
-							<div className="item">1</div>
+							<div className="item" onClick={() => onPage('importIndex')}>
+								<Title text={'Import data'} />
+								<Icon className="arrow forward" />
+							</div>
+							<div className="item" onClick={() => onPage('exportIndex')}>
+								<Title text={'Export data'} />
+								<Icon className="arrow forward" />
+							</div>
 						</div>
 					</div>
 
 					<div className="section sectionInfo">
 						<Title text={'Space information'} />
 						<div className="sectionContent">
-							<div className="item">1</div>
-							<div className="item">1</div>
+							<div className="item">
+								<Title text={'Space ID'} />
+							</div>
+							<div className="item">
+								<Title text={'Creation date'} />
+							</div>
 						</div>
 					</div>
 				</div>
