@@ -132,9 +132,9 @@ class MenuUtil {
 		const { hasText, hasFile, hasBookmark, hasTurnObject } = param;
 		const cmd = keyboard.cmdSymbol();
 		const items: any[] = [
-			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
-			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
 			{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
+			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
+			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
 			//{ id: 'comment', icon: 'comment', name: 'Comment' }
 		];
 
