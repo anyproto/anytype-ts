@@ -352,7 +352,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const { rootId, dataset, isPopup } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
-		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const readonly = this.isReadonly();
 		const node = $(this.node);
 		const button = node.find('#button-block-add');
@@ -373,7 +372,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		if (
 			!root || 
 			readonly || 
-			checkType || 
 			(root && root.isLocked()) || 
 			keyboard.isResizing || 
 			keyboard.isDragging || 
