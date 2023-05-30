@@ -295,9 +295,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 			sections = sections.concat([
 				{ id: 'store', name: 'Anytype library', children: store },
+				{ children: [ { id: 'add', name: `Create type "${filter}"` } ] }
 			]);
-
-			sections.push({ children: [ { id: 'add', name: `Create type "${filter}"` } ] });
 		} else {
 			sections = sections.concat([
 				{ 
@@ -307,7 +306,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				},
 			])
 		};
-		
+
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
