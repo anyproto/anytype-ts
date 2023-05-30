@@ -289,7 +289,6 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		let sections: any[] = [
 			{ id: 'library', name: 'My types', children: library },
 		];
-		let name = 'Create new type';
 
 		if (filter) {
 			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
@@ -298,7 +297,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				{ id: 'store', name: 'Anytype library', children: store },
 			]);
 
-			name = `Create type "${filter}"`;
+			sections.push({ children: [ { id: 'add', name: `Create type "${filter}"` } ] });
 		} else {
 			sections = sections.concat([
 				{ 
@@ -308,9 +307,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				},
 			])
 		};
-
-		sections.unshift({ children: [ { id: 'add', name } ] });
-
+		
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);
 			return section.children.length > 0;
