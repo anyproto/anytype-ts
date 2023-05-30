@@ -25,7 +25,9 @@
 		"publish:linux": "webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
 		"publish:win": "webpack --mode=production --node-env=production && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always",
 		"postinstall": "npx patch-package && electron-builder install-app-deps",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"sentry:source-map": "npx sentry-cli --url \"https://sentry.anytype.io\" releases files \"0.31.54\" upload-sourcemaps ./dist/main.js.map --org \"anytype\" --log-level=debug",
+		"sentry": "npm run build && npm run sentry:source-map"
 	},
 	"repository": {
 		"type": "git",

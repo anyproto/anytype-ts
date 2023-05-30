@@ -511,7 +511,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	onSource () {
 		const { rootId, block, readonly } = this.props;
 
-		if (readonly) {
+		if (readonly || menuStore.isOpen('dataviewSource')) {
 			return;
 		};
 
