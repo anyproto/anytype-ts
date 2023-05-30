@@ -206,7 +206,7 @@ html.bodyAuthDeleted {
 		.account, .space, .line { transition: all 600ms ease-in; position: absolute; display: flex; flex-direction: column; }
 		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
 		.account { z-index: 2; }
-		.space { transition: all 600ms ease-in, opacity 200ms ease-in; z-index: 1; opacity: 0; }
+		.space { transition: all 600ms ease-in, opacity 300ms ease-in; z-index: 1; opacity: 0; }
 		.iconObject.withOption.isSpace { background: $colorBlack; border-radius: 8px; }
 		
 		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: $colorWhite; }
