@@ -110,7 +110,7 @@ class Drag extends React.Component<Props> {
 		});
 		
 		win.off('mouseup.drag touchend.drag').on('mouseup.drag touchend.drag', (e: any) => {
-			this.end();
+			this.end(e);
 
 			if (onEnd) {
 				onEnd(e, this.value);
@@ -145,7 +145,10 @@ class Drag extends React.Component<Props> {
 		});
 	};
 	
-	end () {
+	end (e) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const win = $(window);
 		const node = $(this.node);
 		

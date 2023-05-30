@@ -8,7 +8,6 @@ import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store
 import Constant from 'json/constant.json';
 
 import PageAuthInvite from './auth/invite';
-import PageAuthNotice from './auth/notice';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pinCheck';
@@ -81,12 +80,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
-		const showNotice = !Storage.get('firstRun');
 		const showSidebar = this.isMain() && !this.isMainUsecase();
-
-		if (showNotice) {
-			Components['index/index'] = PageAuthNotice;
-		};
 
 		const Component = Components[path];
 		if (!Component) {
@@ -265,16 +259,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	
 	event () {
 		const { page, action, id } = this.getMatchParams();
-		const showNotice = !Storage.get('firstRun');
 		const params = { page, action, id: undefined };
 		const isMainType = this.isMainType();
 		const isMainRelation = this.isMainRelation();
-
-		if (showNotice) {
-			params.page = 'auth';
-			params.action = 'notice';
-			Storage.set('firstRun', 1);
-		};
 
 		if (isMainType || isMainRelation) {
 			params.id = id;

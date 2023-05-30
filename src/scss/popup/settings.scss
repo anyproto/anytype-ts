@@ -158,6 +158,11 @@
 		.side.right.tabStorageIndex {
 			.title { margin-bottom:  32px; }
 
+			.description {
+				.label { display: inline; }
+				.label.extend { cursor: pointer; color: $colorRed; }
+			}
+
 			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
 			.storageUsage {
 				.space { margin-bottom: 16px; }

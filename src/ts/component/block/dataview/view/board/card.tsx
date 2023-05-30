@@ -70,7 +70,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		return (
 			<div 
 				ref={node => this.node = node} 
-				id={`card-${record.id}`}
+				id={`record-${record.id}`}
 				className={cn.join(' ')} 
 				draggable={true}
 				onDragStart={(e: any) => { onDragStartCard(e, groupId, record); }}

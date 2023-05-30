@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
 import { I, C, Util, Storage } from 'Lib';
-import { commonStore, detailStore, dbStore } from 'Store';
+import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const KEYS = [ 
@@ -44,10 +44,11 @@ class Analytics {
 		this.instance.setVersionName(window.Electron.version.app);
 		this.instance.setUserProperties({ 
 			deviceType: 'Desktop',
-			platform: Util.getPlatform(),
+			platform,
 			osVersion: window.Electron.version.os,
 		});
 
+		this.log('[Analytics].init');
 		this.isInit = true;
 	};
 	
@@ -313,7 +314,6 @@ class Analytics {
 		const map = {
 			'index/index':		 'ScreenIndex',
 
-			'auth/notice':		 'ScreenDisclaimer',
 			'auth/login':		 'ScreenLogin',
 			'auth/onboard':	 	 'ScreenAuthRegistration',
 			'auth/invite':		 'ScreenAuthInvitation',

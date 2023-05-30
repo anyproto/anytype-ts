@@ -12,7 +12,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as Prev
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
 	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
-	focus, Preview, Mark, Animation
+	focus, Preview, Mark, Animation, Onboarding
 } from 'Lib';
 
 configure({ enforceActions: 'never' });
@@ -237,6 +237,7 @@ window.Lib = {
 	Preview,
 	Storage,
 	Animation,
+	Onboarding,
 };
 
 /*
@@ -631,35 +632,41 @@ class App extends React.Component<object, State> {
 		const tmpPath = window.Electron.tmpPath;
 
 		switch (key) {
-			case 'undo':
+			case 'undo': {
 				if (!keyboard.isFocused) {
 					keyboard.onUndo(rootId, 'MenuSystem');
 				};
 				break;
+			};
 
-			case 'redo':
+			case 'redo': {
 				if (!keyboard.isFocused) {
 					keyboard.onRedo(rootId, 'MenuSystem');
 				};
 				break;
+			};
 
-			case 'create':
+			case 'create': {
 				keyboard.pageCreate();
 				break;
+			};
 
-			case 'saveAsHTML':
+			case 'saveAsHTML': {
 				keyboard.onSaveAsHTML();
 				break;
+			};
 
-			case 'saveAsHTMLSuccess':
+			case 'saveAsHTMLSuccess': {
 				keyboard.printRemove();
 				break;
+			};
 
-			case 'save':
+			case 'save': {
 				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true);
 				break;
+			};
 
-			case 'exportTemplates':
+			case 'exportTemplates': {
 				Action.openDir(paths => {
 					C.TemplateExportAll(paths[0], (message: any) => {
 						if (message.error.code) {
@@ -670,8 +677,9 @@ class App extends React.Component<object, State> {
 					});
 				});
 				break;
+			};
 
-			case 'exportLocalstore':
+			case 'exportLocalstore': {
 				Action.openDir(paths => {
 					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
@@ -680,8 +688,9 @@ class App extends React.Component<object, State> {
 					});
 				});
 				break;
+			};
 
-			case 'debugSpace':
+			case 'debugSpace': {
 				C.DebugSpaceSummary((message: any) => {
 					if (!message.error.code) {
 						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
@@ -690,14 +699,16 @@ class App extends React.Component<object, State> {
 					};
 				});
 				break;
+			};
 
-			case 'debugTree':
+			case 'debugTree': {
 				C.DebugTree(rootId, logPath, (message: any) => {
 					if (!message.error.code) {
 						Renderer.send('pathOpen', logPath);
 					};
 				});
 				break;
+			};
 
 			case 'resetOnboarding':
 				Storage.delete('onboarding');

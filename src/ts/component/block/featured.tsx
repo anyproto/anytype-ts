@@ -89,6 +89,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyDown={this.onKeyDown} 
 				onKeyUp={this.onKeyUp}
 			>
+				<span id="onboardingAnchor" />
 				{featuredRelations.includes('type') ? (
 					<span className="cell canEdit">
 						<div

@@ -24,7 +24,7 @@ const Card = observer(class Card extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, recordId, getView, getRecord, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection, onSelectToggle } = this.props;
+		const { rootId, block, recordId, getView, getRecord, onRef, style, onContext, getIdPrefix, getVisibleRelations, isInline, isCollection } = this.props;
 		const view = getView();
 		const { cardSize, coverFit, hideIcon } = view;
 		const relations = getVisibleRelations();
@@ -94,13 +94,13 @@ const Card = observer(class Card extends React.Component<Props> {
 
 		return (
 			<div
-				id={'record-' + record.id}
+				id={`record-${record.id}`}
 				ref={node => this.node = node}
 				className={cn.join(' ')} 
 				style={style}
-				draggable={true}
-				onClick={this.onClick}
-				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				draggable={isCollection}
+				onMouseDown={this.onClick}
+				onContextMenu={(e: any) => onContext(e, record.id)}
 				onDragStart={this.onDragStart}
 			>
 				{content}

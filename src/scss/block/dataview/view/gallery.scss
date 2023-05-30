@@ -4,13 +4,12 @@
 	.block.blockDataview {
 		.viewContent.viewGallery { padding: 0px; }
 		.viewContent.viewGallery {
-			.galleryWrap { margin-left: 14px; }
-
+			.ReactVirtualized__Grid { padding-left: 14px; }
 			.row { display: grid; grid-column-gap: 16px; padding: 0px 0px 16px 0px; }
 
 			.card { 
 				width: 100%; border: 1px solid $colorHoverMedium; transition-property: border-color, background; transition-duration: 0.1s; 
-				transition-timing-function: $easeInQuint; border-radius: 12px; display: inline-block; cursor: pointer; background: $colorWhite; overflow: hidden;
+				transition-timing-function: $easeInQuint; border-radius: 12px; display: inline-block; cursor: pointer; background: $colorWhite;
 				box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); min-height: 72px; position: relative;
 			}
 
@@ -26,7 +25,7 @@
 
 				.cover { 
 					position: relative; aspect-ratio: 7/3; background-position: top center; display: flex; align-items: center;
-					background-color: $colorHoverMedium; width: 100%; justify-content: center;
+					background-color: $colorHoverMedium; width: 100%; justify-content: center; border-radius: 12px 12px 0px 0px; overflow: hidden;
 				}
 
 				.cover {
@@ -37,6 +36,13 @@
 						background-image: url('~img/icon/dataview/gallery-image-preview.svg'); background-repeat: no-repeat;
 						background-position: center center;
 					}
+
+					.mediaVideo { height: 100%; }
+					.mediaVideo {
+						video { width: 100%; height: 100%; object-fit: cover; }
+					}
+
+					.mediaAudio { padding: 8px 16px; }
 				}
 				.cover.canEdit {
 					.inner { background: none; }
@@ -47,13 +53,6 @@
 							top: 50%; margin-top: -10px;
 						}
 					}
-				}
-				.cover.coverAudio {
-					.mediaAudio { padding: 8px 16px; }
-				}
-				.cover.coverVideo { overflow: hidden; }
-				.cover.coverVideo {
-					.mediaVideo video { width: 100%; }
 				}
 			}
 			.card:hover { border: 1px solid $colorBorderLight; background: $colorHoverLight; }
@@ -68,7 +67,13 @@
 
 			.card.coverFit {
 				.cover { background-size: contain; background-position: center center; }
-				.cover img { width: auto; height: auto; max-height: 100%; max-width: 100%; object-fit: contain; }
+				.cover {
+					img { width: auto; height: auto; max-height: 100%; max-width: 100%; object-fit: contain; }
+
+					.mediaVideo {
+						video { object-fit: contain; }
+					}
+				}
 			}
 
 			.card.withCover {
@@ -81,7 +86,8 @@
 		}
 
 		.viewContent.viewGallery.isCollection {
-			.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 4px; height: 100%; border-radius: 2px; top: 0px; left: 0px; }
+			.dropTarget.isOver { box-shadow: 0px 0px; }
+			.dropTarget.isOver.top::before { content: ""; position: absolute; background: $colorOrange; width: 2px; height: 100%; border-radius: 2px; top: 0px; left: -10px; }
 		}
 	}
 }
