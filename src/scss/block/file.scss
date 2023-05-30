@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockFile { padding: 6px 0px; white-space: nowrap; }
-	.block.blockFile.withFile { padding: 0px; }
+	.block.blockFile.withContent { padding: 0px; }
 	.block.blockFile {
 		.flex { cursor: pointer; }
 
@@ -26,5 +26,7 @@
 	
 	.block.blockFile > .wrapContent > .selectable > .dropTarget { @include text-overflow-nw;  }
 	.block.blockFile > .wrapContent > .selectable.isSelectionSelected .download { display: none; }
-	.block.blockFile.withFile > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
+	.block.blockFile.withContent > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
+
+	.block.blockFile > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
 }

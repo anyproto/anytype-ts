@@ -67,7 +67,7 @@
         .loaderWrapper { border: 0px; }
         .pdfWrapper { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
     }
-    .block.blockMedia.isAudio.withFile > .wrapContent { background-color: $colorHoverMedium; }
+    .block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorHoverMedium; }
 
     /* BlockDataview */
 

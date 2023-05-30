@@ -64,10 +64,6 @@ class DataUtil {
 
 		const c = [];
 		if (block.type == I.BlockType.File) {
-			if (state == I.FileState.Done) {
-				c.push('withFile');
-			};
-
 			if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
 				c.push(dc);
 			} else {

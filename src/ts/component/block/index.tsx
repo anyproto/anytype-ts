@@ -141,6 +141,10 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.File: {
+				if (content.state == I.BookmarkState.Done) {
+					cn.push('withContent');
+				};
+
 				if (style == I.FileStyle.Link) {
 					blockComponent = <BlockFile key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 					break;
