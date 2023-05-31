@@ -247,6 +247,38 @@ const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: strin
 	dispatcher.request(BlockDataviewCreateFromExistingObject.name, request, callBack);
 };
 
+// ---------------------- BLOCK WIDGET ---------------------- //
+
+const BlockWidgetSetTargetId = (contextId: string, blockId: string, targetId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockWidget.SetTargetId.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setTargetid(targetId);
+
+	dispatcher.request(BlockWidgetSetTargetId.name, request, callBack);
+};
+
+const BlockWidgetSetLayout = (contextId: string, blockId: string, layout: I.WidgetLayout, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockWidget.SetLayout.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setLayout(layout as number);
+
+	dispatcher.request(BlockWidgetSetLayout.name, request, callBack);
+};
+
+const BlockWidgetSetLimit = (contextId: string, blockId: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockWidget.SetLimit.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setLimit(limit);
+
+	dispatcher.request(BlockWidgetSetLimit.name, request, callBack);
+};
+
 // ---------------------- BLOCK TEXT ---------------------- //
 
 const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
@@ -1784,6 +1816,9 @@ export {
 	BlockDataviewRelationDelete,
 
 	BlockCreateWidget,
+	BlockWidgetSetTargetId,
+	BlockWidgetSetLayout,
+	BlockWidgetSetLimit,
 
 	HistoryGetVersions,	
 	HistoryShowVersion,

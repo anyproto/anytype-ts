@@ -242,9 +242,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			return;
 		};
 
-		const { getId, getSize, param } = this.props;
+		const { getId, getSize, param, position, close } = this.props;
 		const { data, className, classNameWrap } = param;
-		const { isEditing } = data;
+		const { blockId, isEditing } = data;
+		const { widgets } = blockStore;
 		const menuParam: Partial<I.MenuParam> = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
@@ -290,8 +291,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						this.checkState();
 						this.forceUpdate();
 						
-						if (isEditing) {
-							this.save();
+						if (isEditing && this.target) {
+							C.BlockWidgetSetTargetId(widgets, blockId, this.target.id);
+							close();
 						};
 
 						analytics.event('ChangeWidgetSource', {
@@ -313,8 +315,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						this.checkState();
 						this.forceUpdate();
 						
-						if (isEditing) {
-							this.save();
+						if (isEditing && this.layout) {
+							C.BlockWidgetSetLayout(widgets, blockId, this.layout);
+							close();
 						};
 
 						analytics.event('ChangeWidgetSource', {
