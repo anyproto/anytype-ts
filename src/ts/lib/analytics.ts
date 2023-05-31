@@ -24,7 +24,7 @@ class Analytics {
 
 	isAllowed (): boolean {
 		const { config } = commonStore;
-		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || window.Electron.isPackaged) || this.debug();
+		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !window.Electron.isPackaged) || this.debug();
 	};
 	
 	init () {
