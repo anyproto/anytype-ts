@@ -281,6 +281,18 @@
 	"popupSettingsStorageManagerTitle": { "en": "Synced files" },
 	"popupSettingsStorageEmptyLabel": { "en": "Your storage is empty" },
 
+	"popupSettingsSpaceIndex": { "en": "" },
+	"popupSettingsSpaceIndexDescriptionPlaceholder": { "en": "Add a few words about the space..." },
+	"popupSettingsSpaceIndexManageSpaceTitle": { "en": "Manage Space" },
+	"popupSettingsSpaceIndexRemoteStorageTitle": { "en": "Remote Storage" },
+	"popupSettingsSpaceIndexHomepageTitle": { "en": "Homepage" },
+	"popupSettingsSpaceIndexIntegrationsTitle": { "en": "Integrations" },
+	"popupSettingsSpaceIndexImportDataTitle": { "en": "Import data" },
+	"popupSettingsSpaceIndexExportDataTitle": { "en": "Export data" },
+	"popupSettingsSpaceIndexSpaceInfoTitle": { "en": "Space information" },
+	"popupSettingsSpaceIndexSpaceIdTitle": { "en": "Space ID" },
+	"popupSettingsSpaceIndexCreationDateTitle": { "en": "Creation date" },
+
 	"popupSettingsImportTitle": { "en": "Import" },
 	"popupSettingsImportText": { "en": "Choose application or format of data source" },
 	"popupSettingsImportMarkdownTitle": { "en": "How to import Markdown" },

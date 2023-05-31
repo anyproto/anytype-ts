@@ -76,7 +76,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<Input
 								ref={ref => this.refDescription = ref}
 								value={''}
-								placeholder={'Add a few words about the space...'}
+								placeholder={translate(`popupSettingsSpaceIndexDescriptionPlaceholder`)}
 							/>
 						</div>
 
@@ -86,13 +86,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 				<div className="sections">
 					<div className="section sectionSpaceManager">
-						<Title text={'Manage Space'} />
+						<Title text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 						<div className="sectionContent">
 
 							<div className={usageCn.join(' ')}>
 								<div className="sides">
 									<div className="side left">
-										<Title text={'Remote storage'} />
+										<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
 										<div className="storageLabel">
 											<Label text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
 											&nbsp;
@@ -110,7 +110,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<div className="item">
 								<div className="sides">
 									<div className="side left">
-										<Title text={'Homepage'} />
+										<Title text={translate(`popupSettingsSpaceIndexHomepageTitle`)} />
 										<Label text={'Select an object to set as your homepage'} />
 									</div>
 									<div className="side right">
@@ -126,14 +126,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					</div>
 
 					<div className="section sectionIntegrations">
-						<Title text={'Integrations'} />
+						<Title text={translate(`popupSettingsSpaceIndexIntegrationsTitle`)} />
 						<div className="sectionContent">
 
 							<div className="item" onClick={() => onPage('importIndex')}>
 								<div className="sides">
 									<div className="side left">
 										<Icon className="import" />
-										<Title text={'Import data'} />
+										<Title text={translate(`popupSettingsSpaceIndexImportDataTitle`)} />
 									</div>
 									<div className="side right">
 										<Icon className="arrow" />
@@ -145,7 +145,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								<div className="sides">
 									<div className="side left">
 										<Icon className="export" />
-										<Title text={'Export data'} />
+										<Title text={translate(`popupSettingsSpaceIndexExportDataTitle`)} />
 									</div>
 									<div className="side right">
 										<Icon className="arrow" />
@@ -157,13 +157,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					</div>
 
 					<div className="section sectionInfo">
-						<Title text={'Space information'} />
+						<Title text={translate(`popupSettingsSpaceIndexSpaceInfoTitle`)} />
 						<div className="sectionContent">
 
 							<div onClick={this.onCopy} className="item itemSpaceId">
 								<div className="sides">
 									<div className="side left">
-										<Title text={'Space ID'} />
+										<Title text={translate(`popupSettingsSpaceIndexSpaceIdTitle`)} />
 										<Label text={space.id} />
 									</div>
 									<div className="side right">
@@ -175,7 +175,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<div className="item">
 								<div className="sides">
 									<div className="side left">
-										<Title text={'Creation date'} />
+										<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
 									</div>
 								</div>
 							</div>
