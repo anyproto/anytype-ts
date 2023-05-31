@@ -59,12 +59,12 @@ let csp = [
 
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
-	Api.exit(mainWindow, false);
+	Api.exit(mainWindow, '', false);
 	return;
 };
 
 if (app.isPackaged && !app.requestSingleInstanceLock()) {
-	Api.exit(mainWindow, false);
+	Api.exit(mainWindow, '' ,false);
 	return;
 };
 
@@ -188,7 +188,7 @@ app.on('before-quit', (e) => {
 		app.exit(0);
 	} else {
 		e.preventDefault();
-		Api.exit(mainWindow, false);
+		Api.exit(mainWindow, '', false);
 	};
 });
 

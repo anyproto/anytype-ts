@@ -5,6 +5,7 @@ const userPath = app.getPath('userData');
 const logPath = path.join(userPath, 'logs');
 
 const ConfigManager = require('./config.js');
+const Server = require('./server.js');
 const Util = require('./util.js');
 
 const Separator = { type: 'separator' };
@@ -48,7 +49,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Quit', accelerator: 'CmdOrCtrl+Q', click: () => { Api.exit(this.win, false); } },
+					{ label: 'Quit', accelerator: 'CmdOrCtrl+Q', click: () => { Api.exit(this.win, '', false); } },
 				]
 			},
 			{
@@ -72,6 +73,13 @@ class MenuManager {
 
 					{ label: 'Space debug', click: () => { Util.send(this.win, 'command', 'debugSpace'); } },
 					{ label: 'Current object debug', click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
+					{ 
+						label: 'Process debug', 
+						click: () => {
+							Api.exit(this.win, 'SIGUSR1', true);
+							shell.openPath(path.join(Util.dataPath(), Api.account.id, 'logs'));
+						}
+					},
 
 					Separator,
 
@@ -338,7 +346,7 @@ class MenuManager {
 
 			Separator,
 
-			{ label: 'Quit', click: () => { hide(); Api.exit(this.win, false); } },
+			{ label: 'Quit', click: () => { hide(); Api.exit(this.win, '', false); } },
 		]));
 	};
 
