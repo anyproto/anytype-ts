@@ -97,6 +97,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	componentDidUpdate () {
 		this.open();
 		this.resize();
+		this.checkDeleted();
 	};
 
 	componentWillUnmount () {
@@ -123,6 +124,20 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		win.on('keydown.set' + namespace, e => this.onKeyDown(e));
 		win.on('createNewObject.set' + namespace, e => this.onRecordAdd(e));
 		container.on('scroll.set' + namespace, e => this.onScroll());
+	};
+
+	checkDeleted () {
+		const { isDeleted } = this.state;
+		if (isDeleted) {
+			return;
+		};
+
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, []);
+
+		if (object.isArchived || object.isDeleted) {
+			this.setState({ isDeleted: true });
+		};
 	};
 
 	getNamespace () {
