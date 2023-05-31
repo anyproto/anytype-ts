@@ -28,13 +28,13 @@ class FileUtil {
 		let m = v / (unit * unit);
 		let k = v / unit;
 		if (g >= 1) {
-			v = Util.sprintf(`%0.${trimmer(g, 2)}fGB`, Util.round(g, trimmer(g, 2)));
+			v = Util.sprintf(`%0.${trimmer(g, 2)}f GB`, Util.round(g, trimmer(g, 2)));
 		} else if (m > 1) {
-			v = Util.sprintf(`%0.${trimmer(m, 1)}fMB`, Util.round(m, trimmer(m, 1)));
+			v = Util.sprintf(`%0.${trimmer(m, 1)}f MB`, Util.round(m, trimmer(m, 1)));
 		} else if (k > 1) {
-			v = Util.sprintf(`%0.${trimmer(k, 1)}fKB`, Util.round(k, trimmer(k, 1)));
+			v = Util.sprintf(`%0.${trimmer(k, 1)}f KB`, Util.round(k, trimmer(k, 1)));
 		} else {
-			v = Util.sprintf('%dB', Util.round(v, 0));
+			v = Util.sprintf('%d B', Util.round(v, 0));
 		};
 		return v;
 	};
