@@ -118,6 +118,16 @@
 	"authPinCheckTitle": { "en": "Enter pin code" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
+	"authUsecaseTitle": { "en":  "How would you like to start?" },
+	"authUsecaseLabel": { "en":  "No need to decide now, it's just starting a point" },
+	"authUsecaseCase1Title": { "en": "Personal projects" },
+	"authUsecaseCase1Label": { "en": "Your private personal management with project, task and goals" },
+	"authUsecaseCase2Title": { "en": "Knowledge base" },
+	"authUsecaseCase2Label": { "en": "Any base of knowledge that you would like to own, books, movies or recipe for example" },
+	"authUsecaseCase3Title": { "en": "Notes or Diary" },
+	"authUsecaseCase3Label": { "en": "Daily notes with insights or long diary of self-reflection" },
+	"authUsecaseSkip": { "en":  "Skip" },
+
 	"archiveEmptyLabel": { "en": "Your bin is empty"},
 
 	"indexHi": { "en": "Hi, %s" },

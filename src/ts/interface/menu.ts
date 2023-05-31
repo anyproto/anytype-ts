@@ -41,6 +41,7 @@ export interface MenuParam {
 	onClose?(): void;
 	onOpen?(component?: any): void;
 	getTabs?(): I.MenuTab[];
+	force?: boolean;
 };
 
 export interface Menu {

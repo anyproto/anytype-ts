@@ -30,6 +30,7 @@ import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
+import PageMainUsecase from './main/usecase';
 
 const Components: any = {
 	'/':					 PageAuthSelect,
@@ -56,6 +57,7 @@ const Components: any = {
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
 	'main/block':			 PageMainBlock,
+	'main/usecase':			 PageMainUsecase,
 };
 
 const Titles = {
@@ -80,7 +82,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
-		const showSidebar = page == 'main';
+		const showSidebar = (page == 'main') && (action != 'usecase');
 
 		if (account) {
 			const { status } = account || {};

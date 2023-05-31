@@ -706,6 +706,10 @@ class App extends React.Component<object, State> {
 				break;
 			};
 
+			case 'resetOnboarding': {
+				Storage.delete('onboarding');
+				break;
+			};
 		};
 	};
 

@@ -279,6 +279,12 @@ class MenuManager {
 				},
 
 				Separator,
+				{
+					label: 'Reset onboarding',
+					click: () => { Util.send(this.win, 'command', 'resetOnboarding'); }
+				},
+
+				Separator,
 
 				{
 					label: 'Relaunch',

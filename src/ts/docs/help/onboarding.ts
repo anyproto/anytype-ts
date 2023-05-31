@@ -15,7 +15,10 @@ export default {
                 noButton: true,
                 buttons: [
                     { text: 'Next', action: 'dashboard' }
-                ]
+                ],
+                forceButtons: [
+                    { text: 'Close', action: 'close' }
+                ],
             }
         ],
 
@@ -28,6 +31,108 @@ export default {
             noArrow: true,
 			noClose: true,
 			passThrough: true,
+            offsetY: -4,
+        },
+    },
+
+    mainSet: {
+        category: 'Set & Collection',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Anytype has two basic formats: Sets and Collections.</b> As in computer science, a Set is a data structure that contains only unique elements, while a Collection is any group of objects that are stored together. You can convert any set into a collection, but not the other way around.
+					</p>
+				`,
+                video: './img/help/onboarding/set-1-to-collection.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>Sets</b> contain no duplicates and can be used to filter specific objects or relation types, such as all my bookmarks. <b>Collections</b>, however, can contain duplicates and are used for more general-purpose data storage; they can store anything.
+					</p>
+				`,
+                video: './img/help/onboarding/set-2-new-object.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>View sets or collections as an entire object, or place them inline in documents.</b> The first column will contain the collecting objects, and the others will show their relations.
+					</p>
+					<p>Filter and adjust objects by any relation, such as today’s notes (filter by date) or project documents (filter by project).</p>
+				`,
+                buttonText: 'Great! I will try',
+            }
+        ],
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    },
+
+    objectCreationStart: {
+        category: 'Creating objects',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Let’s create an object from scratch.</b> The default object type is now ‘Note’, meaning that each new object is referred to as a Note unless you choose a different type. You can change the default object type anytime in the settings menu.
+					</p>
+				`,
+                video: './img/help/onboarding/object-1-default-object-type.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu, which shows all object types installed from the Library.
+					</p>
+				`,
+                video: './img/help/onboarding/object-2-type-menu.mp4',
+                buttonText: 'I got it!',
+            },
+        ],
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4,
+        },
+    },
+
+    objectCreationFinish: {
+        category: 'Creating objects',
+        items: [
+            {
+                description: `
+					<p>
+						<b>For the object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.
+					</p>
+				`,
+                video: './img/help/onboarding/object-layout.mp4',
+                buttonText: 'Ok! I like it',
+            },
+        ],
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
             offsetY: -4,
         },
     },

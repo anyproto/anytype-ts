@@ -98,7 +98,6 @@
 		}
 
         .dataviewControls {
-            .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
             .viewItem {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
@@ -110,7 +109,7 @@
 			.icon.btn-filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
 			.icon.sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
-		.dataviewControls::after { background-color: $colorLinePrimary; }
+		.dataviewControls::after { background-color: $colorLineSecondary; }
 
 		.dataviewSelection {
 			.side.left { color: $colorPrimary; }
