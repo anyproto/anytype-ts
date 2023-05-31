@@ -166,19 +166,45 @@
 				.section { margin-bottom: 32px; }
 				.section {
 					.title { @include text-header3; margin-bottom: 12px; }
+					.label { @include text-small; color: $colorDarkGrey; }
 
 					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; }
-					.sectionContent .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
+					.sectionContent .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; display: flex; justify-content: space-between; }
 					.sectionContent .item:last-child { border-bottom: 0; }
 					.sectionContent .item {
+						.side.left { margin-right: 16px; }
+
 						.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
 						.title:last-child { margin-bottom: 0px; }
+
+						.button { white-space: nowrap; }
+
+						.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
+						.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
+						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
 					}
 				}
 
-				.section.sectionIntegrations .sectionContent .item { display: flex; justify-content: space-between; cursor: pointer; }
-				.section.sectionIntegrations .sectionContent .item .title { margin-bottom: 0; }
-				.section.sectionIntegrations .sectionContent .item .arrow { width: 14px; }
+				.section.sectionSpaceManager .sectionContent .item {
+					.storageLabel .label { display: inline; }
+					.storageLabel .label.extend { color: $colorRed; cursor: pointer; }
+				}
+
+				.section.sectionIntegrations .sectionContent .item { cursor: pointer; }
+				.section.sectionIntegrations .sectionContent .item {
+					.side.left { display: flex; gap: 0 12px; }
+					.side.left {
+						.icon { width: 22px; height: 22px; }
+						.title { margin-bottom: 0; }
+					}
+					.arrow { width: 6px; height: 11px; }
+				}
+
+				.section.sectionInfo .sectionContent {
+					.item.itemSpaceId { align-items: center; cursor: pointer; }
+					.item.itemSpaceId .icon { width: 22px; height: 22px; margin-right: 2px; }
+				}
 			}
 		}
 

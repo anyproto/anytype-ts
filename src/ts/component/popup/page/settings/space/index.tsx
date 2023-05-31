@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Icon, Title, Label, Input, IconObject } from 'Component';
-import { C, ObjectUtil, DataUtil, I, translate } from 'Lib';
+import { Icon, Title, Label, Input, IconObject, Button } from 'Component';
+import { C, ObjectUtil, DataUtil, I, translate, Util, FileUtil, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore } from 'Store';
+import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
+import Url from 'json/url.json';
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
 
@@ -22,10 +23,21 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	render () {
 		const { onPage } = this.props;
+		const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
 		const subId = Constant.subId.space;
 		const space = detailStore.get(subId, commonStore.workspace);
 		const name = this.checkName(space.name);
 		const home = ObjectUtil.getSpaceDashboard();
+
+		const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
+		const isRed = percentageUsed <= 90;
+
+		let extend = null;
+		if (isRed) {
+			extend = <Label text="Get more space." onClick={this.onExtend} className="extend" />;
+		};
+
+		console.log('SPACE: ', space)
 
 		return (
 			<React.Fragment>
@@ -71,10 +83,24 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={'Manage Space'} />
 						<div className="sectionContent">
 							<div className="item">
-								<Title text={'Remote storage'} />
+								<div className="side left">
+									<Title text={'Remote storage'} />
+									<div className="storageLabel">
+										<Label text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
+										&nbsp;
+										{extend}
+									</div>
+								</div>
+								<div className="side right">
+									<Button onClick={() => onPage('storageManager')} text={translate('popupSettingsStorageIndexManageFiles')} color="blank" className="c28" />
+								</div>
 							</div>
 							<div className="item">
-								<Title text={'Homepage'} />
+								<div className="side left">
+									<Title text={'Homepage'} />
+									<Label text={'Select an object to set as your homepage'} />
+								</div>
+								<div className="side right">1</div>
 							</div>
 						</div>
 					</div>
@@ -83,12 +109,23 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={'Integrations'} />
 						<div className="sectionContent">
 							<div className="item" onClick={() => onPage('importIndex')}>
-								<Title text={'Import data'} />
-								<Icon className="arrow forward" />
+								<div className="side left">
+									<Icon className="import" />
+									<Title text={'Import data'} />
+								</div>
+								<div className="side right">
+									<Icon className="arrow" />
+								</div>
 							</div>
+
 							<div className="item" onClick={() => onPage('exportIndex')}>
-								<Title text={'Export data'} />
-								<Icon className="arrow forward" />
+								<div className="side left">
+									<Icon className="export" />
+									<Title text={'Export data'} />
+								</div>
+								<div className="side right">
+									<Icon className="arrow" />
+								</div>
 							</div>
 						</div>
 					</div>
@@ -96,11 +133,19 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					<div className="section sectionInfo">
 						<Title text={'Space information'} />
 						<div className="sectionContent">
-							<div className="item">
-								<Title text={'Space ID'} />
+							<div className="item itemSpaceId">
+								<div className="side left">
+									<Title text={'Space ID'} />
+									<Label text={space.id} />
+								</div>
+								<div className="side right">
+									<Icon className="copy" />
+								</div>
 							</div>
 							<div className="item">
-								<Title text={'Creation date'} />
+								<div className="side left">
+									<Title text={'Creation date'} />
+								</div>
 							</div>
 						</div>
 					</div>
@@ -108,18 +153,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	
 				<div className="rows">
-
-					<Label className="section" text="Settings" />
-
-					<div className="row">
-						<div className="side left">
-							<Label text="Type" />
-						</div>
-
-						<div className="side right">
-							<Label className="grey" text="Personal" />
-						</div>
-					</div>
 
 					<div className="row">
 						<div className="side left">
@@ -183,6 +216,22 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				}
 			}
 		});
+	};
+
+	onExtend () {
+		const { account } = authStore;
+		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+
+		if (!account || !space) {
+			return;
+		};
+
+		let url = Url.extendStorage;
+
+		url = url.replace(/\%25accountId\%25/g, account.id);
+		url = url.replace(/\%25spaceName\%25/g, space.name);
+
+		Renderer.send('urlOpen', url);
 	};
 
 	onName (e: any, v: string) {

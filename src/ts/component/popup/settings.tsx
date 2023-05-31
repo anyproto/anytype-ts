@@ -18,7 +18,7 @@ import PagePinSelect from './page/settings/pin/select';
 import PagePinConfirm from './page/settings/pin/confirm';
 
 import PageStorageIndex from './page/settings/storage/index';
-import PageStorageManager from './page/settings/storage/manager';
+import PageStorageManager from './page/settings/space/storage';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
@@ -223,7 +223,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			return [
 				{ 
 					name: 'Space', isHidden: true, children: [
-						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'importIndex', 'exportIndex' ] },
+						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'storageManager', 'importIndex', 'exportIndex' ] },
 					]
 				},
 			];
@@ -234,7 +234,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 						{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
 						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-						{ id: 'storageIndex', name: translate('popupSettingsStorageIndexTitle'), icon: 'storage', subPages: [ 'storageManager' ] },
+						{ id: 'storageIndex', name: translate('popupSettingsStorageIndexTitle'), icon: 'storage' },
 					] 
 				},
 				{ 

@@ -83,7 +83,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
     };
 
     onBack = () => {
-        this.props.onPage('storageIndex');
+        this.props.onPage('spaceIndex');
     };
 });
 
