@@ -221,24 +221,28 @@
     .block.blockLink {
         .loading, .deleted { color: $colorSecondary; }
 
-		.linkCard.text {
-			.cardName .name { border-color: $colorLineTertiary; }
-		}
-
 		.linkCard.c48.withIcon {
 			.iconObject { background-color: $colorBgIcon; }
 		}
-
-		.linkCard.card {
+    }
+	.block.blockLink.text {
+		.linkCard {
+			.cardName .name { border-color: $colorLineTertiary; }
+		}
+	}
+	.block.blockLink.card {
+		.linkCard {
 			.side.left, .side.right { border-color: $colorLineTertiary; }
 		}
-    }
+	}
 
-	.block.blockLink:hover {
-		.linkCard.text {
+	.block.blockLink.text:hover {
+		.linkCard {
 			.cardName .name { border-color: $colorPrimary; }
 		}
-		.linkCard.card {
+	}
+	.block.blockLink.card:hover {
+		.linkCard {
 			.side.left, .side.right { border-color: $colorLinePrimary; }
 		}
 	}
