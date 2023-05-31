@@ -218,7 +218,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		this.id = rootId;
-		this.setLoading(true);
+		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {

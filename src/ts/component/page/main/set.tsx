@@ -152,7 +152,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		this.id = rootId;
-		this.setState({ isLoading: true });
+		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
