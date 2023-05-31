@@ -61,7 +61,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
         this.loading = true;
         this.forceUpdate();
 
-        C.ObjectImportUseCase(id, (message) => {
+        C.ObjectImportUseCase(id, () => {
             $('.usecaseWrapper').css({'opacity': 0});
 
             window.setTimeout(() => {
