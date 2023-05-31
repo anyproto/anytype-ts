@@ -169,26 +169,35 @@
 					.label { @include text-small; color: $colorDarkGrey; }
 
 					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; }
-					.sectionContent .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; display: flex; justify-content: space-between; }
+					.sectionContent .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
 					.sectionContent .item:last-child { border-bottom: 0; }
 					.sectionContent .item {
-						.side.left { margin-right: 16px; }
+						.sides { display: flex; justify-content: space-between; }
+						.sides {
+							.side { width: unset; background: unset; padding: unset; }
+							.left { margin-right: 16px; }
+						}
 
 						.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
 						.title:last-child { margin-bottom: 0px; }
 
 						.button { white-space: nowrap; }
+						.button.dashboardSelect .icon { width: 8px; height: 8px; margin-left: 6px; }
 
 						.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
 						.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
 						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+						.icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
 					}
 				}
 
 				.section.sectionSpaceManager .sectionContent .item {
+					.storageLabel { margin-bottom: 12px; }
 					.storageLabel .label { display: inline; }
 					.storageLabel .label.extend { color: $colorRed; cursor: pointer; }
+
+					.progressBar .fill { background: $colorLime; }
 				}
 
 				.section.sectionIntegrations .sectionContent .item { cursor: pointer; }
@@ -234,6 +243,8 @@
 				.space {
 					.txt .type.red { color: $colorRed; }
 				}
+
+				.progressBar { margin-bottom: 54px; }
 			}
 
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }

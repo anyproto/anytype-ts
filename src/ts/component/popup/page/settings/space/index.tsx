@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Title, Label, Input, IconObject, Button } from 'Component';
+import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
 import { C, ObjectUtil, DataUtil, I, translate, Util, FileUtil, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore } from 'Store';
@@ -30,7 +30,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const home = ObjectUtil.getSpaceDashboard();
 
 		const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
-		const isRed = percentageUsed <= 90;
+		const currentUsage = String(FileUtil.size(bytesUsed));
+		const limitUsage = String(FileUtil.size(bytesLimit));
+		const isRed = percentageUsed >= 90;
 
 		let extend = null;
 		if (isRed) {
@@ -82,97 +84,102 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					<div className="section sectionSpaceManager">
 						<Title text={'Manage Space'} />
 						<div className="sectionContent">
+
 							<div className="item">
-								<div className="side left">
-									<Title text={'Remote storage'} />
-									<div className="storageLabel">
-										<Label text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
-										&nbsp;
-										{extend}
+								<div className="sides">
+									<div className="side left">
+										<Title text={'Remote storage'} />
+										<div className="storageLabel">
+											<Label text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
+											&nbsp;
+											{extend}
+										</div>
+									</div>
+									<div className="side right">
+										<Button onClick={() => onPage('storageManager')} text={translate('popupSettingsStorageIndexManageFiles')} color="blank" className="c28" />
 									</div>
 								</div>
-								<div className="side right">
-									<Button onClick={() => onPage('storageManager')} text={translate('popupSettingsStorageIndexManageFiles')} color="blank" className="c28" />
-								</div>
+
+								<ProgressBar percent={percentageUsed} current={currentUsage} max={limitUsage} />
 							</div>
+
 							<div className="item">
-								<div className="side left">
-									<Title text={'Homepage'} />
-									<Label text={'Select an object to set as your homepage'} />
+								<div className="sides">
+									<div className="side left">
+										<Title text={'Homepage'} />
+										<Label text={'Select an object to set as your homepage'} />
+									</div>
+									<div className="side right">
+										<div onClick={this.onDashboard} id="dashboard" className="button blank c28 dashboardSelect">
+											{home ? home.name : 'Select'}
+											<Icon className="arrow down" />
+										</div>
+									</div>
 								</div>
-								<div className="side right">1</div>
 							</div>
+
 						</div>
 					</div>
 
 					<div className="section sectionIntegrations">
 						<Title text={'Integrations'} />
 						<div className="sectionContent">
+
 							<div className="item" onClick={() => onPage('importIndex')}>
-								<div className="side left">
-									<Icon className="import" />
-									<Title text={'Import data'} />
-								</div>
-								<div className="side right">
-									<Icon className="arrow" />
+								<div className="sides">
+									<div className="side left">
+										<Icon className="import" />
+										<Title text={'Import data'} />
+									</div>
+									<div className="side right">
+										<Icon className="arrow" />
+									</div>
 								</div>
 							</div>
 
 							<div className="item" onClick={() => onPage('exportIndex')}>
-								<div className="side left">
-									<Icon className="export" />
-									<Title text={'Export data'} />
-								</div>
-								<div className="side right">
-									<Icon className="arrow" />
+								<div className="sides">
+									<div className="side left">
+										<Icon className="export" />
+										<Title text={'Export data'} />
+									</div>
+									<div className="side right">
+										<Icon className="arrow" />
+									</div>
 								</div>
 							</div>
+
 						</div>
 					</div>
 
 					<div className="section sectionInfo">
 						<Title text={'Space information'} />
 						<div className="sectionContent">
+
 							<div className="item itemSpaceId">
-								<div className="side left">
-									<Title text={'Space ID'} />
-									<Label text={space.id} />
-								</div>
-								<div className="side right">
-									<Icon className="copy" />
-								</div>
-							</div>
-							<div className="item">
-								<div className="side left">
-									<Title text={'Creation date'} />
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-	
-				<div className="rows">
-
-					<div className="row">
-						<div className="side left">
-							<Label text={translate('popupSettingsSpaceHomepageTitle')} />
-							<Label className="small" text="Select an object to set as your homepage" />
-						</div>
-
-						<div className="side right">
-							<div id="dashboard" className="select" onClick={this.onDashboard}>
-								<div className="item">
-									{home ? <IconObject size={20} iconSize={20} object={home} /> : ''}
-									<div className="name">
-										{home ? home.name : 'Select'}
+								<div className="sides">
+									<div className="side left">
+										<Title text={'Space ID'} />
+										<Label text={space.id} />
+									</div>
+									<div className="side right">
+										<Icon className="copy" />
 									</div>
 								</div>
-								<Icon className="arrow light" />
 							</div>
+
+							<div className="item">
+								<div className="sides">
+									<div className="side left">
+										<Title text={'Creation date'} />
+									</div>
+								</div>
+							</div>
+
 						</div>
 					</div>
 				</div>
+
 			</React.Fragment>
 		);
 	};
