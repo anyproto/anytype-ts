@@ -354,7 +354,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			let flags: I.ObjectFlag[] = [];
 			
 			if (typeId) {
-				details.typeId = typeId;
+				details.type = typeId;
 			} else {
 				flags.push(I.ObjectFlag.SelectType);
 			};

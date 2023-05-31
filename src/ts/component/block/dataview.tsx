@@ -519,9 +519,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
-		const details: any = {
-			type: types.length ? types[0].id : commonStore.type,
-		};
+		const details: any = {};
 		const flags: I.ObjectFlag[] = [];
 
 		if (!types.length || isCollection) {
@@ -542,10 +540,21 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 
+		// Type detection and relations population
+		if (types.length) {
+			details.type = types[0].id;
+		};
 		if (relations.length) {
 			relations.forEach((it: any) => {
+				if (it.objectTypes.length && !details.type) {
+					details.type = it.objectTypes[0];
+				};
+
 				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
+		};
+		if (!details.type) {
+			details.type = commonStore.type;
 		};
 
 		for (let filter of view.filters) {
