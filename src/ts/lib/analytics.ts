@@ -21,6 +21,11 @@ class Analytics {
 		const { config } = commonStore;
 		return config.debug.an;
 	};
+
+	isAllowed (): boolean {
+		const { config } = commonStore;
+		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || window.Electron.isPackaged) || this.debug();
+	};
 	
 	init () {
 		if (this.isInit) {
@@ -51,9 +56,9 @@ class Analytics {
 		this.log('[Analytics].init');
 		this.isInit = true;
 	};
-	
+
 	profile (id: string) {
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug())) {
+		if (!this.instance || !this.isAllowed()) {
 			return;
 		};
 
@@ -62,7 +67,7 @@ class Analytics {
 	};
 
 	device (id: string) {
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug())) {
+		if (!this.instance || !this.isAllowed()) {
 			return;
 		};
 
@@ -85,7 +90,7 @@ class Analytics {
 	event (code: string, data?: any) {
 		data = data || {};
 
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug()) || !code) {
+		if (!this.instance || !this.isAllowed() || !code) {
 			return;
 		};
 
