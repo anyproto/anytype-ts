@@ -137,9 +137,7 @@
 		.linkCard.vertical {
 			.sides { flex-direction: column-reverse; }
 			.side.left { width: 100%; border-right-width: 1px; }
-			.side.right { 
-				aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px; border: 1px solid $colorBorderLight; border-bottom: 0px;
-			}
+			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px; border: 1px solid $colorBorderLight; border-bottom: 0px; }
 		}
 
 		.linkCard.withCover.vertical {
@@ -147,13 +145,70 @@
 		}
 
 		.linkCard.withCover.vertical.text { padding-top: 0px; }
-
 	}
 
-	.block.blockLink:hover {
-		.linkCard.text {
+	.blockLink.text {
+		.linkCard {
+			.side.left { line-height: 24px; vertical-align: top; gap: 0px 6px; flex-direction: row; align-items: center;  }
+			.side.right { display: none !important; }
+
+			.relationItem { display: flex; align-items: center; gap: 0px 6px; }
+			.relationItem {
+				.div { width: 2px; height: 18px; line-height: 18px; display: inline-block; vertical-align: top; flex-shrink: 0; flex-grow: 0; }
+				.div {
+					.inner { width: 2px; height: 2px; border-radius: 100%; display: inline-block; vertical-align: middle; background: $colorMediumGrey; }
+				}
+			}
+
+			.cardName { flex-wrap: nowrap; vertical-align: top; max-width: 100%; }
+			.cardName {
+				.name { @include text-overflow-nw; }
+			}
+
+			.cardDescription { @include text-small; }
+			.cardDescription {
+				.description { @include text-overflow-nw; width: 100%; }
+			}
+
+			.cardType { @include text-small; @include text-overflow-nw; color: $colorDarkGrey; flex-shrink: 0; flex-grow: 0; }
+		}
+
+		.linkCard.c2 {
+			.cardName { max-width: 70%; }
+			.cardDescription { max-width: 30%; }
+			.cardType { max-width: 30%; }
+		}
+
+		.linkCard.c3 {
+			.cardName { max-width: 60%; }
+			.cardDescription { max-width: 30%; }
+			.cardType { max-width: 10%; }
+		}
+	}
+
+	.blockLink.card {
+		.linkCard {
+			.side.left { padding: 16px; border: 1px solid $colorBorderLight; border-radius: 12px; flex-direction: column; justify-content: center; }
+			.side.right { border-radius: 0px 12px 12px 0px; }
+
+			.sides.withBgColor {
+				.side { border: 0px; }
+			}
+
+			.cardName { @include text-common; line-height: 20px; }
+			.cardName .name { @include clamp2; font-weight: 500; }
+
+			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
+		}
+	}
+
+	.block.blockLink.text:hover {
+		.linkCard {
 			.cardName .name { border-color: $colorBlack; }
 		}
+	}
+
+	.block.blockLink.card:hover {
 		.linkCard.card {
 			.side.left, .side.right { border-color: $colorBorderDark; }
 		}
@@ -164,5 +219,5 @@
 	}
 
 	.block.blockLink > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
-	.block.blockLink > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; }
+	.block.blockLink.card > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 12px; left: 0px; width: 100%; }
 }

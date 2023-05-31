@@ -46,11 +46,11 @@ Order[I.MarkType.Mention]	 = 2;
 Order[I.MarkType.Link]		 = 3;
 Order[I.MarkType.Underline]	 = 4;
 Order[I.MarkType.Strike]	 = 5;
-Order[I.MarkType.Code]		 = 6;
-Order[I.MarkType.Italic]	 = 7;
-Order[I.MarkType.Bold]		 = 8;
-Order[I.MarkType.Color]		 = 9;
-Order[I.MarkType.BgColor]	 = 10;
+Order[I.MarkType.Italic]	 = 6;
+Order[I.MarkType.Bold]		 = 7;
+Order[I.MarkType.Color]		 = 8;
+Order[I.MarkType.BgColor]	 = 9;
+Order[I.MarkType.Code]		 = 10;
 
 enum Overlap {
 	Equal		 = 0,		 // a == b
@@ -327,7 +327,7 @@ class Mark {
 
 		const render = (mark: I.Mark) => {
 			const param = String(mark.param || '');
-			if (!param && (hasParam.indexOf(mark.type) >= 0)) {
+			if (!param && hasParam.includes(mark.type)) {
 				return;
 			};
 

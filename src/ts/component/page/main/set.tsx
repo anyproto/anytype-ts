@@ -105,6 +105,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	componentDidUpdate () {
 		this.open();
 		this.resize();
+		this.checkDeleted();
 	};
 
 	componentWillUnmount () {
@@ -133,6 +134,20 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		container.on('scroll.set' + namespace, e => this.onScroll());
 	};
 
+	checkDeleted () {
+		const { isDeleted } = this.state;
+		if (isDeleted) {
+			return;
+		};
+
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId, []);
+
+		if (object.isArchived || object.isDeleted) {
+			this.setState({ isDeleted: true });
+		};
+	};
+
 	getNamespace () {
 		return this.props.isPopup ? '-popup' : '';
 	};
@@ -145,7 +160,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		};
 
 		this.id = rootId;
-		this.setState({ isLoading: true });
+		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(rootId, '', (message: any) => {
 			if (message.error.code) {

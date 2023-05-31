@@ -59,8 +59,8 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 						id={'item-' + item.id} 
 						className="item" 
 						style={param.style} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item) }}
-						onClick={(e: any) => { this.onClick(e, item) }}
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onClick={e => this.onClick(e, item)}
 					>
 						{isTemplate ? (
 							<div className="inner">

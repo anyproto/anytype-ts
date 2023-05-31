@@ -141,6 +141,10 @@ const Block = observer(class Block extends React.Component<Props> {
 			};
 				
 			case I.BlockType.File: {
+				if (content.state == I.BookmarkState.Done) {
+					cn.push('withContent');
+				};
+
 				if (style == I.FileStyle.Link) {
 					blockComponent = <BlockFile key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 					break;
@@ -197,6 +201,8 @@ const Block = observer(class Block extends React.Component<Props> {
 					canDropMiddle = canDrop;
 				};
 
+				cn.push(DataUtil.linkCardClass(content.cardStyle));
+
 				blockComponent = <BlockLink key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
 			};
@@ -206,6 +212,10 @@ const Block = observer(class Block extends React.Component<Props> {
 				
 				if (blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Block ])) {
 					canDropMiddle = canDrop;
+				};
+
+				if (content.state == I.BookmarkState.Done) {
+					cn.push('withContent');
 				};
 
 				blockComponent = <BlockBookmark key={`block-${block.id}-component`} ref={setRef} {...this.props} />;

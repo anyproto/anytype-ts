@@ -38,16 +38,17 @@ class Navigation extends React.Component {
 		const cf = isWin ? `${alt} + →` : `${cmd} + →`;
 
 		const buttons: any[] = [
-			{ className: 'back', tooltip: 'Back', caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
-			{ className: 'forward', tooltip: 'Forward', caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
-			{ className: 'plus', tooltip: 'Create new object', caption: `${cmd} + N`, onClick: this.onAdd },
-			{ className: 'graph', tooltip: 'Graph', caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
-			{ className: 'search', tooltip: 'Search', caption: `${cmd} + S`, onClick: this.onSearch },
+			{ id: 'back', tooltip: 'Back', caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
+			{ id: 'forward', tooltip: 'Forward', caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
+			{ id: 'plus', tooltip: 'Create new object', caption: `${cmd} + N`, onClick: this.onAdd },
+			{ id: 'graph', tooltip: 'Graph', caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
+			{ id: 'search', tooltip: 'Search', caption: `${cmd} + S`, onClick: this.onSearch },
 		];
 
 		return (
 			<div 
 				ref={node => this.node = node}
+				id="navigationPanel"
 				className="navigationPanel"
 			>
 				<div className="inner">
@@ -60,13 +61,14 @@ class Navigation extends React.Component {
 
 						return (
 							<div 
-								key={item.className} 
+								key={item.id} 
+								id={`button-navigation-${item.id}`}
 								onClick={item.onClick} 
 								className={cn.join(' ')}
 								onMouseEnter={e => item.disabled ? null : this.onTooltipShow(e, item.tooltip, item.caption)}
 								onMouseLeave={e => Preview.tooltipHide(false)}
 							>
-								<Icon className={item.className} />
+								<Icon className={item.id} />
 							</div>
 						);
 					})}
@@ -215,10 +217,12 @@ class Navigation extends React.Component {
 		const { ww, wh } = Util.getWindowDimensions();
 
 		x = Number(x) || 0;
+		x = Math.floor(x);
 		x = Math.max(0, x);
 		x = Math.min(ww - this.width, x);
 
 		y = Number(y) || 0;
+		y = Math.floor(y);
 		y = Math.max(Util.sizeHeader(), y);
 		y = Math.min(wh - this.height, y);
 
@@ -234,7 +238,7 @@ class Navigation extends React.Component {
 			const node = $(this.node);
 			const coords = this.checkCoords(x, y);
 		
-			node.css({ transform: `translate3d(${coords.x}px, ${coords.y}px, 0px)` });
+			node.css({ left: coords.x, top: coords.y });
 		});
 	};
 

@@ -12,7 +12,7 @@ import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as Prev
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
 	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
-	focus, Preview, Mark, Animation
+	focus, Preview, Mark, Animation, Onboarding
 } from 'Lib';
 
 configure({ enforceActions: 'never' });
@@ -232,6 +232,7 @@ window.Lib = {
 	Preview,
 	Storage,
 	Animation,
+	Onboarding,
 };
 
 /*
@@ -662,23 +663,23 @@ class App extends React.Component<object, State> {
 			};
 
 			case 'exportTemplates': {
-				Action.openDir(paths => {
-					C.TemplateExportAll(paths[ 0 ], (message: any) => {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.TemplateExportAll(paths[0], (message: any) => {
 						if (message.error.code) {
 							return;
 						};
 
-						Renderer.send('pathOpen', paths[ 0 ]);
+						Renderer.send('pathOpen', paths[0]);
 					});
 				});
 				break;
 			};
 
 			case 'exportLocalstore': {
-				Action.openDir(paths => {
-					C.DebugExportLocalstore(paths[ 0 ], [], (message: any) => {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
-							Renderer.send('pathOpen', paths[ 0 ]);
+							Renderer.send('pathOpen', paths[0]);
 						};
 					});
 				});

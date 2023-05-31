@@ -1,6 +1,6 @@
 import * as amplitude from 'amplitude-js';
 import { I, C, Util, Storage } from 'Lib';
-import { commonStore, detailStore, dbStore } from 'Store';
+import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const KEYS = [ 
@@ -20,6 +20,11 @@ class Analytics {
 	debug () {
 		const { config } = commonStore;
 		return config.debug.an;
+	};
+
+	isAllowed (): boolean {
+		const { config } = commonStore;
+		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !window.Electron.isPackaged) || this.debug();
 	};
 	
 	init () {
@@ -44,15 +49,16 @@ class Analytics {
 		this.instance.setVersionName(window.Electron.version.app);
 		this.instance.setUserProperties({ 
 			deviceType: 'Desktop',
-			platform: Util.getPlatform(),
+			platform,
 			osVersion: window.Electron.version.os,
 		});
 
+		this.log('[Analytics].init');
 		this.isInit = true;
 	};
-	
+
 	profile (id: string) {
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug())) {
+		if (!this.instance || !this.isAllowed()) {
 			return;
 		};
 
@@ -61,7 +67,7 @@ class Analytics {
 	};
 
 	device (id: string) {
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug())) {
+		if (!this.instance || !this.isAllowed()) {
 			return;
 		};
 
@@ -84,7 +90,7 @@ class Analytics {
 	event (code: string, data?: any) {
 		data = data || {};
 
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug()) || !code) {
+		if (!this.instance || !this.isAllowed() || !code) {
 			return;
 		};
 
@@ -313,7 +319,6 @@ class Analytics {
 		const map = {
 			'index/index':		 'ScreenIndex',
 
-			'auth/notice':		 'ScreenDisclaimer',
 			'auth/login':		 'ScreenLogin',
 			'auth/register':	 'ScreenAuthRegistration',
 			'auth/invite':		 'ScreenAuthInvitation',

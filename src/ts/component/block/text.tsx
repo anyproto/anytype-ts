@@ -497,6 +497,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					item.addClass('withImage c' + size);
 				};
 			});
+
+			this.textStyle(item);
 		});
 		
 		items.off('mouseenter.mention');

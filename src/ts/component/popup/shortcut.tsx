@@ -154,7 +154,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 						{ com: `${cmd} + X`,			 name: 'Cut selected block/blocks or text part' },
 						{ com: `${cmd} + V`,			 name: 'Paste data outside Anytype, block/blocks or text part' },
 						{ com: `${cmd} + D`,			 name: 'Duplicate selected block/blocks' },
-						{ com: `${cmd} + E, ${cmd} + .`, name: 'Show emoji picker 🏄‍♂️' },
+						{ com: `${cmd} + E`,			 name: 'Show emoji picker 🏄‍♂️' },
 					]
 				},
 

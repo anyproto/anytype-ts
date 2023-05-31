@@ -89,7 +89,7 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		return (
 			<div 
-				id={`row-${record.id}`}
+				id={`record-${record.id}`}
 				ref={node => this.node = node} 
 				className={cn.join(' ')} 
 				style={style}

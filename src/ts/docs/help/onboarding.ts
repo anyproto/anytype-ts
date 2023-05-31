@@ -203,32 +203,43 @@ export default {
         items: [
 			{
                 name: 'Connect your Objects',
-                description: `Use the <span class="highlight">@</span> key to reference other Objects as you're writing.`,
+				description: `Use the <span class="highlight">@</span> symbol to refer to other objects while writing, and the <span class="highlight">/</span> symbol to create text styles, objects, and more.`,
                 param: {
-                    element: '#block-featuredRelations',
+                    element: '#block-featuredRelations #onboardingAnchor',
                     offsetY: 10,
                 }
             },
             {
                 name: 'Did you know?',
-                description: `You can drag &amp; drop files from your computer into the editor window to create new blocks. Give it a try!`,
+                description: `Drag and drop files and images from your computer into the editor window, or copy and paste text to create new blocks. Try it out!`,
                 param: {
-                    element: '#block-featuredRelations',
+                    element: '#block-featuredRelations #onboardingAnchor',
                     offsetY: 10,
+                }
+            },
+			{
+                description: 'Click above to view the Relation menu, where you can find object links as properties.',
+                param: {
+                    element: '#header #button-header-relation',
+                    offsetY: 10,
+                    classNameWrap: 'fixed fromHeader',
+					horizontal: I.MenuDirection.Right,
                 }
             },
             {
                 name: 'See your Graph grow',
-                description: 'Click above to see how your new Objects are linked',
+                description: 'Click below to see how new objects are connected in your own graph by links and relations!',
                 param: {
-                    element: '#header .side.left .icon.graph',
-                    offsetY: 10,
+                    element: '#navigationPanel #button-navigation-graph',
+                    offsetY: -10,
                     classNameWrap: 'fixed fromHeader',
+					vertical: I.MenuDirection.Top,
+					horizontal: I.MenuDirection.Center,
                 }
             },
 			{
                 name: `Like what you're working on?`,
-                description: 'Save this format for future use by selecting Save as Template from the three-dots menu',
+                description: 'Save this structure for future use by selecting “Save as Template” from the three-dot menu. It will be saved in your Library, very useful for recurring work.',
                 param: {
                     element: '#header #button-header-more',
                     offsetY: 10,
@@ -269,7 +280,7 @@ export default {
 		items: [
 			{
 				name: 'This is inline set',
-				description: 'Set query and name are synced with the source set you selected. You can change source by clicking on the set name.',
+				description: 'Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.',
 				param: {
 					element: '#head-title-wrapper #value',
 					offsetY: 10,
@@ -277,9 +288,9 @@ export default {
 			},
 			{
 				name: 'Views',
-				description: 'Views are not synced, but copied. You can tweak them to the needs of your current context. No worries, source set will not be affected.',
+				description: 'Adjust rules and views to suit the current context.',
 				param: {
-					element: '.dataviewControls #sideLeft',
+					element: '#dataviewControls #sideLeft',
 					offsetY: 10,
 				}
 			},

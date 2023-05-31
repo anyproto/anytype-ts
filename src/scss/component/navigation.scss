@@ -2,13 +2,13 @@
 
 .navigationPanel {
 	background: rgba(37, 37, 37, 0.4); backdrop-filter: blur(16px); border-radius: 16px; position: fixed; left: 0px; padding: 8px 16px; top: 0px;
-	height: 48px; z-index: 102; transition: transform 0.3s $easeInQuint;
+	height: 48px; z-index: 102; transition-property: left, top; transition-duration: 0.3s; transition-timing-function: $easeInQuint;
 }
 .navigationPanel {
 	.inner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: center; position: relative; z-index: 1; }
 
 	.iconWrap { 
-		width: 32px; height: 32px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+		width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; 
 		transition: $transitionAllCommon;
 	}
 	.iconWrap:not(.disabled):hover { background-color: $colorHoverMedium; }

@@ -67,7 +67,7 @@
         .loaderWrapper { border: 0px; }
         .pdfWrapper { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
     }
-    .block.blockMedia.isAudio.withFile > .wrapContent { background-color: $colorHoverMedium; }
+    .block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorHoverMedium; }
 
     /* BlockDataview */
 
@@ -107,7 +107,7 @@
             .viewItem.isDragging { background: $colorHoverMedium; }
 
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
-			.icon.filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
+			.icon.btn-filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
 			.icon.sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
 		.dataviewControls::after { background-color: $colorLinePrimary; }

@@ -8,7 +8,6 @@ import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store
 import Constant from 'json/constant.json';
 
 import PageAuthInvite from './auth/invite';
-import PageAuthNotice from './auth/notice';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pin/check';
@@ -83,16 +82,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
-		const showNotice = !Storage.get('firstRun');
 		const showSidebar = (page == 'main') && (action != 'usecase');
 
 		if (account) {
 			const { status } = account || {};
 			const { type } = status || {};
-		};
-
-		if (showNotice) {
-			Components['/'] = PageAuthNotice;
 		};
 
 		const Component = Components[path];
@@ -265,17 +259,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		let page = String(match.params.page || 'index');
 		let action = String(match.params.action || 'index');
 		let id = String(match.params.id || '');
-		let showNotice = !Storage.get('firstRun');
 		let params: any = { page, action };
 		let isMain = page == 'main';
 		let isMainType = isMain && (action == 'type');
 		let isMainRelation = isMain && (action == 'relation');
-
-		if (showNotice) {
-			params.page = 'auth';
-			params.action = 'notice';
-			Storage.set('firstRun', 1);
-		};
 
 		if (isMainType || isMainRelation) {
 			params.id = id;

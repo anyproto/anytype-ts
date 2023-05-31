@@ -168,8 +168,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -288,7 +288,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const offset = 16;
 		const height = Math.max(HEIGHT + offset, Math.min(300, items.length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 

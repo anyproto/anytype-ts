@@ -6,17 +6,17 @@
 		.wrapContent { z-index: 1; }
 
 		#set-loader { margin: 24px auto; }
-		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); cursor: pointer; }
+		.icon.plus { width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
 		
 		.icon.edit { 
-			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); cursor: pointer; 
+			display: none; flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/icon/dataview/button/edit0.svg'); 
 			background-size: 20px;
 		}
 		.icon.edit:hover { background-image: url('~img/icon/dataview/button/edit1.svg'); }
 
 		.loadMore { 
 			display: flex; align-items: center; @include text-small; line-height: 20px; width: 100%; margin-top: 10px; padding: 4px 2px; color: $colorDarkGrey;
-			transition: $transitionAllCommon; cursor: pointer;
+			transition: $transitionAllCommon;
 		}
 		.loadMore {
 			.icon { flex-shrink: 0; width: 20px; height: 20px; background-image: url('~img/arrow/loadMore0.svg'); }
@@ -52,7 +52,7 @@
 			.side.right { opacity: 0; transition: $transitionAllCommon; }
 
 			.iconWrap { 
-				padding: 4px; border-radius: 4px; transition: $transitionAllCommon; cursor: pointer; display: flex; align-items: center;
+				padding: 4px; border-radius: 4px; transition: $transitionAllCommon; display: flex; align-items: center;
 				line-height: 20px; @include text-small; color: $colorMediumGrey;
 			}
 			.iconWrap:hover { background-color: $colorHoverMedium; }
@@ -62,7 +62,7 @@
 				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
 			}
 
-			.editableWrap { @include text-header3; height: 26px; cursor: pointer; max-width: calc(100% - 60px); @include text-overflow-nw; }
+			.editableWrap { @include text-header3; height: 26px; max-width: calc(100% - 60px); @include text-overflow-nw; }
 			.editableWrap.isEmpty { min-width: 70px; }
 
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
@@ -91,14 +91,14 @@
 			.side { padding: 15px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
 
-			.icon { cursor: pointer; position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionAllCommon; }
+			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; transition: $transitionAllCommon; }
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
 
-			.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-			.icon.filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
-			.icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
-			.icon.sort.on { background-image: url('~img/icon/dataview/button/sort1.svg'); }
-			.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
+			.icon.btn-sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
+			.icon.btn-sort.on { background-image: url('~img/icon/dataview/button/sort1.svg'); }
+			.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 
 			.views { display: flex; gap: 0px 16px; flex-direction: row; align-items: center; justify-content: flex-start; }
 			.views {
@@ -106,7 +106,7 @@
 			}
 
 			.viewItem { 
-				transition: color $transitionCommon; cursor: pointer; @include text-header3; font-weight: 700; @include text-overflow-nw; 
+				transition: color $transitionCommon; @include text-header3; font-weight: 700; @include text-overflow-nw; 
 				max-width: 300px; color: $colorMediumGrey;
 			}
 			.viewItem { 
@@ -137,7 +137,7 @@
 			.side.left { @include text-header3; color: $colorBlack;  }
 			.side.right {
 				.element {
-					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px; cursor: pointer;
+					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; border-radius: 4px; padding: 0px 6px 0px 4px;
 					transition: $transitionAllCommon;
 				}
 				.element {

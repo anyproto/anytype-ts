@@ -6,9 +6,10 @@
 		.viewContent.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
 
-		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; position: relative; }
-			.row:last-child { margin: 0px; }
+		    .row { height: 100%; width: 100%; display: block; white-space: nowrap; position: relative; }
 			.row.isDone * { color: $colorDarkGrey; }
+
+			.dropTarget { height: 100%; padding: 0px 0px 10px 0px; }
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
@@ -80,12 +81,23 @@
 		.viewContent.viewList.isCollection { padding-left: 0px; }
 		.viewContent.viewList.isCollection {
 			.row { padding-left: 20px; }
+			.row {
+				.icon.drag { top: 6px; margin: 0px; }
+			}
 			.row:hover {
 				.icon.drag { opacity: 1; }
 			}
+
+			.dropTarget.isOver { box-shadow: 0px 0px; }
+			.dropTarget.isOver::before { 
+				content: ""; position: absolute; background: $colorOrange; width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 14px; 
+			}
+			.dropTarget.isOver.top::before { top: -6px; }
+			.dropTarget.isOver.bottom::before { bottom: 4px; }
 		}
     }
 	.block.blockDataview.isInline {
 		.viewContent.viewList { padding: 9px 0px 0px 0px; }
+		.row { padding-left: 0px !important; }
 	}
 }

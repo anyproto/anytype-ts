@@ -193,12 +193,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const setOf = object.setOf || [];
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const node = $(this.node);
-		const element = node.find(`#card-${groupId}-add`);
+		const element = node.find(`#record-${groupId}-add`);
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
-		const details: any = {
-			type: types.length ? types[0].id : commonStore.type,
-		};
+		const details: any = {};
 		const conditions = [
 			I.FilterCondition.Equal,
 			I.FilterCondition.GreaterOrEqual,
@@ -214,14 +212,21 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		details[view.groupRelationKey] = group.value;
 
+		// Type detection and relations population
 		if (types.length) {
 			details.type = types[0].id;
 		};
-
 		if (relations.length) {
 			relations.forEach((it: any) => {
-				details[it.id] = Relation.formatValue(it, null, true);
+				if (it.objectTypes.length && !details.type) {
+					details.type = it.objectTypes[0];
+				};
+
+				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
+		};
+		if (!details.type) {
+			details.type = commonStore.type;
 		};
 
 		for (let filter of view.filters) {
@@ -356,7 +361,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 			items.push({ id: `${group.id}-add`, isAdd: true });
 			items.forEach((item: any, i: number) => {
-				const el = node.find(`#card-${item.id}`);
+				const el = node.find(`#record-${item.id}`);
 				if (!el.length) {
 					return;
 				};
@@ -460,7 +465,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
 
-				this.newIndex = isLeft ? rect.index : rect.index + 1;
+				this.newIndex = rect.index;
+
+				if (isLeft && (rect.index > current.index)) {
+					this.newIndex--;
+				};
+
+				if (!isLeft && (rect.index < current.index)) {
+					this.newIndex++;
+				};
 				break;
 			};
 		};
@@ -547,7 +560,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			node.find('.isOver').removeClass('isOver top bottom');
 
 			if (hoverId) {
-				node.find(`#card-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+				node.find(`#record-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
 			};
 		});
 	};
@@ -662,7 +675,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 				const items = column.getItems();
 				items.forEach((item: any, i: number) => {
-					const el = node.find(`#card-${item.id}`);
+					const el = node.find(`#record-${item.id}`);
 					if (!el.length) {
 						return;
 					};

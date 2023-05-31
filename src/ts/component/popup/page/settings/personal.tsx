@@ -46,7 +46,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 								id="spellcheck" 
 								value={config.languages} 
 								options={languages} 
-								onChange={(v: any) => { Renderer.send('setLanguage', v); }}
+								onChange={v => Renderer.send('setLanguage', v)}
 								arrowClassName="light"
 								isMultiple={true}
 								noFilter={false}

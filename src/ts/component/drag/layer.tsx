@@ -132,7 +132,7 @@ class DragLayer extends React.Component<object, State> {
 					break;
 				};
 
-				const first = container.find(`#row-${ids[0]}`);
+				const first = container.find(`#record-${ids[0]}`);
 				const cn = first.parents('.viewContent').attr('class');
 				const block = $('<div class="block blockDataview"></div>');
 				const view = $('<div />');
@@ -143,12 +143,12 @@ class DragLayer extends React.Component<object, State> {
 				wrap.addClass('blocks').append(block);
 
 				ids.forEach((id: string, idx: number) => {
-					const el = container.find(`#row-${id}`);
+					const el = container.find(`#record-${id}`);
 					const margin = idx * 10;
 					const clone = el.clone().addClass('record');
 
 					view.append(clone);
-					clone.css({ marginLeft: margin, marginTop: margin, zIndex: (ids.length - idx) });
+					clone.css({ marginLeft: margin, marginTop: margin, zIndex: (ids.length - idx), width: el.width() });
 				});
 				break;
 			};
