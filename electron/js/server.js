@@ -114,7 +114,7 @@ class Server {
 				});
 				
 				this.stopTriggered = true;
-				this.cp.kill('SIGTERM');
+				this.cp.kill(signal);
 			} else {
 				resolve();
 			};
