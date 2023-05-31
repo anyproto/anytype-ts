@@ -5,7 +5,6 @@ const userPath = app.getPath('userData');
 const logPath = path.join(userPath, 'logs');
 
 const ConfigManager = require('./config.js');
-const Server = require('./server.js');
 const Util = require('./util.js');
 
 const Separator = { type: 'separator' };
