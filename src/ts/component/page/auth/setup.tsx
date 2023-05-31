@@ -114,8 +114,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	componentDidMount () {
 		const { match } = this.props;
 
-		console.log(match.params.id);
-		
 		switch (match.params.id) {
 			case 'init': 
 				this.init(); 

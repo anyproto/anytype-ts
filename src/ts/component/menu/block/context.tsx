@@ -43,12 +43,12 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		);
 		
 		let markActions = [
-			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold', caption: `${cmd}+B` },
-			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic', caption: `${cmd}+I` },
-			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough', caption: `${cmd}+Shift+S` },
-			{ type: I.MarkType.Underline, icon: 'underline', name: 'Underline', caption: `${cmd}+U` },
-			{ type: I.MarkType.Link, icon: 'link', name: 'Link', caption: `${cmd}+K` },
-			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code', caption: `${cmd}+L` },
+			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold', caption: `${cmd} + B` },
+			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic', caption: `${cmd} + I` },
+			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough', caption: `${cmd} + Shift + S` },
+			{ type: I.MarkType.Underline, icon: 'underline', name: 'Underline', caption: `${cmd} + U` },
+			{ type: I.MarkType.Link, icon: 'link', name: 'Link', caption: `${cmd} + K` },
+			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code', caption: `${cmd} + L` },
 		];
 		
 		// You can't make headers bold, since they are already bold
@@ -104,7 +104,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								className="color"
 								inner={color}
 								tooltip="Color"
-								tooltipCaption={`${cmd}+Shift+C`}
+								tooltipCaption={`${cmd} + Shift + C`}
 								tooltipY={I.MenuDirection.Top}
 								onMouseDown={(e: any) => { this.onMark(e, I.MarkType.Color); }} 
 							/>
@@ -114,7 +114,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 								className="color"
 								inner={background} 
 								tooltip="Background"
-								tooltipCaption={`${cmd}+Shift+H`}
+								tooltipCaption={`${cmd} + Shift + H`}
 								tooltipY={I.MenuDirection.Top}
 								onMouseDown={(e: any) => { this.onMark(e, I.MarkType.BgColor); }} 
 							/>

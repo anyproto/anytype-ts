@@ -10,6 +10,7 @@ import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 interface State {
+	isLoading: boolean;
 	isDeleted: boolean;
 };
 
@@ -27,11 +28,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	refHeader: any = null;
 	refHead: any = null;
 	refListPreview: any = null;
-	loading = false;
 	timeout = 0;
 	page = 0;
 
 	state = {
+		isLoading: false,
 		isDeleted: false,
 	};
 
@@ -47,11 +48,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	render () {
-		if (this.state.isDeleted) {
+		const { isLoading, isDeleted } = this.state;
+
+		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
-		if (this.loading) {
+		if (isLoading) {
 			return <Loader id="loader" />;
 		};
 
@@ -73,12 +76,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
+		const allowedLayout = rootId != Constant.typeId.bookmark;
 
 		if (!recommendedRelations.includes('rel-description')) {
 			recommendedRelations.push('rel-description');
 		};
-
-		console.log(recommendedRelations);
 
 		const relations = recommendedRelations.map(id => dbStore.getRelationById(id)).filter(it => {
 			if (!it) {
@@ -170,25 +172,27 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 					{allowedObject ? (
 						<React.Fragment>
-							<div className="section layout">
-								<div className="title">Recommended layout</div>
-								<div className="content">
-									{allowedDetails ? (
-										<Select 
-											id="recommendedLayout" 
-											value={object.recommendedLayout} 
-											options={MenuUtil.turnLayouts()} 
-											arrowClassName="light" 
-											onChange={this.onLayout} 
-										/>
-									) : (
-										<React.Fragment>
-											<Icon className={layout.icon} />
-											<div className="name">{layout.name}</div>
-										</React.Fragment>
-									)}
+							{allowedLayout ? (
+								<div className="section layout">
+									<div className="title">Recommended layout</div>
+									<div className="content">
+										{allowedDetails ? (
+											<Select 
+												id="recommendedLayout" 
+												value={object.recommendedLayout} 
+												options={MenuUtil.turnLayouts()} 
+												arrowClassName="light" 
+												onChange={this.onLayout} 
+											/>
+										) : (
+											<React.Fragment>
+												<Icon className={layout.icon} />
+												<div className="name">{layout.name}</div>
+											</React.Fragment>
+										)}
+									</div>
 								</div>
-							</div>
+							) : ''}
 
 							<div className="section relation">
 								<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
@@ -239,22 +243,26 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		this.id = rootId;
-		this.loading = true;
-		this.forceUpdate();
+		this.setState({ isLoading: true });
 
 		C.ObjectOpen(rootId, '', (message: any) => {
 			if (message.error.code) {
 				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.setState({ isDeleted: true });
+					this.setState({ isDeleted: true, isLoading: false });
 				} else {
 					ObjectUtil.openHome('route');
 				};
 				return;
 			};
 
-			this.loading = false;
+			const object = detailStore.get(rootId, rootId, []);
+			if (object.isArchived || object.isDeleted) {
+				this.setState({ isDeleted: true, isLoading: false });
+				return;
+			};
+
+			this.setState({ isLoading: false });
 			this.loadTemplates();
-			this.forceUpdate();
 
 			if (this.refHeader) {
 				this.refHeader.forceUpdate();
@@ -302,9 +310,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		const details: any = { 
 			type: Constant.typeId.template, 
 			targetObjectType: rootId,
+			layout: object.recommendedLayout,
 		};
 
 		C.ObjectCreate(details, [], '', (message) => {

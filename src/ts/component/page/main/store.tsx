@@ -22,9 +22,10 @@ enum View {
 };
 
 const cmd = keyboard.cmdSymbol();
+const alt = keyboard.altSymbol();
 const Tabs = [
 	{ id: Tab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
-	{ id: Tab.Relation, name: 'Relations', tooltipCaption: `${cmd} + Alt + T` },
+	{ id: Tab.Relation, name: 'Relations', tooltipCaption: `${cmd} + ${alt} + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
@@ -45,6 +46,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	frame = 0;
 	limit = 0;
 	midHeight = 0;
+	filter: string = '';
 
 	constructor (props: I.PageComponent) {
 		super(props);
@@ -351,6 +353,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onFilterChange (v: string) {
+		this.filter = v;
 		menuStore.updateData(this.getMenuId(), { filter: v });
 	};
 
@@ -600,25 +603,26 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getLimit () {
-		const ww = $(window).width();
+		const container = Util.getPageContainer(this.props.isPopup);
 		const size = Constant.size.store;
-		const maxWidth = ww - size.border * 2;
+		const maxWidth = container.width() - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
 
 		return Math.max(1, Math.min(5, limit));
 	};
 
 	resize () {
-		const win = $(window);
 		const container = Util.getPageContainer(this.props.isPopup);
+		const win = $(window);
 		const node = $(this.node);
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = Util.sizeHeader();
-		const isPopup = this.props.isPopup && !container.hasClass('full');
+		const isPopup = this.isPopup();
 		const limit = this.getLimit();
 		const wh = isPopup ? container.height() : win.height();
 		const midHeight = node.find('.mid').outerHeight();
+		const filter = node.find('#store-filter');
 
 		node.css({ height: wh });
 		
@@ -637,6 +641,23 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			raf.cancel(this.frame);
 			this.frame = raf(() => { this.forceUpdate(); });
 		};
+
+		if (!menuStore.get(this.getMenuId())) {
+			return;
+		}
+
+		if (this.refFilter && this.filter.length) {
+			this.refFilter.setValue(this.filter);
+			this.refFilter.focus();
+		};
+		menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
+	};
+
+	isPopup () {
+		const { isPopup } = this.props;
+		const container = Util.getPageContainer(isPopup);
+
+		return isPopup && !container.hasClass('full');
 	};
 
 });

@@ -8,11 +8,11 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 import { configure, spy } from 'mobx';
 import { enableLogging } from 'mobx-logger';
-import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Icon, ListPopup, ListMenu } from './component';
+import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
 	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
-	focus, Preview, Mark, Animation
+	focus, Preview, Mark, Animation, Onboarding
 } from 'Lib';
 
 configure({ enforceActions: 'never' });
@@ -61,6 +61,7 @@ import 'scss/component/textarea.scss';
 import 'scss/component/title.scss';
 import 'scss/component/toast.scss';
 import 'scss/component/tooltip.scss';
+import 'scss/component/navigation.scss';
 
 import 'scss/component/widget/common.scss';
 import 'scss/component/widget/space.scss';
@@ -231,6 +232,7 @@ window.Lib = {
 	Preview,
 	Storage,
 	Animation,
+	Onboarding,
 };
 
 /*
@@ -324,6 +326,7 @@ class App extends React.Component<object, State> {
 						<PreviewIndex />
 						<Progress />
 						<Toast />
+						<Navigation />
 
 						<div id="tooltip" />
 						<div id="drag" />
@@ -374,17 +377,19 @@ class App extends React.Component<object, State> {
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => { Util.route(route); });
+		Renderer.on('route', (e: any, route: string) => Util.route(route));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
 		Renderer.on('update-confirm', this.onUpdateConfirm);
 		Renderer.on('update-not-available', this.onUpdateUnavailable);
-		Renderer.on('update-downloaded', () => { commonStore.progressClear(); });
+		Renderer.on('update-downloaded', () => commonStore.progressClear());
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
 		Renderer.on('command', this.onCommand);
 		Renderer.on('spellcheck', this.onSpellcheck);
+		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
+		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => commonStore.configSet(config, true));
 		Renderer.on('enter-full-screen', () => { commonStore.fullscreenSet(true); });
 		Renderer.on('leave-full-screen', () => { commonStore.fullscreenSet(false); });
@@ -658,23 +663,23 @@ class App extends React.Component<object, State> {
 			};
 
 			case 'exportTemplates': {
-				Action.openDir(paths => {
-					C.TemplateExportAll(paths[ 0 ], (message: any) => {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.TemplateExportAll(paths[0], (message: any) => {
 						if (message.error.code) {
 							return;
 						};
 
-						Renderer.send('pathOpen', paths[ 0 ]);
+						Renderer.send('pathOpen', paths[0]);
 					});
 				});
 				break;
 			};
 
 			case 'exportLocalstore': {
-				Action.openDir(paths => {
-					C.DebugExportLocalstore(paths[ 0 ], [], (message: any) => {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
-							Renderer.send('pathOpen', paths[ 0 ]);
+							Renderer.send('pathOpen', paths[0]);
 						};
 					});
 				});

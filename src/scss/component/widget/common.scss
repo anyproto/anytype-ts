@@ -5,7 +5,7 @@
 .widget {
 	.head { 
 		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; justify-content: space-between; 
-		cursor: pointer; padding: 12px 8px 10px 16px;
+		padding: 12px 8px 10px 16px;
 	}
 	.head {
 		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
@@ -82,7 +82,7 @@
 	display: flex; position: relative; gap: 0px 12px; justify-content: flex-start;
 }
 .button.widget {
-	.icon { height: 20px; width: 20px; margin: 0px; }
-	.icon.library { background-image: url('~img/icon/sidebar/library.svg'); }
+	.icon { height: 20px; width: 20px; margin: 0px; flex-shrink: 0; }
+	.icon.store { background-image: url('~img/icon/sidebar/store.svg'); }
 	.icon.bin { background-image: url('~img/icon/sidebar/bin.svg'); }
 }

@@ -3,12 +3,12 @@
 .blocks {
 	.block.blockDataview {
 		.cellHead { 
-			text-align: left; color: $colorDarkGrey; font-weight: 400; line-height: 20px; position: relative; 
-			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon;
+			@include text-small; text-align: left; color: $colorDarkGrey; font-weight: 400; line-height: 20px; position: relative; height: 38px;
+			cursor: grab; display: inline-block; vertical-align: top; transition: background-color $transitionCommon; 
 		}
 		.cellHead {
-			.cellContent { cursor: grab; height: 46px !important; overflow: visible !important; }
-			.flex { padding: 14px; gap: 0px 6px; align-items: center; }
+			.cellContent { cursor: grab; height: 36px !important; overflow: visible !important; }
+			.flex { padding: 9px 14px; gap: 0px 6px; align-items: center; }
 			.iconObject { width: 20px; height: 20px; margin: 0px; vertical-align: top; flex-shrink: 0; display: none; }
 			.icon.lock { flex-shrink: 0; }
 
@@ -26,14 +26,14 @@
 			.name { display: none; }
 			.icon.lock { display: none; }
 		}
-		.cellHead.last { overflow: visible; cursor: pointer; padding: 14px; }
+		.cellHead.last { overflow: visible; padding: 9px 14px; }
 		.cellHead.last {
 			.icon.plus { margin: 0px; }
 		}
 
-		.cellHead.isDragging { border: 0px; }
+		.cellHead.isDragging { border: 0px; height: 38px; }
 		.cellHead.isDragging::after {
-			content: ""; display: block; width: 100%; height: calc(100% - 1px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
 			background-color: rgba(79,79,79,0.04);
 		}
 		.cellHead.isDragging {
@@ -41,7 +41,7 @@
 		}
 
 		.cellHead.cellKeyHover::after, .cellHead.active::after { 
-			content: ""; display: block; width: 100%; height: calc(100% - 1px); position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
+			content: ""; display: block; width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; z-index: 0; pointer-events: none;
 			background-color: rgba(79,79,79,0.04);
 		}
 
@@ -52,7 +52,8 @@
 
         .viewContent.viewGrid { width: 100%; position: relative; }
 		.viewContent.viewGrid {
-			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 46px; }
+			.rowHead { display: grid; white-space: nowrap; width: calc(100% - 4px); margin-left: 2px; height: 36px; }
+
 			.loadMore { padding: 10px 2px; box-shadow: 0px 1px $colorBorderLight inset; }
 
 			.icon.checkbox { vertical-align: top; }
@@ -61,6 +62,7 @@
 			.row { white-space: nowrap; box-shadow: 0px 1px $colorBorderLight inset; margin-left: 2px !important; width: calc(100% - 4px); height: 48px; }
 			.row.add { margin-top: -2px; }
 			.row.isArchived *, .row.isDeleted * { text-decoration: line-through; color: $colorMediumGrey; }
+			.row:hover { background-color: rgba(79,79,79,0.04); }
 
 			.row > .selectable,
 			.row > .dropTarget > .selectable { display: grid; }
@@ -71,7 +73,7 @@
 				.name, .empty { line-height: 20px; @include text-overflow-nw; width: 100%; }
 			}
 
-			.cell.isName, .cellContent.isName { cursor: pointer; }
+			.cell.isName, .cellContent.isName { }
 
 			.cell.isName.canEdit:hover {
 				.name { width: calc(100% - 40px) !important; }
@@ -85,9 +87,6 @@
 				
 			.cell { display: inline-block; height: 48px; padding: 14px; vertical-align: top; position: relative; word-break: break-word; }
 			.cell.cellKeyHover { background-color: rgba(79,79,79,0.04); }
-
-			.cell.canEdit.c-checkbox,
-			.cell.canEdit.c-select { cursor: pointer; }
 
 			.cell.isEditing {
 				.cellContent { height: 100% !important; min-width: 300px; padding: 14px; border-radius: 4px; }
@@ -120,12 +119,9 @@
 		}
 
 		.viewContent.viewGrid.isCollection {
-			.row .icon.dnd { left: 0; height: 32px; top: 8px; z-index: 1; }
-
-			.cellHead:first-child { padding-left: 8px; }
-			.cell:first-child { padding-left: 20px; }
-			.cell.isEditing:first-child {
-				.cellContent.isName { padding-left: 20px !important; }
+			.cellHead:first-child .flex, .cell:first-child { padding-left: 20px; }
+			.row:hover {
+				.icon.drag { opacity: 1; }
 			}
 		}
     }
@@ -133,13 +129,7 @@
 	.block.blockDataview.isInline {
 		.viewContent.viewGrid {
 			.row { height: 40px; }
-			.rowHead { height: 40px; }
 
-			.cellHead {
-				.cellContent { height: 38px !important; }
-				.flex { padding: 10px 14px; @include text-small; }
-			}
-			.cellHead.last { padding: 10px 14px; }
 			.cellHead:first-child {
 				.flex { padding-left: 0px; }
 			}

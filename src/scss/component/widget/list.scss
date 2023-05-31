@@ -15,7 +15,7 @@
 
 			.viewItem { 
 				@include text-common; font-weight: 500; color: $colorMediumGrey; transition: $transitionAllCommon; 	margin-right: 16px; display: inline-block; 
-				vertical-align: top; cursor: pointer;
+				vertical-align: top;
 			}
 			.viewItem:last-child { margin: 0px; }
 			.viewItem:hover, .viewItem.active { color: $colorBlack; }
@@ -33,7 +33,7 @@
 
 	.body { display: flex; flex-direction: column; padding-bottom: 8px; }
 	.body {
-		.item { cursor: pointer; position: relative; }
+		.item { position: relative; }
 		.item:hover, .item.active {
 			.buttons { display: flex; }
 			.icon.more { opacity: 1; }
@@ -60,7 +60,7 @@
 
 			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 			.buttons {
-				.icon { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
+				.icon { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
 				.icon:hover { background-color: $colorHoverMedium; }
 				.icon.active { opacity: 1; background-color: $colorHoverMedium; }
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
@@ -97,7 +97,7 @@
 			.info { width: calc(100% - 96px); }
 		}
 
-		.item::before { border-radius: 8px; }
+		.item::before { border-radius: 12px; }
 	}
 }
 
@@ -111,6 +111,9 @@
 			.iconObject { background: none; border-radius: 0px; }
 		}
 		.item:hover, .item.active {
+			.info { width: calc(100% - 30px); }
+		}
+		.item.withIcon:hover, .item.withIcon.active {
 			.info { width: calc(100% - 54px); }
 		}
 		.item::before { border-radius: 4px; }

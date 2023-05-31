@@ -165,20 +165,20 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const options = this.getLayoutOptions().map(it => it.id);
 
 		if (this.isCollection()) {
-			if (this.layout == I.WidgetLayout.Link) {
-				this.layout = I.WidgetLayout.List;
+			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
+				this.layout = this.target.id == Constant.widgetId.favorite ? I.WidgetLayout.Tree : I.WidgetLayout.Compact;
 			};
 		} else 
 		if (this.target) {
 			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !setTypes.includes(this.target.type)) {
-				this.layout = I.WidgetLayout.Link;
+				this.layout = I.WidgetLayout.Tree;
 			};
 			if ((this.layout == I.WidgetLayout.Tree) && setTypes.includes(this.target.type)) {
-				this.layout = I.WidgetLayout.Link;
+				this.layout = I.WidgetLayout.Compact;
 			};
 		};
 
-		this.layout = options.includes(this.layout) ? this.layout : null;
+		this.layout = options.includes(this.layout) ? this.layout : (options.length ? options[0] : null);
 	};
 
     getItems () {

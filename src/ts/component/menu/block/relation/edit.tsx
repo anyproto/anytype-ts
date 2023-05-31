@@ -38,8 +38,8 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const root = blockStore.getLeaf(rootId, rootId);
 		const isDate = this.format == I.RelationType.Date;
 		const isObject = this.format == I.RelationType.Object;
-		const allowed = root ? !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) : true;
-		const canDelete = allowed && relation && !Relation.systemKeys().includes(relation.relationKey);
+		const canDuplicate = root ? !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) : true;
+		const canDelete = canDuplicate && relation && !Relation.systemKeys().includes(relation.relationKey);
 		const isReadonly = this.isReadonly();
 
 		let opts: any = null;
@@ -161,10 +161,10 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					</div>
 				) : ''}
 
-				{relation && (allowed || canDelete) ? (
+				{relation && (canDuplicate || canDelete) ? (
 					<div className="section">
-						{relation ? <MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} /> : ''}
-						{allowed ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
+						<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />
+						{canDuplicate ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{canDelete ? <MenuItemVertical icon={deleteIcon} name={deleteText} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>
 				) : ''}
@@ -480,15 +480,29 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 		return dbStore.getRelationById(relationId);
 	};
+
+	isAllowed () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rootId } = data;
+		const root = blockStore.getLeaf(rootId, rootId);
+		const relation = this.getRelation();
+
+		let ret = relation ? blockStore.isAllowed(relation.restrictions, [ I.RestrictionObject.Details ]) : true;
+		if (ret && root) {
+			ret = !root.isLocked() && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
+		};
+		return ret;
+	};
 	
 	isReadonly () {
 		const { param } = this.props;
 		const { data } = param;
-		const { rootId, readonly } = data;
+		const { readonly } = data;
 		const relation = this.getRelation();
-		const allowed = rootId ? blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]) : true;
+		const isAllowed = this.isAllowed();
 
-		return readonly || !allowed || (relation && relation.isReadonlyRelation);
+		return readonly || !isAllowed || (relation && relation.isReadonlyRelation);
 	};
 
 });

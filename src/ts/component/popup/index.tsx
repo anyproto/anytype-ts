@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { I, Util, analytics, Storage, Preview } from 'Lib';
 import { Dimmer } from 'Component';
-import { menuStore, popupStore } from 'Store';
+import { menuStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PopupSettings from './settings';
@@ -144,16 +144,35 @@ class Popup extends React.Component<I.Popup> {
 					
 			const node = $(this.node);
 			const inner = node.find('.innerWrap');
+			const { ww } = Util.getWindowDimensions();
+
+			const sidebar = $('#sidebar');
+			const isRight = sidebar.hasClass('right');
+			const width = inner.outerWidth();
+			const height = inner.outerHeight();
+
+			let sw = 0;
+			if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+				sw = sidebar.outerWidth();
+			};
+
+			let x = (ww - sw) / 2 - width / 2;
+			if (!isRight) {
+				x += sw;
+			};
+			if (width >= ww - sw) {
+				x -= sw / 2;
+			};
 
 			inner.css({ 
-				marginTop: -inner.outerHeight() / 2,
-				marginLeft: -inner.outerWidth() / 2
-			});			
+				left: x, 
+				marginTop: -height / 2,
+			});
 		});
 	};
 
 	close () {
-		const { param } = this.props;
+		const { id, param } = this.props;
 		const { preventMenuClose } = param;
 
 		Preview.previewHide(true);
@@ -162,7 +181,7 @@ class Popup extends React.Component<I.Popup> {
 		if (!preventMenuClose) {
 			menuStore.closeAll();
 		};
-		popupStore.close(this.props.id);
+		popupStore.close(id);
 	};
 
 	storageGet () {

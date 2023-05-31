@@ -11,12 +11,12 @@
 .header {
 	.sides { height: 100%; width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: stretch; }
 	.side {	height: 100%; display: flex; align-items: center; flex-direction: row; }
-	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; }
+	.side.left { padding: 0px 6px; width: 20%; flex-shrink: 0; gap: 0px 8px; }
 	.side.center { width: 60%; flex-grow: 1; justify-content: center; }
-	.side.right { padding: 0px 12px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 16px; }
+	.side.right { padding: 0px 12px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
 
 	.path { 
-		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; transition: $transitionAllCommon;
+		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; transition: $transitionAllCommon;
 		@include text-overflow-nw; padding: 0px 6px;
 	}
 
@@ -33,20 +33,18 @@
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
-	.icon.big.expand, .icon.big.toggleSidebar { margin-right: 12px; }
-	.icon.big.nav, .icon.big.graph { margin-left: 12px; }
 	.icon.big:hover, .icon.big.hover { background-color: $colorVeryLightGrey; }
 
-	.icon.back { background-image: url('~img/icon/header/back.svg'); }
-	.icon.forward { background-image: url('~img/icon/header/back.svg'); }
-	.icon.nav { background-image: url('~img/icon/header/nav.svg'); }
-	.icon.plus { background-image: url('~img/icon/header/plus.svg'); }
+	.icon.toggle { background-image: url('~img/icon/sidebar/toggle0.svg'); }
+	.icon.toggle:hover { background-image: url('~img/icon/sidebar/toggle1.svg'); }
 	.icon.more { background-image: url('~img/icon/header/more.svg'); }
-	.icon.add { background-image: url('~img/icon/header/add.svg'); }
 	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
 	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
-	.icon.graph { background-image: url('~img/icon/header/graph.svg'); }
+	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
 	.icon.lock { width: 8px; height: 20px; background-image: url('~img/icon/lock.svg'); flex-shrink: 0; }
+}
+.header.withSidebar {
+	.icon.toggle { display: none; }
 }
 
 .header.authIndex { height: 38px; }
@@ -67,7 +65,7 @@
 	}
 
 	.item { 
-		color: $colorDarkGrey; transition: $transitionAllCommon; cursor: pointer; height: 20px; line-height: 20px; 
+		color: $colorDarkGrey; transition: $transitionAllCommon; height: 20px; line-height: 20px; 
 		display: inline-block; vertical-align: middle; white-space: nowrap;
 	}
 	.item {
@@ -84,10 +82,6 @@
 }
 .header.mainHistory.snapLeft { right: 254px; }
 
-.header.mainObject {
-	.icon.nav { display: none; }
-}
-
 .header.isCommon { background: $colorWhite; height: 38px; }
 .header.isCommon {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; }
@@ -97,9 +91,6 @@
 		.iconObject { flex-shrink: 0; }
 	}
 	.path:hover { border-color: $colorBorderLight; }
-}
-.header.isCommon.active {
-	.path { border-color: $colorBorderLight; }
 }
 
 .header.mainGraph {
@@ -113,13 +104,9 @@
 	}
 	.filterWrap.active { width: 200px; }
 
-	.icon.search { background-image: url('~img/icon/header/search.svg'); }
-	.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-	.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
-}
-
-.header.withSidebar {
-	.icon.toggleSidebar { display: none; }
+	.icon.btn-search { background-image: url('~img/icon/header/search.svg'); }
+	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }
 
 .popup {
@@ -140,7 +127,7 @@ html.platformMac {
 	}
 
 	.header.withSidebar.snapLeft {
-		.side.left { padding-left: 12px; }
+		.side.left { padding-left: 16px; }
 	}
 }
 

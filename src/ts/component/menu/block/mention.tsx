@@ -44,6 +44,10 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};			
+
 			const type = dbStore.getType(item.type);
 			const cn = [];
 

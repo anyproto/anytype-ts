@@ -61,13 +61,13 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	};
 
 	onSubmit (e: any) {
+		//commonStore.redirectSet('/main/usecase');
+
 		DataUtil.onAuth(authStore.account, () => {
 			const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
 			if (blocks.length) {
 				Storage.setToggle('widget', blocks[0].parentId, true);
 			};
-
-			Util.route('/main/usecase');
 		});
 	};
 

@@ -50,7 +50,7 @@ const Row = observer(class Row extends React.Component<Props> {
 							isInline={true}
 							showTooltip={true}
 							arrayLimit={2}
-							iconSize={relation.relationKey == 'name' ? 24 : 20}
+							iconSize={relation.relationKey == 'name' ? 24 : 18}
 						/>
 					);
 				})}
@@ -73,7 +73,7 @@ const Row = observer(class Row extends React.Component<Props> {
 			content = (
 				<React.Fragment>
 					<Icon
-						className="dnd"
+						className="drag"
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
 						onDragStart={e => onDragRecordStart(e, recordId)}
@@ -89,6 +89,7 @@ const Row = observer(class Row extends React.Component<Props> {
 
 		return (
 			<div 
+				id={`record-${record.id}`}
 				ref={node => this.node = node} 
 				className={cn.join(' ')} 
 				style={style}

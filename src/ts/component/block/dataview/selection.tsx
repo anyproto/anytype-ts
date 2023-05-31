@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import { Icon } from 'Component';
 import { I, keyboard } from 'Lib';
 
 interface Props extends I.ViewComponent {
@@ -24,7 +25,7 @@ const Selection = observer(class Selection extends React.Component<Props> {
 
 		const buttons: any[] = [
 			{ id: 'archive', text: 'Move to bin', className: [ 'black' ] },
-			{ id: 'done', text: 'Done', className: [ 'orange' ] },
+			{ id: 'done', text: 'Deselect all', className: [ 'black' ] },
 		];
 
 		if (isCollection) {
@@ -45,6 +46,7 @@ const Selection = observer(class Selection extends React.Component<Props> {
 								onMouseEnter={() => keyboard.setSelectionClearDisabled(true)}
 								onMouseLeave={() => keyboard.setSelectionClearDisabled(false)}
 							>
+								<Icon className={item.id} />
 								{item.text}
 							</div>
 						))}

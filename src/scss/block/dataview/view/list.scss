@@ -2,13 +2,14 @@
 
 .blocks {
 	.block.blockDataview {
-		.viewContent.viewList { padding: 0px 0px 0px 14px; }
+		.viewContent.viewList { padding: 14px 0px 0px 14px; }
 		.viewContent.viewList {
 			.ReactVirtualized__Grid__innerScrollContainer { overflow-x: auto !important; overflow-y: hidden !important; }
 
-		    .row { height: 24px; width: 100%; display: block; white-space: nowrap; position: relative; }
-			.row:last-child { margin: 0px; }
+		    .row { height: 100%; width: 100%; display: block; white-space: nowrap; position: relative; }
 			.row.isDone * { color: $colorDarkGrey; }
+
+			.dropTarget { height: 100%; padding: 0px 0px 10px 0px; }
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
@@ -18,7 +19,7 @@
 			.cellContent:empty::before, .cellContent.isEmpty::before { display: none; }
 
 			.cellContent::before { 
-				content: ""; width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; 
+				content: ""; width: 2px; height: 2px; border-radius: 50%; background: $colorDarkGrey; display: inline-block; 
 				vertical-align: middle; margin: 0px 6px; 
 			}
 			.cellContent.first::before { display: none; }
@@ -77,15 +78,26 @@
 			.loadMore { margin-top: 2px; }
         }
 
-		.viewContent.viewList.isCollection { padding-left: 2px; }
+		.viewContent.viewList.isCollection { padding-left: 0px; }
 		.viewContent.viewList.isCollection {
-			.row.add { padding-left: 20px; }
-			.row .icon.dnd { left: 1px; height: 22px; top: 1px; z-index: 1; }
+			.row { padding-left: 20px; }
+			.row {
+				.icon.drag { top: 6px; margin: 0px; }
+			}
+			.row:hover {
+				.icon.drag { opacity: 1; }
+			}
 
-			.cellContent:first-child { padding-left: 20px; }
+			.dropTarget.isOver { box-shadow: 0px 0px; }
+			.dropTarget.isOver::before { 
+				content: ""; position: absolute; background: $colorOrange; width: calc(100% - 28px); height: 2px; border-radius: 2px; left: 14px; 
+			}
+			.dropTarget.isOver.top::before { top: -6px; }
+			.dropTarget.isOver.bottom::before { bottom: 4px; }
 		}
     }
 	.block.blockDataview.isInline {
-		.viewContent.viewList { padding: 0px; }
+		.viewContent.viewList { padding: 9px 0px 0px 0px; }
+		.row { padding-left: 0px !important; }
 	}
 }

@@ -45,7 +45,7 @@ class MenuStore {
 		if (item) {
 			this.update(id, param);
 		} else {
-			this.menuList.push({ id: id, param: param });
+			this.menuList.push({ id, param });
 		};
 
 		Preview.previewHide(true);
@@ -55,6 +55,7 @@ class MenuStore {
 		const item = this.get(id);
 
 		if (item) {
+			param.data = Object.assign(item.param.data, param.data);
 			set(item, { param: Object.assign(item.param, param) });
 		};
 	};
@@ -137,20 +138,42 @@ class MenuStore {
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
-		this.getItems(ids).filter(it => !it.param.noClose).forEach(it => this.close(it.id));
-		this.onCloseAll(callBack);
+		const items = this.getItems(ids);
+		const timeout = this.getTimeout(items);
+
+		items.filter(it => !it.param.noClose).forEach(it => this.close(it.id));
+		this.onCloseAll(timeout, callBack);
 	};
 
 	closeAllForced (ids?: string[], callBack?: () => void) {
-		this.getItems(ids).forEach(it => this.close(it.id));
-		this.onCloseAll(callBack);
+		const items = this.getItems(ids);
+		const timeout = this.getTimeout(items);
+
+		items.forEach(it => this.close(it.id));
+		this.onCloseAll(timeout, callBack);
 	};
 
-	onCloseAll (callBack?: () => void) {
+	onCloseAll (timeout: number, callBack?: () => void) {
 		this.clearTimeout();
-		if (callBack) {
-			this.timeout = window.setTimeout(() => { callBack(); }, Constant.delay.menu);
+		if (!callBack) {
+			return;
 		};
+
+		if (timeout) {
+			this.timeout = window.setTimeout(() => callBack(), timeout);
+		} else {
+			callBack();
+		};
+	};
+
+	getTimeout (items: I.Menu[]): number {
+		let t = 0;
+		for (let item of items) {
+			if (!item.param.noAnimation) {
+				t = Constant.delay.menu;
+			};
+		};
+		return t;
 	};
 
 	getItems (ids?: string[]) {

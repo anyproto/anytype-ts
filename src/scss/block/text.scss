@@ -28,16 +28,16 @@
 		}
 
 		lnk { position: relative; }
-		lnk, obj { cursor: pointer; color: inherit; text-decoration: none; font-weight: 500; border-bottom: 0.075em solid; transition: border-color $transitionCommon; }
+		lnk, obj { color: inherit; text-decoration: none; font-weight: 500; border-bottom: 0.075em solid; transition: border-color $transitionCommon; }
 		lnk.disabled, obj.disabled { border-width: 0px; }
 
-		mention { cursor: pointer; display: inline; user-select: all !important; position: relative; }
+		mention { display: inline; user-select: all !important; position: relative; }
 		mention * { user-select: text !important; }
 		mention {
 			smile { display: none; position: relative; z-index: 1; }
 			.space { width: 2px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
-			name { display: inline; white-space: normal; vertical-align: top; position: relative; font-weight: 500; }
+			name { display: inline; white-space: normal; vertical-align: top; position: relative; font-weight: 500; border-bottom: 0.075em solid; }
 		}
 		mention.disabled {
 			name { border-width: 0px; }
@@ -73,7 +73,7 @@
 			.marker.number { vertical-align: baseline; min-width: 24px; width: auto; word-break: normal; }
 			.marker.number > span { min-width: 100%; display: inline-block; text-align: center; }
 			
-			.marker.check, .marker.toggle { cursor: pointer; }
+			.marker.check, .marker.toggle { }
 			.marker.check, .marker.toggle {
 				img { width: 100%; height: 100%; }
 			}
@@ -205,11 +205,11 @@
 			}
 			.buttons {
 				.btn { 
-					padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; cursor: pointer; 
+					padding: 0px; height: 20px; line-height: 20px; color: $colorMediumGrey; @include text-common; 
 					display: flex; flex-direction: row; gap: 0px 4px; align-items: center;
 				}
 				.btn {
-					.icon { flex-shrink: 0; width: 20px; height: 20px; cursor: pointer; }
+					.icon { flex-shrink: 0; width: 20px; height: 20px; }
 					.icon.codeWrap { background-image: url('~img/icon/menu/action/wrap0.svg'); }
 					.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
 

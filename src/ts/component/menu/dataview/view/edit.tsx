@@ -268,7 +268,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 				{ id: 'coverRelationKey', name: 'Cover', caption: (coverOption ? coverOption.name : 'Select'), arrow: true },
 				{ id: 'cardSize', name: 'Card size', caption: (sizeOption ? sizeOption.name : 'Select'), arrow: true },
 				{ 
-					id: 'coverFit', name: 'Fit image', withSwitch: true, switchValue: coverFit, 
+					id: 'coverFit', name: 'Fit media', withSwitch: true, switchValue: coverFit, 
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'coverFit', v); }
 				}
 			]);

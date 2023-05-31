@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { I, M, Util } from 'Lib';
+import { I, M, Util, keyboard } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -89,6 +89,7 @@ class DragLayer extends React.Component<object, State> {
 		const { rootId, type, ids } = this.state;
 		const node = $(this.node);
 		const inner = node.find('#inner').html('');
+		const container = Util.getPageContainer(keyboard.isPopup());
 
 		let wrap = $('<div></div>');
 		let items: any[] = [];
@@ -100,7 +101,7 @@ class DragLayer extends React.Component<object, State> {
 				items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(Util.objectCopy(it)));
 
 				items.forEach(block => {
-					const clone = $(`#block-${block.id}`).clone();
+					const clone = container.find(`#block-${block.id}`).clone();
 
 					if (block.isDataview()) {
 						clone.find('.viewContent').remove();
@@ -118,6 +119,7 @@ class DragLayer extends React.Component<object, State> {
 				wrap.addClass('menus').append(add);
 
 				items = ids.map(relationKey => dbStore.getRelationByKey(relationKey)).filter(it => it);
+
 				items.forEach(item => {
 					const el = $(`#menuBlockRelationView #item-${item.id}`);
 					add.append(el.clone());
@@ -126,21 +128,27 @@ class DragLayer extends React.Component<object, State> {
 			};
 
 			case I.DropType.Record: {
-				const cn = $(`.drop-target-${ids[0]}`).parents('.viewItem').attr('class');
-				const dataview = $('<div class="block blockDataview"></div>');
+				if (!ids.length) {
+					break;
+				};
+
+				const first = container.find(`#record-${ids[0]}`);
+				const cn = first.parents('.viewContent').attr('class');
+				const block = $('<div class="block blockDataview"></div>');
 				const view = $('<div />');
 
 				view.addClass(cn);
-				dataview.append(view);
-				wrap.addClass('blocks').append(dataview);
+				block.append(view);
+
+				wrap.addClass('blocks').append(block);
 
 				ids.forEach((id: string, idx: number) => {
-					const el = $(`.drop-target-${id}`).parent();
+					const el = container.find(`#record-${id}`);
 					const margin = idx * 10;
 					const clone = el.clone().addClass('record');
 
 					view.append(clone);
-					clone.css({ marginLeft: margin, marginTop: margin, zIndex: (ids.length - idx) });
+					clone.css({ marginLeft: margin, marginTop: margin, zIndex: (ids.length - idx), width: el.width() });
 				});
 				break;
 			};

@@ -19,7 +19,7 @@
 
 		.wrap { position: relative; }
 
-		.item { padding: 5px 16px 5px 30px; cursor: pointer; transition: $transitionAllCommon; position: relative; }
+		.item { padding: 5px 16px 5px 30px; transition: $transitionAllCommon; position: relative; }
 		.item {
 			.name { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
 			.date { @include text-overflow-nw; }

@@ -64,10 +64,6 @@ class DataUtil {
 
 		const c = [];
 		if (block.type == I.BlockType.File) {
-			if (state == I.FileState.Done) {
-				c.push('withFile');
-			};
-
 			if ((style == I.FileStyle.Link) || (type == I.FileType.File)) {
 				c.push(dc);
 			} else {
@@ -152,9 +148,7 @@ class DataUtil {
 	threadColor (s: I.ThreadStatus) {
 		let c = '';
 		switch (s) {
-			case I.ThreadStatus.Failed:
-			case I.ThreadStatus.Disabled:
-			case I.ThreadStatus.Offline: c = 'red'; break;
+			default: c = 'red'; break;
 			case I.ThreadStatus.Syncing: c = 'orange'; break;
 			case I.ThreadStatus.Synced: c = 'green'; break;
 		};

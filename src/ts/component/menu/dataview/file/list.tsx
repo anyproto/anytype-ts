@@ -49,6 +49,10 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};
+
 			const type = dbStore.getType(item.type);
 
 			let content = null;

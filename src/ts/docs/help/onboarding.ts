@@ -35,6 +35,108 @@ export default {
         },
     },
 
+    mainSet: {
+        category: 'Set & Collection',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Anytype has two basic formats: Sets and Collections.</b> As in computer science, a Set is a data structure that contains only unique elements, while a Collection is any group of objects that are stored together. You can convert any set into a collection, but not the other way around.
+					</p>
+				`,
+                video: './img/help/onboarding/set-1-to-collection.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>Sets</b> contain no duplicates and can be used to filter specific objects or relation types, such as all my bookmarks. <b>Collections</b>, however, can contain duplicates and are used for more general-purpose data storage; they can store anything.
+					</p>
+				`,
+                video: './img/help/onboarding/set-2-new-object.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>View sets or collections as an entire object, or place them inline in documents.</b> The first column will contain the collecting objects, and the others will show their relations.
+					</p>
+					<p>Filter and adjust objects by any relation, such as today’s notes (filter by date) or project documents (filter by project).</p>
+				`,
+                buttonText: 'Great! I will try',
+            }
+        ],
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    },
+
+    objectCreationStart: {
+        category: 'Creating objects',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Let’s create an object from scratch.</b> The default object type is now ‘Note’, meaning that each new object is referred to as a Note unless you choose a different type. You can change the default object type anytime in the settings menu.
+					</p>
+				`,
+                video: './img/help/onboarding/object-1-default-object-type.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu, which shows all object types installed from the Library.
+					</p>
+				`,
+                video: './img/help/onboarding/object-2-type-menu.mp4',
+                buttonText: 'I got it!',
+            },
+        ],
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4,
+        },
+    },
+
+    objectCreationFinish: {
+        category: 'Creating objects',
+        items: [
+            {
+                description: `
+					<p>
+						<b>For the object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.
+					</p>
+				`,
+                video: './img/help/onboarding/object-layout.mp4',
+                buttonText: 'Ok! I like it',
+            },
+        ],
+        param: {
+            element: '#footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4,
+        },
+    },
+
     dashboard: {
         category: 'Onboarding',
         showConfetti: true,
@@ -101,32 +203,43 @@ export default {
         items: [
 			{
                 name: 'Connect your Objects',
-                description: `Use the <span class="highlight">@</span> key to reference other Objects as you're writing.`,
+				description: `Use the <span class="highlight">@</span> symbol to refer to other objects while writing, and the <span class="highlight">/</span> symbol to create text styles, objects, and more.`,
                 param: {
-                    element: '#block-featuredRelations',
+                    element: '#block-featuredRelations #onboardingAnchor',
                     offsetY: 10,
                 }
             },
             {
                 name: 'Did you know?',
-                description: `You can drag &amp; drop files from your computer into the editor window to create new blocks. Give it a try!`,
+                description: `Drag and drop files and images from your computer into the editor window, or copy and paste text to create new blocks. Try it out!`,
                 param: {
-                    element: '#block-featuredRelations',
+                    element: '#block-featuredRelations #onboardingAnchor',
                     offsetY: 10,
+                }
+            },
+			{
+                description: 'Click above to view the Relation menu, where you can find object links as properties.',
+                param: {
+                    element: '#header #button-header-relation',
+                    offsetY: 10,
+                    classNameWrap: 'fixed fromHeader',
+					horizontal: I.MenuDirection.Right,
                 }
             },
             {
                 name: 'See your Graph grow',
-                description: 'Click above to see how your new Objects are linked',
+                description: 'Click below to see how new objects are connected in your own graph by links and relations!',
                 param: {
-                    element: '#header .side.left .icon.graph',
-                    offsetY: 10,
+                    element: '#navigationPanel #button-navigation-graph',
+                    offsetY: -10,
                     classNameWrap: 'fixed fromHeader',
+					vertical: I.MenuDirection.Top,
+					horizontal: I.MenuDirection.Center,
                 }
             },
 			{
                 name: `Like what you're working on?`,
-                description: 'Save this format for future use by selecting Save as Template from the three-dots menu',
+                description: 'Save this structure for future use by selecting “Save as Template” from the three-dot menu. It will be saved in your Library, very useful for recurring work.',
                 param: {
                     element: '#header #button-header-more',
                     offsetY: 10,
@@ -167,7 +280,7 @@ export default {
 		items: [
 			{
 				name: 'This is inline set',
-				description: 'Set query and name are synced with the source set you selected. You can change source by clicking on the set name.',
+				description: 'Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.',
 				param: {
 					element: '#head-title-wrapper #value',
 					offsetY: 10,
@@ -175,9 +288,9 @@ export default {
 			},
 			{
 				name: 'Views',
-				description: 'Views are not synced, but copied. You can tweak them to the needs of your current context. No worries, source set will not be affected.',
+				description: 'Adjust rules and views to suit the current context.',
 				param: {
-					element: '.dataviewControls #sideLeft',
+					element: '#dataviewControls #sideLeft',
 					offsetY: 10,
 				}
 			},

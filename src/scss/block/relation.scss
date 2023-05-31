@@ -18,7 +18,7 @@
 			display: flex; align-items: flex-start; gap: 0px 6px;
 		}
 		.info.noValue { width: 100%; color: $colorSecondary; }
-		.info.noValue.canEdit { cursor: pointer; }
+		.info.noValue.canEdit { }
 
 		.info {
 			.name { 

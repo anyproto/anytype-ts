@@ -99,6 +99,10 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 	};
 
 	onClick (e: React.MouseEvent) {
+		if (e.button) {
+			return;
+		};
+
 		const { preview } = commonStore;
 		const { type, target } = preview;
 		const { object } = this.state;
@@ -188,8 +192,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const win = $(window);
 		const obj = $('#preview');
 		const poly = obj.find('.polygon');
-		const ww = win.width();
-		const wh = win.height();
+		const { ww, wh } = Util.getWindowDimensions();
 		const st = win.scrollTop();
 		const ow = obj.outerWidth();
 		const oh = obj.outerHeight();

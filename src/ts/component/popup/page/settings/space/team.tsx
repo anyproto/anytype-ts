@@ -86,12 +86,11 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
             <div ref={node => this.node = node}>
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
                 <Title text={Util.sprintf(translate('popupSettingsSpaceTeam'), space.name)} />
-
                 <Label className="counter" text={Util.sprintf(translate('popupSettingsSpaceTeamMembers'), length)} />
 
                 {length > FILTER_LIMIT ? (
 					<Filter
-                    	ref={(ref: any) => { this.refFilter = ref; }}
+                    	ref={ref => this.refFilter = ref}
                     	value={this.filter}
                     	onChange={() => { this.load(); }}
                 	/>
@@ -109,7 +108,7 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
                                 <AutoSizer className="scrollArea">
                                     {({ width, height }) => (
                                         <List
-                                            ref={(ref: any) => { this.refList = ref; }}
+                                            ref={ref => this.refList = ref}
                                             height={Number(height) || 0}
                                             width={Number(width) || 0}
                                             deferredMeasurmentCache={this.cache}

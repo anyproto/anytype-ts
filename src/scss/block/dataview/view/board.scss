@@ -6,7 +6,7 @@
         .viewContent.viewBoard {
 
             .columns { display: flex; flex-direction: row; gap: 0px 8px; position: relative; }
-            .column { width: 240px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
+            .column { width: 262px; flex-shrink: 0; display: flex; flex-direction: column; position: relative; }
 
 			.column.isOver::before { content: ""; position: absolute; background: $colorOrange; width: 2px; height: 100%; border-radius: 2px; top: 0px; } 
 			.column.isOver.left::before { left: -5px; }
@@ -42,7 +42,7 @@
 
 					.side.right {
 						.icon { 
-							flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; cursor: pointer; vertical-align: top; 
+							flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; vertical-align: top; 
 							opacity: 0; 
 						}
 						.icon:hover { background-color: $colorHoverMedium; }
@@ -77,16 +77,15 @@
 				.card { display: none; }
 			}
 
-            .card { width: 224px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
+            .card { width: 246px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
 			.card {
-				.selectable.isSelectionSelected::after { display: none; }
-
 				.cellContent.isName {
 					.name { @include clamp2; white-space: normal; }
 				}
 
 				.cardContent { 
 					border: 1px solid $colorHoverMedium; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color $transitionCommon;
+					box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 				}
 
 				.cellContent {
@@ -101,19 +100,12 @@
 					.tagItem { margin: 0px 8px 0px 0px; }
 				}
 
-				.icon.checkbox {
-					width: 40px; height: 40px; position: absolute; right: 0px; top: 0px; z-index: 2; cursor: pointer;
-					background-image: url('~img/icon/index/checkbox0.svg'); opacity: 0; transition: none; background-size: 20px;
-				}
-
-				.isSelectionSelected {
-					.icon.checkbox { background-image: url('~img/icon/index/checkbox1.svg'); opacity: 1; }
-				}
+				.selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 12px; }
 			}
 			.card:last-child { margin: 0px; }
 
 			.card.add:hover, .card:hover {
-				.cardContent { border-color: $colorBorderDark; }
+				.cardContent { border-color: $colorBorderLight; }
 				.icon.checkbox { opacity: 1; }
 			}
 
@@ -126,7 +118,7 @@
 			}
 
             .card.add { 
-				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px auto; line-height: 1; transition: $transitionAllCommon; cursor: pointer; 
+				min-height: unset; text-align: center; padding: 10px 0px; margin: 0px auto; line-height: 1; transition: $transitionAllCommon; 
 				border: 1px solid $colorVeryLightGrey; border-radius: 12px; flex-direction: row; justify-content: center; background: $colorWhite;
 			}
 			.card.add.first { margin: 0px; }

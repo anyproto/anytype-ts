@@ -85,10 +85,9 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		};
 
 		const { getId, position } = this.props;
-		const win = $(window);
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const ww = win.width();
+		const { ww } = Util.getWindowDimensions();
 		const width = Math.max(1096, Math.min(1096, ww - 128));
 
 		width >= ww ? obj.addClass('full') : obj.removeClass('full');

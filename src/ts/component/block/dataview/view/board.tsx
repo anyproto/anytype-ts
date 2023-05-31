@@ -90,7 +90,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	componentDidUpdate () {
 		this.resize();
-		$(window).trigger('resize.editor');
+		Util.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -193,14 +193,14 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const setOf = object.setOf || [];
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const node = $(this.node);
-		const element = node.find(`#card-${groupId}-add`);
+		const element = node.find(`#record-${groupId}-add`);
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
-		const details: any = {
-			type: types.length ? types[0].id : commonStore.type,
-		};
+		const details: any = {};
 		const conditions = [
 			I.FilterCondition.Equal,
+			I.FilterCondition.GreaterOrEqual,
+			I.FilterCondition.LessOrEqual,
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
 		]; 
@@ -212,18 +212,30 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 		details[view.groupRelationKey] = group.value;
 
+		// Type detection and relations population
 		if (types.length) {
 			details.type = types[0].id;
 		};
-
 		if (relations.length) {
 			relations.forEach((it: any) => {
-				details[it.id] = Relation.formatValue(it, null, true);
+				if (it.objectTypes.length && !details.type) {
+					details.type = it.objectTypes[0];
+				};
+
+				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
+		};
+		if (!details.type) {
+			details.type = commonStore.type;
 		};
 
 		for (let filter of view.filters) {
-			if (!conditions.includes(filter.condition) || !filter.value) {
+			if (!conditions.includes(filter.condition)) {
+				continue;
+			};
+
+			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
+			if (!value) {
 				continue;
 			};
 			
@@ -243,7 +255,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 					return;
 				};
 
-				const object = detailStore.get(subId, message.objectId, []);
+				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
 				const oldIndex = records.indexOf(message.objectId);
 				const newIndex = dir > 0 ? records.length : 0;
@@ -252,6 +264,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				if (isCollection) {
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
+
+				detailStore.update(subId, { id: object.id, details: object }, true);
 
 				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
 					dbStore.recordsSet(subId, '', update);
@@ -347,7 +361,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 			items.push({ id: `${group.id}-add`, isAdd: true });
 			items.forEach((item: any, i: number) => {
-				const el = node.find(`#card-${item.id}`);
+				const el = node.find(`#record-${item.id}`);
 				if (!el.length) {
 					return;
 				};
@@ -451,7 +465,15 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
 
-				this.newIndex = isLeft ? rect.index : rect.index + 1;
+				this.newIndex = rect.index;
+
+				if (isLeft && (rect.index > current.index)) {
+					this.newIndex--;
+				};
+
+				if (!isLeft && (rect.index < current.index)) {
+					this.newIndex++;
+				};
 				break;
 			};
 		};
@@ -538,7 +560,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			node.find('.isOver').removeClass('isOver top bottom');
 
 			if (hoverId) {
-				node.find(`#card-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
+				node.find(`#record-${hoverId}`).addClass('isOver ' + (isTop ? 'top' : 'bottom'));
 			};
 		});
 	};
@@ -653,7 +675,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 				const items = column.getItems();
 				items.forEach((item: any, i: number) => {
-					const el = node.find(`#card-${item.id}`);
+					const el = node.find(`#record-${item.id}`);
 					if (!el.length) {
 						return;
 					};
@@ -704,7 +726,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
-		const width = groups.length * size.card;
+		const width = groups.length * (size.card + size.margin) - size.margin;
 
 		if (!isInline) {
 			const maxWidth = cw - PADDING * 2;

@@ -134,7 +134,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						text="Library" 
 						color="" 
 						className="widget" 
-						icon="library" 
+						icon="store" 
 						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store }) : null} 
 					/>
 
@@ -161,6 +161,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 				id="listWidget"
 				className={cn.join(' ')}
 				onDrop={this.onDrop}
+				onDragOver={e => e.preventDefault()}
 				onScroll={this.onScroll}
 				onContextMenu={this.onContextMenu}
 			>
@@ -242,7 +243,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.frame = raf(() => {
 			this.clear();
 			this.dropTargetId = blockId;
-			this.position = this.getPosition(y, target.get(0));
+
+			const { top } = target.offset();
+			const height = target.height();
+
+			this.position = y <= top + height / 2 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
 			target.addClass([ 'isOver', (this.position == I.BlockPosition.Top ? 'top' : 'bottom') ].join(' '));
 		});
@@ -250,7 +255,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onDrop (e: React.DragEvent): void {
 		const { isEditing } = this.state;
-
 		if (!isEditing) {
 			return;
 		};
@@ -258,16 +262,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		e.stopPropagation();
 
 		const { dataset } = this.props;
-		const { selection, preventCommonDrop } = dataset;
+		const { preventCommonDrop } = dataset;
 		const { widgets } = blockStore;
 		const blockId = e.dataTransfer.getData('text');
 
 		if (blockId != this.dropTargetId) {
-			const childrenIds = blockStore.getChildrenIds(widgets, widgets);
-			const oldIndex = childrenIds.indexOf(blockId);
-			const newIndex = childrenIds.indexOf(this.dropTargetId);
-
-			blockStore.updateStructure(widgets, widgets, arrayMove(childrenIds, oldIndex, newIndex));
 			C.BlockListMoveToExistingObject(widgets, widgets, this.dropTargetId, [ blockId ], this.position);
 		};
 
@@ -360,12 +359,6 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.position = null;
 
 		raf.cancel(this.frame);
-	};
-
-	getPosition (y: number, target): I.BlockPosition {
-		const { top, height } = target.getBoundingClientRect();
-
-		return y <= top + height / 2 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 	};
 
 	setPreview (previewId: string) {

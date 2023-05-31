@@ -12,7 +12,7 @@ const logPath = path.join(userPath, 'logs');
 contextBridge.exposeInMainWorld('Electron', {
 	version: {
 		app: app.getVersion(),
-		os: os.release(),
+		os: [ os.platform(), process.arch, process.getSystemVersion() ].join(' '),
 		system: process.getSystemVersion(),
 		device: os.hostname(),
 	},
@@ -48,5 +48,11 @@ contextBridge.exposeInMainWorld('Electron', {
 
 	on: (event, callBack) => ipcRenderer.on(event, callBack),
 	removeAllListeners: (event) => ipcRenderer.removeAllListeners(event),
-	Api: (id, cmd, args) => ipcRenderer.invoke('Api', id, cmd, args),
+	Api: (id, cmd, args) => {
+		id = Number(id) || 0;
+		cmd = String(cmd || '');
+		args = args || [];
+
+		ipcRenderer.invoke('Api', id, cmd, args);
+	},
 });

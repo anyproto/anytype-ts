@@ -38,7 +38,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.onCoverClose = this.onCoverClose.bind(this);
 		this.onCoverSelect = this.onCoverSelect.bind(this);
 		this.onLayout = this.onLayout.bind(this);
-		this.onRelation = this.onRelation.bind(this);
 
 		this.onEdit = this.onEdit.bind(this);
 		this.onSave = this.onSave.bind(this);
@@ -128,7 +127,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 					onCoverClose={this.onCoverClose}
 					onCoverSelect={this.onCoverSelect}
 					onLayout={this.onLayout}
-					onRelation={this.onRelation}
 					onEdit={this.onEdit}
 					onUploadStart={this.onUploadStart}
 					onUpload={this.onUpload}
@@ -164,7 +162,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.resize();
 
 		Util.renderLinks($(this.node));
-		$(window).off('resize.cover').on('resize.cover', () => { this.resize(); });
+		$(window).off('resize.cover').on('resize.cover', () => this.resize());
 	};
 	
 	componentDidUpdate () {
@@ -195,6 +193,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		
 		menuStore.open('smile', { 
 			element: `#block-${block.id} #button-icon`,
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				elements.addClass('hover');
 			},
@@ -237,6 +236,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		
 		menuStore.open('blockLayout', { 
 			element: `#block-${block.id} #button-layout`,
+			horizontal: I.MenuDirection.Center,
 			onOpen: () => {
 				elements.addClass('hover');
 			},
@@ -251,47 +251,6 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		});
 	};
 
-	onRelation () {
-		const { isPopup, rootId, readonly } = this.props;
-		const node = $(this.node);
-		const elements = node.find('#elements');
-		const container = Util.getScrollContainer(isPopup);
-		const cnw = [ 'fixed' ];
-
-		if (!isPopup) {
-			cnw.push('fromHeader');
-		};
-
-		const param: any = {
-			recalcRect: () => {
-				const rect = { x: container.width() / 2 , y: Util.sizeHeader(), width: 0, height: 0 };
-				if (isPopup) {
-					const offset = container.offset();
-					rect.x += offset.left;
-					rect.y += offset.top;
-				};
-				return rect;
-			},
-			noFlipX: true,
-			noFlipY: true,
-			subIds: Constant.menuIds.cell,
-			classNameWrap: cnw.join(' '),
-			onOpen: () => {
-				elements.addClass('hover');
-			},
-			onClose: () => {
-				elements.removeClass('hover');
-			},
-			data: {
-				rootId,
-				isPopup,
-				readonly,
-			},
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
-	};
-	
 	onCoverOpen () {
 		if (!this._isMounted) {
 			return;

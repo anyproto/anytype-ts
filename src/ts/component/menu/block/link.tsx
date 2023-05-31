@@ -53,6 +53,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};
+
 			const type = dbStore.getType(item.type);
 			const cn = [];
 
@@ -240,6 +244,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		let items = [].concat(this.items);
 
 		items = items.filter((it: any) => {
+			if (!it) {
+				return false;
+			};
+
 			let ret = false;
 			if (it.name && it.name.match(reg)) {
 				ret = true;

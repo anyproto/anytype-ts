@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, Util, ObjectUtil } from 'Lib';
+import { analytics, I, Storage, Util, ObjectUtil, Renderer } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -68,7 +68,7 @@ class CommonStore {
 
 	public graphObj: Graph = { 
 		icon: true,
-		orphan: false,
+		orphan: true,
 		marker: true,
 		label: true,
 		relation: true,
@@ -203,12 +203,16 @@ class CommonStore {
 	};
 
 	get spaceStorage (): SpaceStorage {
-		let { bytesUsed } = this.spaceStorageObj;
-		if (bytesUsed <= 1024) {
+		let { bytesUsed, localUsage } = this.spaceStorageObj;
+		
+		if (bytesUsed <= 1024 * 1024) {
 			bytesUsed = 0;
 		};
+		if (localUsage <= 1024 * 1024) {
+			localUsage = 0;
+		};
 
-		return { ...this.spaceStorageObj, bytesUsed };
+		return { ...this.spaceStorageObj, bytesUsed, localUsage };
 	};
 
     coverSet (id: string, image: string, type: I.CoverType) {
@@ -371,6 +375,7 @@ class CommonStore {
 		const c = this.getThemeClass();
 
 		Util.addBodyClass('theme', c);
+		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
 		if (c == 'dark') {

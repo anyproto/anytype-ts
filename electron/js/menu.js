@@ -179,7 +179,7 @@ class MenuManager {
 					Separator,
 
 					{ label: 'Anytype Community', click: () => { Util.send(this.win, 'commandGlobal', 'community'); } },
-					{ label: 'Help & Tutorials', click: () => { Util.send(this.win, 'commandGlobal', 'tutorial'); } },
+					{ label: 'Help and Tutorials', click: () => { Util.send(this.win, 'commandGlobal', 'tutorial'); } },
 					{ label: 'Contact Us', click: () => { Util.send(this.win, 'commandGlobal', 'contact'); } },
 					{ label: 'Technical Information', click: () => { Util.send(this.win, 'commandGlobal', 'tech'); } },
 
@@ -325,7 +325,7 @@ class MenuManager {
 			Separator,
 
 			{ label: 'Settings', click: () => { show(); Util.send(this.win, 'popup', 'settings', {}, true); } },
-			{ label: 'Check for updates', click: () => { show(); UpdateManager.checkUpdate(false); } },
+			{ label: 'Check for updates', click: () => { show(); Api.updateCheck(this.win); } },
 
 			Separator,
 
@@ -334,7 +334,7 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: 'New object', click: () => { show(); Util.send(this.win, 'command', 'create'); } },
+			{ label: 'New object', accelerator: 'CmdOrCtrl+N', click: () => { show(); Util.send(this.win, 'command', 'create'); } },
 			{ label: 'Search object', click: () => { show(); Util.send(this.win, 'popup', 'search', { preventResize: true }, true); } },
 			
 			Separator,

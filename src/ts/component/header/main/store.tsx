@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, sidebar, ObjectUtil } from 'Lib';
+import { I, ObjectUtil, keyboard, sidebar } from 'Lib';
 
 const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent, object> {
 
@@ -12,15 +12,20 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 	};
 
 	render () {
-		const { tabs, tab, onTab, onForward, onBack, onTooltipShow, onTooltipHide } = this.props;
+		const { tabs, tab, onTab, onTooltipShow, onTooltipHide } = this.props;
+		const cmd = keyboard.cmdSymbol();
 		
 		return (
 			<React.Fragment>
 				<div className="side left">
+					<Icon
+						className="toggle big"
+						tooltip="Toggle sidebar fixed mode"
+						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
+						tooltipY={I.MenuDirection.Bottom}
+						onClick={() => sidebar.toggleExpandCollapse()}
+					/>
 					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
-					<Icon className="toggleSidebar big" tooltip="Sidebar" onClick={() => sidebar.expand()} />
-					<Icon className={[ 'back', 'big', (!keyboard.checkBack() ? 'disabled' : '') ].join(' ')} tooltip="Back" onClick={onBack} />
-					<Icon className={[ 'forward', 'big', (!keyboard.checkForward() ? 'disabled' : '') ].join(' ')} tooltip="Forward" onClick={onForward} />
 				</div>
 
 				<div className="side center">
@@ -29,7 +34,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 							<div 
 								key={`tab-store-${item.id}`} 
 								className={[ 'tab', (item.id == tab ? 'active' : '') ].join(' ')} 
-								onClick={() => { onTab(item.id); }}
+								onClick={() => onTab(item.id)}
 								onMouseOver={e => onTooltipShow(e, item.tooltip, item.tooltipCaption)} 
 								onMouseOut={onTooltipHide}
 							>

@@ -16,7 +16,7 @@
 	> .buttons {
 		.button {
 			box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2); border-radius: 8px; width: 100%; min-width: 60px; max-width: 200px; background-color: $colorWhite; 
-			color: $colorDarkGrey; cursor: pointer; font-weight: 400;
+			color: $colorDarkGrey; font-weight: 400;
 		}
 		.button:hover { background-color: $colorVeryLightGrey; }
 

@@ -20,7 +20,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	timeout = 0;
 	cache: any = {};
 	refList: any = null;
-	n = -1;
+	n = 0;
 	filter = '';
 	
 	constructor (props: I.Menu) {
@@ -67,8 +67,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					<div 
 						id={'item-' + item.id}
 						className={[ 'item', 'sides', (item.isHidden ? 'isHidden' : '') ].join(' ')} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
+						onClick={e => this.onClick(e, item)} 
 						style={param.style}
 					>
 						<div className="info">
@@ -110,9 +110,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				
 				if (item.isTextColor || item.isBgColor) {
 					item.icon = 'color';
-					item.inner = (
-						<div className={icn.join(' ')} />
-					);
+					item.inner = <div className={icn.join(' ')} />;
 				};
 
 				if (item.isBig) {
@@ -531,6 +529,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					param.content.style = item.itemId;
 
 					if (param.content.style == I.TextStyle.Code) {
+						param.hAlign = I.BlockHAlign.Left;
 						param.fields = { 
 							lang: (Storage.get('codeLang') || Constant.default.codeLang),
 						};

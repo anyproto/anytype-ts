@@ -168,7 +168,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isInline) {
 			head = (
 				<Head 
-					ref={(ref: any) => { this.refHead = ref; }} 
+					ref={ref => this.refHead = ref} 
 					{...this.props}
 					{...dataviewProps}
 					onSourceSelect={this.onSourceSelect}
@@ -191,7 +191,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					<ViewComponent 
 						key={'view' + view.id}
 						ref={ref => this.refView = ref} 
-						onRef={(ref: any, id: string) => { this.refCells.set(id, ref); }} 
+						onRef={(ref: any, id: string) => this.refCells.set(id, ref)} 
 						{...this.props}
 						{...dataviewProps}
 						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
@@ -277,7 +277,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	unbind () {
 		const { block } = this.props;
-		const events = [ 'resize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
+		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
@@ -288,7 +288,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		this.unbind();
 
-		win.on(`resize.${block.id}`, throttle(() => this.resize(), 20));
+		win.on(`resize.${block.id} sidebarResize.${block.id}`, () => this.resize());
 		win.on(`updateDataviewData.${block.id}`, () => this.loadData(this.getView().id, 0, true));
 		win.on(`setDataviewSource.${block.id}`, () => this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}));
 		win.on(`selectionEnd.${block.id}`, () => this.onSelectEnd());
@@ -392,7 +392,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (view) {
 			keys = keys.concat((view.relations || []).map(it => it.relationKey));
 
-			if (view.coverRelationKey && (view.coverRelationKey != 'pageCover')) {
+			if (view.coverRelationKey && (view.coverRelationKey != Constant.pageCoverRelationKey)) {
 				keys.push(view.coverRelationKey);
 			};
 
@@ -511,15 +511,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const isCollection = this.isCollection();
 		const conditions = [
 			I.FilterCondition.Equal,
+			I.FilterCondition.GreaterOrEqual,
+			I.FilterCondition.LessOrEqual,
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
 		]; 
 
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
-		const details: any = {
-			type: types.length ? types[0].id : commonStore.type,
-		};
+		const details: any = {};
 		const flags: I.ObjectFlag[] = [];
 
 		if (!types.length || isCollection) {
@@ -527,6 +527,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const menuParam: any = {
+			onClose: () => { this.creating = false; },
 		};
 
 		if (dir) {
@@ -534,28 +535,41 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			menuParam.horizontal = I.MenuDirection.Center;
 			menuParam.recalcRect = () => {
-				const win = $(window);
-				const ww = win.width();
-				const wh = win.height();
-
+				const { ww, wh } = Util.getWindowDimensions();
 				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
 			};
 		};
 
+		// Type detection and relations population
+		if (types.length) {
+			details.type = types[0].id;
+		};
 		if (relations.length) {
 			relations.forEach((it: any) => {
+				if (it.objectTypes.length && !details.type) {
+					details.type = it.objectTypes[0];
+				};
+
 				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
 		};
+		if (!details.type) {
+			details.type = commonStore.type;
+		};
 
 		for (let filter of view.filters) {
-			if (!conditions.includes(filter.condition) || !filter.value) {
+			if (!conditions.includes(filter.condition)) {
 				continue;
 			};
-			
+
+			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
+			if (!value) {
+				continue;
+			};
+
 			const relation = dbStore.getRelationByKey(filter.relationKey);
 			if (relation && !relation.isReadonlyValue) {
-				details[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
+				details[filter.relationKey] = Relation.formatValue(relation, value, true);
 			};
 		};
 
@@ -572,11 +586,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const object = message.details;
 				const records = this.getRecords();
 				const oldIndex = records.indexOf(message.objectId);
-				const newIndex = dir > 0 ? records.length - 1 : 0;
+				const newIndex = dir > 0 ? records.length : 0;
 
 				if (isCollection) {
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
+
+				detailStore.update(subId, { id: object.id, details: object }, true);
 
 				if (oldIndex < 0) {
 					dbStore.recordAdd(subId, '', object.id, newIndex);
@@ -606,9 +622,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				type: I.MenuType.Horizontal,
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-				onClose: () => {
-					this.creating = false;
-				},
 				data: {
 					details,
 				},
@@ -714,11 +727,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		value = Relation.formatValue(relation, value, true);
 
-		/*
 		let details: any = {};
 		details[relationKey] = value;
 		detailStore.update(subId, { id, details }, false);
-		*/
 
 		C.ObjectSetDetails(id, [ { key: relationKey, value } ], callBack);
 

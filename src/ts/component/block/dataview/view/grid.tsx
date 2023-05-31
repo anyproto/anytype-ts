@@ -74,7 +74,7 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 					rowCount={total}
 					threshold={10}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
 							{({ height, isScrolling, registerChild, scrollTop }) => (
 								<AutoSizer disableHeight={true}>
@@ -159,13 +159,11 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 	};
 
 	componentDidUpdate () {
-		const win = $(window);
-
 		this.rebind();
 		this.resize();
 		this.onScroll();
 
-		win.trigger('resize.editor');
+		Util.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {

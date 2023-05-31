@@ -72,8 +72,8 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						icon={item.icon}
 						className={cn.join(' ')} 
 						checkbox={this.isActive(item)} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
+						onClick={e => this.onClick(e, item)} 
+						onMouseEnter={e => this.onMouseEnter(e, item)} 
 						style={param.style}
 					/>
 				);

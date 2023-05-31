@@ -1,5 +1,9 @@
 @import "~scss/_vars";
 
+html.bodyAuth, html.bodyIndex {
+	.navigationPanel { display: none; }
+}
+
 .pageAuth, .pageIndex {
 	.frame { width: 672px; padding: 60px 48px 48px 48px; text-align: center; }
 	.title { margin-bottom: 22px; }
@@ -10,7 +14,7 @@
 	.footer { width: 100% !important; }
 
 	.authBackWrap { 
-		position: absolute; top: 4px; left: 4px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; 
+		position: absolute; top: 4px; left: 4px; display: flex; align-items: center; flex-wrap: nowrap; color: $colorDarkGrey; 
 		line-height: 28px; padding: 0px 6px 0px 0px; border-radius: 4px;
 	}
 	.authBackWrap {
@@ -73,7 +77,7 @@
 }
 
 .pageAuthRegister {
-	.advanced { line-height: 24px; cursor: pointer; position: absolute; top: 8px; right: 16px; color: $colorDarkGrey; transition: $transitionAllCommon; }
+	.advanced { line-height: 24px; position: absolute; top: 8px; right: 16px; color: $colorDarkGrey; transition: $transitionAllCommon; }
 	.advanced:hover { color: $colorBlack; }
 
 	.frame { padding-bottom: 36px; }
@@ -103,7 +107,7 @@
 	}
 
 	.row { 
-		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
+		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; position: relative; 
 		@include text-paragraph; line-height: 28px;
 	}
 	.row.red { color: $colorRed; }

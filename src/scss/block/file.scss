@@ -2,16 +2,16 @@
 
 .blocks {
 	.block.blockFile { padding: 6px 0px; white-space: nowrap; }
-	.block.blockFile.withFile { padding: 0px; }
+	.block.blockFile.withContent { padding: 0px; }
 	.block.blockFile {
-		.flex { cursor: pointer; }
+		.flex { }
 
 		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
 		
 		.name {
 			min-width: 40px; height: 24px; line-height: 24px; display: inline-block; font-weight: 500;
-			vertical-align: top; cursor: pointer; @include text-overflow-nw; margin: 0px 8px 0px 4px;
+			vertical-align: top; @include text-overflow-nw; margin: 0px 8px 0px 4px;
 		}
 		.size {
 			@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey;
@@ -26,5 +26,7 @@
 	
 	.block.blockFile > .wrapContent > .selectable > .dropTarget { @include text-overflow-nw;  }
 	.block.blockFile > .wrapContent > .selectable.isSelectionSelected .download { display: none; }
-	.block.blockFile.withFile > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
+	.block.blockFile.withContent > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
+
+	.block.blockFile > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
 }

@@ -70,7 +70,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 			content = (
 				<React.Fragment>
 					<Icon
-						className="dnd"
+						className="drag"
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
 						onDragStart={e => onDragRecordStart(e, recordId)}
@@ -86,7 +86,7 @@ const BodyRow = observer(class BodyRow extends React.Component<Props> {
 
 		return (
 			<div
-				id={'row-' + recordId}
+				id={'record-' + recordId}
 				className={cn.join(' ')}
 				style={style}
 				onContextMenu={e => onContext(e, record.id)}

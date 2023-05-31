@@ -24,13 +24,13 @@ class MediaVideo extends React.Component<Props> {
         const { src } = this.props;
         return (
             <div
-                ref={(ref: any) => { this.node = ref; }}
+                ref={ref => this.node = ref}
                 className="mediaVideo"
             >
                 <video className="media" controls={false} preload="auto" src={src} />
 
                 <div className="controls">
-                    <Icon className="play" onClick={this.onPlayClick} />
+                    <Icon className="play" onMouseDown={this.onPlayClick} />
                 </div>
             </div>
         );

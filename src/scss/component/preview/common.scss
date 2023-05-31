@@ -7,14 +7,14 @@
 .previewWrapper {
 	.content { background: $colorWhite; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px; position: relative; height: 100%; overflow: hidden; }
 	.loaderWrapper { height: 24px !important; margin: 16px auto; border: 0px !important; }
-	.polygon { position: absolute; left: 0px; width: 100%; cursor: pointer; }
+	.polygon { position: absolute; left: 0px; width: 100%; }
 
 	.head { 
 		padding: 10px 12px 12px 12px; letter-spacing: -0.08px; color: $colorMediumGrey; font-weight: 500;
 		position: absolute; left: 0px; width: 100%; border-top: 1px solid $colorBorderLight; bottom: 0px; padding-bottom: 11px;
 	}
 	.head {
-		.item { display: inline-block; vertical-align: top; margin-right: 16px; cursor: pointer; transition: $transitionAllCommon; }
+		.item { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 		.item:hover { color: $colorBlack; }
 		.item:last-child { margin: 0px; }
 	}

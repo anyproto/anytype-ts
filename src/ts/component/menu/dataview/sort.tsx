@@ -94,6 +94,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}
