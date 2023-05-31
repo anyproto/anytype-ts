@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
-import { C, ObjectUtil, DataUtil, I, translate, Util, FileUtil, Renderer } from 'Lib';
+import { C, ObjectUtil, DataUtil, I, translate, Util, FileUtil, Renderer, Preview } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -19,6 +19,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 	};
 
 	render () {
@@ -33,9 +34,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const currentUsage = String(FileUtil.size(bytesUsed));
 		const limitUsage = String(FileUtil.size(bytesLimit));
 		const isRed = percentageUsed >= 90;
+		const usageCn = [ 'item' ];
 
 		let extend = null;
+
 		if (isRed) {
+			usageCn.push('red');
 			extend = <Label text="Get more space." onClick={this.onExtend} className="extend" />;
 		};
 
@@ -85,7 +89,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={'Manage Space'} />
 						<div className="sectionContent">
 
-							<div className="item">
+							<div className={usageCn.join(' ')}>
 								<div className="sides">
 									<div className="side left">
 										<Title text={'Remote storage'} />
@@ -156,7 +160,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={'Space information'} />
 						<div className="sectionContent">
 
-							<div className="item itemSpaceId">
+							<div onClick={this.onCopy} className="item itemSpaceId">
 								<div className="sides">
 									<div className="side left">
 										<Title text={'Space ID'} />
@@ -243,6 +247,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onName (e: any, v: string) {
 		ObjectUtil.setName(commonStore.workspace, this.checkName(v));
+	};
+
+	onCopy () {
+		const subId = Constant.subId.space;
+		const space = detailStore.get(subId, commonStore.workspace);
+
+		Util.clipboardCopy({ text: space.id });
+		Preview.toastShow({ text: 'Space ID copied to clipboard' });
 	};
 
 	checkName (v: string): string {

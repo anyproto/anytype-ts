@@ -176,6 +176,7 @@
 						.sides {
 							.side { width: unset; background: unset; padding: unset; }
 							.left { margin-right: 16px; }
+							.right { flex-shrink: 0; }
 						}
 
 						.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
@@ -198,6 +199,9 @@
 					.storageLabel .label.extend { color: $colorRed; cursor: pointer; }
 
 					.progressBar .fill { background: $colorLime; }
+				}
+				.section.sectionSpaceManager .sectionContent .item.red {
+					.progressBar .fill { background: $colorRed; }
 				}
 
 				.section.sectionIntegrations .sectionContent .item { cursor: pointer; }
