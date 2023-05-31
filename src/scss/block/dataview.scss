@@ -94,11 +94,11 @@
 			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionAllCommon; }
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
 
-			.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-			.icon.filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
-			.icon.sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
-			.icon.sort.on { background-image: url('~img/icon/dataview/button/sort1.svg'); }
-			.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+			.icon.btn-filter.on { background-image: url('~img/icon/dataview/button/filter1.svg'); }
+			.icon.btn-sort { background-image: url('~img/icon/dataview/button/sort0.svg'); }
+			.icon.btn-sort.on { background-image: url('~img/icon/dataview/button/sort1.svg'); }
+			.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 
 			.views { display: flex; gap: 0px 16px; flex-direction: row; align-items: center; justify-content: flex-start; }
 			.views {

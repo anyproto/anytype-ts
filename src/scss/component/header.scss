@@ -104,9 +104,9 @@
 	}
 	.filterWrap.active { width: 200px; }
 
-	.icon.search { background-image: url('~img/icon/header/search.svg'); }
-	.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-	.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+	.icon.btn-search { background-image: url('~img/icon/header/search.svg'); }
+	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }
 
 .popup {
