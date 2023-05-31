@@ -8,7 +8,7 @@
 .pager {
     .pageItem { 
         min-width: 24px; display: inline-block; padding: 0px 2px; transition: $transitionAllCommon; text-align: center;
-        vertical-align: top; line-height: 20px; cursor: pointer;
+        vertical-align: top; line-height: 20px;
     }
     .pageItem:hover, .pageItem.active { color: $colorBlack; }
 
@@ -17,13 +17,13 @@
 	
 	.dots { min-width: 24px; display: inline-block; padding: 0px 2px; text-align: center; vertical-align: top; line-height: 24px; }
 
-    .icon.arrow { width: 20px; height: 20px; background-size: 16px; vertical-align: top; background-image: url('~img/arrow/pager0.svg'); cursor: pointer; }
+    .icon.arrow { width: 20px; height: 20px; background-size: 16px; vertical-align: top; background-image: url('~img/arrow/pager0.svg'); }
     .icon.arrow:hover { background-image: url('~img/arrow/pager1.svg'); }
     .icon.arrow.disabled:hover { background-image: url('~img/arrow/pager0.svg'); }
 
     .icon.arrow.right { transform: rotateZ(180deg); }
 
-    .icon.arrow.end { background-image: url('~img/arrow/pagerEnd0.svg'); cursor: pointer; }
+    .icon.arrow.end { background-image: url('~img/arrow/pagerEnd0.svg'); }
     .icon.arrow.end:hover { background-image: url('~img/arrow/pagerEnd1.svg'); }
     .icon.arrow.end.disabled:hover { background-image: url('~img/arrow/pagerEnd0.svg'); }
 }

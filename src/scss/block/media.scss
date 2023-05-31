@@ -13,13 +13,13 @@
 
 		.icon.resize, .icon.download { position: absolute; z-index: 1; opacity: 0;  }
 		.icon.resize { width: 20px; height: 20px; right: 0px; bottom: 0px; cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); }
-		.icon.download { width: 28px; height: 28px; right: 8px; top: 8px; cursor: pointer; background-image: url('~img/icon/download.svg'); }
+		.icon.download { width: 28px; height: 28px; right: 8px; top: 8px; background-image: url('~img/icon/download.svg'); }
 
 		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 		.error { margin: 0px; @include text-small; line-height: 22px; }
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
-		.media { width: 100%; display: block; cursor: pointer; }
+		.media { width: 100%; display: block; }
 		video { height: 100%; }
 
 		.pdfWrapper { 
@@ -31,7 +31,7 @@
 			.info {
 				.name {
 					min-width: 40px; max-width: calc(100% - 180px); height: 24px; line-height: 24px; display: inline-block;
-					vertical-align: top; cursor: pointer; @include text-overflow-nw;  
+					vertical-align: top; @include text-overflow-nw;  
 				}
 				.size {
 					@include text-common; max-width: 100px; height: 24px; line-height: 24px; color: $colorMediumGrey; margin: 0px 8px;
@@ -46,7 +46,7 @@
 
 			.loaderWrapper { width: 100%; height: 48px; position: relative; left: 0px; top: 0px; }
 
-			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; cursor: pointer; }
+			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; }
 			.react-pdf__Page { position: static !important; }
 			.react-pdf__Page__svg, .react-pdf__Page__canvas { 
 				width: 100% !important; height: 100% !important; overflow: hidden; 
@@ -64,7 +64,7 @@
 				
 		.icon.dots {
 			width: 32px; height: 32px; border-radius: 8px; background-color: rgba(0,0,0,0.35); position: absolute; right: 10px; top: 10px;
-			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; cursor: pointer; z-index: 1;
+			background-image: url('~img/icon/menu/file/dots.svg'); opacity: 0; background-size: 24px 24px; z-index: 1;
 		}
 	}
 

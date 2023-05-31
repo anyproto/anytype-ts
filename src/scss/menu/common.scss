@@ -63,7 +63,7 @@
 
 		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorBorderLight; white-space: nowrap; font-weight: 700; color: $colorMediumGrey; }
 		.tabs {
-			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; cursor: pointer; margin-right: 16px; position: relative; }
+			.tab { display: inline-block; vertical-align: top; transition: $transitionAllCommon; margin-right: 16px; position: relative; }
 			.tab:hover, .tab.active { color: $colorBlack; }
 			.tab:last-child { margin: 0px; }
 		}
@@ -75,7 +75,7 @@
 
 		.separator .inner { margin: 8px 14px 7px 14px; height: 1px; background: $colorBorderLight; }
 	
-		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; cursor: pointer; width: 100%; background: $colorWhite; }
+		.item { padding: 4px 14px; @include text-common; line-height: 20px; position: relative; width: 100%; background: $colorWhite; }
 		.item.isDragging { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.isReadonly { cursor: default; }
 		
@@ -100,7 +100,7 @@
 			.icon.dnd { width: 20px; height: 20px; background-image: url('~img/icon/dnd.svg'); margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.plus { margin-right: 6px; background-image: url('~img/icon/plus/menu0.svg'); }
 			.icon.delete, .icon.more { 
-				width: 24px; height: 24px; background-size: 20px; cursor: pointer; position: absolute; right: 10px; top: 50%; 
+				width: 24px; height: 24px; background-size: 20px; position: absolute; right: 10px; top: 50%; 
 				margin: -12px 0px 0px 0px; border-radius: 4px; opacity: 0; z-index: 1;
 			}
 			.icon.delete { background-image: url('~img/icon/menu/delete.svg'); }
@@ -189,7 +189,7 @@
 		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid $colorBorderLight; white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
-		.icon { width: 20px; height: 20px; margin-right: 12px; cursor: pointer; }
+		.icon { width: 20px; height: 20px; margin-right: 12px; }
 		.icon:last-child { margin: 0px; }
 		
 		.icon {

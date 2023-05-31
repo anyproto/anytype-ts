@@ -26,7 +26,7 @@
 			.name { display: none; }
 			.icon.lock { display: none; }
 		}
-		.cellHead.last { overflow: visible; cursor: pointer; padding: 9px 14px; }
+		.cellHead.last { overflow: visible; padding: 9px 14px; }
 		.cellHead.last {
 			.icon.plus { margin: 0px; }
 		}
@@ -73,7 +73,7 @@
 				.name, .empty { line-height: 20px; @include text-overflow-nw; width: 100%; }
 			}
 
-			.cell.isName, .cellContent.isName { cursor: pointer; }
+			.cell.isName, .cellContent.isName { }
 
 			.cell.isName.canEdit:hover {
 				.name { width: calc(100% - 40px) !important; }

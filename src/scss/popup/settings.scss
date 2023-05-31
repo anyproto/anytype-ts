@@ -66,10 +66,10 @@
 			> .side.right {
 				.head { width: 100%; margin: 0px 0px 36px 0px; }
 				.head {
-					.icon.back { width: 8px; height: 8px; cursor: pointer; background-image: url('~img/icon/popup/settings/back.svg'); }
+					.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
 					
 					.element { 
-						color: $colorDarkGrey; cursor: pointer; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 4px; 
+						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 4px; 
 						border-radius: 6px; margin-left: -5px;
 					}
 					.element:hover { background: $colorHoverMedium; }
@@ -111,7 +111,7 @@
 				.iconWrapper {
 					.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: rgba(255,255,255,0.3); }
 
-					.iconObject { flex-shrink: 0; cursor: pointer; }
+					.iconObject { flex-shrink: 0; }
 					.iconObject:after {
 						content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
 						background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
@@ -148,7 +148,7 @@
 
 			.qrWrap { 
 				padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; 
-				cursor: pointer; 
+				
 			}
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
@@ -160,7 +160,7 @@
 
 			.description {
 				.label { display: inline; }
-				.label.extend { cursor: pointer; color: $colorRed; }
+				.label.extend { color: $colorRed; }
 			}
 
 			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
@@ -204,14 +204,14 @@
 				p.first { margin: 0px 0px 20px 0px; }
 			}
 
-			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; cursor: pointer; }
+			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; }
 		}
 
 		.side.right.tabAppearance {
 			.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 32px 0px; flex-wrap: wrap; }
 			.label.section { margin-bottom: 8px; }
 
-			.btn { text-align: center; @include text-small; color: $colorDarkGrey; cursor: pointer; }
+			.btn { text-align: center; @include text-small; color: $colorDarkGrey; }
 			.btn {
 				.bg { 
 					width: 120px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; 
@@ -294,7 +294,7 @@
 
 				.btn { 
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: $colorDarkGrey; 
-					cursor: pointer; transition: $transitionAllCommon;
+					transition: $transitionAllCommon;
 				}
 				.btn {
 					.icon.help { width: 14px; height: 14px; background-image: url('~img/icon/popup/settings/help0.svg'); transition: $transitionAllCommon; }

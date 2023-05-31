@@ -8,7 +8,7 @@
 	.input { padding: 0px !important; height: 28px; line-height: 28px; vertical-align: top; border: 0px !important; background: none; }
 
 	.icon { flex-shrink: 0; }
-	.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clearFilter0.svg') !important; cursor: pointer; opacity: 0; }
+	.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clearFilter0.svg') !important; opacity: 0; }
 	.icon.clear:hover { background-image: url('~img/icon/clearFilter1.svg') !important; }
 
 	.icon.search { width: 20px; height: 20px; background-size: 18px; background-image: url('~img/icon/search.svg'); }
