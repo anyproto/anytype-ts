@@ -91,7 +91,7 @@
 			.side { padding: 15px 0px; white-space: nowrap; line-height: 28px; }
 			.side.left { padding-left: 14px; }
 
-			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 4px; transition: $transitionAllCommon; }
+			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; transition: $transitionAllCommon; }
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
 
 			.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
