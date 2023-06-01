@@ -344,6 +344,11 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
+
+		window.setTimeout(() => {
+			popupStore.open('settings', {});
+
+		},1500);
 	};
 
 	componentDidUpdate () {

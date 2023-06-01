@@ -269,7 +269,7 @@
 	"popupSettingsPinSelectRepeat": { "en": "Repeat pin code" },
 	"popupSettingsPinSelectError": { "en": "Pin codes do not match, please try again" },
 
-	"popupSettingsStorageIndexTitle": { "en": "File storage" },
+	"popupSettingsStorageIndexTitle": { "en": "Data management" },
 	"popupSettingsStorageIndexRemoteStorage": { "en": "Remote storage" },
 	"popupSettingsStorageIndexText": { "en": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally." },
 	"popupSettingsStorageIndexUsage": { "en": "%s of %s used" },

@@ -55,6 +55,15 @@
 					.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 				}
 
+				.item.itemAccount { padding: 8px; gap: 0 14px; }
+				.item.itemAccount {
+					.name { @include text-common; font-weight: 600; }
+					.onlineStatus { @include text-small; color: $colorDarkGrey; font-weight: 400; text-transform: capitalize; display: flex; gap: 0 6px; align-items: center; }
+					.onlineStatus:before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+					.onlineStatus.online:before { background: $colorLime; }
+					.onlineStatus.offline:before { background: $colorRed; }
+				}
+
 				.select { transition: none; border: 0px; color: $colorMediumGrey; max-width: 100%; }
 				.select { 
 					.icon.arrow { top: 3px; margin: 0px !important; }
@@ -250,9 +259,8 @@
 				.space {
 					.txt .type.red { color: $colorRed; }
 				}
-
-				.progressBar { margin-bottom: 54px; }
 			}
+			.progressBar { margin-bottom: 54px; }
 
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
