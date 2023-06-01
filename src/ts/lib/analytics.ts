@@ -321,7 +321,6 @@ class Analytics {
 
 			'auth/login':		 'ScreenLogin',
 			'auth/onboard':	 	 'ScreenAuthRegistration',
-			'auth/invite':		 'ScreenAuthInvitation',
 
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',

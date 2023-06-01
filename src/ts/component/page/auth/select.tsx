@@ -47,7 +47,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	};
 
 	onRegister () {
-		Animation.from(() => { Util.route('/auth/invite'); });
+		Animation.from(() => { Util.route('/auth/onboard'); });
 	};
 
 });

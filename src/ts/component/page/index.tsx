@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, DataUtil, ObjectUtil } from 'Lib';
-import { Sidebar, Navigation } from 'Component';
+import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -32,6 +32,7 @@ import PageMainUsecase from './main/usecase';
 
 const Components = {
 	'index/index':			 PageAuthSelect,
+
 	'auth/select':			 PageAuthSelect,
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,

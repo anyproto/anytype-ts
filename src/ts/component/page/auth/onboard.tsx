@@ -78,7 +78,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{this.renderButtons()}
 					{footer}
 				</Frame>
-				<CanvasWorkerBridge state={animationStage} />
+				{/*<CanvasWorkerBridge state={animationStage} />*/}
 				<div className="fadeInOverlay" />
 			</div>
 		);
@@ -309,12 +309,6 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		const { stage } = this.state;
 
-		// invite code screen is a separate page
-		if (stage == Stage.Void) {
-			Util.route('/auth/invite');
-			return;
-		};
-
 		// jump back two stages for the animation
 		if (stage == Stage.Soul) {
 			Animation.from(() => {
@@ -353,9 +347,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				};
 
 				const { iconOption } = this.state;
-				const { accountPath, name, code, phrase } = authStore;
+				const { accountPath, phrase } = authStore;
 
-				C.AccountCreate('', '', accountPath, code, iconOption, (message) => {
+				C.AccountCreate('', '', accountPath, iconOption, (message) => {
 					if (message.error.code) {
 						this.showErrorAndExit(message);
 						return;
