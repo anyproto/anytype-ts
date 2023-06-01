@@ -171,7 +171,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	
 	add () {
 		const { match } = this.props;
-		const { walletPath, accountPath, name, icon, code } = authStore;
+		const { walletPath, accountPath, name, icon } = authStore;
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
 
@@ -183,7 +183,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			authStore.phraseSet(message.mnemonic);
 
 			DataUtil.createSession(() => {
-				C.AccountCreate(name, icon, accountPath, code, Util.rand(1, Constant.iconCnt), (message: any) => {
+				C.AccountCreate(name, icon, accountPath, Util.rand(1, Constant.iconCnt), (message: any) => {
 					const description = Errors.AccountCreate[message.error.code] || message.error.description;
 
 					if (this.setError({ ...message.error, description }) || !message.account) {
