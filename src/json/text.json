@@ -291,6 +291,7 @@
 	"popupSettingsSpaceIndexExportDataTitle": { "en": "Export data" },
 	"popupSettingsSpaceIndexSpaceInfoTitle": { "en": "Space information" },
 	"popupSettingsSpaceIndexSpaceIdTitle": { "en": "Space ID" },
+	"popupSettingsSpaceIndexCreatedByTitle": { "en": "Created by" },
 	"popupSettingsSpaceIndexCreationDateTitle": { "en": "Creation date" },
 
 	"popupSettingsImportTitle": { "en": "Import" },

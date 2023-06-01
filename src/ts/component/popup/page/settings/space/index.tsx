@@ -9,7 +9,6 @@ import Url from 'json/url.json';
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
 
 	refName: any = null;
-	refDescription: any = null;
 	dashboardId = '';
 
 	constructor (props: any) {
@@ -24,7 +23,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	render () {
 		const { onPage } = this.props;
-		const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
+		const { bytesUsed, bytesLimit } = commonStore.spaceStorage;
+		const { account } = authStore;
 		const subId = Constant.subId.space;
 		const space = detailStore.get(subId, commonStore.workspace);
 		const name = this.checkName(space.name);
@@ -37,13 +37,26 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const usageCn = [ 'item' ];
 
 		let extend = null;
+		let createdDate = null;
 
 		if (isRed) {
 			usageCn.push('red');
 			extend = <Label text="Get more space." onClick={this.onExtend} className="extend" />;
 		};
 
-		console.log('SPACE: ', space)
+		// old accounts don't have space creation date
+		if (space.createdDate) {
+			createdDate = (
+				<div className="item">
+					<div className="sides">
+						<div className="side left">
+							<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
+							<Label text={Util.date(DataUtil.dateFormat(I.DateFormat.Short), space.createdDate)} />
+						</div>
+					</div>
+				</div>
+			);
+		};
 
 		return (
 			<React.Fragment>
@@ -69,14 +82,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								value={name}
 								onKeyUp={this.onName}
 								placeholder={ObjectUtil.defaultName('Page')}
-							/>
-						</div>
-
-						<div className="description">
-							<Input
-								ref={ref => this.refDescription = ref}
-								value={''}
-								placeholder={translate(`popupSettingsSpaceIndexDescriptionPlaceholder`)}
 							/>
 						</div>
 
@@ -160,7 +165,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={translate(`popupSettingsSpaceIndexSpaceInfoTitle`)} />
 						<div className="sectionContent">
 
-							<div onClick={this.onCopy} className="item itemSpaceId">
+							<div onClick={() => this.onCopy('Space ID', space.id)} className="item itemSpaceId">
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexSpaceIdTitle`)} />
@@ -172,14 +177,19 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								</div>
 							</div>
 
-							<div className="item">
+							<div onClick={() => this.onCopy('Account ID', account.id)} className="item itemAccountId">
 								<div className="sides">
 									<div className="side left">
-										<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
+										<Title text={translate(`popupSettingsSpaceIndexCreatedByTitle`)} />
+										<Label text={account.id} />
+									</div>
+									<div className="side right">
+										<Icon className="copy" />
 									</div>
 								</div>
 							</div>
 
+							{createdDate}
 						</div>
 					</div>
 				</div>
@@ -249,12 +259,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		ObjectUtil.setName(commonStore.workspace, this.checkName(v));
 	};
 
-	onCopy () {
-		const subId = Constant.subId.space;
-		const space = detailStore.get(subId, commonStore.workspace);
-
-		Util.clipboardCopy({ text: space.id });
-		Preview.toastShow({ text: 'Space ID copied to clipboard' });
+	onCopy (label: string, value: string) {
+		Util.clipboardCopy({ text: value });
+		Preview.toastShow({ text: label + ' copied to clipboard' });
 	};
 
 	checkName (v: string): string {

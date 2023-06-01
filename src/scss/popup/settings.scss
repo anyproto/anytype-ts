@@ -144,15 +144,12 @@
 			.spaceSettingsIndexHeader {
 				.iconWrapper { margin-bottom: 0; }
 
-				.headerContent { margin-left: 24px; }
+				.headerContent { margin-left: 24px; width: 100%; }
 				.headerContent {
 					.input { padding: 0; }
 
-					.name { margin-bottom: 4px; }
+					.name { margin-bottom: 8px; }
 					.name .input { @include text-header1; }
-
-					.description { margin-bottom: 8px; }
-					.description .input { color: $colorSecondary; }
 
 					.spaceType {
 						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
@@ -215,8 +212,14 @@
 				}
 
 				.section.sectionInfo .sectionContent {
-					.item.itemSpaceId { align-items: center; cursor: pointer; }
-					.item.itemSpaceId .icon { width: 22px; height: 22px; margin-right: 2px; }
+					.item.itemSpaceId,
+					.item.itemAccountId { align-items: center; cursor: pointer; }
+
+					.item.itemSpaceId .icon,
+					.item.itemAccountId .icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
+
+					.item.itemSpaceId:hover .icon,
+					.item.itemAccountId:hover .icon { opacity: 1; }
 				}
 			}
 		}
