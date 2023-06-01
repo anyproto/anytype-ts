@@ -61,7 +61,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	};
 
 	onSubmit (e: any) {
-		//commonStore.redirectSet('/main/usecase');
+		commonStore.redirectSet('/main/usecase');
 
 		DataUtil.onAuth(authStore.account, () => {
 			const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
