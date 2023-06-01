@@ -15,7 +15,7 @@
 
 			.viewItem { 
 				@include text-common; font-weight: 500; color: $colorMediumGrey; transition: $transitionAllCommon; 	margin-right: 16px; display: inline-block; 
-				vertical-align: top; cursor: pointer;
+				vertical-align: top;
 			}
 			.viewItem:last-child { margin: 0px; }
 			.viewItem:hover, .viewItem.active { color: $colorBlack; }
@@ -60,7 +60,7 @@
 
 			.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 			.buttons {
-				.icon { width: 24px; height: 24px; border-radius: 4px; cursor: pointer; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
+				.icon { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; background-size: 20px; z-index: 2; cursor: default; }
 				.icon:hover { background-color: $colorHoverMedium; }
 				.icon.active { opacity: 1; background-color: $colorHoverMedium; }
 				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }

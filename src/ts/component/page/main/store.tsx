@@ -428,7 +428,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
 		];
 		const sorts: I.Sort[] = [
-			{ type: I.SortType.Desc, relationKey: 'createdDate' },
+			{ type: I.SortType.Desc, relationKey: 'createdDate', includeTime: true },
 		];
 
 		let keys: string[] = Constant.defaultRelationKeys;

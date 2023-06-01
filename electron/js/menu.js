@@ -44,7 +44,7 @@ class MenuManager {
 					Separator,
 
 					{ label: 'Check for updates', click: () => { Api.updateCheck(this.win); } },
-					{ label: 'Settings', click: () => { Util.send(this.win, 'popup', 'settings', { page: 'index' }, true); } },
+					{ label: 'Settings', click: () => { this.openSettings('index'); } },
 
 					Separator,
 
@@ -58,14 +58,8 @@ class MenuManager {
 					{ label: 'Show logs', click: () => { shell.openPath(logPath); } },
 
 					Separator,
-					{
-						label: 'Import',
-						click: () => { Util.send(this.win, 'popup', 'settings', { data: { page: 'importIndex' } }); }
-					},
-					{
-						label: 'Export',
-						click: () => { Util.send(this.win, 'popup', 'settings', { data: { page: 'exportIndex' } }); }
-					},
+					{ label: 'Import', click: () => { this.openSettings('importIndex'); } },
+					{ label: 'Export', click: () => { this.openSettings('exportIndex'); } },
 					{ label: 'Save as file', click: () => { Util.send(this.win, 'command', 'save'); } },
 
 					Separator,
@@ -192,13 +186,6 @@ class MenuManager {
 			},
 		];
 
-		/*
-			{ isDiv: true },
-			{ id: 'terms', name: 'Terms of Use' },
-			{ id: 'privacy', name: 'Privacy Policy' },
-		];
-		*/
-
 		//if (config.allowDebug || config.allowBeta) {
 			config.debug = config.debug || {};
 
@@ -324,13 +311,13 @@ class MenuManager {
 
 			Separator,
 
-			{ label: 'Settings', click: () => { show(); Util.send(this.win, 'popup', 'settings', {}, true); } },
+			{ label: 'Settings', click: () => { show(); this.openSettings(''); } },
 			{ label: 'Check for updates', click: () => { show(); Api.updateCheck(this.win); } },
 
 			Separator,
 
-			{ label: 'Import', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'importIndex' } }, true); } },
-			{ label: 'Export', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'exportIndex' } }, true); } },
+			{ label: 'Import', click: () => { show(); this.openSettings('importIndex'); } },
+			{ label: 'Export', click: () => { show(); this.openSettings('exportIndex'); } },
 			
 			Separator,
 
@@ -346,6 +333,14 @@ class MenuManager {
 
 			{ label: 'Quit', click: () => { hide(); Api.exit(this.win, false); } },
 		]));
+	};
+
+	openSettings (page) {
+		const Api = require('./api.js');
+
+		if (Api.isPinChecked) {
+			Util.send(this.win, 'popup', 'settings', { page }, true); 
+		};
 	};
 
 	updateTrayIcon () {

@@ -19,7 +19,7 @@ class Onboarding {
 
 		menuStore.close('onboarding', () => {
 			window.setTimeout(() => {
-				let param = this.getParam(section, items[0], isPopup);
+				let param = this.getParam(section, items[0], isPopup, force);
 
 				if (options.parseParam) {
 					param = options.parseParam(param);
@@ -51,7 +51,7 @@ class Onboarding {
 		return Util.toCamelCase([ key, 'reminder' ].join('-'));
 	};
 
-	getParam (section: any, item: any, isPopup: boolean): any {
+	getParam (section: any, item: any, isPopup: boolean, force?: boolean): any {
 		section.param = section.param || {};
 		item.param = item.param || {};
 
@@ -81,6 +81,7 @@ class Onboarding {
 		param.classNameWrap = String(param.classNameWrap || '');
 		param.rect = null;
 		param.recalcRect = null;
+		param.force = force;
 
 		const cnw = [];
 		if (param.classNameWrap) {

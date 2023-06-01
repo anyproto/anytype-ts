@@ -49,7 +49,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 
 		const ButtonItem = (item: any) => {
 			const elementId = `button-${block.id}-${item.id}`;
-			const cn = [ item.id ];
+			const cn = [ `btn-${item.id}` ];
 
 			if (item.on) {
 				cn.push('on');
@@ -60,7 +60,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					id={elementId} 
 					className={cn.join(' ')}
 					tooltip={item.text}
-					onClick={(e: any) => { this.onButton(e, '#' + elementId, item.menu); }}
+					onClick={e => this.onButton(e, '#' + elementId, item.menu)}
 				/>
 			);
 		};

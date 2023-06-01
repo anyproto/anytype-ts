@@ -8,7 +8,7 @@
 	.inner { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; justify-content: center; position: relative; z-index: 1; }
 
 	.iconWrap { 
-		width: 32px; height: 32px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+		width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; 
 		transition: $transitionAllCommon;
 	}
 	.iconWrap:not(.disabled):hover { background-color: $colorHoverMedium; }

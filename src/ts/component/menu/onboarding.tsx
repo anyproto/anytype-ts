@@ -29,7 +29,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	render () {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, force } = param;
 		const { key, current } = data;
 		const section = Docs.Help.Onboarding[key] || {};
 		const { items, category, showConfetti } = section;
@@ -39,11 +39,25 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		let buttons = [];
 
 		if (!item.noButton) {
-			buttons.push({ text: current == l - 1 ? 'Finish' : 'Next', action: 'next' });
+			let buttonText = 'Next';
+
+			if (current == l - 1) {
+				buttonText = 'Finish';
+			};
+
+			if (item.buttonText) {
+				buttonText = item.buttonText;
+			};
+
+			buttons.push({ text: buttonText, action: 'next' });
 		};
 
 		if (item.buttons) {
 			buttons = buttons.concat(item.buttons);
+		};
+
+		if (force && item.forceButtons) {
+			buttons = item.forceButtons;
 		};
 
 		const Steps = () => (
@@ -180,6 +194,11 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	onButton (e: any, action: string) {
 		switch (action) {
+			case 'close': {
+				this.onClose();
+				break;
+			};
+
 			case 'next': {
 				this.onArrow(e, 1);
 				break;
@@ -191,6 +210,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			};
 
 			case 'dashboard': {
+				this.onClose();
 				ObjectUtil.openHome('route');
 				break;
 			};

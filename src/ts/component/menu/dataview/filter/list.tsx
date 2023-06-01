@@ -52,6 +52,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}

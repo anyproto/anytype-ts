@@ -3,10 +3,16 @@ import { Frame, Title, Label, Button, Loader } from 'Component';
 import { C, I, ObjectUtil, Util, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
-import Constant from 'json/constant.json';
 
-const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I.PageComponent, object> {
-    loading: boolean = false;
+interface State {
+	isLoading: boolean;
+};
+
+const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I.PageComponent, State> {
+
+	state = {
+		isLoading: false
+	};
 
     constructor (props: I.PageComponent) {
         super(props);
@@ -15,6 +21,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
     };
 
     render () {
+		const { isLoading } = this.state;
         const cases: any[] = [
             { id: 1, img: 'img/usecase/personal-projects.png' },
             { id: 2, img: 'img/usecase/knowledge-base.png' },
@@ -34,6 +41,8 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
                 <div className='fadeInOverlay' />
 
                 <Frame>
+					{isLoading ? <Loader /> : ''}
+
                     <Title className="frameTitle" text={translate('authUsecaseTitle')} />
                     <Label className="frameLabel" text={translate('authUsecaseLabel')} />
 
@@ -46,7 +55,6 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
                     <div className="buttons">
                         <Button color="blank" className="c36" text={translate('authUsecaseSkip')} onClick={(e) => this.onClick(e, 0)} />
                     </div>
-                    {this.loading ? <Loader /> : ''}
                 </Frame>
             </div>
         );
@@ -55,19 +63,21 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
     onClick (e: any, id: number) {
         e.preventDefault();
 
-        if (this.loading) {
+		const { isLoading } = this.state;
+
+        if (isLoading) {
             return;
         };
 
-        this.loading = true;
-        this.forceUpdate();
+		this.setState({ isLoading: true });
 
-        C.ObjectImportUseCase(id, (message) => {
-            $('.usecaseWrapper').css({'opacity': 0});
+        C.ObjectImportUseCase(id, () => {
+            $('.usecaseWrapper').css({ 'opacity': 0 });
 
             window.setTimeout(() => {
-                this.loading = false;
-                Util.route('/main/graph');
+                this.setState({ isLoading: false });
+
+                ObjectUtil.openRoute({ layout: I.ObjectLayout.Graph });
             }, 600);
         });
     };

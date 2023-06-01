@@ -131,7 +131,7 @@ class Dataview {
 			};
 
 			// TODO: Hack until we implement proper logic on Middleware
-			if ([ 'lastModifiedDate', 'lastOpenedDate' ].includes(it.relationKey)) {
+			if ([ 'lastModifiedDate', 'lastOpenedDate', 'createdDate' ].includes(it.relationKey)) {
 				it.includeTime = true;
 			};
 			return it;

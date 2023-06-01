@@ -184,12 +184,16 @@ class CommonStore {
 	};
 
 	get spaceStorage (): SpaceStorage {
-		let { bytesUsed } = this.spaceStorageObj;
-		if (bytesUsed <= 1024) {
+		let { bytesUsed, localUsage } = this.spaceStorageObj;
+		
+		if (bytesUsed <= 1024 * 1024) {
 			bytesUsed = 0;
 		};
+		if (localUsage <= 1024 * 1024) {
+			localUsage = 0;
+		};
 
-		return { ...this.spaceStorageObj, bytesUsed };
+		return { ...this.spaceStorageObj, bytesUsed, localUsage };
 	};
 
     gatewaySet (v: string) {

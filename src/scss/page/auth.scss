@@ -73,7 +73,7 @@ html.bodyAuthDeleted {
 	.icon.arrow.back:hover { background-image: url('~img/arrow/auth1.svg'); }
 	
 	.authBackWrap { 
-		position: absolute; top: 4px; left: 4px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; 
+		position: absolute; top: 4px; left: 4px; display: flex; align-items: center; flex-wrap: nowrap; color: $colorDarkGrey; 
 		line-height: 28px; padding: 0px 6px 0px 0px; border-radius: 4px;
 	}
 	.authBackWrap {
@@ -247,8 +247,36 @@ html.bodyAuthDeleted {
 	.remove { color: $colorRed; font-weight: 500; font-size: 16px; cursor: pointer; }
 
 	.row { 
-		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
+		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; position: relative; 
 		@include text-paragraph; line-height: 28px;
 	}
 	.row.red { color: $colorRed; }
+}
+
+.pageMainUsecase {
+	.usecaseWrapper { transition: opacity 600ms; }
+	.frame { width: 836px; box-shadow: 0px 6px 24px rgba(0,0,0,0.2); border-radius: 12px; padding: 44px 48px 36px; text-align: left; }
+
+	.frame {
+		.frameTitle { @include text-header1; margin-bottom: 8px; }
+		.frameLabel { color: $colorDarkGrey; margin-bottom: 18px; }
+
+		.usecaseList { display: flex; justify-content: space-between; align-items: stretch; gap: 0px 16px; }
+		.usecaseList {
+			.case {
+				position: relative; overflow: hidden; width: 236px; min-height: 236px; padding: 16px 16px 124px 16px; margin-bottom: 18px;
+				cursor: pointer; transition: $transitionAllCommon; border: 1px solid $colorBorderDark; border-radius: 8px;
+			}
+			.case:hover { border-color: $colorMediumGrey; }
+			.case {
+				.caseTitle { @include text-header3; margin-bottom: 8px; }
+				.caseLabel { color: $colorDarkGrey; }
+
+				img { position: absolute; width: 100%; left: 0; bottom: 0; }
+			}
+		}
+
+		.button { width: auto; }
+		.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.3); }
+	}
 }

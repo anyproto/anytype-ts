@@ -41,7 +41,7 @@
 		.focusable { border-radius: inherit; }
 		
 		.emptyToggle { 
-			display: none; margin-left: 28px; color: $colorMediumGrey; position: relative; z-index: 2; cursor: pointer;
+			display: none; margin-left: 28px; color: $colorMediumGrey; position: relative; z-index: 2;
 			@include text-overflow-nw;
 		}
 		.emptyToggle:hover { color: $colorBlack; }

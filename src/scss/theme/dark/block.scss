@@ -67,7 +67,7 @@
         .loaderWrapper { border: 0px; }
         .pdfWrapper { box-shadow: 0px 0px 0px 1px $colorLinePrimary; }
     }
-    .block.blockMedia.isAudio.withFile > .wrapContent { background-color: $colorHoverMedium; }
+    .block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorHoverMedium; }
 
     /* BlockDataview */
 
@@ -98,7 +98,6 @@
 		}
 
         .dataviewControls {
-            .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
             .viewItem {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
@@ -107,10 +106,10 @@
             .viewItem.isDragging { background: $colorHoverMedium; }
 
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
-			.icon.filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
-			.icon.sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
+			.icon.btn-filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
+			.icon.btn-sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
-		.dataviewControls::after { background-color: $colorLinePrimary; }
+		.dataviewControls::after { background-color: $colorLineSecondary; }
 
 		.dataviewSelection {
 			.side.left { color: $colorPrimary; }
@@ -222,24 +221,28 @@
     .block.blockLink {
         .loading, .deleted { color: $colorSecondary; }
 
-		.linkCard.text {
-			.cardName .name { border-color: $colorLineTertiary; }
-		}
-
 		.linkCard.c48.withIcon {
 			.iconObject { background-color: $colorBgIcon; }
 		}
-
-		.linkCard.card {
+    }
+	.block.blockLink.text {
+		.linkCard {
+			.cardName .name { border-color: $colorLineTertiary; }
+		}
+	}
+	.block.blockLink.card {
+		.linkCard {
 			.side.left, .side.right { border-color: $colorLineTertiary; }
 		}
-    }
+	}
 
-	.block.blockLink:hover {
-		.linkCard.text {
+	.block.blockLink.text:hover {
+		.linkCard {
 			.cardName .name { border-color: $colorPrimary; }
 		}
-		.linkCard.card {
+	}
+	.block.blockLink.card:hover {
+		.linkCard {
 			.side.left, .side.right { border-color: $colorLinePrimary; }
 		}
 	}

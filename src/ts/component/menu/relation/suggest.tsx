@@ -280,15 +280,13 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		let sections: any[] = [
 			{ id: 'library', name: 'My relations', children: library },
 		];
-		let name = 'Create new relation';
 
 		if (filter) {
 			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 			sections = sections.concat([
 				{ id: 'store', name: 'Anytype library', children: store },
+				{ children: [ { id: 'add', name: `Create relation "${filter}"` } ] }
 			]);
-
-			name = `Create relation "${filter}"`;
 		} else {
 			sections = sections.concat([
 				{ 
@@ -296,10 +294,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
 					] 
 				},
-			])
+			]);
 		};
-
-		sections.unshift({ children: [ { id: 'add', name } ] });
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);

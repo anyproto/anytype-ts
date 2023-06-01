@@ -104,13 +104,12 @@ const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, avatarPath: string, storePath: string, code: string, icon: number, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 
 	request.setName(name);
 	request.setAvatarlocalpath(avatarPath);
 	request.setStorepath(storePath);
-	request.setAlphainvitecode(code);
 	request.setIcon(icon);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
@@ -1272,11 +1271,13 @@ const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any
 };
 
 const ObjectImportUseCase = (usecase: number, callBack?: (message: any) => void) => {
+	/*
 	const request = new Rpc.Object.ImportUseCase.Request();
 
 	request.setUsecase(usecase);
 
 	dispatcher.request(ObjectImportUseCase.name, request, callBack);
+	*/
 };
 
 const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {

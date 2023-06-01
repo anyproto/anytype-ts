@@ -31,7 +31,7 @@
 		.bottom { display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin-top: 20px; }
 		.bottom {
 			.round {
-				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; cursor: pointer;
+				display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
 				background: $colorOrange; transition: $transitionAllCommon;
 			}
 			.round:hover { background: #F09C0E; }
@@ -54,7 +54,7 @@
 			.steps { display: flex; flex-wrap: nowrap; }
 			.steps {
 				.step {
-					width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; cursor: pointer;
+					width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
 					background: $colorVeryLightGrey; transition: $transitionAllCommon;
 				}
 				.step:hover { background: $colorBorderDark; }

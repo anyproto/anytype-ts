@@ -19,7 +19,7 @@
 
 	.icon.clear { 
 		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 50%;
-		cursor: pointer; transition: background-image $transitionCommon; margin: -10px 0px 0px 0px !important;
+		transition: background-image $transitionCommon; margin: -10px 0px 0px 0px !important;
 	}
 	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 }

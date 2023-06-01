@@ -42,7 +42,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const { account, walletPath, accountPath } = authStore;
 		const { config } = commonStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const canDelete = account?.status?.type == I.AccountStatusType.Active;
 		const canMove = config.experimental;
 
 		return (
@@ -86,11 +85,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						</div>
 					) : ''}
 
-					{canDelete ? (
-						<div className="row cp" onClick={() => { onPage('delete'); }}>
-							<Label text={translate('popupSettingsAccountDeleteTitle')} />
-						</div>
-					) : ''}
+					<div className="row cp" onClick={() => { onPage('delete'); }}>
+						<Label text={translate('popupSettingsAccountDeleteTitle')} />
+					</div>
 
 					<div className="row red cp" onClick={this.onLogout}>
 						<Label text={translate('popupSettingsLogout')} />

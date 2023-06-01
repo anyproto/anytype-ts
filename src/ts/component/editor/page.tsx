@@ -15,10 +15,15 @@ interface Props extends I.PageComponent {
 	onOpen?(): void;
 };
 
+interface State {
+	isLoading: boolean;
+	isDeleted: boolean;
+};
+
 const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
 
-const EditorPage = observer(class EditorPage extends React.Component<Props> {
+const EditorPage = observer(class EditorPage extends React.Component<Props, State> {
 	
 	_isMounted = false;
 	node: any = null;
@@ -27,11 +32,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	hoverPosition: I.BlockPosition = I.BlockPosition.None;
 	scrollTop = 0;
 	uiHidden = false;
-	loading = false;
-	isDeleted = false;
 	width = 0;
 	refHeader: any = null;
 	dir = 0;
+
+	state = {
+		isLoading: false,
+		isDeleted: false,
+	};
 
 	timeoutMove = 0;
 	timeoutScreen = 0;
@@ -61,13 +69,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 	render () {
 		const { rootId } = this.props;
+		const { isLoading, isDeleted } = this.state;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (this.isDeleted) {
+		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
-		if (this.loading) {
+		if (isLoading) {
 			return <Loader id="loader" />;
 		};
 
@@ -80,6 +89,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const length = childrenIds.length;
 		const width = root.fields?.width;
 		const readonly = this.isReadonly();
+		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
 
 		return (
 			<div 
@@ -153,10 +163,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		const resizable = node.find('.resizable');
 		
 		this.open();
-		focus.apply();
-
-		blockStore.updateNumbers(rootId);
 		this.resizePage();
+		this.checkDeleted();
+
+		focus.apply();
+		blockStore.updateNumbers(rootId);
 		sidebar.resizePage();
 
 		if (resizable.length) {
@@ -184,6 +195,21 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		return this.getWidth(root?.fields?.width);
 	};
 
+	checkDeleted () {
+		const { rootId } = this.props;
+		const { isDeleted } = this.state;
+
+		if (isDeleted) {
+			return;
+		};
+
+		const object = detailStore.get(rootId, rootId, []);
+
+		if (object.isArchived || object.isDeleted) {
+			this.setState({ isDeleted: true });
+		};
+	};
+
 	open () {
 		const { rootId, onOpen, isPopup } = this.props;
 
@@ -192,8 +218,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		};
 
 		this.id = rootId;
-		this.isDeleted = false;
-		this.setLoading(true);
+		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(this.id, '', (message: any) => {
 			if (message.error.code) {
@@ -201,8 +226,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 					Util.onErrorUpdate(() => { ObjectUtil.openHome('route'); });
 				} else 
 				if (message.error.code == Errors.Code.NOT_FOUND) {
-					this.isDeleted = true;
-					this.forceUpdate();
+					this.setState({ isDeleted: true, isLoading: false });
 				} else {
 					ObjectUtil.openHome('route');
 				};
@@ -211,8 +235,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 
 			const object = detailStore.get(rootId, rootId, []);
 			if (object.isArchived || object.isDeleted) {
-				this.isDeleted = true;
-				this.forceUpdate();
+				this.setState({ isDeleted: true, isLoading: false });
 				return;
 			};
 
@@ -349,10 +372,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 			return;
 		};
 		
+		const { isLoading } = this.state;
 		const { rootId, dataset, isPopup } = this.props;
 		const { selection } = dataset || {};
 		const root = blockStore.getLeaf(rootId, rootId);
-		const checkType = blockStore.checkBlockTypeExists(rootId);
 		const readonly = this.isReadonly();
 		const node = $(this.node);
 		const button = node.find('#button-block-add');
@@ -373,14 +396,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 		if (
 			!root || 
 			readonly || 
-			checkType || 
 			(root && root.isLocked()) || 
 			keyboard.isResizing || 
 			keyboard.isDragging || 
 			selection && selection.isSelecting || 
 			menuStore.isOpen() || 
 			(!isPopup && popupStore.isOpen()) ||
-			this.loading
+			isLoading
 		) {
 			out();
 			return;
@@ -2086,7 +2108,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	};
 	
 	resizePage () {
-		if (this.loading || !this._isMounted) {
+		const { isLoading } = this.state;
+
+		if (isLoading || !this._isMounted) {
 			return;
 		};
 
@@ -2208,8 +2232,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props> {
 	};
 
 	setLoading (v: boolean): void {
-		this.loading = v;
-		this.forceUpdate();
+		this.setState({ isLoading: v });
 	};
 
 });

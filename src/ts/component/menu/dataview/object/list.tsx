@@ -53,6 +53,10 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+			if (!item) {
+				return null;
+			};
+
 			const type = dbStore.getType(item.type);
 			const name = <ObjectName object={item} />;
 
@@ -350,7 +354,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			let flags: I.ObjectFlag[] = [];
 			
 			if (typeId) {
-				details.typeId = typeId;
+				details.type = typeId;
 			} else {
 				flags.push(I.ObjectFlag.SelectType);
 			};

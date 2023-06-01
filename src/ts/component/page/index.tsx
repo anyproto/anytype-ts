@@ -7,7 +7,6 @@ import { Sidebar, Navigation } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import PageAuthInvite from './auth/invite';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pinCheck';
@@ -31,10 +30,8 @@ import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
 import PageMainUsecase from './main/usecase';
 
-const Components: { [key: string]: any } = {
+const Components = {
 	'index/index':			 PageAuthSelect,
-
-	'auth/invite':			 PageAuthInvite,
 	'auth/select':			 PageAuthSelect,
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,
@@ -81,6 +78,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
 		const showSidebar = this.isMain() && !this.isMainUsecase();
+
+		if (account) {
+			const { status } = account || {};
+			const { type } = status || {};
+		};
 
 		const Component = Components[path];
 		if (!Component) {

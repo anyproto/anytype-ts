@@ -24,7 +24,7 @@ const MenuAccountPath = observer(class MenuAccountPath extends React.Component<I
     };
 
     onClick () {
-		Action.openDir(paths => authStore.accountPathSet(paths[0]));
+		Action.openDir({}, paths => authStore.accountPathSet(paths[0]));
     };
 
 });
