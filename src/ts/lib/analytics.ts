@@ -252,6 +252,7 @@ class Analytics {
 
 			case 'ChangeWidgetSource':
 			case 'ChangeWidgetLayout':
+			case 'ChangeWidgetLimit':
 			case 'ReorderWidget':
 			case 'DeleteWidget': {
 				if (!data.target) {

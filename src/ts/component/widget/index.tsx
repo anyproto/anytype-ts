@@ -254,7 +254,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			onOpen: () => { node.addClass('active'); },
 			onClose: () => { node.removeClass('active'); },
 			data: {
-				layout: block.content.layout,
+				...block.content,
 				target: object,
 				isEditing: true,
 				blockId: block.id,

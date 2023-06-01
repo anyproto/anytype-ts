@@ -37,6 +37,7 @@ export interface WidgetTreeDetails {
 
 export interface ContentWidget {
 	layout: I.WidgetLayout;
+	limit: number;
 };
 
 export interface BlockWidget extends I.Block {

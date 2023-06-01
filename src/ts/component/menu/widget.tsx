@@ -13,19 +13,21 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
     n = -1;
 	target = null;
 	layout: I.WidgetLayout = null;
+	limit = 0;
 
     constructor (props: I.Menu) {
 		super(props);
 
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing, layout, target } = data;
+		const { isEditing, layout, limit, target } = data;
 
 		this.save = this.save.bind(this);
 		this.rebind = this.rebind.bind(this);
 
 		if (isEditing) {
 			this.layout = layout;
+			this.limit = limit;
 			this.target = target;
 			this.checkState();
 		};
@@ -125,7 +127,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this.checkState();
 		
 		let sourceName = 'Choose a source';
-		let layoutName = 'Choose a layout';
+		let layoutName = 'Widget type';
 
 		if (this.target) {
 			sourceName = ObjectUtil.name(this.target);
@@ -143,7 +145,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			},
 			{ 
 				id: 'layout', name: 'Appearance', children: [
-					{ id: 'layout', name: layoutName, arrow: true }
+					{ id: 'layout', name: layoutName, arrow: true },
+					{ id: 'limit', name: 'Number of objects', arrow: true, caption: String(this.limit), withCaption: true },
 				] 
 			},
 		];
@@ -225,6 +228,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		}));
 	};
 
+	getLimitOptions () {
+		return [];
+	};
+
 	isCollection () {
 		return this.target && Object.values(Constant.widgetId).includes(this.target.id);
 	};
@@ -262,7 +269,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		let menuId = '';
 
 		switch (item.itemId) {
-			case 'source':
+			case 'source': {
 				let filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes().concat(ObjectUtil.getFileTypes()) },
 				];
@@ -303,8 +310,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					},
 				});
 				break;
+			};
 
-			case 'layout':
+			case 'layout': {
 				menuId = 'select';
 				menuParam.width = 320;
 				menuParam.data = Object.assign(menuParam.data, {
@@ -322,6 +330,30 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 						analytics.event('ChangeWidgetSource', {
 							layout: I.WidgetLayout[this.layout],
+							route: isEditing ? 'Inner' : 'AddWidget',
+							target: this.target
+						});
+					},
+				});
+				break;
+			};
+
+			case 'limit':
+				menuId = 'select';
+				menuParam.data = Object.assign(menuParam.data, {
+					options: this.getLimitOptions(),
+					value: this.limit,
+					onSelect: (e, option) => {
+						this.limit = option.id;
+						this.checkState();
+						this.forceUpdate();
+						
+						if (isEditing && this.layout) {
+							close();
+						};
+
+						analytics.event('ChangeWidgetlimit', {
+							limit: this.limit,
 							route: isEditing ? 'Inner' : 'AddWidget',
 							target: this.target
 						});
