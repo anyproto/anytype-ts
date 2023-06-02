@@ -203,7 +203,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		this.unbind();
 
-		win.on(`updateWidgetData.${block.id}`, () => this.ref && this.ref.init());
+		win.on(`updateWidgetData.${block.id}`, () => this.ref && this.ref.update());
 	};
 
 	getTargetBlock (): I.Block {
@@ -340,7 +340,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	getData (subId: string, callBack?: () => void) {
-		const { block, isPreview } = this.props;
+		const { block } = this.props;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content;
 		const limit = this.getLimit(block.content);
@@ -412,7 +412,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const { isPreview } = this.props;
 		const options = MenuUtil.getWidgetLimits(layout).map(it => Number(it.id));
 
-		if (!limit || !options.includes(layout)) {
+		if (!limit || !options.includes(limit)) {
 			limit = options[0];
 		};
 		return isPreview ? 0 : limit;

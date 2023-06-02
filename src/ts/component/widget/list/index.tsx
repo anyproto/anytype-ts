@@ -165,7 +165,24 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	componentDidMount (): void {
-		this.init();
+		const { block, isCollection, getData } = this.props;
+		const { targetBlockId } = block.content;
+
+		if (isCollection(targetBlockId)) {
+			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
+		} else {
+			this.setState({ loading: true });
+
+			C.ObjectShow(targetBlockId, this.getTraceId(), () => {
+				this.setState({ loading: false });
+
+				const view = Dataview.getView(this.getRootId(), BLOCK_ID);
+				if (view) {
+					this.onChangeView(view.id);
+					this.load(view.id);
+				};
+			});
+		};
 	};
 
 	componentDidUpdate (): void {
@@ -200,24 +217,18 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 
-	init () {
+	update () {
 		const { block, isCollection, getData } = this.props;
 		const { targetBlockId } = block.content;
 
-		if (!isCollection(targetBlockId)) {
-			this.setState({ loading: true });
-
-			C.ObjectShow(targetBlockId, this.getTraceId(), () => {
-				this.setState({ loading: false });
-
-				const view = Dataview.getView(this.getRootId(), BLOCK_ID);
-				if (view) {
-					this.onChangeView(view.id);
-					this.load(view.id);
-				};
-			});
-		} else {
+		if (isCollection(targetBlockId)) {
 			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
+		} else {
+			const view = Dataview.getView(this.getRootId(), BLOCK_ID);
+			if (view) {
+				this.onChangeView(view.id);
+				this.load(view.id);
+			};
 		};
 	};
 
@@ -234,7 +245,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 	load = (viewId: string) => {
 		const { widgets } = blockStore;
-		const { block, parent, isPreview, getLimit } = this.props;
+		const { block, parent, getLimit } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);

@@ -151,28 +151,12 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	// Lifecycle Methods
 
 	componentDidMount () {
-		this._isMounted = true;
-		this.restoreUIState();
-		this.init();
-	};
-
-	componentDidUpdate () {
-		this.restoreUIState();
-		this.resize();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		const subIds = Object.keys(this.subscriptionHashes).map(this.getSubId);
-		if (subIds.length) {
-			C.ObjectSearchUnsubscribe(subIds);
-		};
-	};
-
-	init () {
 		const { block, isCollection, getData } = this.props;
 		const { targetBlockId } = block.content;
+
+		this._isMounted = true;
+		this.restoreUIState();
+
 		const callBack = () => {
 			const nodes = this.loadTree();
 
@@ -190,8 +174,40 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		} else {
 			callBack();
 		};
+	};
 
+	componentDidUpdate () {
+		this.restoreUIState();
 		this.resize();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+
+		const subIds = Object.keys(this.subscriptionHashes).map(this.getSubId);
+		if (subIds.length) {
+			C.ObjectSearchUnsubscribe(subIds);
+		};
+	};
+
+	update () {
+		const { block, isCollection, getData } = this.props;
+		const { targetBlockId } = block.content;
+		const callBack = () => {
+			const nodes = this.loadTree();
+
+			this.cache = new CellMeasurerCache({
+				fixedWidth: true,
+				defaultHeight: HEIGHT,
+				keyMapper: i => (nodes[i] || {}).id,
+			});
+
+			this.forceUpdate();
+		};
+
+		if (isCollection(targetBlockId)) {
+			getData(this.getSubId(targetBlockId), callBack);
+		};
 	};
 
 	// Restores the scroll position and the keyboard focus
