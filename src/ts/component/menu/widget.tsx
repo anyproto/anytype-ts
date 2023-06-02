@@ -321,7 +321,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						this.checkState();
 						this.forceUpdate();
 						
-						if (isEditing && this.layout) {
+						if (isEditing) {
 							C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
 						};
 
@@ -345,7 +345,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						this.checkState();
 						this.forceUpdate();
 						
-						if (isEditing && this.limit) {
+						if (isEditing) {
 							C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
 						};
 
