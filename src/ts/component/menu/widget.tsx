@@ -407,11 +407,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 
-				targetBlockId: this.target.id,   
+				targetBlockId: this.target.id, 
 			},
 		};
 
-		C.BlockCreateWidget(widgets, targetId, newBlock, position, this.layout, () => {
+		C.BlockCreateWidget(widgets, targetId, newBlock, position, this.layout, this.limit, () => {
 			if (onSave) {
 				onSave();
 			};

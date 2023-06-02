@@ -1025,7 +1025,7 @@ const BlockDataviewSetSource = (contextId: string, blockId: string, sources: str
 
 // ---------------------- BLOCK WIDGET ---------------------- //
 
-const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, callBack?: (message: any) => void) => {
+const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.CreateWidget.Request();
 
 	request.setContextid(contextId);
@@ -1033,6 +1033,7 @@ const BlockCreateWidget = (contextId: string, targetId: string, block: any, posi
 	request.setBlock(Mapper.To.Block(block));
 	request.setPosition(position as number);
 	request.setWidgetlayout(layout as number);
+	request.setObjectlimit(limit);
 
 	dispatcher.request(BlockCreateWidget.name, request, callBack);
 };
