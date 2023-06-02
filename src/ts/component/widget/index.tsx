@@ -201,7 +201,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		this.unbind();
 
-		win.on(`updateWidgetData.${block.id}`, () => this.ref.init());
+		win.on(`updateWidgetData.${block.id}`, () => this.ref && this.ref.init());
 	};
 
 	getTargetBlock (): I.Block {

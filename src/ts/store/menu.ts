@@ -155,14 +155,9 @@ class MenuStore {
 
 	onCloseAll (timeout: number, callBack?: () => void) {
 		this.clearTimeout();
-		if (!callBack) {
-			return;
-		};
 
-		if (timeout) {
+		if (callBack) {
 			this.timeout = window.setTimeout(() => callBack(), timeout);
-		} else {
-			callBack();
 		};
 	};
 

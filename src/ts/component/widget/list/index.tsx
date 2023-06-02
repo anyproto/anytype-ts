@@ -250,8 +250,6 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			limit = isCompact ? Constant.limit.widgetRecords.compact : Constant.limit.widgetRecords.list;
 		};
 
-		console.log(parent);
-
 		Dataview.getData({
 			rootId: this.getRootId(),
 			blockId: BLOCK_ID,
