@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Loader } from 'Component';
-import { I, Util, ObjectUtil, DataUtil, translate, Storage, Action, analytics } from 'Lib';
+import { I, Util, ObjectUtil, DataUtil, MenuUtil, translate, Storage, Action, analytics } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -349,7 +349,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		let limit = Number(block.content.limit) || 0;
 		if (!limit) {
-			limit = layout == I.WidgetLayout.Tree ? Constant.limit.widgetRecords.tree : Constant.limit.widgetRecords.list;
+			limit = Number(MenuUtil.getWidgetLimits(layout)[0].id);
 		};
 		if (isPreview) {
 			limit = 0;

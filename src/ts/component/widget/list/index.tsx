@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, Util, Relation } from 'Lib';
+import { Dataview, I, C, Util, MenuUtil, Relation } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -247,7 +247,10 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 		let limit = Number(parent.content.limit) || 0;
 		if (!isPreview && !limit) {
-			limit = isCompact ? Constant.limit.widgetRecords.compact : Constant.limit.widgetRecords.list;
+			limit = Number(MenuUtil.getWidgetLimits(parent.content.layout)[0].id);
+		};
+		if (isPreview) {
+			limit = 0;
 		};
 
 		Dataview.getData({

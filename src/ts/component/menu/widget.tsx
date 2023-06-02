@@ -188,7 +188,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		this.layout = layoutOptions.includes(this.layout) ? this.layout : (layoutOptions.length ? layoutOptions[0] : null);
 
-		const limitOptions = this.getLimitOptions().map(it => Number(it.id));
+		const limitOptions = MenuUtil.getWidgetLimits(this.layout).map(it => Number(it.id));
 
 		this.limit = limitOptions.includes(this.limit) ? this.limit : (limitOptions.length ? limitOptions[0] : null);
 	};
@@ -235,22 +235,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			icon: `widget-${id}`,
 			withDescription: true,
 		}));
-	};
-
-	getLimitOptions () {
-		let options = [];
-		switch (this.layout) {
-			default: {
-				options = [ 6, 10, 14 ];
-				break;
-			};
-
-			case I.WidgetLayout.List: {
-				options = [ 4, 6, 8 ];
-				break;
-			};
-		};
-		return options.map(id => ({ id: String(id), name: id }));
 	};
 
 	isCollection () {
@@ -356,7 +340,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			case 'limit':
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					options: this.getLimitOptions(),
+					options: MenuUtil.getWidgetLimits(this.layout),
 					value: String(this.limit || ''),
 					onSelect: (e, option) => {
 						this.limit = Number(option.id);
