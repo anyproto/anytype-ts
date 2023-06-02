@@ -25,7 +25,8 @@ interface State {
 
 const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, State> {
 
-	node: any = null;
+	node = null;
+	ref = null;
 	state = {
 		loading: false
 	};
@@ -47,7 +48,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const { loading } = this.state;
 		const { block, isPreview, isEditing, className, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
-		const { layout } = block.content;
+		const { layout, limit } = block.content;
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget', Util.toCamelCase('widget-' + I.WidgetLayout[layout]) ];
 		const object = this.getObject();
@@ -133,18 +134,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			switch (layout) {
 
 				case I.WidgetLayout.Space: {
-					content = <WidgetSpace key={key} {...this.props} {...props} />;
+					content = <WidgetSpace key={key} ref={ref => this.ref = ref} {...this.props} {...props} />;
 					break;
 				};
 
 				case I.WidgetLayout.Tree: {
-					content = <WidgetTree key={key} {...this.props} {...props} />;
+					content = <WidgetTree key={key} ref={ref => this.ref = ref} {...this.props} {...props} />;
 					break;
 				};
 
 				case I.WidgetLayout.List:
 				case I.WidgetLayout.Compact: {
-					content = <WidgetList key={key} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
+					content = <WidgetList key={key} ref={ref => this.ref = ref} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
 					break;
 				};
 
@@ -175,11 +176,32 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	componentDidMount(): void {
+		this.rebind();
 		this.initToggle();
 	};
 
 	componentDidUpdate(): void {
 		this.initToggle();
+	};
+
+	componentWillUnmount(): void {
+		this.unbind();	
+	};
+
+	unbind () {
+		const { block } = this.props;
+		const events = [ 'updateWidgetData' ];
+
+		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+	};
+
+	rebind () {
+		const { block } = this.props;
+		const win = $(window);
+
+		this.unbind();
+
+		win.on(`updateWidgetData.${block.id}`, () => this.ref.init());
 	};
 
 	getTargetBlock (): I.Block {
@@ -325,7 +347,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
 		];
 
-		let limit = layout == I.WidgetLayout.Tree ? Constant.limit.widgetRecords.tree : Constant.limit.widgetRecords.list;
+		let limit = Number(block.content.limit) || 0;
+		if (!limit) {
+			limit = layout == I.WidgetLayout.Tree ? Constant.limit.widgetRecords.tree : Constant.limit.widgetRecords.list;
+		};
 		if (isPreview) {
 			limit = 0;
 		};
@@ -333,7 +358,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
-				limit = 0;
 				break;
 			};
 

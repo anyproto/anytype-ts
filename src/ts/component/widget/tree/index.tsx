@@ -153,7 +153,24 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentDidMount () {
 		this._isMounted = true;
 		this.restoreUIState();
+		this.init();
+	};
 
+	componentDidUpdate () {
+		this.restoreUIState();
+		this.resize();
+	};
+
+	componentWillUnmount () {
+		this._isMounted = false;
+
+		const subIds = Object.keys(this.subscriptionHashes).map(this.getSubId);
+		if (subIds.length) {
+			C.ObjectSearchUnsubscribe(subIds);
+		};
+	};
+
+	init () {
 		const { block, isCollection, getData } = this.props;
 		const { targetBlockId } = block.content;
 		const callBack = () => {
@@ -175,20 +192,6 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		};
 
 		this.resize();
-	};
-
-	componentDidUpdate () {
-		this.restoreUIState();
-		this.resize();
-	};
-
-	componentWillUnmount () {
-		this._isMounted = false;
-
-		const subIds = Object.keys(this.subscriptionHashes).map((id) => this.getSubId(id));
-		if (subIds.length) {
-			C.ObjectSearchUnsubscribe(subIds);
-		};
 	};
 
 	// Restores the scroll position and the keyboard focus

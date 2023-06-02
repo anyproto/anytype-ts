@@ -165,26 +165,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	componentDidMount (): void {
-		const { block, isCollection, getData } = this.props;
-		const { targetBlockId } = block.content;
-
-		if (!isCollection(targetBlockId)) {
-			this.setState({ loading: true });
-
-			C.ObjectShow(targetBlockId, this.getTraceId(), () => {
-				this.setState({ loading: false });
-
-				const view = Dataview.getView(this.getRootId(), BLOCK_ID);
-				if (view) {
-					this.onChangeView(view.id);
-					this.load(view.id);
-				};
-			});
-		} else {
-			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => { this.resize(); });
-		};
-
-		this.resize();
+		this.init();
 	};
 
 	componentDidUpdate (): void {
@@ -219,6 +200,27 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 
+	init () {
+		const { block, isCollection, getData } = this.props;
+		const { targetBlockId } = block.content;
+
+		if (!isCollection(targetBlockId)) {
+			this.setState({ loading: true });
+
+			C.ObjectShow(targetBlockId, this.getTraceId(), () => {
+				this.setState({ loading: false });
+
+				const view = Dataview.getView(this.getRootId(), BLOCK_ID);
+				if (view) {
+					this.onChangeView(view.id);
+					this.load(view.id);
+				};
+			});
+		} else {
+			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
+		};
+	};
+
 	getTraceId = (): string => {
 		return [ 'widget', this.props.block.id ].join('-');
 	};
@@ -232,7 +234,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 	load = (viewId: string) => {
 		const { widgets } = blockStore;
-		const { block, isPreview, isCompact } = this.props;
+		const { block, parent, isPreview, isCompact } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);
@@ -243,10 +245,12 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			return;
 		};
 
-		let limit = 0;
-		if (!isPreview) {
+		let limit = Number(parent.content.limit) || 0;
+		if (!isPreview && !limit) {
 			limit = isCompact ? Constant.limit.widgetRecords.compact : Constant.limit.widgetRecords.list;
 		};
+
+		console.log(parent);
 
 		Dataview.getData({
 			rootId: this.getRootId(),

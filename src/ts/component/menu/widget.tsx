@@ -95,10 +95,15 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId } = data;
+
 		this._isMounted = false;
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.widget);
+		$(window).trigger(`updateWidgetData.${blockId}`);
 	};
 
     rebind (): void {
@@ -146,7 +151,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			{ 
 				id: 'layout', name: 'Appearance', children: [
 					{ id: 'layout', name: layoutName, arrow: true },
-					{ id: 'limit', name: 'Number of objects', arrow: true, caption: String(this.limit), withCaption: true },
+					(this.layout != I.WidgetLayout.Link ? { id: 'limit', name: 'Number of objects', arrow: true, caption: this.limit } : null),
 				] 
 			},
 		];
@@ -165,7 +170,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	checkState () {
 		const setTypes = ObjectUtil.getSetTypes();
-		const options = this.getLayoutOptions().map(it => it.id);
+		const layoutOptions = this.getLayoutOptions().map(it => it.id);
 
 		if (this.isCollection()) {
 			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
@@ -181,7 +186,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 		};
 
-		this.layout = options.includes(this.layout) ? this.layout : (options.length ? options[0] : null);
+		this.layout = layoutOptions.includes(this.layout) ? this.layout : (layoutOptions.length ? layoutOptions[0] : null);
+
+		const limitOptions = this.getLimitOptions().map(it => it.id);
+
+		this.limit = limitOptions.includes(this.limit) ? this.limit : (limitOptions.length ? limitOptions[0] : null);
 	};
 
     getItems () {
@@ -229,7 +238,19 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	getLimitOptions () {
-		return [];
+		let options = [];
+		switch (this.layout) {
+			default: {
+				options = [ 6, 10, 14 ];
+				break;
+			};
+
+			case I.WidgetLayout.List: {
+				options = [ 4, 6, 8 ];
+				break;
+			};
+		};
+		return options.map(id => ({ id, name: id }));
 	};
 
 	isCollection () {
@@ -249,7 +270,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			return;
 		};
 
-		const { getId, getSize, param, position, close } = this.props;
+		const { getId, getSize, param, close } = this.props;
 		const { data, className, classNameWrap } = param;
 		const { blockId, isEditing } = data;
 		const { widgets } = blockStore;
@@ -348,7 +369,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						this.checkState();
 						this.forceUpdate();
 						
-						if (isEditing && this.layout) {
+						if (isEditing && this.limit) {
+							C.BlockWidgetSetLimit(widgets, blockId, this.limit);
 							close();
 						};
 
