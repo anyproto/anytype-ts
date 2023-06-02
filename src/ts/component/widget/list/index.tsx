@@ -234,23 +234,16 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 	load = (viewId: string) => {
 		const { widgets } = blockStore;
-		const { block, parent, isPreview, isCompact } = this.props;
+		const { block, parent, isPreview, getLimit } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);
 		const target = detailStore.get(widgets, targetBlockId);
 		const isCollection = target.type == Constant.typeId.collection;
+		const limit = getLimit(parent.content);
 
 		if (!setOf.length && !isCollection) {
 			return;
-		};
-
-		let limit = Number(parent.content.limit) || 0;
-		if (!isPreview && !limit) {
-			limit = Number(MenuUtil.getWidgetLimits(parent.content.layout)[0].id);
-		};
-		if (isPreview) {
-			limit = 0;
 		};
 
 		Dataview.getData({

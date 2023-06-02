@@ -42,6 +42,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 		this.getData = this.getData.bind(this);
+		this.getLimit = this.getLimit.bind(this);
 	};
 
 	render (): React.ReactNode {
@@ -61,6 +62,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			block: child,
 			isCollection: this.isCollection,
 			getData: this.getData,
+			getLimit: this.getLimit,
 		};
 
 		if (className) {
@@ -340,20 +342,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	getData (subId: string, callBack?: () => void) {
 		const { block, isPreview } = this.props;
 		const child = this.getTargetBlock();
-		const { layout } = block.content;
 		const { targetBlockId } = child?.content;
+		const limit = this.getLimit(block.content);
 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
 		];
-
-		let limit = Number(block.content.limit) || 0;
-		if (!limit) {
-			limit = Number(MenuUtil.getWidgetLimits(layout)[0].id);
-		};
-		if (isPreview) {
-			limit = 0;
-		};
 
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
@@ -413,6 +407,16 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	isCollection (blockId: string) {
 		return Object.values(Constant.widgetId).includes(blockId);
 	};
+
+	getLimit ({ limit, layout }): number {
+		const { isPreview } = this.props;
+		const options = MenuUtil.getWidgetLimits(layout).map(it => Number(it.id));
+
+		if (!limit || !options.includes(layout)) {
+			limit = options[0];
+		};
+		return isPreview ? 0 : limit;
+	}; 
 
 });
 
