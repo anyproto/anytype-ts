@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
 import { analytics, C, DataUtil, I, keyboard, ObjectUtil, Relation, Storage, Util } from 'Lib';
-import { blockStore, dbStore, detailStore, menuStore } from 'Store';
+import { blockStore, dbStore, detailStore } from 'Store';
 import Item from './item';
 import Constant from 'json/constant.json';
 
@@ -20,6 +20,7 @@ const HEIGHT = 28; // Height of each row
 const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetComponent, State> {
 
 	private _isMounted: boolean = false;
+
 	node: any = null;
 	state = {
 		loading: false,
@@ -37,7 +38,6 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.onClick = this.onClick.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.getSubId = this.getSubId.bind(this);
-		this.setActive = this.setActive.bind(this);
 	};
 
 	render() {
@@ -80,7 +80,6 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 							style={style}
 							onClick={this.onClick}
 							onToggle={this.onToggle}
-							setActive={this.setActive}
 							getSubId={this.getSubId}
 						/>
 					</CellMeasurer>
@@ -128,7 +127,6 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 								treeKey={key}
 								onClick={this.onClick}
 								onToggle={this.onToggle}
-								setActive={this.setActive}
 								getSubId={this.getSubId}
 							/>
 						);
@@ -152,8 +150,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 	componentDidMount () {
 		this._isMounted = true;
-		this.restoreUIState();
-
+		
 		const { block, isCollection, getData } = this.props;
 		const { targetBlockId } = block.content;
 		const callBack = () => {
@@ -178,7 +175,6 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	componentDidUpdate () {
-		this.restoreUIState();
 		this.resize();
 	};
 
@@ -191,17 +187,6 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		};
 	};
 
-	// Restores the scroll position and the keyboard focus
-	restoreUIState () {
-		const node = $(this.node);
-		const body = node.find('#body');
-
-		this.id = keyboard.getRootId();
-		this.setActive(this.id);
-
-		body.scrollTop(this.scrollTop);
-	};
-
 	loadTree (): I.WidgetTreeItem[] {
 		const { block, isCollection } = this.props;
 		const { targetBlockId } = block.content;
@@ -210,23 +195,21 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 		this.branches = [];
 
-		let childNodeList = [];
+		let children = [];
 		if (isCollection(targetBlockId)) {
 			const subId = this.getSubId(targetBlockId);
 
-			childNodeList = dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, Constant.sidebarRelationKeys)));
+			children = dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, Constant.sidebarRelationKeys)));
 		} else {
-			const links = Relation.getArrayValue(object.links);
-
-			childNodeList = this.getChildNodesDetails(object.id);
-			this.subscribeToChildNodes(object.id, links);
+			children = this.getChildNodesDetails(object.id);
+			this.subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
 		};
 
-		return this.loadTreeRecursive(object.id, object.id, [], childNodeList, 1);
+		return this.loadTreeRecursive(object.id, object.id, [], children, 1);
 	};
 
 	// Recursive function which returns the tree structure
-	loadTreeRecursive(rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number): I.WidgetTreeItem[] {
+	loadTreeRecursive (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number): I.WidgetTreeItem[] {
 		if (!childNodeList.length || depth >= MAX_DEPTH) {
 			return treeNodeList;
 		};
@@ -262,17 +245,18 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 			const isOpen = Storage.checkToggle(this.getSubKey(), this.getTreeKey(node));
 			if (isOpen) {
-				this.subscribeToChildNodes(childNode.id, childNode.links);
-				const childNodeList = this.getChildNodesDetails(node.id);
-				treeNodeList = this.loadTreeRecursive(rootId, childNode.id, treeNodeList, childNodeList, depth + 1);
+				this.subscribeToChildNodes(childNode.id, links);
+				treeNodeList = this.loadTreeRecursive(rootId, childNode.id, treeNodeList, this.getChildNodesDetails(childNode.id), depth + 1);
 			};
 		};
 
 		return treeNodeList;
 	};
 
-	filterDeletedLinks(ids: string[]): string[] {
-		return ids.filter(id => !dbStore.getRecords(Constant.subId.deleted, '').includes(id));
+	filterDeletedLinks (ids: string[]): string[] {
+		const deleted = dbStore.getRecords(Constant.subId.deleted, '');
+
+		return ids.filter(id => !deleted.includes(id));
 	};
 
 	// return the child nodes details for the given subId
@@ -283,19 +267,24 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	mapper (item) {
-		return {
-			...item,
-			links: (item.type == Constant.typeId.set ? [] : this.filterDeletedLinks(Relation.getArrayValue(item.links))),
+		let links = [];
+
+		if (item.type != Constant.typeId.set) {
+			links = this.filterDeletedLinks(Relation.getArrayValue(item.links));
 		};
+
+		item.links = links;
+
+		return item;
 	};
 
 	// Subscribe to changes to child nodes for a given node Id and its links
-	subscribeToChildNodes(nodeId: string, childLinks: string[]): void {
-		if (!childLinks.length) {
+	subscribeToChildNodes (nodeId: string, links: string[]): void {
+		if (!links.length) {
 			return;
 		};
 
-		const hash = sha1(Util.arrayUnique(childLinks).sort().join(''));
+		const hash = sha1(Util.arrayUnique(links).join(''));
 		const subId = this.getSubId(nodeId);
 
 		// if already subscribed to the same links, dont subscribe again
@@ -306,7 +295,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.subscriptionHashes[nodeId] = hash;
 		DataUtil.subscribeIds({
 			subId,
-			ids: childLinks,
+			ids: links,
 			keys: Constant.sidebarRelationKeys,
 			noDeps: true,
 		});
@@ -328,20 +317,6 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		const { rootId, parentId, id, depth } = node;
 
 		return [ block.id, rootId, parentId, id, depth ].join('-');
-	};
-
-	setActive (id: string): void {
-		if (!this._isMounted) {
-			return;
-		};
-
-		const node = $(this.node);
-
-		node.find('.node.hover').removeClass('hover');
-
-		if (id) {
-			node.find(`.node.c${id}`).addClass('hover');
-		};
 	};
 
 	sortByIds (ids: string[], id1: string, id2: string) {
