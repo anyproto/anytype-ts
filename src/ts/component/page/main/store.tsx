@@ -314,10 +314,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onTab (id: any, isInner: boolean) {
+		const { isPopup } = this.props;
 		this.tab = id;
 		this.onView(Storage.get('viewStore') || View.Library, isInner);
 
 		Storage.set('tabStore', id);
+
+		if (id == 'relation' && !isPopup) {
+			Onboarding.start('storeRelations', false);
+		};
 	};
 
 	onView (id: View, isInner: boolean) {
