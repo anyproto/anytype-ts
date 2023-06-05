@@ -306,16 +306,6 @@ export default {
 					horizontal: I.MenuDirection.Center,
                 }
             },
-			{
-                name: `Like what you're working on?`,
-                description: 'Save this structure for future use by selecting “Save as Template” from the three-dot menu. It will be saved in your Library, very useful for recurring work.',
-                param: {
-                    element: '#header #button-header-more',
-                    offsetY: 10,
-                    classNameWrap: 'fixed fromHeader',
-					horizontal: I.MenuDirection.Right,
-                }
-            },
         ]
     },
 
