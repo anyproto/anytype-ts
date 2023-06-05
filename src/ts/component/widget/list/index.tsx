@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, Util, Relation } from 'Lib';
+import { Dataview, I, C, Util, MenuUtil, Relation } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -168,7 +168,9 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { block, isCollection, getData } = this.props;
 		const { targetBlockId } = block.content;
 
-		if (!isCollection(targetBlockId)) {
+		if (isCollection(targetBlockId)) {
+			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
+		} else {
 			this.setState({ loading: true });
 
 			C.ObjectShow(targetBlockId, this.getTraceId(), () => {
@@ -180,11 +182,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 					this.load(view.id);
 				};
 			});
-		} else {
-			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => { this.resize(); });
 		};
-
-		this.resize();
 	};
 
 	componentDidUpdate (): void {
@@ -219,6 +217,21 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 
+	update () {
+		const { block, isCollection, getData } = this.props;
+		const { targetBlockId } = block.content;
+
+		if (isCollection(targetBlockId)) {
+			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
+		} else {
+			const view = Dataview.getView(this.getRootId(), BLOCK_ID);
+			if (view) {
+				this.onChangeView(view.id);
+				this.load(view.id);
+			};
+		};
+	};
+
 	getTraceId = (): string => {
 		return [ 'widget', this.props.block.id ].join('-');
 	};
@@ -232,20 +245,16 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 	load = (viewId: string) => {
 		const { widgets } = blockStore;
-		const { block, isPreview, isCompact } = this.props;
+		const { block, parent, getLimit } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);
 		const target = detailStore.get(widgets, targetBlockId);
 		const isCollection = target.type == Constant.typeId.collection;
+		const limit = getLimit(parent.content);
 
 		if (!setOf.length && !isCollection) {
 			return;
-		};
-
-		let limit = 0;
-		if (!isPreview) {
-			limit = isCompact ? Constant.limit.widgetRecords.compact : Constant.limit.widgetRecords.list;
 		};
 
 		Dataview.getData({

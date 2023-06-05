@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Loader } from 'Component';
-import { I, Util, ObjectUtil, DataUtil, translate, Storage, Action, analytics } from 'Lib';
+import { I, Util, ObjectUtil, DataUtil, MenuUtil, translate, Storage, Action, analytics } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -25,7 +25,8 @@ interface State {
 
 const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, State> {
 
-	node: any = null;
+	node = null;
+	ref = null;
 	state = {
 		loading: false
 	};
@@ -41,13 +42,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		this.onDragEnd = this.onDragEnd.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 		this.getData = this.getData.bind(this);
+		this.getLimit = this.getLimit.bind(this);
 	};
 
 	render (): React.ReactNode {
 		const { loading } = this.state;
 		const { block, isPreview, isEditing, className, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
-		const { layout } = block.content;
+		const { layout, limit } = block.content;
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget', Util.toCamelCase('widget-' + I.WidgetLayout[layout]) ];
 		const object = this.getObject();
@@ -60,6 +62,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			block: child,
 			isCollection: this.isCollection,
 			getData: this.getData,
+			getLimit: this.getLimit,
 		};
 
 		if (className) {
@@ -133,18 +136,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			switch (layout) {
 
 				case I.WidgetLayout.Space: {
-					content = <WidgetSpace key={key} {...this.props} {...props} />;
+					content = <WidgetSpace key={key} ref={ref => this.ref = ref} {...this.props} {...props} />;
 					break;
 				};
 
 				case I.WidgetLayout.Tree: {
-					content = <WidgetTree key={key} {...this.props} {...props} />;
+					content = <WidgetTree key={key} ref={ref => this.ref = ref} {...this.props} {...props} />;
 					break;
 				};
 
 				case I.WidgetLayout.List:
 				case I.WidgetLayout.Compact: {
-					content = <WidgetList key={key} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
+					content = <WidgetList key={key} ref={ref => this.ref = ref} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
 					break;
 				};
 
@@ -175,11 +178,32 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	componentDidMount(): void {
+		this.rebind();
 		this.initToggle();
 	};
 
 	componentDidUpdate(): void {
 		this.initToggle();
+	};
+
+	componentWillUnmount(): void {
+		this.unbind();	
+	};
+
+	unbind () {
+		const { block } = this.props;
+		const events = [ 'updateWidgetData' ];
+
+		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
+	};
+
+	rebind () {
+		const { block } = this.props;
+		const win = $(window);
+
+		this.unbind();
+
+		win.on(`updateWidgetData.${block.id}`, () => this.ref && this.ref.update());
 	};
 
 	getTargetBlock (): I.Block {
@@ -254,7 +278,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			onOpen: () => { node.addClass('active'); },
 			onClose: () => { node.removeClass('active'); },
 			data: {
-				layout: block.content.layout,
+				...block.content,
 				target: object,
 				isEditing: true,
 				blockId: block.id,
@@ -316,24 +340,18 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	getData (subId: string, callBack?: () => void) {
-		const { block, isPreview } = this.props;
+		const { block } = this.props;
 		const child = this.getTargetBlock();
-		const { layout } = block.content;
 		const { targetBlockId } = child?.content;
+		const limit = this.getLimit(block.content);
 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
 		];
 
-		let limit = layout == I.WidgetLayout.Tree ? Constant.limit.widgetRecords.tree : Constant.limit.widgetRecords.list;
-		if (isPreview) {
-			limit = 0;
-		};
-
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
-				limit = 0;
 				break;
 			};
 
@@ -389,6 +407,16 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	isCollection (blockId: string) {
 		return Object.values(Constant.widgetId).includes(blockId);
 	};
+
+	getLimit ({ limit, layout }): number {
+		const { isPreview } = this.props;
+		const options = MenuUtil.getWidgetLimits(layout).map(it => Number(it.id));
+
+		if (!limit || !options.includes(limit)) {
+			limit = options[0];
+		};
+		return isPreview ? 0 : limit;
+	}; 
 
 });
 

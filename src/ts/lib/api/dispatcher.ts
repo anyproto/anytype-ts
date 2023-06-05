@@ -124,7 +124,7 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
 		if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'blockDataviewObjectOrderUpdate';
 
-		if (v == V.BLOCKSETWIDGET)	 		t = 'blockSetWidget';
+		if (v == V.BLOCKSETWIDGET)				 t = 'blockSetWidget';
 
 		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
@@ -413,6 +413,25 @@ class Dispatcher {
 					};
 
 					block.content.targetObjectId = data.getTargetobjectid();
+					blockStore.updateContent(rootId, id, block.content);
+					break;
+				};
+
+				case 'blockSetWidget': {
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (data.hasLayout()) {
+						block.content.layout = data.getLayout().getValue();
+					};
+
+					if (data.hasLimit()) {
+						block.content.limit = data.getLimit().getValue();
+					};
+
 					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};

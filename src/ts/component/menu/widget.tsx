@@ -13,19 +13,21 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
     n = -1;
 	target = null;
 	layout: I.WidgetLayout = null;
+	limit = 0;
 
     constructor (props: I.Menu) {
 		super(props);
 
 		const { param } = this.props;
 		const { data } = param;
-		const { isEditing, layout, target } = data;
+		const { isEditing, layout, limit, target } = data;
 
 		this.save = this.save.bind(this);
 		this.rebind = this.rebind.bind(this);
 
 		if (isEditing) {
 			this.layout = layout;
+			this.limit = limit;
 			this.target = target;
 			this.checkState();
 		};
@@ -61,19 +63,19 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					{sections.map((item, i) => (
 						<Section key={i} index={i} {...item} />
 					))}
-
-					{!isEditing ? (
-						<div className="buttons">
-							<Button 
-								id="button-save"
-								className="c28"
-								text="Add widget"
-								onClick={this.save} 
-								onMouseEnter={() => menuStore.closeAll(Constant.menuIds.widget)} 
-							/>
-						</div>
-					) : ''}
 				</div>
+
+				{!isEditing ? (
+					<div className="buttons">
+						<Button 
+							id="button-save"
+							className="c28"
+							text="Add widget"
+							onClick={this.save} 
+							onMouseEnter={() => menuStore.closeAll(Constant.menuIds.widget)} 
+						/>
+					</div>
+				) : ''}
 			</div>
 		);
     }
@@ -82,7 +84,6 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		this._isMounted = true;
 		this.checkButton();
 		this.rebind();
-
 		this.getTargetId();
 	};
 
@@ -93,10 +94,15 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 	
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { blockId } = data;
+
 		this._isMounted = false;
 		this.unbind();
 
 		menuStore.closeAll(Constant.menuIds.widget);
+		$(window).trigger(`updateWidgetData.${blockId}`);
 	};
 
     rebind (): void {
@@ -118,14 +124,15 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
     getSections () {
+		this.checkState();
+
 		const { param } = this.props;
 		const { data } = param;
 		const { isEditing } = data;
-		
-		this.checkState();
-		
+		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || this.isCollection();
+
 		let sourceName = 'Choose a source';
-		let layoutName = 'Choose a layout';
+		let layoutName = 'Widget type';
 
 		if (this.target) {
 			sourceName = ObjectUtil.name(this.target);
@@ -143,7 +150,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			},
 			{ 
 				id: 'layout', name: 'Appearance', children: [
-					{ id: 'layout', name: layoutName, arrow: true }
+					{ id: 'layout', name: layoutName, arrow: true },
+					hasLimit ? { id: 'limit', name: 'Number of objects', arrow: true, caption: this.limit } : null,
 				] 
 			},
 		];
@@ -162,7 +170,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 	checkState () {
 		const setTypes = ObjectUtil.getSetTypes();
-		const options = this.getLayoutOptions().map(it => it.id);
+		const layoutOptions = this.getLayoutOptions().map(it => it.id);
 
 		if (this.isCollection()) {
 			if ([ null, I.WidgetLayout.Link ].includes(this.layout)) {
@@ -178,7 +186,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 		};
 
-		this.layout = options.includes(this.layout) ? this.layout : (options.length ? options[0] : null);
+		this.layout = layoutOptions.includes(this.layout) ? this.layout : (layoutOptions.length ? layoutOptions[0] : null);
+
+		const limitOptions = MenuUtil.getWidgetLimits(this.layout).map(it => Number(it.id));
+
+		this.limit = limitOptions.includes(this.limit) ? this.limit : (limitOptions.length ? limitOptions[0] : null);
 	};
 
     getItems () {
@@ -242,9 +254,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			return;
 		};
 
-		const { getId, getSize, param } = this.props;
+		const { getId, getSize, param, close } = this.props;
 		const { data, className, classNameWrap } = param;
-		const { isEditing } = data;
+		const { blockId, isEditing } = data;
+		const { widgets } = blockStore;
 		const menuParam: Partial<I.MenuParam> = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
@@ -261,7 +274,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		let menuId = '';
 
 		switch (item.itemId) {
-			case 'source':
+			case 'source': {
 				let filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes().concat(ObjectUtil.getFileTypes()) },
 				];
@@ -281,17 +294,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					},
 					onSelect: (target) => {
 						this.target = target;
-						
-						const options = this.getLayoutOptions();
-						if (options.length && !this.layout) {
-							this.layout = options[0].id;
-						};
-
 						this.checkState();
 						this.forceUpdate();
 						
-						if (isEditing) {
-							this.save();
+						if (isEditing && this.target) {
+							C.BlockWidgetSetTargetId(widgets, blockId, this.target.id, () => close());
 						};
 
 						analytics.event('ChangeWidgetSource', {
@@ -301,8 +308,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					},
 				});
 				break;
+			};
 
-			case 'layout':
+			case 'layout': {
 				menuId = 'select';
 				menuParam.width = 320;
 				menuParam.data = Object.assign(menuParam.data, {
@@ -314,11 +322,35 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						this.forceUpdate();
 						
 						if (isEditing) {
-							this.save();
+							C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
 						};
 
 						analytics.event('ChangeWidgetSource', {
 							layout: I.WidgetLayout[this.layout],
+							route: isEditing ? 'Inner' : 'AddWidget',
+							target: this.target
+						});
+					},
+				});
+				break;
+			};
+
+			case 'limit':
+				menuId = 'select';
+				menuParam.data = Object.assign(menuParam.data, {
+					options: MenuUtil.getWidgetLimits(this.layout),
+					value: String(this.limit || ''),
+					onSelect: (e, option) => {
+						this.limit = Number(option.id);
+						this.checkState();
+						this.forceUpdate();
+						
+						if (isEditing) {
+							C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
+						};
+
+						analytics.event('ChangeWidgetlimit', {
+							limit: this.limit,
 							route: isEditing ? 'Inner' : 'AddWidget',
 							target: this.target
 						});
@@ -372,11 +404,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const newBlock = { 
 			type: I.BlockType.Link,
 			content: { 
-				targetBlockId: this.target.id,   
+				targetBlockId: this.target.id, 
 			},
 		};
 
-		C.BlockCreateWidget(widgets, targetId, newBlock, position, this.layout, () => {
+		C.BlockCreateWidget(widgets, targetId, newBlock, position, this.layout, this.limit, () => {
 			if (onSave) {
 				onSave();
 			};

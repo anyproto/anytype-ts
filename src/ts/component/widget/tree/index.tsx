@@ -38,6 +38,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.onClick = this.onClick.bind(this);
 		this.onToggle = this.onToggle.bind(this);
 		this.getSubId = this.getSubId.bind(this);
+		this.initCache = this.initCache.bind(this);
 	};
 
 	render() {
@@ -153,25 +154,12 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		
 		const { block, isCollection, getData } = this.props;
 		const { targetBlockId } = block.content;
-		const callBack = () => {
-			const nodes = this.loadTree();
-
-			this.cache = new CellMeasurerCache({
-				fixedWidth: true,
-				defaultHeight: HEIGHT,
-				keyMapper: i => (nodes[i] || {}).id,
-			});
-
-			this.forceUpdate();
-		};
 
 		if (isCollection(targetBlockId)) {
-			getData(this.getSubId(targetBlockId), callBack);
+			getData(this.getSubId(targetBlockId), this.initCache);
 		} else {
-			callBack();
+			this.initCache();
 		};
-
-		this.resize();
 	};
 
 	componentDidUpdate () {
@@ -181,10 +169,31 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	componentWillUnmount () {
 		this._isMounted = false;
 
-		const subIds = Object.keys(this.subscriptionHashes).map((id) => this.getSubId(id));
+		const subIds = Object.keys(this.subscriptionHashes).map(this.getSubId);
 		if (subIds.length) {
 			C.ObjectSearchUnsubscribe(subIds);
 		};
+	};
+
+	update () {
+		const { block, isCollection, getData } = this.props;
+		const { targetBlockId } = block.content;
+
+		if (isCollection(targetBlockId)) {
+			getData(this.getSubId(targetBlockId), this.initCache);
+		};
+	};
+
+	initCache () {
+		const nodes = this.loadTree();
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT,
+			keyMapper: i => (nodes[i] || {}).id,
+		});
+
+		this.forceUpdate();
 	};
 
 	loadTree (): I.WidgetTreeItem[] {

@@ -11,6 +11,7 @@ import BlockContentText from './content/text';
 import BlockContentFile from './content/file';
 import BlockContentDataview from './content/dataview';
 import { BlockContentTableRow } from './content/table';
+import BlockContentWidget from './content/widget';
 
 const ContentModel = {
 	layout:		 BlockContentLayout,
@@ -23,6 +24,7 @@ const ContentModel = {
 	file:		 BlockContentFile,
 	dataview:	 BlockContentDataview,
 	tableRow:	 BlockContentTableRow,
+	widget:		 BlockContentWidget,
 };
 
 class Block implements I.Block {
