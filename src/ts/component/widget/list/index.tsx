@@ -191,7 +191,6 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { targetBlockId } = block.content;
 		const { viewId } = this.state;
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, BLOCK_ID);
 		const view = Dataview.getView(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
