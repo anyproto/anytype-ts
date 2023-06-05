@@ -91,7 +91,15 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
+		const rootId = keyboard.getRootId();
+		const isPopup = keyboard.isPopup();
+		const isEditor = keyboard.isMainEditor();
 		const isGraph = keyboard.isMainGraph();
+		const isSet = keyboard.isMainSet();
+		const isStore = keyboard.isMainStore();
+		const storeTab = Storage.get('tabStore');
+		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
+		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
 
 		close();
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
@@ -128,18 +136,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			};
 
 			case 'hints': {
-				const isPopup = keyboard.isPopup();
-				const rootId = keyboard.getRootId();
-				const object = detailStore.get(rootId, rootId, []);
-				const match = keyboard.getMatch();
-				const { page, action } = match.params;
-				const isEditor = keyboard.isMainEditor();
-				const isSet = keyboard.isMainSet();
-				const isStore = keyboard.isMainStore();
-				const isRelationsStore = isStore && (Storage.get('tabStore') == I.StoreTab.Relation);
-
 				let key = '';
-
 				if (isSet) {
 					key = 'mainSet';
 				} else
@@ -149,9 +146,14 @@ class MenuHelp extends React.Component<I.Menu> {
 				if (isGraph) {
 					key = 'mainGraph';
 				} else
-				if (isRelationsStore) {
-					key = 'storeRelations';
+				if (isStoreType) {
+					key = 'storeType';
+				} else
+				if (isStoreRelation) {
+					key = 'storeRelation';
 				} else {
+					const { page, action } = keyboard.getMatch().params;
+
 					key = Util.toCamelCase([ page, action ].join('-'));
 
 					if (!Docs.Help.Onboarding[key]) {
@@ -161,7 +163,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				};
 
 				if (key) {
-					Onboarding.start(key, keyboard.isPopup(), true);
+					Onboarding.start(key, isPopup, true);
 				};
 				break;
 			};

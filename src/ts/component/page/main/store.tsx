@@ -319,8 +319,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		if (!isPopup) {
 			let key = '';
 			switch (id) {
-				case I.StoreTab.Type: key = 'storeTypes'; break;
-				case I.StoreTab.Relation: key = 'storeRelations'; break;
+				case I.StoreTab.Type: key = 'storeType'; break;
+				case I.StoreTab.Relation: key = 'storeRelation'; break;
 			};
 
 			if (key) {

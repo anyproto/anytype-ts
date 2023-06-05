@@ -77,7 +77,7 @@ export default {
         },
     },
 
-    storeTypes: {
+    storeType: {
         category: 'Library',
         items: [
             {
@@ -112,7 +112,7 @@ export default {
         },
     },
 
-    storeRelations: {
+    storeRelation: {
         category: 'Library',
         items: [
             {
