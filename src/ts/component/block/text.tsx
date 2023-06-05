@@ -566,7 +566,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	textStyle (obj: any) {
-		Util.textStyle(obj, { textOpacity: 0.65, borderOpacity: 0.35 });
+		Util.textStyle(obj, { border: 0.4 });
 	};
 
 	emojiParam (style: I.TextStyle) {

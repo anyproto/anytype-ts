@@ -35,9 +35,9 @@
 		mention * { user-select: text !important; }
 		mention {
 			smile { display: none; position: relative; z-index: 1; }
-			.space { width: 2px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
+			.space { width: 6px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
-			name { display: inline; white-space: normal; vertical-align: top; position: relative; font-weight: 500; border-bottom: 0.075em solid; }
+			name { display: inline; white-space: normal; position: relative; font-weight: 500; border-bottom: 0.075em solid; }
 		}
 		mention.disabled {
 			name { border-width: 0px; }
@@ -117,7 +117,6 @@
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget { @include text-header1; line-height: 35px; padding: 3px 0px 1px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget mention {
-		.space { width: 4px; }
 		name { font-weight: inherit; }
 	}
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget {
@@ -129,7 +128,6 @@
 	.block.blockText.textHeader2 { padding: 14px 0px 0px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget mention {
-		.space { width: 4px; }
 		name { font-weight: inherit; }
 	}
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget {
@@ -141,7 +139,6 @@
 	.block.blockText.textHeader3 { padding: 14px 0px 0px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget mention {
-		.space { width: 3px; }
 		name { font-weight: inherit; }
 	}
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget {

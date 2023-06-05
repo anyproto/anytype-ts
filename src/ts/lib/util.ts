@@ -602,8 +602,7 @@ class Util {
 		const [ r, g, b ] = rgb[1].split(',');
 
 		obj.css({ 
-			color: `rgba(${[ r, g, b, param.textOpacity ].join(',')})`, 
-			borderColor: `rgba(${[ r, g, b, param.borderOpacity ].join(',')}` 
+			borderColor: `rgba(${[ r, g, b, param.border ].join(',')}` 
 		});
 	};
 	
