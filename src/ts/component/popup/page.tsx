@@ -11,7 +11,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 const PopupPage = observer(class PopupPage extends React.Component<Props> {
 
 	_isMounted = false;
-	ref: any = null;
+	ref = null;
 
 	render () {
 		const { param } = this.props;
@@ -21,7 +21,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		return (
 			<div id="wrap">
 				<Page 
-					ref={ref => { this.ref = ref; }} 
+					ref={ref => this.ref = ref} 
 					{...this.props} 
 					rootId={matchPopup.params.id} 
 					isPopup={true} 

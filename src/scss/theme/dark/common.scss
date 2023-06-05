@@ -63,7 +63,7 @@ html.themeDark {
 	}
 
 	.objectManagerWrapper {
-		.controls, .managerEmpty { border-color: $colorLinePrimary; }
+		.controls, .emptySearch { border-color: $colorLinePrimary; }
 	}
 
 	.progressBar { background: $colorBgLight; }

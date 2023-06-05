@@ -9,7 +9,7 @@ interface State {
 
 class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 	
-	ref: any = null;
+	ref = null;
 
 	state = {
 		loading: false,
@@ -31,7 +31,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 			<form onSubmit={this.onSubmit} className="flex">
 				{loading ? <Loader /> : ''}
 
-				<Input ref={ref => { this.ref = ref; }} value={value} placeholder={translate('defaultNameBookmark')} />
+				<Input ref={ref => this.ref = ref} value={value} placeholder={translate('defaultNameBookmark')} />
 
 				<div className="buttons">
 					<Button type="input" color="blank" text="Create" onClick={this.onSubmit} />

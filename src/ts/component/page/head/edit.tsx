@@ -67,7 +67,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 			<div ref={node => this.node = node}>
 				<div id="editorSize" className="dragWrap">
 					<Drag 
-						ref={ref => { this.refDrag = ref; }} 
+						ref={ref => this.refDrag = ref} 
 						value={root.fields.width}
 						snap={0.5}
 						onStart={this.onScaleStart} 

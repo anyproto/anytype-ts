@@ -54,7 +54,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				onDragOver={this.onDragOver} 
 				onDrop={this.onDropCommon}
 			>
-				<DragLayer {...this.props} ref={ref => { this.refLayer = ref; }} />
+				<DragLayer {...this.props} ref={ref => this.refLayer = ref} />
 				{children}
 			</div>
 		);

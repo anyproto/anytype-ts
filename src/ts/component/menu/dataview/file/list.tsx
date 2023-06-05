@@ -93,7 +93,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={ref => { this.refFilter = ref; }} 
+					ref={ref => this.refFilter = ref} 
 					placeholderFocus="Filter objects..." 
 					value={filter}
 					onChange={this.onFilterChange} 
@@ -107,11 +107,11 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 							isRowLoaded={({ index }) => !!this.items[index]}
 							threshold={LIMIT_HEIGHT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}

@@ -124,7 +124,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				) : ''}
 				
 				<Filter 
-					ref={ref => { this.refFilter = ref; }}
+					ref={ref => this.refFilter = ref}
 					value={filter}
 					className={!noHead ? 'withHead' : ''} 
 					onChange={(e: any) => { this.onKeyUp(e, false); }} 
@@ -136,11 +136,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => !!items[index]}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
