@@ -733,6 +733,7 @@ class Dispatcher {
 
 				case 'blockDataviewViewOrder': {
 					id = data.getId();
+
 					dbStore.viewsSort(rootId, id, data.getViewidsList());
 					blockStore.updateWidgetViews(rootId);
 					break; 

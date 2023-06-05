@@ -245,6 +245,9 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const rootId = this.getRootId();
 
 		dbStore.viewsSet(rootId, BLOCK_ID, views);
+		if (this.refSelect) {
+			this.refSelect.setOptions(views);
+		};
 	};
 
 	getTraceId = (): string => {
