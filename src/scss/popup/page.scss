@@ -2,7 +2,12 @@
 
 .popups {
 	.popup.popupPage {
-		.innerWrap { width: 960px; height: calc(100% - 128px); padding: 0px; }
+		.innerWrap { width: 1096px; height: calc(100% - 164px); padding: 0px; }
+
+		@media (max-width: 1128px) {
+			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
+		}
+
 		.innerWrap.full { width: 100% !important; height: 100% !important; border-radius: 0px; margin: 0px !important; left: 0px !important; top: 0px !important; }
 		.innerWrap.full {
 			.header { position: fixed; }

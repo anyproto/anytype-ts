@@ -190,7 +190,7 @@ class WindowManager {
 				}).then((result) => {
 					const fp = result.filePath;
 					if (!fp) {
-						Util.send(win, 'command', 'saveAsHTMLSuccess');
+						Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 					} else {
 						Util[cmd](win, path.dirname(fp), path.basename(fp), param.options);
 					};

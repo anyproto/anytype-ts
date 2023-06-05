@@ -81,13 +81,22 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 	componentDidMount () {
 		this._isMounted = true;
-
+		this.rebind();
 		this.resize();
-		this.props.position();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.popupShortcut', () => this.resize());
+	};
+
+	unbind () {
+		$(window).off('resize.popupShortcut');
 	};
 
 	onPage (id: string) {
@@ -312,15 +321,14 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 		};
 
 		const { getId, position } = this.props;
+		const obj = $(`#${getId()}-innerWrap`);
+		const loader = obj.find('#loader');
+		const hh = Util.sizeHeader();
 
-		raf(() => {
-			const { ww } = Util.getWindowDimensions();
-			const obj = $(`#${getId()}-innerWrap`);
-			const width = Math.max(732, Math.min(960, ww - 128));
+		loader.css({ width: obj.width(), height: obj.height() });
+		position();
 
-			obj.css({ width });
-			position();
-		});
+		raf(() => { obj.css({ top: hh + 20, marginTop: 0 }); });
 	};
 
 };

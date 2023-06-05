@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview } from 'Lib';
+import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview, Action } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -436,6 +436,10 @@ class Keyboard {
 			return;
 		};
 
+		const rootId = keyboard.getRootId();
+		const logPath = window.Electron.logPath;
+		const tmpPath = window.Electron.tmpPath;
+
 		switch (cmd) {
 			case 'search': {
 				this.onSearchMenu('', 'MenuSystem');
@@ -467,6 +471,89 @@ class Keyboard {
 
 			case 'tech': {
 				this.onTechInfo();
+				break;
+			};
+
+			case 'undo': {
+				if (!this.isFocused) {
+					this.onUndo(rootId, 'MenuSystem');
+				};
+				break;
+			};
+
+			case 'redo': {
+				if (!this.isFocused) {
+					this.onRedo(rootId, 'MenuSystem');
+				};
+				break;
+			};
+
+			case 'create': {
+				this.pageCreate();
+				break;
+			};
+
+			case 'saveAsHTML': {
+				this.onSaveAsHTML();
+				break;
+			};
+
+			case 'saveAsHTMLSuccess': {
+				this.printRemove();
+				break;
+			};
+
+			case 'save': {
+				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true);
+				break;
+			};
+
+			case 'exportTemplates': {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.TemplateExportAll(paths[0], (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						Renderer.send('pathOpen', paths[0]);
+					});
+				});
+				break;
+			};
+
+			case 'exportLocalstore': {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.DebugExportLocalstore(paths[0], [], (message: any) => {
+						if (!message.error.code) {
+							Renderer.send('pathOpen', paths[0]);
+						};
+					});
+				});
+				break;
+			};
+
+			case 'debugSpace': {
+				C.DebugSpaceSummary((message: any) => {
+					if (!message.error.code) {
+						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
+
+						Renderer.send('pathOpen', tmpPath);
+					};
+				});
+				break;
+			};
+
+			case 'debugTree': {
+				C.DebugTree(rootId, logPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('pathOpen', logPath);
+					};
+				});
+				break;
+			};
+
+			case 'resetOnboarding': {
+				Storage.delete('onboarding');
 				break;
 			};
 
