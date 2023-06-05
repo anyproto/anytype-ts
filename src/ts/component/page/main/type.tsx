@@ -128,7 +128,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		return (
 			<div>
-				<Header component="mainObject" ref={ref => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
@@ -150,7 +150,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 								<div className="content">
 									<ListObjectPreview 
 										key="listTemplate"
-										ref={ref => { this.refListPreview = ref; }}
+										ref={ref => this.refListPreview = ref}
 										getItems={() => templates}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}

@@ -13,7 +13,7 @@ const SKIP = [
 class MenuSearchText extends React.Component<I.Menu> {
 	
 	node: any = null;
-	ref: any = null;
+	ref = null;
 	last = '';
 	n = 0;
 	
@@ -39,7 +39,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 				<Icon className="search" />
 
 				<Input 
-					ref={ref => { this.ref = ref; }} 
+					ref={ref => this.ref = ref} 
 					value={value} 
 					placeholder={translate('commonSearch')} 
 					onKeyDown={this.onKeyDown} 

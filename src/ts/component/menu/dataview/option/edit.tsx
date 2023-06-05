@@ -45,7 +45,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		return (
 			<div>
 				<Filter
-					ref={ref => { this.refName = ref; }}
+					ref={ref => this.refName = ref}
 					placeholder={translate('menuDataviewOptionEditPlaceholder')}
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
 					className={'textColor-' + this.color}

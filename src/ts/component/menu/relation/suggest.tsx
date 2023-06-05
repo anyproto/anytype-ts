@@ -107,7 +107,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholderFocus="Filter or create a relation..." 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -123,11 +123,11 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						isRowLoaded={({ index }) => !!items[index]}
 						threshold={LIMIT}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}

@@ -72,7 +72,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	_isMounted = false;
 	refChild: any = null;
-	refSidebar: any = null;
 	frame = 0;
 
 	render () {
@@ -96,7 +95,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		const wrap = (
 			<div id="page" className={'page ' + this.getClass('page')}>
-				<Component ref={ref => this.refChild = ref} refSidebar={this.refSidebar} {...this.props} />
+				<Component ref={ref => this.refChild = ref} {...this.props} />
 			</div>
 		);
 
@@ -106,15 +105,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		} else {
 			content = (
 				<div className="pageFlex">
-					<Sidebar 
-						ref={ref => { 
-							if (!this.refSidebar) {
-								this.refSidebar = ref; 
-								this.forceUpdate(); 
-							};
-						}} 
-						{...this.props} 
-					/>
+					<Sidebar {...this.props} />
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />

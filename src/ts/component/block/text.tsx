@@ -136,7 +136,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 							id={'lang-' + id} 
 							arrowClassName="light" 
 							value={fields.lang} 
-							ref={ref => { this.refLang = ref; }} 
+							ref={ref => this.refLang = ref} 
 							options={options} 
 							onChange={this.onLang}
 							noFilter={false} 

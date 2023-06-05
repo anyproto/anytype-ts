@@ -104,11 +104,11 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 					isRowLoaded={() => true}
 					threshold={LIMIT}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<AutoSizer className="scrollArea">
 							{({ width, height }) => (
 								<VList
-									ref={ref => { this.refList = ref; }}
+									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
