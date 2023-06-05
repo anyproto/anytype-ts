@@ -77,7 +77,7 @@ export default {
         },
     },
 
-    mainStore: {
+    storeTypes: {
         category: 'Library',
         items: [
             {
