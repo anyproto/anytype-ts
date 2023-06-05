@@ -97,6 +97,7 @@ import 'scss/page/main/graph.scss';
 import 'scss/page/main/navigation.scss';
 import 'scss/page/main/block.scss';
 import 'scss/page/main/empty.scss';
+import 'scss/page/main/usecase.scss';
 
 import 'scss/block/bookmark.scss';
 import 'scss/block/common.scss';

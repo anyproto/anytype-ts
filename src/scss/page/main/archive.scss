@@ -29,6 +29,8 @@
 					.descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorDarkGrey; }
 				}
 			}
+
+			.ReactVirtualized__List { padding: 12px 0px; }
 		}
 	}
 
