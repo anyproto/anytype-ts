@@ -12,7 +12,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	node: any = null;
 	format: I.RelationType = null;
 	objectTypes: string[] = [];
-	ref: any = null;
+	ref = null;
 	
 	constructor (props: I.Menu) {
 		super(props);

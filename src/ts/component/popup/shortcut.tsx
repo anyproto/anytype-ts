@@ -178,7 +178,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 						{ com: `${cmd} + ,(comma)`,		 name: 'Open settings' },
 						{ com: `${cmd} + O`,			 name: 'Open the navigation pane' },
 						{ com: `${cmd} + ${alt} + O`,	 name: 'Open the graph pane' },
-						{ com: `${cmd} + S`,			 name: 'Open the search pane' },
+						{ com: `${cmd} + S, ${cmd} + K`, name: 'Open the search pane' },
 						{ com: `${cmd} + L`,			 name: 'Open the library pane' },
 						{ com: `${alt} + H`,			 name: 'Return to the home screen' },
 						{ mac: `${cmd} + [, ${cmd} + ←`, com: 'Alt + ←',			 name: 'Show the previous page from history' },

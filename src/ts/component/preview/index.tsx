@@ -15,7 +15,7 @@ interface State {
 
 const PreviewComponent = observer(class PreviewComponent extends React.Component<object, State> {
 
-	ref: any = null;
+	ref = null;
 	state = {
 		object: null,
 	};

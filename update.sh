@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-REPO="anytypeio/go-anytype-middleware"
+REPO="anyproto/anytype-heart"
 FILE="addon.tar.gz"
 GITHUB="api.github.com"
 

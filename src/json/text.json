@@ -118,6 +118,16 @@
 	"authPinCheckTitle": { "en": "Enter pin code" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
+	"authUsecaseTitle": { "en":  "How would you like to start?" },
+	"authUsecaseLabel": { "en":  "We’ll load some templates to get you started" },
+	"authUsecaseCase1Title": { "en": "Personal projects" },
+	"authUsecaseCase1Label": { "en": "Manage your personal projects and tasks with complete privacy" },
+	"authUsecaseCase2Title": { "en": "Bookshelf" },
+	"authUsecaseCase2Label": { "en": "Create your own base of knowledge with books, movies, recipes, and more" },
+	"authUsecaseCase3Title": { "en": "Diary and Quick notes" },
+	"authUsecaseCase3Label": { "en": "Keep your daily notes and self-reflections secure and private" },
+	"authUsecaseSkip": { "en":  "Skip" },
+
 	"archiveEmptyLabel": { "en": "Your bin is empty"},
 
 	"indexHi": { "en": "Hi, %s" },

@@ -110,7 +110,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 						<PageHeadEdit 
 							{...this.props} 
-							ref={ref => { this.refHeader = ref; }}
+							ref={ref => this.refHeader = ref}
 							onKeyDown={this.onKeyDownBlock}
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}

@@ -93,18 +93,18 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			);
 		};
 
-		const List = SortableContainer((item: any) => (
+		const List = SortableContainer(() => (
 			<InfiniteLoader
 				rowCount={items.length}
 				loadMoreRows={() => {}}
 				isRowLoaded={() => true}
 				threshold={LIMIT}
 			>
-				{({ onRowsRendered, registerChild }) => (
+				{({ onRowsRendered }) => (
 					<AutoSizer className="scrollArea">
 						{({ width, height }) => (
 							<VList
-								ref={ref => { this.refList = ref; }}
+								ref={ref => this.refList = ref}
 								width={width}
 								height={height}
 								deferredMeasurmentCache={this.cache}

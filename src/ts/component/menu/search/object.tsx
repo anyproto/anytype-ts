@@ -134,7 +134,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			<div className={cn.join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholder={placeholder} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
@@ -156,11 +156,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							isRowLoaded={({ index }) => !!this.items[index]}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}

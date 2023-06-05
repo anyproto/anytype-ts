@@ -30,6 +30,7 @@ import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
+import PageMainUsecase from './main/usecase';
 
 const Components: any = {
 	'/':					 PageAuthSelect,
@@ -56,6 +57,7 @@ const Components: any = {
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
 	'main/block':			 PageMainBlock,
+	'main/usecase':			 PageMainUsecase,
 };
 
 const Titles = {
@@ -70,7 +72,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	_isMounted = false;
 	refChild: any = null;
-	refSidebar: any = null;
 	frame = 0;
 
 	render () {
@@ -80,7 +81,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const match = this.getMatch();
 		const { page, action } = match.params || {};
 		const path = [ page, action ].join('/');
-		const showSidebar = page == 'main';
+		const showSidebar = (page == 'main') && (action != 'usecase');
 
 		if (account) {
 			const { status } = account || {};
@@ -94,7 +95,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		const wrap = (
 			<div id="page" className={'page ' + this.getClass('page')}>
-				<Component ref={ref => this.refChild = ref} refSidebar={this.refSidebar} {...this.props} />
+				<Component ref={ref => this.refChild = ref} {...this.props} />
 			</div>
 		);
 
@@ -104,15 +105,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		} else {
 			content = (
 				<div className="pageFlex">
-					<Sidebar 
-						ref={ref => { 
-							if (!this.refSidebar) {
-								this.refSidebar = ref; 
-								this.forceUpdate(); 
-							};
-						}} 
-						{...this.props} 
-					/>
+					<Sidebar {...this.props} />
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />
@@ -208,7 +201,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		this.onboardingCheck();
+		this.dashboardOnboardingCheck();
 		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
@@ -234,7 +227,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		}, Constant.delay.popup);
 	};
 
-	onboardingCheck () {
+	dashboardOnboardingCheck () {
 		const match = this.getMatch();
 		const home = ObjectUtil.getSpaceDashboard();
 		const { id } = match.params;

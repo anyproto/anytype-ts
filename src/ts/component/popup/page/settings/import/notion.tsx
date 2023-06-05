@@ -10,7 +10,7 @@ interface State {
 
 class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, State> {
 
-	ref: any = null;
+	ref = null;
 	state: State = {
 		error: '',
 	};

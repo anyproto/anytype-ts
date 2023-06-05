@@ -12,7 +12,7 @@ const HEIGHT = 34;
 const ViewList = observer(class ViewList extends React.Component<I.ViewComponent> {
 
 	node: any = null;
-	ref: any = null;
+	ref = null;
 
 	constructor (props: I.ViewComponent) {
 		super (props);

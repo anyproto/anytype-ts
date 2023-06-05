@@ -40,22 +40,47 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 
 	render () {
 		const { isLoading, isDeleted } = this.state;
+		const rootId = this.getRootId();
+		const check = DataUtil.checkDetails(rootId);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
 		};
 
+		let content = null;
+
 		if (isLoading) {
-			return <Loader id="loader" />;
+			content = <Loader id="loader" />;
+		} else {
+			const object = detailStore.get(rootId, rootId, []);
+			const isCollection = object.type === Constant.typeId.collection;
+
+			const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
+			const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
+
+			content = (
+				<React.Fragment>
+					{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
+
+					<div className="blocks wrapper">
+						<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
+						<HeadSimple ref={ref => this.refHead = ref} type={isCollection ? 'Collection' : 'Set'} rootId={rootId} />
+
+						{children.map((block: I.Block, i: number) => (
+							<Block
+								{...this.props}
+								ref={ref => this.blockRefs[block.id] = ref}
+								key={block.id}
+								rootId={rootId}
+								iconSize={20}
+								block={block}
+								className="noPlus"
+							/>
+						))}
+					</div>
+				</React.Fragment>
+			);
 		};
-
-		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
-		const object = detailStore.get(rootId, rootId, []);
-		const isCollection = object.type === Constant.typeId.collection;
-
-		const children = blockStore.getChildren(rootId, rootId, it => it.isDataview());
-		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, childrenIds: [], fields: {}, content: {} });
 
 		return (
 			<div 
@@ -64,24 +89,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			>
 				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
-				{check.withCover ? <Block {...this.props} key={cover.id} rootId={rootId} block={cover} /> : ''}
-
-				<div className="blocks wrapper">
-					<Controls key="editorControls" {...this.props} rootId={rootId} resize={this.resize} />
-					<HeadSimple ref={ref => this.refHead = ref} type={isCollection ? 'Collection' : 'Set'} rootId={rootId} />
-
-					{children.map((block: I.Block, i: number) => (
-						<Block 
-							{...this.props} 
-							ref={ref => this.blockRefs[block.id] = ref}
-							key={block.id} 
-							rootId={rootId} 
-							iconSize={20} 
-							block={block} 
-							className="noPlus" 
-						/>
-					))}
-				</div>
+				{content}
 
 				<Footer component="mainObject" {...this.props} />
 			</div>
