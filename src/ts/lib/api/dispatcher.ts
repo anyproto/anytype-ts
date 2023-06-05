@@ -704,6 +704,7 @@ class Dispatcher {
 
 					if (updateData) {
 						$(window).trigger(`updateDataviewData.${id}`);
+						blockStore.updateWidgetData(rootId);
 					};
 					break;
 				};

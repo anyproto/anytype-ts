@@ -54,7 +54,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const cn = [ 'widget', Util.toCamelCase('widget-' + I.WidgetLayout[layout]) ];
 		const object = this.getObject();
 		const platform = Util.getPlatform();
-		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || (platform != I.Platform.Mac));
+		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !Util.isPlatformMac());
 		const key = `widget-${block.id}`;
 		const props = {
 			...this.props,

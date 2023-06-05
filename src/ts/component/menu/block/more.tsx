@@ -116,7 +116,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let history = { id: 'history', name: 'Version history', caption: (platform == I.Platform.Mac ? `${cmd} + Y` : `Ctrl + H`) };
+		let history = { id: 'history', name: 'Version history', caption: (Util.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
 		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };

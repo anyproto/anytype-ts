@@ -319,10 +319,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	onKeyDown (e: any) {
-		const platform = Util.getPlatform();
-		const isMac = platform == I.Platform.Mac;
-
-		keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, (pressed: string) => { this.onBack(); });
+		keyboard.shortcut(Util.isPlatformMac() ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 	};
 
 	onMouseDown (e: any) {

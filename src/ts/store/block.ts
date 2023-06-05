@@ -491,6 +491,18 @@ class BlockStore {
 		return header ? header.childrenIds.includes(Constant.blockId.type) : false;
 	};
 
+	updateWidgetData (rootId: string) {
+		const win = $(window);
+		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
+
+		blocks.forEach(block => {
+			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.content.targetBlockId == rootId));
+			if (children.length) {
+				win.trigger(`updateWidgetData.${block.id}`);
+			};
+		});
+	};
+
 };
 
  export const blockStore: BlockStore = new BlockStore();

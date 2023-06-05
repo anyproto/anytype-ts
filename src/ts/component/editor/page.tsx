@@ -710,7 +710,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const styleParam = this.getStyleParam();
-		const platform = Util.getPlatform();
 		const cmd = keyboard.cmdKey();
 
 		// Last line break doesn't expand range.to
@@ -721,7 +720,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		Preview.previewHide(true);
 		
-		if (platform == I.Platform.Mac) {
+		if (Util.isPlatformMac()) {
 			// Print or prev string
 			keyboard.shortcut('ctrl+p', e, (pressed: string) => {
 				this.onArrowVertical(e, Key.up, range, length, props);

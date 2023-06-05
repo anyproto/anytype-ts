@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, Util, MenuUtil, Relation } from 'Lib';
+import { Dataview, I, C, Util, Relation } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -24,7 +24,8 @@ const HEIGHT_LIST = 64;
 
 const WidgetList = observer(class WidgetList extends React.Component<Props, State> {
 
-	node: any = null;
+	node = null;
+	refSelect = null;
 	state = {
 		loading: false,
 		viewId: '',
@@ -36,13 +37,12 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { targetBlockId } = block.content;
 		const { loading, viewId } = this.state;
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, BLOCK_ID);
+		const views = dbStore.getViews(targetBlockId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
 		const { total } = dbStore.getMeta(subId, '');
 		const length = records.length;
-		const platform = Util.getPlatform();
-		const isSelect = !isPreview || (platform != I.Platform.Mac);
+		const isSelect = !isPreview || !Util.isPlatformMac();
 
 		if (!this.cache) {
 			return null;
@@ -117,6 +117,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			if (isSelect) {
 				viewSelect = (
 					<Select 
+						ref={ref => this.refSelect = ref}
 						id={`select-view-${rootId}`} 
 						value={viewId} 
 						options={views} 
@@ -190,6 +191,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { targetBlockId } = block.content;
 		const { viewId } = this.state;
 		const rootId = this.getRootId();
+		const views = dbStore.getViews(targetBlockId, BLOCK_ID);
 		const view = Dataview.getView(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
@@ -204,6 +206,10 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 				defaultHeight: this.getRowHeight(),
 				keyMapper: i => records[i],
 			});
+		};
+
+		if (this.refSelect) {
+			this.refSelect.setOptions(views);
 		};
 
 		this.resize();

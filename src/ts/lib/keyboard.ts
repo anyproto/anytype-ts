@@ -104,8 +104,7 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const platform = Util.getPlatform();
-		const isMac = platform == I.Platform.Mac;
+		const isMac = Util.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -663,12 +662,7 @@ class Keyboard {
 	};
 
 	ctrlByPlatform (e: any) {
-		const platform = Util.getPlatform();
-		if (platform == I.Platform.Mac) {
-			return e.metaKey;
-		} else {
-			return e.ctrlKey;
-		};
+		return Util.isPlatformMac() ? e.metaKey : e.ctrlKey;
 	};
 
 	isMain () {
@@ -891,15 +885,15 @@ class Keyboard {
 	};
 
 	cmdSymbol () {
-		return Util.getPlatform() == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+		return Util.isPlatformMac() ? '&#8984;' : 'Ctrl';
 	};
 
 	altSymbol () {
-		return Util.getPlatform() == I.Platform.Mac ? '&#8997;' : 'Alt';
+		return Util.isPlatformMac() ? '&#8997;' : 'Alt';
 	};
 
 	cmdKey () {
-		return Util.getPlatform() == I.Platform.Mac ? 'cmd' : 'ctrl';
+		return Util.isPlatformMac() ? 'cmd' : 'ctrl';
 	};
 
 	checkPressed (key: string) {
