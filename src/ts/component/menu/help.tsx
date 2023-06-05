@@ -133,10 +133,10 @@ class MenuHelp extends React.Component<I.Menu> {
 				const object = detailStore.get(rootId, rootId, []);
 				const match = keyboard.getMatch();
 				const { page, action } = match.params;
-				const isEditor = (page == 'main') && (action == 'edit');
-				const isSet = (page == 'main') && (action == 'set');
-				const isStore = (page == 'main') && (action == 'store');
-				const isRelationsStore = isStore && Storage.get('tabStore') == 'relation';
+				const isEditor = keyboard.isMainEditor();
+				const isSet = keyboard.isMainSet();
+				const isStore = keyboard.isMainStore();
+				const isRelationsStore = isStore && (Storage.get('tabStore') == I.StoreTab.Relation);
 
 				let key = '';
 
