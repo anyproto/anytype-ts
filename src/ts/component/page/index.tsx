@@ -201,7 +201,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		this.onboardingCheck();
+		this.dashboardOnboardingCheck();
 		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
@@ -227,7 +227,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		}, Constant.delay.popup);
 	};
 
-	onboardingCheck () {
+	dashboardOnboardingCheck () {
 		const match = this.getMatch();
 		const home = ObjectUtil.getSpaceDashboard();
 		const { id } = match.params;

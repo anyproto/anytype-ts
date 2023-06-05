@@ -11,7 +11,7 @@
 		.head {
 			.tabs { @include text-header2; color: $colorMediumGrey; }
 			.tabs {
-				.item { margin-right: 24px; display: inline-block; transition: $transitionAllCommon; }
+				.item { margin-right: 24px; display: inline-block; transition: $transitionAllCommon; cursor: default; }
 				.item:last-child { margin: 0px; }
 				.item:hover, .item.active { color: $colorBlack; }
 			}

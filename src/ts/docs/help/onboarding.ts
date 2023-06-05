@@ -23,7 +23,7 @@ export default {
         ],
 
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -65,7 +65,7 @@ export default {
             }
         ],
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -100,7 +100,7 @@ export default {
             },
         ],
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -134,7 +134,7 @@ export default {
             },
         ],
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -168,7 +168,7 @@ export default {
             },
         ],
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -194,7 +194,7 @@ export default {
             },
         ],
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -255,7 +255,7 @@ export default {
         ],
 
 		param: {
-			element: '#footer #button-help',
+			element: '#page.isFull #footer #button-help',
 			classNameWrap: 'fixed',
 			className: 'wizard',
 			vertical: I.MenuDirection.Top,
