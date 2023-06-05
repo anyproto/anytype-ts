@@ -95,19 +95,16 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={({ index }) => {
-											const item = items[index];
-											return this.getItemHeight(item);
-										}}
+										rowHeight={({ index }) => this.getItemHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}

@@ -124,11 +124,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 					isRowLoaded={({ index }) => !!this.items[index]}
 					threshold={LIMIT_HEIGHT}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<AutoSizer className="scrollArea">
 							{({ width, height }) => (
 								<List
-									ref={ref => { this.refList = ref; }}
+									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}
@@ -150,7 +150,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		return (
 			<div className="wrap">
 				<Filter 
-					ref={ref => { this.refFilter = ref; }} 
+					ref={ref => this.refFilter = ref} 
 					placeholder="Paste link or search objects" 
 					value={filter}
 					onChange={this.onFilterChange}

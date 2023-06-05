@@ -167,11 +167,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}

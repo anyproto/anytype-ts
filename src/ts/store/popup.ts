@@ -1,7 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, focus } from 'Lib';
+import { I, Util, focus, Preview } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -51,6 +51,8 @@ class PopupStore {
 		} else {
 			this.popupList.push({ id, param });
 		};
+
+		Preview.previewHide(true);
 	};
 
     get (id: string): I.Popup {

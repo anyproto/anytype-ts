@@ -105,7 +105,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			<div className="mid">
 				<Title text={title} />
 				<Filter 
-					ref={ref => { this.refFilter = ref; }}
+					ref={ref => this.refFilter = ref}
 					id="store-filter"
 					icon="search"
 					placeholder={placeholder}
@@ -224,11 +224,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 							loadMoreRows={() => {}}
 							isRowLoaded={() => true}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}

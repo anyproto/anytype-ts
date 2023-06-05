@@ -36,7 +36,7 @@ const SNAP = 0.01;
 const Block = observer(class Block extends React.Component<Props> {
 
 	node: any = null;
-	ref: any = null;
+	ref = null;
 	ids: string[] = [];
 
 	public static defaultProps = {

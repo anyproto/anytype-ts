@@ -12,7 +12,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 	node: any = null;
 	format: I.RelationType = null;
 	objectTypes: string[] = [];
-	ref: any = null;
+	ref = null;
 	
 	constructor (props: I.Menu) {
 		super(props);
@@ -124,7 +124,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 					{!isReadonly ? (
 						<div className="inputWrap">
 							<Input 
-								ref={ref => { this.ref = ref; }} 
+								ref={ref => this.ref = ref} 
 								value={relation ? relation.name : ''}
 								onChange={this.onChange} 
 								onMouseEnter={this.menuClose}
