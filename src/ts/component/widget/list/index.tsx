@@ -208,10 +208,6 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			});
 		};
 
-		if (this.refSelect) {
-			this.refSelect.setOptions(views);
-		};
-
 		this.resize();
 	};
 
