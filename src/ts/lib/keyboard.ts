@@ -176,25 +176,15 @@ class Keyboard {
 
 			// Navigation search
 			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked) {
-					return;
-				};
-
-				// Check if smth is selected to prevent search from opening
-				if ((pressed == `${cmd}+k`) && (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length))) {
+				if (popupStore.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
 					return;
 				};
 
 				this.onSearchPopup();
 			});
 
-			this.shortcut(`${cmd}+l`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked) {
-					return;
-				};
-
-				// Check if smth is selected to prevent search from opening
-				if (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+			this.shortcut(`${cmd}+l`, e, () => {
+				if (popupStore.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
 					return;
 				};
 
@@ -253,6 +243,17 @@ class Keyboard {
 		};
 
 		this.initPinCheck();
+	};
+
+	// Check if smth is selected
+	checkSelection () {
+		const range = Util.selectionRange();
+
+		if ((range && !range.collapsed) || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+			return true;
+		};
+
+		return false;
 	};
 
 	pageCreate () {
