@@ -8,35 +8,7 @@
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
 		}
 
-		.innerWrap.full { width: 100% !important; height: 100% !important; border-radius: 0px; margin: 0px !important; left: 0px !important; top: 0px !important; }
-		.innerWrap.full {
-			.header { position: fixed; }
-			.header {
-				.side.left {
-					.icon.expand { display: none; }
-					.icon.home { display: inline-block; }
-				}
-			}
-
-			.pageMainStore {
-				.ReactVirtualized__List { padding-top: 48px; }
-			}
-
-			.pageMainRelation, .pageMainBookmark {
-				.wrapper { padding-top: 126px; }
-			}
-
-			.pageMainType {
-				.wrapper { padding-top: 54px; }
-			}
-
-			#bodyWrapper { padding-top: 30px; }
-
-			.footer { display: block; }
-		}
-
 		.deleteWrapper { position: absolute; }
-
 		.content { min-height: 100%; }
 		#wrap { height: 100%; }
 
@@ -92,11 +64,6 @@
 html.platformMac {
 	.popups {
 		.popup.popupPage {
-			.innerWrap.full {
-				.header {
-					.side.left { padding-left: 88px !important; }
-				}
-			}
 			.pageMainEdit {
 				.block.blockCover { top: 52px; }
 			}	
