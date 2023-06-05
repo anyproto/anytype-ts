@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Docs from 'Docs';
 import { MenuItemVertical, Button } from 'Component';
-import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight } from 'Lib';
+import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight, Storage } from 'Lib';
 import { popupStore, detailStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 
@@ -133,8 +133,10 @@ class MenuHelp extends React.Component<I.Menu> {
 				const object = detailStore.get(rootId, rootId, []);
 				const match = keyboard.getMatch();
 				const { page, action } = match.params;
-				const isEditor = (page == 'main') && (action == 'edit');
-				const isSet =  (page == 'main') && (action == 'set');
+				const isEditor = keyboard.isMainEditor();
+				const isSet = keyboard.isMainSet();
+				const isStore = keyboard.isMainStore();
+				const isRelationsStore = isStore && (Storage.get('tabStore') == I.StoreTab.Relation);
 
 				let key = '';
 
@@ -146,6 +148,9 @@ class MenuHelp extends React.Component<I.Menu> {
 				} else
 				if (isGraph) {
 					key = 'mainGraph';
+				} else
+				if (isRelationsStore) {
+					key = 'storeRelations';
 				} else {
 					key = Util.toCamelCase([ page, action ].join('-'));
 
