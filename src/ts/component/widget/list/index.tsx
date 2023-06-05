@@ -37,7 +37,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { targetBlockId } = block.content;
 		const { loading, viewId } = this.state;
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(targetBlockId, BLOCK_ID);
+		const views = dbStore.getViews(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
 		const { total } = dbStore.getMeta(subId, '');
@@ -191,7 +191,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { targetBlockId } = block.content;
 		const { viewId } = this.state;
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(targetBlockId, BLOCK_ID);
+		const views = dbStore.getViews(rootId, BLOCK_ID);
 		const view = Dataview.getView(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
@@ -223,7 +223,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 
-	update () {
+	updateData () {
 		const { block, isCollection, getData } = this.props;
 		const { targetBlockId } = block.content;
 
@@ -236,6 +236,15 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 				this.load(view.id);
 			};
 		};
+	};
+
+	updateViews () {
+		const { block } = this.props;
+		const { targetBlockId } = block.content;
+		const views = dbStore.getViews(targetBlockId, BLOCK_ID);
+		const rootId = this.getRootId();
+
+		dbStore.viewsSet(rootId, BLOCK_ID, views);
 	};
 
 	getTraceId = (): string => {

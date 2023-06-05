@@ -189,6 +189,7 @@ class Dispatcher {
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
+			const win = $(window);
 			const type = this.eventType(message.getValueCase());
 			const fn = 'get' + Util.ucFirst(type);
 			const data = message[fn] ? message[fn]() : {};
@@ -580,6 +581,7 @@ class Dispatcher {
 					};
 
 					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
+					blockStore.updateWidgetViews(rootId);
 					break;
 				};
 
@@ -701,9 +703,10 @@ class Dispatcher {
 					});
 
 					dbStore.viewUpdate(rootId, id, view);
+					blockStore.updateWidgetViews(rootId);
 
 					if (updateData) {
-						$(window).trigger(`updateDataviewData.${id}`);
+						win.trigger(`updateDataviewData.${id}`);
 						blockStore.updateWidgetData(rootId);
 					};
 					break;
@@ -723,12 +726,15 @@ class Dispatcher {
 
 						dbStore.metaSet(subId, '', { viewId: viewId });
 					};
+
+					blockStore.updateWidgetViews(rootId);
 					break;
 				};
 
 				case 'blockDataviewViewOrder': {
 					id = data.getId();
 					dbStore.viewsSort(rootId, id, data.getViewidsList());
+					blockStore.updateWidgetViews(rootId);
 					break; 
 				};
 
@@ -742,6 +748,7 @@ class Dispatcher {
 
 					block.content.sources = data.getSourceList();
 					blockStore.updateContent(rootId, id, block.content);
+					blockStore.updateWidgetData(rootId);
 					break;
 				};
 

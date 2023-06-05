@@ -192,7 +192,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	unbind () {
 		const { block } = this.props;
-		const events = [ 'updateWidgetData' ];
+		const events = [ 'updateWidgetData', 'updateWidgetViews' ];
 
 		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
 	};
@@ -203,7 +203,8 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 		this.unbind();
 
-		win.on(`updateWidgetData.${block.id}`, () => this.ref && this.ref.update());
+		win.on(`updateWidgetData.${block.id}`, () => this.ref && this.ref.updateData && this.ref.updateData());
+		win.on(`updateWidgetViews.${block.id}`, () => this.ref && this.ref.updateViews && this.ref.updateViews());
 	};
 
 	getTargetBlock (): I.Block {
