@@ -5,14 +5,13 @@
 	.block.blockMedia.isResizing * { cursor: nwse-resize; }
 	
 	.block.blockMedia {
-		.focusable { cursor: zoom-in; }
 		.focusable.isFocused { background: none; }
 		.focusable.isFocused::before { 
 			content: ""; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; z-index: 1; 
 			pointer-events: none; border-radius: 6px;
 		}
 
-		.icon.resize, .icon.download { position: absolute; z-index: 1; opacity: 0;  }
+		.icon.resize, .icon.download { position: absolute; z-index: 1; opacity: 0; cursor: default; }
 		.icon.resize { width: 20px; height: 20px; right: 0px; bottom: 0px; cursor: nwse-resize; background-image: url('~img/icon/resize.svg'); }
 		.icon.download { width: 28px; height: 28px; right: 8px; top: 8px; background-image: url('~img/icon/download.svg'); }
 
@@ -49,9 +48,7 @@
 
 			.react-pdf__Document { width: 100%; display: inline-block; position: relative; flex-grow: 1; }
 			.react-pdf__Page { position: static !important; }
-			.react-pdf__Page__svg, .react-pdf__Page__canvas { 
-				width: 100% !important; height: 100% !important; overflow: hidden; 
-			}
+			.react-pdf__Page__svg, .react-pdf__Page__canvas { width: 100% !important; height: 100% !important; overflow: hidden; }
 			.react-pdf__Page__svg svg { width: 100%; height: auto; }
 			.react-pdf__Page__textContent { display: none; }
 			.react-pdf__Page__annotations { display: none; }
@@ -92,6 +89,10 @@
 		.icon.download { display: none; }
 		.icon.dots { display: none; }
 		.icon.play { display: none; }
+	}
+
+	.block.blockMedia.withContent {
+		.focusable { cursor: zoom-in; }
 	}
 
 	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorVeryLightGrey; }
