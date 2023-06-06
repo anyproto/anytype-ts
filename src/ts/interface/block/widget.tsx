@@ -39,6 +39,7 @@ export interface WidgetTreeDetails {
 export interface ContentWidget {
 	layout: I.WidgetLayout;
 	limit: number;
+	viewId: string;
 };
 
 export interface BlockWidget extends I.Block {
