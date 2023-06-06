@@ -77,10 +77,15 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			cn.push('withSelect');
 		};
 
+		let icon = null;
 		let head = null;
 		let content = null;
 		let back = null;
 		let buttons = null;
+
+		if ([ I.WidgetLayout.Link ].includes(layout)) {
+			icon = <IconObject object={object} size={24} />
+		};
 
 		if (isPreview) {
 			back = (
@@ -117,6 +122,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 				<div className="head">
 					{back}
 					<div className="clickable" onClick={onClick}>
+						{icon}
 						<ObjectName object={object} />
 					</div>
 					{buttons}

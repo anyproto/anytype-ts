@@ -13,7 +13,8 @@ interface Props extends I.WidgetComponent {
 };
 
 interface State {
-	isLoading: boolean;
+	loading: boolean;
+	viewId: string;
 };
 
 const BLOCK_ID = 'dataview';
@@ -26,15 +27,15 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	node = null;
 	refSelect = null;
 	state = {
-		isLoading: false,
+		loading: false,
+		viewId: '',
 	};
 	cache: any = null;
 
 	render (): React.ReactNode {
-		const { parent, block, isCollection, isPreview } = this.props;
-		const { viewId } = parent.content;
+		const { block, isCollection, isPreview } = this.props;
 		const { targetBlockId } = block.content;
-		const { isLoading } = this.state;
+		const { loading, viewId } = this.state;
 		const rootId = this.getRootId();
 		const views = dbStore.getViews(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
@@ -49,7 +50,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 		let content = null;
 
-		if (isLoading) {
+		if (loading) {
 			content = <Loader />;
 		} else
 		if (!length) {
@@ -165,19 +166,18 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	componentDidMount (): void {
-		const { parent, block, isCollection, getData } = this.props;
-		const { viewId } = parent.content;
+		const { block, isCollection, getData } = this.props;
 		const { targetBlockId } = block.content;
 
 		if (isCollection(targetBlockId)) {
 			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
 		} else {
-			this.setState({ isLoading: true });
+			this.setState({ loading: true });
 
 			C.ObjectShow(targetBlockId, this.getTraceId(), () => {
-				this.setState({ isLoading: false });
+				this.setState({ loading: false });
 
-				const view = Dataview.getView(this.getRootId(), BLOCK_ID, viewId);
+				const view = Dataview.getView(this.getRootId(), BLOCK_ID);
 				if (view) {
 					this.onChangeView(view.id);
 					this.load(view.id);
@@ -187,15 +187,15 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	componentDidUpdate (): void {
-		const { parent, block, isCollection } = this.props;
-		const { viewId } = parent.content;
+		const { block, isCollection } = this.props;
 		const { targetBlockId } = block.content;
+		const { viewId } = this.state;
 		const rootId = this.getRootId();
-		const view = Dataview.getView(rootId, BLOCK_ID, viewId);
+		const view = Dataview.getView(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
 
-		if (!isCollection(targetBlockId) && (viewId != view?.id)) {
+		if (!isCollection(targetBlockId) && view && (viewId != view.id)) {
 			this.load(viewId);
 		};
 
@@ -290,9 +290,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	onChangeView = (viewId: string): void => {
-		const { parent } = this.props;
-
-		C.BlockWidgetSetViewId(blockStore.widgets, parent.id, viewId);
+		this.setState({ viewId });
 	};
 
 	resize () {

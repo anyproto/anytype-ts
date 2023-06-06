@@ -279,16 +279,6 @@ const BlockWidgetSetLimit = (contextId: string, blockId: string, limit: number, 
 	dispatcher.request(BlockWidgetSetLimit.name, request, callBack);
 };
 
-const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.BlockWidget.SetViewId.Request();
-	
-	request.setContextid(contextId);
-	request.setBlockid(blockId);
-	request.setViewid(viewId);
-
-	dispatcher.request(BlockWidgetSetViewId.name, request, callBack);
-};
-
 // ---------------------- BLOCK TEXT ---------------------- //
 
 const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
@@ -1840,7 +1830,6 @@ export {
 	BlockWidgetSetTargetId,
 	BlockWidgetSetLayout,
 	BlockWidgetSetLimit,
-	BlockWidgetSetViewId,
 
 	HistoryGetVersions,	
 	HistoryShowVersion,
