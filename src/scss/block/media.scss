@@ -5,6 +5,7 @@
 	.block.blockMedia.isResizing * { cursor: nwse-resize; }
 	
 	.block.blockMedia {
+		.focusable { cursor: zoom-in; }
 		.focusable.isFocused { background: none; }
 		.focusable.isFocused::before { 
 			content: ""; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; z-index: 1; 
