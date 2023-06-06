@@ -31,7 +31,7 @@ class Filter extends React.Component<Props> {
 	node: any = null;
 	isFocused = false;
 	placeholder: any = null;
-	ref: any = null;
+	ref = null;
 
 	constructor (props: Props) {
 		super(props);

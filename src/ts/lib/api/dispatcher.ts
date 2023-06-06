@@ -18,7 +18,6 @@ const SORT_IDS = [
 	'objectDetailsAmend', 
 	'objectDetailsUnset', 
 	'subscriptionCounters',
-	'blockDataviewSourceSet',
 	'blockDataviewViewSet',
 	'blockDataviewViewDelete',
 ];
@@ -114,7 +113,6 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
-		if (v == V.BLOCKDATAVIEWSOURCESET)		 t = 'blockDataviewSourceSet';
 		if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'blockDataviewTargetObjectIdSet';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
@@ -122,7 +120,7 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
 		if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'blockDataviewObjectOrderUpdate';
 
-		if (v == V.BLOCKSETWIDGET)	 		t = 'blockSetWidget';
+		if (v == V.BLOCKSETWIDGET)				 t = 'blockSetWidget';
 
 		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
@@ -187,6 +185,7 @@ class Dispatcher {
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
+			const win = $(window);
 			const type = this.eventType(message.getValueCase());
 			const fn = 'get' + Util.ucFirst(type);
 			const data = message[fn] ? message[fn]() : {};
@@ -415,6 +414,29 @@ class Dispatcher {
 					break;
 				};
 
+				case 'blockSetWidget': {
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (data.hasLayout()) {
+						block.content.layout = data.getLayout().getValue();
+					};
+
+					if (data.hasLimit()) {
+						block.content.limit = data.getLimit().getValue();
+					};
+
+					if (data.hasViewid()) {
+						block.content.viewId = data.getViewid().getValue();
+					};
+
+					blockStore.updateContent(rootId, id, block.content);
+					break;
+				};
+
 				case 'blockSetFile': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
@@ -559,6 +581,7 @@ class Dispatcher {
 					};
 
 					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
+					blockStore.updateWidgetViews(rootId);
 					break;
 				};
 
@@ -680,9 +703,11 @@ class Dispatcher {
 					});
 
 					dbStore.viewUpdate(rootId, id, view);
+					blockStore.updateWidgetViews(rootId);
 
 					if (updateData) {
-						$(window).trigger(`updateDataviewData.${id}`);
+						win.trigger(`updateDataviewData.${id}`);
+						blockStore.updateWidgetData(rootId);
 					};
 					break;
 				};
@@ -701,26 +726,17 @@ class Dispatcher {
 
 						dbStore.metaSet(subId, '', { viewId: viewId });
 					};
+
+					blockStore.updateWidgetViews(rootId);
 					break;
 				};
 
 				case 'blockDataviewViewOrder': {
 					id = data.getId();
+
 					dbStore.viewsSort(rootId, id, data.getViewidsList());
+					blockStore.updateWidgetViews(rootId);
 					break; 
-				};
-
-				case 'blockDataviewSourceSet': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-
-					if (!block) {
-						break;
-					};
-
-					block.content.sources = data.getSourceList();
-					blockStore.updateContent(rootId, id, block.content);
-					break;
 				};
 
 				case 'blockDataviewRelationDelete': {
@@ -814,17 +830,7 @@ class Dispatcher {
 					block = blockStore.getLeaf(rootId, id);
 					details = Decode.decodeStruct(data.getDetails());
 
-					// Subscriptions
-					if (subIds.length) {
-						uniqueSubIds = subIds.map(it => it.split('/')[0]);
-						Util.arrayUnique(uniqueSubIds).forEach(subId => detailStore.update(subId, { id, details }, true));
-					} else {
-						detailStore.update(rootId, { id, details }, true);
-
-						if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, rootId, { layout: details.layout });
-						};
-					};
+					this.detailsUpdate(details, rootId, id, subIds, true);
 					break;
 				};
 
@@ -838,22 +844,7 @@ class Dispatcher {
 						details[item.getKey()] = Decode.decodeValue(item.getValue());
 					};
 
-					// Subscriptions
-
-					if (subIds.length) {
-						uniqueSubIds = subIds.map(it => it.split('/')[0]);
-						Util.arrayUnique(uniqueSubIds).forEach(subId => detailStore.update(subId, { id, details }, false));
-					} else {
-						detailStore.update(rootId, { id, details }, false);
-
-						if ((id == rootId) && block) {
-							if ((undefined !== details.layout) && (block.layout != details.layout)) {
-								blockStore.update(rootId, rootId, { layout: details.layout });
-							};
-	
-							blockStore.checkTypeSelect(rootId);
-						};
-					};
+					this.detailsUpdate(details, rootId, id, subIds, false);
 					break;
 				};
 
@@ -986,6 +977,29 @@ class Dispatcher {
 			blockStore.updateNumbers(rootId); 
 			blockStore.updateMarkup(rootId);
 		}, 10);
+	};
+
+	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
+		const root = blockStore.getLeaf(rootId, id);
+
+		if (subIds.length) {
+			const uniqueSubIds = subIds.map(it => it.split('/')[0]);
+			Util.arrayUnique(uniqueSubIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
+		} else {
+			detailStore.update(rootId, { id, details }, clear);
+
+			if ((id == rootId) && root) {
+				if ((undefined !== details.layout) && (root.layout != details.layout)) {
+					blockStore.update(rootId, rootId, { layout: details.layout });
+				};
+
+				if (undefined !== details.setOf) {
+					blockStore.updateWidgetData(rootId);
+				};
+
+				blockStore.checkTypeSelect(rootId);
+			};
+		};
 	};
 
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {

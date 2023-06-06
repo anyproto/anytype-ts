@@ -110,7 +110,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 						<PageHeadEdit 
 							{...this.props} 
-							ref={ref => { this.refHeader = ref; }}
+							ref={ref => this.refHeader = ref}
 							onKeyDown={this.onKeyDownBlock}
 							onKeyUp={this.onKeyUpBlock}  
 							onMenuAdd={this.onMenuAdd}
@@ -221,10 +221,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(this.id, '', (message: any) => {
+			if (!Util.checkError(message.error.code)) {
+				return;
+			};
+
 			if (message.error.code) {
-				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate(() => { ObjectUtil.openHome('route'); });
-				} else 
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
 				} else {
@@ -249,7 +250,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				onOpen();
 			};
 
-			window.setTimeout(() => { this.resizePage(); }, 15);
+			window.setTimeout(() => this.resizePage(), 15);
 		});
 	};
 
@@ -710,7 +711,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		const styleParam = this.getStyleParam();
-		const platform = Util.getPlatform();
 		const cmd = keyboard.cmdKey();
 
 		// Last line break doesn't expand range.to
@@ -721,7 +721,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		Preview.previewHide(true);
 		
-		if (platform == I.Platform.Mac) {
+		if (Util.isPlatformMac()) {
 			// Print or prev string
 			keyboard.shortcut('ctrl+p', e, (pressed: string) => {
 				this.onArrowVertical(e, Key.up, range, length, props);
@@ -2134,7 +2134,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			this.setLayoutWidth(root?.fields?.width);
 
-			if (blocks.length && last.length) {
+			if (blocks.length && last.length && container.length) {
 				const ct = isPopup ? container.offset().top : 0;
 				const ch = container.height();
 				const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct - 2);

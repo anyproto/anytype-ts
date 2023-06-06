@@ -603,8 +603,7 @@ class Util {
 		const [ r, g, b ] = rgb[1].split(',');
 
 		obj.css({ 
-			color: `rgba(${[ r, g, b, param.textOpacity ].join(',')})`, 
-			borderColor: `rgba(${[ r, g, b, param.borderOpacity ].join(',')}` 
+			borderColor: `rgba(${[ r, g, b, param.border ].join(',')}` 
 		});
 	};
 	
@@ -721,25 +720,42 @@ class Util {
 		return Constant.platforms[window.Electron.platform];
 	};
 
-	checkError (code: number) {
+	isPlatformMac () {
+		return this.getPlatform() == I.Platform.Mac;
+	};
+
+	isPlatformWindows () {
+		return this.getPlatform() == I.Platform.Windows;
+	};
+
+	isPlatformLinux () {
+		return this.getPlatform() == I.Platform.Linux;
+	};
+
+	checkError (code: number): boolean {
 		if (!code) {
-			return;
+			return true;
 		};
 
 		// App is already working
 		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
 			Renderer.send('exit', false);
+			return false;
 		};
 
 		// App needs update
-		if (code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+		if ([ Errors.Code.ANYTYPE_NEEDS_UPGRADE, Errors.Code.PROTOCOL_NEEDS_UPGRADE ].includes(code)) {
 			this.onErrorUpdate();
+			return false;
 		};
+
+		return true;
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {
 		popupStore.open('confirm', {
+			className: 'isWide',
 			data: {
 				icon: 'update',
 				title: translate('confirmUpdateTitle'),
@@ -828,7 +844,7 @@ class Util {
 	};
 
 	sizeHeader (): number {
-		return this.getPlatform() == I.Platform.Windows ? 38 : 52;
+		return this.isPlatformWindows() ? 38 : 52;
 	};
 
 	searchParam (url: string): any {

@@ -11,6 +11,7 @@ import BlockContentText from './content/text';
 import BlockContentFile from './content/file';
 import BlockContentDataview from './content/dataview';
 import { BlockContentTableRow } from './content/table';
+import BlockContentWidget from './content/widget';
 
 const ContentModel = {
 	layout:		 BlockContentLayout,
@@ -23,6 +24,7 @@ const ContentModel = {
 	file:		 BlockContentFile,
 	dataview:	 BlockContentDataview,
 	tableRow:	 BlockContentTableRow,
+	widget:		 BlockContentWidget,
 };
 
 class Block implements I.Block {
@@ -223,6 +225,26 @@ class Block implements I.Block {
 
 	isType (): boolean {
 		return this.type == I.BlockType.Type;
+	};
+
+	isWidget (): boolean {
+		return this.type == I.BlockType.Widget;
+	};
+
+	isWidgetLink (): boolean {
+		return this.isWidget() && (this.content.layout == I.WidgetLayout.Link);
+	};
+
+	isWidgetList (): boolean {
+		return this.isWidget() && (this.content.layout == I.WidgetLayout.List);
+	};
+
+	isWidgetTree (): boolean {
+		return this.isWidget() && (this.content.layout == I.WidgetLayout.Tree);
+	};
+
+	isWidgetCompact (): boolean {
+		return this.isWidget() && (this.content.layout == I.WidgetLayout.Compact);
 	};
 
 	isLayout (): boolean {

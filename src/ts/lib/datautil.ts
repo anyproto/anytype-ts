@@ -209,8 +209,6 @@ class DataUtil {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		this.updateStorageUsage();
-
 		const subscriptions = [
 			{
 				subId: Constant.subId.deleted,
@@ -298,6 +296,12 @@ class DataUtil {
 				};
 			};
 		};
+
+		C.FileSpaceUsage((message) => {
+			if (!message.error.code) {
+				commonStore.spaceStorageSet(message);
+			};
+		});
 
 		C.ObjectOpen(widgets, '', () => {
 			for (const item of subscriptions) {
@@ -757,18 +761,6 @@ class DataUtil {
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
 			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
 		];
-	};
-
-	updateStorageUsage () {
-		C.FileSpaceUsage((message) => {
-			if (message.error.code) {
-				return;
-			};
-
-			const { bytesUsed, bytesLimit, localUsage } = message;
-
-			commonStore.spaceStorageSet({ bytesUsed, bytesLimit, localUsage });
-		});
 	};
 
 };

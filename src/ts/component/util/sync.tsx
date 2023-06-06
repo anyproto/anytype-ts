@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, Preview, DataUtil, translate } from 'Lib';
+import { I, Preview, DataUtil, translate, Util } from 'Lib';
 import { authStore } from 'Store';
 
 interface Props {
@@ -23,6 +23,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	constructor (props: Props) {
 		super(props);
 
+		this.onClick = this.onClick.bind(this);
 		this.onMouseEnter = this.onMouseEnter.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 	};
@@ -41,14 +42,26 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				ref={node => this.node = node}
 				id={id} 
 				className={cn.join(' ')} 
-				onClick={onClick} 
+				onClick={this.onClick} 
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
 				<Icon className={DataUtil.threadColor(status)} />
-				<div className="name">{translate(`syncStatus${status}`)}</div>
+				<div className="name">{translate(`threadStatus${status}`)}</div>
 			</div>
 		);
+	};
+
+	onClick (e: any) {
+		const { onClick } = this.props;
+		const status = this.getStatus();
+
+		if (status == I.ThreadStatus.Incompatible) {
+			Util.onErrorUpdate();
+		} else
+		if (onClick) {
+			onClick(e);
+		};
 	};
 
 	onMouseEnter () {
@@ -56,7 +69,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		const status = this.getStatus();
 
 		if (status) {
-			Preview.tooltipShow({ text: translate(`tooltip${status}`), element: node, typeY: I.MenuDirection.Bottom });
+			Preview.tooltipShow({ text: translate(`threadStatus${status}Tooltip`), element: node, typeY: I.MenuDirection.Bottom });
 		};
 	};
 	
@@ -66,7 +79,6 @@ const Sync = observer(class Sync extends React.Component<Props> {
 
 	getStatus () {
 		const { rootId } = this.props;
-		const { account } = authStore;
 		const thread = authStore.threadGet(rootId);
 		const { summary } = thread;
 
@@ -74,8 +86,6 @@ const Sync = observer(class Sync extends React.Component<Props> {
 			return I.ThreadStatus.Unknown;
 		};
 
-		//const disabled = account?.status?.type != I.AccountStatusType.Active;
-		//return disabled ? I.ThreadStatus.Disabled : ((summary || {}).status || I.ThreadStatus.Unknown);
 		return (thread.summary || {}).status || I.ThreadStatus.Unknown;
 	};
 	

@@ -136,6 +136,7 @@ class ObjectUtil {
 		const action = this.actionByLayout(object.layout);
 
 		param = param || {};
+		param.preventResize = true;
 		param.data = Object.assign(param.data || {}, { 
 			matchPopup: { 
 				params: {

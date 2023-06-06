@@ -87,7 +87,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         const Item = (item: any) => (
             <div className="item" onClick={e => this.onClick(e, item)}>
                 <Checkbox
-                    ref={ref => { this.refCheckbox.set(item.id, ref); }}
+                    ref={ref => this.refCheckbox.set(item.id, ref)}
                     readonly={true}
                     value={this.selected.includes(item.id)}
                 />
@@ -134,7 +134,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
                     <div id="filterWrapper" className="filterWrapper">
                         <Filter
-                            ref={ref => { this.refFilter = ref; }}
+                            ref={ref => this.refFilter = ref}
                             onChange={this.onFilterChange}
                             onClear={this.onFilterClear}
                             placeholder="Type to search..."
@@ -164,13 +164,13 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
                             loadMoreRows={() => {}}
                             isRowLoaded={({ index }) => true}
                         >
-                            {({ onRowsRendered, registerChild }) => (
+                            {({ onRowsRendered }) => (
                                 <WindowScroller scrollElement={$('#popupPage-innerWrap').get(0)}>
                                     {({ height, isScrolling, registerChild, scrollTop }) => (
                                         <AutoSizer className="scrollArea">
                                             {({ width, height }) => (
                                                 <List
-                                                    ref={ref => { this.refList = ref; }}
+                                                    ref={ref => this.refList = ref}
                                                     width={width}
                                                     height={height}
                                                     deferredMeasurmentCache={this.cache}

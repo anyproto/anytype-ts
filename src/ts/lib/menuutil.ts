@@ -259,6 +259,22 @@ class MenuUtil {
 			return it;
 		});
 	};
+
+	getWidgetLimits (layout: I.WidgetLayout) {
+		let options = [];
+		switch (layout) {
+			default: {
+				options = [ 6, 10, 14 ];
+				break;
+			};
+
+			case I.WidgetLayout.List: {
+				options = [ 4, 6, 8 ];
+				break;
+			};
+		};
+		return options.map(id => ({ id: String(id), name: id }));
+	};
 	
 	sectionsFilter (sections: any[], filter: string) {
 		const f = Util.filterFix(filter);

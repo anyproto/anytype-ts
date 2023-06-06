@@ -34,7 +34,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 				</div>
 
 				<div className="check" onClick={this.onCheck}>
-					<Checkbox ref={ref => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
+					<Checkbox ref={ref => this.refCheckbox = ref} /> I have read it and want to delete my account
 				</div>
 
 				<Button id="button" text={translate('commonDelete')} color="red c36" className="disabled" onClick={this.onDelete} />

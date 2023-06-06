@@ -23,7 +23,7 @@ export default {
         ],
 
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -65,7 +65,76 @@ export default {
             }
         ],
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    },
+
+    storeType: {
+        category: 'Library',
+        items: [
+            {
+                description: `
+					<p>
+						<b>This Library contains all types of objects and relations.</b> It comes with preinstalled types, as well as types that can be uploaded to Anytype for different use cases.
+					</p>
+				`,
+                video: './img/help/onboarding/library-1-add-type.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>You can create your own types with any object layout for your own purposes.</b> Additionally, you can save any existing object as a Library template if you need to use it frequently.
+					</p>
+					<p>Now, let’s take a look at the Relations menu.</p>
+				`,
+                video: './img/help/onboarding/library-2-new-type.mp4',
+                buttonText: 'Ok',
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    },
+
+    storeRelation: {
+        category: 'Library',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Relations are reusable links with meaning.</b> Here you can see some examples of relations, but the idea is that you can create your own relations which are valuable to you and connect the objects through them.
+					</p>
+				`,
+                video: './img/help/onboarding/library-3-relation.mp4',
+                buttonText: 'Go ahead',
+            },
+            {
+                description: `
+					<p>
+						<b>Establishing relations helps you to understand the graph</b> and its structure better. You can also create collections or sets based on the relationships for quick access.
+					</p>
+				`,
+                buttonText: 'Great!',
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -99,7 +168,7 @@ export default {
             },
         ],
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -125,7 +194,7 @@ export default {
             },
         ],
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -186,7 +255,7 @@ export default {
         ],
 
 		param: {
-			element: '#footer #button-help',
+			element: '#page.isFull #footer #button-help',
 			classNameWrap: 'fixed',
 			className: 'wizard',
 			vertical: I.MenuDirection.Top,
@@ -235,16 +304,6 @@ export default {
                     classNameWrap: 'fixed fromHeader',
 					vertical: I.MenuDirection.Top,
 					horizontal: I.MenuDirection.Center,
-                }
-            },
-			{
-                name: `Like what you're working on?`,
-                description: 'Save this structure for future use by selecting “Save as Template” from the three-dot menu. It will be saved in your Library, very useful for recurring work.',
-                param: {
-                    element: '#header #button-header-more',
-                    offsetY: 10,
-                    classNameWrap: 'fixed fromHeader',
-					horizontal: I.MenuDirection.Right,
                 }
             },
         ]

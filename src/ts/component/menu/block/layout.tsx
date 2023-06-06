@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
-import { I, keyboard, analytics, DataUtil, ObjectUtil, MenuUtil } from 'Lib';
+import { I, keyboard, analytics, DataUtil, ObjectUtil, MenuUtil, Util } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -202,7 +202,17 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	onResize (e: any) {
-		$('#editorWrapper').addClass('isResizing');
+		const container = Util.getPageContainer(keyboard.isPopup());
+		const wrapper = $('#editorWrapper');
+
+		wrapper.addClass('isResizing');
+
+		container.off('mousedown.editorSize').on('mousedown.editorSize', (e: any) => { 
+			if (!$(e.target).parents(`#editorSize`).length) {
+				wrapper.removeClass('isResizing');
+				container.off('mousedown.editorSize');
+			};
+		});
 	};
 	
 };

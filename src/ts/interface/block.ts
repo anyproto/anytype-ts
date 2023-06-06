@@ -148,6 +148,12 @@ export interface Block {
 	isRelation?(): boolean;
 	isType?(): boolean;
 
+	isWidget?(): boolean;
+	isWidgetLink?(): boolean;
+	isWidgetList?(): boolean;
+	isWidgetTree?(): boolean;
+	isWidgetCompact?(): boolean;
+
 	isLayout?(): boolean;
 	isLayoutRow?(): boolean;
 	isLayoutColumn?(): boolean;

@@ -136,7 +136,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 							id={'lang-' + id} 
 							arrowClassName="light" 
 							value={fields.lang} 
-							ref={ref => { this.refLang = ref; }} 
+							ref={ref => this.refLang = ref} 
 							options={options} 
 							onChange={this.onLang}
 							noFilter={false} 
@@ -566,7 +566,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	textStyle (obj: any) {
-		Util.textStyle(obj, { textOpacity: 0.65, borderOpacity: 0.35 });
+		Util.textStyle(obj, { border: 0.4 });
 	};
 
 	emojiParam (style: I.TextStyle) {

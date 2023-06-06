@@ -11,11 +11,6 @@ interface State {
 	loading: boolean;
 };
 
-enum Tab {
-	Type = 'type',
-	Relation = 'relation',
-};
-
 enum View {
 	Marketplace = 'marketplace',
 	Library = 'library',
@@ -24,8 +19,8 @@ enum View {
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const Tabs = [
-	{ id: Tab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
-	{ id: Tab.Relation, name: 'Relations', tooltipCaption: `${cmd} + ${alt} + T` },
+	{ id: I.StoreTab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
+	{ id: I.StoreTab.Relation, name: 'Relations', tooltipCaption: `${cmd} + ${alt} + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
@@ -41,7 +36,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	cache: any = null;
 	refList: any = null;
 	refFilter: any = null;
-	tab: Tab = Tab.Type;
+	tab: I.StoreTab = I.StoreTab.Type;
 	view: View = View.Marketplace;
 	frame = 0;
 	limit = 0;
@@ -80,7 +75,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let iconSize = 0;
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
 				placeholder = 'Search or create a new type...';
 				textService = 'Service type';
@@ -90,7 +85,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				iconSize = 18;
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				title = 'All objects are connected.<br />Use relations to build connections between objects.';
 				placeholder = 'Search or create a new relation...';
 				textService = 'Service relation';
@@ -105,7 +100,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			<div className="mid">
 				<Title text={title} />
 				<Filter 
-					ref={ref => { this.refFilter = ref; }}
+					ref={ref => this.refFilter = ref}
 					id="store-filter"
 					icon="search"
 					placeholder={placeholder}
@@ -224,11 +219,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 							loadMoreRows={() => {}}
 							isRowLoaded={() => true}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -265,7 +260,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.resize();
 		this.rebind();
-		this.onTab(Storage.get('tabStore') || Tab.Type, false);
+		this.onTab(Storage.get('tabStore') || I.StoreTab.Type, false);
 	};
 
 	componentDidUpdate () {
@@ -298,8 +293,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onKeyDown (e: any) {
 		const cmd = keyboard.cmdKey();
 
-		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(Tab.Type, true); });
-		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(Tab.Relation, true); });
+		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(I.StoreTab.Type, true); });
+		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(I.StoreTab.Relation, true); });
 	};
 
 	getRowHeight (item: any) {
@@ -314,10 +309,24 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onTab (id: any, isInner: boolean) {
+		const { isPopup } = this.props;
+
 		this.tab = id;
 		this.onView(Storage.get('viewStore') || View.Library, isInner);
 
 		Storage.set('tabStore', id);
+
+		if (!isPopup) {
+			let key = '';
+			switch (id) {
+				case I.StoreTab.Type: key = 'storeType'; break;
+				case I.StoreTab.Relation: key = 'storeRelation'; break;
+			};
+
+			if (key) {
+				Onboarding.start(key, false);
+			};
+		};
 	};
 
 	onView (id: View, isInner: boolean) {
@@ -379,7 +388,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				menuParam.data = Object.assign(menuParam.data, {
 					onClick: (item: any) => {
 						this.onClick(e, item);
@@ -387,7 +396,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				});
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				menuParam.data = Object.assign(menuParam.data, {
 					menuIdEdit: 'blockRelationEdit',
 					addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
@@ -411,11 +420,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getMenuId () {
 		let menuId = '';
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				menuId = 'typeSuggest';
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				menuId = 'relationSuggest';
 				break;
 		};
@@ -444,11 +453,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				keys = keys.concat(Constant.typeRelationKeys);
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				keys = keys.concat(Constant.relationRelationKeys);
 				break;
 		};
@@ -480,15 +489,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		switch (this.view) {
 			case View.Marketplace:
 				switch (this.tab) {
-					case Tab.Type:		 type = Constant.storeTypeId.type; break;
-					case Tab.Relation:	 type = Constant.storeTypeId.relation; break;
+					case I.StoreTab.Type:		 type = Constant.storeTypeId.type; break;
+					case I.StoreTab.Relation:	 type = Constant.storeTypeId.relation; break;
 				};
 				break;
 
 			case View.Library:
 				switch (this.tab) {
-					case Tab.Type:		 type = Constant.typeId.type; break;
-					case Tab.Relation:	 type = Constant.typeId.relation; break;
+					case I.StoreTab.Type:		 type = Constant.typeId.type; break;
+					case I.StoreTab.Relation:	 type = Constant.typeId.relation; break;
 				};
 				break;
 		};
@@ -544,11 +553,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const views: any[] = [];
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				views.push({ id: View.Library, name: 'My types' });
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				views.push({ id: View.Library, name: 'My relations' });
 				break;
 		};
@@ -561,11 +570,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let sources: any[] = []
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				sources = dbStore.getTypes();
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				sources = dbStore.getRelations();
 				break;
 		};

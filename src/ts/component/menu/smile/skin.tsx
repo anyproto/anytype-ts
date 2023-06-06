@@ -4,7 +4,7 @@ import { I, SmileUtil } from 'Lib';
 
 class MenuSmileSkin extends React.Component<I.Menu> {
 
-	ref: any = null;
+	ref = null;
 	state = {
 		filter: ''
 	};

@@ -3,7 +3,11 @@
 .popups {
 	.popup.popupHelp * { user-select: text !important; }
 	.popup.popupHelp {
-		.innerWrap { width: 864px; height: calc(100% - 72px); padding: 40px 0px 0px 0px; }
+		.innerWrap { width: 1096px; height: calc(100% - 164px); padding: 40px 0px 0px 0px; }
+
+		@media (max-width: 1128px) {
+			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
+		}
 
 		.head { display: flex; position: absolute; top: 0px; left: 0px; width: 100%; padding: 10px 20px; color: $colorMediumGrey; line-height: 24px; }
 		.head {

@@ -320,22 +320,17 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
 		const content = DataUtil.checkLinkSettings(block.content, object.layout);
-		const { iconSize, cardStyle } = content;
+		const { cardStyle } = content;
 
-		let size = 24;
-		let is = 0;
+		let size = 20;
+		let iconSize = 20;
 
-		if (cardStyle != I.LinkCardStyle.Text) {
-			switch (iconSize) {
-				case I.LinkIconSize.Medium: {
-					size = 48;
-					is = 28;
-					break;
-				};
-			};
+		if ((cardStyle != I.LinkCardStyle.Text) && (content.iconSize == I.LinkIconSize.Medium)) {
+			size = 48;
+			iconSize = 28;
 		};
 
-		return { size, iconSize: is };
+		return { size, iconSize };
 	};
 
 	resize () {

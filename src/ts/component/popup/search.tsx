@@ -147,11 +147,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 							isRowLoaded={({ index }) => !!items[index]}
 							threshold={LIMIT_HEIGHT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}

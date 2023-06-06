@@ -90,11 +90,11 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<VList
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}

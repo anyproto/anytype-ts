@@ -105,7 +105,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -126,11 +126,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 							isRowLoaded={({ index }) => !!this.items[index]}
 							threshold={LIMIT_HEIGHT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}

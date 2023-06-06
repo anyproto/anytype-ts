@@ -233,6 +233,8 @@ export const Mapper = {
 		BlockWidget: (obj: any) => {
 			return {
 				layout: obj.getLayout(),
+				limit: obj.getLimit(),
+				viewId: obj.getViewid(),
 			};
 		},
 
@@ -637,6 +639,8 @@ export const Mapper = {
 			const content = new Model.Block.Content.Widget();
 			
 			content.setLayout(obj.layout);
+			content.setLimit(obj.limit);
+			content.setViewid(obj.viewId);
 
 			return content;
 		},

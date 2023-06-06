@@ -1,11 +1,16 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, focus } from 'Lib';
+import { I, Util, focus, Preview } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const AUTH_IDS = [ 'settings' ];
+const SHOW_DIMMER = [
+	'settings',
+	'confirm',
+	'migration',
+];
 
 class PopupStore {
 
@@ -50,6 +55,12 @@ class PopupStore {
 			this.update(id, param);
 		} else {
 			this.popupList.push({ id, param });
+		};
+
+		Preview.previewHide(true);
+
+		if (this.checkShowDimmer(this.popupList)) {
+			$('#navigationPanel').hide();
 		};
 	};
 
@@ -109,14 +120,18 @@ class PopupStore {
 		};
 		
 		const el = $(`#${Util.toCamelCase(`popup-${id}`)}`);
+		const filtered = this.popupList.filter(it => it.id != id);
+
 		if (el.length) {
-			raf(() => {
-				el.css({ transform: '' }).removeClass('show');
-			});
+			raf(() => { el.css({ transform: '' }).removeClass('show'); });
+		};
+
+		if (!this.checkShowDimmer(filtered)) {
+			$('#navigationPanel').show();
 		};
 		
 		window.setTimeout(() => {
-			this.popupList = this.popupList.filter(it => it.id != id);
+			this.popupList = filtered;
 			
 			if (callBack) {
 				callBack();
@@ -134,11 +149,7 @@ class PopupStore {
 		this.clearTimeout();
 
 		if (callBack) {
-			this.timeout = window.setTimeout(() => {
-				if (callBack) {
-					callBack();
-				};
-			}, Constant.delay.popup);
+			this.timeout = window.setTimeout(() => callBack(), Constant.delay.popup);
 		};
 	};
 
@@ -150,6 +161,21 @@ class PopupStore {
 
     clearTimeout () {
 		window.clearTimeout(this.timeout);
+	};
+
+	showDimmerIds () {
+		return SHOW_DIMMER;
+	};
+
+	checkShowDimmer (list: I.Popup[]) {
+		let ret = false;
+		for (const item of list) {
+			if (SHOW_DIMMER.includes(item.id)) {
+				ret = true;
+				break;
+			};
+		};
+		return ret;
 	};
 
 };

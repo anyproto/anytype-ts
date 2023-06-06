@@ -103,11 +103,11 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 						isRowLoaded={({ index }) => !!this.items[index]}
 						threshold={LIMIT_HEIGHT}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}

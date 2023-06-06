@@ -28,7 +28,7 @@ class Cell extends React.Component<Props> {
 		canOpen: true,
 	};
 
-	ref: any = null;
+	ref = null;
 	timeout = 0;
 	
 	constructor (props: Props) {
@@ -110,7 +110,7 @@ class Cell extends React.Component<Props> {
 				onMouseLeave={this.onMouseLeave}
 			>
 				<CellComponent 
-					ref={ref => { this.ref = ref; }} 
+					ref={ref => this.ref = ref} 
 					{...this.props} 
 					id={id} 
 					key={id}

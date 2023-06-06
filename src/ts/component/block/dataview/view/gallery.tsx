@@ -12,7 +12,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	cache: any = {};
 	cellPositioner: any = null;
-	ref: any = null;
+	ref = null;
 	width = 0;
 	columnCount = 0;
 

@@ -116,7 +116,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
 		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let history = { id: 'history', name: 'Version history', caption: (platform == I.Platform.Mac ? `${cmd} + Y` : `Ctrl + H`) };
+		let history = { id: 'history', name: 'Version history', caption: (Util.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
 		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };
@@ -150,12 +150,9 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		// Restrictions
 
-		const allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedDelete = object.isInstalled && allowedArchive && object.isArchived;
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
-		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedFav = !object.isArchived && !ObjectUtil.getSystemTypes().includes(object.type) && !ObjectUtil.getFileTypes().includes(object.type);
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;

@@ -172,7 +172,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 						<div key="filter-value-date-days" className="item">
 							<Input 
 								key="filter-value-date-days-input"
-								ref={ref => { this.refValue = ref; }} 
+								ref={ref => this.refValue = ref} 
 								value={item.value} 
 								placeholder={translate('commonValue')} 
 								onFocus={this.onFocusText}
@@ -189,7 +189,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 						<div key="filter-value-date-exact" className="item">
 							<Input 
 								key="filter-value-date-exact-input"
-								ref={ref => { this.refValue = ref; }} 
+								ref={ref => this.refValue = ref} 
 								value={item.value !== null ? Util.date('d.m.Y H:i:s', item.value) : ''} 
 								placeholder="dd.mm.yyyy hh:mm:ss"
 								maskOptions={{ mask: '99.99.9999 99:99:99' }}
@@ -208,7 +208,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				value = (
 					<div className="item">
 						<Input 
-							ref={ref => { this.refValue = ref; }} 
+							ref={ref => this.refValue = ref} 
 							value={item.value} 
 							placeholder={translate('commonValue')} 
 							onFocus={this.onFocusText}

@@ -67,7 +67,7 @@ const BlockRelation = observer(class BlockRelation extends React.Component<I.Blo
 						onClick={this.onCellClick}
 					>
 						<Cell 
-							ref={ref => { this.refCell = ref; }}
+							ref={ref => this.refCell = ref}
 							rootId={rootId}
 							subId={rootId}
 							block={block}
