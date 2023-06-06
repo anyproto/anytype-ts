@@ -46,7 +46,7 @@ export const colors = {
 };
 
 export const circlesParams = {
-  NUM_CIRCLES: 7,
+  NUM_CIRCLES: 5,
   RADIUS: 2.2,
   SPACING: 1.4,
   CIRCLES_PER_ROW: 10,

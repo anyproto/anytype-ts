@@ -47,8 +47,7 @@ class Util {
 	};
 
 	getTheme () {
-		const { theme } = ConfigManager.config || {};
-
+		const theme = (undefined !== ConfigManager.config.theme) ? ConfigManager.config.theme : 'dark';
 		switch (theme) {
 			default:
 				return theme;
