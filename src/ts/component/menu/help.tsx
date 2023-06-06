@@ -155,11 +155,6 @@ class MenuHelp extends React.Component<I.Menu> {
 					const { page, action } = keyboard.getMatch().params;
 
 					key = Util.toCamelCase([ page, action ].join('-'));
-
-					if (!Docs.Help.Onboarding[key]) {
-						popupStore.open('migration', { data: { type: 'onboarding' } });
-						return;
-					};
 				};
 
 				if (key) {
