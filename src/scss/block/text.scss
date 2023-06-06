@@ -28,7 +28,7 @@
 		}
 
 		lnk { position: relative; }
-		lnk, obj { color: inherit; text-decoration: none; font-weight: 500; border-bottom: 0.075em solid; transition: border-color $transitionCommon; }
+		lnk, obj { color: inherit; text-decoration: none; border-bottom: 0.075em solid; transition: border-color $transitionCommon; }
 		lnk.disabled, obj.disabled { border-width: 0px; }
 
 		mention { display: inline; user-select: all !important; position: relative; }
@@ -37,7 +37,7 @@
 			smile { display: none; position: relative; z-index: 1; }
 			.space { width: 6px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
-			name { display: inline; white-space: normal; position: relative; font-weight: 500; border-bottom: 0.075em solid; }
+			name { display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid; }
 		}
 		mention.disabled {
 			name { border-width: 0px; }
