@@ -155,6 +155,7 @@
 	"blockNameQuote": { "en": "Highlighted" },
 	"blockTextQuote": { "en": "Spotlight, that needs special attention" },
 
+	
 	"blockNameCallout": { "en": "Callout" },
 	"blockTextCallout": { "en": "Bordered text with icon" },
 
@@ -431,7 +432,7 @@
 	"threadStatus2Tooltip": { "en": "Downloading or uploading data to some node" },
 	"threadStatus3Tooltip": { "en": "Backed up on one node at least" },
 	"threadStatus4Tooltip": { "en": "Failed to sync, trying again..." },
-	"threadStatus5Tooltip": { "en": "Incompatible protocol version, please update" },
+	"threadStatus5Tooltip": { "en": "We have updated the protocol version. Click to update and sync the objects." },
 
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },
