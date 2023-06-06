@@ -32,7 +32,7 @@ const CanvasWorkerBridge = (props: Props) => {
 					drawingSurface: offscreen,
 					width: canvas.clientWidth,
 					height: canvas.clientHeight,
-					pixelRatio: 0.5, //window.devicePixelRatio,
+					pixelRatio: 1, //window.devicePixelRatio,
 				},
 			},
 			[offscreen]
