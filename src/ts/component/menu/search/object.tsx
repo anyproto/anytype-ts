@@ -525,7 +525,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		obj.css({ height });
-		window.setTimeout(() => position(), 100);
 	};
 	
 });
