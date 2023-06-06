@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, Util, Relation } from 'Lib';
+import { Dataview, I, C, Util, Relation, keyboard } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -239,7 +239,13 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const views = dbStore.getViews(targetBlockId, BLOCK_ID);
 		const rootId = this.getRootId();
 
+		if (!views.length || (targetBlockId != keyboard.getRootId())) {
+			return;
+		};
+
+		dbStore.viewsClear(rootId, BLOCK_ID);
 		dbStore.viewsSet(rootId, BLOCK_ID, views);
+
 		if (this.refSelect) {
 			this.refSelect.setOptions(views);
 		};
