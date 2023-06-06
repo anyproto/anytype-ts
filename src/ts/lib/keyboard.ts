@@ -39,6 +39,8 @@ class Keyboard {
 		this.unbind();
 		
 		const win = $(window);
+		const doc = $(document);
+
 		win.on('keydown.common', e => this.onKeyDown(e));
 		win.on('keyup.common', e => this.onKeyUp(e));
 		win.on('mousedown.common', e => this.onMouseDown(e));
@@ -56,6 +58,16 @@ class Keyboard {
 			Preview.previewHide(true);
 
 			this.pressed = [];
+
+			if (!commonStore.isSidebarFixed) {
+				sidebar.hide();
+			};
+		});
+
+		doc.off('mouseleave.common').on('mouseleave.common', () => {
+			if (!commonStore.isSidebarFixed) {
+				sidebar.hide();
+			};
 		});
 
 		Renderer.remove('commandGlobal');
