@@ -731,21 +731,25 @@ class Util {
 		return this.getPlatform() == I.Platform.Linux;
 	};
 
-	checkError (code: number) {
+	checkError (code: number): boolean {
 		if (!code) {
-			return;
+			return true;
 		};
 
 		// App is already working
 		if (code == Errors.Code.ANOTHER_ANYTYPE_PROCESS_IS_RUNNING) {
 			alert('You have another instance of anytype running on this machine. Closing...');
 			Renderer.send('exit', false);
+			return false;
 		};
 
 		// App needs update
-		if (code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
+		if ([ Errors.Code.ANYTYPE_NEEDS_UPGRADE, Errors.Code.PROTOCOL_NEEDS_UPGRADE ].includes(code)) {
 			this.onErrorUpdate();
+			return false;
 		};
+
+		return true;
 	};
 
 	onErrorUpdate (onConfirm?: () => void) {

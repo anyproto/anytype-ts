@@ -309,8 +309,7 @@ class DataUtil {
 		});
 
 		C.ObjectOpen(root, '', (message: any) => {
-			if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-				Util.onErrorUpdate();
+			if (!Util.checkError(message.error.code)) {
 				return;
 			};
 

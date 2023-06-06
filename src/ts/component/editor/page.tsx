@@ -221,10 +221,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		this.setState({ isDeleted: false, isLoading: true });
 
 		C.ObjectOpen(this.id, '', (message: any) => {
+			if (!Util.checkError(message.error.code)) {
+				return;
+			};
+
 			if (message.error.code) {
-				if (message.error.code == Errors.Code.ANYTYPE_NEEDS_UPGRADE) {
-					Util.onErrorUpdate(() => { ObjectUtil.openHome('route'); });
-				} else 
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
 				} else {
