@@ -94,7 +94,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 				ref={node => this.node = node}
 				className="item"
 				key={object.id}
-				onMouseDown={(e) => this.onClick(e, object)}
+				onMouseDown={(e) => this.onClick(e)}
 				onContextMenu={(e) => this.onContext(e, false)}
 				style={style}
 			>
@@ -111,11 +111,14 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		this.resize();
 	};
 
-	onClick = (e: React.MouseEvent, item: unknown): void => {
+	onClick = (e: React.MouseEvent): void => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		ObjectUtil.openEvent(e, item);
+		const { subId, id,  } = this.props;
+		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+
+		ObjectUtil.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 
