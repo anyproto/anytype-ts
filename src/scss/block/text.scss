@@ -37,7 +37,7 @@
 			smile { display: none; position: relative; z-index: 1; }
 			.space { width: 6px; height: 20px; margin-top: -4px; vertical-align: middle; display: none; }
 
-			name { display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid; }
+			name { display: inline; white-space: normal; position: relative; border-bottom: 0.075em solid; border-color: inherit; }
 		}
 		mention.disabled {
 			name { border-width: 0px; }
