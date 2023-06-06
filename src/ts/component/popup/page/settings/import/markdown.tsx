@@ -48,7 +48,7 @@ class PopupSettingsPageImportMarkdown extends React.Component<I.PopupSettings> {
 			]
 		};
 
-		if (platform == I.Platform.Mac) {
+		if (Util.isPlatformMac()) {
 			options.properties.push('openDirectory');
 		};
 

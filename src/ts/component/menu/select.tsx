@@ -96,7 +96,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			<React.Fragment>
 				{withFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						value={filter}
 						placeholder={placeholder}
 						onChange={this.onFilterChange}
@@ -114,11 +114,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => !!items[index]}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -175,12 +175,19 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const { data } = param;
 		const { filter } = data;
 		const withFilter = this.isWithFilter();
+		const items = this.getItems(true);
 
 		if (withFilter && (this.filter != filter)) {
 			this.filter = filter;
 			this.n = -1;
 			this.top = 0;
 		};
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_ITEM,
+			keyMapper: i => (items[i] || {}).id,
+		});
 
 		if (this.refList) {
 			this.refList.scrollToPosition(this.top);

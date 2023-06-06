@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview } from 'Lib';
+import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview, Action } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -39,6 +39,8 @@ class Keyboard {
 		this.unbind();
 		
 		const win = $(window);
+		const doc = $(document);
+
 		win.on('keydown.common', e => this.onKeyDown(e));
 		win.on('keyup.common', e => this.onKeyUp(e));
 		win.on('mousedown.common', e => this.onMouseDown(e));
@@ -56,6 +58,16 @@ class Keyboard {
 			Preview.previewHide(true);
 
 			this.pressed = [];
+
+			if (!commonStore.isSidebarFixed) {
+				sidebar.hide();
+			};
+		});
+
+		doc.off('mouseleave.common').on('mouseleave.common', () => {
+			if (!commonStore.isSidebarFixed) {
+				sidebar.hide();
+			};
 		});
 
 		Renderer.remove('commandGlobal');
@@ -104,8 +116,7 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const platform = Util.getPlatform();
-		const isMac = platform == I.Platform.Mac;
+		const isMac = Util.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -176,25 +187,15 @@ class Keyboard {
 
 			// Navigation search
 			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked) {
-					return;
-				};
-
-				// Check if smth is selected to prevent search from opening
-				if ((pressed == `${cmd}+k`) && (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length))) {
+				if (popupStore.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
 					return;
 				};
 
 				this.onSearchPopup();
 			});
 
-			this.shortcut(`${cmd}+l`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked) {
-					return;
-				};
-
-				// Check if smth is selected to prevent search from opening
-				if (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+			this.shortcut(`${cmd}+l`, e, () => {
+				if (popupStore.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
 					return;
 				};
 
@@ -253,6 +254,17 @@ class Keyboard {
 		};
 
 		this.initPinCheck();
+	};
+
+	// Check if smth is selected
+	checkSelection () {
+		const range = Util.selectionRange();
+
+		if ((range && !range.collapsed) || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+			return true;
+		};
+
+		return false;
 	};
 
 	pageCreate () {
@@ -436,6 +448,10 @@ class Keyboard {
 			return;
 		};
 
+		const rootId = keyboard.getRootId();
+		const logPath = window.Electron.logPath;
+		const tmpPath = window.Electron.tmpPath;
+
 		switch (cmd) {
 			case 'search': {
 				this.onSearchMenu('', 'MenuSystem');
@@ -467,6 +483,89 @@ class Keyboard {
 
 			case 'tech': {
 				this.onTechInfo();
+				break;
+			};
+
+			case 'undo': {
+				if (!this.isFocused) {
+					this.onUndo(rootId, 'MenuSystem');
+				};
+				break;
+			};
+
+			case 'redo': {
+				if (!this.isFocused) {
+					this.onRedo(rootId, 'MenuSystem');
+				};
+				break;
+			};
+
+			case 'create': {
+				this.pageCreate();
+				break;
+			};
+
+			case 'saveAsHTML': {
+				this.onSaveAsHTML();
+				break;
+			};
+
+			case 'saveAsHTMLSuccess': {
+				this.printRemove();
+				break;
+			};
+
+			case 'save': {
+				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true);
+				break;
+			};
+
+			case 'exportTemplates': {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.TemplateExportAll(paths[0], (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						Renderer.send('pathOpen', paths[0]);
+					});
+				});
+				break;
+			};
+
+			case 'exportLocalstore': {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.DebugExportLocalstore(paths[0], [], (message: any) => {
+						if (!message.error.code) {
+							Renderer.send('pathOpen', paths[0]);
+						};
+					});
+				});
+				break;
+			};
+
+			case 'debugSpace': {
+				C.DebugSpaceSummary((message: any) => {
+					if (!message.error.code) {
+						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
+
+						Renderer.send('pathOpen', tmpPath);
+					};
+				});
+				break;
+			};
+
+			case 'debugTree': {
+				C.DebugTree(rootId, logPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('pathOpen', logPath);
+					};
+				});
+				break;
+			};
+
+			case 'resetOnboarding': {
+				Storage.delete('onboarding');
 				break;
 			};
 
@@ -662,12 +761,7 @@ class Keyboard {
 	};
 
 	ctrlByPlatform (e: any) {
-		const platform = Util.getPlatform();
-		if (platform == I.Platform.Mac) {
-			return e.metaKey;
-		} else {
-			return e.ctrlKey;
-		};
+		return Util.isPlatformMac() ? e.metaKey : e.ctrlKey;
 	};
 
 	isMain () {
@@ -890,15 +984,15 @@ class Keyboard {
 	};
 
 	cmdSymbol () {
-		return Util.getPlatform() == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+		return Util.isPlatformMac() ? '&#8984;' : 'Ctrl';
 	};
 
 	altSymbol () {
-		return Util.getPlatform() == I.Platform.Mac ? '&#8997;' : 'Alt';
+		return Util.isPlatformMac() ? '&#8997;' : 'Alt';
 	};
 
 	cmdKey () {
-		return Util.getPlatform() == I.Platform.Mac ? 'cmd' : 'ctrl';
+		return Util.isPlatformMac() ? 'cmd' : 'ctrl';
 	};
 
 	checkPressed (key: string) {

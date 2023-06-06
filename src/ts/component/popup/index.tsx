@@ -59,6 +59,10 @@ class Popup extends React.Component<I.Popup> {
 		if (className) {
 			cn.push(className);
 		};
+
+		if (popupStore.showDimmerIds().includes(id)) {
+			cn.push('showDimmer');
+		};
 		
 		if (!Component) {
 			return <div>Component {id} not found</div>
@@ -70,7 +74,7 @@ class Popup extends React.Component<I.Popup> {
 				id={popupId} 
 				className={cn.join(' ')}
 			>
-				<div id={popupId + '-innerWrap'} className="innerWrap">
+				<div id={`${popupId}-innerWrap`} className="innerWrap">
 					<div className="content">
 						<Component 
 							{...this.props} 
@@ -88,15 +92,18 @@ class Popup extends React.Component<I.Popup> {
 	};
 	
 	componentDidMount () {
-		const { id } = this.props;
+		const { id, param } = this.props;
 
 		this._isMounted = true;
-		this.position();
-		this.unbind();
+
+		if (!param.preventResize) {
+			this.position();
+		};
+
+		this.rebind();
 		this.animate();
-		
+
 		analytics.event('popup', { params: { id } });
-		$(window).on('resize.popup', () => { this.position(); });
 	};
 	
 	componentWillUnmount () {
@@ -104,8 +111,20 @@ class Popup extends React.Component<I.Popup> {
 		this.unbind();
 	};
 	
+	rebind () {
+		const { id, param } = this.props;
+
+		this.unbind();
+
+		if (!param.preventResize) {
+			$(window).on(`resize.popup${id}`, () => this.position());
+		};
+	};
+
 	unbind () {
-		$(window).off('resize.popup');
+		const { id } = this.props;
+
+		$(window).off(`resize.popup${id}`);
 	};
 	
 	animate () {
@@ -131,12 +150,8 @@ class Popup extends React.Component<I.Popup> {
 	};
 	
 	position () {
-		const { param } = this.props;
+		const { id } = this.props;
 
-		if (param.preventResize) {
-			return;
-		};
-		
 		raf(() => {
 			if (!this._isMounted) {
 				return;
@@ -152,7 +167,7 @@ class Popup extends React.Component<I.Popup> {
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+			if (commonStore.isSidebarFixed && sidebar.hasClass('active') && !popupStore.showDimmerIds().includes(id)) {
 				sw = sidebar.outerWidth();
 			};
 
@@ -164,10 +179,7 @@ class Popup extends React.Component<I.Popup> {
 				x -= sw / 2;
 			};
 
-			inner.css({ 
-				left: x, 
-				marginTop: -height / 2,
-			});
+			inner.css({ left: x, marginTop: -height / 2, });
 		});
 	};
 

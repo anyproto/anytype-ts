@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu> {
 	
 	n = -1;
-	ref: any = null;
+	ref = null;
 	isFocused = false;
 	preventSaveOnClose = false;
 	param: any = {};

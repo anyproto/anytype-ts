@@ -154,7 +154,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	_isMounted = false;
 	node: any = null;
 	timeoutPoly = 0;
-	ref: any = null;
+	ref = null;
 	isAnimating = false;
 	poly: any = null;
 
@@ -257,7 +257,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 					<div className="content">
 						<Component 
-							ref={ref => { this.ref = ref; }}
+							ref={ref => this.ref = ref}
 							{...this.props} 
 							setActive={this.setActive}
 							setHover={this.setHover}
@@ -463,11 +463,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					return;
 				};
 
-				const offset = el.offset();
+				const { left, top } = el.offset();
 				ew = el.outerWidth();
 				eh = el.outerHeight();
-				ox = offset.left;
-				oy = offset.top;
+				ox = left;
+				oy = top;
 			};
 
 			let x = ox;

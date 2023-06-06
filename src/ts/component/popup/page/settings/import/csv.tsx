@@ -181,7 +181,6 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 
 	onImport () {
 		const { close, onImport } = this.props;
-		const platform = Util.getPlatform();
 		const options: any = { 
 			properties: [ 'openFile' ],
 			filters: [
@@ -189,7 +188,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			]
 		};
 
-		if (platform == I.Platform.Mac) {
+		if (Util.isPlatformMac()) {
 			options.properties.push('openDirectory');
 		};
 

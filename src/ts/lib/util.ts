@@ -602,8 +602,7 @@ class Util {
 		const [ r, g, b ] = rgb[1].split(',');
 
 		obj.css({ 
-			color: `rgba(${[ r, g, b, param.textOpacity ].join(',')})`, 
-			borderColor: `rgba(${[ r, g, b, param.borderOpacity ].join(',')}` 
+			borderColor: `rgba(${[ r, g, b, param.border ].join(',')}` 
 		});
 	};
 	
@@ -720,6 +719,18 @@ class Util {
 		return Constant.platforms[window.Electron.platform];
 	};
 
+	isPlatformMac () {
+		return this.getPlatform() == I.Platform.Mac;
+	};
+
+	isPlatformWindows () {
+		return this.getPlatform() == I.Platform.Windows;
+	};
+
+	isPlatformLinux () {
+		return this.getPlatform() == I.Platform.Linux;
+	};
+
 	checkError (code: number) {
 		if (!code) {
 			return;
@@ -827,7 +838,7 @@ class Util {
 	};
 
 	sizeHeader (): number {
-		return this.getPlatform() == I.Platform.Windows ? 38 : 52;
+		return this.isPlatformWindows() ? 38 : 52;
 	};
 
 	searchParam (url: string): any {

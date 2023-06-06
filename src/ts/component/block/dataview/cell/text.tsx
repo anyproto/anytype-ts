@@ -19,7 +19,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		isEditing: false,
 	};
 	range: any = null;
-	ref: any = null;
+	ref = null;
 	value: any = null;
 
 	constructor (props: I.Cell) {
@@ -99,7 +99,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 				EditorComponent = (item: any) => (
 					<Input 
-						ref={ref => { this.ref = ref; }} 
+						ref={ref => this.ref = ref} 
 						id="input" 
 						{...item} 
 						maskOptions={maskOptions} 
@@ -111,7 +111,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			} else {
 				EditorComponent = (item: any) => (
 					<Input 
-						ref={ref => { this.ref = ref; }} 
+						ref={ref => this.ref = ref} 
 						id="input" 
 						{...item} 
 						placeholder={placeholder || translate(`placeholderCell${relation.format}`)}

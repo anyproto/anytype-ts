@@ -98,7 +98,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 				name: 'Show on graph', children: [
 					{ id: 'link', name: 'Links' },
 					{ id: 'relation', name: 'Relations' },
-					{ id: 'orphan', name: 'Orphans' },
+					{ id: 'orphan', name: 'Unlinked objects' },
 				] 
 			}
 		];

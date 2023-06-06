@@ -107,7 +107,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholderFocus="Filter types..." 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -127,7 +127,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}

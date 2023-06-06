@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Docs from 'Docs';
 import { MenuItemVertical, Button } from 'Component';
-import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight } from 'Lib';
+import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight, Storage } from 'Lib';
 import { popupStore, detailStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 
@@ -91,7 +91,15 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
+		const rootId = keyboard.getRootId();
+		const isPopup = keyboard.isPopup();
+		const isEditor = keyboard.isMainEditor();
 		const isGraph = keyboard.isMainGraph();
+		const isSet = keyboard.isMainSet();
+		const isStore = keyboard.isMainStore();
+		const storeTab = Storage.get('tabStore');
+		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
+		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
 
 		close();
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
@@ -100,12 +108,12 @@ class MenuHelp extends React.Component<I.Menu> {
 
 		switch (item.id) {
 			case 'whatsNew': {
-				popupStore.open('help', { data: { document: item.document } });
+				popupStore.open('help', { preventResize: true, data: { document: item.document } });
 				break;
 			};
 
 			case 'shortcut': {
-				popupStore.open('shortcut', {});
+				popupStore.open('shortcut', { preventResize: true });
 				break;
 			};
 
@@ -128,16 +136,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			};
 
 			case 'hints': {
-				const isPopup = keyboard.isPopup();
-				const rootId = keyboard.getRootId();
-				const object = detailStore.get(rootId, rootId, []);
-				const match = keyboard.getMatch();
-				const { page, action } = match.params;
-				const isEditor = (page == 'main') && (action == 'edit');
-				const isSet =  (page == 'main') && (action == 'set');
-
 				let key = '';
-
 				if (isSet) {
 					key = 'mainSet';
 				} else
@@ -146,7 +145,15 @@ class MenuHelp extends React.Component<I.Menu> {
 				} else
 				if (isGraph) {
 					key = 'mainGraph';
+				} else
+				if (isStoreType) {
+					key = 'storeType';
+				} else
+				if (isStoreRelation) {
+					key = 'storeRelation';
 				} else {
+					const { page, action } = keyboard.getMatch().params;
+
 					key = Util.toCamelCase([ page, action ].join('-'));
 
 					if (!Docs.Help.Onboarding[key]) {
@@ -156,7 +163,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				};
 
 				if (key) {
-					Onboarding.start(key, keyboard.isPopup(), true);
+					Onboarding.start(key, isPopup, true);
 				};
 				break;
 			};

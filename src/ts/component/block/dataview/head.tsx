@@ -23,7 +23,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	node: any = null;
 	menuContext: any = null;
 	timeout = 0;
-	ref: any = null;
+	ref = null;
 	range: I.TextRange = null;
 
 	constructor (props: Props) {

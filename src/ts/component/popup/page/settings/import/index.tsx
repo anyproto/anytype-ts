@@ -68,13 +68,12 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
 		const { close, onImport } = this.props;
-		const platform = Util.getPlatform();
 		const fileOptions: any = { 
 			properties: [ 'openFile' ],
 			filters: [ { name: '', extensions } ]
 		};
 
-		if (platform == I.Platform.Mac) {
+		if (Util.isPlatformMac()) {
 			fileOptions.properties.push('openDirectory');
 		};
 

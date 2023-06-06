@@ -1,11 +1,15 @@
 @import "~scss/_vars";
 
 .menus {
+	.menu.menuWidget { width: 240px; }
 	.menu.menuWidget {
 		.section:last-child::after { display: none; }
 
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 36px); }
+		}
+		.item.withCaption {
+			.caption { @include text-common; line-height: 20px; padding-right: 16px; }
 		}
 
 		.buttons { padding: 8px 16px 0px 16px; }

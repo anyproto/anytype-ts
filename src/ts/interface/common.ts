@@ -217,3 +217,8 @@ export enum FileSyncStatus {
 	Synced		 = 1,
 	NotSynced	 = 2,
 };
+
+export enum StoreTab {
+	Type = 'type',
+	Relation = 'relation',
+};
