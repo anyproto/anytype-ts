@@ -90,6 +90,8 @@ class DbStore {
 			if (i1 < i2) return -1;
 			return 0;
 		});
+
+		this.viewsSet(rootId, blockId, views);
 	};
 
     viewsClear (rootId: string, blockId: string) {

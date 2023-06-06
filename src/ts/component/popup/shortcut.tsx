@@ -16,8 +16,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 	render () {
 		const { page } = this.state;
-		const platform = Util.getPlatform();
-		const isMac = platform == I.Platform.Mac;
+		const isMac = Util.isPlatformMac();
 		const tabs = [
 			{ id: 'main', name: 'Main' },
 			{ id: 'navigation', name: 'Navigation' },

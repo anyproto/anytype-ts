@@ -491,6 +491,26 @@ class BlockStore {
 		return header ? header.childrenIds.includes(Constant.blockId.type) : false;
 	};
 
+	updateWidgetViews (rootId: string) {
+		this.triggerWidgetEvent('updateWidgetViews', rootId);
+	};
+
+	updateWidgetData (rootId: string) {
+		this.triggerWidgetEvent('updateWidgetData', rootId);
+	};
+
+	triggerWidgetEvent (code: string, rootId: string) {
+		const win = $(window);
+		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
+
+		blocks.forEach(block => {
+			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.content.targetBlockId == rootId));
+			if (children.length) {
+				win.trigger(`${code}.${block.id}`);
+			};
+		});
+	};
+
 };
 
  export const blockStore: BlockStore = new BlockStore();

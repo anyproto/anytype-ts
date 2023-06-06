@@ -227,6 +227,26 @@ class Block implements I.Block {
 		return this.type == I.BlockType.Type;
 	};
 
+	isWidget (): boolean {
+		return this.type == I.BlockType.Widget;
+	};
+
+	isWidgetLink (): boolean {
+		return this.isWidget() && (this.content.layout == I.WidgetLayout.Link);
+	};
+
+	isWidgetList (): boolean {
+		return this.isWidget() && (this.content.layout == I.WidgetLayout.List);
+	};
+
+	isWidgetTree (): boolean {
+		return this.isWidget() && (this.content.layout == I.WidgetLayout.Tree);
+	};
+
+	isWidgetCompact (): boolean {
+		return this.isWidget() && (this.content.layout == I.WidgetLayout.Compact);
+	};
+
 	isLayout (): boolean {
 		return this.type == I.BlockType.Layout;
 	};

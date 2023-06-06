@@ -175,7 +175,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		};
 	};
 
-	update () {
+	updateData () {
 		const { block, isCollection, getData } = this.props;
 		const { targetBlockId } = block.content;
 
