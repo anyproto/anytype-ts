@@ -754,6 +754,7 @@ class Util {
 
 	onErrorUpdate (onConfirm?: () => void) {
 		popupStore.open('confirm', {
+			className: 'isWide',
 			data: {
 				icon: 'update',
 				title: translate('confirmUpdateTitle'),

@@ -77,7 +77,7 @@
 	"headerHistoryRestore": { "en": "Restore version" },
 
 	"confirmUpdateTitle": { "en": "It's time to update" },
-	"confirmUpdateText": { "en": "Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features." },
+	"confirmUpdateText": { "en": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features." },
 	"confirmUpdateConfirm": { "en": "Update" },
 
 	"authInviteTitle": { "en": "Welcome to Anytype" },
@@ -419,18 +419,19 @@
 
 	"inputWithFileTextUrl": { "en": "Paste a link" },
 
-	"syncStatus0": { "en": "Preparing..." },
-	"syncStatus1": { "en": "No connection" },
-	"syncStatus2": { "en": "Syncing..." },
-	"syncStatus3": { "en": "Synced" },
-	"syncStatus4": { "en": "Not syncing" },
-	"syncStatus5": { "en": "Backup disabled" },
+	"threadStatus0": { "en": "Preparing..." },
+	"threadStatus1": { "en": "No connection" },
+	"threadStatus2": { "en": "Syncing..." },
+	"threadStatus3": { "en": "Synced" },
+	"threadStatus4": { "en": "Not syncing" },
+	"threadStatus5": { "en": "Incompatible version" },
 
-	"tooltip0": { "en": "Initializing sync" },
-	"tooltip1": { "en": "Anytype node is not connected" },
-	"tooltip2": { "en": "Downloading or uploading data to some node" },
-	"tooltip3": { "en": "Backed up on one node at least" },
-	"tooltip4": { "en": "Failed to sync, trying again..." },
+	"threadStatus0Tooltip": { "en": "Initializing sync" },
+	"threadStatus1Tooltip": { "en": "Anytype node is not connected" },
+	"threadStatus2Tooltip": { "en": "Downloading or uploading data to some node" },
+	"threadStatus3Tooltip": { "en": "Backed up on one node at least" },
+	"threadStatus4Tooltip": { "en": "Failed to sync, trying again..." },
+	"threadStatus5Tooltip": { "en": "Incompatible protocol version, please update" },
 
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },

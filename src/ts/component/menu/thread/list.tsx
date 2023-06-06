@@ -55,13 +55,13 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 				<div 
 					id="item-cafe" 
 					className="item" 
-					onMouseOver={(e: any) => { this.onMouseEnter('cafe', true); }} 
+					onMouseOver={() => this.onMouseEnter('cafe', true)}
 				>
 					<Icon className="cafe" />
 					<div className="info">
 						<div className="name">Backup node</div>
 						<div className={[ 'description', DataUtil.threadColor(status) ].join(' ')}>
-							{translate('syncStatus' + status)}
+							{translate(`threadStatus${status}`)}
 						</div>
 					</div>
 				</div>
