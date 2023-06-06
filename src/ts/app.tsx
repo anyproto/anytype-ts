@@ -304,7 +304,6 @@ class App extends React.Component<object, State> {
 		this.onUpdateUnavailable = this.onUpdateUnavailable.bind(this);
 		this.onUpdateProgress = this.onUpdateProgress.bind(this);
 		this.onUpdateError = this.onUpdateError.bind(this);
-		this.onCommand = this.onCommand.bind(this);
 		this.onSpellcheck = this.onSpellcheck.bind(this);
 	};
 	
@@ -387,7 +386,6 @@ class App extends React.Component<object, State> {
 		Renderer.on('update-downloaded', () => commonStore.progressClear());
 		Renderer.on('update-error', this.onUpdateError);
 		Renderer.on('download-progress', this.onUpdateProgress);
-		Renderer.on('command', this.onCommand);
 		Renderer.on('spellcheck', this.onSpellcheck);
 		Renderer.on('enter-full-screen', () => commonStore.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => commonStore.fullscreenSet(false));
@@ -621,97 +619,6 @@ class App extends React.Component<object, State> {
 				}, 
 			},
 		});
-	};
-
-	onCommand (e: any, key: string) {
-		const rootId = keyboard.getRootId();
-		const logPath = window.Electron.logPath;
-		const tmpPath = window.Electron.tmpPath;
-
-		switch (key) {
-			case 'undo': {
-				if (!keyboard.isFocused) {
-					keyboard.onUndo(rootId, 'MenuSystem');
-				};
-				break;
-			};
-
-			case 'redo': {
-				if (!keyboard.isFocused) {
-					keyboard.onRedo(rootId, 'MenuSystem');
-				};
-				break;
-			};
-
-			case 'create': {
-				keyboard.pageCreate();
-				break;
-			};
-
-			case 'saveAsHTML': {
-				keyboard.onSaveAsHTML();
-				break;
-			};
-
-			case 'saveAsHTMLSuccess': {
-				keyboard.printRemove();
-				break;
-			};
-
-			case 'save': {
-				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true);
-				break;
-			};
-
-			case 'exportTemplates': {
-				Action.openDir({ buttonLabel: 'Export' }, paths => {
-					C.TemplateExportAll(paths[0], (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						Renderer.send('pathOpen', paths[0]);
-					});
-				});
-				break;
-			};
-
-			case 'exportLocalstore': {
-				Action.openDir({ buttonLabel: 'Export' }, paths => {
-					C.DebugExportLocalstore(paths[0], [], (message: any) => {
-						if (!message.error.code) {
-							Renderer.send('pathOpen', paths[0]);
-						};
-					});
-				});
-				break;
-			};
-
-			case 'debugSpace': {
-				C.DebugSpaceSummary((message: any) => {
-					if (!message.error.code) {
-						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
-
-						Renderer.send('pathOpen', tmpPath);
-					};
-				});
-				break;
-			};
-
-			case 'debugTree': {
-				C.DebugTree(rootId, logPath, (message: any) => {
-					if (!message.error.code) {
-						Renderer.send('pathOpen', logPath);
-					};
-				});
-				break;
-			};
-
-			case 'resetOnboarding': {
-				Storage.delete('onboarding');
-				break;
-			};
-		};
 	};
 
 	onUpdateProgress (e: any, progress: any) {

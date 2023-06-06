@@ -108,12 +108,12 @@ class MenuHelp extends React.Component<I.Menu> {
 
 		switch (item.id) {
 			case 'whatsNew': {
-				popupStore.open('help', { data: { document: item.document } });
+				popupStore.open('help', { preventResize: true, data: { document: item.document } });
 				break;
 			};
 
 			case 'shortcut': {
-				popupStore.open('shortcut', {});
+				popupStore.open('shortcut', { preventResize: true });
 				break;
 			};
 

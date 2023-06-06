@@ -95,14 +95,8 @@ class PopupHelp extends React.Component<I.Popup, State> {
 	};
 
 	rebind () {
-		if (!this._isMounted) {
-			return;
-		};
-		
 		this.unbind();
-		
-		const win = $(window);
-		win.off('resize.help').on('resize.help', () => { this.resize(); });
+		$(window).off('resize.popupHelp').on('resize.popupHelp', () => this.resize());
 	};
 
 	unbind () {
@@ -157,15 +151,15 @@ class PopupHelp extends React.Component<I.Popup, State> {
 			return;
 		};
 
-		raf(() => {
-			const { getId, position } = this.props;
-			const { ww } = Util.getWindowDimensions();
-			const obj = $(`#${getId()}-innerWrap`);
-			const width = Math.max(732, Math.min(960, ww - 128));
+		const { getId, position } = this.props;
+		const obj = $(`#${getId()}-innerWrap`);
+		const loader = obj.find('#loader');
+		const hh = Util.sizeHeader();
 
-			obj.css({ width });
-			position();
-		});
+		loader.css({ width: obj.width(), height: obj.height() });
+		position();
+
+		raf(() => { obj.css({ top: hh + 20, marginTop: 0 }); });
 	};
 	
 };

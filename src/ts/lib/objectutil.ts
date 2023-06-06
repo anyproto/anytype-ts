@@ -142,6 +142,7 @@ class ObjectUtil {
 		};
 
 		param = param || {};
+		param.preventResize = true;
 		param.data = Object.assign(param.data || {}, { 
 			matchPopup: { 
 				params: {
