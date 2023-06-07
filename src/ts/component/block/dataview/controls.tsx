@@ -6,6 +6,7 @@ import { Icon, Button } from 'Component';
 import { C, I, Util, analytics, Relation, Dataview, keyboard, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import Head from './head';
 import arrayMove from 'array-move';
 
 const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
@@ -37,8 +38,10 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			cn.push(className);
 		};
 
+		let head = null;
 		if (isInline) {
 			cn.push('isInline');
+			head = <Head {...this.props} />;
 		};
 
 		const buttons = [
@@ -96,6 +99,8 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			>
 				<div className="sides">
 					<div id="sideLeft" className="side left">
+						{head}
+
 						<div 
 							id="view-selector"
 							className="viewSelect viewItem select"

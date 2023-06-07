@@ -1,20 +1,15 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Editable } from 'Component';
-import { I, C, keyboard, DataUtil, ObjectUtil, analytics } from 'Lib';
+import { Icon, Editable } from 'Component';
+import { I, C, keyboard, ObjectUtil, analytics } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
-
-interface Props extends I.ViewComponent {
-	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
-	onSourceTypeSelect?(element: any): void;
-};
 
 interface State {
 	isEditing: boolean;
 };
 
-const Head = observer(class Head extends React.Component<Props, State> {
+const Head = observer(class Head extends React.Component<I.ViewComponent, State> {
 
 	state = {
 		isEditing: false,
@@ -26,7 +21,7 @@ const Head = observer(class Head extends React.Component<Props, State> {
 	ref = null;
 	range: I.TextRange = null;
 
-	constructor (props: Props) {
+	constructor (props: I.ViewComponent) {
 		super(props);
 
 		this.onSelect = this.onSelect.bind(this);
@@ -66,16 +61,6 @@ const Head = observer(class Head extends React.Component<Props, State> {
 				className={cn.join(' ')}
 			>
 				<div id="head-title-wrapper" className="side left">
-					<IconObject
-						id={`icon-set-${block.id}`}
-						object={object} 
-						size={20}
-						iconSize={20}
-						canEdit={!readonly}
-						onSelect={this.onIconSelect}
-						onUpload={this.onIconUpload}
-					/>
-
 					<Editable
 						ref={ref => this.ref = ref}
 						id="value"

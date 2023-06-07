@@ -46,10 +46,12 @@
 			.side.right { flex-shrink: 0; gap: 0px 12px; justify-content: flex-end; }
 		}
 
-		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
+		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; width: 100%; }
 		.dataviewHead {
-			.side.left { gap: 0px 6px; width: 100%; }
-			.side.right { opacity: 0; transition: $transitionAllCommon; }
+			> .sides {
+				> .side.left { gap: 0px 6px; width: 100%; }
+				> .side.right { opacity: 0; transition: $transitionAllCommon; }
+			}
 
 			.iconWrap { 
 				padding: 4px; border-radius: 4px; transition: $transitionAllCommon; display: flex; align-items: center;
@@ -62,7 +64,7 @@
 				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
 			}
 
-			.editableWrap { @include text-header3; height: 26px; max-width: calc(100% - 60px); @include text-overflow-nw; }
+			.editableWrap { @include text-header2; height: 28px; max-width: calc(100% - 60px); @include text-overflow-nw; }
 			.editableWrap.isEmpty { min-width: 70px; }
 
 			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
@@ -87,9 +89,11 @@
 		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
 
 		.dataviewControls {
-			.sides { gap: 0px 16px; }
-			.side { padding: 15px 0px; white-space: nowrap; line-height: 28px; }
-			.side.left { padding-left: 14px; }
+			> .sides { gap: 0px 16px; }
+			> .sides {
+				> .side { padding: 15px 0px; white-space: nowrap; line-height: 28px; }
+				> .side.left { padding-left: 14px; }
+			}
 
 			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; transition: $transitionAllCommon; }
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
@@ -166,13 +170,19 @@
 
 		.hoverArea:hover {
 			.dataviewControls {
-				.side.right { opacity: 1; }
+				> .sides {
+					> .side.right { opacity: 1; }
+				}
+
 				.views {
 					.icon.plus { opacity: 1; }
 				}
 			}
 			.dataviewHead {
-				.side.right { opacity: 1; }
+				> .sides {
+					> .side.right { opacity: 1; }
+				}
+
 				#head-source-select { opacity: 1; }
 			}
 		}
@@ -182,14 +192,17 @@
 		.wrapMenu > .icon.dnd { height: 88px; }
 
 		.dataviewEmpty { height: auto; padding: 48px 0px; }
-		.dataviewHead { padding-left: 0px; padding-right: 0px; }
 
 		.dataviewControls {
-			.side { padding: 9px 0px; }
-			.side.left { padding-left: 0px; }
-			.side.right { transition: opacity $transitionCommon; opacity: 0; }
-			.line { display: none; }
-			.viewItem { @include text-paragraph; }
+			> .sides {
+				> .side { padding: 4px 0px 12px 0px; }
+				> .side.left { display: flex; flex-direction: column; align-items: flex-start; }
+				> .side.right { transition: opacity $transitionCommon; opacity: 0; gap: 0px 6px; }
+			}
+
+			.views { gap: 0px 12px; }
+			.viewItem { @include text-common; font-weight: 500; }
+			.button { margin-left: 6px; }
 		}
 		.dataviewControls.active {
 			.side.right { opacity: 1; }
