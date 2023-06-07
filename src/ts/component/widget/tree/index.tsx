@@ -254,7 +254,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 			const isOpen = Storage.checkToggle(this.getSubKey(), this.getTreeKey(node));
 			if (isOpen) {
-				this.subscribeToChildNodes(childNode.id, links);
+				this.subscribeToChildNodes(childNode.id, childNode.links);
 				treeNodeList = this.loadTreeRecursive(rootId, childNode.id, treeNodeList, this.getChildNodesDetails(childNode.id), depth + 1);
 			};
 		};
@@ -293,11 +293,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			return;
 		};
 
-		const hash = sha1(Util.arrayUnique(links).join(''));
+		const hash = sha1(Util.arrayUnique(links).join('-'));
 		const subId = this.getSubId(nodeId);
 
 		// if already subscribed to the same links, dont subscribe again
-		if (this.subscriptionHashes[nodeId] && this.subscriptionHashes[nodeId] == hash) {
+		if (this.subscriptionHashes[nodeId] && (this.subscriptionHashes[nodeId] == hash)) {
 			return;
 		};
 
