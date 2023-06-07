@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, DataUtil, ObjectUtil, keyboard, sidebar } from 'Lib';
+import { I, UtilData, UtilObject, keyboard, sidebar } from 'Lib';
 import { blockStore, detailStore, popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -21,7 +21,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled' ]);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = !ObjectUtil.isStoreType(object.type);
+		const showMenu = !UtilObject.isStoreType(object.type);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
 
@@ -76,7 +76,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const object = detailStore.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		popupStore.closeAll(null, () => { ObjectUtil.openRoute(object); });
+		popupStore.closeAll(null, () => { UtilObject.openRoute(object); });
 	};
 	
 	onMore () {
@@ -137,7 +137,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const { rootId, isPopup } = this.props;
 
 		if (!isPopup) {
-			DataUtil.setWindowTitle(rootId, rootId);
+			UtilData.setWindowTitle(rootId, rootId);
 		};
 	};
 	

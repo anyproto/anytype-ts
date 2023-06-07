@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
-import { I, C, Util, Action, ObjectUtil } from 'Lib';
+import { I, C, UtilCommon, Action, UtilObject } from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
@@ -96,7 +96,7 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 				return;
 			};
@@ -151,9 +151,9 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 		
 		raf(() => {
 			const node = $(this.node);
-			const container = Util.getPageContainer(isPopup);
+			const container = UtilCommon.getPageContainer(isPopup);
 			const header = container.find('#header');
-			const hh = isPopup ? header.height() : Util.sizeHeader();
+			const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
 
 			container.css({ minHeight: isPopup ? '' : win.height() });
 			node.css({ paddingTop: isPopup && !container.hasClass('full') ? 0 : hh });

@@ -1,5 +1,5 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, Util, Storage } from 'Lib';
+import { I, C, UtilCommon, Storage } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -32,7 +32,7 @@ class Analytics {
 			return;
 		};
 
-		const platform = Util.getPlatform();
+		const platform = UtilCommon.getPlatform();
 
 		C.MetricsSetParameters(platform);
 
@@ -376,7 +376,7 @@ class Analytics {
 		};
 
 		const code = (undefined !== map[id]) ? map[id] : id;
-		return code ? Util.toUpperCamelCase([ prefix, code ].join('-')) : '';
+		return code ? UtilCommon.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
 	typeMapper (id: string) {

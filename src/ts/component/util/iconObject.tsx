@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, Preview, SmileUtil, DataUtil, FileUtil, ObjectUtil } from 'Lib';
+import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -188,7 +188,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, isDeleted } = object || {};
-		const cn = [ 'iconObject', 'c' + size, DataUtil.layoutClass(object.id, layout) ];
+		const cn = [ 'iconObject', 'c' + size, UtilData.layoutClass(object.id, layout) ];
 		const iconSize = this.iconSize();
 		
 		if (className) {
@@ -267,6 +267,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
+			case I.ObjectLayout.Dashboard:
 			case I.ObjectLayout.Note: {
 				break;
 			};
@@ -311,7 +312,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
+					icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
 				};
 				break;
 			};
@@ -326,15 +327,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
+				icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
 				break;
 			};
 
-			case I.ObjectLayout.Dashboard: {
-				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-				icon = <img src={Home} className={icn.join(' ')} />;
-				break;
-			};
 		};
 
 		if (isDeleted) {
@@ -527,8 +523,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || ObjectUtil.defaultName('Page'));
-		name = SmileUtil.strip(name);
+		let name = String(object.name || UtilObject.defaultName('Page'));
+		name = UtilSmile.strip(name);
 		name = name.trim().substr(0, 1).toUpperCase();
 
 		return name;

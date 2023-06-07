@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, Label, Loader, ObjectName, EmptySearch } from 'Component';
-import { DataUtil, I, Util, translate } from 'Lib';
+import { UtilData, I, UtilCommon, translate } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -151,7 +151,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             if (!filter) {
                 controls = null;
             } else {
-				textEmpty = Util.sprintf(translate('popupSearchEmptyFilter'), filter);
+				textEmpty = UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter);
 			};
 
             content = (
@@ -280,7 +280,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
             if ((idx >= 0) && (this.selected.length > 0)) {
                 const indexes = this.getSelectedIndexes().filter(i => i != idx);
-                const closest = Util.findClosestElement(indexes, idx);
+                const closest = UtilCommon.findClosestElement(indexes, idx);
 
                 if (isFinite(closest)) {
                     const [ start, end ] = this.getSelectionRange(closest, idx);
@@ -295,7 +295,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             };
         };
 
-        this.selected = Util.arrayUnique(this.selected);
+        this.selected = UtilCommon.arrayUnique(this.selected);
         this.forceUpdate();
     };
 
@@ -342,7 +342,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
         this.setState({ loading: true });
 
-        DataUtil.searchSubscribe({
+        UtilData.searchSubscribe({
             subId,
             sorts,
             filters,

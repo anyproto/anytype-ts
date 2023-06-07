@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, keyboard } from 'Lib';
+import { I, UtilCommon, keyboard } from 'Lib';
 
 interface State {
 	page: string;
@@ -16,7 +16,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 	render () {
 		const { page } = this.state;
-		const isMac = Util.isPlatformMac();
+		const isMac = UtilCommon.isPlatformMac();
 		const tabs = [
 			{ id: 'main', name: 'Main' },
 			{ id: 'navigation', name: 'Navigation' },
@@ -322,7 +322,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const hh = Util.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
 
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();

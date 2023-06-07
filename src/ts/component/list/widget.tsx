@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget } from 'Component';
-import { C, I, M, keyboard, ObjectUtil, analytics } from 'Lib';
+import { C, I, M, keyboard, UtilObject, analytics } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
@@ -135,7 +135,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						color="" 
 						className="widget" 
 						icon="store" 
-						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store }) : null} 
+						onClick={e => !isEditing ? UtilObject.openEvent(e, { layout: I.ObjectLayout.Store }) : null} 
 					/>
 
 					<Button 
@@ -143,7 +143,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						color="" 
 						className="widget" 
 						icon="bin" 
-						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Archive }) : null} 
+						onClick={e => !isEditing ? UtilObject.openEvent(e, { layout: I.ObjectLayout.Archive }) : null} 
 					/>
 
 					<div className="buttons">

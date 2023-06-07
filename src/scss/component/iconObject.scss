@@ -8,6 +8,8 @@
 	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
 	.iconImage, .iconGradient { border-radius: inherit; }
 
+	.iconGradient { display: inline-block !important; }
+
 	.iconGradient.c16, .iconCommon.c16, .smileImage.c16, .iconImage.c16, .iconFile.c16, .iconCheckbox.c16 { @include pos-abs-mid; width: 16px; height: 16px; margin: -8px 0px 0px -8px; }
 	.iconGradient.c18, .iconCommon.c18, .smileImage.c18, .iconImage.c18, .iconFile.c18, .iconCheckbox.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
 	.iconGradient.c20, .iconCommon.c20, .smileImage.c20, .iconImage.c20, .iconFile.c20, .iconCheckbox.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }

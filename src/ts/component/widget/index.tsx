@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Loader } from 'Component';
-import { I, Util, ObjectUtil, DataUtil, MenuUtil, translate, Storage, Action, analytics } from 'Lib';
+import { I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -51,10 +51,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const child = this.getTargetBlock();
 		const { layout, limit } = block.content;
 		const { targetBlockId } = child?.content || {};
-		const cn = [ 'widget', Util.toCamelCase('widget-' + I.WidgetLayout[layout]) ];
+		const cn = [ 'widget', UtilCommon.toCamelCase('widget-' + I.WidgetLayout[layout]) ];
 		const object = this.getObject();
-		const platform = Util.getPlatform();
-		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !Util.isPlatformMac());
+		const platform = UtilCommon.getPlatform();
+		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
 		const key = `widget-${block.id}`;
 		const props = {
 			...this.props,
@@ -108,7 +108,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		if (layout != I.WidgetLayout.Space) {
 			let onClick = null;
 			if (!this.isCollection(targetBlockId)) {
-				onClick = e => ObjectUtil.openEvent(e, object);
+				onClick = e => UtilObject.openEvent(e, object);
 			} else {
 				onClick = () => this.onSetPreview();
 			};
@@ -232,7 +232,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			case Constant.widgetId.collection: {
 				object = {
 					id: targetBlockId,
-					name: translate(Util.toCamelCase(`widget-${targetBlockId}`)),
+					name: translate(UtilCommon.toCamelCase(`widget-${targetBlockId}`)),
 				};
 				break;
 			};
@@ -247,7 +247,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	onClick (e: React.MouseEvent): void {
-		ObjectUtil.openEvent(e, this.getObject());
+		UtilObject.openEvent(e, this.getObject());
 	};
 
 	onOptions (e: React.MouseEvent): void {
@@ -341,7 +341,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const limit = this.getLimit(block.content);
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 		];
 
 		switch (targetBlockId) {
@@ -367,7 +367,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			};
 		};
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			subId,
 			filters,
 			sorts,
@@ -405,7 +405,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	getLimit ({ limit, layout }): number {
 		const { isPreview } = this.props;
-		const options = MenuUtil.getWidgetLimits(layout).map(it => Number(it.id));
+		const options = UtilMenu.getWidgetLimits(layout).map(it => Number(it.id));
 
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];

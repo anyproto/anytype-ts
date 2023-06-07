@@ -11,7 +11,7 @@ import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
-	I, C, Util, FileUtil, keyboard, Storage, analytics, dispatcher, translate, Action, Renderer, DataUtil, 
+	I, C, UtilCommon, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding
 } from 'Lib';
 
@@ -224,12 +224,15 @@ window.$ = $;
 window.Lib = {
 	I,
 	C,
-	Util,
+	UtilCommon,
+	UtilData,
+	UtilFile,
+	UtilObject,
+	UtilMenu,
 	analytics,
 	dispatcher,
 	keyboard,
 	Renderer,
-	DataUtil,
 	Preview,
 	Storage,
 	Animation,
@@ -350,7 +353,7 @@ class App extends React.Component<object, State> {
 	};
 	
 	init () {
-		Util.init(history);
+		UtilCommon.init(history);
 
 		dispatcher.init(window.Electron.getGlobal('serverAddress'));
 		keyboard.init();
@@ -367,7 +370,7 @@ class App extends React.Component<object, State> {
 		const lastSurveyTime = Number(Storage.get('lastSurveyTime')) || 0;
 
 		if (!lastSurveyTime) {
-			Storage.set('lastSurveyTime', Util.time());
+			Storage.set('lastSurveyTime', UtilCommon.time());
 		};
 
 		Storage.delete('lastSurveyCanceled');
@@ -377,7 +380,7 @@ class App extends React.Component<object, State> {
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => Util.route(route));
+		Renderer.on('route', (e: any, route: string) => UtilCommon.route(route));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
@@ -452,11 +455,11 @@ class App extends React.Component<object, State> {
 			if (isChild) {
 				authStore.phraseSet(phrase);
 
-				DataUtil.createSession(() => {
+				UtilData.createSession(() => {
 					commonStore.redirectSet(route || redirect || '');
 					keyboard.setPinChecked(isPinChecked);
 
-					DataUtil.onAuth(account, cb);
+					UtilData.onAuth(account, cb);
 				});
 
 				win.off('unload').on('unload', (e: any) => {
@@ -498,7 +501,7 @@ class App extends React.Component<object, State> {
 
 		if (value) {
 			authStore.phraseSet(value);
-			Util.route('/auth/setup/init', true);
+			UtilCommon.route('/auth/setup/init', true);
 		} else {
 			Storage.logout();
 		};
@@ -590,7 +593,7 @@ class App extends React.Component<object, State> {
 		popupStore.open('confirm', {
 			data: {
 				title: 'You are up-to-date',
-				text: Util.sprintf('You are on the latest version: %s', window.Electron.version.app),
+				text: UtilCommon.sprintf('You are on the latest version: %s', window.Electron.version.app),
 				textConfirm: 'Great!',
 				canCancel: false,
 			},
@@ -608,7 +611,7 @@ class App extends React.Component<object, State> {
 		popupStore.open('confirm', {
 			data: {
 				title: translate('popupConfirmUpdateErrorTitle'),
-				text: Util.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
+				text: UtilCommon.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
 				textConfirm: 'Retry',
 				textCancel: 'Later',
 				onConfirm: () => {
@@ -623,7 +626,7 @@ class App extends React.Component<object, State> {
 
 	onUpdateProgress (e: any, progress: any) {
 		commonStore.progressSet({ 
-			status: Util.sprintf('Downloading update... %s/%s', FileUtil.size(progress.transferred), FileUtil.size(progress.total)), 
+			status: UtilCommon.sprintf('Downloading update... %s/%s', UtilFile.size(progress.transferred), UtilFile.size(progress.total)), 
 			current: progress.transferred, 
 			total: progress.total,
 			isUnlocked: true,
@@ -648,7 +651,7 @@ class App extends React.Component<object, State> {
 
 		menuStore.open('select', {
 			recalcRect: () => { 
-				const rect = Util.selectionRect();
+				const rect = UtilCommon.selectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 			},
 			onOpen: () => { menuStore.close('blockContext'); },
@@ -662,7 +665,7 @@ class App extends React.Component<object, State> {
 						switch (item.id) {
 							default: {
 								blockStore.updateContent(rootId, focused, { text: value });
-								DataUtil.blockInsertText(rootId, focused, item.id, range.from, range.to);
+								UtilData.blockInsertText(rootId, focused, item.id, range.from, range.to);
 								break;
 							};
 

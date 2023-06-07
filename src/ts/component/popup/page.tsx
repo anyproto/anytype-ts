@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { I, history as historyPopup, Util } from 'Lib';
+import { I, history as historyPopup, UtilCommon } from 'Lib';
 import { Page } from 'Component';
 import { menuStore } from 'Store';
 
@@ -66,7 +66,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 
 		obj.find('.innerWrap').on('scroll.common', () => {
 			menuStore.list.forEach(it => {
-				win.trigger('resize.' + Util.toCamelCase(`menu-${it.id}`));
+				win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${it.id}`));
 			});
 		});
 	};
@@ -88,7 +88,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const hh = Util.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
 
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();

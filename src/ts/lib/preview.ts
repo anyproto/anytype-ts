@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, keyboard } from 'Lib';
+import { I, UtilCommon, keyboard } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -58,10 +58,10 @@ class Preview {
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
-			const { ww } = Util.getWindowDimensions();
+			const { ww } = UtilCommon.getWindowDimensions();
 			const node = $('<div class="tooltip anim"><div class="txt"></div></div>');
 
-			node.find('.txt').html(Util.lbBr(text));
+			node.find('.txt').html(UtilCommon.lbBr(text));
 			obj.html('').append(node);
 			
 			const ow = node.outerWidth();
@@ -242,7 +242,7 @@ class Preview {
 		const obj = $('#toast');
 		const sidebar = $('#sidebar');
 		const isRight = sidebar.hasClass('right');
-		const { ww, wh } = Util.getWindowDimensions();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
 		const y = wh - obj.outerHeight() - BORDER * 2;
 
 		let sw = 0;

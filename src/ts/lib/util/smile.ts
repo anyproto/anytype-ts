@@ -1,4 +1,4 @@
-import { Util } from 'Lib';
+import { UtilCommon } from 'Lib';
 import { getEmojiDataFromNative } from 'emoji-mart';
 
 import EmojiData from 'json/emoji.json';
@@ -27,7 +27,7 @@ const Mapping = {
 	o: 'added_in',
 };
 
-class SmileUtil {
+class UtilSmile {
 
 	icons: any[] = [];
 	cache: any = {};
@@ -120,8 +120,8 @@ class SmileUtil {
 
 	randomParam (): { id: string, skin: number } {
 		return { 
-			id: this.icons[Util.rand(0, this.icons.length - 1)], 
-			skin: Util.rand(1, 6) 
+			id: this.icons[UtilCommon.rand(0, this.icons.length - 1)], 
+			skin: UtilCommon.rand(1, 6) 
 		};
 	};
 	
@@ -204,4 +204,4 @@ class SmileUtil {
 
 };
 
-export default new SmileUtil ();
+export default new UtilSmile ();

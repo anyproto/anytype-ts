@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, DataUtil, Util, Relation, analytics, keyboard } from 'Lib';
+import { I, C, UtilData, UtilCommon, Relation, analytics, keyboard } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Item from 'Component/menu/item/relationView';
@@ -143,7 +143,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
 
 		for (let menu of menus) {
-			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
 		};
 	};
 
@@ -164,7 +164,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
-		items = items.sort(DataUtil.sortByHidden).filter((it: any) => {
+		items = items.sort(UtilData.sortByHidden).filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
 		});
 
@@ -209,7 +209,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const items = this.getItems();
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ], true);
-		const featured = Util.objectCopy(object.featuredRelations || []);
+		const featured = UtilCommon.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex(it => it == relationKey);
 
 		if (idx < 0) {
@@ -331,12 +331,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { isPopup } = data;
 		const obj = $(`#${getId()} .content`);
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const offset = isPopup ? 16 : 120;
 		const min = isPopup ? 480 : 640;
 
 		obj.css({ 
-			height: container.height() - Util.sizeHeader() - 16,
+			height: container.height() - UtilCommon.sizeHeader() - 16,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
 

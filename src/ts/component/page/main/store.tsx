@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -271,7 +271,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.refList.recomputeRowHeights();
 		};
 
-		Onboarding.start(Util.toCamelCase('store-' + this.tab), isPopup);
+		Onboarding.start(UtilCommon.toCamelCase('store-' + this.tab), isPopup);
 	};
 
 	componentWillUnmount () {
@@ -340,7 +340,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onClick (e: any, item: any) {
-		ObjectUtil.openAuto(item);
+		UtilObject.openAuto(item);
 	};
 
 	onCreateType (e: any) {
@@ -467,7 +467,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			dbStore.recordsSet(Constant.subId.store, '', []);
 		};
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			subId: Constant.subId.store,
 			filters,
 			sorts,
@@ -607,12 +607,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		for (let menu of menus) {
-			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
 		};
 	};
 
 	getLimit () {
-		const container = Util.getPageContainer(this.props.isPopup);
+		const container = UtilCommon.getPageContainer(this.props.isPopup);
 		const size = Constant.size.store;
 		const maxWidth = container.width() - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
@@ -621,12 +621,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	resize () {
-		const container = Util.getPageContainer(this.props.isPopup);
+		const container = UtilCommon.getPageContainer(this.props.isPopup);
 		const win = $(window);
 		const node = $(this.node);
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
-		const hh = Util.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
 		const isPopup = this.isPopup();
 		const limit = this.getLimit();
 		const wh = isPopup ? container.height() : win.height();
@@ -664,7 +664,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	isPopup () {
 		const { isPopup } = this.props;
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 
 		return isPopup && !container.hasClass('full');
 	};

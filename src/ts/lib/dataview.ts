@@ -1,6 +1,6 @@
 import arrayMove from 'array-move';
 import { dbStore, commonStore, blockStore, detailStore } from 'Store';
-import { I, M, C, Util, DataUtil, ObjectUtil, Relation } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, Relation } from 'Lib';
 import Constant from 'json/constant.json';
 
 class Dataview {
@@ -14,7 +14,7 @@ class Dataview {
 
 		const order: any = {};
 
-		let relations = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId));
+		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId));
 		let o = 0;
 
 		if (!config.debug.ho) {
@@ -63,7 +63,7 @@ class Dataview {
 			});
 		});
 
-		return Util.arrayUniqueObjects(ret, 'relationKey');
+		return UtilCommon.arrayUniqueObjects(ret, 'relationKey');
 	};
 
 	relationAdd (rootId: string, blockId: string, relationKey: string, index: number, view?: I.View, callBack?: (message: any) => void) {
@@ -151,7 +151,7 @@ class Dataview {
 
 		dbStore.metaSet(subId, '', meta);
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			...param,
 			subId,
 			filters: view.filters.map(mapper),
@@ -192,7 +192,7 @@ class Dataview {
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 		const { type } = object;
-		const isInline = !ObjectUtil.getSetTypes().includes(type);
+		const isInline = !UtilObject.getSetTypes().includes(type);
 
 		if (!isInline) {
 			return type == Constant.typeId.collection;
@@ -229,7 +229,7 @@ class Dataview {
 			return;
 		};
 
-		const groupOrder = Util.objectCopy(block.content.groupOrder);
+		const groupOrder = UtilCommon.objectCopy(block.content.groupOrder);
 		const idx = groupOrder.findIndex(it => it.viewId == viewId);
 
 		if (idx >= 0) {

@@ -5,7 +5,7 @@ import katex from 'katex';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, Util, C, focus, Renderer } from 'Lib';
+import { I, keyboard, UtilCommon, C, focus, Renderer } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import Constant from 'json/constant.json';
@@ -237,7 +237,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 	};
 
 	updateRect () {
-		const rect = Util.selectionRect();
+		const rect = UtilCommon.selectionRect();
 		if (!rect || !menuStore.isOpen('blockLatex')) {
 			return;
 		};
@@ -263,7 +263,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 		const text = cb.getData('text/plain');
 		const to = range.end + text.length;
 
-		this.setValue(Util.stringInsert(this.getValue(), text, range.start, range.end));
+		this.setValue(UtilCommon.stringInsert(this.getValue(), text, range.start, range.end));
 		this.setRange({ start: to, end: to });
 		this.focus();
 	};
@@ -299,7 +299,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 		const recalcRect = () => {
 			let rect = null;
 			if (element == 'input') {
-				rect = Util.selectionRect();
+				rect = UtilCommon.selectionRect();
 			};
 			return rect ? { ...rect, y: rect.y + this.win.scrollTop() } : null;
 		};
@@ -328,7 +328,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 						text = ' ' + text;
 					};
 					
-					this.setValue(Util.stringInsert(this.getValue(), text, from, to));
+					this.setValue(UtilCommon.stringInsert(this.getValue(), text, from, to));
 					this.save();
 					this.setRange({ start: to, end: to });
 					this.focus();

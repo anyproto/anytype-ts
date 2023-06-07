@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
-import { I, C, Util, keyboard, Relation, analytics } from 'Lib';
+import { I, C, UtilCommon, keyboard, Relation, analytics } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 
 const HEIGHT = 28;
@@ -201,7 +201,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const items: any[] = Util.objectCopy(dbStore.getViews(rootId, blockId));
+		const items: any[] = UtilCommon.objectCopy(dbStore.getViews(rootId, blockId));
 
 		items.unshift({ id: 'label', name: 'Views', isSection: true });
 		return items;
@@ -219,7 +219,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { rootId, blockId, getView, loadData, getSources, isInline, getTarget } = data;
 		const view = getView();
 		const sources = getSources();
-		const relations = Util.objectCopy(view.relations);
+		const relations = UtilCommon.objectCopy(view.relations);
 		const filters: I.Filter[] = [];
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const object = getTarget();

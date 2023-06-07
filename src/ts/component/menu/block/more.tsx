@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, DataUtil, ObjectUtil, Util, Preview, focus, Action } from 'Lib';
+import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -95,7 +95,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const { blockId, rootId } = data;
 		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const platform = Util.getPlatform();
+		const platform = UtilCommon.getPlatform();
 		const { config } = commonStore;
 
 		if (!block) {
@@ -115,8 +115,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let search = { id: 'search', name: 'Search on page', caption: `${cmd} + F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
-		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let history = { id: 'history', name: 'Version history', caption: (Util.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let align = { id: 'align', name: 'Align', icon: [ 'align', UtilData.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let history = { id: 'history', name: 'Version history', caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
 		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };
@@ -153,7 +153,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
-		const allowedFav = !object.isArchived && !ObjectUtil.getSystemTypes().includes(object.type) && !ObjectUtil.getFileTypes().includes(object.type);
+		const allowedFav = !object.isArchived && !UtilObject.getSystemTypes().includes(object.type) && !UtilObject.getFileTypes().includes(object.type);
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;
 		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
@@ -267,7 +267,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
@@ -285,8 +285,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],
@@ -326,8 +326,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: close,
@@ -368,9 +368,9 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				return;
 			};
 
-			const home = ObjectUtil.getSpaceDashboard();
+			const home = UtilObject.getSpaceDashboard();
 			if (home && (object.id == home.id)) {
-				ObjectUtil.openRoute({ layout: I.ObjectLayout.Empty });
+				UtilObject.openRoute({ layout: I.ObjectLayout.Empty });
 			} else {
 				keyboard.onBack();
 			};
@@ -386,7 +386,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'history':
 				keyboard.disableClose(true);
-				ObjectUtil.openAuto({ layout: I.ObjectLayout.History, id: object.id });
+				UtilObject.openAuto({ layout: I.ObjectLayout.History, id: object.id });
 				break;
 			
 			case 'search':
@@ -396,7 +396,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'pageCopy':
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
-						ObjectUtil.openPopup({ id: message.ids[0], layout: object.layout });
+						UtilObject.openPopup({ id: message.ids[0], layout: object.layout });
 
 						analytics.event('DuplicateObject', { count: 1, route });
 					};
@@ -437,8 +437,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'pageCreate':
-				ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					ObjectUtil.openRoute({ id: message.targetId });
+				UtilObject.create('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
+					UtilObject.openRoute({ id: message.targetId });
 
 					analytics.event('CreateObject', {
 						route,
@@ -450,7 +450,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				break;
 
 			case 'pageLink':
-				Util.clipboardCopy({ text: Url.protocol + ObjectUtil.route(object) });
+				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.route(object) });
 				analytics.event('CopyLink', { route });
 				break;
 
@@ -462,7 +462,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			case 'pageInstall':
 				Action.install(object, false, (message: any) => {
-					ObjectUtil.openAuto(message.details);
+					UtilObject.openAuto(message.details);
 				});
 				break;
 

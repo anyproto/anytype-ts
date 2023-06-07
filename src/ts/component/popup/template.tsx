@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader, Title, Label, ListObjectPreview } from 'Component';
-import { I, focus, Util, DataUtil } from 'Lib';
+import { I, focus, UtilCommon, UtilData } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -44,7 +44,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 			<div className="wrapper">
 				<div className="head">
 					<Title text="Choose a template" />
-					<Label text={`Type “${Util.shorten(type.name, 32)}” has ${length} ${Util.cntWord(length, 'template', 'templates')}, use ←→ to switch and ENTER to choose`} />
+					<Label text={`Type “${UtilCommon.shorten(type.name, 32)}” has ${length} ${UtilCommon.cntWord(length, 'template', 'templates')}, use ←→ to switch and ENTER to choose`} />
 				</div>
 
 				<ListObjectPreview 
@@ -100,7 +100,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		];
 
 		this.setState({ loading: true });
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 		}, (message: any) => {

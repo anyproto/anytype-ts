@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button } from 'Component';
-import { I, translate, Util } from 'Lib';
+import { I, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 import Head from '../head';
 
@@ -14,7 +14,7 @@ const PopupSettingsSpaceRemove = observer(class PopupSettingsSpaceRemove extends
         return (
             <div>
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-                <Title text={Util.sprintf(translate('popupSettingsSpaceRemove'), space.name)} />
+                <Title text={UtilCommon.sprintf(translate('popupSettingsSpaceRemove'), space.name)} />
                 <Label text={translate('popupSettingsSpaceRemoveText')} />
                 <Button color="red" className="c36" text={translate('popupSettingsSpaceRemoveButton')} />
             </div>

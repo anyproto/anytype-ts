@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, analytics, keyboard, DataUtil, ObjectUtil, Action, Util } from 'Lib';
+import { I, analytics, keyboard, UtilData, UtilObject, Action, UtilCommon } from 'Lib';
 import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -237,7 +237,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			keys: Constant.relationRelationKeys,
@@ -273,7 +273,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = Util.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.workspaceId == workspace));
 		const librarySources = library.map(it => it.sourceObject);
 

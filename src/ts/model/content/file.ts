@@ -1,4 +1,4 @@
-import { I, Util } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentFile implements I.ContentFile {
@@ -30,7 +30,7 @@ class BlockContentFile implements I.ContentFile {
 			state: observable,
 		});
 
-		intercept(this as any, change => Util.intercept(this, change));
+		intercept(this as any, change => UtilCommon.intercept(this, change));
 	};
 
 };

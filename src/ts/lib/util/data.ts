@@ -1,7 +1,6 @@
-import { I, C, keyboard, translate, Util, Storage, analytics, dispatcher, Mark, ObjectUtil, FileUtil } from 'Lib';
+import { I, C, keyboard, translate, UtilCommon, Storage, analytics, dispatcher, Mark, UtilObject } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -22,18 +21,18 @@ type SearchSubscribeParams = Partial<{
 	noDeps: boolean;
 }>;
 
-class DataUtil {
+class UtilData {
 
 	blockTextClass (v: I.TextStyle): string {
-		return Util.toCamelCase('text-' + String(I.TextStyle[v] || 'paragraph'));
+		return UtilCommon.toCamelCase('text-' + String(I.TextStyle[v] || 'paragraph'));
 	};
 	
 	blockDivClass (v: I.DivStyle): string {
-		return Util.toCamelCase('div-' + String(I.DivStyle[v]));
+		return UtilCommon.toCamelCase('div-' + String(I.DivStyle[v]));
 	};
 
 	blockLayoutClass (v: I.LayoutStyle): string {
-		return Util.toCamelCase('layout-' + String(I.LayoutStyle[v]));
+		return UtilCommon.toCamelCase('layout-' + String(I.LayoutStyle[v]));
 	};
 
 	styleIcon (type: I.BlockType, v: number): string {
@@ -60,7 +59,7 @@ class DataUtil {
 	blockClass (block: any) {
 		const { content } = block;
 		const { style, type, state } = content;
-		const dc = Util.toCamelCase('block-' + block.type);
+		const dc = UtilCommon.toCamelCase('block-' + block.type);
 
 		const c = [];
 		if (block.type == I.BlockType.File) {
@@ -92,7 +91,7 @@ class DataUtil {
 	layoutClass (id: string, layout: I.ObjectLayout) {
 		let c = '';
 		switch (layout) {
-			default: c = Util.toCamelCase('is-' + I.ObjectLayout[layout]); break;
+			default: c = UtilCommon.toCamelCase('is-' + I.ObjectLayout[layout]); break;
 			case I.ObjectLayout.Image:		 c = (id ? 'isImage' : 'isFile'); break;
 		};
 		return c;
@@ -278,12 +277,12 @@ class DataUtil {
 				commonStore.defaultTypeSet(commonStore.type);
 
 				if (pin && !keyboard.isPinChecked) {
-					Util.route('/auth/pin-check');
+					UtilCommon.route('/auth/pin-check');
 				} else {
 					if (redirect) {
-						Util.route(redirect, true);
+						UtilCommon.route(redirect, true);
 					} else {
-						ObjectUtil.openHome('route', { replace: true });
+						UtilObject.openHome('route', { replace: true });
 					};
 
 					commonStore.redirectSet('');
@@ -309,18 +308,8 @@ class DataUtil {
 		});
 
 		C.ObjectOpen(root, '', (message: any) => {
-			if (!Util.checkError(message.error.code)) {
+			if (!UtilCommon.checkError(message.error.code)) {
 				return;
-			};
-
-			const object = detailStore.get(root, root, Constant.coverRelationKeys, true);
-			if (object._empty_) {
-				console.error('Dashboard is empty');
-				return;
-			};
-
-			if (object.coverId && (object.coverType != I.CoverType.None)) {
-				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
 			C.ObjectOpen(widgets, '', (message: any) => {
@@ -372,7 +361,7 @@ class DataUtil {
 		};
 
 		const diff = needle.length - (to - from);
-		const text = Util.stringInsert(block.content.text, needle, from, to);
+		const text = UtilCommon.stringInsert(block.content.text, needle, from, to);
 		const marks = Mark.adjust(block.content.marks, 0, diff);
 
 		this.blockSetText(rootId, blockId, text, marks, true, callBack);
@@ -381,7 +370,7 @@ class DataUtil {
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
 		const { workspace, config } = commonStore;
-		const pageLayouts = ObjectUtil.getPageLayouts();
+		const pageLayouts = UtilObject.getPageLayouts();
 		const page = dbStore.getType(Constant.typeId.page);
 		const note = dbStore.getType(Constant.typeId.note);
 		const set = dbStore.getType(Constant.typeId.set);
@@ -563,7 +552,7 @@ class DataUtil {
 	checkLinkSettings (content: I.ContentLink, layout: I.ObjectLayout) {
 		const relationKeys = [ 'type', 'cover', 'tag' ];
 
-		content = Util.objectCopy(content);
+		content = UtilCommon.objectCopy(content);
 		content.iconSize = Number(content.iconSize) || I.LinkIconSize.None;
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
@@ -584,7 +573,7 @@ class DataUtil {
 			content.relations = content.relations.filter(it => filter.includes(it)); 
 		};
 
-		content.relations = Util.arrayUnique(content.relations);
+		content.relations = UtilCommon.arrayUnique(content.relations);
 		return content;
 	};
 
@@ -640,7 +629,7 @@ class DataUtil {
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
 		if (!subId) {
-			console.error('[DataUtil].searchSubscribe: subId is empty');
+			console.error('[UtilData].searchSubscribe: subId is empty');
 			return;
 		};
 
@@ -681,14 +670,14 @@ class DataUtil {
 
 		let { subId, ids, keys, noDeps } = param;
 
-		ids = Util.arrayUnique(ids.filter(it => it));
+		ids = UtilCommon.arrayUnique(ids.filter(it => it));
 
 		if (!subId) {
-			console.error('[DataUtil].subscribeIds: subId is empty');
+			console.error('[UtilData].subscribeIds: subId is empty');
 			return;
 		};
 		if (!ids.length) {
-			console.error('[DataUtil].subscribeIds: ids list is empty');
+			console.error('[UtilData].subscribeIds: ids list is empty');
 			return;
 		};
 
@@ -745,11 +734,11 @@ class DataUtil {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), Util.filterFix(param.fullText), offset, limit, callBack);
+		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), UtilCommon.filterFix(param.fullText), offset, limit, callBack);
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {
-		this.setWindowTitleText(ObjectUtil.name(detailStore.get(rootId, objectId, [])));
+		this.setWindowTitleText(UtilObject.name(detailStore.get(rootId, objectId, [])));
 	};
 
 	setWindowTitleText (name: string) {
@@ -757,7 +746,7 @@ class DataUtil {
 		const title = [];
 
 		if (name) {
-			title.push(Util.shorten(name, 60));
+			title.push(UtilCommon.shorten(name, 60));
 		};
 
 		if (!space._empty_) {
@@ -771,7 +760,7 @@ class DataUtil {
 	graphFilters () {
 		const { workspace } = commonStore;
 		const { profile } = blockStore;
-		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
+		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const skipIds = [ '_anytype_profile', profile ];
 
 		return [
@@ -786,4 +775,4 @@ class DataUtil {
 
 };
 
-export default new DataUtil();
+export default new UtilData();

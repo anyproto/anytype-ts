@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, Util, analytics, DataUtil, ObjectUtil, keyboard } from 'Lib';
+import { I, C, UtilCommon, analytics, UtilData, UtilObject, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -103,7 +103,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			this.initRootId(data.id);
 		});
 		win.on('removeGraphNode.graphPage', (e: any, data: any) => { 
-			this.refGraph?.send('onRemoveNode', { ids: Util.objectCopy(data.ids) });
+			this.refGraph?.send('onRemoveNode', { ids: UtilCommon.objectCopy(data.ids) });
 		});
 	};
 
@@ -140,7 +140,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	load () {
 		this.setLoading(true);
 
-		C.ObjectGraph(DataUtil.graphFilters(), 0, [], Constant.graphRelationKeys, (message: any) => {
+		C.ObjectGraph(UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -168,7 +168,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 			this.data.nodes = message.nodes.map(it => detailStore.mapper(it));
 
-			DataUtil.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
+			UtilData.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
 				error: {},
 				records: message.nodes,
 				dependencies: [],
@@ -201,7 +201,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	resize () {
 		const win = $(window);
-		const obj = Util.getPageContainer(this.props.isPopup);
+		const obj = UtilCommon.getPageContainer(this.props.isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
@@ -228,7 +228,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		this.ids = [];
 		this.refGraph?.send('onSetSelected', { ids: [] });
 		
-		ObjectUtil.openAuto(this.data.nodes.find(d => d.id == id));
+		UtilObject.openAuto(this.data.nodes.find(d => d.id == id));
 	};
 
 	getRootId () {
@@ -276,7 +276,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	addNewNode (id: string, cb: (target: any) => void) {
-		ObjectUtil.getById(id, (object: any) => {
+		UtilObject.getById(id, (object: any) => {
 			const target = this.refGraph.nodeMapper(object);
 
 			this.data.nodes.push(target);
@@ -364,8 +364,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'newObject': {
-							ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-								ObjectUtil.openPopup({ id: message.targetId }, {
+							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+								UtilObject.openPopup({ id: message.targetId }, {
 									onClose: () => {
 										this.addNewNode(message.targetId, target => {
 											target = Object.assign(target, { x: data.x, y: data.y });
@@ -388,7 +388,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		const tab = Tabs.find(it => it.id == id);
 
 		if (tab) {
-			ObjectUtil.openAuto({ id: this.getRootId(), layout: tab.layout });
+			UtilObject.openAuto({ id: this.getRootId(), layout: tab.layout });
 		};
 	};
 
