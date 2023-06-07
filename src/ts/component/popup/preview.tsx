@@ -9,7 +9,7 @@ const BORDER = 16;
 class PopupPreview extends React.Component<I.Popup> {
 	
 	render () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { src, type } = data;
 
@@ -17,7 +17,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		switch (type) {
 			case I.FileType.Image: {
-				content = <img className="media" src={src} />
+				content = <img className="media" src={src} onClick={() => close()} />
 				break;
 			};
 

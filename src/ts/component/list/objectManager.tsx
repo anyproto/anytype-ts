@@ -123,25 +123,27 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         };
 
         let controls = (
-            <div className={cnControls.join(' ')}>
-                <div className="side left">
-                    {buttonsList.map((item: any, i: number) => (
-                        <Button key={i} {...item} />
-                    ))}
-                </div>
-                <div className="side right">
-                    <Icon className="search" onClick={this.onFilterShow} />
+			<div className="controlsWrapper">
+				<div className={cnControls.join(' ')}>
+					<div className="side left">
+						{buttonsList.map((item: any, i: number) => (
+							<Button key={i} {...item} />
+						))}
+					</div>
+					<div className="side right">
+						<Icon className="search" onClick={this.onFilterShow} />
 
-                    <div id="filterWrapper" className="filterWrapper">
-                        <Filter
-                            ref={ref => this.refFilter = ref}
-                            onChange={this.onFilterChange}
-                            onClear={this.onFilterClear}
-                            placeholder="Type to search..."
-                        />
-                    </div>
-                </div>
-            </div>
+						<div id="filterWrapper" className="filterWrapper">
+							<Filter
+								ref={ref => this.refFilter = ref}
+								onChange={this.onFilterChange}
+								onClear={this.onFilterClear}
+								placeholder="Type to search..."
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
         );
 
         let content = null;

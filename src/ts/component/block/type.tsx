@@ -61,9 +61,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const { isPopup } = this.props;
 		this._isMounted = true;
 
-		if (!isPopup) {
-			Onboarding.start('objectCreationStart', false);
-		};
+		Onboarding.start('objectCreationStart', isPopup);
 	};
 
 	componentWillUnmount () {
@@ -280,9 +278,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			C.ObjectSetObjectType(rootId, typeId, this.onTemplate);
 		};
 
-		if (!isPopup) {
-			Onboarding.start('objectCreated', false);
-		};
+		Onboarding.start('objectCreationFinish', isPopup);
 
 		analytics.event('CreateObject', {
 			route: 'SelectType',

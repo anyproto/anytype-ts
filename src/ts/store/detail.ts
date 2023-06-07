@@ -143,7 +143,7 @@ class DetailStore {
 			list = list.filter(it => keys.includes(it.relationKey));
 		};
 
-		const object = {};
+		const object = { id };
 		list.forEach(it => object[it.relationKey] = it.value);
 
 		return this.mapper(object);

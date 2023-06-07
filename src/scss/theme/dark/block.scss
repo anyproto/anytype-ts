@@ -250,8 +250,8 @@
     /* BlockDiv */
 
     .block.blockDiv {
-        .line { border-color: $colorSecondary; }
-        .dot { background: $colorSecondary !important; }
+        .line { border-color: $colorLineSecondary; }
+        .dot { background: $colorLineSecondary !important; }
     }
 
     /* BlockLatex */

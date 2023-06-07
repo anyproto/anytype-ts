@@ -1,10 +1,10 @@
 export enum ThreadStatus {
-	Unknown	 = 0,
-	Offline	 = 1,
-	Syncing	 = 2,
-	Synced	 = 3,
-	Failed	 = 4,
-	Disabled = 5,
+	Unknown		 = 0,
+	Offline		 = 1,
+	Syncing		 = 2,
+	Synced		 = 3,
+	Failed		 = 4,
+	Incompatible = 5,
 };
 
 export interface FilesStatus {

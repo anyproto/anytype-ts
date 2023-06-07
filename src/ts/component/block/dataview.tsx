@@ -390,7 +390,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
 
 		if (view) {
-			keys = keys.concat((view.relations || []).map(it => it.relationKey));
+			keys = keys.concat((view.relations || []).map(it => it && it.relationKey));
 
 			if (view.coverRelationKey && (view.coverRelationKey != Constant.pageCoverRelationKey)) {
 				keys.push(view.coverRelationKey);

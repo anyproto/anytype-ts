@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as Docs from 'Docs';
 import { MenuItemVertical, Button } from 'Component';
-import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight, Storage } from 'Lib';
-import { popupStore, detailStore, blockStore } from 'Store';
+import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, ObjectUtil } from 'Lib';
+import { popupStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 
 class MenuHelp extends React.Component<I.Menu> {
@@ -100,6 +99,7 @@ class MenuHelp extends React.Component<I.Menu> {
 		const storeTab = Storage.get('tabStore');
 		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
 		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
+		const home = ObjectUtil.getSpaceDashboard();
 
 		close();
 		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
@@ -137,6 +137,10 @@ class MenuHelp extends React.Component<I.Menu> {
 
 			case 'hints': {
 				let key = '';
+
+				if (rootId == home.id) {
+					key = 'dashboard';
+				} else 
 				if (isSet) {
 					key = 'mainSet';
 				} else
@@ -155,11 +159,6 @@ class MenuHelp extends React.Component<I.Menu> {
 					const { page, action } = keyboard.getMatch().params;
 
 					key = Util.toCamelCase([ page, action ].join('-'));
-
-					if (!Docs.Help.Onboarding[key]) {
-						popupStore.open('migration', { data: { type: 'onboarding' } });
-						return;
-					};
 				};
 
 				if (key) {

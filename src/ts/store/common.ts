@@ -348,9 +348,7 @@ class CommonStore {
 	};
 
 	themeSet (v: string) {
-		this.themeId = v;
-		Storage.set('theme', v);
-		
+		this.themeId = String(v || '');
 		this.setThemeClass();
 	};
 
