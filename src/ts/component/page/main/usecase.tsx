@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Frame, Title, Label, Button, Loader } from 'Component';
-import { C, I, ObjectUtil, Util, translate } from 'Lib';
-import { observer } from 'mobx-react';
 import $ from 'jquery';
+import { observer } from 'mobx-react';
+import { Frame, Title, Label, Button, Loader } from 'Component';
+import { C, I, ObjectUtil, DataUtil, Storage, translate } from 'Lib';
+import { authStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I.PageComponent, object> {
@@ -64,10 +65,12 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
         C.ObjectImportUseCase(id, () => {
             $('.usecaseWrapper').css({'opacity': 0});
 
-            window.setTimeout(() => {
-                this.loading = false;
-                ObjectUtil.openRoute({ layout: I.ObjectLayout.Graph });
-            }, 600);
+			DataUtil.onAuth(authStore.account, () => {
+				const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
+				if (blocks.length) {
+					Storage.setToggle('widget', blocks[0].parentId, true);
+				};
+			});
         });
     };
 

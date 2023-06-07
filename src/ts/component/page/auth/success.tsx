@@ -60,18 +60,11 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 		analytics.event('ScreenKeychain', { type: 'FirstSession' });
 	};
 
-	onSubmit (e: any) {
-		commonStore.redirectSet('/main/usecase');
-
-		DataUtil.onAuth(authStore.account, () => {
-			const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
-			if (blocks.length) {
-				Storage.setToggle('widget', blocks[0].parentId, true);
-			};
-		});
+	onSubmit () {
+		Util.route('/main/usecase');
 	};
 
-	onFocus (e: any) {
+	onFocus () {
 		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
@@ -81,7 +74,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 		phrase.removeClass('isBlurred');
 	};
 
-	onBlur (e: any) {
+	onBlur () {
 		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
@@ -93,6 +86,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 
 	onCopy () {
 		this.refPhrase.focus();
+
 		Util.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
 
