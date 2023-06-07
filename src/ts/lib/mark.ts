@@ -357,15 +357,15 @@ class Mark {
 			};
 		};
 
-		for (let mark of parts) {
-			if (mark.type == I.MarkType.Mention) {
+		for (let mark of marks) {
+			if (mark.type != I.MarkType.Mention) {
 				continue;
 			};
 			render(mark);
 		};
 
-		for (let mark of marks) {
-			if (mark.type != I.MarkType.Mention) {
+		for (let mark of parts) {
+			if (mark.type == I.MarkType.Mention) {
 				continue;
 			};
 			render(mark);
