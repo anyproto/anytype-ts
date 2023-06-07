@@ -7,7 +7,6 @@ import { Sidebar, Navigation } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import PageAuthInvite from './auth/invite';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pin/check';
@@ -34,7 +33,6 @@ import PageMainUsecase from './main/usecase';
 
 const Components: any = {
 	'/':					 PageAuthSelect,
-	'auth/invite':			 PageAuthInvite,
 	'auth/select':			 PageAuthSelect,
 	'auth/register':		 PageAuthRegister,
 	'auth/login':			 PageAuthLogin,

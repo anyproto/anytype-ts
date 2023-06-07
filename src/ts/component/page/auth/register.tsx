@@ -112,7 +112,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		};
 		
 		if (!error) {
-			Util.route('/auth/invite/' + match.params.id);
+			Util.route('/auth/setup/' + match.params.id);
 		} else {
 			this.setState({ error });
 		};
