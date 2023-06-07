@@ -29,7 +29,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 				<div className="wrapper">
 					<IconObject object={space} size={112} forceLetter={true} />
 					<Title text={space.name} />
-					<Label text="Select an object to set as your homepage. You can always change it in Settings." />
+					<Label text="Select an object to show when you login. You can always change it in Settings." />
 							
 					<div className="row">
 						<div className="side left">
