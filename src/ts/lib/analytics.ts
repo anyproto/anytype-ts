@@ -280,6 +280,11 @@ class Analytics {
 				data.view = types[data.view];
 				break;
 			};
+
+			case 'ThemeSet': {
+				data.id = String(data.id || 'light');
+				break;
+			};
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
