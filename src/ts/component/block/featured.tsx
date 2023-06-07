@@ -208,10 +208,16 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	init () {
+		const { block } = this.props;
 		const node = $(this.node);
+		const obj = $(`#block-${block.id}`);
 
-		node.find('.cell.first').removeClass('first');
-		node.find('.cell').first().addClass('first');
+		this.node ? obj.removeClass('isHidden') : obj.addClass('isHidden');
+
+		if (node) {
+			node.find('.cell.first').removeClass('first');
+			node.find('.cell').first().addClass('first');
+		};
 	};
 
 	componentWillUnmount () {
