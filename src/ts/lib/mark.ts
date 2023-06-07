@@ -357,18 +357,18 @@ class Mark {
 			};
 		};
 
+		// Render mentions
 		for (let mark of marks) {
-			if (mark.type != I.MarkType.Mention) {
-				continue;
+			if (mark.type == I.MarkType.Mention) {
+				render(mark);
 			};
-			render(mark);
 		};
 
+		// Render everything except mentions
 		for (let mark of parts) {
-			if (mark.type == I.MarkType.Mention) {
-				continue;
+			if (mark.type != I.MarkType.Mention) {
+				render(mark);
 			};
-			render(mark);
 		};
 
 		// Replace tags in text
