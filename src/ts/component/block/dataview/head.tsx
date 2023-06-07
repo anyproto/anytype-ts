@@ -54,39 +54,31 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			cn.push('isEditing');
 		};
 
+		let icon = null;
+		if (targetObjectId && !isCollection) {
+			icon = <Icon id="head-source-select" className="source" onClick={this.onSource} />;
+		};
+
 		return (
 			<div 
 				id={`block-head-${block.id}`}
 				ref={node => this.node = node}
 				className={cn.join(' ')}
 			>
-				<div id="head-title-wrapper" className="side left">
-					<Editable
-						ref={ref => this.ref = ref}
-						id="value"
-						readonly={readonly || !isEditing}
-						placeholder={ObjectUtil.defaultName(isCollection ? 'Collection' : 'Set')}
-						onFocus={this.onFocus}
-						onMouseDown={this.onTitle}
-						onBlur={this.onBlur}
-						onKeyDown={this.onKeyDown}
-						onKeyUp={this.onKeyUp}
-						onSelect={this.onSelect}
-						onCompositionStart={this.onCompositionStart}
-					/>
-
-					{targetObjectId && !isCollection ? (
-						<div id="head-source-select" className="iconWrap" onClick={this.onSource}>
-							<Icon className="set" />
-						</div>
- 					) : ''}
-
-				</div>
-				<div className="side right">
-					<div className="iconWrap dn" onClick={this.onFullscreen}>
-						<Icon className="expand" tooltip="Open fullscreen" />
-					</div>
-				</div>
+				<Editable
+					ref={ref => this.ref = ref}
+					id="value"
+					readonly={readonly || !isEditing}
+					placeholder={ObjectUtil.defaultName(isCollection ? 'Collection' : 'Set')}
+					onFocus={this.onFocus}
+					onMouseDown={this.onTitle}
+					onBlur={this.onBlur}
+					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyUp}
+					onSelect={this.onSelect}
+					onCompositionStart={this.onCompositionStart}
+				/>
+				{icon}
 			</div>
 		);
 	};
@@ -115,7 +107,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { rootId, block, onSourceSelect, isCollection } = this.props;
 		const { targetObjectId } = block.content;
 		const { isEditing } = this.state;
-		const element = `#block-${block.id} #head-title-wrapper`;
+		const element = `#block-head-${block.id}`;
 		const object = detailStore.get(rootId, targetObjectId);
 		const sourceName = isCollection ? 'collection' : 'set';
 

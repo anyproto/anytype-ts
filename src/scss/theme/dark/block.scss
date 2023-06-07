@@ -92,9 +92,10 @@
 			.button { color: $colorPrimary; }
 		}
 
-		.dataviewHead { border-color: $colorLineSecondary; }
+		.dataviewHead { border-color: $colorLineSecondary; color: $colorPrimary; }
 		.dataviewHead {
-			.iconWrap:hover { background-color: $colorHoverMedium; }
+			.icon:hover { background-color: $colorHoverMedium; }
+			.icon.source { background-image: url('#{$themePath}/icon/dataview/button/source0.svg'); opacity: 0; }
 		}
 
         .dataviewControls {
