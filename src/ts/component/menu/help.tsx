@@ -138,7 +138,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			case 'hints': {
 				let key = '';
 
-				if (rootId == home.id) {
+				if (isEditor && (rootId == home.id)) {
 					key = 'dashboard';
 				} else 
 				if (isSet) {
