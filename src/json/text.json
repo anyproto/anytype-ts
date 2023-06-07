@@ -321,7 +321,7 @@
 	"popupSettingsSpaceInviteMemberTypeTextEditor": { "en": "Editor can can edit objects and invite other members to collaborate but can’t edit space settings." },
 	"popupSettingsSpaceInviteMemberTypeTextAdmin": { "en": "Admin can do everything in this space including moving it to the bin." },
 	"popupSettingsSpaceInviteButton": { "en": "Copy invite link" },
-	"popupSettingsSpaceHomepageTitle": { "en": "Home page" },
+	"popupSettingsSpaceHomepageTitle": { "en": "Homepage" },
 	"popupSettingsSpaceTeam": { "en": "%s team" },
 	"popupSettingsSpaceTeamTitle": { "en": "Space team" },
 	"popupSettingsSpaceTeamMembers": { "en": "%s members" },
