@@ -348,7 +348,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		win.on('focus.editor' + namespace, () => {
-			const isPopupOpen = popupStore.isOpen();
+			const isPopupOpen = popupStore.isOpen() && !keyboard.isPopup();
 			const isMenuOpen = menuStore.isOpen();
 			const isMenuContextOpen = menuStore.isOpen('blockContext');
 
