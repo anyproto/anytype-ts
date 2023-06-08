@@ -4,12 +4,10 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { throttle } from 'lodash';
 import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import Head from './dataview/head';
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
 
@@ -34,7 +32,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 	node = null;
 	refView = null;
-	refHead = null;
 	refControls = null;
 	refSelect = null;
 	refCells: Map<string, any> = new Map();
@@ -130,10 +127,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const dataviewProps = {
 			readonly: false,
+			isCollection,
+			isInline,
+			className: className.join(' '),
 			loadData: this.loadData,
 			getView: this.getView,
 			getTarget: this.getTarget,
-			getObjectId: this.getObjectId(),
 			getSources: this.getSources,
 			getRecord: this.getRecord,
 			getRecords: this.getRecords,
@@ -144,9 +143,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getEmpty: this.getEmpty,
 			onRecordAdd: this.onRecordAdd,
 			isAllowedObject: this.isAllowedObject,
-			isCollection,
-			isInline,
-			className: className.join(' '),
+			onSourceSelect: this.onSourceSelect,
+			onSourceTypeSelect: this.onSourceTypeSelect,
 		};
 
 		const controls = (
@@ -164,18 +162,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				/>
 			</React.Fragment>
 		);
-
-		if (isInline) {
-			head = (
-				<Head 
-					ref={ref => this.refHead = ref} 
-					{...this.props}
-					{...dataviewProps}
-					onSourceSelect={this.onSourceSelect}
-					onSourceTypeSelect={this.onSourceTypeSelect}
-				/>
-			);
-		};
 
 		if (loading) {
 			body = null;
@@ -380,7 +366,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	getObjectId () {
+	getObjectId (): string {
 		const { rootId, block, isInline } = this.props;
 		return isInline ? block.content.targetObjectId : rootId;
 	};
