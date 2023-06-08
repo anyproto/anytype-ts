@@ -206,7 +206,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const { rootId, block } = this.props;
 		const storeId = this.getStoreId();
 		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
-		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
+		const featuredRelations = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
 		const node = $(this.node);
 		const obj = $(`#block-${block.id}`);
 
