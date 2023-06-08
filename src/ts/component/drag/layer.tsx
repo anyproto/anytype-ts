@@ -104,8 +104,12 @@ class DragLayer extends React.Component<object, State> {
 					const clone = container.find(`#block-${block.id}`).clone();
 
 					if (block.isDataview()) {
-						clone.find('.viewContent').remove();
-						clone.find('.dataviewControls').remove();
+						const controls = clone.find('.dataviewControls');
+
+						clone.find('.content').remove();
+						controls.find('#views').remove();
+						controls.find('#view-selector').remove();
+						controls.find('#sideRight').remove();
 					};
 
 					wrap.append(clone);
