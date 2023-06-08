@@ -152,7 +152,7 @@ class BlockStore {
 
 		let element = this.getMapElement(rootId, blockId);
 		if (!element) {
-			element = new M.BlockStructure({ parentId: '', childrenIds: childrenIds });
+			element = new M.BlockStructure({ parentId: '', childrenIds });
 		} else {
 			set(element, 'childrenIds', childrenIds);
 		};

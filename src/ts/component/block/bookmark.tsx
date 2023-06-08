@@ -223,7 +223,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 		};
 
 		Preview.previewShow({ 
-			rect: { x: e.pageX, y: e.pageY, width: 0, height: 10 }, 
+			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
+			object,
 			target: targetObjectId, 
 			noUnlink: true,
 			passThrough: true,

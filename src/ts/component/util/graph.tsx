@@ -440,8 +440,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			steps = option.steps;
 		};
 
-		const step0 = UtilCommon.getPercentage(fillR, Number(steps.from.replace('%', '')));
-		const step1 = UtilCommon.getPercentage(fillR, Number(steps.to.replace('%', '')));
+		const step0 = UtilCommon.getPercentage(fillR, steps.from * 100);
+		const step1 = UtilCommon.getPercentage(fillR, steps.to * 100);
 		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
 
 		canvas.width = w;

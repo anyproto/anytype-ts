@@ -341,8 +341,16 @@ class Dispatcher {
 						block.content.description = data.getDescription().getValue();
 					};
 
+					if (data.hasTargetblockid()) {
+						block.content.targetblockId = data.getTargetblockid().getValue();
+					};
+
 					if (data.hasRelations()) {
 						block.content.relations = data.getRelations().getValueList() || [];
+					};
+
+					if (data.hasTargetblockid()) {
+						block.content.targetBlockId = data.getTargetblockid().getValue();
 					};
 
 					if (data.hasFields()) {

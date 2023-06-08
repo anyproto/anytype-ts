@@ -47,11 +47,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
-
-		if (!featuredRelations.length) {
-			return null;
-		};
-
 		const object = detailStore.get(rootId, storeId, featuredRelations);
 		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);

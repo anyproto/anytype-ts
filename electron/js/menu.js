@@ -339,7 +339,7 @@ class MenuManager {
 		const Api = require('./api.js');
 
 		if (Api.isPinChecked) {
-			Util.send(this.win, 'popup', 'settings', { page }, true); 
+			Util.send(this.win, 'popup', 'settings', { data: { page } }, true); 
 		};
 	};
 
