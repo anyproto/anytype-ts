@@ -122,6 +122,12 @@ export enum TabIndex {
 	Archive		 = 'archive',
 };
 
+export enum HomePredefinedId {
+	Graph = 'graph',
+	Last = 'lastOpened',
+	Existing = 'existing',
+};
+
 export interface HeaderComponent extends RouteComponentProps<any> {
 	rootId?: string;
 	isPopup?: boolean;

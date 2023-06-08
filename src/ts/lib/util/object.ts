@@ -32,10 +32,10 @@ class UtilObject {
 		};
 
 		let home = null;
-		if (space.spaceDashboardId == 'graph') {
+		if (space.spaceDashboardId == I.HomePredefinedId.Graph) {
 			home = this.graph();
 		} else
-		if (space.spaceDashboardId == 'lastOpened') {
+		if (space.spaceDashboardId == I.HomePredefinedId.Last) {
 			home = this.lastOpened();
 		} else {
 			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
@@ -49,7 +49,7 @@ class UtilObject {
 
 	graph () {
 		return { 
-			id: 'graph', 
+			id: I.HomePredefinedId.Graph, 
 			name: 'Graph', 
 			iconEmoji: ':earth_americas:',
 			layout: I.ObjectLayout.Graph,

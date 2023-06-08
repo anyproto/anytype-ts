@@ -368,6 +368,7 @@ class UtilMenu {
 
 	dashboardSelect (element: string) {
 		const { workspace } = commonStore;
+		const home = UtilObject.getSpaceDashboard();
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const onSelect = (object: any, update: boolean) => {
 			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
@@ -386,6 +387,11 @@ class UtilMenu {
 		};
 
 		let menuContext = null;
+		let value = home ? home.id : '';
+
+		if (![ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(value)) {
+			value = I.HomePredefinedId.Existing;
+		};
 
 		menuStore.open('select', {
 			element,
@@ -395,10 +401,11 @@ class UtilMenu {
 				menuContext = context;
 			},
 			data: {
+				value,
 				options: [
-					{ id: 'graph', name: 'Graph' },
-					{ id: 'lastOpened', name: 'Last opened object' },
-					{ id: 'existing', name: 'Existion object', arrow: true },
+					{ id: I.HomePredefinedId.Graph, name: 'Graph' },
+					{ id: I.HomePredefinedId.Last, name: 'Last opened object' },
+					{ id: I.HomePredefinedId.Existing, name: 'Existion object', arrow: true },
 				],
 				onOver: (e: any, item: any) => {
 					if (!item.arrow) {
@@ -407,7 +414,7 @@ class UtilMenu {
 					};
 
 					switch (item.id) {
-						case 'existing': {
+						case I.HomePredefinedId.Existing: {
 							menuStore.open('searchObject', {
 								element: `#${menuContext.getId()} #item-${item.id}`,
 								offsetX: menuContext.getSize().width,
@@ -431,8 +438,8 @@ class UtilMenu {
 					};
 
 					switch (item.id) {
-						case 'graph':
-						case 'lastOpened': {
+						case I.HomePredefinedId.Graph:
+						case I.HomePredefinedId.Last: {
 							onSelect({ id: item.id }, false);
 							break;
 						};
