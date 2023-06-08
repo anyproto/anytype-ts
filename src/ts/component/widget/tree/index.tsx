@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
-import { analytics, C, DataUtil, I, ObjectUtil, Relation, Storage, Util } from 'Lib';
+import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon } from 'Lib';
 import { blockStore, dbStore, detailStore } from 'Store';
 import Item from './item';
 import Constant from 'json/constant.json';
@@ -296,7 +296,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			return;
 		};
 
-		const hash = sha1(Util.arrayUnique(links).join('-'));
+		const hash = sha1(UtilCommon.arrayUnique(links).join('-'));
 		const subId = this.getSubId(nodeId);
 
 		// if already subscribed to the same links, dont subscribe again
@@ -305,7 +305,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		};
 
 		this.subscriptionHashes[nodeId] = hash;
-		DataUtil.subscribeIds({
+		UtilData.subscribeIds({
 			subId,
 			ids: links,
 			keys: Constant.sidebarRelationKeys,
@@ -375,7 +375,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		e.preventDefault();
 		e.stopPropagation();
 
-		ObjectUtil.openEvent(e, item);
+		UtilObject.openEvent(e, item);
 		analytics.event('OpenSidebarObject');
 	};
 

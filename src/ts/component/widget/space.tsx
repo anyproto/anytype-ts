@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, ObjectUtil, translate } from 'Lib';
+import { I, UtilObject, translate } from 'Lib';
 import { commonStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 	
@@ -50,11 +50,11 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	onSelect (icon: string) {
-		ObjectUtil.setIcon(commonStore.workspace, icon, '');
+		UtilObject.setIcon(commonStore.workspace, icon, '');
 	};
 
 	onUpload (hash: string) {
-		ObjectUtil.setIcon(commonStore.workspace, '', hash);
+		UtilObject.setIcon(commonStore.workspace, '', hash);
 	};
 
 });

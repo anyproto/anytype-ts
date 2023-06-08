@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'Lib';
+import { I, C, Mark, UtilData, focus, keyboard, Storage } from 'Lib';
 import { blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -27,7 +27,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		const { type, content } = block;
 		const { style } = content;
-		const styleIcon = DataUtil.styleIcon(type, style);
+		const styleIcon = UtilData.styleIcon(type, style);
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 		const canTurn = block.canTurn() && !isInsideTable;

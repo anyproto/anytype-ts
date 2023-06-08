@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover } from 'Component';
-import { I, Util, DataUtil, ObjectUtil, translate, keyboard, focus, Preview } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, translate, keyboard, focus, Preview } from 'Lib';
 import { detailStore, blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -31,7 +31,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, block.content.targetBlockId, Constant.coverRelationKeys);
 		const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
-		const content = DataUtil.checkLinkSettings(block.content, layout);
+		const content = UtilData.checkLinkSettings(block.content, layout);
 		const readonly = this.props.readonly || !blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 		const { description, cardStyle, relations } = content;
 		const { size, iconSize } = this.getIconSize();
@@ -56,7 +56,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 			element = (
 				<div 
 					className="loading" 
-					{...Util.dataProps({ 'target-block-id': object.id })}
+					{...UtilCommon.dataProps({ 'target-block-id': object.id })}
 				>
 					<Loader />
 					<div className="name">{translate('blockLinkSyncing')}</div>
@@ -75,7 +75,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				cn.push('cp');
 			};
 
-			const cnc = [ 'linkCard', DataUtil.layoutClass(object.id, layout), 'c' + size ];
+			const cnc = [ 'linkCard', UtilData.layoutClass(object.id, layout), 'c' + size ];
 			const cns = [ 'sides' ];
 			const cnl = [ 'side', 'left' ];
 			
@@ -267,20 +267,20 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		};
 		
 		if (!(keyboard.withCommand(e) && ids.length)) {
-			ObjectUtil.openEvent(e, object);
+			UtilObject.openEvent(e, object);
 		};
 	};
 	
 	onSelect (icon: string) {
 		const { block } = this.props;
 
-		ObjectUtil.setIcon(block.content.targetBlockId, icon, '');
+		UtilObject.setIcon(block.content.targetBlockId, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { block } = this.props;
 
-		ObjectUtil.setIcon(block.content.targetBlockId, '', hash);
+		UtilObject.setIcon(block.content.targetBlockId, '', hash);
 	};
 
 	onCheckbox () {
@@ -288,7 +288,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
 
-		ObjectUtil.setDone(targetBlockId, !object.done);
+		UtilObject.setDone(targetBlockId, !object.done);
 	};
 
 	onMouseEnter (e: React.MouseEvent) {
@@ -320,7 +320,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 	getIconSize () {
 		const { rootId, block } = this.props;
 		const object = detailStore.get(rootId, block.content.targetBlockId, [ 'layout' ], true);
-		const content = DataUtil.checkLinkSettings(block.content, object.layout);
+		const content = UtilData.checkLinkSettings(block.content, object.layout);
 		const { cardStyle } = content;
 
 		let size = 20;

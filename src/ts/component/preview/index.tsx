@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault, Loader } from 'Component';
-import { I, Util, ObjectUtil, Preview, Mark, translate, Renderer } from 'Lib';
+import { I, UtilCommon, UtilObject, Preview, Mark, translate, Renderer } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 const OFFSET_Y = 8;
@@ -115,7 +115,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 
 			case I.PreviewType.Default:
 			case I.PreviewType.Object: {
-				ObjectUtil.openEvent(e, object);
+				UtilObject.openEvent(e, object);
 				break;
 			};
 		};
@@ -125,7 +125,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const { preview } = commonStore;
 		const { target } = preview;
 		
-		Util.clipboardCopy({ text: target });
+		UtilCommon.clipboardCopy({ text: target });
 		Preview.previewHide(true);
 	};
 	
@@ -137,7 +137,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const { marks, range, onChange } = preview;
 		const mark = Mark.getInRange(marks, I.MarkType.Link, range);
 		const win = $(window);
-		const rect = Util.objectCopy($('#preview').get(0).getBoundingClientRect());
+		const rect = UtilCommon.objectCopy($('#preview').get(0).getBoundingClientRect());
 
 		menuStore.open('blockLink', {
 			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
@@ -192,7 +192,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		const win = $(window);
 		const obj = $('#preview');
 		const poly = obj.find('.polygon');
-		const { ww, wh } = Util.getWindowDimensions();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
 		const st = win.scrollTop();
 		const ow = obj.outerWidth();
 		const oh = obj.outerHeight();

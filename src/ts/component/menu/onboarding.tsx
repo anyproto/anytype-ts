@@ -3,7 +3,7 @@ import $ from 'jquery';
 import * as Docs from 'Docs';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard, ObjectUtil } from 'Lib';
+import { I, Onboarding, UtilCommon, analytics, keyboard, UtilObject } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -115,7 +115,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	componentDidMount () {
 		this.rebind();
-		Util.renderLinks($(this.node));
+		UtilCommon.renderLinks($(this.node));
 	};
 
 	componentDidUpdate () {
@@ -135,7 +135,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		this.rebind();
 		this.scroll();
 
-		Util.renderLinks(node);
+		UtilCommon.renderLinks(node);
 		analytics.event('ScreenOnboarding');
 
 		if (showConfetti && (current == l - 1)) {
@@ -165,7 +165,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			return;
 		};
 
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 		const element = $(param.element);
 
@@ -174,7 +174,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		const rect = element.get(0).getBoundingClientRect() as DOMRect;
-		const hh = Util.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
 
 		let containerOffset = { top: 0, left: 0 };
 		if (isPopup) {
@@ -211,7 +211,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 			case 'dashboard': {
 				this.onClose();
-				ObjectUtil.openHome('route');
+				UtilObject.openHome('route');
 				break;
 			};
 		};
@@ -278,7 +278,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onVideoClick (e: any, src: string) {
-		Util.pauseMedia();
+		UtilCommon.pauseMedia();
 
 		popupStore.open('preview', { data: { src, type: I.FileType.Video },
 			preventMenuClose: true,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, keyboard, sidebar } from 'Lib';
+import { I, UtilObject, keyboard, sidebar } from 'Lib';
 
 const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I.HeaderComponent, object> {
 
@@ -50,7 +50,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ layout: I.ObjectLayout.Store });
+		UtilObject.openRoute({ layout: I.ObjectLayout.Store });
 	};
 
 });

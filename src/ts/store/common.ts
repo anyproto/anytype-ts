@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, Util, ObjectUtil, Renderer } from 'Lib';
+import { analytics, I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -163,7 +163,7 @@ class CommonStore {
 
 		const type = dbStore.getType(typeId);
 
-		if (!type || !type.isInstalled || !ObjectUtil.getPageLayouts().includes(type.recommendedLayout)) {
+		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
 			return Constant.typeId.note;
 		};
 
@@ -283,8 +283,8 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			ObjectUtil.getByIds(ids, (objects: any[]) => {
-				const map = Util.mapToObject(objects, 'id');
+			UtilObject.getByIds(ids, (objects: any[]) => {
+				const map = UtilCommon.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {
 					toast.target = map[targetId];
@@ -372,7 +372,7 @@ class CommonStore {
 		const head = $('head');
 		const c = this.getThemeClass();
 
-		Util.addBodyClass('theme', c);
+		UtilCommon.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();

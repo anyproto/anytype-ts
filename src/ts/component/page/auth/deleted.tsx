@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Title, Label, Error, Header, Footer } from 'Component';
-import { I, Util, C, Action, Survey, ObjectUtil, analytics } from 'Lib';
+import { I, UtilCommon, C, Action, Survey, UtilObject, analytics } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
@@ -35,9 +35,9 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 
 		const { cover } = commonStore;
 		const { error } = this.state;
-		const duration = Math.max(0, account.status.date - Util.time());
+		const duration = Math.max(0, account.status.date - UtilCommon.time());
 		const days = Math.max(1, Math.ceil(duration / 86400));
-		const dt = `${days} ${Util.cntWord(days, 'day', 'days')}`;
+		const dt = `${days} ${UtilCommon.cntWord(days, 'day', 'days')}`;
 
 		let title = '';
 		let description = '';
@@ -125,7 +125,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 				textConfirm: 'Delete',
 				onConfirm: () => { 
 					authStore.logout(true);
-					Util.route('/');
+					UtilCommon.route('/');
 				},
 			},
 		});
@@ -138,7 +138,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	onCancel (e: any) {
 		C.AccountDelete(true, (message: any) => {
 			authStore.accountSet({ status: message.status });
-			ObjectUtil.openHome('route');
+			UtilObject.openHome('route');
 
 			analytics.event('CancelDeletion');
 		});

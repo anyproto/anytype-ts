@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader } from 'Component';
-import { I, Util, Relation, keyboard, DataUtil, ObjectUtil, FileUtil } from 'Lib';
+import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -68,7 +68,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 					<MenuItemVertical 
 						id={item.id}
 						object={item}
-						name={FileUtil.name(item)}
+						name={UtilFile.name(item)}
 						onMouseEnter={(e: any) => { this.onOver(e, item); }} 
 						onClick={(e: any) => { this.onClick(e, item); }}
 						caption={type ? type.name : undefined}
@@ -203,7 +203,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 		const { data } = param;
 		const value = Relation.getArrayValue(data.value);
 
-		return Util.objectCopy(this.items).filter(it => !value.includes(it.id));
+		return UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
@@ -222,7 +222,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			fullText: filter,
@@ -238,7 +238,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || ObjectUtil.defaultName('Page'));
+				it.name = String(it.name || UtilObject.defaultName('Page'));
 				return it;
 			}));
 
@@ -282,7 +282,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 		let value = Relation.getArrayValue(data.value);
 		value.push(item.id);
-		value = Util.arrayUnique(value);
+		value = UtilCommon.arrayUnique(value);
 
 		if (maxCount) {
 			value = value.slice(value.length - maxCount, value.length);

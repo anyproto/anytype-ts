@@ -1,16 +1,16 @@
-import { I, C, keyboard, Util, history as historyPopup, Renderer, FileUtil, translate } from 'Lib';
+import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage } from 'Lib';
 import { commonStore, blockStore, popupStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-class ObjectUtil {
+class UtilObject {
 
 	openHome (type: string, param?: any) {
-		const fn = Util.toCamelCase(`open-${type}`);
+		const fn = UtilCommon.toCamelCase(`open-${type}`);
 		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
 		const empty = { layout: I.ObjectLayout.Empty };
 
 		if (!space.spaceDashboardId) {
-			this.openRoute(empty);
+			this.openRoute(empty, param);
 			return;
 		};
 
@@ -34,6 +34,9 @@ class ObjectUtil {
 		let home = null;
 		if (space.spaceDashboardId == 'graph') {
 			home = this.graph();
+		} else
+		if (space.spaceDashboardId == 'lastOpened') {
+			home = this.lastOpened();
 		} else {
 			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
 		};
@@ -51,6 +54,15 @@ class ObjectUtil {
 			iconEmoji: ':earth_americas:',
 			layout: I.ObjectLayout.Graph,
 		};
+	};
+
+	lastOpened () {
+		const object = Storage.get('lastOpened');
+
+		return object ? { 
+			...object,
+			name: 'Last opened object', 
+		} : null;
 	};
 
 	actionByLayout (v: I.ObjectLayout): string {
@@ -118,7 +130,7 @@ class ObjectUtil {
 		};
 
 		keyboard.setSource(null);
-		Util.route('/' + route, (param || {}).replace);
+		UtilCommon.route('/' + route, (param || {}).replace);
 	};
 
 	openWindow (object: any) {
@@ -228,7 +240,7 @@ class ObjectUtil {
 
 		let name = '';
 		if (!isDeleted && this.isFileType(type)) {
-			name = FileUtil.name(object);
+			name = UtilFile.name(object);
 		} else
 		if (layout == I.ObjectLayout.Note) {
 			name = snippet || translate('commonEmpty');
@@ -326,4 +338,4 @@ class ObjectUtil {
 
 };
 
-export default new ObjectUtil();
+export default new UtilObject();

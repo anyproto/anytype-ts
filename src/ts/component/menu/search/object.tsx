@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, Util, DataUtil, ObjectUtil, Preview, analytics, Action, focus, translate } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate } from 'Lib';
 import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -145,7 +145,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				{isLoading ? <Loader /> : ''}
 
 				{!items.length && !isLoading ? (
-					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 
 				{this.cache && items.length && !isLoading ? (
@@ -308,7 +308,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.setState({ isLoading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			keys: keys || Constant.defaultRelationKeys,
@@ -392,7 +392,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			switch (type) {
 				case I.NavigationType.Go:
-					ObjectUtil.openEvent(e, target);
+					UtilObject.openEvent(e, target);
 					break;
 
 				case I.NavigationType.Move:
@@ -440,8 +440,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				addParam.onClick();
 				close();
 			} else {
-				ObjectUtil.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-					ObjectUtil.getById(message.targetId, (object: any) => { process(object, true); });
+				UtilObject.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+					UtilObject.getById(message.targetId, (object: any) => { process(object, true); });
 					close();
 				});
 			};
@@ -466,7 +466,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			default: {
 				param.type = I.BlockType.Link;
 				param.content = {
-					...DataUtil.defaultLinkSettings(),
+					...UtilData.defaultLinkSettings(),
 					targetBlockId: id,
 				};
 				break;

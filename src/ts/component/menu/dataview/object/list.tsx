@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, Util, keyboard, DataUtil, ObjectUtil, Relation, translate } from 'Lib';
+import { I, UtilCommon, keyboard, UtilData, UtilObject, Relation, translate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -115,7 +115,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				{loading ? <Loader /> : ''}
 
 				{!items.length && !loading ? (
-					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 
 				{this.cache && items.length && !loading ? (
@@ -236,7 +236,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { canAdd } = data;
 		const value = Relation.getArrayValue(data.value);
-		const ret = Util.objectCopy(this.items).filter(it => !value.includes(it.id));
+		const ret = UtilCommon.objectCopy(this.items).filter(it => !value.includes(it.id));
 
 		if (data.filter && canAdd) {
 			if (ret.length) {
@@ -260,14 +260,14 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (types && types.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types });
 		} else {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() });
 		};
 
 		if (clear) {
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			fullText: filter,
@@ -283,7 +283,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			};
 
 			this.items = this.items.concat(message.records.map((it: any) => {
-				it.name = String(it.name || ObjectUtil.defaultName('Page'));
+				it.name = String(it.name || UtilObject.defaultName('Page'));
 				return it;
 			}));
 
@@ -335,7 +335,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return;
 			};
 
-			let value = Util.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
+			let value = UtilCommon.arrayUnique(Relation.getArrayValue(data.value).concat([ id ]));
 			if (maxCount) {
 				value = value.slice(value.length - maxCount, value.length);
 			};
@@ -359,7 +359,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				flags.push(I.ObjectFlag.SelectType);
 			};
 
-			ObjectUtil.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 				cb(message.targetId);
 				close();
 			});

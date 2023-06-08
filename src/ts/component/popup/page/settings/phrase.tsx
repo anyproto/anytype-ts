@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
 import { Title, Label, Textarea } from 'Component';
-import { I, C, translate, analytics, Util, Preview } from 'Lib';
+import { I, C, translate, analytics, UtilCommon, Preview } from 'Lib';
 import { commonStore, authStore } from 'Store';
 
 interface State {
@@ -90,7 +90,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		this.refPhrase.setValue(authStore.phrase);
 		this.refPhrase.select();
 
-		Util.clipboardCopy({ text: authStore.phrase });
+		UtilCommon.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
 
 		phrase.removeClass('isBlurred');

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button } from 'Component';
-import { C, I, Util, analytics, Relation, Dataview, keyboard, translate } from 'Lib';
+import { C, I, UtilCommon, analytics, Relation, Dataview, keyboard, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -328,7 +328,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const node = $(this.node);
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
 		const sidebar = $('#sidebar');
 

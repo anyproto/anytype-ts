@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, Util, Relation, keyboard } from 'Lib';
+import { Dataview, I, C, UtilCommon, Relation, keyboard } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -40,7 +40,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const views = dbStore.getViews(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const { total } = dbStore.getMeta(subId, '');
-		const isSelect = !isPreview || !Util.isPlatformMac();
+		const isSelect = !isPreview || !UtilCommon.isPlatformMac();
 
 		let records = dbStore.getRecords(subId, '');
 		if (targetBlockId == Constant.widgetId.favorite) {
@@ -137,7 +137,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 						className={[ 'viewItem', (item.id == viewId ? 'active' : '') ].join(' ')} 
 						onClick={() => this.onChangeView(item.id)}
 					>
-						{Util.shorten(item.name, 32)}
+						{UtilCommon.shorten(item.name, 32)}
 					</div>
 				);
 

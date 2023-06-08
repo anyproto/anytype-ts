@@ -1,11 +1,11 @@
-import { I, Util, FileUtil, translate, Dataview } from 'Lib';
+import { I, UtilCommon, UtilFile, translate, Dataview } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class Relation {
 
 	public typeName (v: I.RelationType): string {
-		return Util.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+		return UtilCommon.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
 	};
 
 	public className (v: I.RelationType): string {
@@ -17,7 +17,7 @@ class Relation {
 	};
 
 	public selectClassName (v: I.RelationType): string {
-		return Util.toCamelCase('is-' + I.RelationType[v]);
+		return UtilCommon.toCamelCase('is-' + I.RelationType[v]);
 	};
 
 	public cellId (prefix: string, relationKey: string, id: string|number) {
@@ -207,7 +207,7 @@ class Relation {
 			case I.RelationType.Tag:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
-				value = this.getArrayValue(Util.objectCopy(value));
+				value = this.getArrayValue(UtilCommon.objectCopy(value));
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);
@@ -248,12 +248,12 @@ class Relation {
 	public mapValue (relation: any, value: any) {
 		switch (relation.relationKey) {
 			case 'sizeInBytes': {
-				return FileUtil.size(value);
+				return UtilFile.size(value);
 			};
 
 			case 'widthInPixels':
 			case 'heightInPixels': {
-				return Util.formatNumber(value) + 'px';
+				return UtilCommon.formatNumber(value) + 'px';
 			};
 
 			case 'layout': {
@@ -307,7 +307,7 @@ class Relation {
 
 	public getCoverOptions (rootId: string, blockId: string) {
 		const formats = [ I.RelationType.File ];
-		const options: any[] = Util.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
+		const options: any[] = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter((it: any) => {
 			return it.isInstalled && !it.isHidden && formats.includes(it.format);
 		}).map(it => ({
 			id: it.relationKey, 
@@ -366,7 +366,7 @@ class Relation {
 	};
 
 	public getStringValue (value: any) {
-		if ((typeof value === 'object') && value && Util.hasProperty(value, 'length')) {
+		if ((typeof value === 'object') && value && UtilCommon.hasProperty(value, 'length')) {
 			return String(value.length ? value[0] : '');
 		} else {
 			return String(value || '');
@@ -380,10 +380,10 @@ class Relation {
 		if (typeof value !== 'object') {
 			return [ value ];
 		};
-		if (!Util.objectLength(value)) {
+		if (!UtilCommon.objectLength(value)) {
 			return [];
 		};
-		return Util.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
+		return UtilCommon.arrayUnique(value.map(it => String(it || '')).filter(it => !this.isEmpty(it)));
 	};
 
 	private isEmpty (v: any) {
@@ -437,7 +437,7 @@ class Relation {
 	};
 
 	public getTimestampForQuickOption (value: any, option: I.FilterQuickOption) {
-		const time = Util.time();
+		const time = UtilCommon.time();
 
 		switch (option) {
 			case I.FilterQuickOption.Yesterday: {

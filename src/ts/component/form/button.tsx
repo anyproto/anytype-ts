@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util, Preview } from 'Lib';
+import { I, UtilCommon, Preview } from 'Lib';
 import { Icon } from 'Component';
 
 class Button extends React.Component<I.ButtonComponent> {
@@ -37,7 +37,7 @@ class Button extends React.Component<I.ButtonComponent> {
 						onMouseDown={onClick} 
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave}
-						{...Util.dataProps(dataset)}
+						{...UtilCommon.dataProps(dataset)}
 					>
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
@@ -57,7 +57,7 @@ class Button extends React.Component<I.ButtonComponent> {
 						onMouseDown={onClick} 
 						onMouseEnter={this.onMouseEnter} 
 						onMouseLeave={this.onMouseLeave} 
-						{...Util.dataProps(dataset)}
+						{...UtilCommon.dataProps(dataset)}
 					/>
 				);
 				break;

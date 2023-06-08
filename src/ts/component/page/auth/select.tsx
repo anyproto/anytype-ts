@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Title, Label, Error, Button, Header, Footer } from 'Component';
-import { I, Util, translate, C } from 'Lib';
+import { I, UtilCommon, translate, C } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -46,11 +46,11 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	};
 	
 	onLogin (e: any) {
-		Util.route('/auth/login');
+		UtilCommon.route('/auth/login');
 	};
 	
 	onRegister (e: any) {
-		Util.route('/auth/register/register');
+		UtilCommon.route('/auth/register/register');
 	};
 	
 });

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Cover, Icon } from 'Component';
 import { commonStore, detailStore, blockStore } from 'Store';
-import { I, C, DataUtil, Action, translate, Util } from 'Lib';
+import { I, C, UtilData, Action, translate, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -36,7 +36,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 		const { loading } = this.state;
 		const { rootId, className, onClick } = this.props;
 		const contextId = this.getRootId();
-		const check = DataUtil.checkDetails(contextId, rootId);
+		const check = UtilData.checkDetails(contextId, rootId);
 		const object = detailStore.get(contextId, rootId);
 		const { name, description, coverType, coverId, coverX, coverY, coverScale } = object;
 		const author = detailStore.get(contextId, object.creator, []);
@@ -61,7 +61,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 			const { text, style, checked } = content;
 			const childBlocks = blockStore.getChildren(contextId, item.id);
 			const length = childBlocks.length;
-			const cn = [ 'element', DataUtil.blockClass(item), item.className ];
+			const cn = [ 'element', UtilData.blockClass(item), item.className ];
 
 			let bullet = null;
 			let inner = null;
@@ -298,7 +298,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								<div className="name">{name}</div>
 								<div className="description">{description}</div>
 								<div className="featured">
-									{!type._empty_ && !type.isDeleted ? Util.shorten(type.name, 32) : (
+									{!type._empty_ && !type.isDeleted ? UtilCommon.shorten(type.name, 32) : (
 										<span className="textColor-red">
 											{translate('commonDeletedType')}
 										</span>

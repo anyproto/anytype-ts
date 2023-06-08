@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Title, Input, Error, Button, Header, Footer, Icon } from 'Component';
-import { I, Util, translate, C, keyboard } from 'Lib';
+import { I, UtilCommon, translate, C, keyboard } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -78,7 +78,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			};
 
 			authStore.phraseSet(phrase);
-			Util.route('/auth/account-select');
+			UtilCommon.route('/auth/account-select');
 		});
 	};
 
@@ -89,7 +89,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	onCancel (e: any) {
-		Util.route('/auth/select');
+		UtilCommon.route('/auth/select');
 	};
 	
 });

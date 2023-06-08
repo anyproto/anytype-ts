@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import * as Docs from 'Docs';
 import { Label, Icon, Cover, Button } from 'Component';
-import { I, Util, translate } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import Block from 'Component/block/help';
 import Url from 'json/url.json';
 
@@ -51,8 +51,8 @@ class PopupHelp extends React.Component<I.Popup, State> {
 					</div>
 					<div className="side right">
 						<Label text={translate('popupHelpLabel')} />
-						<Icon onClick={(e) => { Util.onUrl(Url.telegram); }} className="telegram" />
-						<Icon onClick={(e) => { Util.onUrl(Url.twitter); }} className="twitter" />
+						<Icon onClick={(e) => { UtilCommon.onUrl(Url.telegram); }} className="telegram" />
+						<Icon onClick={(e) => { UtilCommon.onUrl(Url.twitter); }} className="twitter" />
 					</div>
 				</div>
 				
@@ -80,13 +80,13 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		this.rebind();
 		this.resize();
 
-		Util.renderLinks($(this.node));
+		UtilCommon.renderLinks($(this.node));
 	};
 
 	componentDidUpdate () {
 		this.resize();
 
-		Util.renderLinks($(this.node));
+		UtilCommon.renderLinks($(this.node));
 	};
 
 	componentWillUnmount () {
@@ -107,7 +107,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		const { param } = this.props;
 		const { data } = param;
 
-		return Util.toUpperCamelCase(data.document);
+		return UtilCommon.toUpperCamelCase(data.document);
 	};
 
 	getBlocks () {
@@ -154,7 +154,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const hh = Util.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
 
 		loader.css({ width: obj.width(), height: obj.height() });
 		position();

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon } from 'Component';
-import { I, C, Storage, Util, analytics, Action, keyboard, translate } from 'Lib';
+import { I, C, Storage, UtilCommon, analytics, Action, keyboard, translate } from 'Lib';
 import { popupStore, detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -103,7 +103,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { loading } = this.state;
 		const sections = this.getSections().filter(it => !it.isHidden);
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const cnr = [ 'side', 'right', Util.toCamelCase('tab-' + page) ];
+		const cnr = [ 'side', 'right', UtilCommon.toCamelCase('tab-' + page) ];
 		const length = sections.length;
 
 		if (!length) {
@@ -319,7 +319,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut(Util.isPlatformMac() ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
+		keyboard.shortcut(UtilCommon.isPlatformMac() ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 	};
 
 	onMouseDown (e: any) {

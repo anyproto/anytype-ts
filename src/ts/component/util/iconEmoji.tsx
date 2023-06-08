@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Emoji } from 'emoji-mart';
 import { commonStore, menuStore } from 'Store';
-import { SmileUtil } from 'Lib';
+import { UtilSmile } from 'Lib';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
@@ -59,7 +59,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 			if (icon.match(':')) {
 				colons = icon;
 			} else {
-				const data = SmileUtil.data(icon);
+				const data = UtilSmile.data(icon);
 				if (data) {
 					colons = data.colons;
 					skin = data.skin;
@@ -68,7 +68,7 @@ const IconEmoji = observer(class IconEmoji extends React.Component<Props> {
 
 			if (colons) {
 				if (asImage) {
-					element = <img src={SmileUtil.srcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
+					element = <img src={UtilSmile.srcFromColons(colons, skin)} className={[ 'smileImage', 'c' + size ].join(' ')} onDragStart={(e: any) => { e.preventDefault(); }} />;
 				} else {
 					element = <Emoji native={native} emoji={colons} set="apple" size={size} />;
 				};

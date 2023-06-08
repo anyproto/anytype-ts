@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { Util } from 'Lib';
+import { UtilCommon } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
@@ -26,7 +26,7 @@ class Frame extends React.Component<Props> {
 			<div
 				ref={node => this.node = node}
 				className={cn.join(' ')}
-				{...Util.dataProps(dataset)}
+				{...UtilCommon.dataProps(dataset)}
 			>
 				{children}
 			</div>
