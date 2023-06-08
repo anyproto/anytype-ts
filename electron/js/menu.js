@@ -44,7 +44,7 @@ class MenuManager {
 					Separator,
 
 					{ label: 'Check for updates', click: () => { Api.updateCheck(this.win); } },
-					{ label: 'Settings', click: () => { this.openSettings('index'); } },
+					{ label: 'Settings', click: () => { this.openSettings('account'); } },
 
 					Separator,
 
