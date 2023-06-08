@@ -345,6 +345,10 @@ class Dispatcher {
 						block.content.relations = data.getRelations().getValueList() || [];
 					};
 
+					if (data.hasTargetblockid()) {
+						block.content.targetBlockId = data.getTargetblockid().getValue();
+					};
+
 					if (data.hasFields()) {
 						block.content.fields = Decode.decodeStruct(data.getFields());
 					};

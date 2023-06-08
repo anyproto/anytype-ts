@@ -20,6 +20,7 @@ export interface WidgetComponent {
 	setEditing?: (v: boolean) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
 	getLimit?: (content: ContentWidget) => number;
+	sortFavorite?: (records: string[]) => string[];
 };
 
 export interface WidgetTreeItem {

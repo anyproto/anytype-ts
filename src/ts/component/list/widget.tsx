@@ -72,19 +72,21 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			const blocks = blockStore.getChildren(widgets, widgets, (block: I.Block) => {
 				const childrenIds = blockStore.getChildrenIds(widgets, block.id);
 				if (!childrenIds.length) {
-					return;
+					return false;
 				};
 
 				const child = blockStore.getLeaf(widgets, childrenIds[0]);
 				if (!child) {
-					return;
+					return false;
 				};
 
-				if (Object.values(Constant.widgetId).includes(child.content.targetBlockId)) {
+				const target = child.content.targetBlockId;
+
+				if (Object.values(Constant.widgetId).includes(target)) {
 					return true;
 				};
 
-				const object = detailStore.get(widgets, child.content.targetBlockId, [ 'isArchived', 'isDeleted' ], true);
+				const object = detailStore.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
 				if (object._empty_ || object.isArchived || object.isDeleted) {
 					return false;
 				};

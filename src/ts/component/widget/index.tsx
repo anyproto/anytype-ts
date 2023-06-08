@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, ObjectName, Loader } from 'Component';
+import { Icon, ObjectName, Loader } from 'Component';
 import { I, Util, ObjectUtil, DataUtil, MenuUtil, translate, Storage, Action, analytics } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -19,17 +19,10 @@ interface Props extends I.WidgetComponent {
 	onDragOver?: (e: React.MouseEvent, blockId: string) => void;
 };
 
-interface State {
-	loading: boolean;
-};
-
-const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, State> {
+const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	node = null;
 	ref = null;
-	state = {
-		loading: false
-	};
 
 	constructor (props: Props) {
 		super(props);
@@ -43,19 +36,26 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		this.isCollection = this.isCollection.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
+		this.sortFavorite = this.sortFavorite.bind(this);
 	};
 
-	render (): React.ReactNode {
-		const { loading } = this.state;
+	render () {
 		const { block, isPreview, isEditing, className, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
-		const { layout, limit } = block.content;
+
+		if (!child) {
+			return null;
+		};		
+
+		const { root } = blockStore;
+		const childrenIds = blockStore.getChildrenIds(root, root);
+		const { layout, limit, viewId } = block.content;
 		const { targetBlockId } = child?.content || {};
-		const cn = [ 'widget', Util.toCamelCase('widget-' + I.WidgetLayout[layout]) ];
+		const cn = [ 'widget', Util.toCamelCase(`widget-${I.WidgetLayout[layout]}`) ];
 		const object = this.getObject();
-		const platform = Util.getPlatform();
 		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !Util.isPlatformMac());
-		const key = `widget-${block.id}`;
+		const childKey = `widget-${child?.id}-${layout}`;
+
 		const props = {
 			...this.props,
 			parent: block,
@@ -63,6 +63,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			isCollection: this.isCollection,
 			getData: this.getData,
 			getLimit: this.getLimit,
+			sortFavorite: this.sortFavorite,
 		};
 
 		if (className) {
@@ -124,34 +125,30 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			);
 		};
 
-		if (loading) {
-			content = <Loader />;
-		} else {
-			switch (layout) {
+		switch (layout) {
 
-				case I.WidgetLayout.Space: {
-					content = <WidgetSpace key={key} ref={ref => this.ref = ref} {...this.props} {...props} />;
-					break;
-				};
-
-				case I.WidgetLayout.Tree: {
-					content = <WidgetTree key={key} ref={ref => this.ref = ref} {...this.props} {...props} />;
-					break;
-				};
-
-				case I.WidgetLayout.List:
-				case I.WidgetLayout.Compact: {
-					content = <WidgetList key={key} ref={ref => this.ref = ref} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
-					break;
-				};
-
+			case I.WidgetLayout.Space: {
+				content = <WidgetSpace key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				break;
 			};
+
+			case I.WidgetLayout.Tree: {
+				content = <WidgetTree key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				break;
+			};
+
+			case I.WidgetLayout.List:
+			case I.WidgetLayout.Compact: {
+				content = <WidgetList key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
+				break;
+			};
+
 		};
 
 		return (
 			<div
 				ref={node => this.node = node}
-				id={key}
+				id={`widget-${block.id}`}
 				className={cn.join(' ')}
 				draggable={isEditing}
 				onDragStart={e => onDragStart(e, block.id)}
@@ -374,6 +371,20 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			limit,
 			keys: Constant.sidebarRelationKeys,
 		}, callBack);
+	};
+
+	sortFavorite (records: string[]): string[] {
+		const { root } = blockStore;
+		const ids = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+
+		return Util.objectCopy(records || []).sort((c1: string, c2: string) => {
+			const i1 = ids.indexOf(c1);
+			const i2 = ids.indexOf(c2);
+
+			if (i1 > i2) return 1;
+			if (i1 < i2) return -1;
+			return 0;
+		});
 	};
 
 	onSetPreview () {
