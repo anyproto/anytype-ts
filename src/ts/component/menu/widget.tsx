@@ -325,8 +325,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
 						};
 
-						analytics.event('ChangeWidgetSource', {
-							layout: I.WidgetLayout[this.layout],
+						analytics.event('ChangeWidgetLayout', {
+							widgetLayout: I.WidgetLayout[this.layout],
 							route: isEditing ? 'Inner' : 'AddWidget',
 							target: this.target
 						});
@@ -349,7 +349,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
 						};
 
-						analytics.event('ChangeWidgetlimit', {
+						analytics.event('ChangeWidgetLimit', {
 							limit: this.limit,
 							route: isEditing ? 'Inner' : 'AddWidget',
 							target: this.target

@@ -390,23 +390,26 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	onSetPreview () {
 		const { block, isPreview, setPreview } = this.props;
 		const object = this.getObject();
+		const child = this.getTargetBlock();
+		const { targetBlockId } = child?.content;
 
 		let blockId = '';
-		let eventName = 'ScreenHome';
-		let eventData: any = { view: 'Widget' };
+		let event = 'ScreenHome';
+		let data: any = { view: 'Widget' };
 
 		if (!isPreview) {
 			blockId = block.id;
-			eventName = 'SelectHomeTab';
-			eventData.tab = this.isCollection(block.id) ? object.name : analytics.typeMapper(object.type);
+			event = 'SelectHomeTab';
+			data.tab = this.isCollection(targetBlockId) ? object.name : analytics.typeMapper(object.type);
 		};
 
 		setPreview(blockId);
-		analytics.event(eventName, eventData);
+		analytics.event(event, data);
 	};
 
 	onDragEnd () {
 		const target = this.getObject();
+
 		analytics.event('ReorderWidget', { target });
 	};
 
