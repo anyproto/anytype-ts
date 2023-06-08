@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
-import { ObjectUtil, Util } from 'Lib';
+import { UtilObject, UtilCommon } from 'Lib';
 import { popupStore } from 'Store';
 
 interface Props {
@@ -27,7 +27,7 @@ class Deleted extends React.Component<Props> {
 			onClick = () => popupStore.close('page');
 		} else {
 			textButton = 'Back to dashboard';
-			onClick = () => ObjectUtil.openHome('route');
+			onClick = () => UtilObject.openHome('route');
 		};
 
 		return (

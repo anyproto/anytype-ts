@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Error, Header, Footer, Loader, Title, Label, Button } from 'Component';
-import { I, C, Util, DataUtil, Renderer, Action } from 'Lib';
+import { I, C, UtilCommon, UtilData, Renderer, Action } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -43,12 +43,12 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		authStore.accountListClear();
 
 		C.WalletRecover(walletPath, phrase, () => {
-			DataUtil.createSession(() => {
+			UtilData.createSession(() => {
 				C.AccountRecover((message) => {
 					let error = '';
 					
 					if (message.error.code) {
-						Util.checkError(message.error.code);
+						UtilCommon.checkError(message.error.code);
 						error = Errors.AccountRecover[message.error.code] || message.error.description;
 					};
 
@@ -70,7 +70,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		authStore.accountSet(account);
 
 		Renderer.send('keytarSet', account.id, phrase);
-		Util.route('/auth/setup/select');
+		UtilCommon.route('/auth/setup/select');
 	};
 
 });

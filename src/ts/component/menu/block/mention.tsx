@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, keyboard, Util, DataUtil, ObjectUtil, MenuUtil, Mark, analytics } from 'Lib';
+import { I, keyboard, UtilCommon, UtilData, UtilObject, UtilMenu, Mark, analytics } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';
@@ -209,7 +209,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { skipIds } = data;
 		const filter = this.getFilter();
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes(), },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes(), },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
@@ -223,7 +223,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			fullText: filter,
@@ -276,12 +276,12 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { from } = commonStore.filter;
 
 		const cb = (id: string, name: string) => {
-			name = String(name || ObjectUtil.defaultName('Page'));
-			name = Util.shorten(name, 30);
+			name = String(name || UtilObject.defaultName('Page'));
+			name = UtilCommon.shorten(name, 30);
 
 			const to = from + name.length;
 
-			let marks = Util.objectCopy(data.marks || []);
+			let marks = UtilCommon.objectCopy(data.marks || []);
 			marks = Mark.adjust(marks, from, name.length);
 			marks = Mark.toggle(marks, { 
 				type: I.MarkType.Mention, 
@@ -296,7 +296,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			const type = dbStore.getType(commonStore.type);
 			const name = this.getFilter();
 
-			ObjectUtil.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};

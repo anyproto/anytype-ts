@@ -135,8 +135,7 @@
 		.side.right.tabImportMarkdown,
 		.side.right.tabImportCsv,
 		.side.right.tabExportMarkdown,
-		.side.right.tabExportProtobuf,
-		.side.right.tabStorageManager
+		.side.right.tabExportProtobuf
 		{ padding-top: 22px; }
 
 		.side.right.tabSpaceIndex {
@@ -171,11 +170,17 @@
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
 
-		.side.right.tabStorageManager { padding-bottom: 0px; }
+		.side.right.tabStorageManager { padding: 22px 0px 0px 0px; }
 		.side.right.tabStorageManager {
 			> .wrap { height: 100%; display: flex; flex-direction: column; }
+			> .wrap {
+				.head, .title { padding: 0px 54px; }
+			}
 
 			.objectManagerWrapper {
+				.controlsWrapper, .ReactVirtualized__List { padding: 0px 54px; }
+				.emptySearch { margin: 0px 54px; }
+
 				.items {
 					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }
 					.item { gap: 0px 12px; margin-bottom: 0px; }

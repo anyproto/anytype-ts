@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { Icon, IconObject } from 'Component';
 import { commonStore, detailStore, blockStore, popupStore } from 'Store';
-import { I, ObjectUtil, keyboard, Storage, Util, Preview } from 'Lib';
+import { I, UtilObject, keyboard, Storage, UtilCommon, Preview } from 'Lib';
 import Constant from 'json/constant.json';
 
 class Navigation extends React.Component {
@@ -32,7 +32,7 @@ class Navigation extends React.Component {
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const isWin = Util.isPlatformWindows();
+		const isWin = UtilCommon.isPlatformWindows();
 		const cb = isWin ? `${alt} + ←` : `${cmd} + ←`;
 		const cf = isWin ? `${alt} + →` : `${cmd} + →`;
 
@@ -127,7 +127,7 @@ class Navigation extends React.Component {
 	};
 
 	onGraph () {
-		ObjectUtil.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
+		UtilObject.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
@@ -145,7 +145,7 @@ class Navigation extends React.Component {
 
 		const node = $(this.node);
 		const coords = Storage.get('navigation') || {};
-		const { ww, wh } = Util.getWindowDimensions();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
 		
 		this.height = node.outerHeight();
 		this.width = node.outerWidth();
@@ -213,7 +213,7 @@ class Navigation extends React.Component {
 	};
 
 	checkCoords (x: number, y: number): { x: number, y: number } {
-		const { ww, wh } = Util.getWindowDimensions();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
 
 		x = Number(x) || 0;
 		x = Math.floor(x);
@@ -222,7 +222,7 @@ class Navigation extends React.Component {
 
 		y = Number(y) || 0;
 		y = Math.floor(y);
-		y = Math.max(Util.sizeHeader(), y);
+		y = Math.max(UtilCommon.sizeHeader(), y);
 		y = Math.min(wh - this.height, y);
 
 		return { x, y };

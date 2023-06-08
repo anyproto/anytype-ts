@@ -4,7 +4,7 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, Util, DataUtil, ObjectUtil, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -98,7 +98,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		let { groupRelationKey, pageLimit } = view;
 		let ViewComponent: any = null;
-		let className = [ Util.toCamelCase('view-' + I.ViewType[view.type]) ];
+		let className = [ UtilCommon.toCamelCase('view-' + I.ViewType[view.type]) ];
 		let head = null;
 		let body = null;
 
@@ -180,8 +180,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onRef={(ref: any, id: string) => this.refCells.set(id, ref)} 
 						{...this.props}
 						{...dataviewProps}
-						bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-						pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
+						bodyContainer={UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page')}
+						pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
 						onCellClick={this.onCellClick}
 						onCellChange={this.onCellChange}
 						onContext={this.onContext}
@@ -387,7 +387,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 
-		return Util.arrayUnique(keys);
+		return UtilCommon.arrayUnique(keys);
 	};
 
 	getLimit (type: I.ViewType): number {
@@ -416,7 +416,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 
-		return this.applyObjectOrder(Util.objectCopy(records));
+		return this.applyObjectOrder(UtilCommon.objectCopy(records));
 	};
 
 	getRecord (recordId: string) {
@@ -431,7 +431,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		let { name, layout, isReadonly, isDeleted, snippet } = item;
-		if (name == ObjectUtil.defaultName('Page')) {
+		if (name == UtilObject.defaultName('Page')) {
 			name = '';
 		};
 		if (layout == I.ObjectLayout.Note) {
@@ -521,7 +521,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			menuParam.horizontal = I.MenuDirection.Center;
 			menuParam.recalcRect = () => {
-				const { ww, wh } = Util.getWindowDimensions();
+				const { ww, wh } = UtilCommon.getWindowDimensions();
 				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
 			};
 		};
@@ -655,7 +655,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		DataUtil.checkTemplateCnt(setOf, (message: any) => {
+		UtilData.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
 				withPopup ? showPopup() : showMenu();
 			} else {
@@ -692,10 +692,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				if (ids.length) {
 					return;
 				} else {
-					ObjectUtil.openWindow(record);
+					UtilObject.openWindow(record);
 				};
 			} else {
-				ObjectUtil.openPopup(record);
+				UtilObject.openPopup(record);
 			};
 		} else {
 			ref.onClick(e);
@@ -979,7 +979,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
-		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
+		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 
 		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		for (const type of types) {

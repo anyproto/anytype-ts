@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, Util, Storage, DataUtil } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -319,7 +319,7 @@ class Action {
 
 		popupStore.open('confirm', {
 			data: {
-				title: `Are you sure you want to delete ${count} ${Util.cntWord(count, 'object', 'objects')}?`,
+				title: `Are you sure you want to delete ${count} ${UtilCommon.cntWord(count, 'object', 'objects')}?`,
 				text: `These objects will be deleted irrevocably. You can't undo this action.`,
 				textConfirm: 'Delete',
 				onConfirm: () => { 
@@ -336,7 +336,7 @@ class Action {
 		const { walletPath } = authStore;
 
 		this.openFile([ 'zip' ], paths => {
-			C.AccountRecoverFromLegacyExport(paths[0], walletPath, Util.rand(1, Constant.iconCnt), (message: any) => {
+			C.AccountRecoverFromLegacyExport(paths[0], walletPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
 				if (onError(message.error)) {
 					return;
 				};
@@ -353,7 +353,7 @@ class Action {
 							return;
 						};
 
-						DataUtil.onAuth(message.account, () => {
+						UtilData.onAuth(message.account, () => {
 							window.setTimeout(() => {
 								popupStore.open('migration', { data: { type: 'import' } });
 							}, Constant.delay.popup);

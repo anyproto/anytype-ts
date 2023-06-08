@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
-import { C, I, ObjectUtil, Util, translate } from 'Lib';
+import { C, I, UtilObject, UtilCommon, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import Constant from 'json/constant.json';
@@ -66,7 +66,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 
             window.setTimeout(() => {
                 this.loading = false;
-                ObjectUtil.openRoute({ layout: I.ObjectLayout.Graph });
+                UtilObject.openRoute({ layout: I.ObjectLayout.Graph });
             }, 600);
         });
     };

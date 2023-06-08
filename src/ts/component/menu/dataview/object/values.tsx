@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, ObjectUtil, keyboard, Relation } from 'Lib';
+import { I, UtilObject, keyboard, Relation } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 
 const HEIGHT = 28;
@@ -203,7 +203,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		if (item.id == 'add') {
 			this.onAdd();
 		} else {
-			ObjectUtil.openEvent(e, item);
+			UtilObject.openEvent(e, item);
 		};
 	};
 

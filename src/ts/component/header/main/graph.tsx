@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, DataUtil, keyboard, sidebar } from 'Lib';
+import { I, UtilObject, UtilData, keyboard, sidebar } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
@@ -64,7 +64,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
+		UtilObject.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
@@ -77,7 +77,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				rootId: this.rootId,
 				blockId: this.rootId,
 				blockIds: [ this.rootId ],
-				filters: DataUtil.graphFilters(),
+				filters: UtilData.graphFilters(),
 				filter: graph.filter,
 				canAdd: true,
 				onSelect: (item: any) => {

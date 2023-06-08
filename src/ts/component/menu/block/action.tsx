@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
-import { I, C, keyboard, DataUtil, ObjectUtil, MenuUtil, focus, Action, translate, analytics, Dataview } from 'Lib';
+import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -191,16 +191,16 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let sections: any[] = [];
 		
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: 'Text style', children: MenuUtil.getBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: 'List style', children: MenuUtil.getBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', children: MenuUtil.getTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', children: MenuUtil.getTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: MenuUtil.getTurnFile() };
+			const turnText = { id: 'turnText', icon: '', name: 'Text style', children: UtilMenu.getBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: 'List style', children: UtilMenu.getBlockList() };
+			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', children: UtilMenu.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', children: UtilMenu.getTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: UtilMenu.getTurnFile() };
 			const action = { id: 'action', icon: '', name: 'Actions', children: [] };
 			const align = { id: 'align', icon: '', name: 'Align', children: [] };
-			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: MenuUtil.getBgColors() };
-			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: MenuUtil.getTextColors() };
-			const dataview = { id: 'dataview', icon: '', name: 'Dataview', children: MenuUtil.getDataviewActions(rootId, blockId) };
+			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: UtilMenu.getBgColors() };
+			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: UtilMenu.getTextColors() };
+			const dataview = { id: 'dataview', icon: '', name: 'Dataview', children: UtilMenu.getDataviewActions(rootId, blockId) };
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -258,18 +258,18 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			if (hasAlign) {
 				sections.push({ 
 					...align, 
-					children: MenuUtil.getAlign(hasQuote),
+					children: UtilMenu.getAlign(hasQuote),
 				});
 			};
 
 			if (hasAction) {
 				sections.push({ 
 					...action, 
-					children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasBookmark }),
+					children: UtilMenu.getActions({ hasText, hasFile, hasLink, hasBookmark }),
 				});
 			};
 
-			sections = MenuUtil.sectionsFilter(sections, filter);
+			sections = UtilMenu.sectionsFilter(sections, filter);
 		} else {
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -314,7 +314,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			const section1: any = { 
-				children: MenuUtil.getActions({ hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
+				children: UtilMenu.getActions({ hasText, hasFile, hasLink, hasDataview, hasBookmark, hasTurnObject })
 			};
 
 			const section2: any = { 
@@ -324,7 +324,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasDataview) {
-				section2.children = section2.children.concat(MenuUtil.getDataviewActions(rootId, blockId));
+				section2.children = section2.children.concat(UtilMenu.getDataviewActions(rootId, blockId));
 			};
 
 			if (hasLink) {
@@ -340,15 +340,15 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasTurnText) {
-				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
+				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
 			};
 
 			if (hasTurnDiv) {
-				section2.children.push({ id: 'turnStyle', icon: DataUtil.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
+				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
 			};
 
 			if (hasAlign) {
-				section2.children.push({ id: 'align', icon: [ 'align', DataUtil.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
+				section2.children.push({ id: 'align', icon: [ 'align', UtilData.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
 			};
 
 			if (hasColor) {
@@ -362,7 +362,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			sections = [ section1, section2 ];
 		};
 
-		return MenuUtil.sectionsMap(sections);
+		return UtilMenu.sectionsMap(sections);
 	};
 
 	checkFlagByObject (id: string): boolean {
@@ -486,7 +486,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						this.moveToPage(item.id);
@@ -512,8 +512,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					position: I.BlockPosition.Bottom,
 					skipIds,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 					canAdd: true,
 					onSelect: () => { close(); }
@@ -538,7 +538,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 				
 			case 'background': {
-				ids = DataUtil.selectionGet(blockId, false, false, this.props);
+				ids = UtilData.selectionGet(blockId, false, false, this.props);
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -653,7 +653,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 
-		const ids = DataUtil.selectionGet(blockId, false, false, data);
+		const ids = UtilData.selectionGet(blockId, false, false, data);
 
 		switch (item.itemId) {
 			case 'download': {
@@ -662,27 +662,27 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			case 'openBookmarkAsObject': {
-				ObjectUtil.openPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
+				UtilObject.openPopup({ id: block.content.targetObjectId, layout: I.ObjectLayout.Bookmark });
 
 				analytics.event('OpenAsObject', { type: block.type });
 				break;
 			};
 
 			case 'openFileAsObject': {
-				ObjectUtil.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
+				UtilObject.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 
 				analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 				break;
 			};
 
 			case 'openDataviewFullscreen': {
-				ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
+				UtilObject.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId } });
 				analytics.event('InlineSetOpenFullscreen');
 				break;
 			};
 
 			case 'openDataviewObject': {
-				ObjectUtil.openPopup(detailStore.get(rootId, block.content.targetObjectId));
+				UtilObject.openPopup(detailStore.get(rootId, block.content.targetObjectId));
 				break;
 			};
 					

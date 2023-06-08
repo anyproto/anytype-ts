@@ -6,7 +6,7 @@ import { SortableContainer } from 'react-sortable-hoc';
 import $ from 'jquery';
 import { Icon } from 'Component';
 import { dbStore, menuStore, blockStore } from 'Store';
-import { I, C, Util, keyboard, analytics, Relation } from 'Lib';
+import { I, C, UtilCommon, keyboard, analytics, Relation } from 'Lib';
 import Item from 'Component/menu/item/filter';
 import Constant from 'json/constant.json';
 
@@ -308,7 +308,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 			return [];
 		};
 
-		return Util.objectCopy(view.filters || []).map((it: any) => {
+		return UtilCommon.objectCopy(view.filters || []).map((it: any) => {
 			return { 
 				...it, 
 				relation: dbStore.getRelationByKey(it.relationKey),

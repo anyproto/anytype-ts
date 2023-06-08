@@ -223,7 +223,7 @@
         .loading, .deleted { color: $colorSecondary; }
 
 		.linkCard.c48.withIcon {
-			.iconObject { background-color: $colorBgIcon; }
+			.iconObject { background-color: $colorLineTertiary; }
 		}
     }
 	.block.blockLink.text {
@@ -251,8 +251,8 @@
     /* BlockDiv */
 
     .block.blockDiv {
-        .line { border-color: $colorSecondary; }
-        .dot { background: $colorSecondary !important; }
+        .line { border-color: $colorLineSecondary; }
+        .dot { background: $colorLineSecondary !important; }
     }
 
     /* BlockLatex */

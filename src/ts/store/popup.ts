@@ -1,7 +1,7 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, focus, Preview } from 'Lib';
+import { I, UtilCommon, focus, Preview } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -119,7 +119,7 @@ class PopupStore {
 			item.param.onClose();
 		};
 		
-		const el = $(`#${Util.toCamelCase(`popup-${id}`)}`);
+		const el = $(`#${UtilCommon.toCamelCase(`popup-${id}`)}`);
 		const filtered = this.popupList.filter(it => it.id != id);
 
 		if (el.length) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, keyboard, sidebar } from 'Lib';
+import { I, UtilObject, keyboard, sidebar } from 'Lib';
 import { popupStore } from 'Store';
 
 interface Props extends I.HeaderComponent {
@@ -41,7 +41,7 @@ const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<P
 
 	onOpen () {
 		popupStore.closeAll(null, () => {
-			ObjectUtil.openRoute({ layout: this.props.layout });
+			UtilObject.openRoute({ layout: this.props.layout });
 		});
 	};
 

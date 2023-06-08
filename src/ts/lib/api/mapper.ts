@@ -1,7 +1,7 @@
 import { Rpc } from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
 import { Encode, Decode } from './struct';
-import { I, M, Util } from 'Lib';
+import { I, M, UtilCommon } from 'Lib';
 
 export const Mapper = {
 
@@ -242,8 +242,8 @@ export const Mapper = {
 		Block: (obj: any): I.Block => {
 			const cc = obj.getContentCase();
 			const type = Mapper.BlockType(obj.getContentCase());
-			const fn = 'get' + Util.ucFirst(type);
-			const fm = Util.toUpperCamelCase('block-' + type);
+			const fn = 'get' + UtilCommon.ucFirst(type);
+			const fm = UtilCommon.toUpperCamelCase('block-' + type);
 			const content = obj[fn] ? obj[fn]() : {};
 			const item: I.Block = {
 				id: obj.getId(),
@@ -429,7 +429,7 @@ export const Mapper = {
 
 		BoardGroup: (obj: any): I.BoardGroup => {
 			const type = Mapper.BoardGroupType(obj.getValueCase());
-			const field = obj['get' + Util.ucFirst(type)]();
+			const field = obj['get' + UtilCommon.ucFirst(type)]();
 
 			let value: any = null;
 			switch (type) {
@@ -647,7 +647,7 @@ export const Mapper = {
 		},
 
 		Block: (obj: any) => {
-			obj.content = Util.objectCopy(obj.content || {});
+			obj.content = UtilCommon.objectCopy(obj.content || {});
 	
 			const block = new Model.Block();
 	
@@ -664,8 +664,8 @@ export const Mapper = {
 				block.setFields(Encode.encodeStruct(obj.fields || {}));
 			};
 
-			const fb = Util.toCamelCase('set-' + obj.type.toLowerCase());
-			const fm = Util.toUpperCamelCase('block-' + obj.type);
+			const fb = UtilCommon.toCamelCase('set-' + obj.type.toLowerCase());
+			const fm = UtilCommon.toUpperCamelCase('block-' + obj.type);
 
 			if (block[fb] && Mapper.To[fm]) {
 				block[fb](Mapper.To[fm](obj.content));
@@ -718,7 +718,7 @@ export const Mapper = {
 		},
 
 		View: (obj: I.View) => {
-			obj = new M.View(Util.objectCopy(obj));
+			obj = new M.View(UtilCommon.objectCopy(obj));
 			
 			const item = new Model.Block.Content.Dataview.View();
 

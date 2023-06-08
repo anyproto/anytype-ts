@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, keyboard, ObjectUtil, analytics } from 'Lib';
+import { I, C, keyboard, UtilObject, analytics } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -69,7 +69,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					ref={ref => this.ref = ref}
 					id="value"
 					readonly={readonly || !isEditing}
-					placeholder={ObjectUtil.defaultName(isCollection ? 'Collection' : 'Set')}
+					placeholder={UtilObject.defaultName(isCollection ? 'Collection' : 'Set')}
 					onFocus={this.onFocus}
 					onMouseDown={this.onTitle}
 					onBlur={this.onBlur}
@@ -251,7 +251,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			};
 
 			case 'sourceOpen': {
-				ObjectUtil.openAuto(object);
+				UtilObject.openAuto(object);
 				analytics.event('InlineSetOpenSource');
 				break;
 			};
@@ -310,7 +310,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const object = getTarget();
 
 		let name = String(object.name || '');
-		if ((name == ObjectUtil.defaultName('Page')) || (name == ObjectUtil.defaultName('Set'))) {
+		if ((name == UtilObject.defaultName('Page')) || (name == UtilObject.defaultName('Set'))) {
 			name = '';
 		};
 
@@ -343,12 +343,12 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			return;
 		};
 
-		if ((value == ObjectUtil.defaultName('Page')) || (value == ObjectUtil.defaultName('Set'))) {
+		if ((value == UtilObject.defaultName('Page')) || (value == UtilObject.defaultName('Set'))) {
 			value = '';
 		};
 
 		if (targetObjectId) {
-			ObjectUtil.setName(targetObjectId, this.getValue());
+			UtilObject.setName(targetObjectId, this.getValue());
 		};
 		
 		if (this.ref) {
@@ -361,7 +361,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { targetObjectId } = block.content;
 
 		if (targetObjectId) {
-			ObjectUtil.setIcon(targetObjectId, icon, '');
+			UtilObject.setIcon(targetObjectId, icon, '');
 		};
 	};
 
@@ -370,14 +370,14 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		const { targetObjectId } = block.content;
 
 		if (targetObjectId) {
-			ObjectUtil.setIcon(targetObjectId, '', hash);
+			UtilObject.setIcon(targetObjectId, '', hash);
 		};
 	};
 
 	onFullscreen () {
 		const { rootId, block } = this.props;
 
-		ObjectUtil.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
+		UtilObject.openPopup({ layout: I.ObjectLayout.Block, id: rootId, _routeParam_: { blockId: block.id } });
 		analytics.event('InlineSetOpenFullscreen');
 	};
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, ObjectUtil } from 'Lib';
+import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilObject } from 'Lib';
 import { popupStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 
@@ -99,10 +99,10 @@ class MenuHelp extends React.Component<I.Menu> {
 		const storeTab = Storage.get('tabStore');
 		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
 		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
-		const home = ObjectUtil.getSpaceDashboard();
+		const home = UtilObject.getSpaceDashboard();
 
 		close();
-		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
+		analytics.event(UtilCommon.toUpperCamelCase([ getId(), item.id ].join('-')));
 
 		Highlight.hide(item.id);
 
@@ -138,7 +138,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			case 'hints': {
 				let key = '';
 
-				if (rootId == home.id) {
+				if (isEditor && home && (rootId == home.id)) {
 					key = 'dashboard';
 				} else 
 				if (isSet) {
@@ -158,7 +158,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				} else {
 					const { page, action } = keyboard.getMatch().params;
 
-					key = Util.toCamelCase([ page, action ].join('-'));
+					key = UtilCommon.toCamelCase([ page, action ].join('-'));
 				};
 
 				if (key) {

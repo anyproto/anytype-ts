@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, DataUtil, Util, Action, ObjectUtil, keyboard, analytics } from 'Lib';
+import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, analytics } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -41,7 +41,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	render () {
 		const { isLoading, isDeleted } = this.state;
 		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
+		const check = UtilData.checkDetails(rootId);
 
 		if (isDeleted) {
 			return <Deleted {...this.props} />;
@@ -125,7 +125,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const { isPopup } = this.props;
 		const win = $(window);
 		const namespace = this.getNamespace();
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 
 		this.unbind();
 
@@ -167,7 +167,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
 				} else {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 				return;
 			};
@@ -276,9 +276,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			const win = $(window);
 			const node = $(this.node);
 			const cover = node.find('.block.blockCover');
-			const container = Util.getPageContainer(isPopup);
+			const container = UtilCommon.getPageContainer(isPopup);
 			const header = container.find('#header');
-			const hh = isPopup ? header.height() : Util.sizeHeader();
+			const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
 
 			if (cover.length) {
 				cover.css({ top: hh });

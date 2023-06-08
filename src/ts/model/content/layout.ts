@@ -1,4 +1,4 @@
-import { I, Util } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 import { observable, intercept, makeObservable } from 'mobx';
 
 class BlockContentLayout implements I.ContentLayout {
@@ -12,7 +12,7 @@ class BlockContentLayout implements I.ContentLayout {
 			style: observable,
 		});
 
-		intercept(this as any, change => Util.intercept(this, change));
+		intercept(this as any, change => UtilCommon.intercept(this, change));
 	};
 
 };

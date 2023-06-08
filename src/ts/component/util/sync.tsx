@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, Preview, DataUtil, translate, Util } from 'Lib';
+import { I, Preview, UtilData, translate, UtilCommon } from 'Lib';
 import { authStore } from 'Store';
 
 interface Props {
@@ -46,7 +46,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
-				<Icon className={DataUtil.threadColor(status)} />
+				<Icon className={UtilData.threadColor(status)} />
 				<div className="name">{translate(`threadStatus${status}`)}</div>
 			</div>
 		);
@@ -57,7 +57,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 		const status = this.getStatus();
 
 		if (status == I.ThreadStatus.Incompatible) {
-			Util.onErrorUpdate();
+			UtilCommon.onErrorUpdate();
 		} else
 		if (onClick) {
 			onClick(e);

@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget } from 'Component';
-import { C, I, M, keyboard, ObjectUtil, analytics } from 'Lib';
+import { C, I, M, keyboard, UtilObject, analytics } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
@@ -72,19 +72,21 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			const blocks = blockStore.getChildren(widgets, widgets, (block: I.Block) => {
 				const childrenIds = blockStore.getChildrenIds(widgets, block.id);
 				if (!childrenIds.length) {
-					return;
+					return false;
 				};
 
 				const child = blockStore.getLeaf(widgets, childrenIds[0]);
 				if (!child) {
-					return;
+					return false;
 				};
 
-				if (Object.values(Constant.widgetId).includes(child.content.targetBlockId)) {
+				const target = child.content.targetBlockId;
+
+				if (Object.values(Constant.widgetId).includes(target)) {
 					return true;
 				};
 
-				const object = detailStore.get(widgets, child.content.targetBlockId, [ 'isArchived', 'isDeleted' ], true);
+				const object = detailStore.get(widgets, target, [ 'isArchived', 'isDeleted' ], true);
 				if (object._empty_ || object.isArchived || object.isDeleted) {
 					return false;
 				};
@@ -135,7 +137,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						color="" 
 						className="widget" 
 						icon="store" 
-						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Store }) : null} 
+						onClick={e => !isEditing ? UtilObject.openEvent(e, { layout: I.ObjectLayout.Store }) : null} 
 					/>
 
 					<Button 
@@ -143,7 +145,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						color="" 
 						className="widget" 
 						icon="bin" 
-						onClick={e => !isEditing ? ObjectUtil.openEvent(e, { layout: I.ObjectLayout.Archive }) : null} 
+						onClick={e => !isEditing ? UtilObject.openEvent(e, { layout: I.ObjectLayout.Archive }) : null} 
 					/>
 
 					<div className="buttons">

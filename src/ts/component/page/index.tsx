@@ -2,12 +2,11 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, DataUtil, ObjectUtil } from 'Lib';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject } from 'Lib';
 import { Sidebar, Navigation } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import PageAuthInvite from './auth/invite';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
 import PageAuthPinCheck from './auth/pin/check';
@@ -34,7 +33,6 @@ import PageMainUsecase from './main/usecase';
 
 const Components: any = {
 	'/':					 PageAuthSelect,
-	'auth/invite':			 PageAuthInvite,
 	'auth/select':			 PageAuthSelect,
 	'auth/register':		 PageAuthRegister,
 	'auth/login':			 PageAuthLogin,
@@ -157,7 +155,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isIndex = !page;
 		const isAuth = page == 'auth';
 		const isMain = page == 'main';
-		const isMainIndex = isMain && (action == 'index');
 		const isPinCheck = isAuth && (action == 'pin-check');
 		const pin = Storage.get('pin');
 		const win = $(window);
@@ -172,22 +169,22 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		if (isMain && !account) {
-			Util.route('/');
+			UtilCommon.route('/');
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			Util.route('/auth/pin-check');
+			UtilCommon.route('/auth/pin-check');
 			return;
 		};
 
 		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
-			Util.route('/auth/deleted');
+			UtilCommon.route('/auth/deleted');
 			return;
 		};
 
 		if (!isPopup && Titles[action]) {
-			DataUtil.setWindowTitleText(Titles[action]);
+			UtilData.setWindowTitleText(Titles[action]);
 		};
 
 		this.setBodyClass();
@@ -202,7 +199,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		this.dashboardOnboardingCheck();
-		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
+		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
 		if (isPopup) {
@@ -214,22 +211,17 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				return;
 			};
 
-			if (isMainIndex) {
-				Survey.check(I.SurveyType.Register);
-				Survey.check(I.SurveyType.Pmf);
-				Survey.check(I.SurveyType.Object);
+			Survey.check(I.SurveyType.Register);
+			Survey.check(I.SurveyType.Pmf);
+			Survey.check(I.SurveyType.Object);
 
-				Storage.delete('redirect');
-			} else {
-				Storage.set('survey', { askPmf: true });
-				Storage.set('redirect', history.location.pathname);
-			};
+			Storage.set('survey', { askPmf: true });
 		}, Constant.delay.popup);
 	};
 
 	dashboardOnboardingCheck () {
 		const match = this.getMatch();
-		const home = ObjectUtil.getSpaceDashboard();
+		const home = UtilObject.getSpaceDashboard();
 		const { id } = match.params;
 		const isPopup = keyboard.isPopup();
 
@@ -268,7 +260,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const page = match.params.page || 'index';
 		
 		return [ 
-			Util.toCamelCase([ prefix, page ].join('-')),
+			UtilCommon.toCamelCase([ prefix, page ].join('-')),
 			this.getId(prefix),
 			(isPopup ? 'isPopup' : 'isFull'),
 		].join(' ');
@@ -282,10 +274,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		const { config } = commonStore;
-		const platform = Util.getPlatform();
+		const platform = UtilCommon.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
-			Util.toCamelCase([ 'platform', platform ].join('-')),
+			UtilCommon.toCamelCase([ 'platform', platform ].join('-')),
 		];
 		const obj = $('html');
 
@@ -302,7 +294,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 
-		return Util.toCamelCase([ prefix, page, action ].join('-'));
+		return UtilCommon.toCamelCase([ prefix, page, action ].join('-'));
 	};
 
 	storageGet () {

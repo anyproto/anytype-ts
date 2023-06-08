@@ -1,4 +1,4 @@
-import { I, Storage, Util } from 'Lib';
+import { I, Storage, UtilCommon } from 'Lib';
 import * as Docs from 'Docs';
 import { menuStore } from 'Store';
 
@@ -48,7 +48,7 @@ class Onboarding {
 	};
 
 	getReminderKey (key: string) {
-		return Util.toCamelCase([ key, 'reminder' ].join('-'));
+		return UtilCommon.toCamelCase([ key, 'reminder' ].join('-'));
 	};
 
 	getParam (section: any, item: any, isPopup: boolean, force?: boolean): any {
@@ -97,7 +97,7 @@ class Onboarding {
 			param.containerHorizontal = Number(param.containerHorizontal) || I.MenuDirection.Left;
 
 			const recalcRect = () => {
-				const container = Util.getScrollContainer(isPopup);
+				const container = UtilCommon.getScrollContainer(isPopup);
 				const height = container.height();
 				const width = container.width();
 				const scrollTop = $(window).scrollTop();

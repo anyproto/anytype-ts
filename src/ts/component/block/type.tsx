@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Util, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -71,7 +71,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	getItems () {
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
-		const items = DataUtil.getObjectTypesForNewObject({ withCollection: true, withDefault: true }).filter(it => it.id != object.type);
+		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withDefault: true }).filter(it => it.id != object.type);
 
 		items.push({ id: 'menu', icon: 'search', name: 'My types' });
 
@@ -193,7 +193,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			data: {
 				filter: '',
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
 				],
 				onClick: (item: any) => {
 					this.onClick(e, item);
@@ -212,10 +212,10 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (ObjectUtil.getSetTypes().includes(item.id)) {
+		if (UtilObject.getSetTypes().includes(item.id)) {
 			this.onObjectTo(item.id);
 		} else {
-			DataUtil.checkTemplateCnt([ item.id ], (message: any) => {
+			UtilData.checkTemplateCnt([ item.id ], (message: any) => {
 				if (message.records.length > 1) {
 					popupStore.open('template', { 
 						data: { 
@@ -243,7 +243,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			};
 
 			keyboard.disableClose(true);
-			ObjectUtil.openAuto({ id: rootId, layout }, { replace: true });
+			UtilObject.openAuto({ id: rootId, layout }, { replace: true });
 
 			analytics.event('CreateObject', {
 				route: 'SelectType',
@@ -299,7 +299,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			focus.apply();
 		};
 
-		Util.triggerResizeEditor(isPopup);
+		UtilCommon.triggerResizeEditor(isPopup);
 	};
 
 	onTemplate () {

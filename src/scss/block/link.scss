@@ -1,7 +1,6 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockLink { padding: 6px 0px; }
 	.block.blockLink {
 		.focusable { border-radius: 4px; }
 
@@ -96,7 +95,7 @@
 		.linkCard.withCover.vertical.text { padding-top: 0px; }
 	}
 
-	.blockLink.text {
+	.block.blockLink.text {
 		.linkCard {
 			.side.left { line-height: 24px; vertical-align: top; gap: 0px 6px; flex-direction: row; align-items: center;  }
 			.side.right { display: none !important; }
@@ -135,7 +134,8 @@
 		}
 	}
 
-	.blockLink.card {
+	.block.blockLink.card { padding: 6px 0px; }
+	.block.blockLink.card {
 		.linkCard {
 			.side.left { padding: 16px; border: 1px solid $colorBorderLight; border-radius: 12px; flex-direction: column; justify-content: center; }
 			.side.right { border-radius: 0px 12px 12px 0px; }
@@ -168,5 +168,6 @@
 	}
 
 	.block.blockLink > .wrapContent > .dropTarget.targetBot { display: block; height: 2px; }
+	.block.blockLink.text > .wrapContent > .selectable > .dropTarget { padding: 2px 0px; }
 	.block.blockLink.card > .wrapContent > .selectable.isSelectionSelected::after { border-radius: 12px; left: 0px; width: 100%; }
 }

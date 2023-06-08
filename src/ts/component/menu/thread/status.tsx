@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { authStore } from 'Store';
-import { I, Util } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 
 class MenuThreadStatus extends React.Component<I.Menu> {
 
@@ -40,12 +40,12 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 		if (cafe.lastPushSucceed) {
 			cafeStatus = [
 				{ key: 'This object is backed up', collapse: true },
-				{ key: 'Updates requested', value: cafe.lastPulled ? Util.timeAgo(cafe.lastPulled) : 'No interaction' }
+				{ key: 'Updates requested', value: cafe.lastPulled ? UtilCommon.timeAgo(cafe.lastPulled) : 'No interaction' }
 			];
 		} else {
 			cafeStatus = [
 				{ key: 'Some changes are not backed up', collapse: true },
-				{ key: 'Updates requested', value: cafe.lastPulled ?  Util.timeAgo(cafe.lastPulled) : 'No interaction' }
+				{ key: 'Updates requested', value: cafe.lastPulled ?  UtilCommon.timeAgo(cafe.lastPulled) : 'No interaction' }
 			];
 		};
 
@@ -73,11 +73,11 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 								// },
 								{
 									key: 'Updates requested',
-									value: (item.lastPulled ? Util.timeAgo(item.lastPulled) : 'No interaction'),
+									value: (item.lastPulled ? UtilCommon.timeAgo(item.lastPulled) : 'No interaction'),
 								},
 								{
 									key: 'Last edits received',
-									value: (item.lastEdited ? Util.timeAgo(item.lastEdited) : 'No changes'),
+									value: (item.lastEdited ? UtilCommon.timeAgo(item.lastEdited) : 'No changes'),
 								},
 							];
 							return <Item key={i} {...item} fields={fields} />;
