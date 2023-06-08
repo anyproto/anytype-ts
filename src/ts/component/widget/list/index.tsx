@@ -32,17 +32,22 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	cache: any = null;
 
 	render (): React.ReactNode {
-		const { parent, block, isCollection, isPreview } = this.props;
+		const { parent, block, isCollection, isPreview, sortFavorite } = this.props;
 		const { viewId } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
 		const views = dbStore.getViews(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const records = dbStore.getRecords(subId, '');
 		const { total } = dbStore.getMeta(subId, '');
-		const length = records.length;
 		const isSelect = !isPreview || !Util.isPlatformMac();
+
+		let records = dbStore.getRecords(subId, '');
+		if (targetBlockId == Constant.widgetId.favorite) {
+			records = sortFavorite(records);
+		};
+
+		const length = records.length;
 
 		if (!this.cache) {
 			return null;

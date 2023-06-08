@@ -238,9 +238,9 @@ window.Lib = {
 
 /*
 spy(event => {
-		if (event.type == 'action') {
-				console.log('[Mobx].event', event.name, event.arguments);
-		};
+	if (event.type == 'action') {
+		console.log('[Mobx].event', event.name, event.arguments);
+	};
 });
 enableLogging({
 	predicate: () => true,
