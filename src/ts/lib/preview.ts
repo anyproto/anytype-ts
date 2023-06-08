@@ -148,6 +148,7 @@ class Preview {
 		};
 
 		param.type = param.type || I.PreviewType.Default;
+		param.delay = param.delay || DELAY_PREVIEW;
 		
 		const { element, rect, passThrough } = param;
 		const obj = $('#preview');
@@ -166,12 +167,11 @@ class Preview {
 		};
 
 		passThrough ? obj.addClass('passThrough') : obj.removeClass('passThrough');
-
 		obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
 
 		this.previewHide(true);
 		window.clearTimeout(this.timeout.preview);
-		this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), DELAY_PREVIEW);
+		this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), param.delay);
 	};
 
 	/**

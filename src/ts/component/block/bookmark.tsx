@@ -227,6 +227,8 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 			target: targetObjectId, 
 			noUnlink: true,
 			passThrough: true,
+			noAnimation: true,
+			delay: 0,
 		});
 	};
 

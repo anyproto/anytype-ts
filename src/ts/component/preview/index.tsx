@@ -261,6 +261,11 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 		css.left = Math.min(ww - ow - BORDER, css.left);
 
 		obj.show().css(css);
+
+		if (!preview.noAnimation) {
+			obj.addClass('anim');
+		};
+
 		poly.css(pcss);
 		
 		window.setTimeout(() => { obj.css({ opacity: 1, transform: 'translateY(0%)' }); }, 15);
