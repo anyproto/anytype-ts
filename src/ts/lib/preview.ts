@@ -148,7 +148,7 @@ class Preview {
 		};
 
 		param.type = param.type || I.PreviewType.Default;
-		param.delay = param.delay || DELAY_PREVIEW;
+		param.delay = (undefined === param.delay) ? DELAY_PREVIEW : param.delay;
 		
 		const { element, rect, passThrough } = param;
 		const obj = $('#preview');
@@ -170,8 +170,13 @@ class Preview {
 		obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
 
 		this.previewHide(true);
-		window.clearTimeout(this.timeout.preview);
-		this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), param.delay);
+
+		if (param.delay) {
+			window.clearTimeout(this.timeout.preview);
+			this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), param.delay);
+		} else {
+			commonStore.previewSet(param);
+		};
 	};
 
 	/**
@@ -183,7 +188,7 @@ class Preview {
 
 		const cb = () => {
 			obj.hide();
-			obj.removeClass('top bottom withImage').css({ transform: '' });
+			obj.removeClass('anim top bottom withImage').css({ transform: '' });
 
 			commonStore.previewClear();
 			$('#graphPreview').remove();

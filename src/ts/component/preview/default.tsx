@@ -66,21 +66,13 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 	};
 
 	componentDidUpdate (): void {
-		const { position } = this.props;
-
 		this.init();
-
-		if (position) {
-			position();
-		};
 	};
 
 	init () {
-		const { object } = this.props;
+		const { object, position } = this.props;
 
-		if (!object) {
-			this.load();
-		};
+		object ? position() : this.load();
 	};
 
 	componentWillUnmount(): void {

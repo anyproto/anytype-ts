@@ -305,7 +305,8 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		};
 
 		Preview.previewShow({ 
-			rect: { x: e.pageX, y: e.pageY, width: 0, height: 10 }, 
+			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 }, 
+			object,
 			target: targetBlockId, 
 			noUnlink: true,
 			passThrough: true,
