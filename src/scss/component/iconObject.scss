@@ -6,32 +6,22 @@
 
 	.iconEmoji, .iconImage, .iconFile, .iconCheckbox { width: inherit; height: inherit; transition: none; vertical-align: top; }
 	.iconImage, .iconCheckbox { background-size: cover; object-fit: cover; }
-	.iconImage, .iconGradient { border-radius: inherit; }
+	.iconImage { border-radius: inherit; }
 
-	.iconGradient.c16, .iconCommon.c16, .smileImage.c16, .iconImage.c16, .iconFile.c16, .iconCheckbox.c16 { @include pos-abs-mid; width: 16px; height: 16px; margin: -8px 0px 0px -8px; }
-	.iconGradient.c18, .iconCommon.c18, .smileImage.c18, .iconImage.c18, .iconFile.c18, .iconCheckbox.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
-	.iconGradient.c20, .iconCommon.c20, .smileImage.c20, .iconImage.c20, .iconFile.c20, .iconCheckbox.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
-	.iconGradient.c22, .iconCommon.c22, .smileImage.c22, .iconImage.c22, .iconFile.c22, .iconCheckbox.c22 { @include pos-abs-mid; width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
-	.iconGradient.c24, .iconCommon.c24, .smileImage.c24, .iconImage.c24, .iconFile.c24, .iconCheckbox.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
-	.iconGradient.c26, .iconCommon.c26, .smileImage.c26, .iconImage.c26, .iconFile.c26, .iconCheckbox.c26 { @include pos-abs-mid; width: 26px; height: 26px; margin: -13px 0px 0px -13px; }
-	.iconGradient.c28, .iconCommon.c28, .smileImage.c28, .iconImage.c28, .iconFile.c28, .iconCheckbox.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
-	.iconGradient.c30, .iconCommon.c30, .smileImage.c30, .iconImage.c30, .iconFile.c30, .iconCheckbox.c30 { @include pos-abs-mid; width: 30px; height: 30px; margin: -15px 0px 0px -15px; }
-	.iconGradient.c32, .iconCommon.c32, .smileImage.c32, .iconImage.c32, .iconFile.c32, .iconCheckbox.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
-	.iconGradient.c40, .iconCommon.c40, .smileImage.c40, .iconImage.c40, .iconFile.c40, .iconCheckbox.c40 { @include pos-abs-mid; width: 40px; height: 40px; margin: -20px 0px 0px -20px; }
-	.iconGradient.c48, .iconCommon.c48, .smileImage.c48, .iconImage.c48, .iconFile.c48, .iconCheckbox.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
-	.iconGradient.c64, .iconCommon.c64, .smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
-
-	.iconGradient.c80 { @include pos-abs-mid; width: 80px; height: 80px; margin: -40px 0px 0px -40px; }
-	.iconGradient.c96 { @include pos-abs-mid; width: 96px; height: 96px; margin: -48px 0px 0px -48px; }
-	.iconGradient.c112 { @include pos-abs-mid; width: 112px; height: 112px; margin: -56px 0px 0px -56px; }
-	.iconGradient.c128 { @include pos-abs-mid; width: 128px; height: 128px; margin: -64px 0px 0px -64px; }
+	.iconCommon.c16, .smileImage.c16, .iconImage.c16, .iconFile.c16, .iconCheckbox.c16 { @include pos-abs-mid; width: 16px; height: 16px; margin: -8px 0px 0px -8px; }
+	.iconCommon.c18, .smileImage.c18, .iconImage.c18, .iconFile.c18, .iconCheckbox.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
+	.iconCommon.c20, .smileImage.c20, .iconImage.c20, .iconFile.c20, .iconCheckbox.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
+	.iconCommon.c22, .smileImage.c22, .iconImage.c22, .iconFile.c22, .iconCheckbox.c22 { @include pos-abs-mid; width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
+	.iconCommon.c24, .smileImage.c24, .iconImage.c24, .iconFile.c24, .iconCheckbox.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
+	.iconCommon.c26, .smileImage.c26, .iconImage.c26, .iconFile.c26, .iconCheckbox.c26 { @include pos-abs-mid; width: 26px; height: 26px; margin: -13px 0px 0px -13px; }
+	.iconCommon.c28, .smileImage.c28, .iconImage.c28, .iconFile.c28, .iconCheckbox.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
+	.iconCommon.c30, .smileImage.c30, .iconImage.c30, .iconFile.c30, .iconCheckbox.c30 { @include pos-abs-mid; width: 30px; height: 30px; margin: -15px 0px 0px -15px; }
+	.iconCommon.c32, .smileImage.c32, .iconImage.c32, .iconFile.c32, .iconCheckbox.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
+	.iconCommon.c40, .smileImage.c40, .iconImage.c40, .iconFile.c40, .iconCheckbox.c40 { @include pos-abs-mid; width: 40px; height: 40px; margin: -20px 0px 0px -20px; }
+	.iconCommon.c48, .smileImage.c48, .iconImage.c48, .iconFile.c48, .iconCheckbox.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
+	.iconCommon.c64, .smileImage.c64, .iconImage.c64, .iconFile.c64, .iconCheckbox.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
 
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; overflow: hidden; border-radius: inherit; }
-	.iconGradient { background-image: radial-gradient(50% 50% at 50% 50%, var(--color-from) 22.92%, var(--color-to) 100%); }
-
-	.iconEmoji {
-		.icon.home-big { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
-	}
 }
 .iconObject.c16 { width: 16px; height: 16px; }
 .iconObject.c18 { width: 18px; height: 18px; }
@@ -70,6 +60,3 @@
 .iconObject.isHuman.withImage { background-color: unset !important; }
 
 .iconObject.withOption.isSpace { background: #000; }
-.iconObject.withOption.isSpace {
-	.iconGradient { width: 70%; height: 70%; border-radius: 50%; position: absolute; left: 50%; top: 50%; margin: -35% 0px 0px -35%; }
-}
