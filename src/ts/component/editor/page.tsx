@@ -380,6 +380,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const readonly = this.isReadonly();
 		const node = $(this.node);
 		const button = node.find('#button-block-add');
+		const menuOpen = menuStore.isOpen() && !menuStore.isOpen('onboarding');
 
 		const clear = () => {
 			node.find('.block.showMenu').removeClass('showMenu');
@@ -400,8 +401,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			(root && root.isLocked()) || 
 			keyboard.isResizing || 
 			keyboard.isDragging || 
-			selection && selection.isSelecting || 
-			menuStore.isOpen() || 
+			(selection && selection.isSelecting) || 
+			menuOpen || 
 			(!isPopup && popupStore.isOpen()) ||
 			isLoading
 		) {
