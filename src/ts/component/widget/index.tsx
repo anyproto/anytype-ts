@@ -42,14 +42,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	render () {
 		const { block, isPreview, isEditing, className, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
-
-		if (!child) {
-			return null;
-		};		
-
 		const { root } = blockStore;
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const { layout, limit, viewId } = block.content;
+
+		if (!child && (layout != I.WidgetLayout.Space)) {
+			return null;
+		};
+
 		const { targetBlockId } = child?.content || {};
 		const cn = [ 'widget', UtilCommon.toCamelCase(`widget-${I.WidgetLayout[layout]}`) ];
 		const object = this.getObject();
