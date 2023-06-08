@@ -203,11 +203,14 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	init () {
-		const { block } = this.props;
+		const { rootId, block } = this.props;
+		const storeId = this.getStoreId();
+		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
 		const node = $(this.node);
 		const obj = $(`#block-${block.id}`);
 
-		this.node ? obj.removeClass('isHidden') : obj.addClass('isHidden');
+		featuredRelations.length ? obj.removeClass('isHidden') : obj.addClass('isHidden');
 
 		if (node) {
 			node.find('.cell.first').removeClass('first');
