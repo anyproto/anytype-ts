@@ -292,6 +292,10 @@ class UtilObject {
 		return this.getStoreTypes().includes(type);
 	};
 
+	isTemplate (type: string) {
+		return type == Constant.typeId.template;
+	};
+
 	getFileTypes () {
 		return [
 			Constant.typeId.file, 

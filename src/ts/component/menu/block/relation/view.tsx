@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, UtilData, UtilCommon, Relation, analytics, keyboard } from 'Lib';
+import { I, C, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Item from 'Component/menu/item/relationView';
@@ -153,7 +153,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ 'targetObjectType', 'featuredRelations' ]);
-		const isTemplate = object.type == Constant.typeId.template;
+		const isTemplate = UtilObject.isTemplate(object.type);
 		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
 		const relations = dbStore.getObjectRelations(rootId, rootId);

@@ -104,11 +104,13 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		
 		const object = detailStore.get(rootId, blockId);
 		const cmd = keyboard.cmdSymbol();
+		const isTemplate = UtilObject.isTemplate(object.type);
 
 		let archive = null;
 		let fav = null;
 		let pageLock = null;
 		let pageInstall = null;
+		let template = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let print = { id: 'print', name: 'Print', caption: `${cmd} + P` };
@@ -122,6 +124,12 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: 'Reload from source' };
 		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
+
+		if (isTemplate) {	
+			template = { id: 'pageCreate', icon: 'template', name: 'Create object' };
+		} else {
+			template = { id: 'templateCreate', icon: 'template', name: 'Use as a template' };
+		};
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', name: 'Remove from Favorites' };
@@ -189,7 +197,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (block.isPage()) {
 			sections = [
 				{ children: [ fav, archive, history ] },
-				{ children: [ pageCopy, linkTo, pageLink, pageLock ] },
+				{ children: [ pageCopy, linkTo, pageLink, pageLock, template ] },
 				{ children: [ search ] },
 				{ children: [ print, pageExport, pageReload ] },
 			];
@@ -380,20 +388,23 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		
 		switch (item.id) {
 				
-			case 'print':
+			case 'print': {
 				keyboard.onPrint(route);
 				break;
+			};
 
-			case 'history':
+			case 'history': {
 				keyboard.disableClose(true);
 				UtilObject.openAuto({ layout: I.ObjectLayout.History, id: object.id });
 				break;
+			};
 			
-			case 'search':
+			case 'search': {
 				keyboard.onSearchMenu('', route);
 				break;
+			};
 
-			case 'pageCopy':
+			case 'pageCopy': {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
 						UtilObject.openPopup({ id: message.ids[0], layout: object.layout });
@@ -402,41 +413,43 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					};
 				});
 				break;
+			};
 
-			case 'pageExport':
+			case 'pageExport': {
 				popupStore.open('export', { data: { rootId } });
 				break;
+			};
 				
-			case 'pageArchive':
+			case 'pageArchive': {
 				C.ObjectSetIsArchived(object.id, true, (message: any) => {
-					if (message.error.code) {
-						return;
+					if (!message.error.code) {
+						onBack();
+						analytics.event('MoveToBin', { count: 1, route });
 					};
-
-					onBack();
-					analytics.event('MoveToBin', { count: 1, route });
 				});
 				break;
+			};
 
-			case 'pageUnarchive':
+			case 'pageUnarchive': {
 				C.ObjectSetIsArchived(object.id, false, (message: any) => {
-					if (message.error.code) {
-						return;
+					if (!message.error.code) {
+						analytics.event('RestoreFromBin', { count: 1, route });
 					};
-
-					analytics.event('RestoreFromBin', { count: 1, route });
 				});
 				break;
+			};
 
-			case 'pageLock':
+			case 'pageLock': {
 				keyboard.onLock(rootId, true, route);
 				break;
+			};
 
-			case 'pageUnlock':
+			case 'pageUnlock': {
 				keyboard.onLock(rootId, false, route);
 				break;
+			};
 
-			case 'pageCreate':
+			case 'pageCreate': {
 				UtilObject.create('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
 					UtilObject.openRoute({ id: message.targetId });
 
@@ -448,45 +461,62 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					});
 				});
 				break;
+			};
 
-			case 'pageLink':
+			case 'pageLink': {
 				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.route(object) });
 				analytics.event('CopyLink', { route });
 				break;
+			};
 
-			case 'pageReload':
+			case 'pageReload': {
 				C.ObjectBookmarkFetch(rootId, object.source, () => {
 					analytics.event('ReloadSourceData', { route });
 				});
 				break;
+			};
 
-			case 'pageInstall':
+			case 'pageInstall': {
 				Action.install(object, false, (message: any) => {
 					UtilObject.openAuto(message.details);
 				});
 				break;
+			};
 
-			case 'pageUninstall':
+			case 'pageUninstall': {
 				Action.uninstall(object, false, () => { onBack(); });
 				break;
+			};
 
-			case 'fav':
+			case 'fav': {
 				C.ObjectSetIsFavorite(rootId, true, () => {
 					analytics.event('AddToFavorites', { count: 1, route });
 				});
 				break;
+			};
 
-			case 'unfav':
+			case 'unfav': {
 				C.ObjectSetIsFavorite(rootId, false, () => {
 					analytics.event('RemoveFromFavorites', { count: 1, route });
 				});
 				break;
+			};
 
-			case 'blockRemove':
+			case 'blockRemove': {
 				C.BlockListDelete(rootId, [ blockId ], () => {
 					isPopup ? popupStore.close('page') : onBack();
 				});
 				break;
+			};
+
+			case 'templateCreate': {
+				C.TemplateCreateFromObject(rootId, (message: any) => {
+					UtilObject.openPopup({ id: message.id, layout: object.layout });
+
+					analytics.event('CreateTemplate', { objectType: object.type, route });
+				});
+				break;
+			};
 		};
 		
 		if (close) {
