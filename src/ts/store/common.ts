@@ -325,16 +325,19 @@ class CommonStore {
 
 	pinTimeSet (v: string) {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
+
 		Storage.set('pinTime', this.pinTimeId);
 	};
 
 	autoSidebarSet (v: boolean) {
 		this.autoSidebarValue = Boolean(v);
+
 		Storage.set('autoSidebar', this.autoSidebarValue);
 	};
 
 	isSidebarFixedSet (v: boolean) {
 		this.isSidebarFixedValue = Boolean(v);
+
 		Storage.set('isSidebarFixed', this.isSidebarFixedValue);
 	};
 

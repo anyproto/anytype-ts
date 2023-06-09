@@ -129,15 +129,8 @@ class Storage {
 			'accountId', 
 			'scroll', 
 			'toggle', 
-			'crumbs', 
-			'tabIndex', 
 			'tabStore', 
-			'linkSettings', 
 			'graph',
-			'gateway',
-			'dataPath',
-			'writing',
-			'timezone',
 		];
 
 		keys.forEach(key => this.delete(key));
