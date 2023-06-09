@@ -115,6 +115,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	componentDidMount () {
 		this.rebind();
+		this.event();
+
 		UtilCommon.renderLinks($(this.node));
 	};
 
@@ -134,13 +136,21 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		this.rebind();
 		this.scroll();
+		this.event();
 
 		UtilCommon.renderLinks(node);
-		analytics.event('ScreenOnboarding');
 
 		if (showConfetti && (current == l - 1)) {
 			this.confettiShot();
 		};
+	};
+
+	componentWillUnmount(): void {
+		const { param } = this.props;
+		const { data } = param;
+		const { key, current } = data;
+
+		analytics.event('ClickOnboardingTooltip', { type: 'close', id: key, step: (current + 1) });
 	};
 
 	onClose () {
@@ -149,11 +159,19 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 	};
 	
 	unbind () {
 		$(window).off('keydown.menu');
+	};
+
+	event () {
+		const { param } = this.props;
+		const { data } = param;
+		const { key, current } = data;
+
+		analytics.event('OnboardingTooltip', { step: (current + 1), id: key });
 	};
 
 	scroll () {
@@ -188,11 +206,15 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('arrowleft', e, () => { this.onArrow(e, -1); });
-		keyboard.shortcut('arrowright', e, () => { this.onArrow(e, 1); });
+		keyboard.shortcut('arrowleft', e, () => this.onArrow(e, -1));
+		keyboard.shortcut('arrowright', e, () => this.onArrow(e, 1));
 	};
 
 	onButton (e: any, action: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { key, current } = data;
+
 		switch (action) {
 			case 'close': {
 				this.onClose();
@@ -215,6 +237,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 				break;
 			};
 		};
+
+		analytics.event('ClickOnboardingTooltip', { type: action, id: key, step: (current + 1) });
 	};
 
 	onArrow (e: any, dir: number) {

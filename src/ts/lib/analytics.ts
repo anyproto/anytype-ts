@@ -4,7 +4,7 @@ import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const KEYS = [ 
-	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
+	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
 	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit',
 ];
@@ -288,6 +288,15 @@ class Analytics {
 
 			case 'ThemeSet': {
 				data.id = String(data.id || 'light');
+				break;
+			};
+
+			case 'OnboardingTooltip':
+			case 'ClickOnboardingTooltip': {
+				console.log(data);
+
+				data.id = UtilCommon.ucFirst(data.id);
+				data.type = UtilCommon.ucFirst(data.type);
 				break;
 			};
 		};
