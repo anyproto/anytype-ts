@@ -326,7 +326,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						};
 
 						analytics.event('ChangeWidgetLayout', {
-							widgetLayout: I.WidgetLayout[this.layout],
+							layout: this.layout,
 							route: isEditing ? 'Inner' : 'AddWidget',
 							target: this.target
 						});

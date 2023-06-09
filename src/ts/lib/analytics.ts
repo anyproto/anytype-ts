@@ -135,6 +135,11 @@ class Analytics {
 				break;
 			};
 
+			case 'CreateObject': {
+				data.layout = I.ObjectLayout[data.layout];
+				break;
+			};
+
 			case 'CreateBlock':
 			case 'ChangeBlockStyle': {
 				data.style = Number(data.style) || 0;
@@ -255,12 +260,12 @@ class Analytics {
 			case 'ChangeWidgetLimit':
 			case 'ReorderWidget':
 			case 'DeleteWidget': {
-				if (!data.target) {
-					break;
+				if (data.target) {
+					data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
+					delete data.target;
 				};
 
-				data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
-				delete data.target;
+				data.layout = I.ObjectLayout[data.layout];
 				break;
 			};
 
@@ -303,10 +308,6 @@ class Analytics {
 
 		if (converted.relationKey) {
 			converted.relationKey = this.relationMapper(converted.relationKey);
-		};
-
-		if (undefined !== converted.layout) {
-			converted.layout = I.ObjectLayout[converted.layout];
 		};
 
 		if (undefined !== converted.align) {
