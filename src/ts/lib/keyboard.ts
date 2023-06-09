@@ -170,7 +170,7 @@ class Keyboard {
 
 		// Shortcuts
 		this.shortcut('ctrl+space', e, () => {
-			popupStore.open('shortcut', {});
+			popupStore.open('shortcut', { preventResize: true });
 		});
 
 		// Lock/Unlock
