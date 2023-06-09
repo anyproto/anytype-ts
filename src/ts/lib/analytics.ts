@@ -6,7 +6,7 @@ import Constant from 'json/constant.json';
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'widgetLayout', 'limit',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -265,7 +265,7 @@ class Analytics {
 					delete data.target;
 				};
 
-				data.layout = I.ObjectLayout[data.layout];
+				data.layout = I.WidgetLayout[data.layout];
 				break;
 			};
 
