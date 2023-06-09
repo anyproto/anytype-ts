@@ -168,17 +168,18 @@ class Keyboard {
 			Preview.previewHide(false);
 		});
 
-		// Shortcuts
-		this.shortcut('ctrl+space', e, () => {
-			popupStore.open('shortcut', { preventResize: true });
-		});
-
-		// Lock/Unlock
-		keyboard.shortcut(`ctrl+shift+l`, e, () => {
-			keyboard.onToggleLock();
-		});
-
 		if (isMain) {
+
+			// Shortcuts
+			this.shortcut('ctrl+space', e, () => {
+				popupStore.open('shortcut', { preventResize: true });
+			});
+
+			// Lock/Unlock
+			keyboard.shortcut(`ctrl+shift+l`, e, () => {
+				keyboard.onToggleLock();
+			});
+
 			// Print
 			keyboard.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
@@ -250,6 +251,24 @@ class Keyboard {
 			// Store
 			this.shortcut(`${cmd}+alt+l`, e, () => {
 				UtilObject.openRoute({ layout: I.ObjectLayout.Store });
+			});
+
+			// Object id
+			this.shortcut(`${cmd}+shift+\\`, e, () => {
+				popupStore.open('confirm', {
+					className: 'isWide isLeft',
+					data: {
+						text: `ID: ${this.getRootId()}`,
+						textConfirm: 'Copy',
+						textCancel: 'Close',
+						canConfirm: true,
+						canCancel: true,
+						onConfirm: () => {
+							UtilCommon.clipboardCopy({ text: this.getRootId() });
+							Preview.toastShow({ text: 'ID copied to clipboard' });
+						},
+					}
+				});
 			});
 		};
 
@@ -478,11 +497,6 @@ class Keyboard {
 
 			case 'contact': {
 				this.onContactUrl();
-				break;
-			};
-
-			case 'tech': {
-				this.onTechInfo();
 				break;
 			};
 
