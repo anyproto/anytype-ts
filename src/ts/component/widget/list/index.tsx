@@ -27,13 +27,12 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	refSelect = null;
 	state = {
 		isLoading: false,
-		viewId: '',
 	};
 	cache: any = null;
 
 	render (): React.ReactNode {
 		const { parent, block, isCollection, isPreview, sortFavorite } = this.props;
-		const { viewId } = parent.content;
+		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
@@ -197,7 +196,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { viewId } = parent.content;
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
-		const view = Dataview.getView(rootId, BLOCK_ID, viewId);
+		const view = Dataview.getView(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
 

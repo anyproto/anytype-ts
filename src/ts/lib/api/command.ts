@@ -280,7 +280,6 @@ const BlockWidgetSetLimit = (contextId: string, blockId: string, limit: number, 
 };
 
 const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
-	/*
 	const request = new Rpc.BlockWidget.SetViewId.Request();
 
 	request.setContextid(contextId);
@@ -288,7 +287,6 @@ const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string
 	request.setViewid(viewId);
 
 	dispatcher.request(BlockWidgetSetViewId.name, request, callBack);
-	*/
 };
 
 // ---------------------- BLOCK TEXT ---------------------- //

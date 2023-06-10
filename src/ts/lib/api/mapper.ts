@@ -235,7 +235,7 @@ export const Mapper = {
 			return {
 				layout: obj.getLayout(),
 				limit: obj.getLimit(),
-				//viewId: obj.getViewid(),
+				viewId: obj.getViewid(),
 			};
 		},
 
@@ -641,7 +641,7 @@ export const Mapper = {
 			
 			content.setLayout(obj.layout);
 			content.setLimit(obj.limit);
-			//content.setViewid(obj.viewId);
+			content.setViewid(obj.viewId);
 
 			return content;
 		},
