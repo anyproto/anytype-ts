@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Button } from 'Component';
-import { C, I, keyboard, MenuUtil, translate, Action, ObjectUtil, analytics } from 'Lib';
+import { C, I, keyboard, UtilMenu, translate, Action, UtilObject, analytics } from 'Lib';
 import { blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -135,7 +135,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		let layoutName = 'Widget type';
 
 		if (this.target) {
-			sourceName = ObjectUtil.name(this.target);
+			sourceName = UtilObject.name(this.target);
 		};
 
 		if (this.layout !== null) {
@@ -165,11 +165,11 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			});
 		};
 
-		return MenuUtil.sectionsMap(sections);
+		return UtilMenu.sectionsMap(sections);
 	};
 
 	checkState () {
-		const setTypes = ObjectUtil.getSetTypes();
+		const setTypes = UtilObject.getSetTypes();
 		const layoutOptions = this.getLayoutOptions().map(it => it.id);
 
 		if (this.isCollection()) {
@@ -188,7 +188,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		this.layout = layoutOptions.includes(this.layout) ? this.layout : (layoutOptions.length ? layoutOptions[0] : null);
 
-		const limitOptions = MenuUtil.getWidgetLimits(this.layout).map(it => Number(it.id));
+		const limitOptions = UtilMenu.getWidgetLimits(this.layout).map(it => Number(it.id));
 
 		this.limit = limitOptions.includes(this.limit) ? this.limit : (limitOptions.length ? limitOptions[0] : null);
 	};
@@ -211,8 +211,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (this.target) {
 			if (!isCollection) {
-				const setTypes = ObjectUtil.getSetTypes();
-				const treeSkipTypes = setTypes.concat(ObjectUtil.getSystemTypes()).concat(ObjectUtil.getFileTypes());
+				const setTypes = UtilObject.getSetTypes();
+				const treeSkipTypes = setTypes.concat(UtilObject.getSystemTypes()).concat(UtilObject.getFileTypes());
 
 				// Sets can only become Link and List layouts, non-sets can't become List
 				if (treeSkipTypes.includes(this.target.type)) {
@@ -276,7 +276,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		switch (item.itemId) {
 			case 'source': {
 				let filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes().concat(ObjectUtil.getFileTypes()) },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes().concat(UtilObject.getFileTypes()) },
 				];
 
 				menuId = 'searchObject';
@@ -325,8 +325,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
 						};
 
-						analytics.event('ChangeWidgetSource', {
-							layout: I.WidgetLayout[this.layout],
+						analytics.event('ChangeWidgetLayout', {
+							layout: this.layout,
 							route: isEditing ? 'Inner' : 'AddWidget',
 							target: this.target
 						});
@@ -338,7 +338,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			case 'limit':
 				menuId = 'select';
 				menuParam.data = Object.assign(menuParam.data, {
-					options: MenuUtil.getWidgetLimits(this.layout),
+					options: UtilMenu.getWidgetLimits(this.layout),
 					value: String(this.limit || ''),
 					onSelect: (e, option) => {
 						this.limit = Number(option.id);
@@ -349,7 +349,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							C.BlockWidgetSetLimit(widgets, blockId, this.limit, () => close());
 						};
 
-						analytics.event('ChangeWidgetlimit', {
+						analytics.event('ChangeWidgetLimit', {
 							limit: this.limit,
 							route: isEditing ? 'Inner' : 'AddWidget',
 							target: this.target

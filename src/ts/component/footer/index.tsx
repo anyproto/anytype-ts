@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ObjectUtil, I, sidebar } from 'Lib';
+import { UtilObject, I, sidebar } from 'Lib';
 import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';
@@ -52,8 +52,8 @@ class Footer extends React.Component<Props> {
 	};
 
 	onAdd () {
-		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-			ObjectUtil.openAuto({ id: message.targetId });
+		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
+			UtilObject.openAuto({ id: message.targetId });
 		});
 	};
 

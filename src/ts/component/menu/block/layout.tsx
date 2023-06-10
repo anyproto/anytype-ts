@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
-import { I, keyboard, analytics, DataUtil, ObjectUtil, MenuUtil, Util } from 'Lib';
+import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -77,7 +77,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		
-		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let align = { id: 'align', name: 'Align', icon: [ 'align', UtilData.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let resize = { id: 'resize', icon: 'resize', name: 'Set layout width' };
 
 		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {
@@ -89,7 +89,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 		let sections = [];
 		if (allowedLayout) {
-			sections.push({ name: 'Choose layout type', children: MenuUtil.turnLayouts() });
+			sections.push({ name: 'Choose layout type', children: UtilMenu.turnLayouts() });
 		};
 
 		sections.push({ 
@@ -158,7 +158,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					value: object.layoutAlign,
 					onSelect: (align: I.BlockHAlign) => {
-						ObjectUtil.setAlign(rootId, align);
+						UtilObject.setAlign(rootId, align);
 
 						analytics.event('SetLayoutAlign', { align });
 						close();
@@ -191,7 +191,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 			analytics.event('SetLayoutWidth');
 		} else {
-			ObjectUtil.setLayout(rootId, item.id, (message: any) => {
+			UtilObject.setLayout(rootId, item.id, (message: any) => {
 				if (onLayoutSelect) {
 					onLayoutSelect(item.id);
 				};
@@ -202,7 +202,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 	};
 
 	onResize (e: any) {
-		const container = Util.getPageContainer(keyboard.isPopup());
+		const container = UtilCommon.getPageContainer(keyboard.isPopup());
 		const wrapper = $('#editorWrapper');
 
 		wrapper.addClass('isResizing');

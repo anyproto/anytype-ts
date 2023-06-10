@@ -1,8 +1,8 @@
-import { I, keyboard, translate, Util, DataUtil, ObjectUtil, Relation, Dataview } from 'Lib';
-import { commonStore } from 'Store';
+import { I, C, keyboard, translate, UtilCommon, UtilData, UtilObject, Relation, Dataview } from 'Lib';
+import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
-class MenuUtil {
+class UtilMenu {
 
 	mapperBlock (it: any) {
 		it.isBlock = true;
@@ -21,7 +21,7 @@ class MenuUtil {
 			{ id: I.TextStyle.Callout, lang: 'Callout' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = DataUtil.blockTextClass(it.id);
+			it.icon = UtilData.blockTextClass(it.id);
 			return this.mapperBlock(it);
 		});
 	};
@@ -34,7 +34,7 @@ class MenuUtil {
 			{ id: I.TextStyle.Toggle, lang: 'Toggle' },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = DataUtil.blockTextClass(it.id);
+			it.icon = UtilData.blockTextClass(it.id);
 			return this.mapperBlock(it);
 		});
 	};
@@ -57,7 +57,7 @@ class MenuUtil {
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
 		let i = 0;
-		let items = DataUtil.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+		let items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 
 		for (let type of items) {
 			ret.push({ 
@@ -65,7 +65,7 @@ class MenuUtil {
 				type: I.BlockType.Page, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
-				name: type.name || ObjectUtil.defaultName('Page'), 
+				name: type.name || UtilObject.defaultName('Page'), 
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,
@@ -90,11 +90,11 @@ class MenuUtil {
 		const { config } = commonStore;
 		const ret = [];
 	
-		let types = DataUtil.getObjectTypesForNewObject(); 
+		let types = UtilData.getObjectTypesForNewObject(); 
 		if (!config.debug.ho) {
 			types = types.filter(it => !it.isHidden);
 		};
-		types.sort(DataUtil.sortByName);
+		types.sort(UtilData.sortByName);
 
 		let i = 0;
 		for (let type of types) {
@@ -103,7 +103,7 @@ class MenuUtil {
 				id: 'object' + i++, 
 				objectTypeId: type.id, 
 				iconEmoji: type.iconEmoji, 
-				name: type.name || ObjectUtil.defaultName('Page'), 
+				name: type.name || UtilObject.defaultName('Page'), 
 				description: type.description,
 				isObject: true,
 				isHidden: type.isHidden,
@@ -277,7 +277,7 @@ class MenuUtil {
 	};
 	
 	sectionsFilter (sections: any[], filter: string) {
-		const f = Util.filterFix(filter);
+		const f = UtilCommon.filterFix(filter);
 		const regS = new RegExp('^' + f, 'gi');
 		const regC = new RegExp(f, 'gi');
 		const getWeight = (s: string) => {
@@ -337,16 +337,16 @@ class MenuUtil {
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
-			s.children = s.children.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
+			s.children = s.children.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
 			return s.children.length > 0;
 		});
 
-		sections = sections.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
+		sections = sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
 		return sections;
 	};
 	
 	sectionsMap (sections: any[]) {
-		sections = Util.objectCopy(sections);
+		sections = UtilCommon.objectCopy(sections);
 		sections = sections.filter(it => it.children.length > 0);
 		sections = sections.map((s: any, i: number) => {
 			s.id = (undefined !== s.id) ? s.id : i;
@@ -359,13 +359,96 @@ class MenuUtil {
 				c.color = c.color || s.color || '';
 				return c;
 			});
-			s.children = Util.arrayUniqueObjects(s.children, 'id');
+			s.children = UtilCommon.arrayUniqueObjects(s.children, 'id');
 			return s;
 		});
 
-		return Util.arrayUniqueObjects(sections, 'id');
+		return UtilCommon.arrayUniqueObjects(sections, 'id');
+	};
+
+	dashboardSelect (element: string) {
+		const { workspace } = commonStore;
+		const home = UtilObject.getSpaceDashboard();
+		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
+		const onSelect = (object: any, update: boolean) => {
+			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
+				if (message.error.code) {
+					return;
+				};
+
+				detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: object.id } }, false);
+
+				if (update) {
+					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
+				};
+
+				UtilObject.openHome('route');
+			});
+		};
+
+		let menuContext = null;
+		let value = home ? home.id : '';
+
+		if (![ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(value)) {
+			value = I.HomePredefinedId.Existing;
+		};
+
+		menuStore.open('select', {
+			element,
+			horizontal: I.MenuDirection.Right,
+			subIds: [ 'searchObject' ],
+			onOpen: (context: any) => {
+				menuContext = context;
+			},
+			data: {
+				value,
+				options: [
+					{ id: I.HomePredefinedId.Graph, name: 'Graph' },
+					{ id: I.HomePredefinedId.Last, name: 'Last opened object' },
+					{ id: I.HomePredefinedId.Existing, name: 'Existion object', arrow: true },
+				],
+				onOver: (e: any, item: any) => {
+					if (!item.arrow) {
+						menuStore.closeAll([ 'searchObject' ]);
+						return;
+					};
+
+					switch (item.id) {
+						case I.HomePredefinedId.Existing: {
+							menuStore.open('searchObject', {
+								element: `#${menuContext.getId()} #item-${item.id}`,
+								offsetX: menuContext.getSize().width,
+								vertical: I.MenuDirection.Center,
+								isSub: true,
+								data: {
+									filters: [
+										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+									],
+									canAdd: true,
+									onSelect: (el: any) => onSelect(el, true),
+								}
+							});
+							break;
+						};
+					};
+				},
+				onSelect: (e, item: any) => {
+					if (item.arrow) {
+						return;
+					};
+
+					switch (item.id) {
+						case I.HomePredefinedId.Graph:
+						case I.HomePredefinedId.Last: {
+							onSelect({ id: item.id }, false);
+							break;
+						};
+					};
+				},
+			}
+		});
 	};
 
 };
 
-export default new MenuUtil();
+export default new UtilMenu();

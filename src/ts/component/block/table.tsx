@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, keyboard, focus, Util, Mark, Action } from 'Lib';
+import { I, C, keyboard, focus, UtilCommon, Mark, Action } from 'Lib';
 import { menuStore, blockStore } from 'Store';
 import Row from './table/row';
 import Constant from 'json/constant.json';
@@ -938,7 +938,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
+			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
 				this.hoverId = column.id;
 				this.position = (i < current.index) ? I.BlockPosition.Left : I.BlockPosition.Right;
 				break;
@@ -1030,7 +1030,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				this.hoverId = row.id;
 				this.position = (i < current.index) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
@@ -1527,7 +1527,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
 			const obj = $(`#block-${block.id}`);
-			const container = Util.getPageContainer(isPopup);
+			const container = UtilCommon.getPageContainer(isPopup);
 
 			maxWidth = container.width() - PADDING;
 			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;

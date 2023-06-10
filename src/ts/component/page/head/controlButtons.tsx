@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon } from 'Component';
-import { I, DataUtil, ObjectUtil, Util, translate, analytics, focus } from 'Lib';
+import { I, UtilData, UtilObject, UtilCommon, translate, analytics, focus } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -137,7 +137,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		const options: any[] = [
 			{ id: 'change', icon: 'coverChange', name: 'Change cover' },
 		];
-		if (DataUtil.coverIsImage(object.coverType)) {
+		if (UtilData.coverIsImage(object.coverType)) {
 			options.push({ id: 'position', icon: 'coverPosition', name: 'Reposition' });
 		};
 		if (hasCover) {
@@ -168,7 +168,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 							break;
 
 						case 'remove':
-							ObjectUtil.setCover(rootId, I.CoverType.None, '');
+							UtilObject.setCover(rootId, I.CoverType.None, '');
 							analytics.event('RemoveCover');
 							break;
 					};
@@ -199,7 +199,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 	};
 
 	resize () {
-		const { ww } = Util.getWindowDimensions();
+		const { ww } = UtilCommon.getWindowDimensions();
 		const node = $(this.node);
 
 		ww <= 900 ? node.addClass('small') : node.removeClass('small');

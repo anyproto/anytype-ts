@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
-import { I, Util, keyboard, DataUtil, ObjectUtil, MenuUtil, analytics, focus } from 'Lib';
+import { I, UtilCommon, keyboard, UtilData, UtilObject, UtilMenu, analytics, focus } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';
@@ -235,7 +235,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const reg = new RegExp(Util.filterFix(filter), 'gi');
+		const reg = new RegExp(UtilCommon.filterFix(filter), 'gi');
 		const regProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
 		const buttons: any[] = [
 			{ id: 'add', name: `Create object "${filter}"`, icon: 'plus' }
@@ -265,7 +265,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			items.push({ isDiv: true });
 		};
 
-		if (Util.matchUrl(filter) || filter.match(new RegExp(regProtocol))) {
+		if (UtilCommon.matchUrl(filter) || filter.match(new RegExp(regProtocol))) {
 			buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link' });
 		};
 
@@ -274,7 +274,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			sections.push({ id: I.MarkType.Object, name: 'Objects', children: items });
 		};
 		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
-		return MenuUtil.sectionsMap(sections);
+		return UtilMenu.sectionsMap(sections);
 	};
 
 	getItems (withSections: boolean) {
@@ -303,7 +303,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { skipIds, filter } = data;
 
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes(), },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes(), },
 		];
 		const sorts = [
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true },
@@ -317,7 +317,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			fullText: filter,
@@ -367,7 +367,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		if (item.itemId == 'add') {
 			const type = dbStore.getType(commonStore.type);
 
-			ObjectUtil.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
 					return;
 				};

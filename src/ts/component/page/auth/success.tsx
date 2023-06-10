@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Component';
-import { I, translate, DataUtil, analytics, Util, Preview, Storage } from 'Lib';
+import { I, translate, UtilData, analytics, UtilCommon, Preview, Storage } from 'Lib';
 import { commonStore, authStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -61,7 +61,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	};
 
 	onSubmit () {
-		Util.route('/main/usecase');
+		UtilCommon.route('/main/usecase');
 	};
 
 	onFocus () {
@@ -87,7 +87,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 	onCopy () {
 		this.refPhrase.focus();
 
-		Util.clipboardCopy({ text: authStore.phrase });
+		UtilCommon.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
 
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });

@@ -44,7 +44,7 @@ class MenuManager {
 					Separator,
 
 					{ label: 'Check for updates', click: () => { Api.updateCheck(this.win); } },
-					{ label: 'Settings', click: () => { this.openSettings('index'); } },
+					{ label: 'Settings', click: () => { this.openSettings('account'); } },
 
 					Separator,
 
@@ -339,7 +339,7 @@ class MenuManager {
 		const Api = require('./api.js');
 
 		if (Api.isPinChecked) {
-			Util.send(this.win, 'popup', 'settings', { page }, true); 
+			Util.send(this.win, 'popup', 'settings', { data: { page } }, true); 
 		};
 	};
 

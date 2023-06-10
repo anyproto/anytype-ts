@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
 import { commonStore, popupStore } from 'Store';
-import { I, C, Util, ObjectUtil, Preview, analytics, translate, keyboard } from 'Lib';
+import { I, C, UtilCommon, UtilObject, Preview, analytics, translate, keyboard } from 'Lib';
 
 interface State {
 	object: any;
@@ -67,7 +67,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					break;
 				};
 
-				const cnt = `${count} ${Util.cntWord(count, 'block', 'blocks')}`;
+				const cnt = `${count} ${UtilCommon.cntWord(count, 'block', 'blocks')}`;
 
 				textAction = `${cnt} moved to`;
 				textTarget = <Element {...target} />;
@@ -166,7 +166,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
     };
 
     onOpen (e: any) {
-        ObjectUtil.openEvent(e, commonStore.toast.target);
+        UtilObject.openEvent(e, commonStore.toast.target);
     };
 
 });

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
-import { I, Preview, SmileUtil, DataUtil, FileUtil, ObjectUtil } from 'Lib';
+import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -188,7 +188,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const object = this.getObject();
 		const layout = Number(object.layout) || I.ObjectLayout.Page;
 		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, isDeleted } = object || {};
-		const cn = [ 'iconObject', 'c' + size, DataUtil.layoutClass(object.id, layout) ];
+		const cn = [ 'iconObject', 'c' + size, UtilData.layoutClass(object.id, layout) ];
 		const iconSize = this.iconSize();
 		
 		if (className) {
@@ -206,27 +206,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 			icon = <img src={this.commonSvg()} className={icn.join(' ')} />;
 		};
 
-		let onOption = () => {
-			const option: any = Colors.gradientIcons.options[iconOption - 1];
-			const { colors } = option;
-
-			let steps = Colors.gradientIcons.common.steps;
-			if (option.steps) {
-				steps = option.steps;
-			};
-
-			const style = {
-				'--color-from': colors.from,
-				'--color-to': colors.to,
-				'--step-from': steps.from,
-				'--step-to': steps.to
-			} as React.CSSProperties;
-
-			cn.push(`withImage withOption`);
-			icn = icn.concat([ 'iconGradient', 'c' + iconSize ]);
-			icon = <div className={icn.join(' ')} style={style} />;
-		};
-
 		switch (layout) {
 			default:
 			case I.ObjectLayout.Page: {
@@ -238,7 +217,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <IconEmoji {...this.props} className={icn.join(' ')} iconClass={iconClass} size={iconSize} icon={iconEmoji} hash={iconImage} />;
 				} else 
 				if (iconOption) {
-					onOption();
+					cn.push('withOption withImage');
+
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={this.userGradientSvg(0.35)} className={icn.join(' ')} />;
 				} else
 				if (forceLetter) {
 					onLetter();
@@ -253,7 +235,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <img src={commonStore.imageUrl(iconImage, iconSize * 2)} className={icn.join(' ')} />;
 				} else 
 				if (iconOption) {
-					onOption();
+					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
+					icon = <img src={this.userGradientSvg(0.5)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconImage', 'c' + iconSize ]);
 					icon = <img src={this.userSvg()} className={icn.join(' ')} />;
@@ -267,6 +250,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 				break;
 			};
 
+			case I.ObjectLayout.Dashboard:
 			case I.ObjectLayout.Note: {
 				break;
 			};
@@ -311,7 +295,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 					icon = <img src={commonStore.imageUrl(id, iconSize * 2)} className={icn.join(' ')} />;
 				} else {
 					icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-					icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
+					icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
 				};
 				break;
 			};
@@ -326,15 +310,10 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.File: {
 				icn = icn.concat([ 'iconFile', 'c' + iconSize ]);
-				icon = <img src={File[FileUtil.icon(object)]} className={icn.join(' ')} />;
+				icon = <img src={File[UtilFile.icon(object)]} className={icn.join(' ')} />;
 				break;
 			};
 
-			case I.ObjectLayout.Dashboard: {
-				icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
-				icon = <img src={Home} className={icn.join(' ')} />;
-				break;
-			};
 		};
 
 		if (isDeleted) {
@@ -507,7 +486,38 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		
 		const circle = `<circle cx="50%" cy="50%" r="50%" fill="${this.svgBgColor()}" />`;
 		const text = `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${this.svgColor()}" font-family="Helvetica" font-weight="medium" font-size="${this.fontSize(layout, iconSize)}px">${name}</text>`;
-		const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">${circle}${text}</svg>`;
+		const svg = `
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
+				${circle}
+				${text}
+			</svg>
+		`;
+
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+	};
+
+	userGradientSvg (radius: number): string {
+		const object = this.getObject();
+		const iconSize = this.iconSize();
+		const option = Colors.gradientIcons.options[object.iconOption - 1] as any;
+		const steps = option.steps || Colors.gradientIcons.common.steps;
+
+		const gradient = `
+			<defs>
+				<radialGradient id="gradient">
+					<stop offset="${steps.from}" stop-color="${option.colors.from}" />
+					<stop offset="${steps.to}" stop-color="${option.colors.to}" />
+				</radialGradient>
+			</defs>
+		`;
+
+		const circle = `<circle cx="50%" cy="50%" r="${radius * 100}%" fill="url(#gradient)" />`;
+		const svg = `
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 ${iconSize} ${iconSize}" xml:space="preserve" height="${iconSize}px" width="${iconSize}px">
+				${gradient}
+				${circle}
+			</svg>
+		`;
 
 		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
@@ -527,8 +537,8 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 	iconName () {
 		const object = this.getObject();
 
-		let name = String(object.name || ObjectUtil.defaultName('Page'));
-		name = SmileUtil.strip(name);
+		let name = String(object.name || UtilObject.defaultName('Page'));
+		name = UtilSmile.strip(name);
 		name = name.trim().substr(0, 1).toUpperCase();
 
 		return name;

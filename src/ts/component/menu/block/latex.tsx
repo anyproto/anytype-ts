@@ -3,7 +3,7 @@ import $ from 'jquery';
 import katex from 'katex';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, keyboard, DataUtil, MenuUtil } from 'Lib';
+import { I, keyboard, UtilData, UtilMenu } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Sections from 'json/latex.json';
 
@@ -241,7 +241,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { data } = param;
 		const { isTemplate } = data;
 
-		let sections = MenuUtil.sectionsMap(Sections);
+		let sections = UtilMenu.sectionsMap(Sections);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
 
 		sections = sections.map((it: any) => {
@@ -254,7 +254,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		});
 
 		if (filter.text) {
-			sections = MenuUtil.sectionsFilter(sections, filter.text);
+			sections = UtilMenu.sectionsFilter(sections, filter.text);
 
 			const regS = new RegExp('/^' + filter.text + '/', 'gi');
 			const regC = new RegExp(filter.text, 'gi');
@@ -274,10 +274,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					s._sortWeight_ += w;
 					return c;
 				});
-				s.children.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
+				s.children.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
 				return s;
 			});
-			sections.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
+			sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
 		};
 
 		return sections;

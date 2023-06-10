@@ -2,12 +2,19 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
-import { C, I, ObjectUtil, DataUtil, Storage, translate } from 'Lib';
+import { C, I, translate, UtilData, Storage } from 'Lib';
 import { authStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I.PageComponent, object> {
-    loading: boolean = false;
+interface State {
+	isLoading: boolean;
+};
+
+const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I.PageComponent, State> {
+
+	state = {
+		isLoading: false,
+	};
 
     constructor (props: I.PageComponent) {
         super(props);
@@ -16,17 +23,19 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
     };
 
     render () {
+		const { isLoading } = this.state;
+
         const cases: any[] = [
-            { id: 1, img: 'img/usecase/personal-projects.png' },
-            { id: 3, img: 'img/usecase/notes-or-diary.png' },
-            { id: 2, img: 'img/usecase/knowledge-base.png' },
+			{ id: I.Usecase.Personal, img: 'img/usecase/personal-projects.png' },
+			{ id: I.Usecase.Notes, img: 'img/usecase/notes-or-diary.png' },
+			{ id: I.Usecase.Knowledge, img: 'img/usecase/knowledge-base.png' },
         ];
 
-        const Case = (el) => (
-            <div className="case" onClick={(e) => this.onClick(e, el.id)}>
-                <Title className="caseTitle" text={translate(`authUsecaseCase${el.id}Title`)} />
-                <Label className="caseLabel" text={translate(`authUsecaseCase${el.id}Label`)} />
-                <img src={el.img} />
+        const Case = (item: any) => (
+            <div className="case" onClick={e => this.onClick(e, item.id)}>
+                <Title className="caseTitle" text={translate(`authUsecaseCase${item.id}Title`)} />
+                <Label className="caseLabel" text={translate(`authUsecaseCase${item.id}Label`)} />
+                <img src={item.img} />
             </div>
         );
 
@@ -34,19 +43,20 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
             <div className="usecaseWrapper">
 
                 <Frame>
+					{isLoading ? <Loader /> : ''}
+
                     <Title className="frameTitle" text={translate('authUsecaseTitle')} />
                     <Label className="frameLabel" text={translate('authUsecaseLabel')} />
 
                     <div className="usecaseList">
-                        {cases.map((el, i: number) => (
-                            <Case key={i} {...el} />
+                        {cases.map((item: any, i: number) => (
+                            <Case key={i} {...item} />
                         ))}
                     </div>
 
                     <div className="buttons">
-                        <Button className="c28 outlined" text={translate('authUsecaseSkip')} onClick={(e) => this.onClick(e, 0)} />
+                        <Button color="blank" className="c28" text={translate('authUsecaseSkip')} onClick={e => this.onClick(e, I.Usecase.None)} />
                     </div>
-                    {this.loading ? <Loader /> : ''}
                 </Frame>
             </div>
         );
@@ -55,22 +65,27 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
     onClick (e: any, id: number) {
         e.preventDefault();
 
-        if (this.loading) {
+		const { isLoading } = this.state;
+
+        if (isLoading) {
             return;
         };
 
-        this.loading = true;
-        this.forceUpdate();
+        this.setState({ isLoading: true });
 
         C.ObjectImportUseCase(id, () => {
-            $('.usecaseWrapper').css({'opacity': 0});
+            $('.usecaseWrapper').css({ 'opacity': 0 });
 
-			DataUtil.onAuth(authStore.account, () => {
-				const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
-				if (blocks.length) {
-					Storage.setToggle('widget', blocks[0].parentId, true);
-				};
-			});
+			window.setTimeout(() => {
+				UtilData.onAuth(authStore.account, () => {
+					const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
+					if (blocks.length) {
+						Storage.setToggle('widget', blocks[0].parentId, true);
+					};
+
+					this.setState({ isLoading: false });
+				});
+			}, 600);
         });
     };
 

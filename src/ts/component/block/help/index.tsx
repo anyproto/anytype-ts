@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, DataUtil } from 'Lib';
+import { I, UtilData } from 'Lib';
 import ContentIcon from './icon';
 import ContentText from './text';
 import ContentLink from './link';
@@ -21,7 +21,7 @@ class Block extends React.Component<Props> {
 
 	render () {
 		const { type, style, align } = this.props;
-		const cn = [ 'block', DataUtil.blockClass({ type: type, content: { style: style } }), 'align' + align ];
+		const cn = [ 'block', UtilData.blockClass({ type: type, content: { style: style } }), 'align' + align ];
 
 		let content = null;
 		

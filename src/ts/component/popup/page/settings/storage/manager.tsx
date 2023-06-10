@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Title, ListObjectManager } from 'Component';
-import { analytics, C, FileUtil, I, translate, Util } from 'Lib';
+import { analytics, C, UtilFile, I, translate, UtilCommon } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -30,7 +30,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
         const Info = (item: any) => (
             <React.Fragment>
-                <Label text={String(FileUtil.size(item.sizeInBytes))} />
+                <Label text={String(UtilFile.size(item.sizeInBytes))} />
             </React.Fragment>
         );
 
@@ -66,7 +66,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
         popupStore.open('confirm', {
             data: {
-                title: `Are you sure you want to delete ${count} ${Util.cntWord(count, 'object', 'objects')}?`,
+                title: `Are you sure you want to delete ${count} ${UtilCommon.cntWord(count, 'object', 'objects')}?`,
                 text: 'These objects will be deleted irrevocably. You can\'t undo this action.',
                 textConfirm: 'Delete',
                 onConfirm: () => {

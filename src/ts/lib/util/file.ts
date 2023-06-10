@@ -1,9 +1,8 @@
 import loadImage from 'blueimp-load-image';
-import { Util } from 'Lib';
+import { UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
-
-class FileUtil {
+class UtilFile {
 
 	fromPath (path: string) {
 		const { buffer, type } = window.Electron.fileParam(path);
@@ -28,13 +27,13 @@ class FileUtil {
 		let m = v / (unit * unit);
 		let k = v / unit;
 		if (g >= 1) {
-			v = Util.sprintf(`%0.${trimmer(g, 2)}fGB`, Util.round(g, trimmer(g, 2)));
+			v = UtilCommon.sprintf(`%0.${trimmer(g, 2)}fGB`, UtilCommon.round(g, trimmer(g, 2)));
 		} else if (m > 1) {
-			v = Util.sprintf(`%0.${trimmer(m, 1)}fMB`, Util.round(m, trimmer(m, 1)));
+			v = UtilCommon.sprintf(`%0.${trimmer(m, 1)}fMB`, UtilCommon.round(m, trimmer(m, 1)));
 		} else if (k > 1) {
-			v = Util.sprintf(`%0.${trimmer(k, 1)}fKB`, Util.round(k, trimmer(k, 1)));
+			v = UtilCommon.sprintf(`%0.${trimmer(k, 1)}fKB`, UtilCommon.round(k, trimmer(k, 1)));
 		} else {
-			v = Util.sprintf('%dB', Util.round(v, 0));
+			v = UtilCommon.sprintf('%dB', UtilCommon.round(v, 0));
 		};
 		return v;
 	};
@@ -155,4 +154,4 @@ class FileUtil {
 
 };
 
-export default new FileUtil();
+export default new UtilFile();
