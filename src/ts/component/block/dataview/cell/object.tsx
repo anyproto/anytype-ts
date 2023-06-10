@@ -420,6 +420,10 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const cell = $(`#${id}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
 
+		if (!content.length) {
+			return;
+		};
+
 		content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
 	};
 
