@@ -41,7 +41,7 @@ class UtilObject {
 			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
 		};
 
-		if (home._empty_ || home.isArchived || home.isDeleted) {
+		if (!home || home._empty_ || home.isArchived || home.isDeleted) {
 			return null;
 		};
 		return home;
