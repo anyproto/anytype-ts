@@ -329,6 +329,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	};
 
 	accountCreate = (callBack?: () => void): void => {
+		if (this.account) {
+			return;
+		};
+
 		C.WalletCreate(authStore.walletPath, (message) => {
 			if (message.error.code) {
 				this.showErrorAndExit(message);
