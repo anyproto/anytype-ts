@@ -60,7 +60,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (error) {
 			return (
 				<div>
-					<Frame ref={(ref) => (this.refFrame = ref)}>
+					<Frame ref={ref => this.refFrame = ref}>
 						<Error className="animation" text={error} />
 					</Frame>
 					<CanvasWorkerBridge state={animationStage} />
@@ -71,6 +71,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		return (
 			<div ref={(ref) => (this.node = ref)}>
 				{back}
+
 				<Frame ref={(ref) => (this.refFrame = ref)}>
 					{indicator}
 					<Title className="animation" text={this.getText('Title')} />
@@ -79,6 +80,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{this.renderButtons()}
 					{footer}
 				</Frame>
+
 				{/*<CanvasWorkerBridge state={animationStage} />*/}
 				<div className="fadeInOverlay" />
 			</div>
@@ -103,7 +105,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (stage == Stage.Soul) {
 			return (
-				<div className="animation">
+				<div className="inputWrapper animation">
 					<Input
 						focusOnMount
 						type="text"
@@ -168,7 +170,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (stage == Stage.Phrase) {
-			moreInfo = (<div className="animation small" onClick={this.onPhraseInfo}>More info</div>);
+			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>More info</div>;
 		};
 
 		return (

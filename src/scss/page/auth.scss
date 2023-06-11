@@ -59,7 +59,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuth, .pageIndex {
-	.frame { width: 672px; padding: 60px 48px 48px 48px; text-align: center; background: none !important; }
+	.frame { text-align: center; background: none !important; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
 
 	.header { width: 100% !important; }
@@ -84,7 +84,7 @@ html.bodyAuthDeleted {
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
 
-	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
+	.buttons { display: flex; flex-direction: column; align-items: center; gap: 16px 0px; }
 	.button { width: 192px; color: $colorPrimary; background: $colorButtonStroke; }
 	.button:not(.disabled):hover { background: $colorButtonOpaque; }
 	.button.disabled { color: $colorTertiary }
@@ -158,12 +158,17 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted {
-	.frame { width: 866px; margin-top: -150px !important; display: flex; flex-direction: column; gap: 20px 0px; align-items: center; }
+	.frame { display: flex; flex-direction: column; align-items: center; }
 	.title { font-size: 18px; line-height: 26px; color: $colorPrimary; }
 	.label { color: $colorSecondary; }
 }
 
 .pageAuthOnboard {
+	.frame { width: 1064px; top: 40%; margin-top: 0px !important; }
+	.title { margin: 0px 0px 10px 0px; }
+	.label { margin: 0px 0px 20px 0px; }
+	.dotIndicator { margin: 0px 0px 8px 0px; }
+
 	canvas { height: 100vh; width: 100vw; }
 
 	.fadeInOverlay {
@@ -187,19 +192,18 @@ html.bodyAuthDeleted {
 
 	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
 	
-	@media screen and (max-height: 520px) {
-		.bottom { position: relative; margin: 15px; }
-	}
-	
 	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: $colorSecondary; color: black; }
 	.questionMark:hover { background-color: $colorPrimary; }
 
-	.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: $colorPrimary; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
-	.input:hover { cursor: pointer; filter: brightness(1.2) }
-	.input::placeholder { color: $colorTertiary !important; }
-
+	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
 	.phraseWrapper {
 		.icon { display: none; }
+	}
+
+	.inputWrapper {
+		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: $colorPrimary; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
+		.input:hover { cursor: pointer; filter: brightness(1.2) }
+		.input::placeholder { color: $colorTertiary !important; }
 	}
 
 	.soulContent { position: relative; width: 100px; margin-top: 28px; }
