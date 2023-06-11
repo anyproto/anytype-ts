@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { Util, keyboard, translate } from 'Lib';
+import { UtilCommon, keyboard, translate } from 'Lib';
 
 const COLORS = [
 	'orange',
@@ -71,7 +71,7 @@ class Phrase extends React.Component<Props, State> {
 				cn.push('textColor', `textColor-${c}`);
 			};
 
-			return <span className={cn.join(' ')} key={index}>{Util.ucFirst(word)}</span>;
+			return <span className={cn.join(' ')} key={index}>{UtilCommon.ucFirst(word)}</span>;
 		};
 
 		return (

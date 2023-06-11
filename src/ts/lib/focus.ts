@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-import { I, keyboard, Util } from 'Lib';
+import { I, keyboard, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -33,12 +33,12 @@ class Focus {
 			},
 		};
 
-		this.backup = Util.objectCopy(this.state);
+		this.backup = UtilCommon.objectCopy(this.state);
 		return this;
 	};
 
 	restore () {
-		this.state = Util.objectCopy(this.backup);
+		this.state = UtilCommon.objectCopy(this.backup);
 	};
 
 	clear (withRange: boolean) {
@@ -101,10 +101,10 @@ class Focus {
 			return;
 		};
 
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const h = container.height();
 		const no = node.offset().top;
-		const o = Constant.size.lastBlock + Util.sizeHeader();
+		const o = Constant.size.lastBlock + UtilCommon.sizeHeader();
 		const st = container.scrollTop();
 		const y = isPopup ? (no - container.offset().top + st) : no;
 

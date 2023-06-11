@@ -1,8 +1,7 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { Frame, Title, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, Util, translate, C, keyboard, Animation } from 'Lib';
-import { authStore, popupStore, commonStore } from 'Store';
+import { I, UtilCommon, translate, C, keyboard, Animation } from 'Lib';
+import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -101,7 +100,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			};
 
 			authStore.phraseSet(phrase);
-			Animation.from(() => { Util.route('/auth/account-select'); });
+			Animation.from(() => { UtilCommon.route('/auth/account-select'); });
 		});
 	};
 
@@ -121,7 +120,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	onCancel () {
-		Animation.from(() => { Util.route('/auth/select'); });
+		Animation.from(() => { UtilCommon.route('/auth/select'); });
 	};
 
 	onSelfHost () {

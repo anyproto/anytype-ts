@@ -114,12 +114,10 @@ export enum EdgeType {
 	Relation	 = 1,
 };
 
-export enum TabIndex {
-	None		 = '',
-	Favorite	 = 'favorite',
-	Recent		 = 'recent',
-	Set			 = 'set',
-	Archive		 = 'archive',
+export enum HomePredefinedId {
+	Graph = 'graph',
+	Last = 'lastOpened',
+	Existing = 'existing',
 };
 
 export interface HeaderComponent extends RouteComponentProps<any> {

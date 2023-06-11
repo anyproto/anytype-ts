@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, Util, analytics } from 'Lib';
+import { I, UtilCommon, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
 const Tags = [ 
@@ -79,8 +79,8 @@ class Mark {
 		];
 
 		for (let item of Markdown) {
-			const non = Util.filterFix(item.key.substr(0, 1));
-			const k = Util.filterFix(item.key);
+			const non = UtilCommon.filterFix(item.key.substr(0, 1));
+			const k = UtilCommon.filterFix(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,
 				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
@@ -93,7 +93,7 @@ class Mark {
 			return marks;	
 		};
 
-		let map = Util.mapToArray(marks, 'type');
+		let map = UtilCommon.mapToArray(marks, 'type');
 		let type = mark.type;
 		let add = true;
 
@@ -179,7 +179,7 @@ class Mark {
 		};
 
 		analytics.event('ChangeTextStyle', { type, count: 1 });
-		return Util.unmap(map).sort(this.sort);
+		return UtilCommon.unmap(map).sort(this.sort);
 	};
 	
 	sort (c1: I.Mark, c2: I.Mark) {
@@ -247,7 +247,7 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
-		let map = Util.mapToArray(marks, 'type');
+		let map = UtilCommon.mapToArray(marks, 'type');
 		if (!map[type] || !map[type].length) {
 			return null;
 		};
@@ -357,18 +357,18 @@ class Mark {
 			};
 		};
 
-		for (let mark of parts) {
+		// Render mentions
+		for (let mark of marks) {
 			if (mark.type == I.MarkType.Mention) {
-				continue;
+				render(mark);
 			};
-			render(mark);
 		};
 
-		for (let mark of marks) {
+		// Render everything except mentions
+		for (let mark of parts) {
 			if (mark.type != I.MarkType.Mention) {
-				continue;
+				render(mark);
 			};
-			render(mark);
 		};
 
 		// Replace tags in text
@@ -490,7 +490,7 @@ class Mark {
 	// Unicode symbols
 	fromUnicode (html: string): string {
 		let text = html;
-		let keys = Object.keys(Patterns).map(it => Util.filterFix(it));
+		let keys = Object.keys(Patterns).map(it => UtilCommon.filterFix(it));
 		let reg = new RegExp('(' + keys.join('|') + ')', 'g');
 		let test = reg.test(text);
 

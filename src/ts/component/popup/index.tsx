@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, analytics, Storage, Preview } from 'Lib';
+import { I, UtilCommon, analytics, Storage, Preview } from 'Lib';
 import { Dimmer } from 'Component';
 import { menuStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -159,7 +159,7 @@ class Popup extends React.Component<I.Popup> {
 					
 			const node = $(this.node);
 			const inner = node.find('.innerWrap');
-			const { ww } = Util.getWindowDimensions();
+			const { ww } = UtilCommon.getWindowDimensions();
 
 			const sidebar = $('#sidebar');
 			const isRight = sidebar.hasClass('right');
@@ -205,7 +205,7 @@ class Popup extends React.Component<I.Popup> {
 	};
 
 	getId (): string {
-		return Util.toCamelCase('popup-' + this.props.id);
+		return UtilCommon.toCamelCase('popup-' + this.props.id);
 	};
 
 };

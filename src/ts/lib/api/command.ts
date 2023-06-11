@@ -1,6 +1,7 @@
-import { I, Util, Mark, dispatcher, Encode, Mapper } from 'Lib';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
+import { detailStore } from 'Store';
+import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
 
 const Rpc = Commands.Rpc;
 
@@ -291,7 +292,7 @@ const BlockTextSetText = (contextId: string, blockId: string, text: string, mark
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 
-	marks = Util.objectCopy(marks);
+	marks = UtilCommon.objectCopy(marks);
 	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark) as any;
 
 	const request = new Rpc.BlockText.SetText.Request();
@@ -391,7 +392,7 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 };
 
 const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
-	blocks = Util.objectCopy(blocks);
+	blocks = UtilCommon.objectCopy(blocks);
 
 	const request = new Rpc.Block.Copy.Request();
 
@@ -403,7 +404,7 @@ const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, cal
 };
 
 const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
-	blocks = Util.objectCopy(blocks);
+	blocks = UtilCommon.objectCopy(blocks);
 
 	const request = new Rpc.Block.Cut.Request();
 
@@ -415,7 +416,7 @@ const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, call
 };
 
 const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, callBack?: (message: any) => void) => {
-	data = Util.objectCopy(data);
+	data = UtilCommon.objectCopy(data);
 
 	const request = new Rpc.Block.Paste.Request();
 
@@ -1186,6 +1187,12 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
 		};
 
+		// Save last opened object
+		const object = detailStore.get(objectId, objectId, []);
+		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
+			Storage.set('lastOpened', { id: object.id, layout: object.layout });
+		};
+
 		if (callBack) {
 			callBack(message);
 		};
@@ -1371,7 +1378,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setOffset(offset);
 	request.setLimit(limit);
-	request.setKeysList(Util.arrayUnique(keys));
+	request.setKeysList(UtilCommon.arrayUnique(keys));
 	request.setSourceList(sources);
 	request.setIgnoreworkspace(ignoreWorkspace as any);
 	request.setAfterid(afterId);

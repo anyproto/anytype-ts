@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, analytics, MenuUtil, ObjectUtil, DataUtil, Preview, translate, keyboard, Relation } from 'Lib';
+import { I, C, analytics, UtilMenu, UtilObject, UtilData, Preview, translate, keyboard, Relation } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import { dbStore, menuStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -248,7 +248,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				...data,
 				filter: '',
 				value: this.format,
-				options: MenuUtil.getRelationTypes(),
+				options: UtilMenu.getRelationTypes(),
 				noFilter: true,
 				onSelect: (e: any, item: any) => {
 					this.format = item.id;
@@ -290,7 +290,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				types: [ Constant.typeId.type ],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: Constant.typeId.type },
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => dbStore.getType(it.id),
@@ -375,7 +375,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 	onOpen (e: any) {
 		this.props.close();
-		ObjectUtil.openPopup(this.getRelation());
+		UtilObject.openPopup(this.getRelation());
 	};
 
 	onCopy (e: any) {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, ObjectName, Loader } from 'Component';
-import { I, Util, ObjectUtil, DataUtil, MenuUtil, translate, Storage, Action, analytics } from 'Lib';
+import { Icon, ObjectName } from 'Component';
+import { I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -19,17 +19,10 @@ interface Props extends I.WidgetComponent {
 	onDragOver?: (e: React.MouseEvent, blockId: string) => void;
 };
 
-interface State {
-	loading: boolean;
-};
-
-const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, State> {
+const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 	node = null;
 	ref = null;
-	state = {
-		loading: false
-	};
 
 	constructor (props: Props) {
 		super(props);
@@ -43,19 +36,26 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		this.isCollection = this.isCollection.bind(this);
 		this.getData = this.getData.bind(this);
 		this.getLimit = this.getLimit.bind(this);
+		this.sortFavorite = this.sortFavorite.bind(this);
 	};
 
-	render (): React.ReactNode {
-		const { loading } = this.state;
+	render () {
 		const { block, isPreview, isEditing, className, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
-		const { layout, limit } = block.content;
+		const root = '';
+		const childrenIds = blockStore.getChildrenIds(root, root);
+		const { layout, limit, viewId } = block.content;
+
+		if (!child && (layout != I.WidgetLayout.Space)) {
+			return null;
+		};
+
 		const { targetBlockId } = child?.content || {};
-		const cn = [ 'widget', Util.toCamelCase('widget-' + I.WidgetLayout[layout]) ];
+		const cn = [ 'widget', UtilCommon.toCamelCase(`widget-${I.WidgetLayout[layout]}`) ];
 		const object = this.getObject();
-		const platform = Util.getPlatform();
-		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !Util.isPlatformMac());
-		const key = `widget-${block.id}`;
+		const withSelect = !this.isCollection(targetBlockId) && (!isPreview || !UtilCommon.isPlatformMac());
+		const childKey = `widget-${child?.id}-${layout}`;
+
 		const props = {
 			...this.props,
 			parent: block,
@@ -63,6 +63,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			isCollection: this.isCollection,
 			getData: this.getData,
 			getLimit: this.getLimit,
+			sortFavorite: this.sortFavorite,
 		};
 
 		if (className) {
@@ -108,7 +109,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		if (layout != I.WidgetLayout.Space) {
 			let onClick = null;
 			if (!this.isCollection(targetBlockId)) {
-				onClick = e => ObjectUtil.openEvent(e, object);
+				onClick = e => UtilObject.openEvent(e, object);
 			} else {
 				onClick = () => this.onSetPreview();
 			};
@@ -124,34 +125,30 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			);
 		};
 
-		if (loading) {
-			content = <Loader />;
-		} else {
-			switch (layout) {
+		switch (layout) {
 
-				case I.WidgetLayout.Space: {
-					content = <WidgetSpace key={key} ref={ref => this.ref = ref} {...this.props} {...props} />;
-					break;
-				};
-
-				case I.WidgetLayout.Tree: {
-					content = <WidgetTree key={key} ref={ref => this.ref = ref} {...this.props} {...props} />;
-					break;
-				};
-
-				case I.WidgetLayout.List:
-				case I.WidgetLayout.Compact: {
-					content = <WidgetList key={key} ref={ref => this.ref = ref} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
-					break;
-				};
-
+			case I.WidgetLayout.Space: {
+				content = <WidgetSpace key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				break;
 			};
+
+			case I.WidgetLayout.Tree: {
+				content = <WidgetTree key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} />;
+				break;
+			};
+
+			case I.WidgetLayout.List:
+			case I.WidgetLayout.Compact: {
+				content = <WidgetList key={childKey} ref={ref => this.ref = ref} {...this.props} {...props} isCompact={layout == I.WidgetLayout.Compact} />;
+				break;
+			};
+
 		};
 
 		return (
 			<div
 				ref={node => this.node = node}
-				id={key}
+				id={`widget-${block.id}`}
 				className={cn.join(' ')}
 				draggable={isEditing}
 				onDragStart={e => onDragStart(e, block.id)}
@@ -232,7 +229,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			case Constant.widgetId.collection: {
 				object = {
 					id: targetBlockId,
-					name: translate(Util.toCamelCase(`widget-${targetBlockId}`)),
+					name: translate(UtilCommon.toCamelCase(`widget-${targetBlockId}`)),
 				};
 				break;
 			};
@@ -247,7 +244,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 	};
 
 	onClick (e: React.MouseEvent): void {
-		ObjectUtil.openEvent(e, this.getObject());
+		UtilObject.openEvent(e, this.getObject());
 	};
 
 	onOptions (e: React.MouseEvent): void {
@@ -341,7 +338,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		const limit = this.getLimit(block.content);
 		const sorts = [];
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 		];
 
 		switch (targetBlockId) {
@@ -367,7 +364,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 			};
 		};
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			subId,
 			filters,
 			sorts,
@@ -376,26 +373,43 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 		}, callBack);
 	};
 
+	sortFavorite (records: string[]): string[] {
+		const root = ''; // TODO: use collection
+		const ids = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
+
+		return UtilCommon.objectCopy(records || []).sort((c1: string, c2: string) => {
+			const i1 = ids.indexOf(c1);
+			const i2 = ids.indexOf(c2);
+
+			if (i1 > i2) return 1;
+			if (i1 < i2) return -1;
+			return 0;
+		});
+	};
+
 	onSetPreview () {
 		const { block, isPreview, setPreview } = this.props;
 		const object = this.getObject();
+		const child = this.getTargetBlock();
+		const { targetBlockId } = child?.content;
 
 		let blockId = '';
-		let eventName = 'ScreenHome';
-		let eventData: any = { view: 'Widget' };
+		let event = 'ScreenHome';
+		let data: any = { view: 'Widget' };
 
 		if (!isPreview) {
 			blockId = block.id;
-			eventName = 'SelectHomeTab';
-			eventData.tab = this.isCollection(block.id) ? object.name : analytics.typeMapper(object.type);
+			event = 'SelectHomeTab';
+			data.tab = this.isCollection(targetBlockId) ? object.name : analytics.typeMapper(object.type);
 		};
 
 		setPreview(blockId);
-		analytics.event(eventName, eventData);
+		analytics.event(event, data);
 	};
 
 	onDragEnd () {
 		const target = this.getObject();
+
 		analytics.event('ReorderWidget', { target });
 	};
 
@@ -405,7 +419,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props, St
 
 	getLimit ({ limit, layout }): number {
 		const { isPreview } = this.props;
-		const options = MenuUtil.getWidgetLimits(layout).map(it => Number(it.id));
+		const options = UtilMenu.getWidgetLimits(layout).map(it => Number(it.id));
 
 		if (!limit || !options.includes(limit)) {
 			limit = options[0];

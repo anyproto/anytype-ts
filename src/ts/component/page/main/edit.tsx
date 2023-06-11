@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, Onboarding, ObjectUtil } from 'Lib';
+import { I, Onboarding, UtilObject } from 'Lib';
 import { detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -35,7 +35,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 	onOpen () {
 		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const home = ObjectUtil.getSpaceDashboard();
+		const home = UtilObject.getSpaceDashboard();
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
 		if (this.refHeader) {
@@ -47,7 +47,7 @@ class PageMainEdit extends React.Component<I.PageComponent> {
 
 		if (home && (rootId != home.id)) {
 			let key = '';
-			if (object.type == Constant.typeId.template) {
+			if (UtilObject.isTemplate(object.type)) {
 				key = 'template';
 			} else 
 			if (!blockStore.checkBlockTypeExists(rootId)) {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, ObjectUtil, Renderer, keyboard, sidebar, Preview } from 'Lib';
+import { I, UtilObject, Renderer, keyboard, sidebar, Preview } from 'Lib';
 import { menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
@@ -80,11 +80,11 @@ class Header extends React.Component<Props> {
 	};
 
 	onNavigation () {
-		ObjectUtil.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
+		UtilObject.openPopup({ id: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 	
 	onGraph () {
-		ObjectUtil.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
+		UtilObject.openAuto({ id: this.props.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onTooltipShow (e: any, text: string, caption?: string) {

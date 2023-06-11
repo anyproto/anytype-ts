@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Error, Icon, IconObject, Input } from 'Component';
-import { I, translate, Animation, C, DataUtil, Storage, Util, Renderer, analytics, Preview, keyboard, ObjectUtil } from 'Lib';
+import { I, translate, Animation, C, UtilData, Storage, UtilCommon, Renderer, analytics, Preview, keyboard, UtilObject } from 'Lib';
 import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -27,7 +27,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		stage: Stage.Void,
 		animationStage: Stage.Void,
 		phraseCopied: false,
-		iconOption: Util.rand(1, Constant.iconCnt),
+		iconOption: UtilCommon.rand(1, Constant.iconCnt),
 	};
 
 	render () {
@@ -337,7 +337,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 			authStore.phraseSet(message.mnemonic);
 
-			DataUtil.createSession((message) => {
+			UtilData.createSession((message) => {
 				if (message.error.code) {
 					this.showErrorAndExit(message);
 					return;
@@ -358,7 +358,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					commonStore.configSet(message.account.config, false);
 
 					Renderer.send('keytarSet', message.account.id, phrase);
-					Storage.set('timeRegister', Util.time());
+					Storage.set('timeRegister', UtilCommon.time());
 					analytics.event('CreateAccount');
 
 					if (callBack) {
@@ -376,17 +376,17 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		authStore.accountSet(this.account);
 
-		ObjectUtil.setName(profile, name, () => {
-			ObjectUtil.setName(workspace, name);
+		UtilObject.setName(profile, name, () => {
+			UtilObject.setName(workspace, name);
 
-			DataUtil.onAuth(this.account, () => {
+			UtilData.onAuth(this.account, () => {
 				this.setState(
 					(prev) => ({
 						...prev,
 						animationStage: prev.animationStage + 1,
 					}),
 					() => {
-						Util.route('/main/usecase');
+						UtilCommon.route('/main/usecase');
 					}
 				);
 			});
@@ -397,14 +397,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	showErrorAndExit = (message) => {
 		const error = Errors.AccountCreate[message.error.code] || message.error.description;
 
-		this.setState({ error }, () =>
-			window.setTimeout(() => Util.route('/'), 3000)
-		);
+		this.setState({ error }, () => window.setTimeout(() => UtilCommon.route('/'), 3000));
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy = () => {
-		Util.clipboardCopy({ text: authStore.phrase });
+		UtilCommon.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
 	};
 

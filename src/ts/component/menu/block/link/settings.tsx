@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, Util, DataUtil, MenuUtil, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilMenu, keyboard, Relation } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -143,7 +143,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const block = blockStore.getLeaf(rootId, blockId);
         const object = detailStore.get(rootId, block.content.targetBlockId);
 
-        return DataUtil.checkLinkSettings(block.content, object.layout);
+        return UtilData.checkLinkSettings(block.content, object.layout);
 	};
 
 	getStyles () {
@@ -235,7 +235,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			s.children = s.children.filter(it => it);
 			return s;
 		});
-		sections = MenuUtil.sectionsMap(sections);
+		sections = UtilMenu.sectionsMap(sections);
 
 		sections = sections.map((s: any) => {
 			s.children = s.children.map((child: any) => {
@@ -274,7 +274,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { rootId, blockId, blockIds } = data;
         const block = blockStore.getLeaf(rootId, blockId);
         
-        let content = Util.objectCopy(block.content || {});
+        let content = UtilCommon.objectCopy(block.content || {});
         content[id] = v;
 
 		C.BlockLinkListSetAppearance(rootId, blockIds, content.iconSize, content.cardStyle, content.description, content.relations);

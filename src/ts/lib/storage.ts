@@ -1,4 +1,4 @@
-import { Util } from 'Lib';
+import { UtilCommon } from 'Lib';
 
 class Storage {
 	
@@ -45,7 +45,7 @@ class Storage {
 
 	setToggle (rootId: string, id: string, value: boolean) {
 		let obj = this.get('toggle');
-		if (!obj || Util.hasProperty(obj, 'length')) {
+		if (!obj || UtilCommon.hasProperty(obj, 'length')) {
 			obj = {};
 		};
 		
@@ -129,15 +129,8 @@ class Storage {
 			'accountId', 
 			'scroll', 
 			'toggle', 
-			'crumbs', 
-			'tabIndex', 
 			'tabStore', 
-			'linkSettings', 
 			'graph',
-			'gateway',
-			'dataPath',
-			'writing',
-			'timezone',
 		];
 
 		keys.forEach(key => this.delete(key));

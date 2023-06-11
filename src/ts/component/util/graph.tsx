@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as d3 from 'd3';
 import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
-import { I, Util, ObjectUtil, SmileUtil, FileUtil, translate, Relation, analytics, Preview } from 'Lib';
+import { I, UtilCommon, UtilObject, UtilSmile, UtilFile, translate, Relation, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import Colors from 'json/colors.json';
 
@@ -165,11 +165,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		if (d.layout == I.ObjectLayout.Note) {
 			d.name = d.snippet || translate('commonEmpty');
 		} else {
-			d.name = d.name || ObjectUtil.defaultName('Page');
+			d.name = d.name || UtilObject.defaultName('Page');
 		};
 
-		d.name = SmileUtil.strip(d.name);
-		d.shortName = Util.shorten(d.name, 24);
+		d.name = UtilSmile.strip(d.name);
+		d.shortName = UtilCommon.shorten(d.name, 24);
 		d.description = String(d.description || '');
 		d.snippet = String(d.snippet || '');
 
@@ -367,7 +367,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			};
 
 			case I.ObjectLayout.File: {
-				src = `img/icon/file/${FileUtil.icon(d)}.svg`;
+				src = `img/icon/file/${UtilFile.icon(d)}.svg`;
 				break;
 			};
 
@@ -375,7 +375,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				if (d.id) {
 					src = commonStore.imageUrl(d.id, 160);
 				} else {
-					src = `img/icon/file/${FileUtil.icon(d)}.svg`;
+					src = `img/icon/file/${UtilFile.icon(d)}.svg`;
 				};
 				break;
 			};
@@ -406,9 +406,9 @@ const Graph = observer(class Graph extends React.Component<Props> {
 					src = commonStore.imageUrl(d.iconImage, 160);
 				} else
 				if (d.iconEmoji) {
-					const data = SmileUtil.data(d.iconEmoji);
+					const data = UtilSmile.data(d.iconEmoji);
 					if (data) {
-						src = SmileUtil.srcFromColons(data.colons, data.skin);
+						src = UtilSmile.srcFromColons(data.colons, data.skin);
 					};
 					src = src.replace(/^.\//, '');
 				} else
@@ -437,8 +437,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		const fillW = small ? w * 0.7 : w;
 		const fillR = fillW / 2;
 		const steps = option.steps || Colors.gradientIcons.common.steps;
-		const step0 = Util.getPercentage(fillR, Number(steps.from.replace('%', '')));
-		const step1 = Util.getPercentage(fillR, Number(steps.to.replace('%', '')));
+		const step0 = UtilCommon.getPercentage(fillR, steps.from * 100);
+		const step1 = UtilCommon.getPercentage(fillR, steps.to * 100);
 		const grd = ctx.createRadialGradient(r, r, step0, r, r, step1);
 
 		canvas.width = w;

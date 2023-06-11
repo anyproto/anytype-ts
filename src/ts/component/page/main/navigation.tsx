@@ -4,7 +4,7 @@ import raf from 'raf';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, ObjectUtil, Util, keyboard, Key, focus, translate } from 'Lib';
+import { I, C, UtilObject, UtilCommon, keyboard, Key, focus, translate } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
 
 interface State {
@@ -284,11 +284,11 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		const node = $(this.node);
-		const obj = Util.getPageContainer(this.props.isPopup);
+		const obj = UtilCommon.getPageContainer(this.props.isPopup);
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
 
 		raf(() => {
-			const container = Util.getScrollContainer(isPopup);
+			const container = UtilCommon.getScrollContainer(isPopup);
 			const header = node.find('#header');
 			const items = node.find('.items');
 			const sides = node.find('.sides');
@@ -470,7 +470,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const { isPopup } = this.props;
 		const obj = { id: item.id, layout: I.ObjectLayout.Navigation };
 
-		isPopup ? ObjectUtil.openPopup(obj) : ObjectUtil.openRoute(obj);
+		isPopup ? UtilObject.openPopup(obj) : UtilObject.openRoute(obj);
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
@@ -478,7 +478,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			e.persist();
 		};
 
-		ObjectUtil.openEvent(e, item);
+		UtilObject.openEvent(e, item);
 	};
 
 	getRootId () {
@@ -490,7 +490,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const tab = Tabs.find(it => it.id == id);
 
 		if (tab) {
-			ObjectUtil.openAuto({ id: this.getRootId(), layout: tab.layout });
+			UtilObject.openAuto({ id: this.getRootId(), layout: tab.layout });
 		};
 	};
 	

@@ -2,8 +2,8 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, DataUtil, ObjectUtil } from 'Lib';
-import { Sidebar } from 'Component';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject } from 'Lib';
+import { Sidebar, Navigation } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -151,7 +151,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	getRootId () {
 		const { id } = this.getMatchParams();
-		const home = ObjectUtil.getSpaceDashboard();
+		const home = UtilObject.getSpaceDashboard();
 
 		return id || home?.id;
 	};
@@ -164,7 +164,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isIndex = this.isIndex();
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
-		const isMainIndex = this.isMainIndex();
 		const isPinCheck = this.isAuthPinCheck();
 		const pin = Storage.get('pin');
 		const win = $(window);
@@ -179,22 +178,22 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		if (isMain && !account) {
-			Util.route('/');
+			UtilCommon.route('/');
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			Util.route('/auth/pin-check');
+			UtilCommon.route('/auth/pin-check');
 			return;
 		};
 
 		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
-			Util.route('/auth/deleted');
+			UtilCommon.route('/auth/deleted');
 			return;
 		};
 
 		if (!isPopup && Titles[action]) {
-			DataUtil.setWindowTitleText(Titles[action]);
+			UtilData.setWindowTitleText(Titles[action]);
 		};
 
 		this.setBodyClass();
@@ -209,7 +208,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		this.dashboardOnboardingCheck();
-		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
+		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
 		if (isPopup) {
@@ -221,21 +220,16 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				return;
 			};
 
-			if (isMainIndex) {
-				Survey.check(I.SurveyType.Register);
-				Survey.check(I.SurveyType.Pmf);
-				Survey.check(I.SurveyType.Object);
+			Survey.check(I.SurveyType.Register);
+			Survey.check(I.SurveyType.Pmf);
+			Survey.check(I.SurveyType.Object);
 
-				Storage.delete('redirect');
-			} else {
-				Storage.set('survey', { askPmf: true });
-				Storage.set('redirect', history.location.pathname);
-			};
+			Storage.set('survey', { askPmf: true });
 		}, Constant.delay.popup);
 	};
 
 	dashboardOnboardingCheck () {
-		const home = ObjectUtil.getSpaceDashboard();
+		const home = UtilObject.getSpaceDashboard();
 		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 
@@ -243,7 +237,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		Onboarding.start('dashboard', false);
+		Onboarding.start('dashboard', false, false);
 	};
 
 	unbind () {
@@ -309,7 +303,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { page } = this.getMatchParams();
 		
 		return [ 
-			Util.toCamelCase([ prefix, page ].join('-')),
+			UtilCommon.toCamelCase([ prefix, page ].join('-')),
 			this.getId(prefix),
 			(isPopup ? 'isPopup' : 'isFull'),
 		].join(' ');
@@ -323,10 +317,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		const { config } = commonStore;
-		const platform = Util.getPlatform();
+		const platform = UtilCommon.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
-			Util.toCamelCase([ 'platform', platform ].join('-')),
+			UtilCommon.toCamelCase([ 'platform', platform ].join('-')),
 		];
 		const obj = $('html');
 
@@ -339,8 +333,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	getId (prefix: string) {
-		const { page, action } = this.getMatchParams();
-		return Util.toCamelCase([ prefix, page, action ].join('-'));
+		const match = this.getMatch();
+		const page = match.params.page || 'index';
+		const action = match.params.action || 'index';
+
+		return UtilCommon.toCamelCase([ prefix, page, action ].join('-'));
 	};
 
 	storageGet () {

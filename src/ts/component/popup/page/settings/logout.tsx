@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Textarea, Button } from 'Component';
-import { I, C, translate, analytics, Util, Preview } from 'Lib';
+import { I, C, translate, analytics, UtilCommon, Preview } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -98,7 +98,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	onCopy (e: any) {
 		this.refPhrase.focus();
 
-		Util.clipboardCopy({ text: authStore.phrase });
+		UtilCommon.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
 
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
@@ -109,7 +109,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 
 		window.setTimeout(() => {
 			authStore.logout(false);
-			Util.route('/');
+			UtilCommon.route('/');
 
 			setPinConfirmed(false);
 		}, Constant.delay.popup);

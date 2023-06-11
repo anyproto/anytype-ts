@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, Util, Relation, keyboard } from 'Lib';
+import { Dataview, I, C, UtilCommon, Relation, keyboard } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -32,17 +32,22 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	cache: any = null;
 
 	render (): React.ReactNode {
-		const { parent, block, isCollection, isPreview } = this.props;
+		const { parent, block, isCollection, isPreview, sortFavorite } = this.props;
 		const { viewId } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
 		const views = dbStore.getViews(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const records = dbStore.getRecords(subId, '');
 		const { total } = dbStore.getMeta(subId, '');
+		const isSelect = !isPreview || !UtilCommon.isPlatformMac();
+
+		let records = dbStore.getRecords(subId, '');
+		if (targetBlockId == Constant.widgetId.favorite) {
+			records = sortFavorite(records);
+		};
+
 		const length = records.length;
-		const isSelect = !isPreview || !Util.isPlatformMac();
 
 		if (!this.cache) {
 			return null;
@@ -132,7 +137,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 						className={[ 'viewItem', (item.id == viewId ? 'active' : '') ].join(' ')} 
 						onClick={() => this.onChangeView(item.id)}
 					>
-						{Util.shorten(item.name, 32)}
+						{UtilCommon.shorten(item.name, 32)}
 					</div>
 				);
 
@@ -192,7 +197,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { viewId } = parent.content;
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
-		const view = Dataview.getView(rootId, BLOCK_ID, viewId);
+		const view = Dataview.getView(rootId, BLOCK_ID);
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
 		const records = dbStore.getRecords(subId, '');
 

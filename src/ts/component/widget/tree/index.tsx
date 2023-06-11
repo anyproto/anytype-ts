@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
-import { analytics, C, DataUtil, I, keyboard, ObjectUtil, Relation, Storage, Util } from 'Lib';
+import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon } from 'Lib';
 import { blockStore, dbStore, detailStore } from 'Store';
 import Item from './item';
 import Constant from 'json/constant.json';
@@ -31,7 +31,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	subscriptionHashes: { [key: string]: string } = {};
 	branches: string[] = [];
 
-	constructor(props: I.WidgetComponent) {
+	constructor (props: I.WidgetComponent) {
 		super(props);
 
 		this.onScroll = this.onScroll.bind(this);
@@ -41,7 +41,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		this.initCache = this.initCache.bind(this);
 	};
 
-	render() {
+	render () {
 		const { loading } = this.state;
 		const { isPreview } = this.props;
 		const nodes = this.loadTree();
@@ -147,8 +147,6 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		);
 	};
 
-	// Lifecycle Methods
-
 	componentDidMount () {
 		this._isMounted = true;
 		
@@ -197,7 +195,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	loadTree (): I.WidgetTreeItem[] {
-		const { block, isCollection } = this.props;
+		const { block, isCollection, sortFavorite } = this.props;
 		const { targetBlockId } = block.content;
 		const { widgets } = blockStore;
 		const object = detailStore.get(widgets, targetBlockId, [ 'links' ]);
@@ -207,8 +205,13 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		let children = [];
 		if (isCollection(targetBlockId)) {
 			const subId = this.getSubId(targetBlockId);
+			
+			let records = dbStore.getRecords(subId, '');
+			if (targetBlockId == Constant.widgetId.favorite) {
+				records = sortFavorite(records);
+			};
 
-			children = dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, Constant.sidebarRelationKeys)));
+			children = records.map(id => this.mapper(detailStore.get(subId, id, Constant.sidebarRelationKeys)));
 		} else {
 			children = this.getChildNodesDetails(object.id);
 			this.subscribeToChildNodes(object.id, Relation.getArrayValue(object.links));
@@ -254,7 +257,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 
 			const isOpen = Storage.checkToggle(this.getSubKey(), this.getTreeKey(node));
 			if (isOpen) {
-				this.subscribeToChildNodes(childNode.id, links);
+				this.subscribeToChildNodes(childNode.id, childNode.links);
 				treeNodeList = this.loadTreeRecursive(rootId, childNode.id, treeNodeList, this.getChildNodesDetails(childNode.id), depth + 1);
 			};
 		};
@@ -293,16 +296,16 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			return;
 		};
 
-		const hash = sha1(Util.arrayUnique(links).join(''));
+		const hash = sha1(UtilCommon.arrayUnique(links).join('-'));
 		const subId = this.getSubId(nodeId);
 
 		// if already subscribed to the same links, dont subscribe again
-		if (this.subscriptionHashes[nodeId] && this.subscriptionHashes[nodeId] == hash) {
+		if (this.subscriptionHashes[nodeId] && (this.subscriptionHashes[nodeId] == hash)) {
 			return;
 		};
 
 		this.subscriptionHashes[nodeId] = hash;
-		DataUtil.subscribeIds({
+		UtilData.subscribeIds({
 			subId,
 			ids: links,
 			keys: Constant.sidebarRelationKeys,
@@ -372,7 +375,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 		e.preventDefault();
 		e.stopPropagation();
 
-		ObjectUtil.openEvent(e, item);
+		UtilObject.openEvent(e, item);
 		analytics.event('OpenSidebarObject');
 	};
 

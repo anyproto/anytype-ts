@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as Docs from 'Docs';
 import { MenuItemVertical, Button } from 'Component';
-import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight, Storage } from 'Lib';
-import { popupStore, detailStore, blockStore } from 'Store';
+import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilObject } from 'Lib';
+import { popupStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 
 class MenuHelp extends React.Component<I.Menu> {
@@ -100,9 +99,10 @@ class MenuHelp extends React.Component<I.Menu> {
 		const storeTab = Storage.get('tabStore');
 		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
 		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
+		const home = UtilObject.getSpaceDashboard();
 
 		close();
-		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
+		analytics.event(UtilCommon.toUpperCamelCase([ getId(), item.id ].join('-')));
 
 		Highlight.hide(item.id);
 
@@ -142,6 +142,10 @@ class MenuHelp extends React.Component<I.Menu> {
 				const isSet = keyboard.isMainSet();
 
 				let key = '';
+
+				if (isEditor && home && (rootId == home.id)) {
+					key = 'dashboard';
+				} else 
 				if (isSet) {
 					key = 'mainSet';
 				} else
@@ -159,12 +163,7 @@ class MenuHelp extends React.Component<I.Menu> {
 				} else {
 					const { page, action } = keyboard.getMatch().params;
 
-					key = Util.toCamelCase([ page, action ].join('-'));
-
-					if (!Docs.Help.Onboarding[key]) {
-						popupStore.open('migration', { data: { type: 'onboarding' } });
-						return;
-					};
+					key = UtilCommon.toCamelCase([ page, action ].join('-'));
 				};
 
 				if (key) {

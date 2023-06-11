@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, Util, DataUtil, Dataview, analytics, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilData, Dataview, analytics, keyboard, Relation } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
@@ -90,7 +90,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	componentDidUpdate () {
 		this.resize();
-		Util.triggerResizeEditor(this.props.isPopup);
+		UtilCommon.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -296,7 +296,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return;
 		};
 
-		DataUtil.checkTemplateCnt(setOf, (message: any) => {
+		UtilData.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
 				popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
 			} else {
@@ -307,7 +307,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	getGroups (withHidden: boolean) {
 		let { rootId, block } = this.props;
-		let groups = this.applyGroupOrder(Util.objectCopy(dbStore.getGroups(rootId, block.id)));
+		let groups = this.applyGroupOrder(UtilCommon.objectCopy(dbStore.getGroups(rootId, block.id)));
 
 		if (!withHidden) {
 			groups = groups.filter(it => !it.isHidden);
@@ -461,7 +461,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				continue;
 			};
 
-			if (rect && this.cache[groupId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && this.cache[groupId] && UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
 
@@ -542,7 +542,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				continue;
 			};
 
-			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
+			if (UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
 				isTop = rect.isAdd || (e.pageY <= rect.y + rect.height / 2);
 				hoverId = rect.id;
 
@@ -722,7 +722,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const view = node.find('.viewContent');
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);

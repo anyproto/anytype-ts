@@ -4,7 +4,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
-import { I, Relation, ObjectUtil, translate, Util, keyboard, analytics } from 'Lib';
+import { I, Relation, UtilObject, translate, UtilCommon, keyboard, analytics } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import ItemObject from './item/object';
 
@@ -72,7 +72,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 									id={`item-${item.id}`}
 									className="itemWrap isDraggable"
 									draggable={true}
-									{...Util.dataProps({ id: item.id, index: i })}
+									{...UtilCommon.dataProps({ id: item.id, index: i })}
 								>
 									<ItemObject 
 										key={item.id} 
@@ -179,7 +179,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		if (canOpen && item) {
 			e.stopPropagation();
-			ObjectUtil.openPopup(item);
+			UtilObject.openPopup(item);
 		};
 	};
 
@@ -250,7 +250,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const { onChange, relation } = this.props;
 		const { maxCount } = relation;
 		
-		value = Util.arrayUnique(value);
+		value = UtilCommon.arrayUnique(value);
 
 		if (maxCount && value.length > maxCount) {
 			value = value.slice(value.length - maxCount, value.length);
@@ -373,7 +373,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			flags.push(I.ObjectFlag.SelectType);
 		};
 
-		ObjectUtil.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
+		UtilObject.create('', '', details, I.BlockPosition.Bottom, '', {}, flags, (message: any) => {
 			if (!message.error.code) {
 				this.onValueAdd(message.targetId);
 			};
@@ -419,6 +419,10 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 		const { id } = this.props;
 		const cell = $(`#${id}`);
 		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
+
+		if (!content.length) {
+			return;
+		};
 
 		content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
 	};

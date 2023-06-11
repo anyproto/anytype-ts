@@ -184,6 +184,7 @@
 	"blockNameQuote": { "en": "Highlighted" },
 	"blockTextQuote": { "en": "Spotlight, that needs special attention" },
 
+	
 	"blockNameCallout": { "en": "Callout" },
 	"blockTextCallout": { "en": "Bordered text with icon" },
 
@@ -349,7 +350,8 @@
 	"popupSettingsSpaceInviteMemberTypeTextEditor": { "en": "Editor can can edit objects and invite other members to collaborate but can’t edit space settings." },
 	"popupSettingsSpaceInviteMemberTypeTextAdmin": { "en": "Admin can do everything in this space including moving it to the bin." },
 	"popupSettingsSpaceInviteButton": { "en": "Copy invite link" },
-	"popupSettingsSpaceHomepageTitle": { "en": "Home page" },
+	"popupSettingsSpaceHomepageTitle": { "en": "Homepage" },
+	"popupSettingsSpaceHomepageText": { "en": "Select an object to show when you login" },
 	"popupSettingsSpaceTeam": { "en": "%s team" },
 	"popupSettingsSpaceTeamTitle": { "en": "Space team" },
 	"popupSettingsSpaceTeamMembers": { "en": "%s members" },
@@ -460,7 +462,7 @@
 	"threadStatus2Tooltip": { "en": "Downloading or uploading data to some node" },
 	"threadStatus3Tooltip": { "en": "Backed up on one node at least" },
 	"threadStatus4Tooltip": { "en": "Failed to sync, trying again..." },
-	"threadStatus5Tooltip": { "en": "Incompatible protocol version, please update" },
+	"threadStatus5Tooltip": { "en": "We have updated the protocol version. Click to update and sync the objects." },
 
 	"toastRecoveryCopiedClipboard": { "en": "Recovery phrase copied to clipboard"  },
 

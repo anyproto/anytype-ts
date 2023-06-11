@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
-import { I, M, Util, keyboard } from 'Lib';
+import { I, M, UtilCommon, keyboard } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -89,7 +89,7 @@ class DragLayer extends React.Component<object, State> {
 		const { rootId, type, ids } = this.state;
 		const node = $(this.node);
 		const inner = node.find('#inner').html('');
-		const container = Util.getPageContainer(keyboard.isPopup());
+		const container = UtilCommon.getPageContainer(keyboard.isPopup());
 
 		let wrap = $('<div></div>');
 		let items: any[] = [];
@@ -98,14 +98,18 @@ class DragLayer extends React.Component<object, State> {
 			case I.DropType.Block: {
 				wrap.addClass('blocks');
 
-				items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(Util.objectCopy(it)));
+				items = ids.map(id => blockStore.getLeaf(rootId, id)).filter(it => it).map(it => new M.Block(UtilCommon.objectCopy(it)));
 
 				items.forEach(block => {
 					const clone = container.find(`#block-${block.id}`).clone();
 
 					if (block.isDataview()) {
-						clone.find('.viewContent').remove();
-						clone.find('.dataviewControls').remove();
+						const controls = clone.find('.dataviewControls');
+
+						clone.find('.content').remove();
+						controls.find('#views').remove();
+						controls.find('#view-selector').remove();
+						controls.find('#sideRight').remove();
 					};
 
 					wrap.append(clone);

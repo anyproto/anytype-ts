@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Header, Button } from 'Component';
-import { I, Util, C, Action, Survey, ObjectUtil, analytics, translate } from 'Lib';
+import { I, UtilCommon, C, Action, Survey, UtilObject, analytics, translate } from 'Lib';
 import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
@@ -35,15 +35,11 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		};
 
 		const { error } = this.state;
+		const duration = Math.max(0, account.status.date - UtilCommon.time());
+		const days = Math.max(1, Math.ceil(duration / 86400));
+		const dt = `${days} ${UtilCommon.cntWord(days, 'day', 'days')}`;
 
-		// Time left until permanent deletion
-		const SECS_PER_DAY = 86400;
-		/*
-			Math.max(0, ...) is to prevent negative numbers
-			Math.ceil(...) is to round up to the day
-		*/
-		const daysUntilDeletion = Math.ceil(Math.max(0, (account.status.date - Util.time()) / SECS_PER_DAY ));
-		const dt = `${daysUntilDeletion} ${Util.cntWord(daysUntilDeletion, 'day', 'days')}`;
+		const daysUntilDeletion = Math.ceil(Math.max(0, (account.status.date - UtilCommon.time()) / 86400 ));
 
 		// Deletion Status
 		let status: I.AccountStatusType = account.status.type;
@@ -124,7 +120,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
 					authStore.logout(true);
-					Util.route('/');
+					UtilCommon.route('/');
 				},
 			},
 		});
@@ -137,7 +133,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	onCancel () {
 		C.AccountDelete(true, (message) => {
 			authStore.accountSet({ status: message.status });
-			ObjectUtil.openHome('route');
+			UtilObject.openHome('route');
 			analytics.event('CancelDeletion');
 		});
 	};

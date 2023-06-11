@@ -39,8 +39,12 @@
 
     @media (max-width: 940px) {
         .controls.withSelected {
-            .side.left .element { height: 28px; }
-            .side.left .element .name { display: none; }
+            .side.left {
+				.element { height: 28px; }
+				.element {
+					.name { display: none; }
+				}
+			}
         }
     }
 

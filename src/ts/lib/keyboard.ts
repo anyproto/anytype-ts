@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview, Action } from 'Lib';
+import { I, C, UtilCommon, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, Preview, Action } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -116,7 +116,7 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const isMac = Util.isPlatformMac();
+		const isMac = UtilCommon.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -133,7 +133,7 @@ class Keyboard {
 			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
 
-			if (!Util.selectionRange() && isMac) {
+			if (!UtilCommon.selectionRange() && isMac) {
 				keyboard.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
 				keyboard.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
 			};
@@ -148,7 +148,7 @@ class Keyboard {
 			if (popupStore.isOpen()) {
 				let canClose = true;
 
-				if (Util.selectionRange()) {
+				if (UtilCommon.selectionRange()) {
 					$(document.activeElement).blur();
 					window.getSelection().removeAllRanges();
 					canClose = false;
@@ -168,17 +168,18 @@ class Keyboard {
 			Preview.previewHide(false);
 		});
 
-		// Shortcuts
-		this.shortcut('ctrl+space', e, () => {
-			popupStore.open('shortcut', {});
-		});
-
-		// Lock/Unlock
-		keyboard.shortcut(`ctrl+shift+l`, e, () => {
-			keyboard.onToggleLock();
-		});
-
 		if (isMain) {
+
+			// Shortcuts
+			this.shortcut('ctrl+space', e, () => {
+				popupStore.open('shortcut', { preventResize: true });
+			});
+
+			// Lock/Unlock
+			keyboard.shortcut(`ctrl+shift+l`, e, () => {
+				keyboard.onToggleLock();
+			});
+
 			// Print
 			keyboard.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
@@ -199,7 +200,7 @@ class Keyboard {
 					return;
 				};
 
-				ObjectUtil.openAuto({ layout: I.ObjectLayout.Store });
+				UtilObject.openAuto({ layout: I.ObjectLayout.Store });
 			});
 
 			// Text search
@@ -212,19 +213,19 @@ class Keyboard {
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, () => {
 				e.preventDefault();
-				ObjectUtil.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
+				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
 			this.shortcut(`${cmd}+alt+o`, e, () => {
 				e.preventDefault();
-				ObjectUtil.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
 				if (authStore.account && !popupStore.isOpen('search')) {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 			});
 
@@ -249,7 +250,25 @@ class Keyboard {
 
 			// Store
 			this.shortcut(`${cmd}+alt+l`, e, () => {
-				ObjectUtil.openRoute({ layout: I.ObjectLayout.Store });
+				UtilObject.openRoute({ layout: I.ObjectLayout.Store });
+			});
+
+			// Object id
+			this.shortcut(`${cmd}+shift+\\`, e, () => {
+				popupStore.open('confirm', {
+					className: 'isWide isLeft',
+					data: {
+						text: `ID: ${this.getRootId()}`,
+						textConfirm: 'Copy',
+						textCancel: 'Close',
+						canConfirm: true,
+						canCancel: true,
+						onConfirm: () => {
+							UtilCommon.clipboardCopy({ text: this.getRootId() });
+							Preview.toastShow({ text: 'ID copied to clipboard' });
+						},
+					}
+				});
 			});
 		};
 
@@ -258,7 +277,7 @@ class Keyboard {
 
 	// Check if smth is selected
 	checkSelection () {
-		const range = Util.selectionRange();
+		const range = UtilCommon.selectionRange();
 
 		if ((range && !range.collapsed) || (this.selection && this.selection.get(I.SelectType.Block).length)) {
 			return true;
@@ -313,8 +332,8 @@ class Keyboard {
 			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 		};
 		
-		ObjectUtil.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
-			ObjectUtil.openPopup({ id: message.targetId });
+		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
+			UtilObject.openPopup({ id: message.targetId });
 		});
 	};
 
@@ -349,15 +368,15 @@ class Keyboard {
 				});
 			};
 		} else {
-			let prev = Util.history.entries[Util.history.index - 1];
+			let prev = UtilCommon.history.entries[UtilCommon.history.index - 1];
 
 			if (account && !prev) {
-				ObjectUtil.openHome('route');
+				UtilObject.openHome('route');
 				return;
 			};
 
 			if (prev) {
-				const route = Util.getRoute(prev.pathname);
+				const route = UtilCommon.getRoute(prev.pathname);
 
 				if ([ 'index', 'auth' ].includes(route.page) && account) {
 					return;
@@ -368,14 +387,14 @@ class Keyboard {
 				};
 
 				if ((route.page == 'main') && (route.action == 'history')) {
-					prev = Util.history.entries[Util.history.index - 3];
+					prev = UtilCommon.history.entries[UtilCommon.history.index - 3];
 					if (prev) {
-						Util.route(prev.pathname);
+						UtilCommon.route(prev.pathname);
 					};
 					return;
 				};
 
-				Util.history.goBack();
+				UtilCommon.history.goBack();
 			};
 		};
 
@@ -392,7 +411,7 @@ class Keyboard {
 				popupStore.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			Util.history.goForward();
+			UtilCommon.history.goForward();
 		};
 
 		menuStore.closeAll();
@@ -401,7 +420,7 @@ class Keyboard {
 
 	checkBack (): boolean {
 		const isPopup = this.isPopup();
-		const history = Util.history;
+		const history = UtilCommon.history;
 
 		if (!history) {
 			return;
@@ -413,8 +432,8 @@ class Keyboard {
 
 			if (history.index === 0) {
 				const entry = history.entries[history.index];
-				const route = Util.getRoute(entry.pathname);
-				const home = ObjectUtil.getSpaceDashboard();
+				const route = UtilCommon.getRoute(entry.pathname);
+				const home = UtilObject.getSpaceDashboard();
 
 				if (home && (route.id != home.id)) {
 					ret = true;
@@ -427,7 +446,7 @@ class Keyboard {
 
 	checkForward (): boolean {
 		const isPopup = this.isPopup();
-		const history = Util.history;
+		const history = UtilCommon.history;
 
 		if (!history) {
 			return;
@@ -477,11 +496,6 @@ class Keyboard {
 
 			case 'contact': {
 				this.onContactUrl();
-				break;
-			};
-
-			case 'tech': {
-				this.onTechInfo();
 				break;
 			};
 
@@ -618,7 +632,7 @@ class Keyboard {
 					canConfirm: true,
 					canCancel: true,
 					onConfirm: () => {
-						Util.clipboardCopy({ text: data.map(it => `${it[0]}: ${it[1]}`).join('\n') });
+						UtilCommon.clipboardCopy({ text: data.map(it => `${it[0]}: ${it[1]}`).join('\n') });
 						Preview.toastShow({ text: 'Tech information copied to clipboard' });
 					},
 				}
@@ -653,7 +667,7 @@ class Keyboard {
 		};
 
 		if (clearTheme) {
-			Util.addBodyClass('theme', '');
+			UtilCommon.addBodyClass('theme', '');
 		};
 		focus.clearRange(true);
 	};
@@ -760,7 +774,7 @@ class Keyboard {
 	};
 
 	ctrlByPlatform (e: any) {
-		return Util.isPlatformMac() ? e.metaKey : e.ctrlKey;
+		return UtilCommon.isPlatformMac() ? e.metaKey : e.ctrlKey;
 	};
 
 	isMain () {
@@ -813,7 +827,7 @@ class Keyboard {
 	};
 
 	setSource (source: any) {
-		this.source = Util.objectCopy(source);
+		this.source = UtilCommon.objectCopy(source);
 	};
 
 	setSelection (v: any) {
@@ -854,7 +868,7 @@ class Keyboard {
 			};
 
 			this.setPinChecked(false);
-			Util.route('/auth/pin-check');
+			UtilCommon.route('/auth/pin-check');
 		}, pinTime);
 	};
 
@@ -983,15 +997,15 @@ class Keyboard {
 	};
 
 	cmdSymbol () {
-		return Util.isPlatformMac() ? '&#8984;' : 'Ctrl';
+		return UtilCommon.isPlatformMac() ? '&#8984;' : 'Ctrl';
 	};
 
 	altSymbol () {
-		return Util.isPlatformMac() ? '&#8997;' : 'Alt';
+		return UtilCommon.isPlatformMac() ? '&#8997;' : 'Alt';
 	};
 
 	cmdKey () {
-		return Util.isPlatformMac() ? 'cmd' : 'ctrl';
+		return UtilCommon.isPlatformMac() ? 'cmd' : 'ctrl';
 	};
 
 	checkPressed (key: string) {

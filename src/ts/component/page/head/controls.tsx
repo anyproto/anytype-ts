@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader } from 'Component';
-import { I, C, focus, ObjectUtil, Action } from 'Lib';
+import { I, C, focus, UtilObject, Action } from 'Lib';
 import { menuStore, blockStore, detailStore } from 'Store';
 import ControlButtons  from './controlButtons';
 import Constant from 'json/constant.json';
@@ -119,12 +119,12 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 				noUpload,
 				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
-					ObjectUtil.setIcon(rootId, icon, '', () => {
+					UtilObject.setIcon(rootId, icon, '', () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
 				onUpload (hash: string) {
-					ObjectUtil.setIcon(rootId, '', hash, () => {
+					UtilObject.setIcon(rootId, '', hash, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -138,7 +138,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		Action.openFile(Constant.extension.cover, paths => {
 			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
 				if (message.hash) {
-					ObjectUtil.setIcon(rootId, '', message.hash);
+					UtilObject.setIcon(rootId, '', message.hash);
 				};
 			});
 		});
@@ -165,7 +165,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onCoverSelect (item: any) {
 		const { rootId } = this.props;
 
-		ObjectUtil.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		UtilObject.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 
 	onLayout (e: any) {
@@ -240,7 +240,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 	onUpload (type: I.CoverType, hash: string) {
 		const { rootId } = this.props;
 
-		ObjectUtil.setCover(rootId, type, hash, 0, -0.25, 0, () => {
+		UtilObject.setCover(rootId, type, hash, 0, -0.25, 0, () => {
 			this.setState({ loading: false });
 		});
 	};

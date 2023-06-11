@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, ObjectUtil, analytics, translate } from 'Lib';
+import { I, UtilObject, translate } from 'Lib';
 import { commonStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 	
@@ -10,7 +10,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	constructor (props: I.WidgetComponent) {
 		super(props);
 
-		this.onOpenSpace = this.onOpenSpace.bind(this);
 		this.onOpenSettings = this.onOpenSettings.bind(this);
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
@@ -21,7 +20,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 		return (
 			<div className="body">
-				<div className="side left" onClick={this.onOpenSpace}>
+				<div className="side left" onClick={this.onOpenSettings}>
 					<IconObject 
 						id="widget-space-icon" 
 						object={{ ...space, layout: I.ObjectLayout.Space }} 
@@ -44,10 +43,6 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 		);
 	};
 
-	onOpenSpace () {
-		ObjectUtil.openRoute({ layout: I.ObjectLayout.Graph });
-	};
-
 	onOpenSettings (e: React.MouseEvent) {
 		e.stopPropagation();
 
@@ -55,11 +50,11 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	onSelect (icon: string) {
-		ObjectUtil.setIcon(commonStore.workspace, icon, '');
+		UtilObject.setIcon(commonStore.workspace, icon, '');
 	};
 
 	onUpload (hash: string) {
-		ObjectUtil.setIcon(commonStore.workspace, '', hash);
+		UtilObject.setIcon(commonStore.workspace, '', hash);
 	};
 
 });

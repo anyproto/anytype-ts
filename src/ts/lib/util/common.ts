@@ -1,11 +1,10 @@
 import * as $ from 'jquery';
-import { I, Preview, Renderer } from 'Lib';
-import { commonStore, popupStore, menuStore } from 'Store';
-import { translate } from '.';
+import { I, Preview, Renderer, translate } from 'Lib';
+import { popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
-class Util {
+class UtilCommon {
 
 	history: any = null;
 
@@ -1022,4 +1021,4 @@ class Util {
 
 };
 
-export default new Util();
+export default new UtilCommon();

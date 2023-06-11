@@ -1,7 +1,6 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { Frame, Title, Label, Error, Button, Header, Footer, Icon } from 'Component';
-import { I, Storage, translate, C, DataUtil, Util, Action } from 'Lib';
+import { I, Storage, translate, C, UtilData, UtilCommon, Action } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -63,7 +62,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 						<Title text="Error" />
 						<Error text={error.description} />
 						<div className="buttons">
-							<Button text={translate('commonBack')} onClick={() => Util.route('/')} />
+							<Button text={translate('commonBack')} onClick={() => UtilCommon.route('/')} />
 						</div>
 					</React.Fragment>
 				);
@@ -130,7 +129,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				return;
 			};
 
-			DataUtil.createSession((message: any) => {
+			UtilData.createSession((message: any) => {
 				if (this.setError(message.error)) {
 					return;
 				};
@@ -143,10 +142,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 							return;
 						};
 
-						DataUtil.onAuth(message.account);
+						UtilData.onAuth(message.account);
 					});
 				} else {
-					Util.route('/auth/account-select');
+					UtilCommon.route('/auth/account-select');
 				};
 			});
 		});
@@ -161,7 +160,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 
 			if (message.account) {
-				DataUtil.onAuth(message.account);
+				UtilData.onAuth(message.account);
 			};
 		});
 	};
@@ -172,7 +171,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		};
 
 		this.setState({ error });
-		Util.checkError(error.code);
+		UtilCommon.checkError(error.code);
 		return true;
 	};
 
@@ -181,7 +180,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		Util.route('/auth/select');
+		UtilCommon.route('/auth/select');
 	};
 	
 });

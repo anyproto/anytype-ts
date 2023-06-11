@@ -1,12 +1,12 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, Util, Storage } from 'Lib';
+import { I, C, UtilCommon, Storage } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const KEYS = [ 
-	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
+	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -32,7 +32,7 @@ class Analytics {
 			return;
 		};
 
-		const platform = Util.getPlatform();
+		const platform = UtilCommon.getPlatform();
 
 		C.MetricsSetParameters(platform);
 
@@ -132,6 +132,11 @@ class Analytics {
 
 			case 'ScreenRelation': {
 				data.relationKey = data.params.id;
+				break;
+			};
+
+			case 'CreateObject': {
+				data.layout = I.ObjectLayout[data.layout];
 				break;
 			};
 
@@ -255,12 +260,12 @@ class Analytics {
 			case 'ChangeWidgetLimit':
 			case 'ReorderWidget':
 			case 'DeleteWidget': {
-				if (!data.target) {
-					break;
+				if (data.target) {
+					data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
+					delete data.target;
 				};
 
-				data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
-				delete data.target;
+				data.layout = I.WidgetLayout[data.layout];
 				break;
 			};
 
@@ -278,6 +283,20 @@ class Analytics {
 				};
 
 				data.view = types[data.view];
+				break;
+			};
+
+			case 'ThemeSet': {
+				data.id = String(data.id || 'light');
+				break;
+			};
+
+			case 'OnboardingTooltip':
+			case 'ClickOnboardingTooltip': {
+				console.log(data);
+
+				data.id = UtilCommon.ucFirst(data.id);
+				data.type = UtilCommon.ucFirst(data.type);
 				break;
 			};
 		};
@@ -298,10 +317,6 @@ class Analytics {
 
 		if (converted.relationKey) {
 			converted.relationKey = this.relationMapper(converted.relationKey);
-		};
-
-		if (undefined !== converted.layout) {
-			converted.layout = I.ObjectLayout[converted.layout];
 		};
 
 		if (undefined !== converted.align) {
@@ -370,7 +385,7 @@ class Analytics {
 		};
 
 		const code = (undefined !== map[id]) ? map[id] : id;
-		return code ? Util.toUpperCamelCase([ prefix, code ].join('-')) : '';
+		return code ? UtilCommon.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
 	typeMapper (id: string) {
