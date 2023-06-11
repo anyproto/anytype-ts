@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Frame, Title, Label, Error, Button, Header, Footer, Icon } from 'Component';
+import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
 import { I, Storage, translate, C, UtilData, UtilCommon, Action } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -29,7 +29,6 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	render () {
-		const { match } = this.props;
 		const error = this.state.error || {};
 		
 		let content = null;
@@ -68,21 +67,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				);
 			};
 		} else {
-			let title = '';
-
-			switch (match.params.id) {
-				case 'init': {
-					title = translate('authSetupLogin'); 
-					break;
-				};
-
-				case 'select': {
-					title = translate('authSetupSelect');
-					break;
-				};
-			};
-
-			content = <Title text={title} />;
+			content = <Loader />;
 		};
 		
 		return (

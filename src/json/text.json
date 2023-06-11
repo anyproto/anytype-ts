@@ -106,10 +106,6 @@
 	"authRegisterSubmit": { "en": "Create" },
 	"authRegisterAdvanced": {"en": "Advanced"},
 
-	"authSetupLogin": { "en": "Logging in..." },
-	"authSetupSelect": { "en": "Selecting profile..." },
-	"authSetupShare": { "en": "Adding space" },
-
 	"authDeleteTitle": { "en": "Delete profile" },
 	"authDeleteTitleDeleted": { "en": "Account data removed from the backup node" },
 	"authDeleteDescription": { "en": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices." },

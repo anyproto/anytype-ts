@@ -336,7 +336,7 @@ class Analytics {
 			'index/index':		 'ScreenIndex',
 
 			'auth/login':		 'ScreenLogin',
-			'auth/onboard':	 	 'ScreenAuthRegistration',
+			'auth/onboard':	 	 'ScreenOnboarding',
 
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',

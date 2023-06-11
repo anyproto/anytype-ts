@@ -79,7 +79,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					{this.renderButtons()}
 					{footer}
 				</Frame>
-				<CanvasWorkerBridge state={animationStage} />
+				{/*<CanvasWorkerBridge state={animationStage} />*/}
 				<div className="fadeInOverlay" />
 			</div>
 		);
@@ -247,7 +247,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Guard to prevent illegal state change */
 	canMoveBackward = (): boolean => {
 		const { stage } = this.state;
-		return stage <= Stage.Soul;
+		return (stage > Stage.Void) && (stage <= Stage.Soul);
 	};
 
 	/** Moves the Onboarding Flow one stage forward if possible */
