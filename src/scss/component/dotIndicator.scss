@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
-.dotIndicator { display: flex; justify-content: center; align-items: center; }
+.dotIndicator { display: flex; justify-content: center; align-items: center; gap: 0px 2px; }
 .dotIndicator {
-    span { display: inline-block; width: 4px; height: 4px; border-radius: 50%; margin: 0 2px; background-color: #252525; }
-    span.active { background-color: #D4D4D4; }
+    span { display: inline-block; width: 4px; height: 4px; border-radius: 50%; background-color: $colorBlack; }
+    span.active { background-color: $colorSecondary; opacity: 0.9; }
   }
