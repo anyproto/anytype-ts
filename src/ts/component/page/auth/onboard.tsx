@@ -156,7 +156,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	renderButtons = (): JSX.Element => {
 		const { stage, phraseCopied } = this.state;
 
-		if ([Stage.SoulCreating, Stage.SpaceCreating].includes(stage)) {
+		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
 			return null;
 		};
 
@@ -246,8 +246,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Guard to prevent illegal state change */
 	canMoveBackward = (): boolean => {
-		const { stage } = this.state;
-		return (stage > Stage.Void) && (stage <= Stage.Soul);
+		return this.state.stage <= Stage.Soul;
 	};
 
 	/** Moves the Onboarding Flow one stage forward if possible */
@@ -306,30 +305,32 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		const { stage } = this.state;
 
+		if (stage == Stage.Void) {
+			UtilCommon.route('/');
+			return;
+		};
+
 		// jump back two stages for the animation
 		if (stage == Stage.Soul) {
-			Animation.from(() => {
-				this.setState((prev) => ({
-					...prev,
-					animationStage: prev.animationStage - 2,
-					stage: prev.stage - 1,
-				}));
-			});
+			this.setState((prev) => ({
+				...prev,
+				animationStage: prev.animationStage - 2,
+				stage: prev.stage - 1,
+			}));
 			return;
 		};
 
 		// jump back one stage for both
-		Animation.from(() => {
-			this.setState((prev) => ({
-				...prev,
-				animationStage: prev.animationStage - 1,
-				stage: prev.stage - 1,
-			}));
-		});
+		this.setState((prev) => ({
+			...prev,
+			animationStage: prev.animationStage - 1,
+			stage: prev.stage - 1,
+		}));
 	};
 
 	accountCreate = (callBack?: () => void): void => {
 		if (this.account) {
+			callBack();
 			return;
 		};
 

@@ -27,7 +27,7 @@ $colorErrorBackground: #240e07;
 	.bgColor-green { background: $colorGreen !important; }
 
 	.placeholder { color: $colorTertiary; padding: 33px 48px; top: 0; }
-	#entry { display: inline; font-size: 18px; line-height: 18px; height: 18px; -webkit-user-modify: read-write-plaintext-only; }
+	#entry { display: inline; font-size: 18px; line-height: 18px; height: 18px; -webkit-user-modify: read-write-plaintext-only; user-select: text; }
 
 	.icon { 
 		height: 20px; width: 20px; vertical-align: top; transition: $transitionAllCommon; position: absolute;

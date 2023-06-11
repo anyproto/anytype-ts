@@ -4,27 +4,20 @@ import { I } from 'Lib';
 
 const Duration = {
 	Normal: 0.2,
-	Word: 0.05,
+	Word: 0.1,
 };
 
-const WORD_DELAY_COEF = 0.5;
+const WORD_DELAY_COEF = 0.1;
 
 class Animation {
 
 	to (callBack?: () => void) {
-		function handler(e) {
-			e.stopPropagation();
-			e.preventDefault();
-		}
-		document.addEventListener("click", handler, true);
-		window.setTimeout(() =>  document.removeEventListener('click', handler, true), this.getDuration());
-
-		const css = { opacity: 0, transform: 'translate3d(0px,10%,0px)', pointerEvents: 'none' };
+		const css = { opacity: 0, transform: 'scale3d(0.9,0.9,1)' };
 
 		this.initNodes(css, I.AnimDirection.To);
 
 		raf(() => {
-			const css = { opacity: 1, transform: 'translate3d(0px,0px,0px)', pointerEvents: 'auto' };
+			const css = { opacity: 1, transform: 'scale3d(1,1,1)' };
 
 			$('.animation').css(css);
 			$('.animationWord').css(css);
@@ -36,19 +29,12 @@ class Animation {
 	};
 
 	from (callBack?: () => void) {
-		function handler(e) {
-			e.stopPropagation();
-			e.preventDefault();
-		}
-		document.addEventListener("click", handler, true);
-		window.setTimeout(() =>  document.removeEventListener('click', handler, true), this.getDuration());
-		
-		const css = { opacity: 1, transform: 'translate3d(0px,0px,0px)', pointerEvents: 'auto' };
+		const css = { opacity: 1, transform: 'scale3d(1,1,1)' };
 
 		this.initNodes(css, I.AnimDirection.From);
 
 		raf(() => {
-			const css = { opacity: 0, transform: 'translate3d(0px,-10%,0px)', pointerEvents: 'none' };
+			const css = { opacity: 0, transform: 'scale3d(0.9,0.9,1)' };
 
 			$('.animation').css(css);
 			$('.animationWord').css(css);
