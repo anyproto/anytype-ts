@@ -368,7 +368,7 @@ class UtilMenu {
 
 	dashboardSelect (element: string) {
 		const { workspace } = commonStore;
-		const home = UtilObject.getSpaceDashboard();
+		const space = UtilObject.getSpace();
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const onSelect = (object: any, update: boolean) => {
 			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
@@ -387,7 +387,7 @@ class UtilMenu {
 		};
 
 		let menuContext = null;
-		let value = home ? home.id : '';
+		let value = space.spaceDashboardId;
 
 		if (![ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(value)) {
 			value = I.HomePredefinedId.Existing;
