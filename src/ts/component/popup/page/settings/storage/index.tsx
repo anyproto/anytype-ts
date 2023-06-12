@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, IconObject, ObjectName, Button, ProgressBar } from 'Component';
-import { analytics, C, UtilData, UtilFile, Storage, I, translate, UtilCommon, Renderer } from 'Lib';
+import { analytics, C, UtilObject, UtilFile, I, translate, UtilCommon, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { authStore, commonStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -25,7 +25,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
         const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
         const isRed = percentageUsed >= 90;
-        const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+        const space = UtilObject.getSpace();
         const usageCn = [ 'type' ];
         const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
 
@@ -122,9 +122,9 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
     onExtend () {
         const { account } = authStore;
-        const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+        const space = UtilObject.getSpace();
 
-        if (!account || !space) {
+        if (!account || space._empty_) {
             return;
         };
 

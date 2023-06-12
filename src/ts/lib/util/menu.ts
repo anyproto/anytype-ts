@@ -405,7 +405,7 @@ class UtilMenu {
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: 'Graph' },
 					{ id: I.HomePredefinedId.Last, name: 'Last opened object' },
-					{ id: I.HomePredefinedId.Existing, name: 'Existion object', arrow: true },
+					{ id: I.HomePredefinedId.Existing, name: 'Existing object', arrow: true },
 				],
 				onOver: (e: any, item: any) => {
 					if (!item.arrow) {

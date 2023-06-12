@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, IconObject, Header, Icon } from 'Component';
-import { I, C, UtilMenu, UtilObject } from 'Lib';
-import { detailStore, commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, UtilMenu, UtilObject } from 'Lib';
 
 const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.PageComponent> {
 
@@ -16,7 +14,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const space = UtilObject.getSpace();
 		const home = UtilObject.getSpaceDashboard();
 
 		return (
