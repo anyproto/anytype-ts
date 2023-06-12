@@ -153,11 +153,13 @@ class Dataview {
 
 		dbStore.metaSet(subId, '', meta);
 
-		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == ''));
-		const objectIds = el ? el.objectIds || [] : [];
+		if (block) {
+			const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == ''));
+			const objectIds = el ? el.objectIds || [] : [];
 
-		if (objectIds.length) {
-			sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
+			if (objectIds.length) {
+				sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
+			};
 		};
 
 		UtilData.searchSubscribe({
