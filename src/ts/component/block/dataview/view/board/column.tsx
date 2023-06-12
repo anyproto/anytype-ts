@@ -195,7 +195,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			dbStore.recordsSet(subId, '', applyObjectOrder(dbStore.getRecords(subId, ''), id));
+			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecords(subId, '')));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -210,7 +210,8 @@ const Column = observer(class Column extends React.Component<Props> {
 
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
-		return applyObjectOrder(UtilCommon.objectCopy(dbStore.getRecords(getSubId(), '')), id).map(id => ({ id }));
+
+		return applyObjectOrder(id, UtilCommon.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => ({ id }));
 	};
 
 	onLoadMore () {

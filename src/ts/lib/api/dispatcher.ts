@@ -831,6 +831,7 @@ class Dispatcher {
 
 					block.content.objectOrder[index] = el;
 					blockStore.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
+					blockStore.updateWidgetData(rootId);
 					break;
 				};
 

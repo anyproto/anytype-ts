@@ -113,6 +113,7 @@ class Dataview {
 		}, param);
 
 		const { rootId, blockId, newViewId, keys, offset, limit, clear, collectionId } = param;
+		const block = blockStore.getLeaf(rootId, blockId);
 		const view = dbStore.getView(rootId, blockId, newViewId);
 		
 		if (!view) {
@@ -141,6 +142,7 @@ class Dataview {
 		const { viewId } = dbStore.getMeta(subId, '');
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
+		const sorts = UtilCommon.objectCopy(view.sorts);
 
 		if (viewChange) {
 			meta.viewId = newViewId;
@@ -151,11 +153,18 @@ class Dataview {
 
 		dbStore.metaSet(subId, '', meta);
 
+		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == ''));
+		const objectIds = el ? el.objectIds || [] : [];
+
+		if (objectIds.length) {
+			sorts.unshift({ relationKey: '', type: I.SortType.Custom, customOrder: objectIds });
+		};
+
 		UtilData.searchSubscribe({
 			...param,
 			subId,
 			filters: view.filters.map(mapper),
-			sorts: view.sorts.map(mapper),
+			sorts: sorts.map(mapper),
 			keys,
 			limit,
 			offset,
@@ -239,6 +248,33 @@ class Dataview {
 		};
 
 		blockStore.updateContent(rootId, blockId, { groupOrder });
+	};
+
+	applyObjectOrder (rootId: string, blockId: string, viewId: string, groupId: string, records: string[]): string[] {
+		records = records || [];
+
+		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return records;
+		};
+
+		const el = block.content.objectOrder.find(it => (it.viewId == viewId) && (groupId ? it.groupId == groupId : true));
+		if (!el) {
+			return records;
+		};
+
+		const objectIds = el.objectIds || [];
+
+		records.sort((c1: any, c2: any) => {
+			const idx1 = objectIds.indexOf(c1);
+			const idx2 = objectIds.indexOf(c2);
+
+			if (idx1 > idx2) return 1;
+			if (idx1 < idx2) return -1;
+			return 0;
+		});
+
+		return records;
 	};
 
 };
