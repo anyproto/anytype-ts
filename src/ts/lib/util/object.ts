@@ -58,7 +58,7 @@ class UtilObject {
 		const object = Storage.get('lastOpened');
 
 		return object ? { 
-			id: object.id,
+			...object,
 			name: 'Last opened object', 
 		} : null;
 	};

@@ -18,4 +18,8 @@
 			.icon.arrow { top: 3px; margin: 0px !important; }
 		}
 	}
+
+	@media (max-width: 1128px) {
+		.wrapper { width: calc(100% - 32px); }
+	}
 }

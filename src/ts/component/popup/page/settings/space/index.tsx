@@ -22,6 +22,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const space = UtilObject.getSpace() || {};
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
+		const notExisting = [ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId);
 
 		return (
 			<React.Fragment>
@@ -73,7 +74,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<div className="side right">
 							<div id="dashboard" className="select" onClick={this.onDashboard}>
 								<div className="item">
-									{home ? <IconObject size={20} iconSize={20} object={home} /> : ''}
+									{home && !notExisting ? (
+										<IconObject size={20} iconSize={20} object={home} />
+ 									) : ''}
 									<div className="name">
 										{home ? home.name : 'Select'}
 									</div>
