@@ -91,20 +91,19 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	unbind () {
-		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage`);
+		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage sidebarResize.graphPage`);
 	};
 
 	rebind () {
 		const win = $(window);
 
 		this.unbind();
-		win.on(`keydown.graphPage`, (e: any) => { this.onKeyDown(e); });
-		win.on('updateGraphRoot.graphPage', (e: any, data: any) => { 
-			this.initRootId(data.id);
-		});
+		win.on(`keydown.graphPage`, e => this.onKeyDown(e));
+		win.on('updateGraphRoot.graphPage', (e: any, data: any) => this.initRootId(data.id));
 		win.on('removeGraphNode.graphPage', (e: any, data: any) => { 
 			this.refGraph?.send('onRemoveNode', { ids: UtilCommon.objectCopy(data.ids) });
 		});
+		win.on('sidebarResize.graphPage', () => this.resize());
 	};
 
 	initRootId (id: string) {
