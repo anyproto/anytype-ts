@@ -1,6 +1,7 @@
 import { I, keyboard } from 'Lib';
 
 const cmd = keyboard.cmdSymbol();
+const alt = keyboard.altSymbol();
 const hl = (t: string) => `<span class="highlight">${t}</span>`;
 const block = (style: I.TextStyle, text: string) => ({ style, text });
 const title = (t: string) => block(I.TextStyle.Title, t);
@@ -25,7 +26,7 @@ export default [
 	h2(`Introduction of Private Spaces`),
 	video(`./img/help/32/1-spaces.mp4`),
 	text(`Upon opening this version you'll notice a new addition to your account: that of ${hl(`Space`)}. Your space can be customized in terms of name, icon, and homepage, which you'll find by clicking on the settings wheel on the ${hl(`Space`)} button.`),
-	text(`Your space homepage is the main page you'll see, each time you open Anytype. You can select any object or your graph as your Space homepage. Clicking on the space widget in the top position of your sidebar will take you to your homepage from wherever you are in the app.`),
+	text(`Your space homepage is the main page you'll see, each time you open Anytype. You can select any object or your graph as your space homepage. Clicking on the space widget in the top position of your sidebar will open your space settings. To return to your home page from anywhere in the app, you can use shortcut: ${hl(`${alt} + H`)}`),
 
 	h2(`Integration of Anysync protocol`),
 	text(`While it won't be visible from the interface, this release brings the integration of our new Anysync protocol, a work which has been years in the making. For us, arriving here means showing the world that a local-first, p2p synced protocol with an E2E encrypted product built on top, is possible. We hope you'll find the syncing of your accounts between devices a smoother experience than before, and rest easy knowing that your data is absolutely yours.`),
@@ -52,7 +53,7 @@ export default [
 
 	div(),
 
-	h1(`Inline Sets are Here 😍`),
+	h1(`Release 0.31.0: Inline Sets are Here 😍`),
 	text(`Throughout the past months, our team has been researching &amp; designing solutions to our community's needs to manage several objects at once.`),
 	text(`As the first in a series of projects addressing this topic, we're happy to bring you inline sets, which will allow more flexible interaction between sets & objects, allowing you to freely embed the former within the latter. If February is about surprising your loved ones, consider this feature our early Valentine's gift to you 💖`),
 
