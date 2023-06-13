@@ -374,7 +374,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	sortFavorite (records: string[]): string[] {
-		const root = ''; // TODO: use collection
+		const { root } = blockStore;
 		const ids = blockStore.getChildren(root, root, it => it.isLink()).map(it => it.content.targetBlockId);
 
 		return UtilCommon.objectCopy(records || []).sort((c1: string, c2: string) => {

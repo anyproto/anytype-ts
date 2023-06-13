@@ -12,13 +12,15 @@ $colorInputOpaque: #17171799;
 $colorPopUp: #141414;
 $colorErrorBackground: #240e07;
 
+$shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;
+
 html.bodyIndex, html.bodyAuth {
 	body { background: $colorDark !important; color: $colorSecondary; overflow: hidden; }
-	.navigationPanel { display: none; }
+	.navigationPanel { display: none !important; }
 }
 
 html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
-	#popupConfirm-innerWrap { background: $colorPopUp; min-width: 700px; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset; }
+	#popupConfirm-innerWrap { background: $colorPopUp; width: 542px; box-shadow: $shadow; }
 	#popupConfirm-innerWrap h1 { color: $colorPrimary; }
 	#popupConfirm-innerWrap {
 		.content { text-align: left; }
@@ -31,24 +33,25 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		.button.blank:hover { background: $colorButtonOpaque; }
 
 		h1 { font-size: 18px; margin-bottom: 16px; }
-		h2 { font-size: 14px; margin-bottom: 8px;  color: $colorPrimary; }
+		b { display: block; font-weight: 700; color: $colorPrimary; margin-bottom: 8px; }
 		p { margin-bottom: 8px; }
-		ul { list-style-position: inside; margin-bottom: 8px; }
+		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
+		ul.last { margin: 0px; }
 	}
 
 	.menus {
-		.menu.menuAccountPath { background: $colorBlack; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;  width: 460px; } 
+		.menu.menuAccountPath { background: $colorPopUp; box-shadow: $shadow; width: 460px; } 
 		.menu.menuAccountPath {
 			.label { color: $colorSecondary; }
 			.label.path { color: $colorPrimary; }
 		}
 	}
 
-	.tooltip { padding: 12px 16px; background: $colorPopUp; color: $colorSecondary; box-shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;  }
+	.tooltip { padding: 12px 16px; background: $colorPopUp; color: $colorSecondary; box-shadow: $shadow; @include text-common; }
 	.tooltip {
-		h2 {  font-size: 14px; color: $colorPrimary; }
-		ul { margin-top: 2px; list-style-position: inside; margin-left: 5px; padding-left: 0; }
-		li { line-height: 1.8;}
+		.txt { line-height: 22px; }
+		b { display: block; font-weight: 500; color: $colorPrimary; }
+		ul { list-style-position: inside; padding-left: 0.75em; }
 	}
 }
 

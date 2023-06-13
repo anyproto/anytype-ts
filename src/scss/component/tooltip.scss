@@ -9,6 +9,6 @@
 .tooltip.anim { transition-duration: 0.25s; transition-timing-function: $easeInQuint; transition-property: opacity, transform; }
 .tooltip.show { transform: scale3d(1, 1, 1); opacity: 1; }
 .tooltip {
-	.txt { line-height: 1.2; margin-top: -1px; list-style-position: inside; }
+	.txt { line-height: 1.2; list-style-position: inside; }
 	.caption { color: $colorDarkGrey; }
 }

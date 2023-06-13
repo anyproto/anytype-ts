@@ -192,7 +192,7 @@ class UtilData {
 		authStore.accountSet(account);
 
 		const pin = Storage.get('pin');
-		const { profile, widgets } = blockStore;
+		const { profile, widgets, root } = blockStore;
 		const { redirect } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
@@ -225,10 +225,6 @@ class UtilData {
 			if (object._empty_) {
 				console.error('Dashboard is empty');
 				return;
-			};
-
-			if (object.coverId && (object.coverType != I.CoverType.None)) {
-				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
 			};
 
 			C.ObjectOpen(widgets, '', () => {

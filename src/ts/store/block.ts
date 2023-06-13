@@ -8,7 +8,7 @@ class BlockStore {
 
     public profileId = '';
 	public widgetsId = '';
-    public recentId = '';
+	public rootId = '';
 
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
     public blockMap: Map<string, Map<string, I.Block>> = new Map();
@@ -17,12 +17,10 @@ class BlockStore {
     constructor() {
         makeObservable(this, {
             profileId: observable,
-            recentId: observable,
             profile: computed,
-            recent: computed,
+			root: computed,
             profileSet: action,
             widgetsSet: action,
-            recentSet: action,
             set: action,
             clear: action,
             clearAll: action,
@@ -42,8 +40,8 @@ class BlockStore {
 		return this.widgetsId;
 	};
 
-    get recent (): string {
-		return this.recentId;
+	get root (): string {
+		return this.rootId;
 	};
 
 	profileSet (id: string) {
@@ -54,8 +52,8 @@ class BlockStore {
 		this.widgetsId = String(id || '');
 	};
 
-    recentSet (id: string) {
-		this.recentId = String(id || '');
+	rootSet (id: string) {
+		this.rootId = String(id || '');
 	};
 	
     set (rootId: string, blocks: I.Block[]) {
@@ -99,7 +97,7 @@ class BlockStore {
     clearAll () {
 		this.profileSet('');
 		this.widgetsSet('');
-		this.recentSet('');
+		this.rootSet('');
 
 		this.blockMap.clear();
 		this.treeMap.clear();

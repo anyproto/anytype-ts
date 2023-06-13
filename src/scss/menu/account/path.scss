@@ -1,11 +1,11 @@
 @import "~scss/_vars";
 
 .menus {
-	.menu.menuAccountPath { width: 320px; padding: 10px 16px 16px 16px; }
+	.menu.menuAccountPath { width: 320px; padding: 8px 16px 12px 16px; }
 	.menu.menuAccountPath {
 		.content { padding: 0; overflow: visible; }
 		.content {
-			.label.small { margin-bottom: 6px; font-weight: 500; @include text-small; }
+			.label.small { font-weight: 500; @include text-small; }
 			.label.path { @include text-overflow-nw; }
 		}
 	}
