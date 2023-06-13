@@ -223,6 +223,11 @@ const Graph = observer(class Graph extends React.Component<Props> {
 	onDragMove (e: any) {
 		const p = d3.pointer(e, d3.select(this.canvas));
 		const node = $(this.node);
+		
+		if (!node || !node.length) {
+			return;
+		};
+
 		const { left, top } = node.offset();
 
 		this.send('onDragMove', { 

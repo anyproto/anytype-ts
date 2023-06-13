@@ -2,8 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import { I, UtilObject, translate } from 'Lib';
-import { commonStore, detailStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
+import { commonStore, popupStore } from 'Store';
 	
 const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetComponent> {
 
@@ -16,7 +15,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	render (): React.ReactNode {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace, []);
+		const space = UtilObject.getSpace();
 
 		return (
 			<div className="body">

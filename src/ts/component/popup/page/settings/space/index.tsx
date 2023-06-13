@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Icon, Label, Input, IconObject } from 'Component';
-import { C, UtilObject, UtilMenu, I, translate } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+import { Icon, Label, Input, IconObject } from 'Component';
+import { UtilObject, UtilMenu, I, translate } from 'Lib';
+import { commonStore } from 'Store';
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
 
@@ -20,10 +19,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	render () {
-		const subId = Constant.subId.space;
-		const space = detailStore.get(subId, commonStore.workspace);
+		const space = UtilObject.getSpace() || {};
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
+		const notExisting = [ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId);
 
 		return (
 			<React.Fragment>
@@ -75,7 +74,9 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<div className="side right">
 							<div id="dashboard" className="select" onClick={this.onDashboard}>
 								<div className="item">
-									{home ? <IconObject size={20} iconSize={20} object={home} /> : ''}
+									{home && !notExisting ? (
+										<IconObject size={20} iconSize={20} object={home} />
+ 									) : ''}
 									<div className="name">
 										{home ? home.name : 'Select'}
 									</div>

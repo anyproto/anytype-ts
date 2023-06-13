@@ -416,7 +416,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const subId = dbStore.getSubId(rootId, block.id);
 		const records = dbStore.getRecords(subId, '');
 
-		return this.applyObjectOrder(UtilCommon.objectCopy(records));
+		return this.applyObjectOrder('', UtilCommon.objectCopy(records));
 	};
 
 	getRecord (recordId: string) {
@@ -1013,7 +1013,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					block.content.objectOrder.push(it);
 				};
 
-				window.setTimeout(() => { this.applyObjectOrder(records, it.groupId); }, 30);
+				window.setTimeout(() => { this.applyObjectOrder(it.groupId, records); }, 30);
 			});
 
 			if (callBack) {
@@ -1022,22 +1022,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	applyObjectOrder (records: any[], groupId?: string): string[] {
-		const { block } = this.props;
+	applyObjectOrder (groupId: string, records: any[]): string[] {
+		const { rootId, block } = this.props;
 		const view = this.getView();
-		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (groupId ? it.groupId == groupId : true));
-		const objectIds = el ? el.objectIds || [] : [];
 
-		records.sort((c1: any, c2: any) => {
-			const idx1 = objectIds.indexOf(c1);
-			const idx2 = objectIds.indexOf(c2);
-
-			if (idx1 > idx2) return 1;
-			if (idx1 < idx2) return -1;
-			return 0;
-		});
-
-		return records;
+		return Dataview.applyObjectOrder(rootId, block.id, view.id, groupId, records);
 	};
 
 	onSelectToggle (e: React.MouseEvent, id: string) {
