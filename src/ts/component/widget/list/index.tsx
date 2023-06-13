@@ -32,7 +32,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 	render (): React.ReactNode {
 		const { parent, block, isCollection, isPreview, sortFavorite } = this.props;
-		const { viewId } = parent.content;
+		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
 		const { isLoading } = this.state;
 		const rootId = this.getRootId();
@@ -196,7 +196,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		const { targetBlockId } = block.content;
 		const rootId = this.getRootId();
 		const view = Dataview.getView(rootId, BLOCK_ID);
-		const records = this.getRecords();
+		const records = this.getRecords();		
 
 		if (!isCollection(targetBlockId) && view && (viewId != view.id)) {
 			this.load(viewId);
