@@ -380,7 +380,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 			case I.ObjectLayout.Image:
 				if (d.id) {
-					src = commonStore.imageUrl(d.id, 160);
+					src = commonStore.imageUrl(d.id, 100);
 				} else {
 					src = `img/icon/file/${UtilFile.icon(d)}.svg`;
 				};
@@ -388,7 +388,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 				
 			case I.ObjectLayout.Human:
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 160);
+					src = commonStore.imageUrl(d.iconImage, 100);
 				} else
 				if (d.iconOption) {
 					src = this.gradientIcon(d.iconOption);
@@ -401,13 +401,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 			case I.ObjectLayout.Bookmark:
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 24);
+					src = commonStore.imageUrl(d.iconImage, 100);
 				};
 				break;
 				
 			default:
 				if (d.iconImage) {
-					src = commonStore.imageUrl(d.iconImage, 160);
+					src = commonStore.imageUrl(d.iconImage, 100);
 				} else
 				if (d.iconEmoji) {
 					const data = UtilSmile.data(d.iconEmoji);
