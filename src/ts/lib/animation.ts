@@ -7,7 +7,7 @@ const Duration = {
 	Word: 0.1,
 };
 
-const WORD_DELAY_COEF = 0.15;
+const WORD_DELAY_COEF = 0.1;
 
 class Animation {
 

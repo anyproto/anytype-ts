@@ -118,7 +118,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
-			const cn = ['soulContent'];
+			const cn = [ 'soulContent' ];
 
 			if (stage == Stage.SoulCreating) {
 				cn.push('soulCreating');
@@ -287,13 +287,19 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 			// Move animation forward, wait for delay, move animation forward again, then move onboarding forward
 			if (stage == Stage.Offline) {
-				incrementAnimation(delay(incrementAnimation(delay(incrementOnboarding(), 1000)), 2400))();
+				const second = delay(incrementOnboarding(), 500);
+				const first = delay(incrementAnimation(second), 2400);
+
+				incrementAnimation(first)();
 				return;
 			};
 
 			// Wait for delay, move onboarding forward, wait for delay, move onboarding forward again
 			if (stage == Stage.Soul) {
-				delay(incrementOnboarding(delay(incrementOnboarding(this.accountUpdate), 1200)), 3000)();
+				const second = delay(incrementOnboarding(this.accountUpdate), 3000);
+				const first = delay(incrementOnboarding(second), 1000);
+
+				first();
 				return;
 			};
 		});
@@ -386,17 +392,9 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		UtilObject.setName(profile, name, () => {
 			UtilObject.setName(workspace, name);
 
-			UtilData.onAuth(this.account, () => {
-				this.setState(
-					(prev) => ({
-						...prev,
-						animationStage: prev.animationStage + 1,
-					}),
-					() => {
-						UtilCommon.route('/main/usecase');
-					}
-				);
-			});
+			window.setTimeout(() => {
+				UtilData.onAuth(this.account, () => UtilCommon.route('/main/usecase'));
+			}, 2000);
 		});
 	};
 

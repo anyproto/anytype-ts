@@ -40,7 +40,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 
         return (
             <div className="usecaseWrapper">
-                <div className='fadeInOverlay' />
+                <div className="fadeInOverlay" />
 
                 <Frame>
 					{isLoading ? <Loader /> : ''}
