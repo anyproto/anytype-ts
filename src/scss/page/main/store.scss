@@ -46,7 +46,7 @@
 		}
 
 		.loaderWrapper { position: relative !important; }
-		.ReactVirtualized__List { padding: 48px 80px; }
+		.ReactVirtualized__List { padding: 48px 80px 80px 80px; }
 
 		.emptySearch { padding: 56px 0px; border: 1px solid $colorBorderDark; border-radius: 12px; height: auto; @include text-paragraph; }
 		.emptySearch { 
