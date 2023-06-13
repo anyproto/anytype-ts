@@ -8,11 +8,11 @@
 		.frameTitle { @include text-header1; margin-bottom: 8px; }
 		.frameLabel { color: $colorDarkGrey; margin-bottom: 18px; }
 
-		.usecaseList { display: flex; justify-content: space-between; align-items: stretch; gap: 0px 16px; }
+		.usecaseList { display: flex; justify-content: space-between; align-items: stretch; gap: 0px 16px; margin-bottom: 18px; }
 		.usecaseList {
 			.case {
-				position: relative; overflow: hidden; width: 236px; min-height: 236px; padding: 16px 16px 124px 16px; margin-bottom: 18px;
-				cursor: pointer; transition: $transitionAllCommon; border: 1px solid $colorBorderDark; border-radius: 8px;
+				position: relative; overflow: hidden; width: 236px; min-height: 236px; padding: 16px 16px 124px 16px;
+				transition: $transitionAllCommon; border: 1px solid $colorBorderDark; border-radius: 8px;
 			}
 			.case:hover { border-color: $colorBlack; }
 			.case {
@@ -23,7 +23,6 @@
 			}
 		}
 
-		.button { width: auto; }
 		.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: $colorBgLoader; z-index: 1; }
 	}
 }
