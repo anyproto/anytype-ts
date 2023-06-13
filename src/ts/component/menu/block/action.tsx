@@ -525,7 +525,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'blockColor';
 
 				menuParam.data = Object.assign(menuParam.data, {
-					value: color,
 					onChange: (color: string) => {
 						C.BlockTextListSetColor(rootId, blockIds, color, (message: any) => {
 							this.setFocus(blockIds[0]);
@@ -542,7 +541,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
-					value: bgColor,
 					onChange: (color: string) => {
 						C.BlockListSetBackgroundColor(rootId, ids, color, (message: any) => {
 							this.setFocus(blockIds[0]);
