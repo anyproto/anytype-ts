@@ -8,10 +8,11 @@ import { I, UtilCommon, Mark, Storage } from 'Lib';
 
 const Rpc = Commands.Rpc;
 
-const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) => void) => {
+const MetricsSetParameters = (platform: I.Platform, version: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Metrics.SetParameters.Request();
 
 	request.setPlatform(platform);
+	request.setVersion(version);
 
 	dispatcher.request(MetricsSetParameters.name, request, callBack);
 };
