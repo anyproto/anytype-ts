@@ -168,6 +168,7 @@ class AuthStore {
 
 		analytics.event('LogOut');
 		analytics.profile('');
+		analytics.removeContext();
 
 		keyboard.setPinChecked(false);
 
