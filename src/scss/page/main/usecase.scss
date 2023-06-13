@@ -8,7 +8,7 @@
 	}
 
 	.usecaseWrapper { transition: opacity 0.6s $easeInQuint; }
-	.fadeInOverlay { animation: fadeIn 2s 1; background: black; position: absolute; top: 0; left: 0; height: 100vh; width: 100vw; z-index: 3; opacity: 0; pointer-events: none; }
+	.fadeInOverlay { animation: fadeIn 2s 1; background: #060606; position: absolute; top: 0; left: 0; height: 100vh; width: 100vw; z-index: 3; opacity: 0; pointer-events: none; }
 
     .frame { width: 836px; box-shadow: 0px 6px 24px rgba(0,0,0,0.2); border-radius: 12px; padding: 44px 48px 36px; text-align: left; }
     .frame {
