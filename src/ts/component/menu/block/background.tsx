@@ -16,14 +16,14 @@ class MenuBlockBackground extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const value = String(data.value || '');
 		const items = this.getItems();
 
 		let id = 0;
 		return (
 			<div>
 				{items.map((action: any, i: number) => {
-					let inner = <div className={'inner bgColor bgColor-' + action.className} />;
+					const inner = <div className={'inner bgColor bgColor-' + action.className} />;
 					return (
 						<MenuItemVertical 
 							id={id++} 

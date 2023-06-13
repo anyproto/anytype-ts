@@ -29,7 +29,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	};
 
 	render () {
-		const { id, className, onClick } = this.props;
+		const { id, className } = this.props;
 		const status = this.getStatus();
 		const cn = [ 'sync' ];
 

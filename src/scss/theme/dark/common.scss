@@ -73,7 +73,7 @@ html.themeDark {
 
     /* Components */
 
-	@keyframes fill {
+	@keyframes dots {
 		0% { background-color: $colorPrimary; }
 		32% { background-color: $colorPrimary; }
 		100% { background-color: rgba(0,0,0,0); }

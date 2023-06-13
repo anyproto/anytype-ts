@@ -53,6 +53,7 @@ class Analytics {
 			osVersion: window.Electron.version.os,
 		});
 
+		this.removeContext();
 		this.log('[Analytics].init');
 		this.isInit = true;
 	};
@@ -255,6 +256,11 @@ class Analytics {
 				break;
 			};
 
+			case 'SelectUsecase': {
+				data.type = I.Usecase[data.type];
+				break;
+			};
+
 			case 'ChangeWidgetSource':
 			case 'ChangeWidgetLayout':
 			case 'ChangeWidgetLimit':
@@ -293,8 +299,6 @@ class Analytics {
 
 			case 'OnboardingTooltip':
 			case 'ClickOnboardingTooltip': {
-				console.log(data);
-
 				data.id = UtilCommon.ucFirst(data.id);
 				data.type = UtilCommon.ucFirst(data.type);
 				break;
@@ -346,6 +350,7 @@ class Analytics {
 			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
+			'main/usecase':		 'ScreenUsecase',
 		};
 
 		return map[key] || '';

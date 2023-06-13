@@ -77,7 +77,7 @@
 
 		.linkCard.withCover {
 			.sides { align-items: stretch; }
-			.side.left { width: calc(100% - 28%); border-radius: 12px 0px 0px 12px; border-right-width: 0px; }
+			.side.left { width: calc(100% - 28%); border-radius: 12px 0px 0px 12px !important; border-right-width: 0px; }
 			.side.right { width: 28%; display: block; border: 1px solid $colorBorderLight; border-left: 0px; }
 		}
 
@@ -85,11 +85,11 @@
 		.linkCard.vertical {
 			.sides { flex-direction: column-reverse; }
 			.side.left { width: 100%; border-right-width: 1px; }
-			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px; border: 1px solid $colorBorderLight; border-bottom: 0px; }
+			.side.right { aspect-ratio: 7/3; width: 100%; border-radius: 12px 12px 0px 0px !important; border: 1px solid $colorBorderLight; border-bottom: 0px; }
 		}
 
 		.linkCard.withCover.vertical {
-			.side.left { border-radius: 0px 0px 12px 12px; }
+			.side.left { border-radius: 0px 0px 12px 12px !important; }
 		}
 
 		.linkCard.withCover.vertical.text { padding-top: 0px; }

@@ -6,15 +6,9 @@ class UtilObject {
 
 	openHome (type: string, param?: any) {
 		const fn = UtilCommon.toCamelCase(`open-${type}`);
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
 		const empty = { layout: I.ObjectLayout.Empty };
-
-		if (!space.spaceDashboardId) {
-			this.openRoute(empty, param);
-			return;
-		};
-
 		const home = this.getSpaceDashboard();
+
 		if (!home) {
 			this.openRoute(empty, param);
 			return;
@@ -25,8 +19,12 @@ class UtilObject {
 		};
 	};
 
+	getSpace () {
+		return detailStore.get(Constant.subId.space, commonStore.workspace)
+	};
+
 	getSpaceDashboard () {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const space = this.getSpace();
 		if (!space.spaceDashboardId) {
 			return null;
 		};

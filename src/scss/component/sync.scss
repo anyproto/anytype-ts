@@ -6,6 +6,7 @@
 }
 .sync {
 	.icon { width: 8px; height: 8px; }
+	.icon.grey { background-image: url('~img/icon/status/grey.svg'); }
 	.icon.green { background-image: url('~img/icon/status/green.svg'); }
 	.icon.orange { background-image: url('~img/icon/status/orange.svg'); }
 	.icon.red { background-image: url('~img/icon/status/red.svg'); }

@@ -147,8 +147,10 @@ class UtilData {
 	threadColor (s: I.ThreadStatus) {
 		let c = '';
 		switch (s) {
-			default: c = 'red'; break;
+			default: c = 'grey'; break;
 			case I.ThreadStatus.Syncing: c = 'orange'; break;
+			case I.ThreadStatus.Failed: 
+			case I.ThreadStatus.Incompatible: c = 'red'; break;
 			case I.ThreadStatus.Synced: c = 'green'; break;
 		};
 		return c;
@@ -208,7 +210,68 @@ class UtilData {
 		keyboard.initPinCheck();
 		analytics.event('OpenAccount');
 
-		const subscriptions = [
+		C.FileSpaceUsage((message) => {
+			if (!message.error.code) {
+				commonStore.spaceStorageSet(message);
+			};
+		});
+
+		C.ObjectOpen(root, '', (message: any) => {
+			if (!UtilCommon.checkError(message.error.code)) {
+				return;
+			};
+
+			const object = detailStore.get(root, root, Constant.coverRelationKeys, true);
+			if (object._empty_) {
+				console.error('Dashboard is empty');
+				return;
+			};
+
+			if (object.coverId && (object.coverType != I.CoverType.None)) {
+				commonStore.coverSet(object.coverId, object.coverId, object.coverType);
+			};
+
+			C.ObjectOpen(widgets, '', () => {
+				this.createsSubscriptions(() => {
+					commonStore.defaultTypeSet(commonStore.type);
+
+					if (pin && !keyboard.isPinChecked) {
+						UtilCommon.route('/auth/pin-check');
+					} else {
+						if (redirect) {
+							UtilCommon.route(redirect, true);
+						} else {
+							UtilObject.openHome('route', { replace: true });
+						};
+
+						commonStore.redirectSet('');
+					};
+
+					if (!color) {
+						Storage.set('color', 'orange');
+					};
+					if (!bgColor) {
+						Storage.set('bgColor', 'orange');
+					};
+
+					if (callBack) {
+						callBack();
+					};
+				});
+
+				if (profile) {
+					this.subscribeIds({
+						subId: Constant.subId.profile, 
+						ids: [ profile ], 
+						noDeps: true,
+					});
+				};
+			});
+		});
+	};
+
+	createsSubscriptions (callBack?: () => void): void {
+		const list = [
 			{
 				subId: Constant.subId.deleted,
 				keys: [],
@@ -268,53 +331,14 @@ class UtilData {
 
 			cnt++;
 
-			if (cnt == subscriptions.length) {
-				commonStore.defaultTypeSet(commonStore.type);
-
-				if (pin && !keyboard.isPinChecked) {
-					UtilCommon.route('/auth/pin-check');
-				} else {
-					if (redirect) {
-						UtilCommon.route(redirect, true);
-					} else {
-						UtilObject.openHome('route', { replace: true });
-					};
-
-					commonStore.redirectSet('');
-				};
-
-				if (!color) {
-					Storage.set('color', 'orange');
-				};
-				if (!bgColor) {
-					Storage.set('bgColor', 'orange');
-				};
-
-				if (callBack) {
-					callBack();
-				};
+			if ((cnt == list.length) && callBack) {
+				callBack();
 			};
 		};
 
-		C.FileSpaceUsage((message) => {
-			if (!message.error.code) {
-				commonStore.spaceStorageSet(message);
-			};
-		});
-
-		C.ObjectOpen(widgets, '', () => {
-			for (const item of subscriptions) {
-				this.searchSubscribe(item, () => { cb(item); });
-			};
-
-			if (profile) {
-				this.subscribeIds({
-					subId: Constant.subId.profile, 
-					ids: [ profile ], 
-					noDeps: true,
-				});
-			};
-		});
+		for (const item of list) {
+			this.searchSubscribe(item, () => cb(item));
+		};
 	};
 
 	createSession (callBack?: (message: any) => void) {
@@ -731,7 +755,7 @@ class UtilData {
 	};
 
 	setWindowTitleText (name: string) {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace, []);
+		const space = UtilObject.getSpace();
 		const title = [];
 
 		if (name) {

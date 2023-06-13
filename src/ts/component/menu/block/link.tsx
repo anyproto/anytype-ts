@@ -235,31 +235,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			return [];
 		};
 
-		const reg = new RegExp(UtilCommon.filterFix(filter), 'gi');
 		const regProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
 		const buttons: any[] = [
 			{ id: 'add', name: `Create object "${filter}"`, icon: 'plus' }
 		];
-
-		let items = [].concat(this.items);
-
-		items = items.filter((it: any) => {
-			if (!it) {
-				return false;
-			};
-
-			let ret = false;
-			if (it.name && it.name.match(reg)) {
-				ret = true;
-			} else 
-			if (it.description && it.description.match(reg)) {
-				ret = true;
-			};
-			return ret;
-		}).map((it: any) => { 
-			it.isBig = true; 
-			return it;
-		});
+		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
 
 		if (items.length) {
 			items.push({ isDiv: true });
@@ -269,11 +249,14 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			buttons.unshift({ id: 'link', name: 'Link to website', icon: 'link' });
 		};
 
-		let sections: any[] = [];
+		const sections: any[] = [];
+
 		if (items.length) {
 			sections.push({ id: I.MarkType.Object, name: 'Objects', children: items });
 		};
+
 		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
+
 		return UtilMenu.sectionsMap(sections);
 	};
 
@@ -402,24 +385,22 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		return h;
 	};
 
-	getListHeight (items: any) {
-		return items.reduce((res: number, item: any) => {
-			res += this.getRowHeight(item);
-			return res;
-		}, 0);
-	}
+	getListHeight () {
+		return this.getItems(true).reduce((res: number, item: any) => res + this.getRowHeight(item), 0);
+	};
 
 	resize () {
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = this.getItems(true);
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
 
+		console.log(this.getItems(true));
+
 		let height = HEIGHT_FILTER;
 		if (filter) {
-			height += this.getListHeight(items) + offset;
+			height += this.getListHeight() + offset;
 			obj.removeClass('initial');
 		} else {
 			obj.addClass('initial');

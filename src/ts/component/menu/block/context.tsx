@@ -268,7 +268,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			
 			case I.MarkType.BgColor:
 			case I.MarkType.Color: {
-				let storageKey = ''
+				let storageKey = '';
 
 				switch (type) {
 					case I.MarkType.Color: {

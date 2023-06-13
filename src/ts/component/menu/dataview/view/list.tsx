@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
-import { I, C, UtilCommon, keyboard, Relation, analytics } from 'Lib';
+import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 
 const HEIGHT = 28;
@@ -201,7 +201,9 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId } = data;
-		const items: any[] = UtilCommon.objectCopy(dbStore.getViews(rootId, blockId));
+		const items: any[] = UtilCommon.objectCopy(dbStore.getViews(rootId, blockId)).map(it => ({ 
+			...it, name: it.name || UtilObject.defaultName('Page'),
+		}));
 
 		items.unshift({ id: 'label', name: 'Views', isSection: true });
 		return items;

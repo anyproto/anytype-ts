@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, IconObject, Header, Icon } from 'Component';
-import { I, C, UtilMenu, UtilObject } from 'Lib';
-import { detailStore, commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, UtilMenu, UtilObject } from 'Lib';
 
 const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.PageComponent> {
 
@@ -16,8 +14,9 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const space = UtilObject.getSpace();
 		const home = UtilObject.getSpaceDashboard();
+		const notExisting = [ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId);
 
 		return (
 			<div 
@@ -39,6 +38,9 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 						<div className="side right">
 							<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
 								<div className="item">
+									{home && !notExisting ? (
+										<IconObject size={20} iconSize={20} object={home} />
+ 									) : ''}
 									<div className="name">
 										{home ? home.name : 'Select'}
 									</div>

@@ -114,6 +114,13 @@ export enum EdgeType {
 	Relation	 = 1,
 };
 
+export enum Usecase {
+	None		 = 0,
+	Personal	 = 1,
+    Knowledge	 = 2,
+    Notes		 = 3,
+};
+
 export enum HomePredefinedId {
 	Graph = 'graph',
 	Last = 'lastOpened',

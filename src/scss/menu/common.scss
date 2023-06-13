@@ -58,7 +58,7 @@
 
 		.loaderWrapper { 
 			position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px;
-			background: rgba(255,255,255, 0.7);
+			background: $colorBgLoader;
 		}
 
 		.tabs { padding: 10px 14px; border-bottom: 1px solid $colorBorderLight; white-space: nowrap; font-weight: 700; color: $colorMediumGrey; }

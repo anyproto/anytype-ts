@@ -601,6 +601,7 @@ class Keyboard {
 			url = url.replace(/\%25middleware\%25/g, message.version);
 			url = url.replace(/\%25accountId\%25/g, account.id);
 			url = url.replace(/\%25analyticsId\%25/g, account.info.analyticsId);
+			url = url.replace(/\%25deviceId\%25/g, account.info.deviceId);
 
 			Renderer.send('urlOpen', url);
 		});
@@ -621,6 +622,7 @@ class Keyboard {
 				[ 'Library version', message.version ],
 				[ 'Account ID', account.id ],
 				[ 'Analytics ID', account.info.analyticsId ],
+				[ 'Device ID', account.info.deviceId ],
 			];
 
 			popupStore.open('confirm', {

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button } from 'Component';
-import { C, I, UtilCommon, analytics, Relation, Dataview, keyboard, translate } from 'Lib';
+import { C, I, UtilCommon, analytics, Relation, Dataview, keyboard, translate, UtilObject } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import Head from './head';
@@ -63,7 +63,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					id={elementId} 
 					className={cn.join(' ')}
 					tooltip={item.text}
-					onClick={e => this.onButton(e, '#' + elementId, item.menu)}
+					onClick={e => this.onButton(e, `#${elementId}`, item.menu)}
 				/>
 			);
 		};
@@ -74,10 +74,10 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				<div 
 					id={elementId} 
 					className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
-					onClick={(e: any) => { this.onViewSet(item); }} 
-					onContextMenu={(e: any) => { this.onViewEdit(e, '#views #' + elementId, item); }}
+					onClick={() => this.onViewSet(item)} 
+					onContextMenu={e => this.onViewEdit(e, `#views #${elementId}`, item)}
 				>
-					{item.name}
+					{item.name || UtilObject.defaultName('Page')}
 				</div>
 			);
 		});

@@ -20,7 +20,7 @@
 		}
 
 		.dimmer { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 0; transition: opacity 0.3s $easeInQuint; opacity: 0; }
-		#loader { position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px; background: rgba(255,255,255, 0.7); }
+		#loader { position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px; background: $colorBgLoader; }
 	}
 }
 

@@ -27,6 +27,7 @@ import {
 	FileSyncStatus,
 	StoreTab,
 	HomePredefinedId,
+	Usecase,
 } from './common';
 import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, FilesStatus } from './thread';
 import { Progress, ProgressType, ProgressState } from './progress';
@@ -98,6 +99,7 @@ export {
 	Dataset,
 	ButtonComponent,
 	HomePredefinedId,
+	Usecase,
 
 	ImportType,
 	ImportMode,

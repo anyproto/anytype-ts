@@ -483,7 +483,12 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+
+		let root = rootId ? rootId : match.params.id;
+		if (root == I.HomePredefinedId.Graph) {
+			root = UtilObject.lastOpened()?.id;
+		};
+		return root;
 	};
 
 	onTab (id: string) {
