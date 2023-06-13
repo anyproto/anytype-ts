@@ -18,9 +18,7 @@ class Dataview {
 		let o = 0;
 
 		if (!config.debug.ho) {
-			relations = relations.filter((it: any) => { 
-				return (it.relationKey == 'name') || !it.isHidden; 
-			});
+			relations = relations.filter(it => it && ((it.relationKey == 'name') || !it.isHidden));
 		};
 
 		(view.relations || []).forEach((it: any) => {
