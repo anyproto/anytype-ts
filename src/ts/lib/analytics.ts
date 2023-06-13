@@ -34,7 +34,7 @@ class Analytics {
 
 		const platform = UtilCommon.getPlatform();
 
-		C.MetricsSetParameters(platform);
+		C.MetricsSetParameters(platform, window.Electron.version.app);
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
