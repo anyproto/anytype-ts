@@ -1344,15 +1344,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		} else {
 			this.blockSplit(block, range);
 		};
-
-		if (blockStore.checkBlockTypeExists(rootId)) {
-			const object = detailStore.get(rootId, rootId, []);
-			analytics.event('CreateObject', { 
-				route: 'Editor',
-				objectType: object.type, 
-				layout: object.layout,
-			});
-		};
 	};
 
 	menuCheck () {

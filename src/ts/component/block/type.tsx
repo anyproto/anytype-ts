@@ -280,8 +280,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		Onboarding.start('objectCreationFinish', isPopup);
 
-		analytics.event('CreateObject', {
-			route: 'SelectType',
+		analytics.event('SelectObjectType', {
 			objectType: typeId,
 			layout: template?.layout,
 			template: (template && template.templateIsBundled ? template.id : 'custom'),

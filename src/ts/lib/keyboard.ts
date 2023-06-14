@@ -287,7 +287,6 @@ class Keyboard {
 	};
 
 	pageCreate () {
-		const { focused } = focus.state;
 		const isMain = this.isMain();
 
 		if (!isMain) {
@@ -297,43 +296,20 @@ class Keyboard {
 		let targetId = '';
 		let position = I.BlockPosition.Bottom;
 		let rootId = '';
-		let root: any = null;
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
 		
-		/*
-		if (this.isMainEditor()) {
-			rootId = this.getRootId();
-			root = blockStore.getLeaf(rootId, rootId);
-
-			if (!root || root.isLocked()) {
-				return;
-			};
-
-			details = {};
-
-			const fb = blockStore.getLeaf(rootId, focused);
-			if (fb) {
-				if (fb.isTextTitle()) {
-					const first = blockStore.getFirstBlock(rootId, 1, it => it.isFocusable() && !it.isTextTitle());
-					if (first) {
-						targetId = first.id;
-						position = I.BlockPosition.Top;
-					};
-				} else 
-				if (fb.isFocusable()) {
-					targetId = fb.id;
-				};
-			};
-		};
-		*/
-
 		if (!rootId) {
 			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 		};
 		
 		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
 			UtilObject.openPopup({ id: message.targetId });
+
+			analytics.event('CreateObject', {
+				route: 'Navigation',
+				objectType: commonStore.type,
+			});
 		});
 	};
 
