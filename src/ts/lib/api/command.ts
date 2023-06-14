@@ -1146,7 +1146,9 @@ const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], callBack?: 
 	dispatcher.request(ObjectCreateObjectType.name, request, callBack);
 };
 
-const ObjectCreateRelation = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+const ObjectCreateRelation = (details: any, callBack?: (message: any) => void) => {
+	details.relationFormat = Number(details.relationFormat) || I.RelationType.LongText;
+
 	const request = new Rpc.Object.CreateRelation.Request();
 	
 	request.setDetails(Encode.encodeStruct(details));
