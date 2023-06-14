@@ -244,12 +244,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 			keyboard.disableClose(true);
 			UtilObject.openAuto({ id: rootId, layout }, { replace: true });
-
-			analytics.event('CreateObject', {
-				route: 'SelectType',
-				objectType: type,
-				layout,
-			});
 		};
 
 		setLoading(true);
