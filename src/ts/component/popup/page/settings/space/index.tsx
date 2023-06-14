@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Label, Input, IconObject } from 'Component';
 import { UtilObject, UtilMenu, I, translate } from 'Lib';
-import { commonStore } from 'Store';
+import { commonStore, menuStore } from 'Store';
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
 
@@ -88,6 +88,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				</div>
 			</React.Fragment>
 		);
+	};
+
+	componentWillUnmount(): void {
+		menuStore.closeAll([ 'select', 'searchObject' ]);	
 	};
 
 	onSelect (icon: string) {
