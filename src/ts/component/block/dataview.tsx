@@ -276,7 +276,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		win.on(`resize.${block.id} sidebarResize.${block.id}`, () => this.resize());
 		win.on(`updateDataviewData.${block.id}`, () => this.loadData(this.getView().id, 0, true));
-		win.on(`setDataviewSource.${block.id}`, () => this.onSourceSelect(`#block-${block.id} #head-title-wrapper #value`, {}));
+		win.on(`setDataviewSource.${block.id}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 32 }));
 		win.on(`selectionEnd.${block.id}`, () => this.onSelectEnd());
 		win.on(`selectionClear.${block.id}`, () => this.onSelectEnd());
 	};
@@ -922,6 +922,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getEmpty (type: string) {
 		const { isInline, block } = this.props;
+		const isCollection = this.isCollection();
 		const cn = [];
 
 		if (isInline) {
@@ -932,9 +933,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		switch (type) {
 			case 'target': {
+				const name = isCollection ? 'collections' : 'sets';
 				emptyProps = {
 					title: 'No data source',
-					description: 'Connect one of your sets or create new<br/>one to continue',
+					description: UtilCommon.sprintf('Connect one of your %s or create a new<br/>one to continue', name),
 					button: 'Select source',
 					onClick: () => this.onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
 				};
