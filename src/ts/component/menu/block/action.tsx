@@ -164,7 +164,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				Action.duplicate(rootId, rootId, blockIds[blockIds.length - 1], blockIds, I.BlockPosition.Bottom, () => { 
 					focus.clear(true); 
 				});
-				this.refFilter.blur();
+				this.refFilter?.blur();
 				ret = true;
 			});
 		};
