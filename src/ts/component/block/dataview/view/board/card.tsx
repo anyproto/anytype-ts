@@ -57,14 +57,6 @@ const Card = observer(class Card extends React.Component<Props> {
 					{content}
 				</div>
 			);
-		
-			if (isCollection) {
-				content = (
-					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
-						{content}
-					</DropTarget>
-				);
-			};
 		};
 
 		return (
