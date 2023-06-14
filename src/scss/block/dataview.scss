@@ -50,7 +50,7 @@
 			.icon.source.active { opacity: 1; }
 
 			.editableWrap { @include text-header2; height: 28px; max-width: calc(100% - 26px); @include text-overflow-nw; }
-			.editableWrap.isEmpty { min-width: 70px; }
+			.editableWrap.isEmpty { min-width: 90px; }
 		}
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }
