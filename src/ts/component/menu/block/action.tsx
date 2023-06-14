@@ -411,8 +411,8 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			return;
 		};
 		
-		const { content, align } = block;
-		const { color, bgColor } = content;
+		const { content, hAlign, bgColor } = block;
+		const { color } = content;
 
 		setActive(item, false);
 
@@ -525,6 +525,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'blockColor';
 
 				menuParam.data = Object.assign(menuParam.data, {
+					value: color,
 					onChange: (color: string) => {
 						C.BlockTextListSetColor(rootId, blockIds, color, (message: any) => {
 							this.setFocus(blockIds[0]);
@@ -541,6 +542,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuId = 'blockBackground';
 
 				menuParam.data = Object.assign(menuParam.data, {
+					value: bgColor,
 					onChange: (color: string) => {
 						C.BlockListSetBackgroundColor(rootId, ids, color, (message: any) => {
 							this.setFocus(blockIds[0]);
@@ -560,7 +562,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.vertical = I.MenuDirection.Center;
 
 				menuParam.data = Object.assign(menuParam.data, {
-					value: align,
+					value: hAlign,
 					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, blockIds, align, (message: any) => {
 							this.setFocus(blockIds[0]);
