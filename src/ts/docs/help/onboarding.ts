@@ -341,8 +341,29 @@ export default {
 				name: 'This is inline set',
 				description: 'Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.',
 				param: {
-					element: '#head-title-wrapper #value',
+					element: '.dataviewHead #value',
+					offsetY: 32,
+				}
+			},
+			{
+				name: 'Views',
+				description: 'Adjust rules and views to suit the current context.',
+				param: {
+					element: '#dataviewControls #sideLeft',
 					offsetY: 10,
+				}
+			},
+		],
+	},
+
+	inlineCollection: {
+		items: [
+			{
+				name: 'This is inline collection',
+				description: 'Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.',
+				param: {
+					element: '.dataviewHead #value',
+					offsetY: 36,
 				}
 			},
 			{

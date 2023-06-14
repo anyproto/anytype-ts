@@ -276,7 +276,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		win.on(`resize.${block.id} sidebarResize.${block.id}`, () => this.resize());
 		win.on(`updateDataviewData.${block.id}`, () => this.loadData(this.getView().id, 0, true));
-		win.on(`setDataviewSource.${block.id}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 32 }));
+		win.on(`setDataviewSource.${block.id}`, () => this.onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
 		win.on(`selectionEnd.${block.id}`, () => this.onSelectEnd());
 		win.on(`selectionClear.${block.id}`, () => this.onSelectEnd());
 	};
@@ -796,7 +796,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				if (isInline) {
-					Onboarding.start('inlineSet', isPopup, false, {
+					Onboarding.start(isCollection ? 'inlineCollection' : 'inlineSet', isPopup, false, {
 						parseParam: (param: any) => {
 							param.element = [ `#block-${block.id}`, param.element ].join(' ');
 							return param;
