@@ -34,7 +34,7 @@ class UtilObject {
 			home = this.graph();
 		} else
 		if (space.spaceDashboardId == I.HomePredefinedId.Last) {
-			home = this.lastOpened();
+			home = this.lastOpened() || this.graph();
 		} else {
 			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
 		};
