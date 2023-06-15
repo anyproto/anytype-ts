@@ -231,7 +231,9 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		if (srcBlock) {
 			let dstBlock = blockStore.getLeaf(rootId, BLOCK_ID);
 
-			dstBlock = Object.assign(dstBlock, srcBlock);
+			if (dstBlock) {
+				dstBlock = Object.assign(dstBlock, srcBlock);
+			};
 		};
 
 		if (isCollection(targetBlockId)) {
