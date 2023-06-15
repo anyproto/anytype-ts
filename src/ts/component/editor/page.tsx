@@ -364,7 +364,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		win.on('resize.editor' + namespace, () => this.resizePage());
-		container.on('scroll.editor' + namespace, e => this.onScroll(e));
+		container.on('scroll.editor' + namespace, e => this.onScroll());
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
