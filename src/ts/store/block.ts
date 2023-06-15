@@ -258,7 +258,7 @@ class BlockStore {
 		const block = blockStore.getLeaf(rootId, blockId);
 		const parent = blockStore.getLeaf(rootId, block.parentId);
 
-		if (parent.isPage() || parent.isLayoutDiv()) {
+		if (!parent || (parent && (parent.isPage() || parent.isLayoutDiv()))) {
 			return block;
 		} else {
 			return this.getHighestParent(rootId, parent.id);
