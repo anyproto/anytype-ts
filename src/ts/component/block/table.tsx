@@ -1099,10 +1099,14 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			case I.BlockType.TableColumn: {
 				columns.forEach((column: I.Block, i: number) => {
 					const cell = node.find(`.cell.column${column.id}`).first();
-					const p = cell.offset();
+					if (!cell.length) {
+						return;
+					};
+
+					const { left } = cell.offset();
 
 					this.cache[column.id] = {
-						x: p.left,
+						x: left,
 						y: 0,
 						height: 1,
 						width: cell.outerWidth(),
@@ -1117,11 +1121,15 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 				rows.forEach((row: I.Block, i: number) => {
 					const el = node.find(`#row-${row.id}`).first();
-					const p = el.offset();
+					if (!el.length) {
+						return;
+					};
+
+					const { left, top } = el.offset();
 
 					this.cache[row.id] = {
-						x: p.left,
-						y: p.top,
+						x: left,
+						y: top,
 						height: el.height(),
 						width: width,
 						index: i,
