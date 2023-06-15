@@ -36,6 +36,9 @@ class Analytics {
 		const platform = UtilCommon.getPlatform();
 
 		let version = String(window.Electron.version.app || '').split('-');
+		if (version.length) {
+			version = [ version[0] ];
+		};
 		if (config.sudo || !window.Electron.isPackaged || [ 'alpha' ].includes(config.channel)) {
 			version.push('dev');
 		} else
