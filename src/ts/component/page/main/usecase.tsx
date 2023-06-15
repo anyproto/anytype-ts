@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
 import { C, I, translate, UtilData, Storage, analytics } from 'Lib';
-import { authStore, blockStore } from 'Store';
+import { authStore, blockStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -79,6 +79,8 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 			analytics.event('SelectUsecase', { type: id });
 
 			window.setTimeout(() => {
+				commonStore.redirectSet('/main/graph');
+
 				UtilData.onAuth(authStore.account, () => {
 					const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
 					if (blocks.length) {

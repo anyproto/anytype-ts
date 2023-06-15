@@ -246,7 +246,7 @@ class UtilData {
 						if (redirect) {
 							UtilCommon.route(redirect, true);
 						} else {
-							UtilObject.openRoute({ layout: I.ObjectLayout.Graph }, { replace: true });
+							UtilObject.openHome('route', { replace: true });
 						};
 
 						commonStore.redirectSet('');
