@@ -1544,6 +1544,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		menuStore.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
+			subIds: Constant.menuIds.add,
 			recalcRect: () => {
 				const rect = UtilCommon.selectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
@@ -1568,7 +1569,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 	
-	onScroll (e: any) {
+	onScroll () {
 		const { rootId, isPopup } = this.props;
 		const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 
