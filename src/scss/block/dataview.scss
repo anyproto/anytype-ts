@@ -170,13 +170,13 @@
 	}
 
 	.block.blockDataview.isInline {
-		.wrapMenu > .icon.dnd { height: 88px; }
+		.wrapMenu > .icon.dnd { height: 60px; }
 
 		.dataviewEmpty { height: auto; padding: 48px 0px; border-top: 1px solid $colorBorderLight; border-bottom: 1px solid $colorBorderLight; }
 
 		.dataviewControls {
 			> .sides {
-				> .side { padding: 0px 0px 12px 0px; }
+				> .side { padding: 0px 0px 8px 0px; }
 				> .side.left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px 0px; }
 				> .side.right { transition: opacity $transitionCommon; opacity: 0; gap: 0px 6px; }
 			}
