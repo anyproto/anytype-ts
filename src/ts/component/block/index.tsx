@@ -497,7 +497,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		});
 	};
 
-	menuOpen (param?: any) {
+	menuOpen (param?: Partial<I.MenuParam>) {
 		const { dataset, rootId, block, blockRemove } = this.props;
 		const { selection } = dataset || {};
 
@@ -506,7 +506,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		$('.block.showMenu').removeClass('showMenu');
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
-		const menuParam = Object.assign({
+		const menuParam: Partial<I.MenuParam> = Object.assign({
+			subIds: Constant.menuIds.action,
 			onClose: () => {
 				selection.clear();
 				focus.apply();
