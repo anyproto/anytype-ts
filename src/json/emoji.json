@@ -1516,10 +1516,10 @@
             "name": "Flags",
             "emojis": [
                 "checkered_flag",
-                "cn",
+                "flag-cn",
                 "crossed_flags",
-                "de",
-                "es",
+                "flag-de",
+                "flag-es",
                 "flag-ac",
                 "flag-ad",
                 "flag-ae",
@@ -1770,16 +1770,16 @@
                 "flag-za",
                 "flag-zm",
                 "flag-zw",
-                "fr",
-                "gb",
-                "it",
-                "jp",
-                "kr",
+                "flag-fr",
+                "flag-gb",
+                "flag-it",
+                "flag-jp",
+                "flag-kr",
                 "pirate_flag",
                 "rainbow-flag",
-                "ru",
+                "flag-ru",
                 "triangular_flag_on_post",
-                "us",
+                "flag-us",
                 "waving_black_flag",
                 "waving_white_flag"
             ]
@@ -11297,7 +11297,7 @@
             ],
             "o": 2
         },
-        "cn": {
+        "flag-cn": {
             "a": "China Flag",
             "b": "1F1E8-1F1F3",
             "j": [
@@ -12974,7 +12974,7 @@
             ],
             "o": 2
         },
-        "de": {
+        "flag-de": {
             "a": "Germany Flag",
             "b": "1F1E9-1F1EA",
             "j": [
@@ -15425,7 +15425,7 @@
             ],
             "o": 2
         },
-        "es": {
+        "flag-es": {
             "a": "Spain Flag",
             "b": "1F1EA-1F1F8",
             "j": [
@@ -16791,7 +16791,7 @@
             ],
             "o": 2
         },
-        "fr": {
+        "flag-fr": {
             "a": "France Flag",
             "b": "1F1EB-1F1F7",
             "j": [
@@ -17049,7 +17049,7 @@
             ],
             "o": 2
         },
-        "gb": {
+        "flag-gb": {
             "a": "United Kingdom Flag",
             "b": "1F1EC-1F1E7",
             "k": [
@@ -22730,7 +22730,7 @@
             ],
             "o": 2
         },
-        "it": {
+        "flag-it": {
             "a": "Italy Flag",
             "b": "1F1EE-1F1F9",
             "j": [
@@ -23288,7 +23288,7 @@
             "m": "<3",
             "o": 2
         },
-        "jp": {
+        "flag-jp": {
             "a": "Japan Flag",
             "b": "1F1EF-1F1F5",
             "j": [
@@ -24403,7 +24403,7 @@
             ],
             "o": 0
         },
-        "kr": {
+        "flag-kr": {
             "a": "South Korea Flag",
             "b": "1F1F0-1F1F7",
             "j": [
@@ -32989,7 +32989,7 @@
             ],
             "o": 2
         },
-        "ru": {
+        "flag-ru": {
             "a": "Russia Flag",
             "b": "1F1F7-1F1FA",
             "j": [
@@ -36790,7 +36790,7 @@
             ],
             "o": 4
         },
-        "us": {
+        "flag-us": {
             "a": "United States Flag",
             "b": "1F1FA-1F1F8",
             "j": [
@@ -41746,17 +41746,12 @@
         "face_with_one_eyebrow_raised": "face_with_raised_eyebrow",
         "face_with_open_mouth_vomiting": "face_vomiting",
         "cooking": "fried_egg",
-        "flag-cn": "cn",
         "shocked_face_with_exploding_head": "exploding_head",
         "paw_prints": "feet",
-        "flag-de": "de",
         "telephone": "phone",
-        "flag-es": "es",
         "red_car": "car",
         "flipper": "dolphin",
-        "flag-fr": "fr",
         "uk": "gb",
-        "flag-gb": "gb",
         "serious_face_with_symbols_covering_mouth": "face_with_symbols_on_mouth",
         "poop": "hankey",
         "shit": "hankey",
@@ -41765,11 +41760,8 @@
         "open_book": "book",
         "sailboat": "boat",
         "knife": "hocho",
-        "flag-it": "it",
         "heavy_exclamation_mark": "exclamation",
-        "flag-jp": "jp",
         "envelope": "email",
-        "flag-kr": "kr",
         "collision": "boom",
         "pencil": "memo",
         "waxing_gibbous_moon": "moon",
@@ -41779,9 +41771,7 @@
         "sun_behind_rain_cloud": "partly_sunny_rain",
         "lightning_cloud": "lightning",
         "tornado_cloud": "tornado",
-        "flag-ru": "ru",
         "running": "runner",
-        "flag-us": "us",
         "women_holding_hands": "two_women_holding_hands",
         "man_and_woman_holding_hands": "couple",
         "woman_and_man_holding_hands": "couple",
