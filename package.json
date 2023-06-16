@@ -163,6 +163,7 @@
 			"dist/lib",
 			"dist/anytypeHelper",
 			"dist/anytypeHelper.exe",
+			"dist/font/**/*",
 			"dist/workers/**/*",
 			"dist/*.node",
 			"dist/img/**/*",
@@ -201,6 +202,7 @@
 			"dist/anytypeHelper.exe",
 			"dist/anytypeHelper",
 			"dist/*.node",
+			"dist/font/**/*",
 			"dist/workers/**/*",
 			"!node_modules/**/*",
 			{
