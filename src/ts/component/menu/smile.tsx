@@ -68,10 +68,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				<div 
 					id={'item-' + item.id} 
 					className="item" 
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
-					onMouseLeave={(e: any) => { this.onMouseLeave(e); }} 
-					onMouseDown={(e: any) => { this.onMouseDown(e, item.id, item.smile, item.skin); }}
-					onContextMenu={(e: any) => { this.onSkin(e, item.id, item.smile); }}
+					onMouseEnter={e => this.onMouseEnter(e, item)}
+					onMouseLeave={() => this.onMouseLeave()} 
+					onMouseDown={e => this.onMouseDown(e, item.id, item.smile, item.skin)}
+					onContextMenu={e => this.onSkin(e, item.id, item.smile)}
 				>
 					<div 
 						className="iconObject c32" 
@@ -390,12 +390,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	onMouseEnter (e: any, item: any) {
 		Preview.tooltipShow({ 
-			text: (this.aliases[item.smile] || item.smile), 
+			text: this.aliases[item.smile] || item.smile, 
 			element: $(e.currentTarget),
 		});
 	};
 
-	onMouseLeave (e: any) {
+	onMouseLeave () {
 		Preview.tooltipHide(false);
 	};
 	
