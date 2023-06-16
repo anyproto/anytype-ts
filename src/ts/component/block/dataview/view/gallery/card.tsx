@@ -166,8 +166,16 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 	};
 
-	onCellClick (e: React.MouseEvent, relation) {
+	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		const { onCellClick, recordId } = this.props;
+		const relation = dbStore.getRelationByKey(vr.relationKey);
+
+		if (!relation) {
+			return;
+		};
 
 		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;

@@ -41,6 +41,7 @@ const Card = observer(class Card extends React.Component<Props> {
 						arrayLimit={2}
 						showTooltip={true}
 						tooltipX={I.MenuDirection.Left}
+						onClick={e => this.onCellClick(e, relation)}
 						iconSize={relation.relationKey == 'name' ? 20 : 18}
 					/>
 				))}
@@ -65,9 +66,9 @@ const Card = observer(class Card extends React.Component<Props> {
 				id={`record-${record.id}`}
 				className={cn.join(' ')} 
 				draggable={true}
-				onDragStart={(e: any) => { onDragStartCard(e, groupId, record); }}
-				onClick={(e: any) => { this.onClick(e); }}
-				onContextMenu={(e: any) => { onContext(e, record.id); }}
+				onDragStart={e => onDragStartCard(e, groupId, record)}
+				onClick={e => this.onClick(e)}
+				onContextMenu={e => onContext(e, record.id)}
 				{...UtilCommon.dataProps({ id: record.id })}
 			>
 				{content}
@@ -110,6 +111,24 @@ const Card = observer(class Card extends React.Component<Props> {
 		if (cb[e.button]) {
 			cb[e.button]();
 		};
+	};
+
+	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const { onCellClick, recordId } = this.props;
+		const relation = dbStore.getRelationByKey(vr.relationKey);
+
+		if (!relation) {
+			return;
+		};
+
+		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+			return;
+		};
+
+		onCellClick(e, relation.relationKey, recordId);
 	};
 
 	resize () {

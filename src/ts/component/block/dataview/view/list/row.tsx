@@ -148,8 +148,6 @@ const Row = observer(class Row extends React.Component<Props> {
 			return;
 		};
 
-		console.log(relation);
-
 		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;
 		};
