@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Header, Footer, ObjectDescription, Icon, ListObjectManager } from 'Component';
 import { C, I, UtilCommon, analytics, translate } from 'Lib';
@@ -35,6 +36,13 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			{ icon: 'remove', text: 'Delete immediately', onClick: this.onRemove }
 		];
 
+		const win = $(window);
+
+		let rowLength = 3;
+		if (win.width() < 720) {
+			rowLength = 2;
+		};
+
 		const Info = (item: any) => (
 			<ObjectDescription object={item} />
 		);
@@ -54,7 +62,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 						subId={Constant.subId.archive}
 						filters={filters}
 						sorts={sorts}
-						rowLength={3}
+						rowLength={rowLength}
 						withArchived={true}
 						buttons={buttons}
 						Info={Info}
