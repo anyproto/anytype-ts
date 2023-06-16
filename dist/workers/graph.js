@@ -70,7 +70,7 @@ let time = 0;
 let isHovering = false;
 let edgeMap = new Map();
 let hoverAlpha = 0.2;
-let fontFamily = 'Inter';
+let fontFamily = 'Helvetica, san-serif';
 let timeoutHover = 0;
 let root = null;
 
