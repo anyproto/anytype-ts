@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
-import { C, UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview } from 'Lib';
+import { C, UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -231,6 +231,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		url = url.replace(/\%25spaceName\%25/g, space.name);
 
 		Renderer.send('urlOpen', url);
+		analytics.event('GetMoreSpace');
 	};
 
 	onName (e: any, v: string) {
