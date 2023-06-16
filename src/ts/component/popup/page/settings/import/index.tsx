@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, Util, translate } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore } from 'Store';
 
@@ -44,12 +44,12 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const { onPage } = this.props;
 		const items = this.getItems();
 		const item = items.find(it => it.id == id);
-		const fn = Util.toCamelCase('onImport-' + item.id);
+		const fn = UtilCommon.toCamelCase('onImport-' + item.id);
 
 		if (item.skipPage && this[fn]) {
 			this[fn]();
 		} else {
-			onPage(Util.toCamelCase('import-' + item.id));
+			onPage(UtilCommon.toCamelCase('import-' + item.id));
 		};
 	};
 
@@ -72,13 +72,12 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
 		const { close, onImport } = this.props;
-		const platform = Util.getPlatform();
 		const fileOptions: any = { 
 			properties: [ 'openFile' ],
 			filters: [ { name: '', extensions } ]
 		};
 
-		if (platform == I.Platform.Mac) {
+		if (UtilCommon.isPlatformMac()) {
 			fileOptions.properties.push('openDirectory');
 		};
 

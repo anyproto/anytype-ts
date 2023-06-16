@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch } from 'Component';
-import { I, Util, translate, keyboard } from 'Lib';
+import { I, UtilCommon, translate, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import Head from '../head';
 
@@ -168,7 +168,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 	};
 
 	delimiterOptions () {
-		const delimiters = Util.objectCopy(Delimiters);
+		const delimiters = UtilCommon.objectCopy(Delimiters);
 
 		let delimiter = delimiters.find(it => (it.value == this.data.delimiter) || (it.caption == this.data.delimiter));
 		if (!delimiter) {
@@ -181,7 +181,6 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 
 	onImport () {
 		const { close, onImport } = this.props;
-		const platform = Util.getPlatform();
 		const options: any = { 
 			properties: [ 'openFile' ],
 			filters: [
@@ -189,7 +188,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			]
 		};
 
-		if (platform == I.Platform.Mac) {
+		if (UtilCommon.isPlatformMac()) {
 			options.properties.push('openDirectory');
 		};
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Frame, Cover, Title, Label, Error, Button, Header, Footer, Icon } from 'Component';
-import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer, ObjectUtil, Action } from 'Lib';
+import { I, Storage, translate, C, UtilData, UtilCommon, analytics, Renderer, UtilObject, Action } from 'Lib';
 import { commonStore, authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -65,7 +65,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 						<Title className="withError" text="Error" />
 						<Error text={error.description} />
 						<div className="buttons">
-							<Button text={translate('commonBack')} onClick={() => Util.route('/')} />
+							<Button text={translate('commonBack')} onClick={() => UtilCommon.route('/')} />
 						</div>
 					</React.Fragment>
 				);
@@ -147,7 +147,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				return;
 			};
 
-			DataUtil.createSession((message: any) => {
+			UtilData.createSession((message: any) => {
 				if (this.setError(message.error)) {
 					return;
 				};
@@ -160,10 +160,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 							return;
 						};
 
-						DataUtil.onAuth(message.account);
+						UtilData.onAuth(message.account);
 					});
 				} else {
-					Util.route('/auth/account-select');
+					UtilCommon.route('/auth/account-select');
 				};
 			});
 		});
@@ -171,7 +171,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	
 	add () {
 		const { match } = this.props;
-		const { walletPath, accountPath, name, icon, code } = authStore;
+		const { walletPath, accountPath, name, icon } = authStore;
 
 		commonStore.defaultTypeSet(Constant.typeId.note);
 
@@ -182,8 +182,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 			authStore.phraseSet(message.mnemonic);
 
-			DataUtil.createSession(() => {
-				C.AccountCreate(name, icon, accountPath, code, Util.rand(1, Constant.iconCnt), (message: any) => {
+			UtilData.createSession(() => {
+				C.AccountCreate(name, icon, accountPath, UtilCommon.rand(1, Constant.iconCnt), (message: any) => {
 					const description = Errors.AccountCreate[message.error.code] || message.error.description;
 
 					if (this.setError({ ...message.error, description }) || !message.account) {
@@ -198,13 +198,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					authStore.previewSet('');
 					analytics.profile(message.account.info.analyticsId);
 
-					Storage.set('timeRegister', Util.time());
+					Storage.set('timeRegister', UtilCommon.time());
 
 					Renderer.send('keytarSet', message.account.id, authStore.phrase);
 					analytics.event('CreateAccount');
 					
 					if (match.params.id == 'register') {
-						Util.route('/auth/success');
+						UtilCommon.route('/auth/success');
 					};
 				});
 			});
@@ -220,7 +220,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 
 			if (message.account) {
-				DataUtil.onAuth(message.account);
+				UtilData.onAuth(message.account);
 			};
 		});
 	};
@@ -231,7 +231,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		};
 
 		this.setState({ error });
-		Util.checkError(error.code);
+		UtilCommon.checkError(error.code);
 		return true;
 	};
 
@@ -240,7 +240,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		Util.route('/auth/select');
+		UtilCommon.route('/auth/select');
 	};
 	
 });

@@ -3,24 +3,24 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, Loader, ObjectName, EmptySearch } from 'Component';
-import { I, C, keyboard, Util, DataUtil, ObjectUtil, Preview, analytics, Action, focus, translate } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilData, UtilObject, Preview, analytics, Action, focus, translate } from 'Lib';
 import { commonStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	loading: boolean;
+	isLoading: boolean;
 };
 
 const LIMIT = 10;
 const HEIGHT_SECTION = 28;
-const HEIGHT_ITEM = 28;
+const HEIGHT_ITEM_SMALL = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 
 const MenuSearchObject = observer(class MenuSearchObject extends React.Component<I.Menu, State> {
 
 	state = {
-		loading: false,
+		isLoading: false,
 	};
 
 	_isMounted = false;	
@@ -43,7 +43,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	};
 	
 	render () {
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter, value, placeholder, label, isBig, noFilter, noIcon } = data;
@@ -134,7 +134,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			<div className={cn.join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholder={placeholder} 
 						placeholderFocus={placeholderFocus} 
 						value={filter}
@@ -142,13 +142,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					/>
 				) : ''}
 
-				{loading ? <Loader /> : ''}
+				{isLoading ? <Loader /> : ''}
 
-				{!items.length && !loading ? (
-					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+				{!items.length && !isLoading ? (
+					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 
-				{this.cache && items.length && !loading ? (
+				{this.cache && items.length && !isLoading ? (
 					<div className="items">
 						<InfiniteLoader
 							rowCount={items.length + 1}
@@ -156,11 +156,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							isRowLoaded={({ index }) => !!this.items[index]}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -205,7 +205,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
-			defaultHeight: HEIGHT_ITEM,
+			defaultHeight: HEIGHT_ITEM_SMALL,
 			keyMapper: i => (items[i] || {}).id,
 		});
 
@@ -277,8 +277,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			return;
 		};
 
-		const { loading } = this.state;
-		if (loading) {
+		const { isLoading } = this.state;
+		if (isLoading) {
 			return;
 		};
 
@@ -305,10 +305,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 
 		if (clear) {
-			this.setState({ loading: true });
+			this.setState({ isLoading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			keys: keys || Constant.defaultRelationKeys,
@@ -344,7 +344,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 
 			if (clear) {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 			} else {
 				this.forceUpdate();
 			};
@@ -392,7 +392,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 			switch (type) {
 				case I.NavigationType.Go:
-					ObjectUtil.openEvent(e, target);
+					UtilObject.openEvent(e, target);
 					break;
 
 				case I.NavigationType.Move:
@@ -440,8 +440,8 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				addParam.onClick();
 				close();
 			} else {
-				ObjectUtil.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-					ObjectUtil.getById(message.targetId, (object: any) => { process(object, true); });
+				UtilObject.create('', '', { name: filter, type: commonStore.type }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+					UtilObject.getById(message.targetId, (object: any) => { process(object, true); });
 					close();
 				});
 			};
@@ -466,7 +466,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			default: {
 				param.type = I.BlockType.Link;
 				param.content = {
-					...DataUtil.defaultLinkSettings(),
+					...UtilData.defaultLinkSettings(),
 					targetBlockId: id,
 				};
 				break;
@@ -495,18 +495,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 	getRowHeight (item: any) {
 		if (!item) {
-			return HEIGHT_ITEM;
+			return HEIGHT_ITEM_SMALL;
 		};
 
 		const { param } = this.props;
 		const { data } = param;
 		const { isBig } = data;
 
-		let h = HEIGHT_ITEM;
-		if (!item) {
-			return h;
-		};
-
+		let h = HEIGHT_ITEM_SMALL;
 		if ((isBig || item.isBig) && !item.isAdd)	 h = HEIGHT_ITEM_BIG;
 		if (item.isSection)							 h = HEIGHT_SECTION;
 		if (item.isDiv)								 h = HEIGHT_DIV;
@@ -517,13 +513,15 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { getId, position, param } = this.props;
 		const { data } = param;
 		const { noFilter } = data;
-		const { loading } = this.state;
+		const { isLoading } = this.state;
 		const items = this.getItems().slice(0, LIMIT);
 		const obj = $(`#${getId()} .content`);
 
-		let height = items.reduce((res: number, current: any) => { return res + this.getRowHeight(current); }, 16 + (noFilter ? 0 : 44));
+		let height = 16 + (noFilter ? 0 : 44);
 		if (!items.length) {
-			height = loading ? height + 40 : 160;
+			height = isLoading ? height + 40 : 160;
+		} else {
+			height = items.reduce((res: number, current: any) => res + this.getRowHeight(current), height);
 		};
 
 		obj.css({ height });

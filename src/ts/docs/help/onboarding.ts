@@ -15,12 +15,15 @@ export default {
                 noButton: true,
                 buttons: [
                     { text: 'Next', action: 'dashboard' }
-                ]
+                ],
+                forceButtons: [
+                    { text: 'Close', action: 'close' }
+                ],
             }
         ],
 
         param: {
-            element: '#footer #button-help',
+            element: '#page.isFull #footer #button-help',
             classNameWrap: 'fixed',
             className: 'wizard',
             vertical: I.MenuDirection.Top,
@@ -28,6 +31,177 @@ export default {
             noArrow: true,
 			noClose: true,
 			passThrough: true,
+            offsetY: -4,
+        },
+    },
+
+    mainSet: {
+        category: 'Set & Collection',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Anytype has two basic formats: Sets and Collections.</b> As in computer science, a Set is a data structure that contains only unique elements, while a Collection is any group of objects that are stored together. You can convert any set into a collection, but not the other way around.
+					</p>
+				`,
+                video: './img/help/onboarding/set-1-to-collection.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>Sets</b> contain no duplicates and can be used to filter specific objects or relation types, such as all my bookmarks. <b>Collections</b>, however, can contain duplicates and are used for more general-purpose data storage; they can store anything.
+					</p>
+				`,
+                video: './img/help/onboarding/set-2-new-object.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>View sets or collections as an entire object, or place them inline in documents.</b> The first column will contain the collecting objects, and the others will show their relations.
+					</p>
+					<p>Filter and adjust objects by any relation, such as today’s notes (filter by date) or project documents (filter by project).</p>
+				`,
+                buttonText: 'Great! I will try',
+            }
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    },
+
+    storeType: {
+        category: 'Library',
+        items: [
+            {
+                description: `
+					<p>
+						<b>This Library contains all types of objects and relations.</b> It comes with preinstalled types, as well as types that can be uploaded to Anytype for different use cases.
+					</p>
+				`,
+                video: './img/help/onboarding/library-1-add-type.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>You can create your own types with any object layout for your own purposes.</b> Additionally, you can save any existing object as a Library template if you need to use it frequently.
+					</p>
+					<p>Now, let’s take a look at the Relations menu.</p>
+				`,
+                video: './img/help/onboarding/library-2-new-type.mp4',
+                buttonText: 'Ok',
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    },
+
+    storeRelation: {
+        category: 'Library',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Relations are reusable links with meaning.</b> Here you can see some examples of relations, but the idea is that you can create your own relations which are valuable to you and connect the objects through them.
+					</p>
+				`,
+                video: './img/help/onboarding/library-3-relation.mp4',
+                buttonText: 'Go ahead',
+            },
+            {
+                description: `
+					<p>
+						<b>Establishing relations helps you to understand the graph</b> and its structure better. You can also create collections or sets based on the relationships for quick access.
+					</p>
+				`,
+                buttonText: 'Great!',
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4
+        },
+    },
+
+    objectCreationStart: {
+        category: 'Creating objects',
+        items: [
+            {
+                description: `
+					<p>
+						<b>Let’s create an object from scratch.</b> The default object type is now ‘Note’, meaning that each new object is referred to as a Note unless you choose a different type. You can change the default object type anytime in the settings menu.
+					</p>
+				`,
+                video: './img/help/onboarding/object-1-default-object-type.mp4',
+            },
+            {
+                description: `
+					<p>
+						<b>Choose here from the most popular object types</b>, such as Page, Task, or Collection. You can also select an object from the Type menu, which shows all object types installed from the Library.
+					</p>
+				`,
+                video: './img/help/onboarding/object-2-type-menu.mp4',
+                buttonText: 'I got it!',
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
+            offsetY: -4,
+        },
+    },
+
+    objectCreationFinish: {
+        category: 'Creating objects',
+        items: [
+            {
+                description: `
+					<p>
+						<b>For the object you created, you can adjust it using the top menu.</b> Change the cover, layout, or set up a relations to build the graph.
+					</p>
+				`,
+                video: './img/help/onboarding/object-layout.mp4',
+                buttonText: 'Ok! I like it',
+            },
+        ],
+        param: {
+            element: '#page.isFull #footer #button-help',
+            classNameWrap: 'fixed',
+            className: 'wizard',
+            vertical: I.MenuDirection.Top,
+            horizontal: I.MenuDirection.Right,
+            noArrow: true,
+            noClose: true,
+            passThrough: true,
             offsetY: -4,
         },
     },
@@ -81,7 +255,7 @@ export default {
         ],
 
 		param: {
-			element: '#footer #button-help',
+			element: '#page.isFull #footer #button-help',
 			classNameWrap: 'fixed',
 			className: 'wizard',
 			vertical: I.MenuDirection.Top,
@@ -132,16 +306,6 @@ export default {
 					horizontal: I.MenuDirection.Center,
                 }
             },
-			{
-                name: `Like what you're working on?`,
-                description: 'Save this structure for future use by selecting “Save as Template” from the three-dot menu. It will be saved in your Library, very useful for recurring work.',
-                param: {
-                    element: '#header #button-header-more',
-                    offsetY: 10,
-                    classNameWrap: 'fixed fromHeader',
-					horizontal: I.MenuDirection.Right,
-                }
-            },
         ]
     },
 
@@ -177,8 +341,29 @@ export default {
 				name: 'This is inline set',
 				description: 'Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.',
 				param: {
-					element: '#head-title-wrapper #value',
+					element: '.dataviewHead #value',
+					offsetY: 32,
+				}
+			},
+			{
+				name: 'Views',
+				description: 'Adjust rules and views to suit the current context.',
+				param: {
+					element: '#dataviewControls #sideLeft',
 					offsetY: 10,
+				}
+			},
+		],
+	},
+
+	inlineCollection: {
+		items: [
+			{
+				name: 'This is inline collection',
+				description: 'Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.',
+				param: {
+					element: '.dataviewHead #value',
+					offsetY: 36,
 				}
 			},
 			{

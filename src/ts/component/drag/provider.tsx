@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { DragLayer } from 'Component';
-import { I, C, focus, keyboard, Util, scrollOnMove, Action, Preview, DataUtil, ObjectUtil } from 'Lib';
+import { I, C, focus, keyboard, UtilCommon, scrollOnMove, Action, Preview, UtilData, UtilObject } from 'Lib';
 import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -54,7 +54,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				onDragOver={this.onDragOver} 
 				onDrop={this.onDropCommon}
 			>
-				<DragLayer {...this.props} ref={ref => { this.refLayer = ref; }} />
+				<DragLayer {...this.props} ref={ref => this.refLayer = ref} />
 				{children}
 			</div>
 		);
@@ -134,7 +134,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const dataTransfer = e.dataTransfer;
-		const items = Util.getDataTransferItems(dataTransfer.items);
+		const items = UtilCommon.getDataTransferItems(dataTransfer.items);
 		const isFileDrop = dataTransfer.files && dataTransfer.files.length;
 		const last = blockStore.getFirstBlock(rootId, -1, it => it.canCreateBlock());
 
@@ -164,7 +164,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		// String items drop
 		if (items && items.length) {
-			Util.getDataTransferString(items, (html: string) => {
+			UtilCommon.getDataTransferString(items, (html: string) => {
 				C.BlockPaste(rootId, targetId, { from: 0, to: 0 }, [], false, { html });
 			});
 
@@ -200,7 +200,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const { selection } = dataset || {};
 		const win = $(window);
 		const node = $(this.node);
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const sidebar = $('#sidebar');
 		const layer = $('#dragLayer');
 		const body = $('body');
@@ -256,7 +256,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
    		e.stopPropagation();
 
 		const isPopup = keyboard.isPopup();
-		const top = Util.getScrollContainer(isPopup).scrollTop();
+		const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 		const diff = isPopup ? Math.abs(top - this.top) * (top > this.top ? 1 : -1) : 0;
 
 		this.initData();
@@ -270,7 +270,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 	onDragEnd (e: any) {
 		const isPopup = keyboard.isPopup();
 		const node = $(this.node);
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const sidebar = $('#sidebar');
 		const body = $('body');
 
@@ -324,7 +324,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const processAddRecord = () => {
-			ObjectUtil.getById(targetContextId, (object) => {
+			UtilObject.getById(targetContextId, (object) => {
 				if (object.type === Constant.typeId.collection) {
 					// add to collection
 					C.ObjectCollectionAdd(targetContextId, ids);
@@ -333,7 +333,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 						const newBlock = {
 							type: I.BlockType.Link,
 							content: {
-								...DataUtil.defaultLinkSettings(),
+								...UtilData.defaultLinkSettings(),
 								targetBlockId: key,
 							}
 						};
@@ -443,7 +443,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		const isPopup = keyboard.isPopup();
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 
 		for (let [ key, value ] of this.objectData) {
@@ -454,7 +454,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	checkNodes (e: any, ex: number, ey: number) {
 		let dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
-		let isItemDrag = Util.getDataTransferItems(dataTransfer.items).length ? true : false;
+		let isItemDrag = UtilCommon.getDataTransferItems(dataTransfer.items).length ? true : false;
 		let isFileDrag = dataTransfer.types.includes('Files');
 		let data: any = {};
 

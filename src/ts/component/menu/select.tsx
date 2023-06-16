@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, Util, Relation, keyboard } from 'Lib';
+import { I, UtilCommon, Relation, keyboard } from 'Lib';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 28;
@@ -96,7 +96,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			<React.Fragment>
 				{withFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						value={filter}
 						placeholder={placeholder}
 						onChange={this.onFilterChange}
@@ -114,11 +114,11 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => !!items[index]}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -175,12 +175,19 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const { data } = param;
 		const { filter } = data;
 		const withFilter = this.isWithFilter();
+		const items = this.getItems(true);
 
 		if (withFilter && (this.filter != filter)) {
 			this.filter = filter;
 			this.n = -1;
 			this.top = 0;
 		};
+
+		this.cache = new CellMeasurerCache({
+			fixedWidth: true,
+			defaultHeight: HEIGHT_ITEM,
+			keyMapper: i => (items[i] || {}).id,
+		});
 
 		if (this.refList) {
 			this.refList.scrollToPosition(this.top);
@@ -248,7 +255,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 
 		if (data.filter && !preventFilter) {
-			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+			const filter = new RegExp(UtilCommon.filterFix(data.filter), 'gi');
 
 			items = items.filter(it => String(it.name || '').match(filter));
 		};

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, DataUtil, Action, Util } from 'Lib';
+import { I, C, analytics, keyboard, UtilData, Action, UtilCommon } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -107,7 +107,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholderFocus="Filter types..." 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -127,7 +127,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -246,7 +246,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
@@ -282,23 +282,21 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = Util.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.workspaceId == workspace));
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
 			{ id: 'library', name: 'My types', children: library },
 		];
-		let name = 'Create new type';
 
 		if (filter) {
 			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 			sections = sections.concat([
 				{ id: 'store', name: 'Anytype library', children: store },
+				{ children: [ { id: 'add', name: `Create type "${filter}"` } ] }
 			]);
-
-			name = `Create type "${filter}"`;
 		} else {
 			sections = sections.concat([
 				{ 
@@ -306,10 +304,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
 					] 
 				},
-			])
+			]);
 		};
-
-		sections.unshift({ children: [ { id: 'add', name } ] });
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);

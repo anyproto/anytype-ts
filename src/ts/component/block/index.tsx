@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, C, Util, DataUtil, keyboard, focus, Storage } from 'Lib';
+import { I, C, UtilCommon, UtilData, keyboard, focus, Storage } from 'Lib';
 import { DropTarget, ListChildren, Icon } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore, blockStore, detailStore } from 'Store';
@@ -36,7 +36,7 @@ const SNAP = 0.01;
 const Block = observer(class Block extends React.Component<Props> {
 
 	node: any = null;
-	ref: any = null;
+	ref = null;
 	ids: string[] = [];
 
 	public static defaultProps = {
@@ -79,7 +79,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let canSelect = !isInsideTable && !isSelectionDisabled;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = false;
-		let cn: string[] = [ 'block', DataUtil.blockClass(block), 'align' + hAlign, 'index' + index ];
+		let cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
 		let cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
 		let empty = null;
@@ -201,7 +201,7 @@ const Block = observer(class Block extends React.Component<Props> {
 					canDropMiddle = canDrop;
 				};
 
-				cn.push(DataUtil.linkCardClass(content.cardStyle));
+				cn.push(UtilData.linkCardClass(content.cardStyle));
 
 				blockComponent = <BlockLink key={`block-${block.id}-component`} ref={setRef} {...this.props} />;
 				break;
@@ -315,7 +315,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				<div 
 					id={`selectable-${id}`} 
 					className={[ 'selectable', 'type-' + I.SelectType.Block ].join(' ')} 
-					{...Util.dataProps({ id, type: I.SelectType.Block })}
+					{...UtilCommon.dataProps({ id, type: I.SelectType.Block })}
 				>
 					{object}
 				</div>
@@ -337,7 +337,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				id={'block-' + id} 
 				className={cn.join(' ')} 
 				style={css}
-				{...Util.dataProps({ id })}
+				{...UtilCommon.dataProps({ id })}
 				onContextMenu={this.onContextMenu} 
 			>
 				<div className="wrapMenu">
@@ -438,7 +438,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			selection.setIsSelecting(false);
 		};
 
-		this.ids = DataUtil.selectionGet(block.id, false, true, this.props);
+		this.ids = UtilData.selectionGet(block.id, false, true, this.props);
 		onDragStart(e, I.DropType.Block, this.ids, this);
 	};
 	
@@ -448,7 +448,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { block } = this.props;
 
 		focus.clear(true);
-		this.ids = DataUtil.selectionGet(block.id, true, false, this.props);
+		this.ids = UtilData.selectionGet(block.id, true, false, this.props);
 	};
 	
 	onMenuClick () {
@@ -490,14 +490,14 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		focus.clear(true);
 		menuStore.closeAll([], () => {
-			this.ids = DataUtil.selectionGet(block.id, true, true, this.props);
+			this.ids = UtilData.selectionGet(block.id, true, true, this.props);
 			this.menuOpen({
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
 			});
 		});
 	};
 
-	menuOpen (param?: any) {
+	menuOpen (param?: Partial<I.MenuParam>) {
 		const { dataset, rootId, block, blockRemove } = this.props;
 		const { selection } = dataset || {};
 
@@ -506,7 +506,8 @@ const Block = observer(class Block extends React.Component<Props> {
 		$('.block.showMenu').removeClass('showMenu');
 		$('.block.isAdding').removeClass('isAdding top bottom');
 
-		const menuParam = Object.assign({
+		const menuParam: Partial<I.MenuParam> = Object.assign({
+			subIds: Constant.menuIds.action,
 			onClose: () => {
 				selection.clear();
 				focus.apply();

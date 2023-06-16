@@ -2,7 +2,7 @@ import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
 import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
-import { Util, I, M, translate, analytics, Renderer, Action, Dataview, Preview, DataUtil, Storage } from 'Lib';
+import { UtilCommon, I, M, translate, analytics, Renderer, Action, Dataview, Preview, UtilData, Storage } from 'Lib';
 import { observable } from 'mobx';
 import * as Sentry from '@sentry/browser';
 import arrayMove from 'array-move';
@@ -20,7 +20,6 @@ const SORT_IDS = [
 	'objectDetailsAmend', 
 	'objectDetailsUnset', 
 	'subscriptionCounters',
-	'blockDataviewSourceSet',
 	'blockDataviewViewSet',
 	'blockDataviewViewDelete',
 ];
@@ -116,7 +115,6 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWVIEWDELETE)		 t = 'blockDataviewViewDelete';
 		if (v == V.BLOCKDATAVIEWVIEWORDER)		 t = 'blockDataviewViewOrder';
 
-		if (v == V.BLOCKDATAVIEWSOURCESET)		 t = 'blockDataviewSourceSet';
 		if (v == V.BLOCKDATAVIEWTARGETOBJECTIDSET)	 t = 'blockDataviewTargetObjectIdSet';
 
 		if (v == V.BLOCKDATAVIEWRELATIONSET)	 t = 'blockDataviewRelationSet';
@@ -124,7 +122,7 @@ class Dispatcher {
 		if (v == V.BLOCKDATAVIEWGROUPORDERUPDATE)	 t = 'blockDataviewGroupOrderUpdate';
 		if (v == V.BLOCKDATAVIEWOBJECTORDERUPDATE)	 t = 'blockDataviewObjectOrderUpdate';
 
-		if (v == V.BLOCKSETWIDGET)	 		t = 'blockSetWidget';
+		if (v == V.BLOCKSETWIDGET)				 t = 'blockSetWidget';
 
 		if (v == V.SUBSCRIPTIONADD)				 t = 'subscriptionAdd';
 		if (v == V.SUBSCRIPTIONREMOVE)			 t = 'subscriptionRemove';
@@ -169,7 +167,7 @@ class Dispatcher {
 			};
 
 			if (data && data.toObject) {
-				const d = Util.objectClear(data.toObject());
+				const d = UtilCommon.objectClear(data.toObject());
 				console.log(config.debug.js ? JSON.stringify(d, null, 3) : d); 
 			};
 		};
@@ -189,8 +187,9 @@ class Dispatcher {
 		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
 
 		for (const message of messages) {
+			const win = $(window);
 			const type = this.eventType(message.getValueCase());
-			const fn = 'get' + Util.ucFirst(type);
+			const fn = 'get' + UtilCommon.ucFirst(type);
 			const data = message[fn] ? message[fn]() : {};
 			const needLog = this.checkLog(type) && !skipDebug;
 
@@ -205,7 +204,7 @@ class Dispatcher {
 					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 
-					Renderer.send('setConfig', Util.objectCopy(commonStore.config));
+					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
 					break;	
 				};
 
@@ -256,7 +255,7 @@ class Dispatcher {
 
 				case 'fileLimitReached': {
 					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
-					const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
+					const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
 
 					if (percentageUsed >= 99) {
 						Preview.toastShow({ action: I.ToastAction.StorageFull });
@@ -342,8 +341,16 @@ class Dispatcher {
 						block.content.description = data.getDescription().getValue();
 					};
 
+					if (data.hasTargetblockid()) {
+						block.content.targetblockId = data.getTargetblockid().getValue();
+					};
+
 					if (data.hasRelations()) {
 						block.content.relations = data.getRelations().getValueList() || [];
+					};
+
+					if (data.hasTargetblockid()) {
+						block.content.targetBlockId = data.getTargetblockid().getValue();
 					};
 
 					if (data.hasFields()) {
@@ -413,6 +420,29 @@ class Dispatcher {
 					};
 
 					block.content.targetObjectId = data.getTargetobjectid();
+					blockStore.updateContent(rootId, id, block.content);
+					break;
+				};
+
+				case 'blockSetWidget': {
+					id = data.getId();
+					block = blockStore.getLeaf(rootId, id);
+					if (!block) {
+						break;
+					};
+
+					if (data.hasLayout()) {
+						block.content.layout = data.getLayout().getValue();
+					};
+
+					if (data.hasLimit()) {
+						block.content.limit = data.getLimit().getValue();
+					};
+
+					if (data.hasViewid()) {
+						block.content.viewId = data.getViewid().getValue();
+					};
+
 					blockStore.updateContent(rootId, id, block.content);
 					break;
 				};
@@ -561,6 +591,7 @@ class Dispatcher {
 					};
 
 					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
+					blockStore.updateWidgetViews(rootId);
 					break;
 				};
 
@@ -597,7 +628,7 @@ class Dispatcher {
 					];
 
 					keys.forEach(key => {
-						const items = data[Util.toCamelCase(`get-${key.id}-list`)]() || [];
+						const items = data[UtilCommon.toCamelCase(`get-${key.id}-list`)]() || [];
 						const mapper = Mapper.From[key.mapper];
 
 						items.forEach(item => {
@@ -682,9 +713,11 @@ class Dispatcher {
 					});
 
 					dbStore.viewUpdate(rootId, id, view);
+					blockStore.updateWidgetViews(rootId);
 
 					if (updateData) {
-						$(window).trigger(`updateDataviewData.${id}`);
+						win.trigger(`updateDataviewData.${id}`);
+						blockStore.updateWidgetData(rootId);
 					};
 					break;
 				};
@@ -703,26 +736,17 @@ class Dispatcher {
 
 						dbStore.metaSet(subId, '', { viewId: viewId });
 					};
+
+					blockStore.updateWidgetViews(rootId);
 					break;
 				};
 
 				case 'blockDataviewViewOrder': {
 					id = data.getId();
+
 					dbStore.viewsSort(rootId, id, data.getViewidsList());
+					blockStore.updateWidgetViews(rootId);
 					break; 
-				};
-
-				case 'blockDataviewSourceSet': {
-					id = data.getId();
-					block = blockStore.getLeaf(rootId, id);
-
-					if (!block) {
-						break;
-					};
-
-					block.content.sources = data.getSourceList();
-					blockStore.updateContent(rootId, id, block.content);
-					break;
 				};
 
 				case 'blockDataviewRelationDelete': {
@@ -807,6 +831,7 @@ class Dispatcher {
 
 					block.content.objectOrder[index] = el;
 					blockStore.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
+					blockStore.updateWidgetData(rootId);
 					break;
 				};
 
@@ -816,17 +841,7 @@ class Dispatcher {
 					block = blockStore.getLeaf(rootId, id);
 					details = Decode.decodeStruct(data.getDetails());
 
-					// Subscriptions
-					if (subIds.length) {
-						uniqueSubIds = subIds.map(it => it.split('/')[0]);
-						Util.arrayUnique(uniqueSubIds).forEach(subId => detailStore.update(subId, { id, details }, true));
-					} else {
-						detailStore.update(rootId, { id, details }, true);
-
-						if ((id == rootId) && block && (undefined !== details.layout) && (block.layout != details.layout)) {
-							blockStore.update(rootId, rootId, { layout: details.layout });
-						};
-					};
+					this.detailsUpdate(details, rootId, id, subIds, true);
 					break;
 				};
 
@@ -840,22 +855,7 @@ class Dispatcher {
 						details[item.getKey()] = Decode.decodeValue(item.getValue());
 					};
 
-					// Subscriptions
-
-					if (subIds.length) {
-						uniqueSubIds = subIds.map(it => it.split('/')[0]);
-						Util.arrayUnique(uniqueSubIds).forEach(subId => detailStore.update(subId, { id, details }, false));
-					} else {
-						detailStore.update(rootId, { id, details }, false);
-
-						if ((id == rootId) && block) {
-							if ((undefined !== details.layout) && (block.layout != details.layout)) {
-								blockStore.update(rootId, rootId, { layout: details.layout });
-							};
-	
-							blockStore.checkTypeSelect(rootId);
-						};
-					};
+					this.detailsUpdate(details, rootId, id, subIds, false);
 					break;
 				};
 
@@ -868,7 +868,7 @@ class Dispatcher {
 
 					if (subIds.length) {
 						uniqueSubIds = subIds.map(it => it.split('/')[0]);
-						Util.arrayUnique(uniqueSubIds).forEach(subId => detailStore.delete(subId, id, keys));
+						UtilCommon.arrayUnique(uniqueSubIds).forEach(subId => detailStore.delete(subId, id, keys));
 					} else {
 						detailStore.delete(rootId, id, keys);
 						blockStore.checkTypeSelect(rootId);
@@ -990,6 +990,29 @@ class Dispatcher {
 		}, 10);
 	};
 
+	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
+		const root = blockStore.getLeaf(rootId, id);
+
+		if (subIds.length) {
+			const uniqueSubIds = subIds.map(it => it.split('/')[0]);
+			UtilCommon.arrayUnique(uniqueSubIds).forEach(subId => detailStore.update(subId, { id, details }, clear));
+		} else {
+			detailStore.update(rootId, { id, details }, clear);
+
+			if ((id == rootId) && root) {
+				if ((undefined !== details.layout) && (root.layout != details.layout)) {
+					blockStore.update(rootId, rootId, { layout: details.layout });
+				};
+
+				if (undefined !== details.setOf) {
+					blockStore.updateWidgetData(rootId);
+				};
+
+				blockStore.checkTypeSelect(rootId);
+			};
+		};
+	};
+
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = subId.split('/');
 
@@ -1080,7 +1103,7 @@ class Dispatcher {
 
 		const { config } = commonStore;
 		const debug = config.debug.mw;
-		const ct = Util.toCamelCase(type);
+		const ct = UtilCommon.toCamelCase(type);
 
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
@@ -1094,7 +1117,7 @@ class Dispatcher {
 
 		if (debug && !SKIP_IDS.includes(type)) {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
-			d = Util.objectClear(data.toObject());
+			d = UtilCommon.objectClear(data.toObject());
 			console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
 		};
 
@@ -1134,7 +1157,7 @@ class Dispatcher {
 
 				if (debug && !SKIP_IDS.includes(type)) {
 					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;');
-					d = Util.objectClear(response.toObject());
+					d = UtilCommon.objectClear(response.toObject());
 					console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
 				};
 

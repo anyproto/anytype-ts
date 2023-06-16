@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, keyboard, sidebar } from 'Lib';
+import { I, UtilObject, keyboard, sidebar } from 'Lib';
 
 const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.Component<I.HeaderComponent, object> {
 
@@ -50,7 +50,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Navigation });
+		UtilObject.openRoute({ rootId: this.props.rootId, layout: I.ObjectLayout.Navigation });
 	};
 
 });

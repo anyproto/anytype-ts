@@ -3,7 +3,7 @@ import $ from 'jquery';
 import * as Docs from 'Docs';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, Util, analytics, keyboard, ObjectUtil } from 'Lib';
+import { I, Onboarding, UtilCommon, analytics, keyboard, UtilObject } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -29,7 +29,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	render () {
 		const { param } = this.props;
-		const { data } = param;
+		const { data, force } = param;
 		const { key, current } = data;
 		const section = Docs.Help.Onboarding[key] || {};
 		const { items, category, showConfetti } = section;
@@ -39,11 +39,25 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		let buttons = [];
 
 		if (!item.noButton) {
-			buttons.push({ text: current == l - 1 ? 'Finish' : 'Next', action: 'next' });
+			let buttonText = 'Next';
+
+			if (current == l - 1) {
+				buttonText = 'Finish';
+			};
+
+			if (item.buttonText) {
+				buttonText = item.buttonText;
+			};
+
+			buttons.push({ text: buttonText, action: 'next' });
 		};
 
 		if (item.buttons) {
 			buttons = buttons.concat(item.buttons);
+		};
+
+		if (force && item.forceButtons) {
+			buttons = item.forceButtons;
 		};
 
 		const Steps = () => (
@@ -101,7 +115,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	componentDidMount () {
 		this.rebind();
-		Util.renderLinks($(this.node));
+		this.event();
+
+		UtilCommon.renderLinks($(this.node));
 	};
 
 	componentDidUpdate () {
@@ -120,13 +136,21 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		this.rebind();
 		this.scroll();
+		this.event();
 
-		Util.renderLinks(node);
-		analytics.event('ScreenOnboarding');
+		UtilCommon.renderLinks(node);
 
 		if (showConfetti && (current == l - 1)) {
 			this.confettiShot();
 		};
+	};
+
+	componentWillUnmount(): void {
+		const { param } = this.props;
+		const { data } = param;
+		const { key, current } = data;
+
+		analytics.event('ClickOnboardingTooltip', { type: 'close', id: key, step: (current + 1) });
 	};
 
 	onClose () {
@@ -135,11 +159,19 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 	};
 	
 	unbind () {
 		$(window).off('keydown.menu');
+	};
+
+	event () {
+		const { param } = this.props;
+		const { data } = param;
+		const { key, current } = data;
+
+		analytics.event('OnboardingTooltip', { step: (current + 1), id: key });
 	};
 
 	scroll () {
@@ -151,7 +183,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			return;
 		};
 
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 		const element = $(param.element);
 
@@ -160,7 +192,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		const rect = element.get(0).getBoundingClientRect() as DOMRect;
-		const hh = Util.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
 
 		let containerOffset = { top: 0, left: 0 };
 		if (isPopup) {
@@ -174,12 +206,21 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onKeyDown (e: any) {
-		keyboard.shortcut('arrowleft', e, () => { this.onArrow(e, -1); });
-		keyboard.shortcut('arrowright', e, () => { this.onArrow(e, 1); });
+		keyboard.shortcut('arrowleft', e, () => this.onArrow(e, -1));
+		keyboard.shortcut('arrowright', e, () => this.onArrow(e, 1));
 	};
 
 	onButton (e: any, action: string) {
+		const { param } = this.props;
+		const { data } = param;
+		const { key, current } = data;
+
 		switch (action) {
+			case 'close': {
+				this.onClose();
+				break;
+			};
+
 			case 'next': {
 				this.onArrow(e, 1);
 				break;
@@ -191,10 +232,13 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			};
 
 			case 'dashboard': {
-				ObjectUtil.openHome('route');
+				this.onClose();
+				UtilObject.openHome('route');
 				break;
 			};
 		};
+
+		analytics.event('ClickOnboardingTooltip', { type: action, id: key, step: (current + 1) });
 	};
 
 	onArrow (e: any, dir: number) {
@@ -258,7 +302,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onVideoClick (e: any, src: string) {
-		Util.pauseMedia();
+		UtilCommon.pauseMedia();
 
 		popupStore.open('preview', { data: { src, type: I.FileType.Video },
 			preventMenuClose: true,

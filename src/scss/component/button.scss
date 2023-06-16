@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .button { 
-	display: inline-flex; border: 0px; font-weight: 500; text-decoration: none; cursor: pointer;
+	display: inline-flex; border: 0px; font-weight: 500; text-decoration: none;
 	height: 40px; padding: 0px 16px; border-radius: 8px; transition: $transitionAllCommon;
 	vertical-align: middle; position: relative; overflow: hidden; align-items: center; justify-content: center; 
 	@include text-paragraph;

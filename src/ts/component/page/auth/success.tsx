@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Frame, Cover, Title, Label, Button, Header, Footer, Textarea } from 'Component';
-import { I, translate, DataUtil, analytics, Util, Preview, Storage } from 'Lib';
+import { I, translate, UtilData, analytics, UtilCommon, Preview, Storage } from 'Lib';
 import { commonStore, authStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -60,16 +60,11 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 		analytics.event('ScreenKeychain', { type: 'FirstSession' });
 	};
 
-	onSubmit (e: any) {
-		DataUtil.onAuth(authStore.account, () => {
-			const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
-			if (blocks.length) {
-				Storage.setToggle('widget', blocks[0].parentId, true);
-			};
-		});
+	onSubmit () {
+		UtilCommon.route('/main/usecase');
 	};
 
-	onFocus (e: any) {
+	onFocus () {
 		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
@@ -79,7 +74,7 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 		phrase.removeClass('isBlurred');
 	};
 
-	onBlur (e: any) {
+	onBlur () {
 		const node = $(this.node);
 		const phrase = node.find('#phrase');
 
@@ -91,7 +86,8 @@ const PageAuthSuccess = observer(class PageAuthSuccess extends React.Component<I
 
 	onCopy () {
 		this.refPhrase.focus();
-		Util.clipboardCopy({ text: authStore.phrase });
+
+		UtilCommon.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
 
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil, focus, translate, keyboard, Action } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, focus, translate, keyboard, Action } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import ControlButtons  from 'Component/page/head/controlButtons';
 import Constant from 'json/constant.json';
@@ -63,7 +63,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId, readonly } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'iconImage', 'iconEmoji' ].concat(Constant.coverRelationKeys), true);
 		const { coverType, coverId } = object;
-		const isImage = DataUtil.coverIsImage(coverType);
+		const isImage = UtilData.coverIsImage(coverType);
 		const root = blockStore.getLeaf(rootId, rootId);
 		const cn = [ 'elements', 'editorControlElements' ];
 
@@ -103,7 +103,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 					
 					<div className="dragWrap">
 						<Drag 
-							ref={ref => { this.refDrag = ref; }} 
+							ref={ref => this.refDrag = ref} 
 							onStart={this.onScaleStart} 
 							onMove={this.onScaleMove} 
 							onEnd={this.onScaleEnd} 
@@ -161,14 +161,14 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this._isMounted = true;
 		this.resize();
 
-		Util.renderLinks($(this.node));
+		UtilCommon.renderLinks($(this.node));
 		$(window).off('resize.cover').on('resize.cover', () => this.resize());
 	};
 	
 	componentDidUpdate () {
 		this.resize();
 
-		Util.renderLinks($(this.node));
+		UtilCommon.renderLinks($(this.node));
 	};
 	
 	componentWillUnmount () {
@@ -203,12 +203,12 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			data: {
 				noRemove: !(iconEmoji || iconImage),
 				onSelect: (icon: string) => {
-					ObjectUtil.setIcon(rootId, icon, '', () => {
+					UtilObject.setIcon(rootId, icon, '', () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
 				onUpload (hash: string) {
-					ObjectUtil.setIcon(rootId, '', hash, () => {
+					UtilObject.setIcon(rootId, '', hash, () => {
 						menuStore.update('smile', { element: `#block-icon-${rootId}` });
 					});
 				},
@@ -222,7 +222,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		Action.openFile(Constant.extension.cover, paths => {
 			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code) {
-					ObjectUtil.setIcon(rootId, '', message.hash);
+					UtilObject.setIcon(rootId, '', message.hash);
 				};
 			});
 		});
@@ -275,7 +275,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 
 		this.loaded = false;
-		ObjectUtil.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
+		UtilObject.setCover(rootId, item.type, item.id, item.coverX, item.coverY, item.coverScale);
 	};
 	
 	onEdit (e: any) {
@@ -311,7 +311,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		this.coords.y = -0.25;
 		this.scale = 0;
 
-		ObjectUtil.setCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
+		UtilObject.setCover(rootId, type, hash, this.coords.x, this.coords.y, this.scale, () => {
 			this.loaded = false;
 			this.setLoading(false);
 		});
@@ -324,7 +324,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 
-		ObjectUtil.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
+		UtilObject.setCover(rootId, object.coverType, object.coverId, this.coords.x, this.coords.y, this.scale, () => {
 			this.setState({ isEditing: false });
 		});
 	};
@@ -345,7 +345,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const object = detailStore.get(rootId, rootId, Constant.coverRelationKeys, true);
 		const { coverId, coverType } = object;
 		const node = $(this.node);
-		const isImage = DataUtil.coverIsImage(coverType);
+		const isImage = UtilData.coverIsImage(coverType);
 		
 		if (!isImage || !node.hasClass('wrap')) {
 			return;
@@ -522,7 +522,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			};
 			
 			this.loaded = false;
-			ObjectUtil.setCover(rootId, I.CoverType.Upload, message.hash);
+			UtilObject.setCover(rootId, I.CoverType.Upload, message.hash);
 		});
 	};
 	

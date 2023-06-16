@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import findAndReplaceDOMText from 'findandreplacedomtext';
 import { Icon, Input } from 'Component';
-import { I, Util, keyboard, translate, analytics } from 'Lib';
+import { I, UtilCommon, keyboard, translate, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
 const SKIP = [ 
@@ -13,7 +13,7 @@ const SKIP = [
 class MenuSearchText extends React.Component<I.Menu> {
 	
 	node: any = null;
-	ref: any = null;
+	ref = null;
 	last = '';
 	n = 0;
 	
@@ -39,7 +39,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 				<Icon className="search" />
 
 				<Input 
-					ref={ref => { this.ref = ref; }} 
+					ref={ref => this.ref = ref} 
 					value={value} 
 					placeholder={translate('commonSearch')} 
 					onKeyDown={this.onKeyDown} 
@@ -124,7 +124,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { data } = param;
 		const { route } = data;
 		const searchContainer = this.getSearchContainer();
-		const value = Util.filterFix(this.ref.getValue());
+		const value = UtilCommon.filterFix(this.ref.getValue());
 		const node = $(this.node);
 		const switcher = node.find('#switcher').removeClass('active');
 
@@ -232,7 +232,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const scrollContainer = this.getScrollContainer();
 		const searchContainer = this.getSearchContainer();
 		const items = this.getItems();
-		const offset = Constant.size.lastBlock + Util.sizeHeader();
+		const offset = Constant.size.lastBlock + UtilCommon.sizeHeader();
 
 		searchContainer.find('search.active').removeClass('active');
 

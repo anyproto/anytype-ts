@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, IconObject, Header, Icon } from 'Component';
-import { I, C, Util, DataUtil, ObjectUtil } from 'Lib';
-import { detailStore, commonStore, menuStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, UtilMenu, UtilObject } from 'Lib';
 
 const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.PageComponent> {
 
@@ -16,8 +14,9 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	render () {
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
-		const home = ObjectUtil.getSpaceDashboard();
+		const space = UtilObject.getSpace();
+		const home = UtilObject.getSpaceDashboard();
+		const notExisting = [ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId);
 
 		return (
 			<div 
@@ -29,7 +28,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 				<div className="wrapper">
 					<IconObject object={space} size={112} forceLetter={true} />
 					<Title text={space.name} />
-					<Label text="Select an object to set as your homepage. You can always change it in Settings." />
+					<Label text="Select an object to show when you login. You can always change it in Settings." />
 							
 					<div className="row">
 						<div className="side left">
@@ -39,6 +38,9 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 						<div className="side right">
 							<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
 								<div className="item">
+									{home && !notExisting ? (
+										<IconObject size={20} iconSize={20} object={home} />
+ 									) : ''}
 									<div className="name">
 										{home ? home.name : 'Select'}
 									</div>
@@ -53,35 +55,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	onDashboard () {
-		const { workspace } = commonStore;
-		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
-
-		menuStore.open('searchObject', {
-			element: `#empty-dashboard-select`,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
-				],
-				canAdd: true,
-				dataChange: (items: any[]) => {
-					const fixed: any[] = [ ObjectUtil.graph() ];
-					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
-				},
-				onSelect: (el: any) => {
-					C.ObjectWorkspaceSetDashboard(workspace, el.id, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: el.id } }, false);
-						detailStore.update(Constant.subId.space, { id: el.id, details: el }, false);
-
-						ObjectUtil.openHome('route');
-					});
-				}
-			}
-		});
+		UtilMenu.dashboardSelect('#empty-dashboard-select');
 	};
 
 });

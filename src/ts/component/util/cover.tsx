@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 
 import Constant from 'json/constant.json';

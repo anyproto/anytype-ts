@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, keyboard } from 'Lib';
+import { I, UtilCommon, keyboard } from 'Lib';
 
 interface State {
 	page: string;
@@ -16,8 +16,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 	render () {
 		const { page } = this.state;
-		const platform = Util.getPlatform();
-		const isMac = platform == I.Platform.Mac;
+		const isMac = UtilCommon.isPlatformMac();
 		const tabs = [
 			{ id: 'main', name: 'Main' },
 			{ id: 'navigation', name: 'Navigation' },
@@ -81,13 +80,22 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 
 	componentDidMount () {
 		this._isMounted = true;
-
+		this.rebind();
 		this.resize();
-		this.props.position();
 	};
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('resize.popupShortcut', () => this.resize());
+	};
+
+	unbind () {
+		$(window).off('resize.popupShortcut');
 	};
 
 	onPage (id: string) {
@@ -178,7 +186,7 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 						{ com: `${cmd} + ,(comma)`,		 name: 'Open settings' },
 						{ com: `${cmd} + O`,			 name: 'Open the navigation pane' },
 						{ com: `${cmd} + ${alt} + O`,	 name: 'Open the graph pane' },
-						{ com: `${cmd} + S`,			 name: 'Open the search pane' },
+						{ com: `${cmd} + S, ${cmd} + K`, name: 'Open the search pane' },
 						{ com: `${cmd} + L`,			 name: 'Open the library pane' },
 						{ com: `${alt} + H`,			 name: 'Return to the home screen' },
 						{ mac: `${cmd} + [, ${cmd} + ←`, com: 'Alt + ←',			 name: 'Show the previous page from history' },
@@ -312,15 +320,14 @@ class PopupShortcut extends React.Component<I.Popup, State> {
 		};
 
 		const { getId, position } = this.props;
+		const obj = $(`#${getId()}-innerWrap`);
+		const loader = obj.find('#loader');
+		const hh = UtilCommon.sizeHeader();
 
-		raf(() => {
-			const { ww } = Util.getWindowDimensions();
-			const obj = $(`#${getId()}-innerWrap`);
-			const width = Math.max(732, Math.min(960, ww - 128));
+		loader.css({ width: obj.width(), height: obj.height() });
+		position();
 
-			obj.css({ width });
-			position();
-		});
+		raf(() => { obj.css({ top: hh + 20, marginTop: 0 }); });
 	};
 
 };

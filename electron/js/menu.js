@@ -44,7 +44,7 @@ class MenuManager {
 					Separator,
 
 					{ label: 'Check for updates', click: () => { Api.updateCheck(this.win); } },
-					{ label: 'Settings', click: () => { Util.send(this.win, 'popup', 'settings', { page: 'index' }, true); } },
+					{ label: 'Settings', click: () => { this.openSettings('account'); } },
 
 					Separator,
 
@@ -58,20 +58,14 @@ class MenuManager {
 					{ label: 'Show logs', click: () => { shell.openPath(logPath); } },
 
 					Separator,
-					{
-						label: 'Import',
-						click: () => { Util.send(this.win, 'popup', 'settings', { data: { page: 'importIndex' } }); }
-					},
-					{
-						label: 'Export',
-						click: () => { Util.send(this.win, 'popup', 'settings', { data: { page: 'exportIndex' } }); }
-					},
-					{ label: 'Save as file', click: () => { Util.send(this.win, 'command', 'save'); } },
+					{ label: 'Import', click: () => { this.openSettings('importIndex'); } },
+					{ label: 'Export', click: () => { this.openSettings('exportIndex'); } },
+					{ label: 'Save as file', click: () => { Util.send(this.win, 'commandGlobal', 'save'); } },
 
 					Separator,
 
-					{ label: 'Space debug', click: () => { Util.send(this.win, 'command', 'debugSpace'); } },
-					{ label: 'Current object debug', click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
+					{ label: 'Space debug', click: () => { Util.send(this.win, 'commandGlobal', 'debugSpace'); } },
+					{ label: 'Current object debug', click: () => { this.win.show(); Util.send(this.win, 'commandGlobal', 'debugTree'); } },
 
 					Separator,
 
@@ -86,7 +80,7 @@ class MenuManager {
 						click: () => { 
 							if (this.win) {
 								this.win.webContents.undo();
-								Util.send(this.win, 'command', 'undo');
+								Util.send(this.win, 'commandGlobal', 'undo');
 							};
 						}
 					},
@@ -95,7 +89,7 @@ class MenuManager {
 						click: () => {
 							if (this.win) {
 								this.win.webContents.redo();
-								Util.send(this.win, 'command', 'redo');
+								Util.send(this.win, 'commandGlobal', 'redo');
 							};
 						}
 					},
@@ -169,11 +163,11 @@ class MenuManager {
 				submenu: [
 					{
 						label: `What's new (${app.getVersion()})`,
-						click: () => { Util.send(this.win, 'popup', 'help', { data: { document: 'whatsNew' } }); }
+						click: () => { Util.send(this.win, 'popup', 'help', { preventResize: true, data: { document: 'whatsNew' } }); }
 					},
 					{
 						label: 'Shortcuts', accelerator: 'Ctrl+Space',
-						click: () => { Util.send(this.win, 'popup', 'shortcut'); }
+						click: () => { Util.send(this.win, 'popup', 'shortcut', { preventResize: true }); }
 					},
 
 					Separator,
@@ -191,13 +185,6 @@ class MenuManager {
 				]
 			},
 		];
-
-		/*
-			{ isDiv: true },
-			{ id: 'terms', name: 'Terms of Use' },
-			{ id: 'privacy', name: 'Privacy Policy' },
-		];
-		*/
 
 		//if (config.allowDebug || config.allowBeta) {
 			config.debug = config.debug || {};
@@ -267,15 +254,21 @@ class MenuManager {
 
 				{
 					label: 'Export templates',
-					click: () => { Util.send(this.win, 'command', 'exportTemplates'); }
+					click: () => { Util.send(this.win, 'commandGlobal', 'exportTemplates'); }
 				},
 				{
 					label: 'Export objects',
-					click: () => { Util.send(this.win, 'command', 'exportObjects'); }
+					click: () => { Util.send(this.win, 'commandGlobal', 'exportObjects'); }
 				},
 				{
 					label: 'Export localstore',
-					click: () => { Util.send(this.win, 'command', 'exportLocalstore'); }
+					click: () => { Util.send(this.win, 'commandGlobal', 'exportLocalstore'); }
+				},
+
+				Separator,
+				{
+					label: 'Reset onboarding',
+					click: () => { Util.send(this.win, 'commandGlobal', 'resetOnboarding'); }
 				},
 
 				Separator,
@@ -318,28 +311,36 @@ class MenuManager {
 
 			Separator,
 
-			{ label: 'Settings', click: () => { show(); Util.send(this.win, 'popup', 'settings', {}, true); } },
+			{ label: 'Settings', click: () => { show(); this.openSettings(''); } },
 			{ label: 'Check for updates', click: () => { show(); Api.updateCheck(this.win); } },
 
 			Separator,
 
-			{ label: 'Import', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'importIndex' } }, true); } },
-			{ label: 'Export', click: () => { show(); Util.send(this.win, 'popup', 'settings', { data: { page: 'exportIndex' } }, true); } },
+			{ label: 'Import', click: () => { show(); this.openSettings('importIndex'); } },
+			{ label: 'Export', click: () => { show(); this.openSettings('exportIndex'); } },
 			
 			Separator,
 
-			{ label: 'New object', accelerator: 'CmdOrCtrl+N', click: () => { show(); Util.send(this.win, 'command', 'create'); } },
-			{ label: 'Search object', click: () => { show(); Util.send(this.win, 'popup', 'search', { preventResize: true }, true); } },
+			{ label: 'New object', accelerator: 'CmdOrCtrl+N', click: () => { show(); Util.send(this.win, 'commandGlobal', 'create'); } },
+			{ label: 'Search object', click: () => { show(); Util.send(this.win, 'popup', 'search', {}, true); } },
 			
 			Separator,
 
-			{ label: 'Space debug', click: () => { show(); Util.send(this.win, 'command', 'debugSpace'); } },
-			{ label: 'Tree diagnostics', click: () => { show(); Util.send(this.win, 'command', 'debugTree'); } },
+			{ label: 'Space debug', click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugSpace'); } },
+			{ label: 'Tree diagnostics', click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugTree'); } },
 
 			Separator,
 
 			{ label: 'Quit', click: () => { hide(); Api.exit(this.win, false); } },
 		]));
+	};
+
+	openSettings (page) {
+		const Api = require('./api.js');
+
+		if (Api.isPinChecked) {
+			Util.send(this.win, 'popup', 'settings', { data: { page } }, true); 
+		};
 	};
 
 	updateTrayIcon () {

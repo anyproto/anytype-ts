@@ -3,14 +3,16 @@ import Model from 'protobuf/pkg/lib/pb/model/protos/models_pb';
 import { Encode } from './struct';
 import { Mapper } from './mapper';
 import { dispatcher } from './dispatcher';
-import { I, Util, Mark } from 'Lib';
+import { detailStore } from 'Store';
+import { I, UtilCommon, Mark, Storage } from 'Lib';
 
 const Rpc = Commands.Rpc;
 
-const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) => void) => {
+const MetricsSetParameters = (platform: I.Platform, version: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Metrics.SetParameters.Request();
 
 	request.setPlatform(platform);
+	request.setVersion(version);
 
 	dispatcher.request(MetricsSetParameters.name, request, callBack);
 };
@@ -107,13 +109,12 @@ const WorkspaceObjectListRemove = (objectIds: string[], callBack?: (message: any
 
 // ---------------------- ACCOUNT ---------------------- //
 
-const AccountCreate = (name: string, avatarPath: string, storePath: string, code: string, icon: number, callBack?: (message: any) => void) => {
+const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Account.Create.Request();
 	
 	request.setName(name);
 	request.setAvatarlocalpath(avatarPath);
 	request.setStorepath(storePath);
-	request.setAlphainvitecode(code);
 	request.setIcon(icon);
 
 	dispatcher.request(AccountCreate.name, request, callBack);
@@ -247,13 +248,55 @@ const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: strin
 	dispatcher.request(BlockDataviewCreateFromExistingObject.name, request, callBack);
 };
 
+// ---------------------- BLOCK WIDGET ---------------------- //
+
+const BlockWidgetSetTargetId = (contextId: string, blockId: string, targetId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockWidget.SetTargetId.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setTargetid(targetId);
+
+	dispatcher.request(BlockWidgetSetTargetId.name, request, callBack);
+};
+
+const BlockWidgetSetLayout = (contextId: string, blockId: string, layout: I.WidgetLayout, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockWidget.SetLayout.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setLayout(layout as number);
+
+	dispatcher.request(BlockWidgetSetLayout.name, request, callBack);
+};
+
+const BlockWidgetSetLimit = (contextId: string, blockId: string, limit: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockWidget.SetLimit.Request();
+	
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setLimit(limit);
+
+	dispatcher.request(BlockWidgetSetLimit.name, request, callBack);
+};
+
+const BlockWidgetSetViewId = (contextId: string, blockId: string, viewId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.BlockWidget.SetViewId.Request();
+
+	request.setContextid(contextId);
+	request.setBlockid(blockId);
+	request.setViewid(viewId);
+
+	dispatcher.request(BlockWidgetSetViewId.name, request, callBack);
+};
+
 // ---------------------- BLOCK TEXT ---------------------- //
 
 const BlockTextSetText = (contextId: string, blockId: string, text: string, marks: I.Mark[], callBack?: (message: any) => void) => {
 	text = text.replace(/&lt;/g, '<');
 	text = text.replace(/&gt;/g, '>');
 
-	marks = Util.objectCopy(marks);
+	marks = UtilCommon.objectCopy(marks);
 	marks = Mark.checkRanges(text, marks).map(Mapper.To.Mark) as any;
 
 	const request = new Rpc.BlockText.SetText.Request();
@@ -353,7 +396,7 @@ const BlockUpload = (contextId: string, blockId: string, url: string, path: stri
 };
 
 const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
-	blocks = Util.objectCopy(blocks);
+	blocks = UtilCommon.objectCopy(blocks);
 
 	const request = new Rpc.Block.Copy.Request();
 	
@@ -365,7 +408,7 @@ const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, cal
 };
 
 const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
-	blocks = Util.objectCopy(blocks);
+	blocks = UtilCommon.objectCopy(blocks);
 
 	const request = new Rpc.Block.Cut.Request();
 	
@@ -377,7 +420,7 @@ const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, call
 };
 
 const BlockPaste = (contextId: string, focusedId: string, range: I.TextRange, blockIds: string[], isPartOfBlock: boolean, data: any, callBack?: (message: any) => void) => {
-	data = Util.objectCopy(data);
+	data = UtilCommon.objectCopy(data);
 
 	const request = new Rpc.Block.Paste.Request();
 	
@@ -993,7 +1036,7 @@ const BlockDataviewSetSource = (contextId: string, blockId: string, sources: str
 
 // ---------------------- BLOCK WIDGET ---------------------- //
 
-const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, callBack?: (message: any) => void) => {
+const BlockCreateWidget = (contextId: string, targetId: string, block: any, position: I.BlockPosition, layout: I.WidgetLayout, limit: number, callBack?: (message: any) => void) => {
 	const request = new Rpc.Block.CreateWidget.Request();
 
 	request.setContextid(contextId);
@@ -1001,6 +1044,7 @@ const BlockCreateWidget = (contextId: string, targetId: string, block: any, posi
 	request.setBlock(Mapper.To.Block(block));
 	request.setPosition(position as number);
 	request.setWidgetlayout(layout as number);
+	request.setObjectlimit(limit);
 
 	dispatcher.request(BlockCreateWidget.name, request, callBack);
 };
@@ -1102,7 +1146,9 @@ const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], callBack?: 
 	dispatcher.request(ObjectCreateObjectType.name, request, callBack);
 };
 
-const ObjectCreateRelation = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+const ObjectCreateRelation = (details: any, callBack?: (message: any) => void) => {
+	details.relationFormat = Number(details.relationFormat) || I.RelationType.LongText;
+
 	const request = new Rpc.Object.CreateRelation.Request();
 	
 	request.setDetails(Encode.encodeStruct(details));
@@ -1145,6 +1191,12 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
+		};
+
+		// Save last opened object
+		const object = detailStore.get(objectId, objectId, []);
+		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
+			Storage.set('lastOpened', { id: object.id, layout: object.layout });
 		};
 
 		if (callBack) {
@@ -1274,6 +1326,14 @@ const ObjectImportNotionValidateToken = (token: string, callBack?: (message: any
 	dispatcher.request(ObjectImportNotionValidateToken.name, request, callBack);
 };
 
+const ObjectImportUseCase = (usecase: number, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ImportUseCase.Request();
+
+	request.setUsecase(usecase);
+
+	dispatcher.request(ObjectImportUseCase.name, request, callBack);
+};
+
 const ObjectSetObjectType = (contextId: string, url: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetObjectType.Request();
 	
@@ -1324,7 +1384,7 @@ const ObjectSearchSubscribe = (subId: string, filters: I.Filter[], sorts: I.Sort
 	request.setSortsList(sorts.map(Mapper.To.Sort));
 	request.setOffset(offset);
 	request.setLimit(limit);
-	request.setKeysList(Util.arrayUnique(keys));
+	request.setKeysList(UtilCommon.arrayUnique(keys));
 	request.setSourceList(sources);
 	request.setIgnoreworkspace(ignoreWorkspace as any);
 	request.setAfterid(afterId);
@@ -1784,6 +1844,10 @@ export {
 	BlockDataviewRelationDelete,
 
 	BlockCreateWidget,
+	BlockWidgetSetTargetId,
+	BlockWidgetSetLayout,
+	BlockWidgetSetLimit,
+	BlockWidgetSetViewId,
 
 	HistoryGetVersions,	
 	HistoryShowVersion,
@@ -1816,6 +1880,8 @@ export {
 	ObjectImportList,
 	ObjectImport,
 	ObjectImportNotionValidateToken,
+
+	ObjectImportUseCase,
 
 	ObjectCreate,
 	ObjectCreateSet,

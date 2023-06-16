@@ -19,6 +19,8 @@ export interface WidgetComponent {
 	setPreview?: (id: string) => void;
 	setEditing?: (v: boolean) => void;
 	getData?: (subId: string, callBack?: () => void) => void;
+	getLimit?: (content: ContentWidget) => number;
+	sortFavorite?: (records: string[]) => string[];
 };
 
 export interface WidgetTreeItem {
@@ -37,6 +39,8 @@ export interface WidgetTreeDetails {
 
 export interface ContentWidget {
 	layout: I.WidgetLayout;
+	limit: number;
+	viewId: string;
 };
 
 export interface BlockWidget extends I.Block {

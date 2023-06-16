@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, MenuUtil } from 'Lib';
+import { I, keyboard, UtilMenu } from 'Lib';
 import { blockStore } from 'Store';
 
 class MenuBlockHAlign extends React.Component<I.Menu> {
@@ -17,16 +17,17 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const value = Number(data.value || I.BlockHAlign.Left);
 		const items = this.getItems();
+
 		return (
 			<div>
 				{items.map((action: any, i: number) => (
 					<MenuItemVertical 
 						key={i} 
 						{...action} 
-						onClick={(e: any) => { this.onClick(e, action); }} 
-						onMouseEnter={(e: any) => { this.onOver(e, action); }} 
+						onClick={e => this.onClick(e, action)} 
+						onMouseEnter={e => this.onOver(e, action)} 
 						checkbox={action.id == value}
 					/>
 				))}
@@ -62,7 +63,7 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 			};
 		};
 
-		return MenuUtil.getAlign(hasQuote);
+		return UtilMenu.getAlign(hasQuote);
 	};
 	
 	onOver (e: any, item: any) {

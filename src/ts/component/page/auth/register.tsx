@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Cover, Label, Error, Input, Button, Header, Footer, Icon } from 'Component';
-import { FileUtil, Util, translate, I, Action } from 'Lib';
+import { UtilFile, UtilCommon, translate, I, Action } from 'Lib';
 import { commonStore, authStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -77,20 +77,20 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 
 	onFileClick (e: any) {
 		Action.openFile(Constant.extension.cover, paths => {
-			let file = FileUtil.fromPath(paths[0]);
+			let file = UtilFile.fromPath(paths[0]);
 			if (!file) {
 				return;
 			};
 
 			authStore.iconSet(paths[0]);
-			FileUtil.loadPreviewBase64(file, {}, (image: string, param: any) => { 
+			UtilFile.loadPreviewBase64(file, {}, (image: string, param: any) => { 
 				authStore.previewSet(image);
 			});
 		});
 	};
 
 	onPathClick (e: any) {
-		Action.openDir(paths => authStore.accountPathSet(paths[0]));
+		Action.openDir({}, paths => authStore.accountPathSet(paths[0]));
 	};
 	
 	onNameChange (e: any) {
@@ -112,9 +112,9 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 		};
 		
 		if (!error) {
-			Util.route('/auth/invite/' + match.params.id);
+			UtilCommon.route('/auth/setup/' + match.params.id);
 		} else {
-			this.setState({ error: error });
+			this.setState({ error });
 		};
 	};
 
@@ -128,7 +128,7 @@ const PageAuthRegister = observer(class PageAuthRegister extends React.Component
 	}
 
 	onCancel () {
-		Util.route('/auth/select');
+		UtilCommon.route('/auth/select');
 	};
 	
 });

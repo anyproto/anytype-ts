@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Checkbox } from 'Component';
-import { I, C, translate, Util, analytics } from 'Lib';
+import { I, C, translate, UtilCommon, analytics } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Head from './head';
@@ -34,7 +34,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 				</div>
 
 				<div className="check" onClick={this.onCheck}>
-					<Checkbox ref={ref => { this.refCheckbox = ref; }} /> I have read it and want to delete my account
+					<Checkbox ref={ref => this.refCheckbox = ref} /> I have read it and want to delete my account
 				</div>
 
 				<Button id="button" text={translate('commonDelete')} color="red c36" className="disabled" onClick={this.onDelete} />
@@ -55,7 +55,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 
 			authStore.accountSet({ status: message.status });		
 			this.props.close();
-			Util.route('/auth/deleted');
+			UtilCommon.route('/auth/deleted');
 
 			analytics.event('DeleteAccount');
 		});

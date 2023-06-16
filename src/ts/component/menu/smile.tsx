@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
-import { I, C, Util, SmileUtil, keyboard, translate, analytics, Preview, Action } from 'Lib';
+import { I, C, UtilCommon, UtilSmile, keyboard, translate, analytics, Preview, Action } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
@@ -74,7 +74,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				>
 					<div 
 						className="iconObject c32" 
-						{...Util.dataProps({ code: str })}
+						{...UtilCommon.dataProps({ code: str })}
 					>
 						<IconEmoji className="c32" size={28} icon={str} />
 					</div>
@@ -124,7 +124,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				) : ''}
 				
 				<Filter 
-					ref={ref => { this.refFilter = ref; }}
+					ref={ref => this.refFilter = ref}
 					value={filter}
 					className={!noHead ? 'withHead' : ''} 
 					onChange={(e: any) => { this.onKeyUp(e, false); }} 
@@ -136,11 +136,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 						loadMoreRows={() => {}}
 						isRowLoaded={({ index }) => !!items[index]}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -157,7 +157,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 						)}
 					</InfiniteLoader>
 					{!sections.length ? (
-						<EmptySearch text={Util.sprintf(translate('menuSmileEmpty'), filter)} />
+						<EmptySearch text={UtilCommon.sprintf(translate('menuSmileEmpty'), filter)} />
 					): ''}
 				</div>
 
@@ -325,12 +325,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ page: 0, filter: Util.filterFix(this.refFilter.getValue()) });
+			this.setState({ page: 0, filter: UtilCommon.filterFix(this.refFilter.getValue()) });
 		}, force ? 0 : 50);
 	};
 	
 	onRandom () {
-		const param = SmileUtil.randomParam();
+		const param = UtilSmile.randomParam();
 
 		this.onSelect(param.id, param.skin);
 		this.forceUpdate();
@@ -363,7 +363,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		storageSet({ skin: this.skin });
 
 		if (onSelect) {
-			onSelect(SmileUtil.nativeById(id, this.skin));
+			onSelect(UtilSmile.nativeById(id, this.skin));
 		};
 
 		analytics.event(id ? 'SetIcon' : 'RemoveIcon');
@@ -456,7 +456,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			key: [ id, skin ].join(',') 
 		});
 		
-		ids = Util.arrayUniqueObjects(ids, 'key');
+		ids = UtilCommon.arrayUniqueObjects(ids, 'key');
 		ids = ids.slice(0, LIMIT_RECENT);
 		ids = ids.map((it: any) => {
 			delete(it.key);

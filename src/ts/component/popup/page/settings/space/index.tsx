@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
-import { C, ObjectUtil, DataUtil, I, translate, Util, FileUtil, Renderer, Preview } from 'Lib';
+import { C, UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -25,14 +25,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { onPage } = this.props;
 		const { bytesUsed, bytesLimit } = commonStore.spaceStorage;
 		const { account } = authStore;
-		const subId = Constant.subId.space;
-		const space = detailStore.get(subId, commonStore.workspace);
+		const space = UtilObject.getSpace() || {};
 		const name = this.checkName(space.name);
-		const home = ObjectUtil.getSpaceDashboard();
+		const home = UtilObject.getSpaceDashboard();
+		const notExisting = [ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId);
 
-		const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
-		const currentUsage = String(FileUtil.size(bytesUsed));
-		const limitUsage = String(FileUtil.size(bytesLimit));
+		const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
+		const currentUsage = String(UtilFile.size(bytesUsed));
+		const limitUsage = String(UtilFile.size(bytesLimit));
 		const isRed = percentageUsed >= 90;
 		const usageCn = [ 'item' ];
 
@@ -51,7 +51,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					<div className="sides">
 						<div className="side left">
 							<Title text={translate(`popupSettingsSpaceIndexCreationDateTitle`)} />
-							<Label text={Util.date(DataUtil.dateFormat(I.DateFormat.Short), space.createdDate)} />
+							<Label text={UtilCommon.date(UtilData.dateFormat(I.DateFormat.Short), space.createdDate)} />
 						</div>
 					</div>
 				</div>
@@ -77,12 +77,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					<div className="headerContent">
 						<div className="name">
+							<Label className="small" text="Space name" />
 							<Input
 								ref={ref => this.refName = ref}
 								value={name}
 								onKeyUp={this.onName}
-								placeholder={ObjectUtil.defaultName('Page')}
+								placeholder={UtilObject.defaultName('Page')}
 							/>
+
 						</div>
 
 						<div className="spaceType">Personal</div>
@@ -99,13 +101,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
 										<div className="storageLabel">
-											<Label text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
+											<Label text={UtilCommon.sprintf(translate(`popupSettingsStorageIndexText`), UtilFile.size(bytesLimit))} />
 											&nbsp;
 											{extend}
 										</div>
 									</div>
 									<div className="side right">
 										<Button onClick={() => onPage('storageManager')} text={translate('popupSettingsStorageIndexManageFiles')} color="blank" className="c28" />
+
 									</div>
 								</div>
 
@@ -198,45 +201,20 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		);
 	};
 
+	componentWillUnmount(): void {
+		menuStore.closeAll([ 'select', 'searchObject' ]);	
+	};
+
 	onSelect (icon: string) {
-		ObjectUtil.setIcon(commonStore.workspace, icon, '');
+		UtilObject.setIcon(commonStore.workspace, icon, '');
 	};
 
 	onUpload (hash: string) {
-		ObjectUtil.setIcon(commonStore.workspace, '', hash);
+		UtilObject.setIcon(commonStore.workspace, '', hash);
 	};
 
 	onDashboard () {
-		const { getId } = this.props;
-		const { workspace } = commonStore;
-		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
-
-		menuStore.open('searchObject', {
-			element: `#${getId()} #dashboard`,
-			horizontal: I.MenuDirection.Right,
-			data: {
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
-				],
-				canAdd: true,
-				dataChange: (items: any[]) => {
-					const fixed: any[] = [ ObjectUtil.graph() ];
-					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
-				},
-				onSelect: (el: any) => {
-					C.ObjectWorkspaceSetDashboard(workspace, el.id, (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: el.id } }, false);
-						detailStore.update(Constant.subId.space, { id: el.id, details: el }, false);
-
-						ObjectUtil.openHome('route');
-					});
-				}
-			}
-		});
+		UtilMenu.dashboardSelect(`#${this.props.getId()} #dashboard`);
 	};
 
 	onExtend () {
@@ -256,16 +234,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		ObjectUtil.setName(commonStore.workspace, this.checkName(v));
+		UtilObject.setName(commonStore.workspace, this.checkName(v));
 	};
 
 	onCopy (label: string, value: string) {
-		Util.clipboardCopy({ text: value });
+		UtilCommon.clipboardCopy({ text: value });
 		Preview.toastShow({ text: label + ' copied to clipboard' });
 	};
 
 	checkName (v: string): string {
-		if ((v == ObjectUtil.defaultName('Space')) || (v == ObjectUtil.defaultName('Page'))) {
+		if ((v == UtilObject.defaultName('Space')) || (v == UtilObject.defaultName('Page'))) {
 			v = '';
 		};
 		return v;

@@ -131,7 +131,9 @@ export interface ViewComponent {
 	onSelectEnd?: () => void;
 	isAllowedObject?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
-	applyObjectOrder?: (records: any[], groupId?: string) => any[];
+	applyObjectOrder?: (groupId: string, records: any[]) => any[];
+	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
+	onSourceTypeSelect?(element: any): void;
 };
 
 export interface ViewEmpty {

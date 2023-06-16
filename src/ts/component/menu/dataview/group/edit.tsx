@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, Dataview, MenuUtil, keyboard, Relation } from 'Lib';
+import { I, C, Dataview, UtilMenu, keyboard, Relation } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import { dbStore } from 'Store';
 
@@ -82,7 +82,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 	};
 
 	getSections () {
-		const colors = MenuUtil.getBgColors().filter(it => it.id != 'bgColor-default');
+		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
 			{ 

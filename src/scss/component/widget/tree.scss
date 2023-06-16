@@ -6,7 +6,7 @@
 	.item { position: relative; }
 	.item {
 		.inner {
-			display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; cursor: pointer; position: relative;
+			display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; position: relative;
 			height: 28px; padding: 0px 8px;
 		}
 		.inner::before {
@@ -32,7 +32,7 @@
 		
 		.clickable {
 			flex-grow: 1; display: flex; flex-direction: row; width: calc(100% - 30px); align-items: center; justify-content: space-between;
-			cursor: pointer; line-height: 20px;
+			line-height: 20px;
 		}
 		.name { flex-grow: 1; @include text-overflow-nw; }
 

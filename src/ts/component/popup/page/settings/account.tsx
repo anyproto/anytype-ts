@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Label, IconObject, Input, Loader } from 'Component';
-import { I, C, translate, Util, analytics, Action, DataUtil, ObjectUtil } from 'Lib';
+import { I, C, translate, UtilCommon, analytics, Action, UtilData, UtilObject } from 'Lib';
 import { authStore, commonStore, popupStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -42,7 +42,6 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const { account, walletPath, accountPath } = authStore;
 		const { config } = commonStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const canDelete = account?.status?.type == I.AccountStatusType.Active;
 		const canMove = config.experimental;
 
 		return (
@@ -68,7 +67,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 								ref={ref => this.refName = ref} 
 								value={profile.name} 
 								onKeyUp={this.onName} 
-								placeholder={ObjectUtil.defaultName('Page')} 
+								placeholder={UtilObject.defaultName('Page')} 
 							/>
 						</div>
 					</div>
@@ -86,11 +85,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						</div>
 					) : ''}
 
-					{canDelete ? (
-						<div className="row cp" onClick={() => { onPage('delete'); }}>
-							<Label text={translate('popupSettingsAccountDeleteTitle')} />
-						</div>
-					) : ''}
+					<div className="row cp" onClick={() => { onPage('delete'); }}>
+						<Label text={translate('popupSettingsAccountDeleteTitle')} />
+					</div>
 
 					<div className="row red cp" onClick={this.onLogout}>
 						<Label text={translate('popupSettingsLogout')} />
@@ -124,7 +121,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				if (message.error.code) {
 					this.setState({ error: message.error.description });
 				} else {
-					Util.route('/auth/setup/init'); 
+					UtilCommon.route('/auth/setup/init'); 
 				};
 				setLoading(false);
 			});
@@ -159,7 +156,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						};
 
 						case 'remove': {
-							ObjectUtil.setIcon(blockStore.profile, '', '');
+							UtilObject.setIcon(blockStore.profile, '', '');
 							break;
 						};
 					};
@@ -177,7 +174,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
                     return;
                 };
 
-                ObjectUtil.setIcon(blockStore.profile, '', message.hash, () => {
+                UtilObject.setIcon(blockStore.profile, '', message.hash, () => {
                     this.setState({ loading: false });
                 });
             });
@@ -185,7 +182,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
     };
 
     onName () {
-        ObjectUtil.setName(blockStore.profile, this.refName.getValue());
+        UtilObject.setName(blockStore.profile, this.refName.getValue());
     };
 
 	getObject () {

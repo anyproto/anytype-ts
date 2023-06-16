@@ -114,12 +114,17 @@ export enum EdgeType {
 	Relation	 = 1,
 };
 
-export enum TabIndex {
-	None		 = '',
-	Favorite	 = 'favorite',
-	Recent		 = 'recent',
-	Set			 = 'set',
-	Archive		 = 'archive',
+export enum Usecase {
+	None		 = 0,
+	Personal	 = 1,
+    Knowledge	 = 2,
+    Notes		 = 3,
+};
+
+export enum HomePredefinedId {
+	Graph = 'graph',
+	Last = 'lastOpened',
+	Existing = 'existing',
 };
 
 export interface HeaderComponent extends RouteComponentProps<any> {
@@ -216,4 +221,9 @@ export enum FileSyncStatus {
 	Unknown		 = 0,
 	Synced		 = 1,
 	NotSynced	 = 2,
+};
+
+export enum StoreTab {
+	Type = 'type',
+	Relation = 'relation',
 };

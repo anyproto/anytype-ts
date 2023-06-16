@@ -1,20 +1,15 @@
 import * as React from 'react';
 import { Header, Footer, EditorPage } from 'Component';
-import { I, Onboarding, ObjectUtil } from 'Lib';
+import { I, Onboarding, UtilObject } from 'Lib';
 import { detailStore, blockStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {
-	refSidebar?: any;
-};
-
-class PageMainEdit extends React.Component<Props> {
+class PageMainEdit extends React.Component<I.PageComponent> {
 	
 	refHeader: any = null;
 	refFooter: any = null;
 
-	constructor (props: Props) {
+	constructor (props: I.PageComponent) {
 		super(props);
 		
 		this.onOpen = this.onOpen.bind(this);
@@ -38,9 +33,9 @@ class PageMainEdit extends React.Component<Props> {
 	};
 
 	onOpen () {
-		const { isPopup, refSidebar } = this.props;
+		const { isPopup } = this.props;
 		const rootId = this.getRootId();
-		const home = ObjectUtil.getSpaceDashboard();
+		const home = UtilObject.getSpaceDashboard();
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
 		if (this.refHeader) {
@@ -49,14 +44,10 @@ class PageMainEdit extends React.Component<Props> {
 		if (this.refFooter) {
 			this.refFooter.forceUpdate();
 		};
-		if (refSidebar) {
-			refSidebar.id = rootId;
-			refSidebar.setActive(rootId);
-		};
 
 		if (home && (rootId != home.id)) {
 			let key = '';
-			if (object.type == Constant.typeId.template) {
+			if (UtilObject.isTemplate(object.type)) {
 				key = 'template';
 			} else 
 			if (!blockStore.checkBlockTypeExists(rootId)) {

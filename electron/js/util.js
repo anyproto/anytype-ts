@@ -172,9 +172,9 @@ class Util {
 				this.log('info', err);
 			});
 
-			this.send(win, 'command', 'saveAsHTMLSuccess');
+			this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 		}).catch(err => { 
-			this.send(win, 'command', 'saveAsHTMLSuccess');
+			this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 			this.log('info', err); 
 		});
 	};
@@ -188,10 +188,10 @@ class Util {
 					this.log('info', err);
 				});
 
-				this.send(win, 'command', 'saveAsHTMLSuccess');
+				this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 			});
 		}).catch(err => {
-			this.send(win, 'command', 'saveAsHTMLSuccess');
+			this.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 			this.log('info', err);
 		});
 	};

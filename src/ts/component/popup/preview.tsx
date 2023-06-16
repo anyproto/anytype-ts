@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader } from 'Component';
-import { I, keyboard, Util } from 'Lib';
+import { I, keyboard, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 
 const BORDER = 16;
@@ -9,7 +9,7 @@ const BORDER = 16;
 class PopupPreview extends React.Component<I.Popup> {
 	
 	render () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { src, type } = data;
 
@@ -17,7 +17,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		switch (type) {
 			case I.FileType.Image: {
-				content = <img className="media" src={src} />
+				content = <img className="media" src={src} onClick={() => close()} />
 				break;
 			};
 
@@ -73,7 +73,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find('#wrap');
 		const loader = obj.find('#loader');
-		const { ww, wh } = Util.getWindowDimensions();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
 		const mh = wh - BORDER * 2;
 		const sidebar = $('#sidebar');
 

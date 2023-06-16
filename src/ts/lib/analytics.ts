@@ -1,12 +1,12 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, Util, Storage } from 'Lib';
+import { I, C, UtilCommon, Storage } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const KEYS = [ 
-	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
+	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -21,15 +21,32 @@ class Analytics {
 		const { config } = commonStore;
 		return config.debug.an;
 	};
+
+	isAllowed (): boolean {
+		const { config } = commonStore;
+		return !(config.sudo || [ 'alpha', 'beta' ].includes(config.channel) || !window.Electron.isPackaged) || this.debug();
+	};
 	
 	init () {
 		if (this.isInit) {
 			return;
 		};
 
-		const platform = Util.getPlatform();
+		const { config } = commonStore;
+		const platform = UtilCommon.getPlatform();
 
-		C.MetricsSetParameters(platform);
+		let version = String(window.Electron.version.app || '').split('-');
+		if (version.length) {
+			version = [ version[0] ];
+		};
+		if (config.sudo || !window.Electron.isPackaged || [ 'alpha' ].includes(config.channel)) {
+			version.push('dev');
+		} else
+		if ([ 'beta' ].includes(config.channel)) {
+			version.push(config.channel);
+		};
+
+		C.MetricsSetParameters(platform, version.join('-'));
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
@@ -48,12 +65,13 @@ class Analytics {
 			osVersion: window.Electron.version.os,
 		});
 
+		this.removeContext();
 		this.log('[Analytics].init');
 		this.isInit = true;
 	};
-	
+
 	profile (id: string) {
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug())) {
+		if (!this.instance || !this.isAllowed()) {
 			return;
 		};
 
@@ -62,7 +80,7 @@ class Analytics {
 	};
 
 	device (id: string) {
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug())) {
+		if (!this.instance || !this.isAllowed()) {
 			return;
 		};
 
@@ -85,7 +103,7 @@ class Analytics {
 	event (code: string, data?: any) {
 		data = data || {};
 
-		if (!this.instance || (!window.Electron.isPackaged && !this.debug()) || !code) {
+		if (!this.instance || !this.isAllowed() || !code) {
 			return;
 		};
 
@@ -127,6 +145,11 @@ class Analytics {
 
 			case 'ScreenRelation': {
 				data.relationKey = data.params.id;
+				break;
+			};
+
+			case 'CreateObject': {
+				data.layout = I.ObjectLayout[data.layout];
 				break;
 			};
 
@@ -245,16 +268,22 @@ class Analytics {
 				break;
 			};
 
+			case 'SelectUsecase': {
+				data.type = I.Usecase[data.type];
+				break;
+			};
+
 			case 'ChangeWidgetSource':
 			case 'ChangeWidgetLayout':
+			case 'ChangeWidgetLimit':
 			case 'ReorderWidget':
 			case 'DeleteWidget': {
-				if (!data.target) {
-					break;
+				if (data.target) {
+					data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
+					delete data.target;
 				};
 
-				data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
-				delete data.target;
+				data.layout = I.WidgetLayout[data.layout];
 				break;
 			};
 
@@ -272,6 +301,18 @@ class Analytics {
 				};
 
 				data.view = types[data.view];
+				break;
+			};
+
+			case 'ThemeSet': {
+				data.id = String(data.id || 'light');
+				break;
+			};
+
+			case 'OnboardingTooltip':
+			case 'ClickOnboardingTooltip': {
+				data.id = UtilCommon.ucFirst(data.id);
+				data.type = UtilCommon.ucFirst(data.type);
 				break;
 			};
 		};
@@ -292,10 +333,6 @@ class Analytics {
 
 		if (converted.relationKey) {
 			converted.relationKey = this.relationMapper(converted.relationKey);
-		};
-
-		if (undefined !== converted.layout) {
-			converted.layout = I.ObjectLayout[converted.layout];
 		};
 
 		if (undefined !== converted.align) {
@@ -326,6 +363,7 @@ class Analytics {
 			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
+			'main/usecase':		 'ScreenUsecase',
 		};
 
 		return map[key] || '';
@@ -365,7 +403,7 @@ class Analytics {
 		};
 
 		const code = (undefined !== map[id]) ? map[id] : id;
-		return code ? Util.toUpperCamelCase([ prefix, code ].join('-')) : '';
+		return code ? UtilCommon.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
 	typeMapper (id: string) {

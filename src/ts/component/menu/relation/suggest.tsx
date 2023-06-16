@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, analytics, keyboard, DataUtil, ObjectUtil, Action, Util } from 'Lib';
+import { I, analytics, keyboard, UtilData, UtilObject, Action, UtilCommon } from 'Lib';
 import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -107,7 +107,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholderFocus="Filter or create a relation..." 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -123,11 +123,11 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						isRowLoaded={({ index }) => !!items[index]}
 						threshold={LIMIT}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -237,7 +237,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			keys: Constant.relationRelationKeys,
@@ -273,22 +273,20 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = Util.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.workspaceId == workspace));
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
 			{ id: 'library', name: 'My relations', children: library },
 		];
-		let name = 'Create new relation';
 
 		if (filter) {
 			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 			sections = sections.concat([
 				{ id: 'store', name: 'Anytype library', children: store },
+				{ children: [ { id: 'add', name: `Create relation "${filter}"` } ] }
 			]);
-
-			name = `Create relation "${filter}"`;
 		} else {
 			sections = sections.concat([
 				{ 
@@ -296,10 +294,8 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
 					] 
 				},
-			])
+			]);
 		};
-
-		sections.unshift({ children: [ { id: 'add', name } ] });
 
 		sections = sections.filter((section: any) => {
 			section.children = section.children.filter(it => it);

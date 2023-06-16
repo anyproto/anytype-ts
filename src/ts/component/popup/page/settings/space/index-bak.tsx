@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Label, Input, IconObject } from 'Component';
-import { C, ObjectUtil, DataUtil, I, translate } from 'Lib';
+import { C, UtilObject, I, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -23,7 +23,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const subId = Constant.subId.space;
 		const space = detailStore.get(subId, commonStore.workspace);
 		const name = this.checkName(space.name);
-		const home = ObjectUtil.getSpaceDashboard();
+		const home = UtilObject.getSpaceDashboard();
 
 		return (
 			<React.Fragment>
@@ -49,7 +49,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								ref={ref => this.refName = ref} 
 								value={name} 
 								onKeyUp={this.onName} 
-								placeholder={ObjectUtil.defaultName('Page')} 
+								placeholder={UtilObject.defaultName('Page')}
 							/>
 						</div>
 					</div>
@@ -90,17 +90,17 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onSelect (icon: string) {
-		ObjectUtil.setIcon(commonStore.workspace, icon, '');
+		UtilObject.setIcon(commonStore.workspace, icon, '');
 	};
 
 	onUpload (hash: string) {
-		ObjectUtil.setIcon(commonStore.workspace, '', hash);
+		UtilObject.setIcon(commonStore.workspace, '', hash);
 	};
 
 	onDashboard () {
 		const { getId } = this.props;
 		const { workspace } = commonStore;
-		const skipTypes = ObjectUtil.getFileTypes().concat(ObjectUtil.getSystemTypes());
+		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 
 		menuStore.open('searchObject', {
 			element: `#${getId()} #dashboard`,
@@ -111,7 +111,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				],
 				canAdd: true,
 				dataChange: (items: any[]) => {
-					const fixed: any[] = [ ObjectUtil.graph() ];
+					const fixed: any[] = [ UtilObject.graph() ];
 					return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 				},
 				onSelect: (el: any) => {
@@ -123,7 +123,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: el.id } }, false);
 						detailStore.update(Constant.subId.space, { id: el.id, details: el }, false);
 
-						ObjectUtil.openHome('route');
+						UtilObject.openHome('route');
 					});
 				}
 			}
@@ -131,11 +131,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		ObjectUtil.setName(commonStore.workspace, this.checkName(v));
+		UtilObject.setName(commonStore.workspace, this.checkName(v));
 	};
 
 	checkName (v: string): string {
-		if ((v == ObjectUtil.defaultName('Space')) || (v == ObjectUtil.defaultName('Page'))) {
+		if ((v == UtilObject.defaultName('Space')) || (v == UtilObject.defaultName('Page'))) {
 			v = '';
 		};
 		return v;

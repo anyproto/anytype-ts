@@ -1,8 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
+import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { I, history as historyPopup, Util } from 'Lib';
+import { I, history as historyPopup, UtilCommon } from 'Lib';
 import { Page } from 'Component';
 import { menuStore } from 'Store';
 
@@ -11,7 +12,7 @@ interface Props extends I.Popup, RouteComponentProps<any> {};
 const PopupPage = observer(class PopupPage extends React.Component<Props> {
 
 	_isMounted = false;
-	ref: any = null;
+	ref = null;
 
 	render () {
 		const { param } = this.props;
@@ -21,7 +22,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		return (
 			<div id="wrap">
 				<Page 
-					ref={ref => { this.ref = ref; }} 
+					ref={ref => this.ref = ref} 
 					{...this.props} 
 					rootId={matchPopup.params.id} 
 					isPopup={true} 
@@ -61,11 +62,11 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		const win = $(window);
 		const obj = $(`#${getId()}`);
 
-		win.on('resize.popupPage', () => { this.resize(); });
+		win.on('resize.popupPage', () => this.resize());
 
 		obj.find('.innerWrap').on('scroll.common', () => {
 			menuStore.list.forEach(it => {
-				win.trigger('resize.' + Util.toCamelCase(`menu-${it.id}`));
+				win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${it.id}`));
 			});
 		});
 	};
@@ -87,14 +88,12 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const loader = obj.find('#loader');
-		const { ww } = Util.getWindowDimensions();
-		const width = Math.max(1096, Math.min(1096, ww - 128));
+		const hh = UtilCommon.sizeHeader();
 
-		width >= ww ? obj.addClass('full') : obj.removeClass('full');
-
-		obj.css({ width });
-		loader.css({ width, height: obj.height() });
+		loader.css({ width: obj.width(), height: obj.height() });
 		position();
+
+		raf(() => { obj.css({ top: hh + 20, marginTop: 0 }); });
 	};
 
 });

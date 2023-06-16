@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { observer } from 'mobx-react';
 import { Cell, DropTarget, Icon } from 'Component';
@@ -23,7 +23,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const idPrefix = getIdPrefix();
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const record = detailStore.get(subId, id);
-		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout) ];
+		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout) ];
 		const { done } = record;
 
 		let content = (
@@ -52,19 +52,11 @@ const Card = observer(class Card extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
+					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
 					{content}
 				</div>
 			);
-		
-			if (isCollection) {
-				content = (
-					<DropTarget {...this.props} rootId={rootId} id={record.id} dropType={I.DropType.Record}>
-						{content}
-					</DropTarget>
-				);
-			};
 		};
 
 		return (
@@ -76,7 +68,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				onDragStart={(e: any) => { onDragStartCard(e, groupId, record); }}
 				onClick={(e: any) => { this.onClick(e); }}
 				onContextMenu={(e: any) => { onContext(e, record.id); }}
-				{...Util.dataProps({ id: record.id })}
+				{...UtilCommon.dataProps({ id: record.id })}
 			>
 				{content}
 			</div>
@@ -105,7 +97,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const record = detailStore.get(subId, id);
 		const cb = {
 			0: () => {
-				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
+				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
 			},
 			2: () => { onContext(e, record.id); }
 		};

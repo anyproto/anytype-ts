@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, IconObject, ObjectName, Button, ProgressBar } from 'Component';
-import { analytics, C, DataUtil, FileUtil, Storage, I, translate, Util, Renderer } from 'Lib';
+import { analytics, C, UtilObject, UtilFile, I, translate, UtilCommon, Renderer } from 'Lib';
 import { observer } from 'mobx-react';
 import { authStore, commonStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -23,9 +23,9 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
     render () {
         const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
-        const percentageUsed = Math.floor(Util.getPercent(bytesUsed, bytesLimit));
+        const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
         const isRed = percentageUsed >= 90;
-        const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+        const space = UtilObject.getSpace();
         const usageCn = [ 'type' ];
         const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
 
@@ -40,7 +40,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                 <Title text={translate('popupSettingsStorageIndexTitle')} />
                 <Title className="sub" text={translate('popupSettingsStorageIndexRemoteStorage')} />
                 <div className="description">
-                    <Label text={Util.sprintf(translate(`popupSettingsStorageIndexText`), FileUtil.size(bytesLimit))} />
+                    <Label text={UtilCommon.sprintf(translate(`popupSettingsStorageIndexText`), UtilFile.size(bytesLimit))} />
                     &nbsp;
                     {extend}
                 </div>
@@ -51,7 +51,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                         <IconObject object={space} forceLetter={true} size={44} />
                         <div className="txt">
                             <ObjectName object={space} />
-                            <div className={usageCn.join(' ')}>{Util.sprintf(translate(`popupSettingsStorageIndexUsage`), FileUtil.size(bytesUsed), FileUtil.size(bytesLimit))}</div>
+                            <div className={usageCn.join(' ')}>{UtilCommon.sprintf(translate(`popupSettingsStorageIndexUsage`), UtilFile.size(bytesUsed), UtilFile.size(bytesLimit))}</div>
                         </div>
                     </div>
                     <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManage} />
@@ -67,7 +67,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                         <IconObject object={localStorage} size={44} />
                         <div className="txt">
                             <ObjectName object={localStorage} />
-                            <div className="type">{Util.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), FileUtil.size(localUsage))}</div>
+                            <div className="type">{UtilCommon.sprintf(translate(`popupSettingsStorageIndexLocalStorageUsage`), UtilFile.size(localUsage))}</div>
                         </div>
                     </div>
                     <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onOffload} />
@@ -107,7 +107,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                         popupStore.open('confirm',{
                             data: {
                                 title: 'Files offloaded',
-                                //text: Util.sprintf('Files: %s, Size: %s', message.files, FileUtil.size(message.bytes)),
+                                //text: UtilCommon.sprintf('Files: %s, Size: %s', message.files, UtilFile.size(message.bytes)),
                                 textConfirm: 'Ok',
                                 canCancel: false,
                             }
@@ -122,9 +122,9 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
     onExtend () {
         const { account } = authStore;
-        const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+        const space = UtilObject.getSpace();
 
-        if (!account || !space) {
+        if (!account || space._empty_) {
             return;
         };
 

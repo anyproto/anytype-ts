@@ -55,7 +55,7 @@
 				.name { width: 200px; @include text-overflow-nw; line-height: 20px; color: $colorDarkGrey; }
 			}
 			.item.canEdit {
-				.clickable { cursor: pointer; }
+				.clickable { }
 				.clickable:hover { background: $colorHoverLight; }
 			}
 

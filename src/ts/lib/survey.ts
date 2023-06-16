@@ -1,4 +1,4 @@
-import { I, Storage, Util, analytics, Renderer, translate, ObjectUtil, DataUtil } from 'Lib';
+import { I, Storage, UtilCommon, analytics, Renderer, translate, UtilObject, UtilData } from 'Lib';
 import { popupStore, authStore } from 'Store';
 import Surveys from 'json/survey.json';
 
@@ -25,7 +25,7 @@ class Survey {
     };
 
     show (type: I.SurveyType) {
-        const prefix = Util.toCamelCase('survey-' + type);
+        const prefix = UtilCommon.toCamelCase('survey-' + type);
 
         analytics.event('SurveyShow', { type });
 
@@ -53,7 +53,7 @@ class Survey {
     onConfirm (type: I.SurveyType) {
         const { account } = authStore;
         const survey = Surveys[type];
-        const prefix = Util.toCamelCase('survey-' + type);
+        const prefix = UtilCommon.toCamelCase('survey-' + type);
 		const param: any = {};
 
         switch (type) {
@@ -62,12 +62,12 @@ class Survey {
 				break;
 
             case I.SurveyType.Pmf:
-                param.pmfCompleteTime = Util.time();
+                param.pmfCompleteTime = UtilCommon.time();
                 break;
         };
 
 		Storage.set('survey', param);
-		Renderer.send('urlOpen', Util.sprintf(survey.url, account.id));
+		Renderer.send('urlOpen', UtilCommon.sprintf(survey.url, account.id));
         analytics.event('SurveyOpen', { type });
     };
 
@@ -81,7 +81,7 @@ class Survey {
 
             case I.SurveyType.Pmf:
                 param.pmfCanceled = true;
-                param.pmfCompleteTime = Util.time();
+                param.pmfCompleteTime = UtilCommon.time();
                 break;
         };
 
@@ -95,7 +95,7 @@ class Survey {
         const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || Number(surveyStorage.pmfCanceled) || false;
         const askPmf = Number(surveyStorage.askPmf) || false;
         const days = lastTime ? 90 : 30;
-        const surveyTime = (lastTime <= Util.time() - 86400 * days);
+        const surveyTime = (lastTime <= UtilCommon.time() - 86400 * days);
 
         if (askPmf && !popupStore.isOpen() && !lastCanceled && surveyTime) {
             this.show(I.SurveyType.Pmf);
@@ -106,7 +106,7 @@ class Survey {
         const timeRegister = Number(Storage.get('timeRegister')) || 0;
         const surveyStorage = Storage.get('survey') || {};
         const isComplete = surveyStorage.registerComplete || false;
-        const surveyTime = timeRegister && Util.time() - 86400 * 7 - timeRegister > 0;
+        const surveyTime = timeRegister && UtilCommon.time() - 86400 * 7 - timeRegister > 0;
 
         if (!isComplete && surveyTime && !popupStore.isOpen()) {
             this.show(I.SurveyType.Register);
@@ -131,10 +131,10 @@ class Survey {
             return;
         };
 
-		DataUtil.search({
+		UtilData.search({
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
             	{ operator: I.FilterOperator.And, relationKey: 'createdDate', condition: I.FilterCondition.Greater, value: timeRegister + 30 }
 			],
 			limit: 50,

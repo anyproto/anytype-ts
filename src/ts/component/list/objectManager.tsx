@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, Label, Loader, ObjectName, EmptySearch } from 'Component';
-import { DataUtil, I, Util, translate } from 'Lib';
+import { UtilData, I, UtilCommon, translate } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -87,7 +87,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         const Item = (item: any) => (
             <div className="item" onClick={e => this.onClick(e, item)}>
                 <Checkbox
-                    ref={ref => { this.refCheckbox.set(item.id, ref); }}
+                    ref={ref => this.refCheckbox.set(item.id, ref)}
                     readonly={true}
                     value={this.selected.includes(item.id)}
                 />
@@ -123,25 +123,27 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         };
 
         let controls = (
-            <div className={cnControls.join(' ')}>
-                <div className="side left">
-                    {buttonsList.map((item: any, i: number) => (
-                        <Button key={i} {...item} />
-                    ))}
-                </div>
-                <div className="side right">
-                    <Icon className="search" onClick={this.onFilterShow} />
+			<div className="controlsWrapper">
+				<div className={cnControls.join(' ')}>
+					<div className="side left">
+						{buttonsList.map((item: any, i: number) => (
+							<Button key={i} {...item} />
+						))}
+					</div>
+					<div className="side right">
+						<Icon className="search" onClick={this.onFilterShow} />
 
-                    <div id="filterWrapper" className="filterWrapper">
-                        <Filter
-                            ref={ref => { this.refFilter = ref; }}
-                            onChange={this.onFilterChange}
-                            onClear={this.onFilterClear}
-                            placeholder="Type to search..."
-                        />
-                    </div>
-                </div>
-            </div>
+						<div id="filterWrapper" className="filterWrapper">
+							<Filter
+								ref={ref => this.refFilter = ref}
+								onChange={this.onFilterChange}
+								onClear={this.onFilterClear}
+								placeholder="Type to search..."
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
         );
 
         let content = null;
@@ -149,7 +151,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             if (!filter) {
                 controls = null;
             } else {
-				textEmpty = Util.sprintf(translate('popupSearchEmptyFilter'), filter);
+				textEmpty = UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter);
 			};
 
             content = (
@@ -164,13 +166,13 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
                             loadMoreRows={() => {}}
                             isRowLoaded={({ index }) => true}
                         >
-                            {({ onRowsRendered, registerChild }) => (
+                            {({ onRowsRendered }) => (
                                 <WindowScroller scrollElement={$('#popupPage-innerWrap').get(0)}>
                                     {({ height, isScrolling, registerChild, scrollTop }) => (
                                         <AutoSizer className="scrollArea">
                                             {({ width, height }) => (
                                                 <List
-                                                    ref={ref => { this.refList = ref; }}
+                                                    ref={ref => this.refList = ref}
                                                     width={width}
                                                     height={height}
                                                     deferredMeasurmentCache={this.cache}
@@ -278,7 +280,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
             if ((idx >= 0) && (this.selected.length > 0)) {
                 const indexes = this.getSelectedIndexes().filter(i => i != idx);
-                const closest = Util.findClosestElement(indexes, idx);
+                const closest = UtilCommon.findClosestElement(indexes, idx);
 
                 if (isFinite(closest)) {
                     const [ start, end ] = this.getSelectionRange(closest, idx);
@@ -293,7 +295,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             };
         };
 
-        this.selected = Util.arrayUnique(this.selected);
+        this.selected = UtilCommon.arrayUnique(this.selected);
         this.forceUpdate();
     };
 
@@ -340,7 +342,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
         this.setState({ loading: true });
 
-        DataUtil.searchSubscribe({
+        UtilData.searchSubscribe({
             subId,
             sorts,
             filters,

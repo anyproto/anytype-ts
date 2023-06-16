@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, DataUtil, ObjectUtil, Util, analytics, keyboard } from 'Lib';
+import { I, M, C, UtilData, UtilObject, UtilCommon, analytics, keyboard } from 'Lib';
 import { Block, Drag } from 'Component';
 import { blockStore, detailStore } from 'Store';
 
@@ -32,7 +32,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 			return null;
 		};
 
-		const check = DataUtil.checkDetails(rootId);
+		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		const header = blockStore.getLeaf(rootId, 'header') || {};
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
@@ -67,7 +67,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 			<div ref={node => this.node = node}>
 				<div id="editorSize" className="dragWrap">
 					<Drag 
-						ref={ref => { this.refDrag = ref; }} 
+						ref={ref => this.refDrag = ref} 
 						value={root.fields.width}
 						snap={0.5}
 						onStart={this.onScaleStart} 
@@ -112,10 +112,10 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 
 	init () {
 		const { rootId, isPopup } = this.props;
-		const check = DataUtil.checkDetails(rootId);
+		const check = UtilData.checkDetails(rootId);
 
 		$('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
-		Util.triggerResizeEditor(isPopup);
+		UtilCommon.triggerResizeEditor(isPopup);
 	};
 
 	onScaleStart (e: any, v: number) {
@@ -154,7 +154,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 
 		C.TemplateClone(rootId, (message: any) => {
 			if (message.id) {
-				ObjectUtil.openRoute({ id: message.id });
+				UtilObject.openRoute({ id: message.id });
 			};
 
 			analytics.event('CreateTemplate', { objectType: object.targetObjectType });

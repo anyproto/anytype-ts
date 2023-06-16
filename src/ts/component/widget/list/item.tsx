@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget } from 'Component';
 import { blockStore, menuStore, detailStore } from 'Store';
-import { I, Util, ObjectUtil, keyboard, analytics } from 'Lib';
+import { I, UtilCommon, UtilObject, keyboard, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
 type Props = {
@@ -40,7 +40,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		if (object.type == Constant.typeId.bookmark) {
 			descr = (
 				<div className="descr">
-					{Util.shortUrl(source)}
+					{UtilCommon.shortUrl(source)}
 				</div>
 			);
 		} else {
@@ -94,7 +94,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 				ref={node => this.node = node}
 				className="item"
 				key={object.id}
-				onMouseDown={(e) => this.onClick(e, object)}
+				onMouseDown={(e) => this.onClick(e)}
 				onContextMenu={(e) => this.onContext(e, false)}
 				style={style}
 			>
@@ -111,11 +111,14 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		this.resize();
 	};
 
-	onClick = (e: React.MouseEvent, item: unknown): void => {
+	onClick = (e: React.MouseEvent): void => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		ObjectUtil.openEvent(e, item);
+		const { subId, id,  } = this.props;
+		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
+
+		UtilObject.openEvent(e, object);
 		analytics.event('OpenSidebarObject');
 	};
 
@@ -155,20 +158,20 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	onSelect (icon: string) {
 		const { id } = this.props;
 
-		ObjectUtil.setIcon(id, icon, '');
+		UtilObject.setIcon(id, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { id } = this.props;
 
-		ObjectUtil.setIcon(id, '', hash);
+		UtilObject.setIcon(id, '', hash);
 	};
 
 	onCheckbox () {
 		const { subId, id } = this.props;
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 
-		ObjectUtil.setDone(id, !object.done);
+		UtilObject.setDone(id, !object.done);
 	};
 
 	resize () {

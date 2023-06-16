@@ -13,7 +13,6 @@ class AuthStore {
 	public preview = '';
 	public name = '';
 	public phrase = '';
-	public code = '';
 	public token = '';
 	public threadMap: Map<string, any> = new Map();
 
@@ -27,7 +26,6 @@ class AuthStore {
 			preview: observable,
 			name: observable,
 			phrase: observable,
-			code: observable,
 			threadMap: observable,
 			walletPath: computed,
 			accountPath: computed,
@@ -36,7 +34,6 @@ class AuthStore {
 			walletPathSet: action,
 			accountPathSet: action,
 			phraseSet: action,
-			codeSet: action,
 			iconSet: action,
 			previewSet: action,
 			nameSet: action,
@@ -75,10 +72,6 @@ class AuthStore {
 
 	phraseSet (v: string) {
 		this.phrase = v;
-    };
-
-	codeSet (v: string) {
-		this.code = v;
     };
 
 	iconSet (v: string) {
@@ -165,7 +158,6 @@ class AuthStore {
 		this.previewSet('');
 		this.nameSet('');
 		this.phraseSet('');
-		this.codeSet('');
 	};
 
 	logout (removeData: boolean) {
@@ -176,6 +168,7 @@ class AuthStore {
 
 		analytics.event('LogOut');
 		analytics.profile('');
+		analytics.removeContext();
 
 		keyboard.setPinChecked(false);
 

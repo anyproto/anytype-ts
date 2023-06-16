@@ -25,7 +25,7 @@
 			.icon.arrow.right { transform: rotateZ(180deg); }
 			.icon.arrow:hover { background-color: $colorHoverMedium; }
 
-			.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clearFilter0.svg') !important; cursor: pointer; }
+			.icon.clear { width: 20px; height: 20px; background-image: url('~img/icon/clearFilter0.svg') !important; }
 			.icon.clear:hover { background-image: url('~img/icon/clearFilter1.svg') !important; }
 		}
 	}

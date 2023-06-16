@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
-import { I, C, Relation, Util, keyboard, analytics } from 'Lib';
+import { I, C, Relation, UtilCommon, keyboard, analytics } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -108,7 +108,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 			);
 		};
 		
-		const List = SortableContainer((item: any) => {
+		const List = SortableContainer(() => {
 			return (
 				<div className="items">
 					{!items.length ? (
@@ -122,11 +122,11 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<VList
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -227,7 +227,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const { getView } = data;
 		const view = getView();
 
-		return view ? Util.objectCopy(view.sorts || []) : [];
+		return view ? UtilCommon.objectCopy(view.sorts || []) : [];
 	};
 
 	getRelationOptions () {

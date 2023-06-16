@@ -3,7 +3,7 @@ import $ from 'jquery';
 import katex from 'katex';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, keyboard, DataUtil, MenuUtil } from 'Lib';
+import { I, keyboard, UtilData, UtilMenu } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Sections from 'json/latex.json';
 
@@ -95,19 +95,16 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 						isRowLoaded={() => true}
 						threshold={LIMIT}
 					>
-						{({ onRowsRendered, registerChild }) => (
+						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
 										rowCount={items.length}
-										rowHeight={({ index }) => {
-											const item = items[index];
-											return this.getItemHeight(item);
-										}}
+										rowHeight={({ index }) => this.getRowHeight(items[index])}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
@@ -244,7 +241,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { data } = param;
 		const { isTemplate } = data;
 
-		let sections = MenuUtil.sectionsMap(Sections);
+		let sections = UtilMenu.sectionsMap(Sections);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
 
 		sections = sections.map((it: any) => {
@@ -257,7 +254,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		});
 
 		if (filter.text) {
-			sections = MenuUtil.sectionsFilter(sections, filter.text);
+			sections = UtilMenu.sectionsFilter(sections, filter.text);
 
 			const regS = new RegExp('/^' + filter.text + '/', 'gi');
 			const regC = new RegExp(filter.text, 'gi');
@@ -277,10 +274,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					s._sortWeight_ += w;
 					return c;
 				});
-				s.children.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
+				s.children.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
 				return s;
 			});
-			sections.sort((c1: any, c2: any) => DataUtil.sortByWeight(c1, c2));
+			sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
 		};
 
 		return sections;
@@ -300,7 +297,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		return items;
 	};
 
-	getItemHeight (item: any) {
+	getRowHeight (item: any) {
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
@@ -331,7 +328,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		let height = offset;
 
 		for (let item of items) {
-			height += this.getItemHeight(item);
+			height += this.getRowHeight(item);
 		};
 		
 		height = Math.max(ih + offset, Math.min(ih * 10, height));
