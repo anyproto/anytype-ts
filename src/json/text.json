@@ -245,6 +245,13 @@
 	"blockBookmarkError": { "en": "There was an error fetching the url" },
 
 	"popupSettingsTitle": { "en": "Settings" },
+
+	"popupSettingsAccountPersonalInformationTitle": { "en": "Personal information" },
+	"popupSettingsAccountPersonalInformationNamePlaceholder": { "en": "Your name" },
+	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": { "en": "A few words about yourself" },
+	"popupSettingsAccountAnytypeIdentityTitle": { "en": "Anytype identity" },
+	"popupSettingsAccountAnytypeIdentityAccountId": { "en": "Account ID" },
+
 	"popupSettingsAccountTitle": { "en": "Profile" },
 	"popupSettingsAccountDeleteTitle": { "en": "Delete account" },
 	"popupSettingsAccountMoveTitle": { "en": "Account data location" },

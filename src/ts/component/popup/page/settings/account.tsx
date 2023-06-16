@@ -63,31 +63,31 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				</div>
 
 				<div className="section">
-					<Title text={'Personal information'} />
+					<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
 
 					<Input
 						ref={ref => this.refName = ref}
 						value={profile.name}
 						onKeyUp={this.onName}
-						placeholder={'Your name'}
+						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
 					/>
 
 					<Input
 						ref={ref => this.refDescription = ref}
 						value={profile.description}
 						onKeyUp={this.onDescription}
-						placeholder={'A few words about yourself'}
+						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
 					/>
 				</div>
 
 				<div className="section">
-					<Title text={'Anytype identity'} />
+					<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
 
 					<div className="inputWrapper accountId">
 						<Input
 							value={account.id}
 							readonly={true}
-							onFocus={() => UtilCommon.clipboard('Account ID', account.id)}
+							onFocus={() => UtilCommon.clipboard(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
 						/>
 						<Icon className="copy" />
 					</div>
