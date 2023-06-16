@@ -18,7 +18,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		this.onSelect = this.onSelect.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
-		this.onCopy = this.onCopy.bind(this);
 	};
 
 	render () {
@@ -168,7 +167,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={translate(`popupSettingsSpaceIndexSpaceInfoTitle`)} />
 						<div className="sectionContent">
 
-							<div onClick={() => this.onCopy('Space ID', space.id)} className="item itemSpaceId">
+							<div onClick={() => UtilCommon.clipboard('Space ID', space.id)} className="item itemSpaceId">
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexSpaceIdTitle`)} />
@@ -180,7 +179,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								</div>
 							</div>
 
-							<div onClick={() => this.onCopy('Account ID', account.id)} className="item itemAccountId">
+							<div onClick={() => UtilCommon.clipboard('Account ID', account.id)} className="item itemAccountId">
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexCreatedByTitle`)} />
@@ -236,11 +235,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onName (e: any, v: string) {
 		UtilObject.setName(commonStore.workspace, this.checkName(v));
-	};
-
-	onCopy (label: string, value: string) {
-		UtilCommon.clipboardCopy({ text: value });
-		Preview.toastShow({ text: label + ' copied to clipboard' });
 	};
 
 	checkName (v: string): string {

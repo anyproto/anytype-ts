@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Label, IconObject, Input, Loader } from 'Component';
-import { I, C, translate, UtilCommon, analytics, Action, UtilData, UtilObject } from 'Lib';
+import { Label, IconObject, Input, Title, Loader, Button, Icon } from 'Component';
+import { I, C, translate, UtilCommon, analytics, Action, UtilData, UtilObject, Preview } from 'Lib';
 import { authStore, commonStore, popupStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -18,6 +18,7 @@ interface State {
 const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, State> {
 
 	refName: any = null;
+	refDescription: any = null;
 	pinConfirmed = false;
 	format = '';
 	refCheckbox: any = null;
@@ -32,6 +33,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onMenu = this.onMenu.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
+		this.onDescription = this.onDescription.bind(this);
 		this.onLogout = this.onLogout.bind(this);
 		this.onLocationMove = this.onLocationMove.bind(this);
 	};
@@ -45,55 +47,56 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const canMove = config.experimental;
 
 		return (
-			<React.Fragment>
-				{error ? <div className="message">{error}</div> : ''}
+			<div className="sections">
+				<div className="section top">
+					{error ? <div className="message">{error}</div> : ''}
 
-				<div className="iconWrapper">
-					{loading ? <Loader /> : ''}
-					<IconObject 
-						id="userpic" 
-						object={profile} 
-						size={112} 
-						onClick={this.onMenu} 
+					<div className="iconWrapper">
+						{loading ? <Loader /> : ''}
+						<IconObject
+							id="userpic"
+							object={profile}
+							size={108}
+							onClick={this.onMenu}
+						/>
+					</div>
+				</div>
+
+				<div className="section">
+					<Title text={'Personal information'} />
+
+					<Input
+						ref={ref => this.refName = ref}
+						value={profile.name}
+						onKeyUp={this.onName}
+						placeholder={'Your name'}
+					/>
+
+					<Input
+						ref={ref => this.refDescription = ref}
+						value={profile.description}
+						onKeyUp={this.onDescription}
+						placeholder={'A few words about yourself'}
 					/>
 				</div>
 
-				<div className="rows">
+				<div className="section">
+					<Title text={'Anytype identity'} />
 
-					<div className="row">
-						<div className="name">
-							<Label className="small" text="Name" />
-							<Input 
-								ref={ref => this.refName = ref} 
-								value={profile.name} 
-								onKeyUp={this.onName} 
-								placeholder={UtilObject.defaultName('Page')} 
-							/>
-						</div>
-					</div>
-
-					<Label className="section" text="Account" />
-
-					{canMove ? (
-						<div id="row-location" className="row cp" onClick={this.onLocationMove}>
-							<Label text={translate('popupSettingsAccountMoveTitle')} />
-							<div className="select">
-								<div className="item">
-									<div className="name">{walletPath == accountPath ? 'Default' : 'Custom'}</div>
-								</div>
-							</div>
-						</div>
-					) : ''}
-
-					<div className="row cp" onClick={() => { onPage('delete'); }}>
-						<Label text={translate('popupSettingsAccountDeleteTitle')} />
-					</div>
-
-					<div className="row red cp" onClick={this.onLogout}>
-						<Label text={translate('popupSettingsLogout')} />
+					<div className="inputWrapper accountId">
+						<Input
+							value={account.id}
+							readonly={true}
+							onFocus={() => UtilCommon.clipboard('Account ID', account.id)}
+						/>
+						<Icon className="copy" />
 					</div>
 				</div>
-			</React.Fragment>
+
+				<div className="section bottom">
+					<Button className="red blank" text={translate('popupSettingsLogout')} />
+				</div>
+			</div>
 		);
 	};
 
@@ -184,6 +187,10 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
     onName () {
         UtilObject.setName(blockStore.profile, this.refName.getValue());
     };
+
+	onDescription (e) {
+		UtilObject.setDescription(blockStore.profile, this.refDescription.getValue());
+	};
 
 	getObject () {
 		return detailStore.get(Constant.subId.profile, blockStore.profile);

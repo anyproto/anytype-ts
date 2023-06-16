@@ -147,6 +147,32 @@
 		.side.right.tabExportProtobuf
 		{ padding-top: 22px; }
 
+		.side.right.tabAccount {
+			.sections { display: flex; flex-direction: column; height: 100%; }
+			.sections {
+				.section { margin-bottom: 40px; display: flex; flex-direction: column; gap: 12px 0px; }
+				.section.top { margin-bottom: 16px; }
+				.section.bottom { height: 100%; flex-direction: row; align-items: end; margin-bottom: 0; }
+
+				.section {
+					.iconWrapper { margin-bottom: 0; }
+					.title { @include text-header3; margin: 0; }
+					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorBorderDark; border-radius: 6px; }
+					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorYellow; padding: 5px 11px; }
+
+					.accountId { position: relative; }
+					.accountId {
+						.input { background-color: unset; @include text-small; color: $colorDarkGrey; }
+						.icon.copy {
+							width: 20px; height: 20px; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
+							opacity: 0; transition: $transitionAllCommon;
+						}
+					}
+					.accountId:hover .icon.copy { opacity: 1; }
+				}
+			}
+		}
+
 		.side.right.tabSpaceIndex {
 			.spaceSettingsIndexHeader { display: flex; align-items: center; margin-bottom: 32px; }
 			.spaceSettingsIndexHeader {

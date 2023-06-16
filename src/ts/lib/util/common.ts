@@ -294,6 +294,11 @@ class UtilCommon {
 		document.addEventListener('copy', handler, true);
 		document.execCommand('copy');
 	};
+
+	clipboard (label: string, value: string) {
+		this.clipboardCopy({ text: value });
+		Preview.toastShow({ text: label + ' copied to clipboard' });
+	};
 	
 	cacheImages (images: string[], callBack?: () => void) {
 		let loaded = 0;

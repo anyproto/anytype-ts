@@ -200,6 +200,10 @@ class UtilObject {
 	setName (rootId: string, name: string, callBack?: (message: any) => void) {
 		C.ObjectSetDetails(rootId, [ { key: 'name', value: String(name || '') } ], callBack);
 	};
+
+	setDescription (rootId: string, description: string, callBack?: (message: any) => void) {
+		C.ObjectSetDetails(rootId, [ { key: 'description', value: String(description || '') } ], callBack);
+	};
 	
 	setCover (rootId: string, type: I.CoverType, id: string, x?: number, y?: number, scale?: number, callBack?: (message: any) => void) {
 		x = Number(x) || 0;
