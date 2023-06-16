@@ -134,6 +134,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         url = url.replace(/\%25spaceName\%25/g, space.name);
 
         Renderer.send('urlOpen', url);
+        analytics.event('GetMoreSpace');
     };
 
 });
