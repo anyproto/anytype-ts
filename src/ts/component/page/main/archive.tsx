@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Header, Footer, ObjectDescription, Icon, ListObjectManager } from 'Component';
 import { C, I, UtilCommon, analytics, translate } from 'Lib';
@@ -13,6 +14,7 @@ interface Props extends I.PageComponent {
 const PageMainArchive = observer(class PageMainArchive extends React.Component<Props, {}> {
 
 	refManager: any = null;
+	rowLength = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -20,6 +22,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		this.onRestore = this.onRestore.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.resize = this.resize.bind(this);
+		this.getRowLength = this.getRowLength.bind(this);
 	};
 	
 	render () {
@@ -54,7 +57,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 						subId={Constant.subId.archive}
 						filters={filters}
 						sorts={sorts}
-						rowLength={3}
+						rowLength={this.getRowLength()}
 						withArchived={true}
 						buttons={buttons}
 						Info={Info}
@@ -107,6 +110,11 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		});
 	};
 
+	getRowLength () {
+		const { ww } = UtilCommon.getWindowDimensions();
+		return ww <= 940 ? 2 : 3;
+	};
+
 	resize () {
 		const win = $(window);
 		const container = UtilCommon.getPageContainer(this.props.isPopup);
@@ -116,6 +124,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		const hh = UtilCommon.sizeHeader();
 		const isPopup = this.props.isPopup && !container.hasClass('full');
 		const wh = isPopup ? container.height() : win.height();
+		const rowLength = this.getRowLength();
 
 		node.css({ height: wh });
 		
@@ -126,6 +135,11 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			body.css({ height: '' });
 			content.css({ minHeight: '', height: '' });
 		};
+
+		if (this.rowLength != rowLength) {
+			this.rowLength = rowLength;
+			this.forceUpdate();
+		};	
 	};
 
 });
