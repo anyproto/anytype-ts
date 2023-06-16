@@ -157,6 +157,7 @@
 		],
 		"asarUnpack": [
 			"dist/main.js",
+			"dist/main.js.map",
 			"dist/index.html",
 			"dist/run.js",
 			"dist/lib",
@@ -191,6 +192,7 @@
 			"!dist/*",
 			"dist/index.html",
 			"dist/main.js",
+			"dist/main.js.map",
 			"dist/run.js",
 			"dist/lib/**/*",
 			"dist/img/**/*",
