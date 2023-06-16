@@ -18,48 +18,21 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
         this.onManage = this.onManage.bind(this);
         this.onOffload = this.onOffload.bind(this);
-		this.onExtend = this.onExtend.bind(this);
+		this.onLocationMove = this.onLocationMove.bind(this);
     };
 
     render () {
-        const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
-        const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
-        const isRed = percentageUsed >= 90;
-        const space = UtilObject.getSpace();
-        const usageCn = [ 'type' ];
-        const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
+        const { onPage } = this.props;
+        const { localUsage } = commonStore.spaceStorage;
+        const { walletPath, accountPath } = authStore;
+        const { config } = commonStore;
 
-        let extend = null;
-        if (isRed) {
-            usageCn.push('red');
-            extend = <Label text="Get more space." onClick={this.onExtend} className="extend" />;
-        };
+        const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
+        const canMove = config.experimental;
 
         return (
             <React.Fragment>
                 <Title text={translate('popupSettingsStorageIndexTitle')} />
-                <Title className="sub" text={translate('popupSettingsStorageIndexRemoteStorage')} />
-                <div className="description">
-                    <Label text={UtilCommon.sprintf(translate(`popupSettingsStorageIndexText`), UtilFile.size(bytesLimit))} />
-                    &nbsp;
-                    {extend}
-                </div>
-
-
-                <div className="storageUsage">
-                    <div className="space">
-                        <IconObject object={space} forceLetter={true} size={44} />
-                        <div className="txt">
-                            <ObjectName object={space} />
-                            <div className={usageCn.join(' ')}>{UtilCommon.sprintf(translate(`popupSettingsStorageIndexUsage`), UtilFile.size(bytesUsed), UtilFile.size(bytesLimit))}</div>
-                        </div>
-                    </div>
-                    <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexManageFiles')} onClick={this.onManage} />
-                </div>
-
-                <ProgressBar percent={percentageUsed} />
-
-                <Title className="sub" text={translate('popupSettingsStorageIndexLocalStorageTitle')} />
                 <Label className="description" text={translate('popupSettingsStorageIndexLocalStorageText')} />
 
                 <div className="storageUsage">
@@ -72,6 +45,21 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
                     </div>
                     <Button color="blank" className="c28" text={translate('popupSettingsStorageIndexOffloadFiles')} onClick={this.onOffload} />
                 </div>
+
+                {canMove ? (
+                    <div id="row-location" className="row cp" onClick={this.onLocationMove}>
+                        <Label text={translate('popupSettingsAccountMoveTitle')} />
+                        <div className="select">
+                            <div className="item">
+                                <div className="name">{walletPath == accountPath ? 'Default' : 'Custom'}</div>
+                            </div>
+                        </div>
+                    </div>
+                ) : ''}
+
+                <Title className="sub" text={'Danger zone'} />
+                <Label className="description" text={'Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted account data is permanently removed from the backup node, you won\'t be able to sign into Anytype on new devices.'} />
+                <Button onClick={() => { onPage('delete'); }} className="red blank" text={'Delete account'} />
 
             </React.Fragment>
         );
@@ -120,20 +108,31 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
         });
     };
 
-    onExtend () {
+    onLocationMove () {
         const { account } = authStore;
-        const space = UtilObject.getSpace();
-
-        if (!account || space._empty_) {
-            return;
+        const { setLoading } = this.props;
+        const accountPath = account.info.localStoragePath.replace(new RegExp(account.id + '\/?$'), '');
+        const options = {
+            defaultPath: accountPath,
+            properties: [ 'openDirectory' ],
         };
 
-        let url = Url.extendStorage;
+        window.Electron.showOpenDialog(options).then((result: any) => {
+            const files = result.filePaths;
+            if ((files == undefined) || !files.length) {
+                return;
+            };
 
-        url = url.replace(/\%25accountId\%25/g, account.id);
-        url = url.replace(/\%25spaceName\%25/g, space.name);
-
-        Renderer.send('urlOpen', url);
+            setLoading(true);
+            C.AccountMove(files[0], (message: any) => {
+                if (message.error.code) {
+                    this.setState({ error: message.error.description });
+                } else {
+                    UtilCommon.route('/auth/setup/init');
+                };
+                setLoading(false);
+            });
+        });
     };
 
 });

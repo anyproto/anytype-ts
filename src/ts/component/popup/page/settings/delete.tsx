@@ -22,7 +22,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 			<div
 				ref={node => this.node = node}
 			>
-				<Head {...this.props} returnTo="account" name={translate('commonBack')} />
+				<Head {...this.props} returnTo="storageIndex" name={translate('commonBack')} />
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 				<div className="text">

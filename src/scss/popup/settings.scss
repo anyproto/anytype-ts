@@ -268,21 +268,18 @@
 		}
 
 		.side.right.tabStorageIndex {
-			.title { margin-bottom:  32px; }
-
 			.description {
 				.label { display: inline; }
 				.label.extend { color: $colorRed; }
 			}
 
-			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
+			.storageUsage { display: flex; justify-content: space-between; align-items: center; border: 1px solid $colorBorderLight; border-radius: 12px; padding: 14px 16px; margin-bottom: 40px; }
 			.storageUsage {
-				.space { margin-bottom: 16px; }
+				.space { margin-bottom: 0px; padding: 0; }
 				.space {
 					.txt .type.red { color: $colorRed; }
 				}
 			}
-			.progressBar { margin-bottom: 54px; }
 
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
