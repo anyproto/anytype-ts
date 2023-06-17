@@ -138,19 +138,15 @@ const Row = observer(class Row extends React.Component<Props> {
 	};
 
 	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
-		e.preventDefault();
-		e.stopPropagation();
-
 		const { onCellClick, recordId } = this.props;
 		const relation = dbStore.getRelationByKey(vr.relationKey);
 
-		if (!relation) {
+		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;
 		};
 
-		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
-			return;
-		};
+		e.preventDefault();
+		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, recordId);
 	};
