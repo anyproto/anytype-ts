@@ -166,10 +166,9 @@ class Storage {
 	logout () {
 		const keys = [ 
 			'accountId', 
-			'scroll', 
-			'toggle', 
 			'tabStore', 
 			'graph',
+			'space',
 		];
 
 		keys.forEach(key => this.delete(key));
