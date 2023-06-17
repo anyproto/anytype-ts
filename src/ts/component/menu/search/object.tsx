@@ -321,6 +321,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				return;
 			};
 
+			if (message.error.code) {
+				this.setState({ isLoading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -329,7 +334,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records);
+			this.items = this.items.concat(message.records || []);
 
 			if (clear && dataChange) {
 				this.items = dataChange(this.items);

@@ -139,7 +139,7 @@ class Survey {
 			],
 			limit: 50,
 		}, (message: any) => {
-            if (!message.error.code && message.records.length >= 50) {
+            if (!message.error.code && (message.records.length >= 50)) {
                 this.show(I.SurveyType.Object);
             };
         });

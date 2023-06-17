@@ -307,6 +307,11 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(null);
 			};
@@ -315,7 +320,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records);
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });
