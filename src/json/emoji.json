@@ -36577,6 +36577,13 @@
         "flag-ua": {
             "a": "Ukraine Flag",
             "b": "1F1FA-1F1E6",
+			 "j": [
+                "ukraine",
+                "flag",
+                "nation",
+                "country",
+                "banner"
+            ],
             "k": [
                 4,
                 39
