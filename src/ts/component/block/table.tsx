@@ -156,12 +156,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	rebind () {
 		const { block } = this.props;
 		const win = $(window);
-		const node = $(this.node);
 
 		this.unbind();
 
-		win.on('resize.' + block.id, () => this.resize());
-		node.on('resizeInit', () => this.resize());
+		win.on(`resize.${block.id} resizeInit`, () => this.resize());
 	};
 
 	getData () {

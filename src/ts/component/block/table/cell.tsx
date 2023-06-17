@@ -147,7 +147,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 					<EmptyBlock />
 				)}
 
-				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} />
+				{!readonly ? <div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} /> : ''}
 				<Icon className="menu" inner={inner} onClick={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }} />
 			</div>
 		);
