@@ -415,6 +415,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				switch (position) {
 					case I.BlockPosition.Top:
 					case I.BlockPosition.Bottom: {
+						if (!this.origin) {
+							break;
+						};
+
 						// Sort
 						const { onRecordDrop } = this.origin;
 
