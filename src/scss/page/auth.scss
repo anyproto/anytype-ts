@@ -109,8 +109,11 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthLogin {
+	.frame { width: 830px; }
 	.form { width: 100%; }
 	.icon { height: 20px; width: 20px; }
+
+	.title { margin: 0px 0px 20px 0px; }
 	.phraseWrapper { margin: 0px 0px 20px 0px; }
 
 	.bottom { 
@@ -124,12 +127,7 @@ html.bodyAuthDeleted {
 		.icon { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
 
-	.error {
-		position: absolute;
-		z-index: 2;
-		left: 0;
-		right: 0;
-	}
+	.error { position: absolute; z-index: 2; left: 0px; right: 0px; }
 }
 
 .pageAuthInvite {

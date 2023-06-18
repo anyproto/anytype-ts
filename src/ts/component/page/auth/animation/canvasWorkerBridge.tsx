@@ -3,7 +3,8 @@ NOTE: this file is copy pasted from the JS-Onboard-Animation Repository
 */
 
 import * as React from 'react';
-import { DOM_EVENTS, OnboardStage } from './constants';
+import { DOM_EVENTS, OnboardStage, statsVisible } from './constants';
+//import Stats from 'stats.js';
 
 type Props = {
 	state: OnboardStage;
@@ -14,12 +15,12 @@ const CanvasWorkerBridge = (props: Props) => {
 	const worker = React.useRef<Worker | null>(null);
 
 	React.useEffect(() => {
+		// NOTE: Change this next line to new Worker(`workers/onboard.js`) when copying over to JS-anytype
+		worker.current = new Worker('workers/onboard.js');
+
 		if (!canvasRef.current) {
 			return;
 		};
-
-		// NOTE: Change this next line to new Worker(`workers/onboard.js`) when copying over to JS-anytype
-		worker.current = new Worker('workers/onboard.js');
 
 		const canvas = canvasRef.current;
 		const offscreen = canvasRef.current.transferControlToOffscreen();
@@ -28,7 +29,7 @@ const CanvasWorkerBridge = (props: Props) => {
 			{
 				type: 'init',
 				payload: {
-					props: props,
+					props,
 					drawingSurface: offscreen,
 					width: canvas.clientWidth,
 					height: canvas.clientHeight,
@@ -42,7 +43,10 @@ const CanvasWorkerBridge = (props: Props) => {
 			canvas.addEventListener(
 				eventName,
 				(event: any) => {
-					if (!worker.current) return;
+					if (!worker.current) {
+						return;
+					};
+
 					worker.current.postMessage({
 						type: 'dom_events',
 						payload: {
@@ -61,14 +65,16 @@ const CanvasWorkerBridge = (props: Props) => {
 		});
 
 		const handleResize = () => {
-			const dpr = window.devicePixelRatio;
-			if (!worker.current) return;
+			if (!worker.current) {
+				return;
+			};
+
 			worker.current.postMessage({
 				type: 'resize',
 				payload: {
 					width: canvas.clientWidth,
 					height: canvas.clientHeight,
-					dpr,
+					dpr: 1,
 				},
 			});
 		};
@@ -89,7 +95,23 @@ const CanvasWorkerBridge = (props: Props) => {
 		worker.current.postMessage({ type: 'props', payload: props });
 	}, [ props ]);
 
+	/*
+	React.useEffect(() => {
+		if (!statsVisible) {
+			return;
+		};
+
+		const stats = new Stats();
+
+		document.body.appendChild(stats.dom);
+		requestAnimationFrame(function loop() {
+			stats.update();
+			requestAnimationFrame(loop);
+		});
+	}, []);
+	*/
+
 	return <canvas ref={canvasRef} />;
 };
-	
+
 export default CanvasWorkerBridge;

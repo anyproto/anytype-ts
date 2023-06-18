@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
 import { C, I, translate, analytics, UtilData, Storage } from 'Lib';
-import { authStore, blockStore } from 'Store';
+import { authStore, blockStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
