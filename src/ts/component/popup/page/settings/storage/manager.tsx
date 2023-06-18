@@ -70,8 +70,8 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                 text: 'These objects will be deleted irrevocably. You can\'t undo this action.',
                 textConfirm: 'Delete',
                 onConfirm: () => {
-					C.ObjectListSetIsArchived(this.refManager.selected, true, (message: any) => {
-						C.ObjectListDelete(this.refManager.selected);
+					C.ObjectListSetIsArchived(this.refManager?.selected, true, () => {
+						C.ObjectListDelete(this.refManager?.selected);
 
 						this.refManager.selectionClear();
 						analytics.event('RemoveCompletely', { count, route: 'Settings' });
