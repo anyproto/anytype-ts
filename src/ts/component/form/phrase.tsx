@@ -75,16 +75,10 @@ class Phrase extends React.Component<Props, State> {
 		};
 
 		const renderWord = (word: string, index: number) => {
-			const c = COLORS[index % COLORS.length];
-			const cn = [ 'item' ];
+			const color = COLORS[index % COLORS.length];
+			const cn = isHidden ? `bgColor bgColor-${color}` : `textColor textColor-${color}`;
 
-			if (isHidden) {
-				cn.push('bgColor', `bgColor-${c}`);
-			} else {
-				cn.push('textColor', `textColor-${c}`);
-			};
-
-			return <span className={cn.join(' ')} key={index}>{UtilCommon.ucFirst(word)}</span>;
+			return <span className={[ 'word', cn ].join(' ')} key={index}>{UtilCommon.ucFirst(word)}</span>;
 		};
 
 		return (
@@ -94,9 +88,8 @@ class Phrase extends React.Component<Props, State> {
 				onClick={this.onClick}
 			>
 				<div className="phraseInnerWrapper">
+					{!phrase.length ? <span className="word" /> : ''}
 					{phrase.map(renderWord)}
-
-					<span id="placeholder" className="placeholder">{translate('phrasePlaceholder')}</span>
 					<span 
 						id="entry" 
 						contentEditable={true}
@@ -111,6 +104,8 @@ class Phrase extends React.Component<Props, State> {
 						{'\n'}
 					</span>
 				</div>
+
+				<div id="placeholder" className="placeholder">{translate('phrasePlaceholder')}</div>
 				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.toggleVisibility} />
 			</div>
 		);
@@ -172,6 +167,11 @@ class Phrase extends React.Component<Props, State> {
 
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
+
+			if (!value.length) {
+				return;
+			};
+
 			this.clear();
 			this.setState(({ phrase }) => ({ phrase: phrase.concat([ value ]) }));
 		});
