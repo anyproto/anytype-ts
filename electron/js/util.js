@@ -60,7 +60,7 @@ class Util {
 	getBgColor (theme) {
 		let bg = {
 			'': '#fff',
-			dark: '#171717',
+			dark: '#060606',
 		};
 		return bg[theme];
 	};
