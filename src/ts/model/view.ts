@@ -74,7 +74,7 @@ class View implements I.View {
 	};
 
 	getRelation (relationKey: string) {
-		return this.relations.find(it => it.relationKey == relationKey);
+		return this.relations.find(it => it && (it.relationKey == relationKey));
 	};
 
 	getFilter (id: string) {

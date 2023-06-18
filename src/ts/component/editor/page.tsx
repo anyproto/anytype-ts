@@ -364,7 +364,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		win.on('resize.editor' + namespace, () => this.resizePage());
-		container.on('scroll.editor' + namespace, e => this.onScroll(e));
+		container.on('scroll.editor' + namespace, e => this.onScroll());
 		Renderer.on('commandEditor', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
 	};
 	
@@ -1344,15 +1344,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		} else {
 			this.blockSplit(block, range);
 		};
-
-		if (blockStore.checkBlockTypeExists(rootId)) {
-			const object = detailStore.get(rootId, rootId, []);
-			analytics.event('CreateObject', { 
-				route: 'Editor',
-				objectType: object.type, 
-				layout: object.layout,
-			});
-		};
 	};
 
 	menuCheck () {
@@ -1553,6 +1544,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		menuStore.open('blockAdd', { 
 			element: $(`#block-${blockId}`),
+			subIds: Constant.menuIds.add,
 			recalcRect: () => {
 				const rect = UtilCommon.selectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
@@ -1577,7 +1569,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 	
-	onScroll (e: any) {
+	onScroll () {
 		const { rootId, isPopup } = this.props;
 		const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
 
@@ -1808,6 +1800,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 								UtilObject.openRoute({ id: message.objectId, layout: I.ObjectLayout.Bookmark });
 
 								analytics.event('CreateObject', {
+									route: 'Bookmark',
 									objectType: Constant.typeId.bookmark,
 									layout: I.ObjectLayout.Bookmark,
 									template: '',

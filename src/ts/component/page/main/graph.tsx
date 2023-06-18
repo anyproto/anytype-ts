@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, UtilCommon, analytics, UtilData, UtilObject, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
-import { detailStore, menuStore } from 'Store';
+import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ctrl = keyboard.cmdSymbol();
@@ -352,7 +352,10 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 									}
 								});
 
-								analytics.event('CreateObject', { route: 'Graph' });
+								analytics.event('CreateObject', { 
+									objectType: commonStore.type, 
+									route: 'Graph',
+								});
 							});
 							break;
 						};

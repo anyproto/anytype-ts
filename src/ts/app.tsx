@@ -361,7 +361,6 @@ class App extends React.Component<object, State> {
 
 		dispatcher.init(window.Electron.getGlobal('serverAddress'));
 		keyboard.init();
-		analytics.init();
 
 		this.registerIpcEvents();
 		Renderer.send('appOnLoad');
@@ -431,6 +430,8 @@ class App extends React.Component<object, State> {
 		commonStore.nativeThemeSet(isDark);
 		commonStore.themeSet(config.theme);
 		commonStore.languagesSet(languages);
+
+		analytics.init();
 
 		authStore.walletPathSet(dataPath);
 		authStore.accountPathSet(dataPath);

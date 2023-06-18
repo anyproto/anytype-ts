@@ -32,9 +32,21 @@ class Analytics {
 			return;
 		};
 
+		const { config } = commonStore;
 		const platform = UtilCommon.getPlatform();
 
-		C.MetricsSetParameters(platform);
+		let version = String(window.Electron.version.app || '').split('-');
+		if (version.length) {
+			version = [ version[0] ];
+		};
+		if (config.sudo || !window.Electron.isPackaged || [ 'alpha' ].includes(config.channel)) {
+			version.push('dev');
+		} else
+		if ([ 'beta' ].includes(config.channel)) {
+			version.push(config.channel);
+		};
+
+		C.MetricsSetParameters(platform, version.join('-'));
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {

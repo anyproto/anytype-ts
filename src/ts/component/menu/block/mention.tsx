@@ -230,6 +230,11 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(null);
 			};
@@ -238,7 +243,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records);
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });

@@ -115,7 +115,7 @@ const Column = observer(class Column extends React.Component<Props> {
 						{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
 						{isAllowedObject ? (
-							<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
+							<div id={`record-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
 								<Icon className="plus" />
 							</div>
 						) : ''}

@@ -244,12 +244,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 			keyboard.disableClose(true);
 			UtilObject.openAuto({ id: rootId, layout }, { replace: true });
-
-			analytics.event('CreateObject', {
-				route: 'SelectType',
-				objectType: type,
-				layout,
-			});
 		};
 
 		setLoading(true);
@@ -280,8 +274,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		Onboarding.start('objectCreationFinish', isPopup);
 
-		analytics.event('CreateObject', {
-			route: 'SelectType',
+		analytics.event('SelectObjectType', {
 			objectType: typeId,
 			layout: template?.layout,
 			template: (template && template.templateIsBundled ? template.id : 'custom'),

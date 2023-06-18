@@ -229,6 +229,11 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -237,7 +242,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map((it: any) => {
+			this.items = this.items.concat((message.records || []).map((it: any) => {
 				it.name = String(it.name || UtilObject.defaultName('Page'));
 				return it;
 			}));

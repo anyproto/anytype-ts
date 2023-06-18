@@ -5,10 +5,11 @@ import { I, UtilCommon, Mark, Storage, dispatcher, Encode, Mapper } from 'Lib';
 
 const Rpc = Commands.Rpc;
 
-const MetricsSetParameters = (platform: I.Platform, callBack?: (message: any) => void) => {
+const MetricsSetParameters = (platform: I.Platform, version: string, callBack?: (message: any) => void) => {
 	const request = new Rpc.Metrics.SetParameters.Request();
 
 	request.setPlatform(platform);
+	request.setVersion(version);
 
 	dispatcher.request(MetricsSetParameters.name, request, callBack);
 };
@@ -1142,7 +1143,9 @@ const ObjectCreateObjectType = (details: any, flags: I.ObjectFlag[], callBack?: 
 	dispatcher.request(ObjectCreateObjectType.name, request, callBack);
 };
 
-const ObjectCreateRelation = (details: any, flags: I.ObjectFlag[], callBack?: (message: any) => void) => {
+const ObjectCreateRelation = (details: any, callBack?: (message: any) => void) => {
+	details.relationFormat = Number(details.relationFormat) || I.RelationType.LongText;
+
 	const request = new Rpc.Object.CreateRelation.Request();
 
 	request.setDetails(Encode.encodeStruct(details));

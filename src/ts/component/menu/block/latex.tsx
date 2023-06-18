@@ -3,7 +3,7 @@ import $ from 'jquery';
 import katex from 'katex';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, keyboard, UtilData, UtilMenu } from 'Lib';
+import { I, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Sections from 'json/latex.json';
 
@@ -236,10 +236,10 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 	};
 
 	getSections () {
-		const { filter } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
+		const filter = UtilCommon.filterFix(commonStore.filter.text);
 
 		let sections = UtilMenu.sectionsMap(Sections);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
@@ -253,18 +253,17 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			return it;
 		});
 
-		if (filter.text) {
-			sections = UtilMenu.sectionsFilter(sections, filter.text);
+		if (filter) {
+			sections = UtilMenu.sectionsFilter(sections, filter);
 
-			const regS = new RegExp('/^' + filter.text + '/', 'gi');
-			const regC = new RegExp(filter.text, 'gi');
+			const regS = new RegExp('/^' + filter + '/', 'gi');
 
 			sections = sections.map((s: any) => {
 				s._sortWeight_ = 0;
 				s.children = s.children.map((c: any) => {
 					const n = c.name.replace(/\\/g, '');
 					let w = 0;
-					if (n === filter.text) {
+					if (n === filter) {
 						w = 10000;
 					} else 
 					if (n.match(regS)) {

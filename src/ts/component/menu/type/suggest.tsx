@@ -259,6 +259,11 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				return;
 			};
 
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -267,7 +272,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map(it => detailStore.mapper(it)));
+			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
 
 			if (clear) {
 				this.setState({ loading: false });

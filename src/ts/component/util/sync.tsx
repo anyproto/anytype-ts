@@ -31,6 +31,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 	render () {
 		const { id, className } = this.props;
 		const status = this.getStatus();
+		const color = UtilData.threadColor(status);
 		const cn = [ 'sync' ];
 
 		if (className) {
@@ -46,7 +47,7 @@ const Sync = observer(class Sync extends React.Component<Props> {
 				onMouseEnter={this.onMouseEnter} 
 				onMouseLeave={this.onMouseLeave}
 			>
-				<Icon className={UtilData.threadColor(status)} />
+				{color ? <Icon className={UtilData.threadColor(status)} /> : ''}
 				<div className="name">{translate(`threadStatus${status}`)}</div>
 			</div>
 		);

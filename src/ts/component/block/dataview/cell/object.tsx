@@ -379,6 +379,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			};
 
 			analytics.event('CreateObject', {
+				route: 'Relation',
 				objectType: details.type,
 				layout: details.layout,
 				template: '',

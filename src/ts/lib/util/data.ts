@@ -147,7 +147,7 @@ class UtilData {
 	threadColor (s: I.ThreadStatus) {
 		let c = '';
 		switch (s) {
-			default: c = 'grey'; break;
+			default: c = ''; break;
 			case I.ThreadStatus.Syncing: c = 'orange'; break;
 			case I.ThreadStatus.Failed: 
 			case I.ThreadStatus.Incompatible: c = 'red'; break;

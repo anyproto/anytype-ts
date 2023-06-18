@@ -146,6 +146,11 @@ class Cell extends React.Component<Props> {
 		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(recordId);
+
+		if (!relation || !record) {
+			return;
+		};
+
 		const { config } = commonStore;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, recordId);
 		const value = record[relation.relationKey] || '';

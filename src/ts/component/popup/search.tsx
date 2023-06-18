@@ -367,7 +367,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records);
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });

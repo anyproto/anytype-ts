@@ -250,6 +250,11 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				return;
 			};
 
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -258,7 +263,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map(it => detailStore.mapper(it)));
+			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
 
 			if (clear) {
 				this.setState({ loading: false });

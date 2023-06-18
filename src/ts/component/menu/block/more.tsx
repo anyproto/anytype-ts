@@ -93,9 +93,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const platform = UtilCommon.getPlatform();
 		const { config } = commonStore;
 
 		if (!block) {
@@ -117,7 +115,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let search = { id: 'search', name: 'Search on page', caption: `${cmd} + F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
-		let align = { id: 'align', name: 'Align', icon: [ 'align', UtilData.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
 		let history = { id: 'history', name: 'Version history', caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
@@ -203,6 +200,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			];
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		} else {
+			const align = { id: 'align', name: 'Align', icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };
+
 			sections.push({ children: [
 				turn,
 				move,
@@ -313,7 +312,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'align': {
 				menuId = 'blockAlign';
 				menuParam.data = Object.assign(menuParam.data, {
-					value: block.align,
+					value: block.hAlign,
 					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, [ blockId ], align, () => {
 							analytics.event('ChangeBlockAlign', { align, count: 1 });
