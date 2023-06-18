@@ -44,5 +44,5 @@
 }
 
 html.bodyMainUsecase {
-	.navigationPanel { display: none; }
+	.navigationPanel { display: none !important; }
 }
