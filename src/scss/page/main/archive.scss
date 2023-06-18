@@ -17,7 +17,7 @@
 				.icon.restore { background-image: url('~img/icon/menu/action/restore0.svg'); }
 			}
 
-			.ReactVirtualized__List { padding: 12px 0px; }
+			.ReactVirtualized__List { padding: 12px 0px 80px 0px; }
 			
 			.items { height: 100%; }
 			.items {
@@ -35,8 +35,6 @@
 					.descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorDarkGrey; }
 				}
 			}
-
-			.ReactVirtualized__List { padding: 12px 0px; }
 		}
 	}
 
