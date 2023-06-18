@@ -31,7 +31,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
             <div className="case" onClick={e => this.onClick(e, item.id)}>
                 <Title className="caseTitle" text={translate(`authUsecaseCase${item.id}Title`)} />
                 <Label className="caseLabel" text={translate(`authUsecaseCase${item.id}Label`)} />
-                <img src={item.img} />
+                <div className="bg" style={{ backgroundImage: `url('${item.img}')` }} />
             </div>
         );
 

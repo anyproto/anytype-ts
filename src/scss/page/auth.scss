@@ -69,7 +69,7 @@ html.bodyAuthDeleted {
 	.footer { width: 100% !important; }
 
 	.icon.arrow.back {
-		position: fixed; top: 50%; left: 40px; width: 28px; height: 56px; cursor: pointer; margin-top: -22px; background-image: url('~img/arrow/auth0.svg');
+		position: fixed; top: 50%; left: 10px; width: 28px; height: 56px; cursor: pointer; margin-top: -22px; background-image: url('~img/arrow/auth0.svg');
 		background-position: center; background-repeat: no-repeat; background-size: 8px 24px;
 		z-index: 2;
 	}
@@ -106,10 +106,13 @@ html.bodyAuthDeleted {
 	.frame { width: 830px; }
 	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 24px; color: $colorPrimary; }
 	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; color: $colorSecondary; }
+
+	@media (max-width: 862px) {
+		.frame { width: calc(100% - 32px); }
+	}
 }
 
 .pageAuthLogin {
-	.frame { width: 1064px; top: 40%; margin-top: 0px !important; }
 	.form { width: 100%; }
 	.icon { height: 20px; width: 20px; }
 
@@ -161,8 +164,15 @@ html.bodyAuthDeleted {
 	.label { color: $colorSecondary; }
 }
 
-.pageAuthOnboard {
+.pageAuthOnboard, .pageAuthLogin {
 	.frame { width: 1064px; top: 40%; margin-top: 0px !important; }
+
+	@media (max-width: 1160px) {
+		.frame { width: calc(100% - 96px); }
+	}
+}
+
+.pageAuthOnboard {
 	.title { margin: 0px 0px 10px 0px; }
 	.label { margin: 0px 0px 20px 0px; }
 	.dotIndicator { margin: 0px 0px 8px 0px; }
