@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
-import { I, Storage, translate, C, UtilData, UtilCommon, Action } from 'Lib';
+import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -30,14 +30,9 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	render () {
 		const error = this.state.error || {};
-		
+		const back = <Icon className="arrow back" onClick={this.onCancel} />;
+
 		let content = null;
-		const back = (
-			<div className="authBackWrap" onClick={this.onCancel}>
-				<Icon className="back" />
-				<div className="name">{translate('commonBack')}</div>
-			</div>
-		);
 
 		if (error.code) {
 			if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
@@ -45,11 +40,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					<div className="importBackupWrap">
 						{back}
 
-						<Title text="⚡️ Congratulations!" />
-						<Label text="You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported." />
+						<Title className="animation" text="⚡️ Congratulations!" />
+						<Label className="animation" text="You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported." />
 
 						<div className="buttons">
-							<Button text="Import backup" onClick={this.onBackup} />
+							<div className="animation">
+								<Button text="Import backup" onClick={this.onBackup} />
+							</div>
 						</div>
 					</div>
 				);
@@ -58,10 +55,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					<React.Fragment>
 						{back}
 
-						<Title text="Error" />
-						<Error text={error.description} />
+						<Title className="animation" text="Error" />
+						<Error className="animation" text={error.description} />
+
 						<div className="buttons">
-							<Button text={translate('commonBack')} onClick={() => UtilCommon.route('/')} />
+							<div className="animation">
+								<Button text={translate('commonBack')} onClick={() => UtilCommon.route('/')} />
+							</div>
 						</div>
 					</React.Fragment>
 				);
@@ -95,10 +95,14 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				break;
 
 		};
+
+		Animation.to();
 	};
 
 	componentDidUpdate (): void {
 		this.refFrame.resize();
+
+		Animation.to();
 	};
 	
 	init () {

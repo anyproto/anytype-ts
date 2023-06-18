@@ -43,6 +43,19 @@ class Phrase extends React.Component<Props, State> {
 	placeholder = null;
 	entry = null;
 	timeout = 0;
+	range = null;
+
+	constructor (props: Props) {
+		super(props);
+
+		this.onSelect = this.onSelect.bind(this);
+		this.onClick = this.onClick.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onPaste = this.onPaste.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
+	};
 
 	render () {
 		const { readonly } = this.props;
@@ -82,6 +95,7 @@ class Phrase extends React.Component<Props, State> {
 			>
 				<div className="phraseInnerWrapper">
 					{phrase.map(renderWord)}
+
 					<span id="placeholder" className="placeholder">{translate('phrasePlaceholder')}</span>
 					<span 
 						id="entry" 
@@ -92,6 +106,7 @@ class Phrase extends React.Component<Props, State> {
 						onPaste={this.onPaste}
 						onBlur={this.onBlur}
 						onFocus={this.onFocus}
+						onSelect={this.onSelect}
 					>
 						{'\n'}
 					</span>
@@ -124,11 +139,11 @@ class Phrase extends React.Component<Props, State> {
 		this.entry = node.find('#entry');
 	};
 
-	onClick = () => {
+	onClick () {
 		this.focus();
 	};
 
-	onKeyDown = (e: React.KeyboardEvent) => {
+	onKeyDown (e: React.KeyboardEvent) {
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
 		});
@@ -145,29 +160,28 @@ class Phrase extends React.Component<Props, State> {
 
 			this.setState(({ phrase }) => {
 				phrase.pop();
-				return { phrase }
+				return { phrase };
 			});
 		});
 
 		this.placeholderCheck();
 	};
 
-	onKeyUp = (e: React.KeyboardEvent) => {
+	onKeyUp (e: React.KeyboardEvent) {
 		const value = this.getEntryValue();
 
 		keyboard.shortcut('space, enter', e, () => {
-			if (value.length) {
-				e.preventDefault();
-				this.clear();
-				this.setState(({ phrase }) => ({ phrase: phrase.concat([ value ]) }));
-			}
+			e.preventDefault();
+			this.clear();
+			this.setState(({ phrase }) => ({ phrase: phrase.concat([ value ]) }));
 		});
 
 		this.placeholderCheck();
 	};
 
-	onPaste = (e) => {
+	onPaste (e) {
 		e.preventDefault();
+
 		const cb = e.clipboardData || e.originalEvent.clipboardData;
 		const text = this.normalizeWhiteSpace(cb.getData('text/plain'));
 
@@ -175,32 +189,38 @@ class Phrase extends React.Component<Props, State> {
 		this.setState(({ phrase }) => ({ phrase: phrase.concat(text.split(' ')) }));
 	};
 
-	onBlur = () => {
+	onBlur () {
 		this.placeholderCheck();
 	};
 
-	onFocus = () => {
+	onFocus () {
 		this.placeholderCheck();
 	};
 
-	toggleVisibility = () => {
+	onSelect () {
+		const node = $(this.node);
+
+		this.range = getRange(node.find('#entry').get(0));
+	};
+
+	toggleVisibility () {
 		this.setState({ isHidden: !this.state.isHidden });
 	};
 
-	publicsetError = () => {
+	publicsetError () {
 		this.setState({ hasError: true })
 	};
 
-	focus = () => {
+	focus () {
 		this.entry.trigger('focus');
-		setRange(this.entry.get(0), { start: 0, end: 0 });
+		setRange(this.entry.get(0), this.range || { start: 0, end: 0 });
 	};
 
-	clear = () => {
+	clear () {
 		this.entry.text('');
 	};
 
-	getEntryValue = () => {
+	getEntryValue () {
 		return this.normalizeWhiteSpace(this.entry.text());
 	};
 
@@ -208,8 +228,8 @@ class Phrase extends React.Component<Props, State> {
 		return val.replace(/\s\s+/g, ' ').trim() || '';
 	};
 
-	getValue = () => {
-		return this.state.phrase.join(' ');
+	getValue () {
+		return this.state.phrase.join(' ').trim();
 	};
 
 	placeholderCheck () {

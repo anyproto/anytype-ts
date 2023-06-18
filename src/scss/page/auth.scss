@@ -109,7 +109,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthLogin {
-	.frame { width: 830px; }
+	.frame { width: 1064px; top: 40%; margin-top: 0px !important; }
 	.form { width: 100%; }
 	.icon { height: 20px; width: 20px; }
 
@@ -143,13 +143,10 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthSetup {
-	.title { margin: 0px; }
-	.title.withLabel { margin-bottom: 22px; }
-	.button { width: auto; }
+	.frame { width: 480px; }
 
-	.importBackupWrap { text-align: left; }
 	.importBackupWrap {
-		.title { @include text-header1; margin: 0px 0px 16px 0px; }
+		.title { margin: 0px 0px 12px 0px; }
 		.label { margin: 0px 0px 32px 0px; }
 	}
 }
@@ -158,9 +155,9 @@ html.bodyAuthDeleted {
 	.frame { padding-bottom: 48px; }
 }
 
-.pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted {
+.pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
 	.frame { display: flex; flex-direction: column; align-items: center; }
-	.title { font-size: 18px; line-height: 26px; color: $colorPrimary; }
+	.title { @include text-description; color: $colorPrimary; }
 	.label { color: $colorSecondary; }
 }
 
