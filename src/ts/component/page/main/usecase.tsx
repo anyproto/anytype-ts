@@ -28,10 +28,14 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 		const items = this.getItems();
 
         const Case = (item: any) => (
-            <div className="case" onClick={e => this.onClick(e, item.id)}>
-                <Title className="caseTitle" text={translate(`authUsecaseCase${item.id}Title`)} />
-                <Label className="caseLabel" text={translate(`authUsecaseCase${item.id}Label`)} />
-                <div className="bg" style={{ backgroundImage: `url('${item.img}')` }} />
+            <div className="item" onClick={e => this.onClick(e, item.id)}>
+				<div className="head">
+                	<Title text={translate(`authUsecaseCase${item.id}Title`)} />
+                	<Label text={translate(`authUsecaseCase${item.id}Label`)} />
+				</div>
+                <div className="picture">
+					<img src={item.img} />
+				</div>
             </div>
         );
 
@@ -42,10 +46,10 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
                 <Frame>
 					{isLoading ? <Loader /> : ''}
 
-                    <Title className="frameTitle" text={translate('authUsecaseTitle')} />
-                    <Label className="frameLabel" text={translate('authUsecaseLabel')} />
+                    <Title text={translate('authUsecaseTitle')} />
+                    <Label text={translate('authUsecaseLabel')} />
 
-                    <div className="usecaseList">
+                    <div className="list">
                         {items.map((item: any, i: number) => (
                             <Case key={i} {...item} />
                         ))}
