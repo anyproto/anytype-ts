@@ -5,10 +5,14 @@ require('dotenv').config();
 function execPromise (command) {
     return new Promise(function(resolve, reject) {
         exec(command, (error, stdout, stderr) => {
+			console.log('Error: ', error);
+
             if (error) {
                 reject(error);
                 return;
             };
+
+			console.log('Out: ', stdout.trim());
 
             resolve(stdout.trim());
         });
@@ -17,10 +21,6 @@ function execPromise (command) {
 
 exports.default = async function (context) {
 	const { packager, file } = context;
-
-	console.log('-----------------------------------------');
-	console.log('PACKAGER:', packager.platform.name);
-	console.log('-----------------------------------------');
 
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
@@ -38,6 +38,7 @@ exports.default = async function (context) {
 			-v
 			-ifl "${fileName}"
 		`
+		console.log(cmd);
 
 		return await execPromise(cmd);
 	};
