@@ -349,7 +349,7 @@ class App extends React.Component<object, State> {
 		this.init();
 
 		window.setTimeout(() => {
-			popupStore.open('settings', { data: { page: 'storageIndex' } });
+			popupStore.open('settings', { data: { page: 'spaceStorageManager' } });
 
 		},1500);
 	};

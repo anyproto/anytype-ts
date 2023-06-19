@@ -7,6 +7,7 @@ import { popupStore, detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PageAccount from './page/settings/account';
+import PageDataManagement from './page/settings/data';
 import PageDelete from './page/settings/delete';
 import PagePersonal from './page/settings/personal';
 import PageAppearance from './page/settings/appearance';
@@ -16,9 +17,6 @@ import PageLogout from './page/settings/logout';
 import PagePinIndex from './page/settings/pin/index';
 import PagePinSelect from './page/settings/pin/select';
 import PagePinConfirm from './page/settings/pin/confirm';
-
-import PageStorageIndex from './page/settings/storage/index';
-import PageStorageManager from './page/settings/space/storage';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
@@ -32,6 +30,7 @@ import PageExportProtobuf from './page/settings/export/protobuf';
 import PageExportMarkdown from './page/settings/export/markdown';
 
 import PageSpaceIndex from './page/settings/space/index';
+import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceInvite from './page/settings/space/invite';
 import PageSpaceTeam from './page/settings/space/team';
 import PageSpaceLeave from './page/settings/space/leave';
@@ -43,6 +42,7 @@ interface State {
 
 const Components: any = {
 	account:			 PageAccount,
+	dataManagement: 	 PageDataManagement,
 	delete:				 PageDelete,
 	personal:			 PagePersonal,
 	appearance:			 PageAppearance,
@@ -53,8 +53,6 @@ const Components: any = {
 	pinSelect:			 PagePinSelect,
 	pinConfirm:			 PagePinConfirm,
 
-	storageIndex: 		 PageStorageIndex,
-	storageManager: 	 PageStorageManager,
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
@@ -68,6 +66,7 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
+	spaceStorageManager: PageSpaceStorageManager,
 	spaceInvite:		 PageSpaceInvite,
 	spaceTeam:		 	 PageSpaceTeam,
 	spaceLeave:		 	 PageSpaceLeave,
@@ -241,7 +240,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			return [
 				{ 
 					name: 'Space', isHidden: true, children: [
-						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'storageManager', 'importIndex', 'exportIndex' ] },
+						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager', 'importIndex', 'exportIndex' ] },
 					]
 				},
 			];
@@ -250,7 +249,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				{ children: [ { id: 'account', name: 'Profile', subPages: [ 'logout' ] } ] },
 				{ 
 					name: 'Void & key', children: [
-						{ id: 'storageIndex', name: translate('popupSettingsStorageIndexTitle'), icon: 'storage', subPages: [ 'delete' ] },
+						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 					]
 				},

@@ -132,6 +132,12 @@
 				.icon.logo { width: 54px; height: 54px; margin: 0px 0px 16px 0px; }
 
 				ol, ul { padding-left: 1.35em; margin: 8px 0px; }
+
+				.actionItems { border: 1px solid $colorBorderLight; border-radius: 12px; margin-bottom: 40px; }
+				.actionItems {
+					.item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
+					.item:last-child { border-bottom: 0; }
+				}
 			}
 		}
 
@@ -267,13 +273,12 @@
 			}
 		}
 
-		.side.right.tabStorageIndex {
+		.side.right.tabDataManagement {
 			.description {
 				.label { display: inline; }
 				.label.extend { color: $colorRed; }
 			}
 
-			.storageUsage { display: flex; justify-content: space-between; align-items: center; border: 1px solid $colorBorderLight; border-radius: 12px; padding: 14px 16px; margin-bottom: 40px; }
 			.storageUsage {
 				.space { margin-bottom: 0px; padding: 0; }
 				.space {
@@ -284,8 +289,8 @@
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
 
-		.side.right.tabStorageManager { padding: 22px 0px 0px 0px; }
-		.side.right.tabStorageManager {
+		.side.right.tabSpaceStorageManager { padding: 22px 0px 0px 0px; }
+		.side.right.tabSpaceStorageManager {
 			> .wrap { height: 100%; display: flex; flex-direction: column; }
 			> .wrap {
 				.head, .title { padding: 0px 54px; }

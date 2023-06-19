@@ -40,7 +40,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		if (isRed) {
 			usageCn.push('red');
-			extend = <Label text="Get more space." onClick={this.onExtend} className="extend" />;
+			extend = <Label text={translate(`popupSettingsSpaceIndexRemoteStorageExtend`)} onClick={this.onExtend} className="extend" />;
 		};
 
 		// old accounts don't have space creation date
@@ -100,13 +100,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexRemoteStorageTitle`)} />
 										<div className="storageLabel">
-											<Label text={UtilCommon.sprintf(translate(`popupSettingsStorageIndexText`), UtilFile.size(bytesLimit))} />
+											<Label text={UtilCommon.sprintf(translate(`popupSettingsSpaceIndexStorageText`), UtilFile.size(bytesLimit))} />
 											&nbsp;
 											{extend}
 										</div>
 									</div>
 									<div className="side right">
-										<Button onClick={() => onPage('storageManager')} text={translate('popupSettingsStorageIndexManageFiles')} color="blank" className="c28" />
+										<Button onClick={() => onPage('spaceStorageManager')} text={translate('popupSettingsSpaceIndexStorageManageFiles')} color="blank" className="c28" />
 
 									</div>
 								</div>
