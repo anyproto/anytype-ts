@@ -63,7 +63,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 						Info={Info}
 						iconSize={48}
 						resize={this.resize}
-						textEmpty={translate('archiveEmptyLabel')}
+						textEmpty={translate('pageMainArchiveEmpty')}
 					/>
 				</div>
 
