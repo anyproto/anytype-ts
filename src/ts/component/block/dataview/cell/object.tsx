@@ -304,7 +304,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 
 		const node = $(this.node);
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
+		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -314,7 +314,7 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			};
 		});
 		
-		keyboard.shortcut('backspace', e, (pressed: string) => {
+		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
 			const range = getRange(node.find('#entry').get(0));

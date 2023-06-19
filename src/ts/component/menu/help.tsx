@@ -136,6 +136,11 @@ class MenuHelp extends React.Component<I.Menu> {
 			};
 
 			case 'hints': {
+				const isPopup = keyboard.isPopup();
+				const rootId = keyboard.getRootId();
+				const isEditor = keyboard.isMainEditor();
+				const isSet = keyboard.isMainSet();
+
 				let key = '';
 
 				if (isEditor && home && (rootId == home.id)) {

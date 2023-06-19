@@ -1,18 +1,9 @@
 import * as React from 'react';
-import { Frame, Cover, Title, Label, Error, Button, Header, Footer } from 'Component';
-import { I, UtilCommon, translate, C } from 'Lib';
-import { commonStore } from 'Store';
+import { Frame, Title, Label, Button, Header, Footer } from 'Component';
+import { I, UtilCommon, translate, Animation } from 'Lib';
 import { observer } from 'mobx-react';
 
-interface State {
-	error: string;
-};
-
-const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent, State> {
-
-	state = {
-		error: ''
-	};
+const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent> {
 
 	constructor (props: I.PageComponent) {
         super(props);
@@ -20,37 +11,43 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 		this.onLogin = this.onLogin.bind(this);
 		this.onRegister = this.onRegister.bind(this);
 	};
-	
+
 	render () {
-		const { cover } = commonStore;
-		const { error } = this.state;
-		
         return (
 			<div>
-				<Cover {...cover} className="main" />
-				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
-				
+				<Header {...this.props} className="animation" component="authIndex" />
 				<Frame>
-					<Title text={translate('authSelectTitle')} />
-					<Label text={translate('authSelectLabel')} />
-					<Error text={error} />
-								
+					<Title className="animation" text={translate('authSelectTitle')} />
+					<Label className="animation" text={translate('authSelectLabel')} />
+
 					<div className="buttons">
-						<Button text={translate('authSelectLogin')} type="input" onClick={this.onLogin} />
-						<Button text={translate('authSelectSignup')} type="input" color="blank" onClick={this.onRegister} />
+						<div className="animation">
+							<Button text={translate('authSelectSignup')} onClick={this.onRegister} />
+						</div>
+						<div className="animation">
+							<Button text={translate('authSelectLogin')} color="blank" onClick={this.onLogin} />
+						</div>
 					</div>
 				</Frame>
+				<Footer {...this.props} className="animation" component="authIndex" />
 			</div>
 		);
 	};
-	
-	onLogin (e: any) {
-		UtilCommon.route('/auth/login');
+
+	componentDidMount(): void {
+		Animation.to();
 	};
-	
-	onRegister (e: any) {
-		UtilCommon.route('/auth/register/register');
+
+	componentDidUpdate(): void {
+		Animation.to();
+	};
+
+	onLogin () {
+		Animation.from(() => { UtilCommon.route('/auth/login'); });
+	};
+
+	onRegister () {
+		Animation.from(() => { UtilCommon.route('/auth/onboard'); });
 	};
 	
 });

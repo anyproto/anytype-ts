@@ -326,6 +326,7 @@ class UtilCommon {
 		};
 	};
 
+	/** The current time in seconds, rounded down to the nearest second */
 	time (): number {
 		const date = new Date();
 		const timestamp = Math.floor(date.getTime() / 1000);

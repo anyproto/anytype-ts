@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Frame, Cover, Error, Header, Footer, Loader, Title, Label, Button } from 'Component';
-import { I, C, UtilCommon, UtilData, Renderer, Action } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { Frame, Error, Header, Footer, Loader } from 'Component';
+import { I, C, UtilCommon, UtilData, Renderer } from 'Lib';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
 
@@ -18,14 +18,12 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 	};
 
 	render () {
-		const { cover } = commonStore;
 		const { loading, error } = this.state;
 		const { accounts } = authStore;
 		const length = accounts.length;
 
 		return (
 			<div>
-				<Cover {...cover} className="main" />
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				

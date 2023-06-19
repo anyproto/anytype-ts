@@ -143,13 +143,7 @@ class UtilObject {
 			return;
 		};
 
-		const { root } = blockStore;
 		const action = this.actionByLayout(object.layout);
-
-		if ((action == 'edit') && (object.id == root)) {
-			this.openRoute(object);
-			return;
-		};
 
 		param = param || {};
 		param.preventResize = true;

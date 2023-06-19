@@ -1,6 +1,5 @@
 import { Rpc } from 'protobuf/pb/protos/commands_pb';
-import { Decode } from './struct';
-import { Mapper } from './mapper';
+import { Decode, Mapper } from 'Lib';
 
 export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
 	return {

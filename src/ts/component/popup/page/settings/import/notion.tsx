@@ -36,7 +36,8 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 				<div className="inputWrapper flex">
 					<div className="errorWrapper">
 						<Input 
-							ref={ref => this.ref = ref} 
+							focusOnMount
+							ref={(ref: any) => { this.ref = ref; }} 
 							type="password"
 							placeholder="Paste your integration token"
 						/>
@@ -67,11 +68,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 			</React.Fragment>
 		);
 	};
-
-	componentDidMount(): void {
-		this.ref.focus();
-	};
-
+	
 	onImport (): void {
 		const token = this.ref.getValue();
 

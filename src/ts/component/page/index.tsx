@@ -9,11 +9,10 @@ import Constant from 'json/constant.json';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
-import PageAuthPinCheck from './auth/pin/check';
+import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
-import PageAuthAccountSelect from './auth/account/select';
-import PageAuthRegister from './auth/register';
-import PageAuthSuccess from './auth/success';
+import PageAuthAccountSelect from './auth/accountSelect';
+import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
 
 import PageMainEmpty from './main/empty';
@@ -31,15 +30,15 @@ import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
 import PageMainUsecase from './main/usecase';
 
-const Components: any = {
-	'/':					 PageAuthSelect,
+const Components = {
+	'index/index':			 PageAuthSelect,
+
 	'auth/select':			 PageAuthSelect,
-	'auth/register':		 PageAuthRegister,
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
-	'auth/success':			 PageAuthSuccess,
+	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
 
 	'main/empty':			 PageMainEmpty,		
@@ -76,10 +75,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { isPopup } = this.props;
 		const { config, theme } = commonStore;
 		const { account } = authStore;
-		const match = this.getMatch();
-		const { page, action } = match.params || {};
+		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
-		const showSidebar = (page == 'main') && (action != 'usecase');
+		const showSidebar = this.isMain() && !this.isMainUsecase();
 
 		if (account) {
 			const { status } = account || {};
@@ -142,20 +140,31 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		return (isPopup ? matchPopup : match) || { params: {} };
 	};
 
-	getRootId () {
+	getMatchParams () {
 		const match = this.getMatch();
-		return match?.params?.id || blockStore.root;
+		const page = String(match?.params?.page || 'index');
+		const action = String(match?.params?.action || 'index');
+		const id = String(match?.params?.id || '');
+
+		return { page, action, id };
+	};
+
+	getRootId () {
+		const { id } = this.getMatchParams();
+		const home = UtilObject.getSpaceDashboard();
+
+		return id || home?.id;
 	};
 
 	init () {
 		const { account } = authStore;
 		const { isPopup, history } = this.props;
 		const match = this.getMatch();
-		const { page, action } = match.params || {};
-		const isIndex = !page;
-		const isAuth = page == 'auth';
-		const isMain = page == 'main';
-		const isPinCheck = isAuth && (action == 'pin-check');
+		const { page, action } = this.getMatchParams();
+		const isIndex = this.isIndex();
+		const isAuth = this.isAuth();
+		const isMain = this.isMain();
+		const isPinCheck = this.isAuthPinCheck();
 		const pin = Storage.get('pin');
 		const win = $(window);
 		const path = [ page, action ].join('/');
@@ -220,9 +229,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 
 	dashboardOnboardingCheck () {
-		const match = this.getMatch();
 		const home = UtilObject.getSpaceDashboard();
-		const { id } = match.params;
+		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 
 		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('dashboard')) {
@@ -238,14 +246,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 	
 	event () {
-		let match = this.getMatch();
-		let page = String(match.params.page || 'index');
-		let action = String(match.params.action || 'index');
-		let id = String(match.params.id || '');
-		let params: any = { page, action };
-		let isMain = page == 'main';
-		let isMainType = isMain && (action == 'type');
-		let isMainRelation = isMain && (action == 'relation');
+		const { page, action, id } = this.getMatchParams();
+		const params = { page, action, id: undefined };
+		const isMainType = this.isMainType();
+		const isMainRelation = this.isMainRelation();
 
 		if (isMainType || isMainRelation) {
 			params.id = id;
@@ -253,11 +257,50 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		analytics.event('page', { params });
 	};
-	
+
+	isIndex () {
+		const { page } = this.getMatchParams();
+		return page == 'index';
+	};
+
+	isAuth () {
+		const { page } = this.getMatchParams();
+		return page == 'auth';
+	};
+
+	isAuthPinCheck () {
+		const { action } = this.getMatchParams();
+		return this.isAuth() && (action == 'pin-check');
+	};
+
+	isMain () {
+		const { page } = this.getMatchParams();
+		return page == 'main';
+	};
+
+	isMainIndex () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'index');
+	};
+
+	isMainType () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'type');
+	};
+
+	isMainRelation () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'relation');
+	};
+
+	isMainUsecase () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'usecase');
+	};
+
 	getClass (prefix: string) {
 		const { isPopup } = this.props;
-		const match = this.getMatch();
-		const page = match.params.page || 'index';
+		const { page } = this.getMatchParams();
 		
 		return [ 
 			UtilCommon.toCamelCase([ prefix, page ].join('-')),
@@ -301,7 +344,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		return Storage.get(this.getId('page')) || {};
 	};
 
-	storageSet (data: any) {
+	storageSet (data) {
 		Storage.set(this.getId('page'), data);
 	};
 	

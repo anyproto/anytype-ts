@@ -1,17 +1,18 @@
 const { exec } = require('child_process');
-const package = require('../../package.json');
-const path = require('path');
-const fs = require('fs');
 
 require('dotenv').config();
 
 function execPromise (command) {
     return new Promise(function(resolve, reject) {
         exec(command, (error, stdout, stderr) => {
+			console.log('Error: ', error);
+
             if (error) {
                 reject(error);
                 return;
             };
+
+			console.log('Out: ', stdout.trim());
 
             resolve(stdout.trim());
         });
@@ -37,6 +38,7 @@ exports.default = async function (context) {
 			-v
 			-ifl "${fileName}"
 		`
+		console.log(cmd);
 
 		return await execPromise(cmd);
 	};

@@ -9,8 +9,6 @@ class AuthStore {
 	public accountPathValue = '';
 	public accountItem: I.Account = null;
 	public accountList: I.Account[] = [];
-	public icon = '';
-	public preview = '';
 	public name = '';
 	public phrase = '';
 	public token = '';
@@ -22,8 +20,6 @@ class AuthStore {
 			accountPathValue: observable,
 			accountItem: observable,
 			accountList: observable,
-			icon: observable,
-			preview: observable,
 			name: observable,
 			phrase: observable,
 			threadMap: observable,
@@ -34,8 +30,6 @@ class AuthStore {
 			walletPathSet: action,
 			accountPathSet: action,
 			phraseSet: action,
-			iconSet: action,
-			previewSet: action,
 			nameSet: action,
 			accountAdd: action,
 			accountSet: action,
@@ -72,14 +66,6 @@ class AuthStore {
 
 	phraseSet (v: string) {
 		this.phrase = v;
-    };
-
-	iconSet (v: string) {
-		this.icon = v;
-    };
-
-	previewSet (v: string) {
-		this.preview = v;
     };
 
 	nameSet (v: string) {
@@ -154,8 +140,6 @@ class AuthStore {
 		this.accountItem = null;
 
 		this.accountListClear();
-		this.iconSet('');
-		this.previewSet('');
 		this.nameSet('');
 		this.phraseSet('');
 	};
@@ -172,7 +156,6 @@ class AuthStore {
 
 		keyboard.setPinChecked(false);
 
-		commonStore.coverSetDefault();
 		commonStore.workspaceSet('');
 
 		blockStore.clearAll();
