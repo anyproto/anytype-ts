@@ -4,6 +4,8 @@ import { I, UtilCommon, translate } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore } from 'Store';
 
+import Head from '../head';
+
 interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any) => void;
 };
@@ -11,6 +13,7 @@ interface Props extends I.PopupSettings {
 const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex extends React.Component<Props> {
 
 	render () {
+		const { onPage } = this.props;
 		const items = this.getItems();
 
 		const Item = (item: any) => {
@@ -24,6 +27,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 		return (
 			<React.Fragment>
+				<Head onPage={() => onPage('spaceIndex')} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsImportTitle')} />
 				<Label className="description" text={translate('popupSettingsImportText')} />
 

@@ -55,6 +55,15 @@
 					.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 				}
 
+				.item.itemAccount { padding: 8px; gap: 0 14px; align-items: center; }
+				.item.itemAccount {
+					.name { @include text-common; font-weight: 600; }
+					.onlineStatus { @include text-small; color: $colorDarkGrey; font-weight: 400; text-transform: capitalize; display: flex; gap: 0 6px; align-items: center; }
+					.onlineStatus:before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+					.onlineStatus.online:before { background: $colorLime; }
+					.onlineStatus.offline:before { background: $colorRed; }
+				}
+
 				.select { transition: none; border: 0px; color: $colorMediumGrey; max-width: 100%; }
 				.select { 
 					.icon.arrow { top: 3px; margin: 0px !important; }
@@ -123,6 +132,12 @@
 				.icon.logo { width: 54px; height: 54px; margin: 0px 0px 16px 0px; }
 
 				ol, ul { padding-left: 1.35em; margin: 8px 0px; }
+
+				.actionItems { border: 1px solid $colorBorderLight; border-radius: 12px; margin-bottom: 40px; }
+				.actionItems {
+					.item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
+					.item:last-child { border-bottom: 0; }
+				}
 			}
 		}
 
@@ -138,8 +153,115 @@
 		.side.right.tabExportProtobuf
 		{ padding-top: 22px; }
 
+		.side.right.tabAccount {
+			.sections { display: flex; flex-direction: column; height: 100%; }
+			.sections {
+				.section { margin-bottom: 40px; display: flex; flex-direction: column; gap: 12px 0px; }
+				.section.top { margin-bottom: 16px; }
+				.section.bottom { height: 100%; flex-direction: row; align-items: end; margin-bottom: 0; }
+
+				.section {
+					.iconWrapper { margin-bottom: 0; }
+					.title { @include text-header3; margin: 0; }
+					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorBorderDark; border-radius: 6px; }
+					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorYellow; padding: 5px 11px; }
+
+					.accountId { position: relative; }
+					.accountId {
+						.input { background-color: unset; @include text-small; color: $colorDarkGrey; }
+						.icon.copy {
+							width: 20px; height: 20px; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
+							opacity: 0; transition: $transitionAllCommon;
+						}
+					}
+					.accountId:hover .icon.copy { opacity: 1; }
+				}
+			}
+		}
+
 		.side.right.tabSpaceIndex {
-			> .iconObject { margin: 0px 0px 12px 0px; }
+			.spaceSettingsIndexHeader { display: flex; align-items: center; margin-bottom: 32px; }
+			.spaceSettingsIndexHeader {
+				.iconWrapper { margin-bottom: 0; }
+
+				.headerContent { margin-left: 24px; width: 100%; }
+				.headerContent {
+					.input { padding: 0; }
+
+					.name { margin-bottom: 8px; }
+					.name .input { @include text-header1; }
+
+					.spaceType {
+						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
+						background: $colorHoverLight url('~img/icon/space/personal.svg') 4px 2px no-repeat;
+						@include text-small; color: $colorDarkGrey;
+					}
+				}
+			}
+
+			.sections {
+				.section { margin-bottom: 32px; }
+				.section {
+					.title { @include text-header3; margin-bottom: 12px; }
+					.label { @include text-small; color: $colorDarkGrey; }
+
+					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; }
+					.sectionContent .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
+					.sectionContent .item:last-child { border-bottom: 0; }
+					.sectionContent .item {
+						.sides { display: flex; justify-content: space-between; }
+						.sides {
+							.side { width: unset; background: unset; padding: unset; }
+							.left { margin-right: 16px; }
+							.right { flex-shrink: 0; }
+						}
+
+						.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
+						.title:last-child { margin-bottom: 0px; }
+
+						.button { white-space: nowrap; }
+						.button.dashboardSelect .icon { width: 8px; height: 8px; margin-left: 6px; }
+
+						.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
+						.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
+						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+						.icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
+					}
+				}
+
+				.section.sectionSpaceManager .sectionContent .item {
+					.storageLabel { margin-bottom: 12px; }
+					.storageLabel .label { display: inline; }
+					.storageLabel .label.extend { color: $colorRed; cursor: pointer; }
+
+					.progressBar .fill { background: $colorLime; }
+				}
+				.section.sectionSpaceManager .sectionContent .item.red {
+					.progressBar .fill { background: $colorRed; }
+				}
+
+				.section.sectionIntegrations .sectionContent .item { cursor: pointer; }
+				.section.sectionIntegrations .sectionContent .item {
+					.side.left { display: flex; gap: 0 12px; }
+					.side.left {
+						.icon { width: 22px; height: 22px; }
+						.title { margin-bottom: 0; }
+					}
+					.arrow { width: 6px; height: 11px; }
+				}
+
+				.section.sectionInfo .sectionContent {
+					.item.itemSpaceId,
+					.item.itemAccountId { align-items: center; cursor: pointer; }
+
+					.item.itemSpaceId .icon,
+					.item.itemAccountId .icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
+
+					.item.itemSpaceId:hover .icon,
+					.item.itemAccountId:hover .icon { opacity: 1; }
+				}
+			}
 		}
 
 		.side.right.tabPhrase {
@@ -151,17 +273,14 @@
 			}
 		}
 
-		.side.right.tabStorageIndex {
-			.title { margin-bottom:  32px; }
-
+		.side.right.tabDataManagement {
 			.description {
 				.label { display: inline; }
 				.label.extend { color: $colorRed; }
 			}
 
-			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
 			.storageUsage {
-				.space { margin-bottom: 16px; }
+				.space { margin-bottom: 0px; padding: 0; }
 				.space {
 					.txt .type.red { color: $colorRed; }
 				}
@@ -170,8 +289,8 @@
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
 
-		.side.right.tabStorageManager { padding: 22px 0px 0px 0px; }
-		.side.right.tabStorageManager {
+		.side.right.tabSpaceStorageManager { padding: 22px 0px 0px 0px; }
+		.side.right.tabSpaceStorageManager {
 			> .wrap { height: 100%; display: flex; flex-direction: column; }
 			> .wrap {
 				.head, .title { padding: 0px 54px; }
@@ -210,7 +329,7 @@
 		}
 
 		.side.right.tabAppearance {
-			.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 32px 0px; flex-wrap: wrap; }
+			.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 46px 0px; flex-wrap: wrap; }
 			.label.section { margin-bottom: 8px; }
 
 			.btn { text-align: center; @include text-small; color: $colorDarkGrey; }
@@ -244,6 +363,20 @@
 			}
 			.btn.system.active {
 				.bg::before { box-shadow: 0px 0px; }
+			}
+		}
+
+		.side.right.tabPersonal {
+			.title { margin-bottom: 32px; }
+
+			.select {
+				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
+				height: 28px; padding: 0px 26px 0 12px; border-radius: 8px; transition: $transitionAllCommon;
+				display: flex; align-items: center;
+			}
+			.select {
+				.item { border-bottom: 0; color: $colorBlack; }
+				.icon.arrow { right: 3px !important; }
 			}
 		}
 

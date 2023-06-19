@@ -10,42 +10,40 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 		const { autoSidebar } = commonStore;
 		const { theme } = commonStore;
 		const themes: any[] = [
-			{ id: '', class: 'light', name: 'Light' },
-			{ id: 'dark', class: 'dark', name: 'Dark' },
-			{ id: 'system', class: 'system', name: 'System' },
+			{ id: '', class: 'light', name: translate('popupSettingsAppearanceColorModeButtonLight') },
+			{ id: 'dark', class: 'dark', name: translate('popupSettingsAppearanceColorModeButtonDark') },
+			{ id: 'system', class: 'system', name: translate('popupSettingsAppearanceColorModeButtonSystem') },
 		];
 
 		return (
 			<React.Fragment>
 				<Title text={translate('popupSettingsAppearanceTitle')} />
 
-				<div className="rows">
-					<Label className="section" text="Color mode" />
+				<Label className="section" text={translate('popupSettingsAppearanceColorMode')} />
 
-					<div className="buttons">
-						{themes.map((item: any, i: number) => (
-							<div 
-								key={i} 
-								className={[ 'btn', (theme == item.id ? 'active' : ''), item.class ].join(' ')} 
-								onClick={() => { this.onTheme(item.id); }}
-							>
-								<div className="bg">
-									<Icon />
-								</div>
-								<Label text={item.name} />
+				<div className="buttons">
+					{themes.map((item: any, i: number) => (
+						<div
+							key={i}
+							className={[ 'btn', (theme == item.id ? 'active' : ''), item.class ].join(' ')}
+							onClick={() => { this.onTheme(item.id); }}
+						>
+							<div className="bg">
+								<Icon />
 							</div>
-						))}
-					</div>
-
-					<div className="rows">
-						<div className="row">
-							<div className="side left">
-								<Label text="Automatically show and hide sidebar" />
-							</div>
-							<div className="side right">
-								<Switch value={autoSidebar} className="big" onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
-							</div>
+							<Label text={item.name} />
 						</div>
+					))}
+				</div>
+
+				<Label className="section" text={translate('popupSettingsAppearancePersonalisation')} />
+
+				<div className="actionItems">
+					<div className="item">
+
+						<Label text={translate('popupSettingsAppearancePersonalisationSidebar')} />
+
+						<Switch value={autoSidebar} onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
 					</div>
 				</div>
 			</React.Fragment>

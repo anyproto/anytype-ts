@@ -37,7 +37,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
         return (
             <div className="wrap">
                 <Head onPage={this.onBack} name={translate('commonBack')} />
-                <Title text={translate('popupSettingsStorageManagerTitle')} />
+                <Title text={translate('popupSettingsSpaceStorageManagerTitle')} />
 
                 <ListObjectManager
                     ref={ref => this.refManager = ref}
@@ -47,9 +47,9 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                     buttons={buttons}
                     Info={Info}
                     iconSize={18}
+                    sorts={sorts}
                     filters={filters}
-					sorts={sorts}
-                    textEmpty={translate('popupSettingsStorageEmptyLabel')}
+                    textEmpty={translate('popupSettingsSpaceStorageManagerEmptyLabel')}
                 />
             </div>
         );
@@ -66,9 +66,13 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
         popupStore.open('confirm', {
             data: {
-                title: `Are you sure you want to delete ${count} ${UtilCommon.cntWord(count, 'object', 'objects')}?`,
-                text: 'These objects will be deleted irrevocably. You can\'t undo this action.',
-                textConfirm: 'Delete',
+                title: UtilCommon.sprintf(
+                    translate(`popupSettingsSpaceStorageManagerDeletionWarningTitle`),
+                    count,
+                    UtilCommon.cntWord(count, translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObject`), translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObjects`))
+                ),
+                text: translate(`popupSettingsSpaceStorageManagerDeletionWarningText`),
+                textConfirm: translate(`popupSettingsSpaceStorageManagerDeletionWarningConfirm`),
                 onConfirm: () => {
 					C.ObjectListSetIsArchived(this.refManager?.selected, true, () => {
 						C.ObjectListDelete(this.refManager?.selected);
@@ -83,7 +87,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
     };
 
     onBack = () => {
-        this.props.onPage('storageIndex');
+        this.props.onPage('spaceIndex');
     };
 });
 

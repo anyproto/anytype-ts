@@ -22,39 +22,34 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 			<React.Fragment>
 				<Title text={translate('popupSettingsPersonalTitle')} />
 
-				<div className="rows">
-					<div className="row">
-						<div className="side left">
-							<Label text="Default object type" />
-						</div>
-						<div className="side right">
-							<div id="defaultType" className="select" onClick={this.onType}>
-								<div className="item">
-									<div className="name">{type?.name || 'Select'}</div>
-								</div>
-								<Icon className="arrow light" />
+				<div className="actionItems">
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalDefaultObjectType')} />
+
+						<div id="defaultType" className="select" onClick={this.onType}>
+							<div className="item">
+								<div className="name">{type?.name || translate('popupSettingsPersonalDefaultObjectTypeSelect')}</div>
 							</div>
+							<Icon className="arrow black" />
 						</div>
 					</div>
 
-					<div className="row">
-						<div className="side left">
-							<Label text="Spellcheck languages" />
-						</div>
-						<div className="side right">
-							<Select 
-								id="spellcheck" 
-								value={config.languages} 
-								options={languages} 
-								onChange={v => Renderer.send('setLanguage', v)}
-								arrowClassName="light"
-								isMultiple={true}
-								noFilter={false}
-								menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
-							/>
-						</div>
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalSpellcheckLanguages')} />
+
+						<Select
+							id="spellcheck"
+							value={config.languages}
+							options={languages}
+							onChange={v => Renderer.send('setLanguage', v)}
+							arrowClassName="black"
+							isMultiple={true}
+							noFilter={false}
+							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
+						/>
 					</div>
 				</div>
+
 			</React.Fragment>
 		);
 	};

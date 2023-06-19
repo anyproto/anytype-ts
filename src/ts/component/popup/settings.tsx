@@ -7,6 +7,7 @@ import { popupStore, detailStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PageAccount from './page/settings/account';
+import PageDataManagement from './page/settings/data';
 import PageDelete from './page/settings/delete';
 import PagePersonal from './page/settings/personal';
 import PageAppearance from './page/settings/appearance';
@@ -16,9 +17,6 @@ import PageLogout from './page/settings/logout';
 import PagePinIndex from './page/settings/pin/index';
 import PagePinSelect from './page/settings/pin/select';
 import PagePinConfirm from './page/settings/pin/confirm';
-
-import PageStorageIndex from './page/settings/storage/index';
-import PageStorageManager from './page/settings/storage/manager';
 
 import PageImportIndex from './page/settings/import/index';
 import PageImportNotion from './page/settings/import/notion';
@@ -32,6 +30,7 @@ import PageExportProtobuf from './page/settings/export/protobuf';
 import PageExportMarkdown from './page/settings/export/markdown';
 
 import PageSpaceIndex from './page/settings/space/index';
+import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceInvite from './page/settings/space/invite';
 import PageSpaceTeam from './page/settings/space/team';
 import PageSpaceLeave from './page/settings/space/leave';
@@ -43,6 +42,7 @@ interface State {
 
 const Components: any = {
 	account:			 PageAccount,
+	dataManagement: 	 PageDataManagement,
 	delete:				 PageDelete,
 	personal:			 PagePersonal,
 	appearance:			 PageAppearance,
@@ -53,8 +53,6 @@ const Components: any = {
 	pinSelect:			 PagePinSelect,
 	pinConfirm:			 PagePinConfirm,
 
-	storageIndex: 		 PageStorageIndex,
-	storageManager: 	 PageStorageManager,
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
@@ -68,6 +66,7 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
+	spaceStorageManager: PageSpaceStorageManager,
 	spaceInvite:		 PageSpaceInvite,
 	spaceTeam:		 	 PageSpaceTeam,
 	spaceLeave:		 	 PageSpaceLeave,
@@ -130,31 +129,49 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			);
 		};
 
+		const Item = (action: any) => {
+			const itemCn = [ 'item' ];
+
+			let icon = null;
+			let name = null;
+			let onlineStatus = null;
+
+			if (action.id == 'account') {
+				const isOnline = true;
+				const status = isOnline ? 'online' : 'offline';
+
+				icon = <IconObject object={profile} size={40} iconSize={40} forceLetter={true} />;
+				name = profile.name;
+				itemCn.push('itemAccount');
+				// onlineStatus = <div className={[ 'onlineStatus', status ].join(' ')}>{status}</div>
+			} else {
+				icon = <Icon className={action.icon || action.id} />;
+				name = action.name;
+			};
+
+			return (
+				<div
+					id={`item-${action.id}`}
+					className={itemCn.join(' ')}
+					onClick={() => this.onPage(action.id)}
+				>
+					{icon}
+					<div className="name">
+						{name}
+						{onlineStatus}
+					</div>
+				</div>
+			);
+		};
+
 		const Section = (item: any) => (
 			<div className="section">
 				{item.name ? <div className="name">{item.name}</div> : ''}
 
 				<div className="items">
-					{item.children.map((action: any, i: number) => {
-						let icon = null;
-						if (action.id == 'account') {
-							icon = <IconObject object={profile} size={22} iconSize={22} forceLetter={true} />;
-						} else {
-							icon = <Icon className={action.icon || action.id} />;
-						};
-
-						return (
-							<div 
-								key={i} 
-								id={`item-${action.id}`} 
-								className="item" 
-								onClick={() => this.onPage(action.id)}
-							>
-								{icon}
-								<div className="name">{action.name}</div>
-							</div>
-						);
-					})}
+					{item.children.map((action: any, i: number) => (
+						<Item key={i} {...action} />
+					))}
 				</div>
 			</div>
 		);
@@ -223,30 +240,24 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			return [
 				{ 
 					name: 'Space', isHidden: true, children: [
-						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove' ] },
+						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager', 'importIndex', 'exportIndex' ] },
 					]
 				},
 			];
 		} else {
 			return [
+				{ children: [ { id: 'account', name: 'Profile', subPages: [ 'logout' ] } ] },
 				{ 
-					name: 'Account & data', children: [
-						{ id: 'account', name: 'Profile', subPages: [ 'logout', 'delete' ] },
+					name: 'Void & key', children: [
+						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
-						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-						{ id: 'storageIndex', name: translate('popupSettingsStorageIndexTitle'), icon: 'storage', subPages: [ 'storageManager' ] },
-					] 
+					]
 				},
 				{ 
-					name: 'Customization', children: [
+					name: 'Application', children: [
 						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 						{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
-					] 
-				},
-				{ 
-					name: 'Integrations', children: [
-						{ id: 'importIndex', name: translate('popupSettingsImportTitle'), icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown' ] },
-						{ id: 'exportIndex', name: translate('popupSettingsExportTitle'), icon: 'export', subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
+						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 					] 
 				}
 			];

@@ -42,18 +42,44 @@
 				.label.section, .label.small, .label.grey { color: $colorSecondary; }
 				.row { border-color: $colorLineSecondary; }
 
-				.input { border-color: $colorLinePrimary; }
+				.input,
+				.select { border-color: $colorLinePrimary; }
 
 				.select { color: $colorSecondary; }
 				.select:hover { background-color: $colorHoverMedium; }
+
+				.actionItems,
+				.actionItems .item { border-color: $colorLinePrimary; }
 			}
 
+		}
+
+		.side.right.tabSpaceIndex {
+			.sections .section .sectionContent { border-color: $colorLinePrimary; }
+
+			.sections .section .sectionContent {
+				.item { border-color: $colorLinePrimary; }
+				.item {
+					.progressBar .fill { background: $colorOrange; }
+				}
+				.item.red {
+					.progressBar .fill { background: $colorRed; }
+				}
+			}
+		}
+
+		.side.right.tabDataManagement {
+			.iconObject { background: $colorHoverMedium; }
 		}
 
         .side.right.tabPhrase {
             .qrWrap { background: $colorMediumGrey; }
 			.textareaWrap { background-color: $colorBgLight; }
         }
+
+		.side.right.tabPersonal {
+			.select .item { color: $colorPrimary; }
+		}
 
         .side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
