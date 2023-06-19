@@ -110,8 +110,10 @@ html.themeDark {
     .button.blank { color: $colorPrimary; border-color: $colorLineSecondary; }
     .button.blank:hover { border-color: #525148; background: $colorHoverMedium; }
 
-	.button.red { border-color: $colorLineSecondary; }
-    .button.red:hover { border-color: #581f0c; background: #311107; }
+	.button.red,
+    .button.red.blank { border-color: $colorLineSecondary; background: none; color: $colorRed; }
+    .button.red:hover,
+    .button.red.blank:hover { border-color: #581f0c; background: #311107; }
 
     .filter {
         .line { background: $colorLineSecondary; }

@@ -55,6 +55,10 @@
 			.textareaWrap { background-color: $colorBgLight; }
         }
 
+		.side.right.tabPersonal {
+			.select .item { color: $colorPrimary; }
+		}
+
         .side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
             .item { border-color: $colorLineSecondary; }
