@@ -55,7 +55,7 @@
 					.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 				}
 
-				.item.itemAccount { padding: 8px; gap: 0 14px; }
+				.item.itemAccount { padding: 8px; gap: 0 14px; align-items: center; }
 				.item.itemAccount {
 					.name { @include text-common; font-weight: 600; }
 					.onlineStatus { @include text-small; color: $colorDarkGrey; font-weight: 400; text-transform: capitalize; display: flex; gap: 0 6px; align-items: center; }
