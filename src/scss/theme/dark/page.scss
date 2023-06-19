@@ -20,12 +20,14 @@
 	.pie .inner { border-color: $colorLineSecondary; }
 }
 
+/* PageMainUsecase */
+
 .pageMainUsecase {
     .frame { background: $colorBgLight; }
     .frame {
-        .usecaseList {
-            .case { border-color: $colorLineSecondary; }
-            .case:hover { border-color: $colorLinePrimary; }
+        .list {
+            .item { border-color: $colorLineSecondary; }
+            .item:hover { border-color: $colorLinePrimary; }
         }
         .loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.3); }
     }
@@ -214,4 +216,11 @@
 
 		.archiveEmpty { border-color: $colorLinePrimary; }
 	}
+}
+
+/* PageMainUsecase */
+
+.pageMainUsecase {
+    .frame { background: $colorBlack; border: 0.5px solid #4C4B43; }
+    .loaderWrapper { background-color: rgba(0,0,0,0.3); }
 }

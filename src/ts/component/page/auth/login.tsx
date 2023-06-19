@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Frame, Cover, Title, Input, Error, Button, Header, Footer, Icon } from 'Component';
-import { I, UtilCommon, translate, C, keyboard } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { Frame, Title, Error, Button, Header, Icon, Phrase } from 'Component';
+import { I, UtilCommon, translate, C, keyboard, Animation } from 'Lib';
+import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
 interface State {
@@ -10,10 +10,11 @@ interface State {
 
 const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.PageComponent, State> {
 
-	phraseRef: any;
+	node = null;
+	refPhrase = null;
 
 	state = {
-		error: ''
+		error: '',
 	};
 	
 	constructor (props: I.PageComponent) {
@@ -22,76 +23,124 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onCancel = this.onCancel.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onChange = this.onChange.bind(this);
+		this.canSubmit = this.canSubmit.bind(this);
+		this.onSelfHost = this.onSelfHost.bind(this);
+		this.onForgot = this.onForgot.bind(this);
 	};
 	
 	render () {
-		const { cover } = commonStore;
 		const { error } = this.state;
+		const { config } = commonStore;
 		
         return (
-			<div>
-				<Cover {...cover} className="main" />
+			<div ref={ref => this.node = ref} onKeyDown={this.onKeyDown}>
 				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
+				<Icon className="arrow back" onClick={this.onCancel} />
 				
 				<Frame>
-					<div className="authBackWrap" onClick={this.onCancel}>
-						<Icon className="back" />
-						<div className="name">{translate('commonBack')}</div>
-					</div>
-					<Title text={translate('authLoginTitle')} />
-					<Error text={error} />
-							
-					<form onSubmit={this.onSubmit}>
-						<Input ref={ref => this.phraseRef = ref} placeholder={translate('authLoginLabel')} onKeyDown={this.onKeyDown} />
+					<Title text={translate('authLoginTitle')} className="animation" />	
 
-						<div className="buttons">
-							<Button type="input" text={translate('authLoginLogin')} />
+					<form className="form" onSubmit={this.onSubmit}>
+						<Error text={error} className="animation" />
+
+						<div className="animation">
+							<Phrase ref={ref => this.refPhrase = ref} onChange={this.onChange} isHidden />
+						</div>
+						<div className="buttons animation">
+							<Button id="submit" type="input" text={translate('authLoginSubmit')} />
+
+							<div className="small" onClick={this.onForgot}>{translate('authLoginLostPhrase')}</div>
 						</div>
 					</form>
 				</Frame>
+
+				{config.experimental ? (
+					<div className="animation">
+						<div className="animation small bottom" onClick={this.onSelfHost}>
+							<Icon />
+							{translate('authLoginSelfHost')}
+						</div>
+					</div>
+				) : ''}
 			</div>
 		);
 	};
 
 	componentDidMount () {
-		this.phraseRef.focus();
+		Animation.to();
+		this.focus();
 	};
 	
 	componentDidUpdate () {
-		this.phraseRef.focus();
+		this.focus();
+	};
+
+	focus () {
+		if (this.refPhrase) {
+			this.refPhrase.focus();
+		};
 	};
 
 	onSubmit (e: any) {
 		e.preventDefault();
+
+		if (!this.canSubmit()) {
+			return;
+		};
 		
 		const { walletPath } = authStore;
-		const phrase = this.phraseRef.getValue().trim();
-		
-		this.phraseRef.setError(false);
+		const phrase = this.refPhrase.getValue();
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
-				this.phraseRef.setError(true);
+				this.refPhrase.publicsetError();
 				this.setState({ error: message.error.description });	
 				return;
 			};
 
 			authStore.phraseSet(phrase);
-			UtilCommon.route('/auth/account-select');
+			Animation.from(() => { UtilCommon.route('/auth/account-select'); });
 		});
 	};
 
+	checkButton () {
+		const node = $(this.node);
+		const button = node.find('#submit');
+
+		this.canSubmit() ? button.removeClass('disabled') : button.addClass('disabled');
+	};
+
+	canSubmit () {
+		return this.refPhrase.getValue().length;
+	};
+
 	onKeyDown (e: any) {
-		keyboard.shortcut('enter', e, (pressed: string) => {
-			this.onSubmit(e);
-		})
+		keyboard.shortcut('enter', e, () => { this.onSubmit(e); });
 	};
 	
-	onCancel (e: any) {
-		UtilCommon.route('/auth/select');
+	onCancel () {
+		Animation.from(() => { UtilCommon.route('/auth/select'); });
 	};
-	
+
+	onSelfHost () {
+	};
+
+	onChange () {
+		this.checkButton();
+	};
+
+	onForgot () {
+		popupStore.open('confirm', {
+            data: {
+                text: translate('authLoginLostPhrasePopupContent'),
+				textConfirm: 'Okay',
+				canConfirm: true,
+				canCancel: false,
+            },
+        });
+	};
+
 });
 
 export default PageAuthLogin;

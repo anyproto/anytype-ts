@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, UtilCommon, analytics, UtilData, UtilObject, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
-import { blockStore, detailStore, menuStore, commonStore } from 'Store';
+import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ctrl = keyboard.cmdSymbol();
@@ -236,17 +236,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	onSelect (id: string, related?: string[]) {
-		const { root } = blockStore;
 		const isSelected = this.ids.includes(id);
-
-		if (id === root) {
-			return;
-		};
 
 		let ids = [ id ];
 
 		if (related && related.length) {
-
 			if (!isSelected) {
 				this.ids = [];
 			};
@@ -255,10 +249,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		};
 
 		ids.forEach((id) => {
-			if (id === root) {
-				return;
-			};
-
 			if (isSelected) {
 				this.ids = this.ids.filter(it => it != id);
 				return;
@@ -286,7 +276,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	onContextMenu (id: string, param: any) {
-		const { root } = blockStore;
 		const ids = this.ids.length ? this.ids : [ id ];
 
 		menuStore.open('dataviewContext', {
@@ -318,7 +307,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 								
 								if (node) {
 									node.isFavorite = true;
-									this.data.edges.push({ type: I.EdgeType.Link, source: root, target: id });
 								};
 							});
 							this.refGraph?.send('onSetEdges', { edges: this.data.edges });
@@ -333,15 +321,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 									node.isFavorite = false;
 								};
 							});
-
-							this.data.edges = this.data.edges.filter(d => {
-								if ((d.source == root) && ids.includes(d.target)) {
-									return false;
-								};
-								return true;
-							});
-
-							this.refGraph?.send('onSetEdges', { edges: this.data.edges });
 							break;
 						};
 					};

@@ -3,7 +3,6 @@ import { setRange } from 'selection-ranges';
 import { I, keyboard, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
-
 interface State {
 	focused: string;
 	range: I.TextRange;

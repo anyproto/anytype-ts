@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Label, IconObject, Input, Title, Loader, Button, Icon } from 'Component';
-import { I, C, translate, UtilCommon, analytics, Action, UtilData, UtilObject, Preview } from 'Lib';
-import { authStore, commonStore, popupStore, detailStore, blockStore, menuStore } from 'Store';
+import { IconObject, Input, Title, Loader, Button, Icon } from 'Component';
+import { I, C, translate, UtilCommon, Action, UtilObject } from 'Lib';
+import { authStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
@@ -39,12 +39,9 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	};
 
 	render () {
-		const { onPage } = this.props;
 		const { error, loading } = this.state;
-		const { account, walletPath, accountPath } = authStore;
-		const { config } = commonStore;
+		const { account } = authStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const canMove = config.experimental;
 
 		return (
 			<div className="sections">
@@ -94,7 +91,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				</div>
 
 				<div className="section bottom">
-					<Button className="red blank" text={translate('popupSettingsLogout')} />
+					<Button className="red blank" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
 				</div>
 			</div>
 		);
