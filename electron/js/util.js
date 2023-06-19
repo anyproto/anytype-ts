@@ -112,6 +112,8 @@ class Util {
 		const filesPath = path.join(exportPath, fn);
 		const exportName = path.join(exportPath, this.fileName(name));
 
+		try { fs.mkdirSync(filesPath); } catch (e) {};
+
 		win.webContents.savePage(exportName, 'HTMLComplete').then(() => {
 			let content = fs.readFileSync(exportName, 'utf8');
 
@@ -123,11 +125,11 @@ class Util {
 
 					name = name[name.length - 1];
 
-					let src = p.replace('file://', '').replace(/\?.*/, '');
+					let src = p.replace('file://', '').replace(/\?.*/, '').replace(/\/app.asar\//g, '/app.asar.unpacked/');
 					let dst = path.join(filesPath, name).replace(/\?.*/, '');
 
 					fs.copyFileSync(src, dst);
-					return `./${fn}/${name}`;
+					return `"./${fn}/${name}"`;
 				});
 			} catch (e) {
 				this.log('info', e);
@@ -142,6 +144,9 @@ class Util {
 
 				let replaceJs = '';
 				let replaceCss = '';
+				let replaceMeta = `
+					<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				`;
 
 				js.forEach(it => {
 					fs.copyFileSync(`${ap}/dist/js/${it}.js`, path.join(filesPath, it + '.js'));
@@ -155,6 +160,7 @@ class Util {
 
 				content = content.replace('<!-- %REPLACE-JS% -->', replaceJs);
 				content = content.replace('</head>', replaceCss + '</head>');
+				content = content.replace('<head>', '<head>' + replaceMeta);
 			} catch (e) {
 				this.log('info', e);
 			};
