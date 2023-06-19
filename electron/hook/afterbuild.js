@@ -18,7 +18,9 @@ function execPromise (command) {
 exports.default = async function (context) {
 	const { packager, file } = context;
 
-	console.log(JSON.stringify(context, null, 4));
+	console.log('-----------------------------------------');
+	console.log('PACKAGER:', packager.platform.name);
+	console.log('-----------------------------------------');
 
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
