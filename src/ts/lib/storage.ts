@@ -1,4 +1,12 @@
 import { UtilCommon } from 'Lib';
+import { commonStore } from 'Store';
+
+const SPACE_KEYS = [
+	'toggle',
+	'defaultType',
+	'lastOpened',
+	'scroll',
+];
 
 class Storage {
 	
@@ -10,6 +18,14 @@ class Storage {
 
 	get (key: string): any {
 		let o = String(this.storage[key] || '');
+		if (SPACE_KEYS.includes(key)) {
+			if (o) {
+				this.delete(key);
+			} else {
+				o = this.getSpaceKey(key);
+			};
+		};
+
 		if (!o) {
 			return;
 		};
@@ -36,11 +52,33 @@ class Storage {
 		} else {
 			o = obj;
 		};
-		this.storage[key] = JSON.stringify(o);
+
+		if (SPACE_KEYS.includes(key)) {
+			this.setSpaceKey(key, o);
+		} else {
+			this.storage[key] = JSON.stringify(o);
+		};
 	};
 	
 	delete (key: string) {
 		delete(this.storage[key]);
+	};
+
+	setSpaceKey (key: string, value: any) {
+		const obj = this.get('space') || {};
+
+		obj[commonStore.workspace] = obj[commonStore.workspace] || {};
+		obj[commonStore.workspace][key] = value;
+
+		this.set('space', obj, true);
+	};
+
+	getSpaceKey (key: string) {
+		const obj = this.get('space') || {};
+
+		obj[commonStore.workspace] = obj[commonStore.workspace] || {};
+
+		return obj[commonStore.workspace][key];
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {
@@ -113,6 +151,7 @@ class Storage {
 
 	getHighlight (key: string) {
 		const highlights = this.get('highlights') || {};
+
 		return highlights[key] || false;
 	};
 
@@ -127,10 +166,9 @@ class Storage {
 	logout () {
 		const keys = [ 
 			'accountId', 
-			'scroll', 
-			'toggle', 
 			'tabStore', 
 			'graph',
+			'space',
 		];
 
 		keys.forEach(key => this.delete(key));
