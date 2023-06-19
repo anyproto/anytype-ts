@@ -8,7 +8,7 @@ class UtilObject {
 		const fn = UtilCommon.toCamelCase(`open-${type}`);
 		
 		let home = this.getSpaceDashboard();
-		if (home && ((home.id == I.HomePredefinedId.Last)) {
+		if (home && (home.id == I.HomePredefinedId.Last)) {
 			home = Storage.get('lastOpened');
 		};
 
