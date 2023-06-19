@@ -50,6 +50,15 @@
 
 		}
 
+		.side.right.tabSpaceIndex {
+			.sections .section.sectionSpaceManager .sectionContent .item {
+				.progressBar .fill { background: $colorOrange; }
+			}
+			.sections .section.sectionSpaceManager .sectionContent .item.red {
+				.progressBar .fill { background: $colorRed; }
+			}
+		}
+
         .side.right.tabPhrase {
             .qrWrap { background: $colorMediumGrey; }
 			.textareaWrap { background-color: $colorBgLight; }

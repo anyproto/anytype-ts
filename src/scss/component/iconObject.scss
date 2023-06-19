@@ -30,6 +30,7 @@
 .iconObject.c26 { width: 26px; height: 26px; }
 .iconObject.c28 { width: 28px; height: 28px; }
 .iconObject.c32 { width: 32px; height: 32px; }
+.iconObject.c36 { width: 36px; height: 36px; }
 .iconObject.c40 { width: 40px; height: 40px; }
 .iconObject.c44 { width: 44px; height: 44px; }
 .iconObject.c48 { display: block; width: 48px; height: 48px; overflow: hidden; }
@@ -43,9 +44,9 @@
 
 .iconObject.c56, .iconObject.c80, .iconObject.c96, .iconObject.c128 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
-} 
+}
 
-.iconObject.c40, .iconObject.c48, .iconObject.c64 {
+.iconObject.c36, .iconObject.c40, .iconObject.c48, .iconObject.c64 {
 	.iconImage { width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
 }
 

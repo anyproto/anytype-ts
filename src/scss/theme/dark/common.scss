@@ -66,9 +66,9 @@ html.themeDark {
 		.controls, .emptySearch { border-color: $colorLinePrimary; }
 	}
 
-	.progressBar { background: $colorBgLight; }
 	.progressBar {
-		.progressBarFill { background: $colorOrange; }
+        .bar { background: $colorBgLight; }
+        .fill { background: $colorOrange; }
 	}
 
     /* Components */
