@@ -23,7 +23,6 @@ exports.default = async function (context) {
 
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
-		//const cmd = `AzureSignTool sign -kvu "${process.env.AZURE_KEY_VAULT_URI}" -kvi "${process.env.AZURE_CLIENT_ID}" -kvt "${process.env.AZURE_TENANT_ID}" -kvs "${process.env.AZURE_CLIENT_SECRET}" -kvc ${process.env.AZURE_CERT_NAME} -tr http://timestamp.digicert.com -v "${fileName}"`;
 		const cmd = `
 			AzureSignTool.exe sign 
 			-du "Anytype"
