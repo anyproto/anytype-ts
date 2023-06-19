@@ -104,7 +104,12 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 			filters,
 			sorts,
 		}, (message: any) => {
-			this.setState({ loading: false, items: message.records });
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
+			this.setState({ loading: false, items: message.records || [] });
 		});
 	};
 

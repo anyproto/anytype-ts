@@ -1,5 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
+import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
 import { C, I, translate, UtilData, Storage, analytics } from 'Lib';
@@ -24,12 +25,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 
     render () {
 		const { isLoading } = this.state;
-
-        const cases: any[] = [
-			{ id: I.Usecase.Personal, img: 'img/usecase/personal-projects.png' },
-			{ id: I.Usecase.Notes, img: 'img/usecase/notes-or-diary.png' },
-			{ id: I.Usecase.Knowledge, img: 'img/usecase/knowledge-base.png' },
-        ];
+		const items = this.getItems();
 
         const Case = (item: any) => (
             <div className="case" onClick={e => this.onClick(e, item.id)}>
@@ -49,7 +45,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
                     <Label className="frameLabel" text={translate('authUsecaseLabel')} />
 
                     <div className="usecaseList">
-                        {cases.map((item: any, i: number) => (
+                        {items.map((item: any, i: number) => (
                             <Case key={i} {...item} />
                         ))}
                     </div>
@@ -61,6 +57,14 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
             </div>
         );
     };
+
+	getItems () {
+ 		return _.shuffle([
+			{ id: I.Usecase.Personal, img: 'img/usecase/personal-projects.png' },
+			{ id: I.Usecase.Notes, img: 'img/usecase/notes-or-diary.png' },
+			{ id: I.Usecase.Knowledge, img: 'img/usecase/knowledge-base.png' },
+        ]);
+	}
 
     onClick (e: any, id: number) {
         e.preventDefault();

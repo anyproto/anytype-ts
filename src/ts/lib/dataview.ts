@@ -47,7 +47,7 @@ class Dataview {
 			return 0;
 		});
 
-		const ret = relations.map((relation: any) => {
+		const ret = relations.filter(it => it).map(relation => {
 			const vr = (view.relations || []).find(it => it.relationKey == relation.relationKey) || {};
 
 			if (relation.relationKey == 'name') {

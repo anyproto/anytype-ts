@@ -274,6 +274,11 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			offset: this.offset,
 			limit: Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -282,7 +287,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map((it: any) => {
+			this.items = this.items.concat((message.records || []).map((it: any) => {
 				it.name = String(it.name || UtilObject.defaultName('Page'));
 				return it;
 			}));

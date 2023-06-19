@@ -36,6 +36,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	timeoutFilter = 0;
 	cache: any = null;
 	groupCache: any[] = [];
+	aliases = {};
 
 	constructor (props: I.Menu) {
 		super(props);
@@ -67,10 +68,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				<div 
 					id={'item-' + item.id} 
 					className="item" 
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
-					onMouseLeave={(e: any) => { this.onMouseLeave(e); }} 
-					onMouseDown={(e: any) => { this.onMouseDown(e, item.id, item.smile, item.skin); }}
-					onContextMenu={(e: any) => { this.onSkin(e, item.id, item.smile); }}
+					onMouseEnter={e => this.onMouseEnter(e, item)}
+					onMouseLeave={() => this.onMouseLeave()} 
+					onMouseDown={e => this.onMouseDown(e, item.id, item.smile, item.skin)}
+					onContextMenu={e => this.onSkin(e, item.id, item.smile)}
 				>
 					<div 
 						className="iconObject c32" 
@@ -170,7 +171,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 								className={group.id} 
 								tooltip={group.name} 
 								tooltipY={I.MenuDirection.Bottom} 
-								onClick={(e: any) => { this.onGroup(group.id); }} 
+								onClick={() => this.onGroup(group.id)} 
 							/>
 						))}
 					</div>
@@ -183,6 +184,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const { storageGet } = this.props;
 
 		this.skin = Number(storageGet().skin) || 1;
+		this.aliases = {};
+
+		for (let k in EmojiData.aliases) {
+			this.aliases[EmojiData.aliases[k]] = k;
+		};
 
 		if (!this.cache) {
 			const items = this.getItems();
@@ -244,13 +250,26 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			sections.push({
 				id: it.id,
 				name: it.name,
-				children: it.emojis.map(id => ({ smile: id, skin: this.skin })),
+				children: it.emojis.map(id => {
+					const item = EmojiData.emojis[id] || {};
+					return { smile: id, skin: this.skin, keywords: item.keywords || [] };
+				}),
 			});
 		});
 
 		if (filter) {
 			sections = sections.filter((s: any) => {
-				s.children = (s.children || []).filter(c => c.smile.match(reg));
+				s.children = (s.children || []).filter(c => {
+					if (c.smile.match(reg)) {
+						return true;
+					};
+					for (let w of c.keywords) {
+						if (w.match(reg)) {
+							return true;
+						};
+					};
+					return false;
+				});
 				return s.children.length > 0;
 			});
 		};
@@ -370,10 +389,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		Preview.tooltipShow({ text: item.smile, element: $(e.currentTarget) });
+		Preview.tooltipShow({ 
+			text: this.aliases[item.smile] || item.smile, 
+			element: $(e.currentTarget),
+		});
 	};
 
-	onMouseLeave (e: any) {
+	onMouseLeave () {
 		Preview.tooltipHide(false);
 	};
 	

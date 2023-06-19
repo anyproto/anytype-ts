@@ -327,6 +327,10 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const oldIndex = result.oldIndex - 1;
 		const newIndex = result.newIndex - 1;
 		const view = views[oldIndex];
+		if (!view) {
+			return;
+		};
+
 		const ids = arrayMove(views.map(it => it.id), oldIndex, newIndex);
 
 		dbStore.viewsSort(rootId, blockId, ids);
