@@ -28,7 +28,7 @@ exports.default = async function (context) {
 			-du "Anytype"
 			-fd sha384 
 			-td sha384
-			-tr http://timestamp.digicert.com
+			-tr https://freetsa.org
 			--azure-key-vault-url "${process.env.AZURE_KEY_VAULT_URI}"
 			--azure-key-vault-client-id "${process.env.AZURE_CLIENT_ID}"
 			--azure-key-vault-tenant-id "${process.env.AZURE_TENANT_ID}"
