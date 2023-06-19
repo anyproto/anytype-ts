@@ -6,11 +6,14 @@ class UtilObject {
 
 	openHome (type: string, param?: any) {
 		const fn = UtilCommon.toCamelCase(`open-${type}`);
-		const empty = { layout: I.ObjectLayout.Empty };
-		const home = this.getSpaceDashboard();
+		
+		let home = this.getSpaceDashboard();
+		if (home && (home.id == I.HomePredefinedId.Last)) {
+			home = Storage.get('lastOpened');
+		};
 
 		if (!home) {
-			this.openRoute(empty, param);
+			this.openRoute({ layout: I.ObjectLayout.Empty }, param);
 			return;
 		};
 
@@ -34,7 +37,7 @@ class UtilObject {
 			home = this.graph();
 		} else
 		if (space.spaceDashboardId == I.HomePredefinedId.Last) {
-			home = this.lastOpened() || this.graph();
+			home = this.lastOpened();
 		} else {
 			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
 		};
@@ -55,12 +58,10 @@ class UtilObject {
 	};
 
 	lastOpened () {
-		const object = Storage.get('lastOpened');
-
-		return object ? { 
-			...object,
+		return { 
+			id: I.HomePredefinedId.Last,
 			name: 'Last opened object', 
-		} : null;
+		};
 	};
 
 	actionByLayout (v: I.ObjectLayout): string {
