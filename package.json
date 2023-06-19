@@ -143,7 +143,6 @@
 		"generateUpdatesFilesForAllChannels": true,
 		"beforeBuild": "./electron/hook/beforebuild.js",
 		"afterSign": "./electron/hook/notarize.js",
-		"afterAllArtifactBuild": "./electron/hook/windows-sign.js",
 		"appId": "com.anytype.anytype",
 		"compression": "normal",
 		"productName": "Anytype",
