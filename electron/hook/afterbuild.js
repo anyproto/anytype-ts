@@ -28,7 +28,7 @@ exports.default = async function (context) {
 			-du "Anytype"
 			-fd sha384 
 			-td sha384
-			-tr https://freetsa.org
+			-tr http://timestamp.digicert.com
 			--azure-key-vault-url "${process.env.AZURE_KEY_VAULT_URI}"
 			--azure-key-vault-client-id "${process.env.AZURE_CLIENT_ID}"
 			--azure-key-vault-tenant-id "${process.env.AZURE_TENANT_ID}"
@@ -37,8 +37,6 @@ exports.default = async function (context) {
 			-v
 			-ifl "${fileName}"
 		`
-
-		console.log('[afterSign]: ', cmd);
 
 		return await execPromise(cmd);
 	};
