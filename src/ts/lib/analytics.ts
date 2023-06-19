@@ -352,8 +352,7 @@ class Analytics {
 			'index/index':		 'ScreenIndex',
 
 			'auth/login':		 'ScreenLogin',
-			'auth/register':	 'ScreenAuthRegistration',
-			'auth/invite':		 'ScreenAuthInvitation',
+			'auth/onboard':	 	 'ScreenOnboarding',
 
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',

@@ -42,7 +42,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	render () {
 		const { block, isPreview, isEditing, className, onDragStart, onDragOver, setPreview } = this.props;
 		const child = this.getTargetBlock();
-		const { root } = blockStore;
+		const root = '';
 		const childrenIds = blockStore.getChildrenIds(root, root);
 		const { layout, limit, viewId } = block.content;
 

@@ -1,32 +1,48 @@
 @import "~scss/_vars";
 
 .pageMainUsecase {
+
+	@keyframes fadeIn {
+		0% { opacity: 1;  }
+		100% { opacity: 0; }
+	}
+
 	.usecaseWrapper { transition: opacity 0.6s $easeInQuint; }
-	.frame { width: 836px; box-shadow: 0px 6px 24px rgba(0,0,0,0.2); border-radius: 12px; padding: 44px 48px 36px; text-align: left; }
-
+	.fadeInOverlay { animation: fadeIn 2s 1; background: #060606; position: absolute; top: 0; left: 0; height: 100vh; width: 100vw; z-index: 3; opacity: 0; pointer-events: none; }
+	
+	.frame { width: 830px; box-shadow: 0px 6px 24px rgba(0,0,0,0.2); border-radius: 12px; padding: 44px 48px 36px; text-align: left; }
 	.frame {
-		.frameTitle { @include text-header1; margin-bottom: 8px; }
-		.frameLabel { color: $colorDarkGrey; margin-bottom: 18px; }
+		> .title { @include text-header1; margin-bottom: 8px; }
+		> .label { color: $colorDarkGrey; margin-bottom: 18px; }
 
-		.usecaseList { display: flex; justify-content: space-between; align-items: stretch; gap: 0px 16px; margin-bottom: 18px; }
-		.usecaseList {
-			.case {
-				position: relative; overflow: hidden; width: 236px; min-height: 236px; padding: 16px 16px 124px 16px;
-				transition: $transitionAllCommon; border: 1px solid $colorBorderDark; border-radius: 8px;
+		.list { display: grid; gap: 0px 16px; margin-bottom: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+		.list {
+			.item { 
+				position: relative; overflow: hidden; min-height: 236px; transition: $transitionAllCommon; 
+				border: 1px solid $colorBorderDark; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between;
 			}
-			.case:hover { border-color: $colorBlack; }
-			.case {
-				.caseTitle { @include text-header3; margin-bottom: 8px; }
-				.caseLabel { color: $colorDarkGrey; }
+			.item:hover { border-color: $colorBlack; }
+			.item {
+				.head { padding: 16px; }
 
-				img { position: absolute; width: 100%; left: 0; bottom: 0; }
+				.title { @include text-header3; margin-bottom: 8px; }
+				.label { @include text-small; color: $colorDarkGrey; }
+
+				.picture { height: 50%; width: 100%; position: relative; }
+				.picture {
+					img { width: 100%; display: block; position: absolute; right: 0px; bottom: 0px; }
+				}
 			}
 		}
 
 		.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: $colorBgLoader; z-index: 1; }
 	}
+
+	@media (max-width: 862px) {
+		.frame { width: calc(100% - 32px); }
+	}
 }
 
 html.bodyMainUsecase {
-	.navigationPanel { display: none; }
+	.navigationPanel { display: none !important; }
 }

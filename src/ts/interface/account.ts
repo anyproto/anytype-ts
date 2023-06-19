@@ -28,5 +28,5 @@ export interface AccountConfig {
 
 export interface AccountStatus {
 	type: AccountStatusType;
-	date: number;
+	date: number; // The UNIX timestamp of when the account is set to be deleted
 };

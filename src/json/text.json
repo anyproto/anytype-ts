@@ -95,9 +95,10 @@
 	"authSelectSignup": { "en": "Join" },
 
 	"authLoginTitle": { "en": "Login with recovery phrase" },
-	"authLoginLabel": { "en": "Type your recovery phrase" },
-	"authLoginPhrase": { "en": "witch collapse practice feed shame open despair creek road again ice least" },
-	"authLoginLogin": { "en": "Continue" },
+	"authLoginSelfHost": { "en": "Self-host" },
+	"authLoginSubmit": { "en": "Continue" },
+	"authLoginLostPhrase": { "en": "I've lost the phrase" },
+	"authLoginLostPhrasePopupContent": { "en": "<h1>Anytype cannot recover recovery phrase for you</h1><p>There is technically no possible way access it, as it's not stored on Anytype side. Check out the places where it can be stored:</p> <ul class=\"last\"><li>In system password storage. We did it for you automatically</li><li>Inside a password manager if you use one</li><li>On a piece of paper stored in a secure place chosen prior</li></ul>" },
 
 	"authRegisterTitle": { "en": "Add name and profile picture" },
 	"authRegisterLabel": { "en": "New profile" },
@@ -105,21 +106,47 @@
 	"authRegisterSubmit": { "en": "Create" },
 	"authRegisterAdvanced": {"en": "Advanced"},
 
-	"authSetupLogin": { "en": "Logging in..." },
-	"authSetupRegister": { "en": "Creating profile..." },
-	"authSetupSelect": { "en": "Selecting profile..." },
-	"authSetupShare": { "en": "Adding space" },
+	"authDeleteTitle": { "en": "Delete profile" },
+	"authDeleteTitleDeleted": { "en": "Account data removed from the backup node" },
+	"authDeleteDescription": { "en": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices." },
+	"authDeleteDescriptionDeleted": { "en": "All logged-in devices may have your data locally. However, you are not able to sign into Anytype on new devices using your keychain phrase." },
+	"authDeleteCancelButton": { "en": "Cancel deletion" },
+	"authDeleteExportButton": { "en": "Export data to markdown" },
+	"authDeleteRemoveButton": { "en": "Remove local data" },
+	"authDeleteRemovePopupTitle": { "en": "Are you sure you want to delete your local account data?" },
+	"authDeleteRemovePopupText": { "en": "These objects will be deleted irrevocably. You can't undo this action." },
+	"authDeleteRemovePopupConfirm": { "en": "Delete" },
 
-	"authSuccessTitle": { "en": "Congratulations!" },
-	"authSuccessLabel": { "en": "You've created your first profile! It is stored on your device and nobody will know about it until you share it!" },
-	"authSuccessSubmit": { "en": "Let's start!" },
-	"authSuccessCopy": { "en": "Show and copy phrase" },
-
-	"authPinCheckTitle": { "en": "Enter pin code" },
+	"authPinCheckTitle": { "en": "Enter pin" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
+	"authOnboardSubmit": { "en": "Next" },
+	"authOnboardMoreInfo": { "en": "More info" },
+	"authOnboardAccountDataLocation": { "en": "Account data location" },
+
+	"authOnboardVoidTitle": { "en": "This is your Void" },
+	"authOnboardVoidLabel": { "en": "Everything you create will be stored here. It is a special encrypted place, which exist on your machine and is backed up to the network." },
+
+	"authOnboardPhraseTitle": { "en": "Your Void is encrypted by your Key" },
+	"authOnboardPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. If you lose it there is no way to recover it. Keep it in safe place <span class='questionMark'>?</span>" },
+	"authOnboardPhraseTooltip": { "en": "<b>How to secure your phrase?</b> <ul><li>In system password storage. We will do it for you</li><li>On a piece of paper stored in a secure place</li><li>Inside a password manager if you use one</li></ul>" },
+	"authOnboardPhraseMoreInfoPopupContent": { "en": "<b>Anytype uses recovery phrase instead of login and password to encrypt your data</b><ul><li>Phrase is randomly generated on your device and stored locally</li><li>No one can access your data without recovery phrase</li><li>Phrase ensures only you own your data, but if you lose it there is no way to recover it.</li></ul><b>If you lose recovery phrase there is no way to recover it</b><ul><li>Anytype cannot recover it for you</li><li>There is technically no possible way access it, as it’s not stored on anytype side</li><li>Anytype will never reach out to ask for it</li><li>Sharing the phase equals sharing the ownership of account</li><li>The ordering of the words in a recovery phrase matters</li></ul><b>Store recovery phrase in secure place In system password storage</b><ul><li>In system password storage. We will do it for you</li><li>Inside password manager if you use one</li><li>On a piece of paper in safe and secure place</li></ul>" },
+	"authOnboardPhraseSubmit": { "en": "Show and copy" },
+
+	"authOnboardOfflineTitle": { "en": "Anytype is an offline-first application" },
+	"authOnboardOfflineLabel": { "en": "Here, everything you create is truly yours. Connecting to the distributed network helps to backup and sync data between your devices." },
+	"authOnboardOfflineSubmit": { "en": "Connect to the network" },
+
+	"authOnboardSoulTitle": { "en": "Let's create your soul" },
+	"authOnboardSoulLabel": { "en": "Think of it like an identity, or a profile within Anytype." },
+	"authOnboardSoulSubmit": { "en": "Finish" },
+
+	"authOnboardSoulCreatingTitle": { "en": "Creating soul..." },
+
+	"authOnboardSpaceCreatingTitle": { "en": "Setting up your personal Space..." },
+
 	"authUsecaseTitle": { "en":  "How would you like to start?" },
-	"authUsecaseLabel": { "en":  "We’ll load some templates to get you started" },
+	"authUsecaseLabel": { "en":  "We'll load some templates to get you started" },
 	"authUsecaseCase1Title": { "en": "Personal projects" },
 	"authUsecaseCase1Label": { "en": "Manage your personal projects and tasks with complete privacy" },
 	"authUsecaseCase2Title": { "en": "Bookshelf" },
@@ -127,8 +154,6 @@
 	"authUsecaseCase3Title": { "en": "Diary and Quick notes" },
 	"authUsecaseCase3Label": { "en": "Keep your daily notes and self-reflections secure and private" },
 	"authUsecaseSkip": { "en":  "Skip" },
-
-	"archiveEmptyLabel": { "en": "Your bin is empty"},
 
 	"indexHi": { "en": "Hi, %s" },
 
@@ -139,7 +164,7 @@
 
 	"setTitle": { "en": "New set" },
 	"setText": { "en": "Choose an object type for this set" },
-	
+
 	"blockNameParagraph": { "en": "Text" },
 	"blockTextParagraph": { "en": "Write a plain text" },
 
@@ -218,7 +243,7 @@
 
 	"blockNameSimpleTable": { "en": "Table 3x3" },
 	"blockTextSimpleTable": { "en": "Create a simple table" },
-	
+
 	"blockNameTableOfContents": { "en": "Table of contents" },
 	"blockTextTableOfContents": { "en": "" },
 
@@ -435,6 +460,8 @@
 	"threadStatus4Tooltip": { "en": "Failed to sync, trying again..." },
 	"threadStatus5Tooltip": { "en": "We have updated the protocol version. Click to update and sync the objects." },
 
+	"toastRecoveryCopiedClipboard": { "en": "Recovery phrase copied to clipboard"  },
+
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },
 	"textColor-orange": { "en": "Amber" },
@@ -480,13 +507,13 @@
 	"placeholderFilter": { "en": "Type to filter" },
 	"placeholderCellCommon": { "en": "No value" },
 	"placeholderCell0": { "en": "Enter text" },
-	"placeholderCell1": { "en": "Enter name" },	
-	"placeholderCell2": { "en": "Enter number" },	
-	"placeholderCell3": { "en": "Select status" },	
-	"placeholderCell4": { "en": "Enter date" },	
-	"placeholderCell5": { "en": "Select files" },	
-	"placeholderCell7": { "en": "Enter URL" },	
-	"placeholderCell8": { "en": "Enter e-mail" },	
+	"placeholderCell1": { "en": "Enter name" },
+	"placeholderCell2": { "en": "Enter number" },
+	"placeholderCell3": { "en": "Select status" },
+	"placeholderCell4": { "en": "Enter date" },
+	"placeholderCell5": { "en": "Select files" },
+	"placeholderCell7": { "en": "Enter URL" },
+	"placeholderCell8": { "en": "Enter e-mail" },
 	"placeholderCell9": { "en": "Enter phone" },
 	"placeholderCell11": { "en": "Select tags" },
 	"placeholderCell100": { "en": "Select objects" },
@@ -528,6 +555,8 @@
 	"widgetSet": { "en": "Sets" },
 	"widgetCollection": { "en": "Collections" },
 
-	"spaceType0": { "en": "Personal space" }
+	"spaceType0": { "en": "Personal space" },
+
+	"phrasePlaceholder": { "en": "Type your recovery phrase" }
 
 }

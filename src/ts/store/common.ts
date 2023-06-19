@@ -10,12 +10,6 @@ interface Filter {
 	text: string;
 };
 
-interface Cover {
-	id: string;
-	image: string;
-	type: I.CoverType;
-};
-
 interface Graph {
 	icon: boolean;
 	orphan: boolean;
@@ -52,12 +46,6 @@ class CommonStore {
 	public workspaceId = '';
 	public notionToken = '';
 
-	public coverObj: Cover = { 
-		id: '', 
-		type: 0, 
-		image: '',
-	};
-
 	public previewObj: I.Preview = { 
 		type: null, 
 		target: null, 
@@ -84,7 +72,6 @@ class CommonStore {
 
     constructor() {
         makeObservable(this, {
-            coverObj: observable,
             progressObj: observable,
             filterObj: observable,
             gatewayUrl: observable,
@@ -104,12 +91,10 @@ class CommonStore {
             preview: computed,
 			toast: computed,
             filter: computed,
-            cover: computed,
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
 			workspace: computed,
-            coverSet: action,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -144,10 +129,6 @@ class CommonStore {
 
     get filter(): Filter {
 		return this.filterObj;
-	};
-
-    get cover(): Cover {
-		return this.coverObj;
 	};
 
     get gateway(): string {
@@ -213,20 +194,6 @@ class CommonStore {
 		};
 
 		return { ...this.spaceStorageObj, bytesUsed, localUsage };
-	};
-
-    coverSet (id: string, image: string, type: I.CoverType) {
-		this.coverObj = { id, image, type };
-	};
-
-    coverSetDefault () {
-		const cover = this.coverGetDefault();
-
-		this.coverSet(cover.id, '', cover.type);
-	};
-
-	coverGetDefault () {
-		return { id: Constant.default.cover, type: I.CoverType.Gradient };
 	};
 
     gatewaySet (v: string) {

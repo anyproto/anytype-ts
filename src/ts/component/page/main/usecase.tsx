@@ -3,7 +3,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
-import { C, I, translate, UtilData, Storage, analytics } from 'Lib';
+import { C, I, translate, analytics, UtilData, Storage } from 'Lib';
 import { authStore, blockStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -14,7 +14,7 @@ interface State {
 const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I.PageComponent, State> {
 
 	state = {
-		isLoading: false,
+		isLoading: false
 	};
 
     constructor (props: I.PageComponent) {
@@ -28,23 +28,28 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 		const items = this.getItems();
 
         const Case = (item: any) => (
-            <div className="case" onClick={e => this.onClick(e, item.id)}>
-                <Title className="caseTitle" text={translate(`authUsecaseCase${item.id}Title`)} />
-                <Label className="caseLabel" text={translate(`authUsecaseCase${item.id}Label`)} />
-                <img src={item.img} />
+            <div className="item" onClick={e => this.onClick(e, item.id)}>
+				<div className="head">
+                	<Title text={translate(`authUsecaseCase${item.id}Title`)} />
+                	<Label text={translate(`authUsecaseCase${item.id}Label`)} />
+				</div>
+                <div className="picture">
+					<img src={item.img} />
+				</div>
             </div>
         );
 
         return (
             <div className="usecaseWrapper">
+                <div className="fadeInOverlay" />
 
                 <Frame>
 					{isLoading ? <Loader /> : ''}
 
-                    <Title className="frameTitle" text={translate('authUsecaseTitle')} />
-                    <Label className="frameLabel" text={translate('authUsecaseLabel')} />
+                    <Title text={translate('authUsecaseTitle')} />
+                    <Label text={translate('authUsecaseLabel')} />
 
-                    <div className="usecaseList">
+                    <div className="list">
                         {items.map((item: any, i: number) => (
                             <Case key={i} {...item} />
                         ))}
