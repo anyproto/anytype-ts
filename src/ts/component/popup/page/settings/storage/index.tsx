@@ -122,7 +122,9 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
     onExtend () {
         const { account } = authStore;
+        const { bytesLimit } = commonStore.spaceStorage;
         const space = UtilObject.getSpace();
+        const limit = String(UtilFile.size(bytesLimit)).replace(' ', '')
 
         if (!account || space._empty_) {
             return;
@@ -132,6 +134,7 @@ const PopupSettingsPageStorageIndex = observer(class PopupSettingsPageStorageInd
 
         url = url.replace(/\%25accountId\%25/g, account.id);
         url = url.replace(/\%25spaceName\%25/g, space.name);
+        url = url.replace(/\%25storageLimit\%25/g, limit);
 
         Renderer.send('urlOpen', url);
         analytics.event('GetMoreSpace');
