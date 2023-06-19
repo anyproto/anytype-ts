@@ -18,6 +18,8 @@ function execPromise (command) {
 exports.default = async function (context) {
 	const { packager, file } = context;
 
+	console.log(JSON.stringify(context, null, 4));
+
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
 		const cmd = `
