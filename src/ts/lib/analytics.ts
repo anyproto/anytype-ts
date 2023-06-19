@@ -2,6 +2,7 @@ import * as amplitude from 'amplitude-js';
 import { I, C, UtilCommon, Storage } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
+import { OnboardStage } from 'Component/page/auth/animation/constants';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
@@ -315,6 +316,13 @@ class Analytics {
 				data.type = UtilCommon.ucFirst(data.type);
 				break;
 			};
+
+			case 'ClickOnboarding':
+			case 'ScreenOnboarding': {
+				data.step = OnboardStage[data.step];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -352,7 +360,6 @@ class Analytics {
 			'index/index':		 'ScreenIndex',
 
 			'auth/login':		 'ScreenLogin',
-			'auth/onboard':	 	 'ScreenOnboarding',
 
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',

@@ -155,7 +155,7 @@
 	"authUsecaseCase3Label": { "en": "Keep your daily notes and self-reflections secure and private" },
 	"authUsecaseSkip": { "en":  "Skip" },
 
-	"indexHi": { "en": "Hi, %s" },
+	"pageMainArchiveEmpty": { "en": "Your bin is empty" },
 
 	"editorControlIcon": { "en": "Icon" },
 	"editorControlCover": { "en": "Cover" },
@@ -397,11 +397,6 @@
 	"popupSettingsSpaceRemoveTitle": { "en": "Move to Bin" },
 	"popupSettingsSpaceRemoveText": { "en": "Members could no longer see any objects inside" },
 	"popupSettingsSpaceRemoveButton": { "en": "Move to bin" },
-
-	"popupArchiveTitle": { "en": "Archive" },
-	"popupArchiveSelectAll": { "en": "Select All" },
-	"popupArchivePutBack": { "en": "Put it back" },
-	"popupArchiveDelete": { "en": "Delete" },
 
 	"popupHelpLabel": { "en": "Stay tuned for Anytype's news" },
 

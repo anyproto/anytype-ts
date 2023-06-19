@@ -157,6 +157,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	renderButtons = (): JSX.Element => {
 		const { stage, phraseCopied } = this.state;
+		const cn = [ 'animation' ];
 
 		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
 			return null;
@@ -173,21 +174,25 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>More info</div>;
 		};
 
+		if (!this.canMoveForward()) {
+			cn.push('disabled');
+		};
+
 		return (
 			<div className="buttons">
-				<Button
-					className={['animation', this.canMoveForward() ? '' : 'disabled'].join(' ')}
-					text={text}
-					onClick={this.onNext}
-				/>
+				<Button className={cn.join(' ')} text={text} onClick={this.onNext} />
 				{moreInfo}
 			</div>
 		);
 	};
 
 	componentDidMount (): void {
+		const { stage } = this.state;
+
 		Animation.to();
 		this.rebind();
+
+		analytics.event('ScreenOnboarding', { step: stage });
 	};
 
 	componentDidUpdate (_, prevState): void {
@@ -195,6 +200,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (prevState.stage != stage) {
 			Animation.to();
+			analytics.event('ScreenOnboarding', { step: stage });
 		};
 
 		this.refFrame?.resize();
@@ -237,7 +243,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage } = this.state;
 
 		let ret = false;
-		if ([Stage.Void, Stage.Phrase, Stage.Offline].includes(stage)) {
+		if ([ Stage.Void, Stage.Phrase, Stage.Offline ].includes(stage)) {
 			ret = true;
 		};
 		if ((stage == Stage.Soul) && authStore.name) {
@@ -263,6 +269,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			this.refPhrase.toggleVisibility();
 			this.setState({ phraseCopied: true });
 			this.onCopy();
+
+			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
 			return;
 		};
 
@@ -427,6 +435,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Shows a simple popup that educates the user about their account keyphrase */
 	onPhraseInfo = () => {
+		const { stage } = this.state;
+
 		popupStore.open('confirm', {
 			data: {
 				text: translate('authOnboardPhraseMoreInfoPopupContent'),
@@ -438,6 +448,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				},
 			},
 		});
+
+		analytics.event('ClickOnboarding', { type: 'MoreInfo', step: stage });
 	};
 
 	/** Shows a tooltip that specififies where the Users account data is stored on their machine */
