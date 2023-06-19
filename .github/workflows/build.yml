@@ -1,9 +1,11 @@
 name: Release
 
+#on:
+#  push:
+#    tags:        
+#      - v*
 on:
-  push:
-    tags:        
-      - v*
+  push
 
 jobs:
   release:
@@ -15,6 +17,11 @@ jobs:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
 
     steps:
+      - name: Get the version
+        id: version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        shell: bash
+
       - name: Setup
         run: | 
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
@@ -84,6 +91,12 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           mv dist/*.{zip,dmg,deb,AppImage,exe,snap,rpm} artifacts || true
+
+      - name: Sign Windows build
+        if: matrix.os == 'windows-latest'
+        run: |
+          dotnet tool install --global AzureSignTool
+          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}"-kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v dist/Anytype.Setup.${{ steps.version.outputs.VERSION }}.exe
 
       - name: Cleanup artifacts Windows
         if: matrix.os == 'windows-latest'
