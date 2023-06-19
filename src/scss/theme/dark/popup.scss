@@ -42,21 +42,34 @@
 				.label.section, .label.small, .label.grey { color: $colorSecondary; }
 				.row { border-color: $colorLineSecondary; }
 
-				.input { border-color: $colorLinePrimary; }
+				.input,
+				.select { border-color: $colorLinePrimary; }
 
 				.select { color: $colorSecondary; }
 				.select:hover { background-color: $colorHoverMedium; }
+
+				.actionItems,
+				.actionItems .item { border-color: $colorLinePrimary; }
 			}
 
 		}
 
 		.side.right.tabSpaceIndex {
-			.sections .section.sectionSpaceManager .sectionContent .item {
-				.progressBar .fill { background: $colorOrange; }
+			.sections .section .sectionContent { border-color: $colorLinePrimary; }
+
+			.sections .section .sectionContent {
+				.item { border-color: $colorLinePrimary; }
+				.item {
+					.progressBar .fill { background: $colorOrange; }
+				}
+				.item.red {
+					.progressBar .fill { background: $colorRed; }
+				}
 			}
-			.sections .section.sectionSpaceManager .sectionContent .item.red {
-				.progressBar .fill { background: $colorRed; }
-			}
+		}
+
+		.side.right.tabDataManagement {
+			.iconObject { background: $colorHoverMedium; }
 		}
 
         .side.right.tabPhrase {
