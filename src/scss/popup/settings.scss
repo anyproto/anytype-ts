@@ -366,6 +366,20 @@
 			}
 		}
 
+		.side.right.tabPersonal {
+			.title { margin-bottom: 32px; }
+
+			.select {
+				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
+				height: 28px; padding: 0px 26px 0 12px; border-radius: 8px; transition: $transitionAllCommon;
+				display: flex; align-items: center;
+			}
+			.select {
+				.item { border-bottom: 0; color: $colorBlack; }
+				.icon.arrow { right: 3px !important; }
+			}
+		}
+
 		.side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
 			.items { display: flex; gap: 16px; flex-wrap: wrap; }

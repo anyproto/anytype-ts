@@ -71,7 +71,6 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
                     count,
                     UtilCommon.cntWord(count, translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObject`), translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObjects`))
                 ),
-                // title: `Are you sure you want to delete ${count} ${UtilCommon.cntWord(count, 'object', 'objects')}?`,
                 text: translate(`popupSettingsSpaceStorageManagerDeletionWarningText`),
                 textConfirm: translate(`popupSettingsSpaceStorageManagerDeletionWarningConfirm`),
                 onConfirm: () => {
