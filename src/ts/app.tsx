@@ -349,7 +349,7 @@ class App extends React.Component<object, State> {
 		this.init();
 
 		window.setTimeout(() => {
-			popupStore.open('settings', { data: { page: 'personal' } });
+			popupStore.open('settings', { data: { page: 'appearance' } });
 
 		},1500);
 	};

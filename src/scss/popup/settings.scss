@@ -329,7 +329,7 @@
 		}
 
 		.side.right.tabAppearance {
-			.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 32px 0px; flex-wrap: wrap; }
+			.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 46px 0px; flex-wrap: wrap; }
 			.label.section { margin-bottom: 8px; }
 
 			.btn { text-align: center; @include text-small; color: $colorDarkGrey; }
