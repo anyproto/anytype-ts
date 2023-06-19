@@ -17,15 +17,14 @@ jobs:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
 
     steps:
-      - name: Get the version
-        id: version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-        shell: bash
-
       - name: Setup
         run: | 
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@api.github.com/".insteadOf "https://api.github.com/"
+
+      - name: Install AzureSignTool
+        if: matrix.os == 'windows-latest'
+        run: dotnet tool install --global AzureSignTool
 
       - name: Check out Git repository
         uses: actions/checkout@v1
@@ -82,6 +81,11 @@ jobs:
           DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
           USE_HARD_LINKS: false
+          AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
       - name: Make artifacts dir
         run: | 
@@ -91,12 +95,6 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           mv dist/*.{zip,dmg,deb,AppImage,exe,snap,rpm} artifacts || true
-
-      - name: Sign Windows build
-        if: matrix.os == 'windows-latest'
-        run: |
-          dotnet tool install --global AzureSignTool
-          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}"-kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v dist/Anytype.Setup.${{ steps.version.outputs.VERSION }}.exe
 
       - name: Cleanup artifacts Windows
         if: matrix.os == 'windows-latest'
