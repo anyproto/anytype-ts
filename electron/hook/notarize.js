@@ -38,7 +38,7 @@ exports.default = async function notarizing (context) {
 	};
 
 	if (electronPlatformName == 'win32') {
-		let fileName = path.join(context.outDir, `Anytype Setup ${package.version}`);
+		let fileName = path.join(context.outDir, `Anytype Setup ${package.version}.exe`);
 		let cmd = `AzureSignTool sign -kvu "${process.env.AZURE_KEY_VAULT_URI}" -kvi "${process.env.AZURE_CLIENT_ID}" -kvt "${process.env.AZURE_TENANT_ID}" -kvs "${process.env.AZURE_CLIENT_SECRET}" -kvc ${process.env.AZURE_CERT_NAME} -tr http://timestamp.digicert.com -v "${fileName}"`;
 
 		console.log('[afterSign]: ', fileName);
