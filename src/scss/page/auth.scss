@@ -7,7 +7,8 @@ $colorError: #8a351a;
 
 $colorDark: #060606;
 $colorButtonStroke: #252525;
-$colorButtonOpaque: rgba(23, 23, 23, 0.8);
+$colorButtonBlackHover: rgba(37, 37, 37, 0.8);
+$colorButtonBlankHover: rgba(23, 23, 23, 0.8);
 $colorInputOpaque: #17171799;
 $colorPopUp: #141414;
 $colorErrorBackground: #240e07;
@@ -25,12 +26,13 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 	#popupConfirm-innerWrap {
 		.content { text-align: left; }
 
-		.button { color: $colorPrimary; background: $colorButtonStroke; }
-		.button:not(.disabled):hover { background: $colorButtonOpaque; }
 		.button.disabled { color: $colorTertiary }
+
+		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
+		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
 		
 		.button.blank { border-color: $colorButtonStroke; color: $colorPrimary; background: none; }
-		.button.blank:hover { background: $colorButtonOpaque; }
+		.button.blank:hover { background: $colorButtonBlankHover; }
 
 		h1 { font-size: 18px; margin-bottom: 16px; }
 		b { display: block; font-weight: 700; color: $colorPrimary; margin-bottom: 8px; }
@@ -92,10 +94,10 @@ html.bodyAuthDeleted {
 	.button.disabled { color: $colorTertiary }
 	
 	.button.black { color: $colorPrimary !important; background: $colorButtonStroke !important; }
-	.button.black:not(.disabled):hover { background: $colorButtonOpaque !important; }
+	.button.black:not(.disabled):hover { background: $colorButtonBlackHover !important; }
 
 	.button.blank { border-color: $colorButtonStroke !important; color: $colorPrimary !important; background: none; }
-	.button:not(.disabled):hover{ background: $colorButtonOpaque !important; }
+	.button:not(.disabled):hover{ background: $colorButtonBlankHover !important; }
 
 	.small { color: $colorSecondary; cursor: pointer; }
 	.small:hover { color: $colorPrimary; }
