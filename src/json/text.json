@@ -94,7 +94,6 @@
 	"authSelectLogin": { "en": "Login" },
 	"authSelectSignup": { "en": "Join" },
 
-	"authLoginTitle": { "en": "Login with recovery phrase" },
 	"authLoginSelfHost": { "en": "Self-host" },
 	"authLoginSubmit": { "en": "Continue" },
 	"authLoginLostPhrase": { "en": "I've lost the phrase" },
@@ -590,6 +589,6 @@
 
 	"spaceType0": { "en": "Personal space" },
 
-	"phrasePlaceholder": { "en": "Type your recovery phrase" }
+	"phrasePlaceholder": { "en": "Please enter your Recovery phrase here" }
 
 }
