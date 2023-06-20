@@ -55,6 +55,7 @@ class Phrase extends React.Component<Props, State> {
 		this.onPaste = this.onPaste.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.toggleVisibility = this.toggleVisibility.bind(this);
 	};
 
 	render () {

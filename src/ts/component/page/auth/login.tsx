@@ -45,7 +45,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 						<Error text={error} className="animation" />
 
 						<div className="animation">
-							<Phrase ref={ref => this.refPhrase = ref} onChange={this.onChange} isHidden />
+							<Phrase ref={ref => this.refPhrase = ref} onChange={this.onChange} isHidden={true} />
 						</div>
 						<div className="buttons animation">
 							<Button id="submit" type="input" text={translate('authLoginSubmit')} />
