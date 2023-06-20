@@ -208,8 +208,9 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { data } = param;
 		const { skipIds } = data;
 		const filter = this.getFilter();
+		const skipTypes = UtilObject.getSystemTypes().filter(it => it != Constant.typeId.date);
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes(), },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];
 		const sorts = [
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
