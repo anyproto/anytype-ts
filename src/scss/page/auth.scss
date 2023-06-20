@@ -57,7 +57,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 
 html.bodyAuthDeleted {
 	#popupConfirm-innerWrap {
-		.buttons { flex-direction: row-reverse; justify-content: space-between; width: 100%;}
+		.buttons { flex-direction: row-reverse; justify-content: space-between; width: 100%; }
 	}
 }
 
@@ -88,12 +88,14 @@ html.bodyAuthDeleted {
 	.iconObject { margin-bottom: 12px; }
 
 	.buttons { display: flex; flex-direction: column; align-items: center; gap: 16px 0px; }
-	.button { width: 192px; color: $colorPrimary; background: $colorButtonStroke; }
-	.button:not(.disabled):hover { background: $colorButtonOpaque; }
+	.button { width: 192px; }
 	.button.disabled { color: $colorTertiary }
 	
-	.button.blank { border-color: $colorButtonStroke; color: $colorPrimary; background: none; }
-	.button.blank:hover { background: $colorButtonOpaque; }
+	.button.black { color: $colorPrimary !important; background: $colorButtonStroke !important; }
+	.button.black:not(.disabled):hover { background: $colorButtonOpaque !important; }
+
+	.button.blank { border-color: $colorButtonStroke !important; color: $colorPrimary !important; background: none; }
+	.button:not(.disabled):hover{ background: $colorButtonOpaque !important; }
 
 	.small { color: $colorSecondary; cursor: pointer; }
 	.small:hover { color: $colorPrimary; }

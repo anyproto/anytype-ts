@@ -158,7 +158,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	init () {
 		const { account } = authStore;
-		const { isPopup, history } = this.props;
+		const { isPopup } = this.props;
 		const match = this.getMatch();
 		const { page, action } = this.getMatchParams();
 		const isIndex = this.isIndex();

@@ -166,8 +166,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		let text = this.getText('Submit');
 		let moreInfo = null;
 
-		if (stage == Stage.Void || (stage == Stage.Phrase && phraseCopied)) {
+		if (stage == Stage.Void) {
 			text = translate('authOnboardSubmit');
+		};
+
+		if ((stage == Stage.Phrase) && phraseCopied) {
+			text = translate('authOnboardGoAhead');
 		};
 
 		if (stage == Stage.Phrase) {

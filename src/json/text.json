@@ -121,25 +121,26 @@
 	"authPinCheckError": { "en": "Incorrect pin" },
 
 	"authOnboardSubmit": { "en": "Next" },
+	"authOnboardGoAhead": { "en": "Go ahead" },
 	"authOnboardMoreInfo": { "en": "More info" },
 	"authOnboardAccountDataLocation": { "en": "Account data location" },
 
-	"authOnboardVoidTitle": { "en": "This is your Void" },
-	"authOnboardVoidLabel": { "en": "Everything you create will be stored here. It is a special encrypted place, which exist on your machine and is backed up to the network." },
+	"authOnboardVoidTitle": { "en": "This is the Void" },
+	"authOnboardVoidLabel": { "en": "It is an encrypted location for everything you create. Everything is stored on your device, and backed up to the distributed network." },
 
-	"authOnboardPhraseTitle": { "en": "Your Void is encrypted by your Key" },
-	"authOnboardPhraseLabel": { "en": "Anytype uses recovery phrase randomly generated on your device for data encryption. If you lose it there is no way to recover it. Keep it in safe place <span class='questionMark'>?</span>" },
+	"authOnboardPhraseTitle": { "en": "End-to-end Encryption" },
+	"authOnboardPhraseLabel": { "en": "Your data is encrypted by the Key which is represented by the Recovery phrase. Store it securely. This is the only way to log in and access your Void. <span class='questionMark'>?</span>" },
 	"authOnboardPhraseTooltip": { "en": "<b>How to secure your phrase?</b> <ul><li>In system password storage. We will do it for you</li><li>On a piece of paper stored in a secure place</li><li>Inside a password manager if you use one</li></ul>" },
 	"authOnboardPhraseMoreInfoPopupContent": { "en": "<b>Anytype uses recovery phrase instead of login and password to encrypt your data</b><ul><li>Phrase is randomly generated on your device and stored locally</li><li>No one can access your data without recovery phrase</li><li>Phrase ensures only you own your data, but if you lose it there is no way to recover it.</li></ul><b>If you lose recovery phrase there is no way to recover it</b><ul><li>Anytype cannot recover it for you</li><li>There is technically no possible way access it, as it’s not stored on anytype side</li><li>Anytype will never reach out to ask for it</li><li>Sharing the phase equals sharing the ownership of account</li><li>The ordering of the words in a recovery phrase matters</li></ul><b>Store recovery phrase in secure place In system password storage</b><ul><li>In system password storage. We will do it for you</li><li>Inside password manager if you use one</li><li>On a piece of paper in safe and secure place</li></ul>" },
 	"authOnboardPhraseSubmit": { "en": "Show and copy" },
 
-	"authOnboardOfflineTitle": { "en": "Anytype is an offline-first application" },
-	"authOnboardOfflineLabel": { "en": "Here, everything you create is truly yours. Connecting to the distributed network helps to backup and sync data between your devices." },
-	"authOnboardOfflineSubmit": { "en": "Connect to the network" },
+	"authOnboardOfflineTitle": { "en": "Offline-first application" },
+	"authOnboardOfflineLabel": { "en": "Your data is kept locally on your device. A connection to a distributed network is needed to synchronize your data across devices and back it up" },
+	"authOnboardOfflineSubmit": { "en": "Establish Connection" },
 
-	"authOnboardSoulTitle": { "en": "Let's create your soul" },
-	"authOnboardSoulLabel": { "en": "Think of it like an identity, or a profile within Anytype." },
-	"authOnboardSoulSubmit": { "en": "Finish" },
+	"authOnboardSoulTitle": { "en": "Anytype Identity" },
+	"authOnboardSoulLabel": { "en": "Anytype uses asymmetric encryption for verification, using a public key for identification and a private key for authorization. Enter your name to associate it with your public key." },
+	"authOnboardSoulSubmit": { "en": "Go to the app" },
 
 	"authOnboardSoulCreatingTitle": { "en": "Creating soul..." },
 
