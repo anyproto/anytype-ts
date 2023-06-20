@@ -7,7 +7,7 @@ $colorError: #8a351a;
 
 $colorDark: #060606;
 $colorButtonStroke: #252525;
-$colorButtonOpaque: #252525cc;
+$colorButtonOpaque: rgba(37, 37, 37, 0.8);
 $colorInputOpaque: #17171799;
 $colorPopUp: #141414;
 $colorErrorBackground: #240e07;
@@ -87,7 +87,7 @@ html.bodyAuthDeleted {
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
 
-	.buttons { display: flex; flex-direction: column; align-items: center; gap: 16px 0px; }
+	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
 	.button { width: 192px; }
 	.button.disabled { color: $colorTertiary }
 	
@@ -100,7 +100,7 @@ html.bodyAuthDeleted {
 	.small { color: $colorSecondary; cursor: pointer; }
 	.small:hover { color: $colorPrimary; }
 
-	.error { color: $colorError; }
+	.error { color: $colorError; margin: 0.3em 0px; }
 	.withError { background: $colorErrorBackground; }
 
 	@keyframes dots {

@@ -6,9 +6,7 @@ class HeaderAuthIndex extends React.Component {
 		return (
 			<React.Fragment>
 				<div className="side left" />
-				<div className="side center">
-					<div className="logo" />
-				</div>
+				<div className="side center" />
 				<div className="side right" />
 			</React.Fragment>
 		);

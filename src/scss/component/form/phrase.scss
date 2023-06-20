@@ -9,21 +9,22 @@ $colorErrorBackground: #240e07;
 	font-size: 18px; line-height: 38px; transition: $transitionAllCommon; text-align: center; letter-spacing: -0.12px;
 }
 .phraseWrapper {
-	.phraseInnerWrapper { word-break: break-word; min-height: 38px; }
+	.phraseInnerWrapper { word-break: break-word; min-height: 38px; position: relative; z-index: 1; }
 
 	.word { 
 		font-size: 18px; line-height: 18px; height: 18px; user-select: text !important; display: inline; margin: 10px; vertical-align: middle;
+		white-space: nowrap;
 	}
 
-	.bgColor { border-radius: 6px; filter: blur(5px); }
-	.bgColor-orange { background: $colorOrange !important; user-select: none !important; }
-	.bgColor-red { background: $colorRed !important; }
-	.bgColor-pink { background: $colorPink !important; }
-	.bgColor-purple { background: $colorPurple !important; }
-	.bgColor-blue { background: $colorBlue !important; }
-	.bgColor-ice { background: $colorIce !important; }
-	.bgColor-lime { background: $colorLime !important; }
-	.bgColor-green { background: $colorGreen !important; }
+	.bg { border-radius: 8px; filter: blur(10px); }
+	.bg-orange { background: $colorOrange !important; user-select: none !important; }
+	.bg-red { background: $colorRed !important; }
+	.bg-pink { background: $colorPink !important; }
+	.bg-purple { background: $colorPurple !important; }
+	.bg-blue { background: $colorBlue !important; }
+	.bg-ice { background: $colorIce !important; }
+	.bg-lime { background: $colorLime !important; }
+	.bg-green { background: $colorGreen !important; }
 
 	.placeholder { color: $colorTertiary; top: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	#entry { 

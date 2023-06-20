@@ -4,16 +4,6 @@ import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
 import { UtilCommon, keyboard, translate } from 'Lib';
 
-const COLORS = [
-	'orange',
-	'red',
-	'pink',
-	'purple',
-	'blue',
-	'ice',
-	'lime',
-];
-
 interface Props {
 	value: string;
 	readonly?: boolean;
@@ -26,6 +16,18 @@ interface State {
 	isHidden: boolean;
 	hasError: boolean;
 };
+
+const COLORS = [
+	'orange',
+	'red',
+	'pink',
+	'purple',
+	'blue',
+	'ice',
+	'lime',
+];
+
+const LIMIT = 12;
 
 class Phrase extends React.Component<Props, State> {
 
@@ -77,7 +79,7 @@ class Phrase extends React.Component<Props, State> {
 
 		const renderWord = (word: string, index: number) => {
 			const color = COLORS[index % COLORS.length];
-			const cn = isHidden ? `bgColor bgColor-${color}` : `textColor textColor-${color}`;
+			const cn = isHidden ? `bg bg-${color}` : `textColor textColor-${color}`;
 
 			return <span className={[ 'word', cn ].join(' ')} key={index}>{UtilCommon.ucFirst(word)}</span>;
 		};
@@ -174,7 +176,7 @@ class Phrase extends React.Component<Props, State> {
 			};
 
 			this.clear();
-			this.setState(({ phrase }) => ({ phrase: phrase.concat([ value ]) }));
+			this.setState(({ phrase }) => ({ phrase: phrase.concat([ value ]).slice(0, LIMIT) }));
 		});
 
 		this.placeholderCheck();
