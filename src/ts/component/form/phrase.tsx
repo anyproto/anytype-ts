@@ -176,7 +176,7 @@ class Phrase extends React.Component<Props, State> {
 			};
 
 			this.clear();
-			this.setState(({ phrase }) => ({ phrase: phrase.concat([ value ]).slice(0, LIMIT) }));
+			this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
 		});
 
 		this.placeholderCheck();
@@ -189,7 +189,7 @@ class Phrase extends React.Component<Props, State> {
 		const text = this.normalizeWhiteSpace(cb.getData('text/plain'));
 
 		this.clear();
-		this.setState(({ phrase }) => ({ phrase: phrase.concat(text.split(' ')) }));
+		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat(text.split(' '))) }));
 	};
 
 	onBlur () {
@@ -208,6 +208,10 @@ class Phrase extends React.Component<Props, State> {
 
 	onToggle () {
 		this.setState({ isHidden: !this.state.isHidden });
+	};
+
+	checkValue (v: string[]) {
+		return v.filter(it => it).slice(0, LIMIT);
 	};
 
 	setError () {
