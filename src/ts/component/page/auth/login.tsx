@@ -94,7 +94,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
-				this.refPhrase.publicsetError();
+				this.refPhrase.setError();
 				this.setState({ error: message.error.description });	
 				return;
 			};

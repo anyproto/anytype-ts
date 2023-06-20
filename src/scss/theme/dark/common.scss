@@ -81,7 +81,7 @@ html.themeDark {
 
     .loaderWrapper {
         .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
-		.dot { animation-name: fill; }
+		.dot { animation-name: dots; }
     }
 
     .mediaAudio {

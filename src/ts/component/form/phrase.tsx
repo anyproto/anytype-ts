@@ -208,7 +208,7 @@ class Phrase extends React.Component<Props, State> {
 		this.setState({ isHidden: !this.state.isHidden });
 	};
 
-	publicsetError () {
+	setError () {
 		this.setState({ hasError: true })
 	};
 

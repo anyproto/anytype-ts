@@ -102,6 +102,16 @@ html.bodyAuthDeleted {
 
 	.error { color: $colorError; }
 	.withError { background: $colorErrorBackground; }
+
+	@keyframes dots {
+		0% { background-color: $colorWhite; }
+		32% { background-color: $colorWhite; }
+		100% { background-color: rgba(0,0,0,0); }
+	}
+
+	.loaderWrapper {
+		.dot { animation-name: dots !important; }
+    }
 }
 
 .pageIndexIndex, .pageAuthSelect {
@@ -131,8 +141,6 @@ html.bodyAuthDeleted {
 	.bottom:hover {
 		.icon { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
-
-	.error { position: absolute; z-index: 2; left: 0px; right: 0px; }
 }
 
 .pageAuthInvite {

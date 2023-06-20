@@ -67,7 +67,12 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				);
 			};
 		} else {
-			content = <Loader />;
+			content = (
+				<React.Fragment>
+					<Title text="Entering the void..." />
+					<Loader />
+				</React.Fragment>
+			);
 		};
 		
 		return (
