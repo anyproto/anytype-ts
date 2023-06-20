@@ -26,7 +26,7 @@ exports.default = async function (context) {
 		const fileName = file.replace('.blockmap', '');
 		const cmd = `
 			AzureSignTool.exe sign \
-			-du "Anytype" \
+			-du "https://anytype.io" \
 			-fd sha384 \
 			-td sha384 \
 			-tr http://timestamp.digicert.com \
