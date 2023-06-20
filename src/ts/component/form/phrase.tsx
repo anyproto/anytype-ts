@@ -55,6 +55,7 @@ class Phrase extends React.Component<Props, State> {
 		this.onPaste = this.onPaste.bind(this);
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
+		this.onToggle = this.onToggle.bind(this);
 	};
 
 	render () {
@@ -106,7 +107,7 @@ class Phrase extends React.Component<Props, State> {
 				</div>
 
 				<div id="placeholder" className="placeholder">{translate('phrasePlaceholder')}</div>
-				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.toggleVisibility} />
+				<Icon className={isHidden ? 'see' : 'hide'} onClick={this.onToggle} />
 			</div>
 		);
 	};
@@ -203,7 +204,7 @@ class Phrase extends React.Component<Props, State> {
 		this.range = getRange(node.find('#entry').get(0));
 	};
 
-	toggleVisibility () {
+	onToggle () {
 		this.setState({ isHidden: !this.state.isHidden });
 	};
 

@@ -266,7 +266,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage, phraseCopied } = this.state;
 
 		if (stage == Stage.Phrase && !phraseCopied) {
-			this.refPhrase.toggleVisibility();
+			this.refPhrase.onToggle();
 			this.setState({ phraseCopied: true });
 			this.onCopy();
 
