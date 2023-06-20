@@ -30,21 +30,24 @@
 .iconObject.c26 { width: 26px; height: 26px; }
 .iconObject.c28 { width: 28px; height: 28px; }
 .iconObject.c32 { width: 32px; height: 32px; }
+.iconObject.c36 { width: 36px; height: 36px; }
 .iconObject.c40 { width: 40px; height: 40px; }
 .iconObject.c42 { width: 42px; height: 42px; }
+.iconObject.c44 { width: 44px; height: 44px; }
 .iconObject.c48 { display: block; width: 48px; height: 48px; overflow: hidden; }
 .iconObject.c56 { display: block; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c64 { display: block; width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c80 { display: block; width: 80px; height: 80px; border-radius: 14px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c96 { display: block; width: 96px; height: 96px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
+.iconObject.c108 { display: block; width: 108px; height: 108px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c112 { display: block; width: 112px; height: 112px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
 .iconObject.c128 { display: block; width: 128px; height: 128px; border-radius: 20px; overflow: hidden; background-color: $colorVeryLightGrey; }
 
 .iconObject.c56, .iconObject.c80, .iconObject.c96, .iconObject.c128 {
 	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
-} 
+}
 
-.iconObject.c40, .iconObject.c48, .iconObject.c64 {
+.iconObject.c36, .iconObject.c40, .iconObject.c48, .iconObject.c64 {
 	.iconImage { width: 100%; height: 100%; margin: 0px; left: 0px; top: 0px; }
 }
 

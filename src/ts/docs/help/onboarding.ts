@@ -9,7 +9,7 @@ export default {
 					<p>
 						<b>Welcome to your Anytype Space.</b> Space is essentially a graph, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.
 					</p>
-					<p>To access your Dashboard, click the icon in the center of your screen.</p>
+					<p>To access your Homepage, click the icon in the center of your screen.</p>
 				`,
                 video: './img/help/onboarding/space.mp4',
                 noButton: true,
@@ -213,16 +213,16 @@ export default {
             {
                 description: `
 					<p>
-						<b>Welcome to your Dashboard.</b> This is your personalized page, which you can customize to your liking.<br />
+						<b>Welcome to your Homepage.</b> This is your personalized page, which you can customize to your liking.<br />
 						We've included some materials to help you get started, but feel free to make adjustments as needed.
 					</p>
 					<p>Let's take a few minutes to explore the features together.</p>
 				`,
-                video: './img/help/onboarding/dashboard.mp4',
+                video: './img/help/onboarding/homepage.mp4',
             },
             {
                 description: `
-					<p>On the Dashboard page, you'll find <b>Sets, which act as filters for your objects</b> with various viewing options.</p>
+					<p><b>Sets, acting as filters for your objects</b>, are featured on your Homepage.</p>
 					<p>Sets make it easy to navigate and collect specific objects, such as notes, links, tasks, ideas, and more.</p>
 					<p>To access different Set views, simply select them.</p>
                 `,

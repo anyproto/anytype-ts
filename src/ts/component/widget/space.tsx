@@ -24,7 +24,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 						id="widget-space-icon" 
 						object={{ ...space, layout: I.ObjectLayout.Space }} 
 						forceLetter={true} 
-						size={40} 
+						size={36}
 						canEdit={true} 
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload}
@@ -45,7 +45,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	onOpenSettings (e: React.MouseEvent) {
 		e.stopPropagation();
 
-		popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true } });
+		popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true }, className: 'isSpace' });
 	};
 
 	onSelect (icon: string) {

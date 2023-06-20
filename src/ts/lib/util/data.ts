@@ -311,7 +311,7 @@ class UtilData {
 			},
 			{
 				subId: Constant.subId.space,
-				keys: Constant.defaultRelationKeys.concat([ 'spaceDashboardId', 'spaceAccessibility' ]),
+				keys: Constant.defaultRelationKeys.concat([ 'spaceDashboardId', 'spaceAccessibility', 'createdDate' ]),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space },
 				],
