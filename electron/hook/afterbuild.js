@@ -25,7 +25,7 @@ exports.default = async function (context) {
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
 		const cmd = [
-			`AzureSignTool.exe sign`
+			`AzureSignTool.exe sign`,
 			`-du "https://anytype.io"`,
 			`-fd sha384`,
 			`-td sha384`,
@@ -35,7 +35,7 @@ exports.default = async function (context) {
 			`--azure-key-vault-tenant-id "${process.env.AZURE_TENANT_ID}"`,
 			`--azure-key-vault-client-secret "${process.env.AZURE_CLIENT_SECRET}"`,
 			`--azure-key-vault-certificate "${process.env.AZURE_CERT_NAME}"`,
-			`-v`
+			`-v`,
 			`"${fileName}"`,
 		].join(' ');
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Frame, Error, Header, Footer, Loader } from 'Component';
+import { Frame, Error, Header, Footer } from 'Component';
 import { I, C, UtilCommon, UtilData, Renderer } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -7,18 +7,16 @@ import Errors from 'json/error.json';
 
 interface State {
 	error: string;
-	loading: boolean;
 };
 
 const PageAccountSelect = observer(class PageAccountSelect extends React.Component<I.PageComponent, State> {
 	
 	state: State = {
-		loading: true,
 		error: '',
 	};
 
 	render () {
-		const { loading, error } = this.state;
+		const { error } = this.state;
 		const { accounts } = authStore;
 		const length = accounts.length;
 
@@ -28,7 +26,6 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 				<Footer {...this.props} component="authIndex" />
 				
 				<Frame>
-					{loading ? <Loader />  : null}
 					<Error text={error} />
 				</Frame>
 			</div>
@@ -50,7 +47,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 						error = Errors.AccountRecover[message.error.code] || message.error.description;
 					};
 
-					this.setState({ loading: false, error });
+					this.setState({ error });
 				});
 			});
 		});
