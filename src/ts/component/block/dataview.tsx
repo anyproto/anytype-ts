@@ -1028,7 +1028,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block } = this.props;
 		const view = this.getView();
 
-		return Dataview.applyObjectOrder(rootId, block.id, view.id, groupId, records);
+		return view ? Dataview.applyObjectOrder(rootId, block.id, view.id, groupId, records) : [];
 	};
 
 	onSelectToggle (e: React.MouseEvent, id: string) {
