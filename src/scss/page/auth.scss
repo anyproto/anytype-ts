@@ -13,7 +13,7 @@ $colorInputOpaque: #17171799;
 $colorPopUp: #141414;
 $colorErrorBackground: #240e07;
 
-$shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #393933 inset;
+$shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #252525 inset;
 
 html.bodyIndex, html.bodyAuth {
 	body { background: $colorDark !important; color: $colorSecondary; overflow: hidden; }
@@ -129,6 +129,7 @@ html.bodyAuthDeleted {
 .pageAuthLogin {
 	.form { width: 100%; }
 	.icon { height: 20px; width: 20px; }
+	.error { position: absolute; z-index: 1; width: 100%; left: 0px; top: -32px; }
 
 	.title { margin: 0px 0px 20px 0px; }
 	.phraseWrapper { margin: 0px 0px 20px 0px; }

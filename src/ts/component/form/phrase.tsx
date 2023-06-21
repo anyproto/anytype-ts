@@ -214,8 +214,8 @@ class Phrase extends React.Component<Props, State> {
 		return v.filter(it => it).slice(0, LIMIT);
 	};
 
-	setError () {
-		this.setState({ hasError: true })
+	setError (v: boolean) {
+		this.setState({ hasError: v })
 	};
 
 	focus () {

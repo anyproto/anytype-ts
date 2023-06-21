@@ -15,6 +15,7 @@ $colorErrorBackground: #240e07;
 		font-size: 18px; line-height: 18px; height: 18px; user-select: text !important; display: inline; margin: 10px; vertical-align: middle;
 		white-space: nowrap;
 	}
+	.word:empty { margin: 0px; }
 
 	.bg { border-radius: 8px; filter: blur(10px); }
 	.bg-orange { background: $colorOrange !important; user-select: none !important; }

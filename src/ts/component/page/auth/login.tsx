@@ -76,7 +76,10 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		this.focus();
 
 		if (error) {
-			window.setTimeout(() => this.setState({ error: '' }), 1500);
+			window.setTimeout(() => {
+				this.setState({ error: '' });
+				this.refPhrase.setError(false);
+			}, 1500);
 		};
 	};
 
@@ -98,7 +101,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		
 		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
-				this.refPhrase.setError();
+				this.refPhrase.setError(true);
 				this.setState({ error: 'Invalid recovery phrase' });	
 				return;
 			};
