@@ -181,7 +181,7 @@ class UtilData {
 		return ids;
 	};
 	
-	onAuth (account: I.Account, callBack?: () => void) {
+	onAuth (account: I.Account, param?: any, callBack?: () => void) {
 		if (!account) {
 			console.error('[onAuth] No account defined');
 			return;
@@ -196,6 +196,7 @@ class UtilData {
 		const { redirect } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
+		const routeParam = Object.assign({ replace: true}, (param || {}).routeParam || {});
 
 		if (!profile) {
 			console.error('[onAuth] No profile defined');
@@ -230,8 +231,6 @@ class UtilData {
 			C.ObjectOpen(widgets, '', () => {
 				this.createsSubscriptions(() => {
 					commonStore.defaultTypeSet(commonStore.type);
-
-					const routeParam = { replace: true, animate: true };
 
 					if (pin && !keyboard.isPinChecked) {
 						UtilCommon.route('/auth/pin-check', routeParam);

@@ -464,7 +464,7 @@ class App extends React.Component<object, State> {
 					commonStore.redirectSet(route || redirect || '');
 					keyboard.setPinChecked(isPinChecked);
 
-					UtilData.onAuth(account, cb);
+					UtilData.onAuth(account, {}, cb);
 				});
 
 				win.off('unload').on('unload', (e: any) => {

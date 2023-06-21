@@ -80,8 +80,8 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				ref={node => this.node = node} 
 				className="wrapper"
 			>
-				<Header {...this.props} className="animation" component="authIndex" />
-				<Footer {...this.props} className="animation" component="authIndex" />
+				<Header {...this.props} component="authIndex" />
+				<Footer {...this.props} component="authIndex" />
 				
 				<Frame ref={ref => this.refFrame = ref}>
 					{content}
@@ -101,7 +101,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 
 			case 'select': {
-				this.select(account.id, walletPath);
+				this.select(account.id, walletPath, true);
 				break;
 			};
 
@@ -136,7 +136,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 				if (accountId) {
 					authStore.phraseSet(phrase);
-					this.select(accountId, walletPath);
+					this.select(accountId, walletPath, false);
 				} else {
 					UtilCommon.route('/auth/account-select', { replace: true });
 				};
@@ -144,13 +144,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		});
 	};
 
-	select (accountId: string, walletPath: string) {
+	select (accountId: string, walletPath: string, animate: boolean) {
 		C.AccountSelect(accountId, walletPath, (message: any) => {
 			if (this.setError(message.error) || !message.account) {
 				return;
 			};
 
-			UtilData.onAuth(message.account);
+			UtilData.onAuth(message.account, { routeParam: { animate } });
 		});
 	};
 

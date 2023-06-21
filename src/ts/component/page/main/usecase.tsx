@@ -1,5 +1,4 @@
 import * as React from 'react';
-import $ from 'jquery';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
@@ -9,12 +8,14 @@ import Constant from 'json/constant.json';
 
 interface State {
 	isLoading: boolean;
+	items: any[];
 };
 
 const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I.PageComponent, State> {
 
 	state = {
-		isLoading: false
+		isLoading: false,
+		items: [],
 	};
 
     constructor (props: I.PageComponent) {
@@ -24,8 +25,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
     };
 
     render () {
-		const { isLoading } = this.state;
-		const items = this.getItems();
+		const { isLoading, items } = this.state;
 
         const Case = (item: any) => (
             <div className="item" onClick={e => this.onClick(e, item.id)}>
@@ -40,9 +40,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
         );
 
         return (
-            <div className="usecaseWrapper">
-                <div className="fadeInOverlay" />
-
+            <div>
                 <Frame>
 					{isLoading ? <Loader /> : ''}
 
@@ -63,13 +61,17 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
         );
     };
 
+	componentDidMount (): void {
+		this.setState({ items: this.getItems() });
+	};
+
 	getItems () {
  		return _.shuffle([
 			{ id: I.Usecase.Personal, img: 'img/usecase/personal-projects.png' },
 			{ id: I.Usecase.Notes, img: 'img/usecase/notes-or-diary.png' },
 			{ id: I.Usecase.Knowledge, img: 'img/usecase/knowledge-base.png' },
         ]);
-	}
+	};
 
     onClick (e: any, id: number) {
         e.preventDefault();
@@ -83,22 +85,17 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
         this.setState({ isLoading: true });
 
         C.ObjectImportUseCase(id, () => {
-            $('.usecaseWrapper').css({ 'opacity': 0 });
-
 			analytics.event('SelectUsecase', { type: id });
+			commonStore.redirectSet('/main/graph');
 
-			window.setTimeout(() => {
-				commonStore.redirectSet('/main/graph');
+			UtilData.onAuth(authStore.account, { routeParam: { animate: true } }, () => {
+				const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
+				if (blocks.length) {
+					Storage.setToggle('widget', blocks[0].parentId, true);
+				};
 
-				UtilData.onAuth(authStore.account, () => {
-					const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
-					if (blocks.length) {
-						Storage.setToggle('widget', blocks[0].parentId, true);
-					};
-
-					this.setState({ isLoading: false });
-				});
-			}, 600);
+				this.setState({ isLoading: false });
+			});
         });
     };
 

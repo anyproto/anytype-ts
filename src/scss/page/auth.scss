@@ -198,15 +198,6 @@ html.bodyAuthDeleted {
 
 	canvas { height: 100vh; width: 100vw; }
 
-	.fadeInOverlay {
-		animation: fadeIn 2s 1; background: black; position: absolute; top: 0; left: 0; height: 100vh; width: 100vw; z-index: 3; opacity: 0; 
-		pointer-events: none; 
-	}
-	@keyframes fadeIn {
-		0% { opacity: 1; }
-		100% { opacity: 0; }
-	}
-
 	.label { width: 415px; }
 	.button { min-width: 192px; width: auto; }
 

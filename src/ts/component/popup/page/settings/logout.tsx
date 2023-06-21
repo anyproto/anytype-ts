@@ -95,7 +95,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 		window.getSelection().removeAllRanges();
 	};
 
-	onCopy (e: any) {
+	onCopy () {
 		this.refPhrase.focus();
 
 		UtilCommon.clipboardCopy({ text: authStore.phrase });
@@ -104,15 +104,15 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};
 
-	onLogout (e: any) {
+	onLogout () {
 		const { setPinConfirmed } = this.props;
+
+		UtilCommon.route('/', { replace: true, animate: true });
 
 		window.setTimeout(() => {
 			authStore.logout(false);
-			UtilCommon.route('/', { replace: true });
-
 			setPinConfirmed(false);
-		}, Constant.delay.popup);
+		}, Constant.delay.route * 2);
 	};
 
 });

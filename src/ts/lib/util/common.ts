@@ -810,8 +810,8 @@ class UtilCommon {
 					this.history[method](route); 
 					fade.removeClass('show');
 
-					window.setTimeout(() => fade.hide(), 250);
-				}, 250);
+					window.setTimeout(() => fade.hide(), Constant.delay.route);
+				}, Constant.delay.route);
 			} else {
 				this.history[method](route); 
 			};
