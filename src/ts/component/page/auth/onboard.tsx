@@ -322,28 +322,28 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return;
 		};
 
-		const { stage } = this.state;
+		const { stage, animationStage } = this.state;
 
 		if (stage == Stage.Void) {
-			UtilCommon.route('/', {});
+			UtilCommon.route('/', { replace: true });
 			return;
 		};
 
-		// jump back two stages for the animation
-		if (stage == Stage.Soul) {
-			this.setState((prev) => ({
-				...prev,
-				animationStage: prev.animationStage - 2,
-				stage: prev.stage - 1,
-			}));
-			return;
+		let nextStage = stage - 1;
+		let nextAnimation = animationStage - 1;
+
+		if (animationStage == Stage.SoulCreating) {
+			nextAnimation = Stage.Offline;
 		};
 
-		// jump back one stage for both
+		if (animationStage == Stage.Offline) {
+			nextAnimation = Stage.Void;
+		};
+
 		this.setState((prev) => ({
 			...prev,
-			animationStage: prev.animationStage - 1,
-			stage: prev.stage - 1,
+			animationStage: nextAnimation,
+			stage: nextStage,
 		}));
 	};
 
