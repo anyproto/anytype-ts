@@ -123,7 +123,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                 if (message.error.code) {
                     this.setState({ error: message.error.description });
                 } else {
-                    UtilCommon.route('/auth/setup/init');
+                    UtilCommon.route('/auth/setup/init', {});
                 };
                 setLoading(false);
             });

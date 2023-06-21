@@ -54,7 +54,7 @@ class Preview {
 		window.clearTimeout(this.timeout.tooltip);
 		this.timeout.tooltip = window.setTimeout(() => {
 			const win = $(window);
-			const obj = $('#tooltip');
+			const obj = $('#tooltipContainer');
 			const { left, top } = element.offset();
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();

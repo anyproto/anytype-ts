@@ -164,6 +164,7 @@ html.bodyAuthDeleted {
 }
 
 .pageAuthSetup {
+	.wrapper { transition: opacity 0.5s ease-in-out; }
 	.frame { width: 480px; }
 
 	.importBackupWrap {

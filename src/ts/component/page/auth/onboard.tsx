@@ -326,7 +326,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage } = this.state;
 
 		if (stage == Stage.Void) {
-			UtilCommon.route('/');
+			UtilCommon.route('/', {});
 			return;
 		};
 
@@ -405,7 +405,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			UtilObject.setName(workspace, name);
 
 			window.setTimeout(() => {
-				UtilData.onAuth(this.account, () => UtilCommon.route('/main/usecase'));
+				UtilData.onAuth(this.account, () => UtilCommon.route('/main/usecase', { replace: true }));
 			}, 2000);
 		});
 	};
@@ -414,7 +414,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	showErrorAndExit = (message) => {
 		const error = Errors.AccountCreate[message.error.code] || message.error.description;
 
-		this.setState({ error }, () => window.setTimeout(() => UtilCommon.route('/'), 3000));
+		this.setState({ error }, () => window.setTimeout(() => UtilCommon.route('/', { replace: true }), 3000));
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */

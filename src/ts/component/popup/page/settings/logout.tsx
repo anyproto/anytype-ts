@@ -109,7 +109,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 
 		window.setTimeout(() => {
 			authStore.logout(false);
-			UtilCommon.route('/');
+			UtilCommon.route('/', { replace: true });
 
 			setPinConfirmed(false);
 		}, Constant.delay.popup);

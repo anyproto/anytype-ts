@@ -60,7 +60,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 						<div className="buttons">
 							<div className="animation">
-								<Button text={translate('commonBack')} onClick={() => UtilCommon.route('/')} />
+								<Button text={translate('commonBack')} onClick={() => UtilCommon.route('/', {})} />
 							</div>
 						</div>
 					</React.Fragment>
@@ -69,16 +69,19 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		} else {
 			content = (
 				<React.Fragment>
-					<Title text="Entering the void..." />
-					<Loader />
+					<Title className="animation" text="Entering the void..." />
+					<Loader className="animation" />
 				</React.Fragment>
 			);
 		};
 		
 		return (
-			<div ref={node => this.node = node}>
-				<Header {...this.props} component="authIndex" />
-				<Footer {...this.props} component="authIndex" />
+			<div 
+				ref={node => this.node = node} 
+				className="wrapper"
+			>
+				<Header {...this.props} className="animation" component="authIndex" />
+				<Footer {...this.props} className="animation" component="authIndex" />
 				
 				<Frame ref={ref => this.refFrame = ref}>
 					{content}
@@ -89,15 +92,18 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidMount () {
 		const { match } = this.props;
+		const { account, walletPath } = authStore;
 
 		switch (match.params.id) {
-			case 'init': 
+			case 'init': {
 				this.init(); 
 				break;
+			};
 
-			case 'select': 
-				this.select();
+			case 'select': {
+				this.select(account.id, walletPath);
 				break;
+			};
 
 		};
 
@@ -130,32 +136,21 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 				if (accountId) {
 					authStore.phraseSet(phrase);
-					
-					C.AccountSelect(accountId, walletPath, (message: any) => {
-						if (this.setError(message.error) || !message.account) {
-							return;
-						};
-
-						UtilData.onAuth(message.account);
-					});
+					this.select(accountId, walletPath);
 				} else {
-					UtilCommon.route('/auth/account-select');
+					UtilCommon.route('/auth/account-select', { replace: true });
 				};
 			});
 		});
 	};
 
-	select () {
-		const { account, walletPath } = authStore;
-		
-		C.AccountSelect(account.id, walletPath, (message: any) => {
-			if (this.setError(message.error)) {
+	select (accountId: string, walletPath: string) {
+		C.AccountSelect(accountId, walletPath, (message: any) => {
+			if (this.setError(message.error) || !message.account) {
 				return;
 			};
 
-			if (message.account) {
-				UtilData.onAuth(message.account);
-			};
+			UtilData.onAuth(message.account);
 		});
 	};
 
@@ -174,7 +169,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		UtilCommon.route('/auth/select');
+		UtilCommon.route('/auth/select', {});
 	};
 	
 });

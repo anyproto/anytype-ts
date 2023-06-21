@@ -1,4 +1,5 @@
-import * as $ from 'jquery';
+import $ from 'jquery';
+import raf from 'raf';
 import { I, Preview, Renderer, translate } from 'Lib';
 import { popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -791,14 +792,29 @@ class UtilCommon {
 		return { page, action, id };
 	};
 
-	route (route: string, replace?: boolean) {
+	route (route: string, param: Partial<{ replace: boolean, animate: boolean }>) {
+		const { replace, animate } = param;
 		const method = replace ? 'replace' : 'push';
 
 		menuStore.closeAll();
 		popupStore.closeAll(null, () => { 
 			Preview.hideAll();
 
-			this.history[method](route); 
+			if (animate) {
+				const fade = $('#globalFade');
+				
+				fade.show();
+				window.setTimeout(() => fade.addClass('show'), 15);
+
+				window.setTimeout(() => {
+					this.history[method](route); 
+					fade.removeClass('show');
+
+					window.setTimeout(() => fade.hide(), 250);
+				}, 250);
+			} else {
+				this.history[method](route); 
+			};
 		});
 	};
 

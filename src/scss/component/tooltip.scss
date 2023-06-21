@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-#tooltip { position: fixed; left: 0px; top: 0px; z-index: 1000; pointer-events: none; }
+#tooltipContainer { position: fixed; left: 0px; top: 0px; z-index: 1000; pointer-events: none; }
 
 .tooltip { 
 	position: absolute; border-radius: 4px; background: #373632; padding: 3px 7px; text-transform: none;

@@ -335,8 +335,9 @@ class App extends React.Component<object, State> {
 						<Toast />
 						<Navigation />
 
-						<div id="tooltip" />
+						<div id="tooltipContainer" />
 						<div id="drag" />
+						<div id="globalFade" />
 
 						<Switch>
 							{Routes.map((item: RouteElement, i: number) => (
@@ -382,7 +383,7 @@ class App extends React.Component<object, State> {
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => UtilCommon.route(route));
+		Renderer.on('route', (e: any, route: string) => UtilCommon.route(route, {}));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
@@ -505,7 +506,7 @@ class App extends React.Component<object, State> {
 
 		if (value) {
 			authStore.phraseSet(value);
-			UtilCommon.route('/auth/setup/init', true);
+			UtilCommon.route('/auth/setup/init', { replace: true });
 		} else {
 			Storage.logout();
 		};

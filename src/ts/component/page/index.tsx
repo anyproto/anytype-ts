@@ -169,6 +169,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
+		const routeParam = { replace: true };
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
@@ -178,17 +179,17 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		if (isMain && !account) {
-			UtilCommon.route('/');
+			UtilCommon.route('/', routeParam);
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			UtilCommon.route('/auth/pin-check');
+			UtilCommon.route('/auth/pin-check', routeParam);
 			return;
 		};
 
 		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
-			UtilCommon.route('/auth/deleted');
+			UtilCommon.route('/auth/deleted', routeParam);
 			return;
 		};
 

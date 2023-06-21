@@ -43,11 +43,11 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	};
 
 	onLogin () {
-		Animation.from(() => { UtilCommon.route('/auth/login'); });
+		Animation.from(() => UtilCommon.route('/auth/login', {}));
 	};
 
 	onRegister () {
-		Animation.from(() => { UtilCommon.route('/auth/onboard'); });
+		Animation.from(() => UtilCommon.route('/auth/onboard', {}));
 	};
 	
 });

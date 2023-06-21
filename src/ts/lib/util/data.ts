@@ -231,13 +231,15 @@ class UtilData {
 				this.createsSubscriptions(() => {
 					commonStore.defaultTypeSet(commonStore.type);
 
+					const routeParam = { replace: true, animate: true };
+
 					if (pin && !keyboard.isPinChecked) {
-						UtilCommon.route('/auth/pin-check');
+						UtilCommon.route('/auth/pin-check', routeParam);
 					} else {
 						if (redirect) {
-							UtilCommon.route(redirect, true);
+							UtilCommon.route(redirect, routeParam);
 						} else {
-							UtilObject.openHome('route', { replace: true });
+							UtilObject.openHome('route', routeParam);
 						};
 
 						commonStore.redirectSet('');

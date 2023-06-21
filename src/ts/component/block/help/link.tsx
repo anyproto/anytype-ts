@@ -30,7 +30,7 @@ class ContentLink extends React.Component<Props> {
 	onClick (e: any) {
 		const { contentId } = this.props;
 		
-		UtilCommon.route('/help/' + contentId);
+		UtilCommon.route('/help/' + contentId, {});
 	};
 	
 };

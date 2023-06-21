@@ -65,7 +65,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		authStore.accountSet(account);
 
 		Renderer.send('keytarSet', account.id, phrase);
-		UtilCommon.route('/auth/setup/select');
+		UtilCommon.route('/auth/setup/select', { replace: true });
 	};
 
 });

@@ -67,13 +67,14 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 	onSuccess () {
 		const { account } = authStore;
 		const redirect = Storage.get('redirect');
+		const routeParam = { replace: true, animate: true };
 
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			redirect ? UtilCommon.route(redirect) : UtilObject.openHome('route');
+			redirect ? UtilCommon.route(redirect, routeParam) : UtilObject.openHome('route', routeParam);
 		} else {
-			UtilCommon.route('/');
+			UtilCommon.route('/', routeParam);
 		};
 	};
 	
