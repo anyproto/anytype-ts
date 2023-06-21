@@ -51,7 +51,10 @@
 				.actionItems,
 				.actionItems .item { border-color: $colorLineSecondary; }
 			}
+		}
 
+		.side.right.tabImportCsv {
+			.select .item { color: unset; }
 		}
 
 		.side.right.tabSpaceIndex {

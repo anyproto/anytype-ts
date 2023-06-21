@@ -481,16 +481,15 @@
 			}
 
 			.actionItems { margin: 24px 0px; }
-			.actionItems {
-				.select {
-					background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
-					height: 28px; padding: 0px 26px 0 12px; border-radius: 8px; transition: $transitionAllCommon;
-					display: flex; align-items: center;
-				}
-				.select {
-					.item { border-bottom: 0; color: $colorBlack; }
-					.icon.arrow { right: 3px !important; }
-				}
+
+			.select {
+				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
+				height: 28px; padding: 0px 26px 0 12px; border-radius: 8px; transition: $transitionAllCommon;
+				display: flex; align-items: center;
+			}
+			.select {
+				.item { border-bottom: 0; color: $colorBlack; }
+				.icon.arrow { right: 3px !important; }
 			}
 		}
 
