@@ -18,20 +18,23 @@ class Storage {
 
 	get (key: string): any {
 		let o = String(this.storage[key] || '');
-		if (SPACE_KEYS.includes(key)) {
-			if (o) {
-				this.delete(key);
-			} else {
-				o = this.getSpaceKey(key);
-			};
-		};
 
-		if (!o) {
-			return;
+		if (this.isSpaceKey(key)) {
+			if (o) {
+				delete(this.storage[key]);
+				this.set(key, o, true);
+			};
+
+			return this.getSpaceKey(key);
+		} else {
+			if (!o) {
+				return;
+			};
+
+			let ret = '';
+			try { ret = JSON.parse(o); } catch (e) { /**/ };
+			return ret;
 		};
-		let ret = '';
-		try { ret = JSON.parse(o); } catch (e) { /**/ };
-		return ret;
 	};
 	
 	set (key: string, obj: any, del?: boolean): void {
@@ -53,7 +56,7 @@ class Storage {
 			o = obj;
 		};
 
-		if (SPACE_KEYS.includes(key)) {
+		if (this.isSpaceKey(key)) {
 			this.setSpaceKey(key, o);
 		} else {
 			this.storage[key] = JSON.stringify(o);
@@ -61,24 +64,44 @@ class Storage {
 	};
 	
 	delete (key: string) {
-		delete(this.storage[key]);
+		if (this.isSpaceKey(key)) {
+			const obj = this.getSpace();
+
+			delete(obj[commonStore.workspace][key]);
+
+			this.setSpace(obj);
+		} else {
+			delete(this.storage[key]);
+		};
+	};
+
+	isSpaceKey (key: string): boolean {
+		return SPACE_KEYS.includes(key);
 	};
 
 	setSpaceKey (key: string, value: any) {
-		const obj = this.get('space') || {};
+		const obj = this.getSpace();
 
-		obj[commonStore.workspace] = obj[commonStore.workspace] || {};
 		obj[commonStore.workspace][key] = value;
 
-		this.set('space', obj, true);
+		this.setSpace(obj);
 	};
 
 	getSpaceKey (key: string) {
+		const obj = this.getSpace();
+		return obj[commonStore.workspace][key];
+	};
+
+	getSpace () {
 		const obj = this.get('space') || {};
 
 		obj[commonStore.workspace] = obj[commonStore.workspace] || {};
 
-		return obj[commonStore.workspace][key];
+		return obj;
+	};
+
+	setSpace (obj: any) {
+		this.set('space', obj, true);
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {
@@ -96,7 +119,6 @@ class Storage {
 		list = [ ...new Set(list) ];
 
 		obj[rootId] = list;
-
 		this.set('toggle', obj, true);
 		return obj;
 	};
