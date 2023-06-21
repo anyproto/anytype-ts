@@ -247,18 +247,18 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		} else {
 			return [
 				{ children: [ { id: 'account', name: 'Profile', subPages: [ 'logout' ] } ] },
+				{
+					name: 'Application', children: [
+						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
+						{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
+						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+					]
+				},
 				{ 
 					name: 'Void & key', children: [
 						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 					]
-				},
-				{ 
-					name: 'Application', children: [
-						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
-						{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
-						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-					] 
 				}
 			];
 		};

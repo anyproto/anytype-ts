@@ -151,14 +151,15 @@
 				.section {
 					.iconWrapper { margin-bottom: 0; }
 					.title { @include text-header3; margin: 0; }
-					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorBorderDark; border-radius: 6px; }
-					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorYellow; padding: 5px 11px; }
+					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorBorderLight; border-radius: 10px; }
+					.input:hover:not(.isReadonly) { border-color: $colorBorderDark; }
+					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorAmber; padding: 5px 11px; }
 
 					.accountId { position: relative; }
 					.accountId {
 						.input { background-color: unset; @include text-small; color: $colorDarkGrey; }
 						.icon.copy {
-							width: 20px; height: 20px; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
+							width: 20px; height: 20px; z-index: -1; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
 							opacity: 0; transition: $transitionAllCommon;
 						}
 					}
