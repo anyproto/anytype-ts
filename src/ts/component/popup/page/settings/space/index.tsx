@@ -118,7 +118,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexHomepageTitle`)} />
-										<Label text={'Select an object to set as your homepage'} />
+										<Label text={translate(`popupSettingsSpaceIndexHomepageDescription`)} />
 									</div>
 									<div className="side right">
 										<div onClick={this.onDashboard} id="dashboard" className="button blank c28 dashboardSelect">
@@ -218,9 +218,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onExtend () {
 		const { account } = authStore;
+		const { bytesLimit } = commonStore.spaceStorage;
 		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const limit = String(UtilFile.size(bytesLimit)).replace(' ', '');
 
-		if (!account || !space) {
+		if (!account || !space || !bytesLimit) {
 			return;
 		};
 
@@ -228,6 +230,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		url = url.replace(/\%25accountId\%25/g, account.id);
 		url = url.replace(/\%25spaceName\%25/g, space.name);
+		url = url.replace(/\%25storageLimit\%25/g, limit);
 
 		Renderer.send('urlOpen', url);
 		analytics.event('GetMoreSpace');
