@@ -341,6 +341,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 					};
 				},
 				onOver: (e: any, item: any) => {
+					if (!menuContext) {
+						return;
+					};
+
 					if (!item.arrow) {
 						menuStore.closeAll(subIds);
 						return;

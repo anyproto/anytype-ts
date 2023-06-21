@@ -314,6 +314,10 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 			data: {
 				options,
 				onOver: (e: any, item: any) => {
+					if (!menuContext) {
+						return;
+					};
+
 					if (!item.arrow) {
 						menuStore.close('widget');
 						return;
