@@ -338,6 +338,7 @@
 	"popupSettingsSpaceIndexStorageText": { "en": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally." },
 	"popupSettingsSpaceIndexStorageManageFiles": { "en": "Manage files" },
 	"popupSettingsSpaceIndexHomepageTitle": { "en": "Homepage" },
+	"popupSettingsSpaceIndexHomepageDescription": { "en": "Select an object to show when you login" },
 	"popupSettingsSpaceIndexIntegrationsTitle": { "en": "Integrations" },
 	"popupSettingsSpaceIndexImportDataTitle": { "en": "Import data" },
 	"popupSettingsSpaceIndexExportDataTitle": { "en": "Export data" },
