@@ -202,8 +202,11 @@ class Phrase extends React.Component<Props, State> {
 
 	onSelect () {
 		const node = $(this.node);
+		const entry = node.find('#entry');
 
-		this.range = getRange(node.find('#entry').get(0));
+		if (entry.length) {
+			this.range = getRange(entry.get(0));
+		};
 	};
 
 	onToggle () {
