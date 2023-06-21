@@ -659,10 +659,6 @@ onAddNode = ({ target, sourceId }) => {
 
 	data.nodes.push(target);
 
-	if (sourceId) {
-		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
-	};
-
 	updateForces();
 };
 
