@@ -118,7 +118,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexHomepageTitle`)} />
-										<Label text={'Select an object to set as your homepage'} />
+										<Label text={translate(`popupSettingsSpaceIndexHomepageDescription`)} />
 									</div>
 									<div className="side right">
 										<div onClick={this.onDashboard} id="dashboard" className="button blank c28 dashboardSelect">
