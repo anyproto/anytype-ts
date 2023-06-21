@@ -331,7 +331,11 @@
 	"popupSettingsDataManagementDeleteButton": { "en": "Delete account" },
 
 	"popupSettingsSpaceIndex": { "en": "" },
+	"popupSettingsSpaceIndexSpaceNameLabel": { "en": "Space name" },
 	"popupSettingsSpaceIndexDescriptionPlaceholder": { "en": "Add a few words about the space..." },
+	"popupSettingsSpaceIndexSpaceTypePersonal": { "en": "Personal space" },
+	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": { "en": "End-to-end encryption (E2EE)" },
+	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": { "en": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction." },
 	"popupSettingsSpaceIndexManageSpaceTitle": { "en": "Manage Space" },
 	"popupSettingsSpaceIndexRemoteStorageTitle": { "en": "Remote Storage" },
 	"popupSettingsSpaceIndexRemoteStorageExtend": { "en": "Get more space" },

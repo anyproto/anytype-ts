@@ -14,6 +14,8 @@ interface TooltipParam {
 	typeX: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	typeY: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	delay: number;
+	className?: string;
+	title?: string;
 };
 
 /**
@@ -37,6 +39,7 @@ class Preview {
    * @param typeX - The horizontal direction in which the tooltip should be positioned.
    * @param typeY - The vertical direction in which the tooltip should be positioned.
    * @param delay - The length of time to wait before showing the tooltip.
+   * @param className - custom class name to be added to tooltip element.
    */
 	tooltipShow (param: Partial<TooltipParam>) {
 		const { element } = param;
@@ -61,6 +64,15 @@ class Preview {
 			const eh = element.outerHeight();
 			const { ww } = UtilCommon.getWindowDimensions();
 			const node = $('<div class="tooltip anim"><div class="txt"></div></div>');
+
+			if (param.className) {
+				node.addClass(param.className);
+			};
+
+			if (param.title) {
+				node.prepend('<div class="title"></div>');
+				node.find('.title').html(param.title);
+			};
 
 			node.find('.txt').html(UtilCommon.lbBr(text));
 			obj.html('').append(node);

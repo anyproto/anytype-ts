@@ -44,8 +44,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 				<Title text={translate('popupSettingsImportCsvTitle')} />
 				<Label text={translate('popupSettingsImportCsvText')} />
 
-				<div className="rows">
-					<div className="row">
+				<div className="actionItems">
+					<div className="item">
 						<Label text="Mode" />
 						<Select 
 							ref={ref => this.refMode = ref}
@@ -61,7 +61,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 						/>
 					</div>
 
-					<div className="row">
+					<div className="item">
 						<Label text="Use the first row as column names" />
 						<Switch 
 							value={this.data.firstRow} 
@@ -73,7 +73,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 						/>
 					</div>
 
-					<div className="row">
+					<div className="item">
 						<Label text="Transpose rows and columns" />
 						<Switch 
 							value={this.data.transpose} 
@@ -85,7 +85,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 						/>
 					</div>
 
-					<div className="row">
+					<div className="item">
 						<Label text="Columns are divided by" />
 						<Select 
 							ref={ref => this.refDelimiter = ref}

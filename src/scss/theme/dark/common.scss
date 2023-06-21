@@ -239,6 +239,7 @@ html.themeDark {
     }
 
     .tooltip { background: $colorBgIcon; color: $colorPrimary; }
+    .tooltip.big { background: $colorBgLight; border: 1px solid rgba(229, 229, 229, 0.1); }
 
     /* Icon */
 

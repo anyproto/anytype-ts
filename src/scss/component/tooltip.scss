@@ -12,3 +12,12 @@
 	.txt { line-height: 1.2; list-style-position: inside; }
 	.caption { color: $colorDarkGrey; }
 }
+
+.tooltip.big {
+	background-color: $colorWhite; color: $colorBlack; width: 316px; white-space: normal; padding: 12px 16px;
+	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); border-radius: 8px;
+}
+.tooltip.big {
+	.title { @include text-common; font-weight: 500; margin-bottom: 2px; }
+	.txt { @include text-small; }
+}
