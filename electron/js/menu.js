@@ -352,7 +352,7 @@ class MenuManager {
 	getTrayIcon () {
 		let icon = '';
 		if (is.windows) {
-			icon = 'icon64x64.png';
+			icon = 'icon32x32.png';
 		} else 
 		if (is.linux) {
 			icon = 'icon-tray-white.png';
