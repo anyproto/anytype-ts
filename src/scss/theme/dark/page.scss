@@ -199,7 +199,7 @@
 			.items { height: 100%; }
 			.items {
 				.item {
-					.iconObject:not(.withImage) { background-color: $colorBgIcon; }
+					.iconObject { background-color: $colorBgIcon; }
 				}
 			}
 		}
