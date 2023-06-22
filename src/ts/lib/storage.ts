@@ -16,27 +16,31 @@ class Storage {
 		this.storage = localStorage;
 	};
 
+	parse (s: string) {
+		if (!s) {
+			return;
+		};
+
+		let ret = '';
+		try { ret = JSON.parse(s); } catch (e) { /**/ };
+		return ret;
+	};
+
 	get (key: string): any {
 		let o = String(this.storage[key] || '');
 
 		if (this.isSpaceKey(key)) {
 			if (o) {
 				delete(this.storage[key]);
-				this.set(key, o, true);
+				this.set(key, this.parse(o), true);
 			};
 
 			return this.getSpaceKey(key);
 		} else {
-			if (!o) {
-				return;
-			};
-
-			let ret = '';
-			try { ret = JSON.parse(o); } catch (e) { /**/ };
-			return ret;
+			return this.parse(o);
 		};
 	};
-	
+
 	set (key: string, obj: any, del?: boolean): void {
 		if (!key) {
 			console.log('[Storage].set: key not specified');
