@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
-import { Title, Label, Textarea } from 'Component';
+import { Title, Label, Textarea, Phrase } from 'Component';
 import { I, C, translate, analytics, UtilCommon, Preview } from 'Lib';
 import { commonStore, authStore } from 'Store';
 
 interface State {
 	entropy: string;
 	showCode: boolean;
+	phraseCopied: boolean;
 };
 
 const QRColor = {
@@ -22,6 +23,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	state = {
 		entropy: '',
 		showCode: false,
+		phraseCopied: false
 	};
 
 	constructor (props: I.PopupSettings) {
@@ -30,10 +32,11 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		this.onFocus = this.onFocus.bind(this);
 		this.onBlur = this.onBlur.bind(this);
 		this.onCode = this.onCode.bind(this);
+		this.onCopy = this.onCopy.bind(this);
 	};
 
 	render () {
-		const { entropy, showCode } = this.state;
+		const { entropy, showCode, phraseCopied } = this.state;
 		const theme = commonStore.getThemeClass();
 
 		return (
@@ -43,20 +46,13 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 				<Title text={translate('popupSettingsPhraseTitle')} />
 				<Label className="description" text={translate('popupSettingsPhraseText')} />
 				
-				<div className="inputs">
-					<div className="textareaWrap">
-						<Textarea 
-							ref={ref => this.refPhrase = ref} 
-							id="phrase" 
-							value={translate('popupSettingsPhraseStub')} 
-							className="isBlurred"
-							onFocus={this.onFocus} 
-							onBlur={this.onBlur} 
-							onCopy={() => { analytics.event('KeychainCopy', { type: 'ScreenSettings' }); }}
-							placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
-							readonly={true} 
-						/>
-					</div>
+				<div className="inputs" onClick={this.onCopy}>
+					<Phrase
+						ref={(ref) => (this.refPhrase = ref)}
+						value={authStore.phrase}
+						readonly={true}
+						isHidden={!phraseCopied}
+					/>
 				</div>
 
 				<Title className="sub" text={translate('popupSettingsMobileQRSubTitle')} />
@@ -81,6 +77,13 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		};
 
 		analytics.event('ScreenKeychain', { type: 'ScreenSettings' });
+	};
+
+	onCopy = () => {
+		this.refPhrase.onToggle();
+		this.setState({ phraseCopied: true });
+		UtilCommon.clipboardCopy({ text: authStore.phrase });
+		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
 	};
 
 	onFocus () {

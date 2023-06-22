@@ -352,6 +352,10 @@ class App extends React.Component<object, State> {
 
 	componentDidMount () {
 		this.init();
+
+		window.setTimeout(() => {
+			popupStore.open('settings', { data: { page: 'phrase'}})
+		}, 1500)
 	};
 
 	componentDidUpdate () {

@@ -263,6 +263,11 @@
 
 		.side.right.tabPhrase {
 			.inputs { margin: 0px 0px 54px 0px; }
+			.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 18px 21px; line-height: unset; }
+			.phraseWrapper {
+				.phraseInnerWrapper { min-height: unset; display: flex; justify-content: space-between; }
+				.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }
+			}
 
 			.qrWrap { padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; }
 			.qrWrap {
