@@ -30,6 +30,7 @@
 				.item { gap: 0px 12px; }
 				.item {
 					.iconObject { flex-shrink: 0; flex-basis: 48px; }
+					.iconObject:not(.withImage) { border-radius: 10px; background-color: $colorVeryLightGrey; }
 
 					.name { @include text-overflow-nw; width: 100%; }
 					.descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorDarkGrey; }

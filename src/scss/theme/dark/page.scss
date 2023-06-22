@@ -194,6 +194,15 @@
 				.element:hover { background-color: $colorHoverMedium; }
 			}
 		}
+
+		.objectManagerWrapper {
+			.items { height: 100%; }
+			.items {
+				.item {
+					.iconObject:not(.withImage) { background-color: $colorBgIcon; }
+				}
+			}
+		}
 	}
 }
 
