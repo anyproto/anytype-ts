@@ -91,7 +91,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				</div>
 
 				<div className="section bottom">
-					<Button className="red blank" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
+					<Button color="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
 				</div>
 			</div>
 		);

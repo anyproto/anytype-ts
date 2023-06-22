@@ -53,10 +53,6 @@
 			}
 		}
 
-		.side.right.tabImportCsv {
-			.select .item { color: unset; }
-		}
-
 		.side.right.tabSpaceIndex {
 			.sections .section .sectionContent { border-color: $colorLinePrimary; }
 
@@ -80,7 +76,9 @@
 			.textareaWrap { background-color: $colorBgLight; }
         }
 
-		.side.right.tabPersonal {
+		.side.right.tabPersonal,
+		.side.right.tabImportCsv,
+		.side.right.tabPinIndex {
 			.select .item { color: $colorPrimary; }
 		}
 

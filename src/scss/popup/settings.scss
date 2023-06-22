@@ -137,6 +137,11 @@
 				.actionItems {
 					.item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
 					.item:last-child { border-bottom: 0; }
+					.item.red { color: $colorRed; }
+
+					.item {
+						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+					}
 				}
 			}
 		}
@@ -278,7 +283,19 @@
 				}
 			}
 
+			.accountLocation {
+				.locationDescription { @include text-small; color: $colorDarkGrey; }
+				.locationLabel { color: $colorDarkGrey; }
+			}
+
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
+		}
+
+		.side.right.tabPinIndex {
+			.actionItems {
+				.item { @include text-common; padding: 20px 16px; }
+				.arrow { width: 6px; height: 10px; }
+			}
 		}
 
 		.side.right.tabSpaceStorageManager { padding: 22px 0px 0px 0px; }
@@ -358,18 +375,23 @@
 			}
 		}
 
-		.side.right.tabPersonal {
-			.title { margin-bottom: 32px; }
-
+		.side.right.tabImportCsv,
+		.side.right.tabPersonal,
+		.side.right.tabPinIndex {
 			.select {
 				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
 				height: 28px; padding: 0px 26px 0 12px; border-radius: 8px; transition: $transitionAllCommon;
 				display: flex; align-items: center;
 			}
+			.select:hover { background: $colorHoverMedium; }
 			.select {
 				.item { border-bottom: 0; color: $colorBlack; }
 				.icon.arrow { right: 3px !important; }
 			}
+		}
+
+		.side.right.tabPersonal {
+			.title { margin-bottom: 32px; }
 		}
 
 		.side.right.tabImportIndex, 
@@ -482,16 +504,6 @@
 			}
 
 			.actionItems { margin: 24px 0px; }
-
-			.select {
-				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
-				height: 28px; padding: 0px 26px 0 12px; border-radius: 8px; transition: $transitionAllCommon;
-				display: flex; align-items: center;
-			}
-			.select {
-				.item { border-bottom: 0; color: $colorBlack; }
-				.icon.arrow { right: 3px !important; }
-			}
 		}
 
 		.side.right.tabExportMarkdown,
