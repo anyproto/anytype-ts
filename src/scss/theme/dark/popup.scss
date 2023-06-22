@@ -54,12 +54,13 @@
 		}
 
 		.side.right.tabSpaceIndex {
-			.sections .section .sectionContent { border-color: $colorLinePrimary; }
+			.spaceSettingsIndexHeader .headerContent .spaceType { background-color: $colorHoverMedium; }
+			.sections .section .sectionContent { border-color: $colorLineSecondary; }
 
 			.sections .section .sectionContent {
-				.item { border-color: $colorLinePrimary; }
+				.item { border-color: $colorLineSecondary; }
 				.item {
-					.progressBar .fill { background: $colorOrange; }
+					.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
 				}
 				.item.red {
 					.progressBar .fill { background: $colorRed; }
@@ -75,6 +76,17 @@
             .qrWrap { background: $colorMediumGrey; }
 			.textareaWrap { background-color: $colorBgLight; }
         }
+
+		.side.right.tabAccount {
+			.sections .section {
+				.input { border-color: $colorLineSecondary; }
+				.input:hover { border-color: $colorLinePrimary; }
+				.input:focus:not(.isReadonly) { border-color: $colorAmber; }
+			}
+		}
+
+		.side.right.tabSpaceIndex .sectionIntegrations .item:hover,
+		.side.right.tabPinIndex .actionItems .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
 
 		.side.right.tabPersonal,
 		.side.right.tabImportCsv,

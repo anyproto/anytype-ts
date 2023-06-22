@@ -78,7 +78,7 @@
 					.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
 					
 					.element { 
-						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 4px; 
+						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 6px 2px 8px;
 						border-radius: 6px; margin-left: -5px;
 					}
 					.element:hover { background: $colorHoverMedium; }
@@ -294,6 +294,7 @@
 		.side.right.tabPinIndex {
 			.actionItems {
 				.item { @include text-common; padding: 20px 16px; }
+				.item.cp:hover { background-color: $colorHoverLight; }
 				.arrow { width: 6px; height: 10px; }
 			}
 		}
