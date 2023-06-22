@@ -8,6 +8,8 @@ const BORDER = 16;
 
 class PopupPreview extends React.Component<I.Popup> {
 	
+	isLoaded = false;
+
 	render () {
 		const { param, close } = this.props;
 		const { data } = param;
@@ -43,6 +45,7 @@ class PopupPreview extends React.Component<I.Popup> {
 	};
 	
 	componentDidUpdate () {
+		this.isLoaded = false;
 		this.resize();
 	};
 
@@ -85,6 +88,13 @@ class PopupPreview extends React.Component<I.Popup> {
 		const onError = () => {
 			wrap.addClass('brokenMedia');
 			loader.remove();
+
+			this.isLoaded = true;
+		};
+
+		if (this.isLoaded) {
+			position();
+			return;
 		};
 
 		switch (type) {
@@ -109,10 +119,11 @@ class PopupPreview extends React.Component<I.Popup> {
 					wrap.css({ height, width });
 					loader.remove();
 					position();
+
+					this.isLoaded = true;
 				};
 
 				img.onerror = onError;
-
 				img.src = src;
 				break;
 			};
@@ -122,7 +133,10 @@ class PopupPreview extends React.Component<I.Popup> {
 				const width = 672;
 				const height = 382;
 
-				video.oncanplay = () => { loader.remove(); };
+				video.oncanplay = () => { 
+					loader.remove(); 
+					this.isLoaded = true;
+				};
 				video.onerror = onError;
 
 				wrap.css({ height, width });
