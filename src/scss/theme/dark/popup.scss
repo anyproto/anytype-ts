@@ -73,6 +73,7 @@
 		}
 
         .side.right.tabPhrase {
+			.phraseWrapper { background-color: $colorBgLight; }
             .qrWrap { background: $colorMediumGrey; }
 			.textareaWrap { background-color: $colorBgLight; }
         }
