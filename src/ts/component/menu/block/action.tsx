@@ -589,21 +589,22 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.className = 'single';
 
 				const isCollection = Dataview.isCollection(rootId, blockId);
+				const name = isCollection ? 'collection' : 'set';
 
-				let addParam: any = {};
+				let addParam: any = {
+					name: `Create new ${name}`,
+				};
 				if (isCollection) {
-					addParam.name = 'Create new collection';
 					addParam.onClick = () => {
-						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', () => { onCreate(); });
+						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', () => onCreate());
 					};
 
 					filters = filters.concat([
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
 					]);
 				} else {
-					addParam.name = 'Create new set';
 					addParam.onClick = () => {
-						C.ObjectCreateSet([], {}, '', () => { onCreate(); });
+						C.ObjectCreateSet([], {}, '', () => onCreate());
 					};
 
 					filters = filters.concat([
