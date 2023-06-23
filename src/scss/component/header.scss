@@ -111,7 +111,8 @@
 
 .header.mainObject {
 	.templateBanner { display: flex; gap: 0 4px; padding: 6px 8px; border-radius: 6px; background: $colorVeryLightGrey; }
-	.typeName { display: flex; gap: 0 4px; font-weight: 600; cursor: pointer; }
+	.typeName { display: flex; gap: 0 4px; cursor: pointer; }
+	.typeName .name { font-weight: 600; }
 }
 
 .popup {

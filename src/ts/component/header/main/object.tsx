@@ -24,31 +24,36 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const showMenu = !UtilObject.isStoreType(object.type);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
-		const type = dbStore.getType(object.targetObjectType);
 
-		let center = (
-			<div
-				id="path"
-				className="path"
-				onClick={onSearch}
-				onMouseOver={e => onTooltipShow(e, 'Click to search')}
-				onMouseOut={onTooltipHide}
-			>
-				<div className="inner">
-					<IconObject object={object} size={18} />
-					<ObjectName object={object} />
-					{isLocked ? <Icon className="lock" /> : ''}
-				</div>
-			</div>
-		);
+		let center = null;
 
-		if (UtilObject.isTemplate(object.type) && type) {
+		if (UtilObject.isTemplate(object.type)) {
+			const type = dbStore.getType(object.targetObjectType);
 			center = (
 				<div className="templateBanner">
-					<Label text="You are editing a template of" />
-					<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
-						<IconObject object={type} />
-						<ObjectName object={type} />
+					<Label text="You are editing a template" />
+					{type ? (
+						<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
+							of
+							<IconObject object={type} />
+							<ObjectName object={type} />
+						</div>
+					) : ''}
+				</div>
+			);
+		} else {
+			center = (
+				<div
+					id="path"
+					className="path"
+					onClick={onSearch}
+					onMouseOver={e => onTooltipShow(e, 'Click to search')}
+					onMouseOut={onTooltipHide}
+				>
+					<div className="inner">
+						<IconObject object={object} size={18} />
+						<ObjectName object={object} />
+						{isLocked ? <Icon className="lock" /> : ''}
 					</div>
 				</div>
 			);
