@@ -42,7 +42,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			<div className={[ 'inner', 'bgColor', 'bgColor-' + (bgMark.param || 'default') ].join(' ')} />
 		);
 		
-		let markActions = [
+		const markActions = [
 			{ type: I.MarkType.Bold, icon: 'bold', name: 'Bold', caption: `${cmd} + B` },
 			{ type: I.MarkType.Italic, icon: 'italic', name: 'Italic', caption: `${cmd} + I` },
 			{ type: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough', caption: `${cmd} + Shift + S` },
@@ -51,11 +51,6 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code', caption: `${cmd} + L` },
 		];
 		
-		// You can't make headers bold, since they are already bold
-		if (block.isTextHeader()) {
-			markActions = markActions.filter(it => ![ I.MarkType.Bold ].includes(it.type));
-		};
-
 		return (
 			<div className="flex">
 				{canTurn ? (

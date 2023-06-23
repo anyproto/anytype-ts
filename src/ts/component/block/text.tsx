@@ -597,15 +597,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 	
 	getMarksFromHtml (): { marks: I.Mark[], text: string } {
-		const { block } = this.props;
-		const value = this.refEditable ? this.refEditable.getHtmlValue() : '';
-		const restricted: I.MarkType[] = [];
-
-		if (block.isTextHeader()) {
-			restricted.push(I.MarkType.Bold);
-		};
-		
-		return Mark.fromHtml(value, restricted);
+		return Mark.fromHtml(this.refEditable ? this.refEditable.getHtmlValue() : '');
 	};
 
 	onInput () {
