@@ -24,6 +24,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const showMenu = !UtilObject.isStoreType(object.type);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
+		const type = dbStore.getType(object.targetObjectType);
 
 		let center = (
 			<div
@@ -41,9 +42,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			</div>
 		);
 
-		if (UtilObject.isTemplate(object.type)) {
-			const type = dbStore.getType(object.targetObjectType);
-
+		if (UtilObject.isTemplate(object.type) && type) {
 			center = (
 				<div className="templateBanner">
 					<Label text="You are editing a template of" />
