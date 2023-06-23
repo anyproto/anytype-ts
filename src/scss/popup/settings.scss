@@ -135,14 +135,11 @@
 				ol, ul { padding-left: 1.35em; margin: 8px 0px; }
 
 				.actionItems { border: 1px solid $colorBorderLight; border-radius: 12px; margin-bottom: 40px; }
-				.actionItems {
-					.item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
-					.item:last-child { border-bottom: 0; }
-					.item.red { color: $colorRed; }
-
-					.item {
-						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
-					}
+				.actionItems > .item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
+				.actionItems > .item:last-child { border-bottom: 0; }
+				.actionItems > .item.red { color: $colorRed; }
+				.actionItems > .item {
+					.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
 				}
 			}
 		}
@@ -391,8 +388,7 @@
 		.side.right.tabPinIndex {
 			.select {
 				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
-				height: 28px; padding: 0px 26px 0 12px; border-radius: 8px; transition: $transitionAllCommon;
-				display: flex; align-items: center;
+				min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px;
 			}
 			.select:hover { background: $colorHoverMedium; }
 			.select {
@@ -403,7 +399,6 @@
 
 		.side.right.tabPersonal {
 			.title { margin-bottom: 32px; }
-			.selectSpellcheck { flex-direction: column; justify-content: space-around; height: unset; min-height: 28px; padding: 3px 26px 3px 12px; }
 		}
 
 		.side.right.tabImportIndex, 
