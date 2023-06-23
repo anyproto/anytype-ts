@@ -374,6 +374,7 @@ class Relation {
 	};
 
 	public getArrayValue (value: any): string[] {
+		console.log('VALUE: ', value)
 		if (this.isEmpty(value)) {
 			return [];
 		};

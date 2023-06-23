@@ -403,6 +403,8 @@
 
 		.side.right.tabPersonal {
 			.title { margin-bottom: 32px; }
+			.selectSpellcheck { gap: 0 4px; }
+			.selectSpellcheck .item:after { content: ','; }
 		}
 
 		.side.right.tabImportIndex, 
