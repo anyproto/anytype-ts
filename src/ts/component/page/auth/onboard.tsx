@@ -43,12 +43,12 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			back = <Icon className="arrow back" onClick={this.onBack} />;
 		};
 
-		if (![Stage.SoulCreating, Stage.SpaceCreating].includes(stage)) {
+		if (![ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
 			indicator = <DotIndicator className="animation" index={stage} count={4} />;
 			label = <Label id="label" className="animation" text={this.getText('Label')} />;
 		};
 
-		if ( [Stage.Phrase, Stage.Offline].includes(stage) && config.experimental ) {
+		if ([ Stage.Phrase, Stage.Offline ].includes(stage) && config.experimental ) {
 			footer = (
 				<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
 					<Icon className="gear" />
