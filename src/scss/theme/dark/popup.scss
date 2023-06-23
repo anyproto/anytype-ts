@@ -49,7 +49,7 @@
 				.select:hover { background-color: $colorHoverMedium; }
 
 				.actionItems,
-				.actionItems .item { border-color: $colorLineSecondary; }
+				.actionItems > .item { border-color: $colorLineSecondary; }
 			}
 		}
 
@@ -87,7 +87,7 @@
 		}
 
 		.side.right.tabSpaceIndex .sectionIntegrations .item:hover,
-		.side.right.tabPinIndex .actionItems .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
+		.side.right.tabPinIndex .actionItems > .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
 
 		.side.right.tabPersonal,
 		.side.right.tabImportCsv,

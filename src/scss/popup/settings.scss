@@ -135,11 +135,13 @@
 				ol, ul { padding-left: 1.35em; margin: 8px 0px; }
 
 				.actionItems { border: 1px solid $colorBorderLight; border-radius: 12px; margin-bottom: 40px; }
-				.actionItems > .item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
-				.actionItems > .item:last-child { border-bottom: 0; }
-				.actionItems > .item.red { color: $colorRed; }
-				.actionItems > .item {
-					.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+				.actionItems {
+					> .item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
+					> .item:last-child { border-bottom: 0; }
+					> .item.red { color: $colorRed; }
+					> .item {
+						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+					}
 				}
 			}
 		}
@@ -300,8 +302,8 @@
 
 		.side.right.tabPinIndex {
 			.actionItems {
-				.item { @include text-common; padding: 20px 16px; }
-				.item.cp:hover { background-color: $colorHoverLight; }
+				> .item { @include text-common; padding: 20px 16px; }
+				> .item.cp:hover { background-color: $colorHoverLight; }
 				.arrow { width: 6px; height: 10px; }
 			}
 		}
