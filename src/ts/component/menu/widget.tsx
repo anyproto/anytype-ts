@@ -298,7 +298,9 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						this.forceUpdate();
 						
 						if (isEditing && this.target) {
-							C.BlockWidgetSetTargetId(widgets, blockId, this.target.id, () => close());
+							C.BlockWidgetSetTargetId(widgets, blockId, this.target.id, () => {
+								C.BlockWidgetSetLayout(widgets, blockId, this.layout, () => close());
+							});
 						};
 
 						analytics.event('ChangeWidgetSource', {

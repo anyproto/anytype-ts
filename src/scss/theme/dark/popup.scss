@@ -82,7 +82,7 @@
 			.sections .section {
 				.input { border-color: $colorLineSecondary; }
 				.input:hover { border-color: $colorLinePrimary; }
-				.input:focus:not(.isReadonly) { border-color: $colorAmber; }
+				.input:focus:not(.isReadonly) { border-color: $colorOrange; }
 			}
 		}
 
