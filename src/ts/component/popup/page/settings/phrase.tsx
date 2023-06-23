@@ -29,8 +29,6 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	constructor (props: I.PopupSettings) {
 		super(props);
 
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onCode = this.onCode.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 	};
@@ -84,30 +82,6 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		this.setState({ phraseCopied: true });
 		UtilCommon.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
-	};
-
-	onFocus () {
-		const node = $(this.node);
-		const phrase = node.find('#phrase');
-
-		this.refPhrase.setValue(authStore.phrase);
-		this.refPhrase.select();
-
-		UtilCommon.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: 'Recovery phrase copied to clipboard' });
-
-		phrase.removeClass('isBlurred');
-		analytics.event('KeychainCopy', { type: 'ScreenSettings' });
-	};
-
-	onBlur () {
-		const node = $(this.node);
-		const phrase = node.find('#phrase');
-
-		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));
-
-		phrase.addClass('isBlurred');
-		window.getSelection().removeAllRanges();
 	};
 
 	onCode () {
