@@ -402,8 +402,6 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const obj = $(`#${getId()} .content`);
 		const offset = 16;
 
-		console.log(this.getItems(true));
-
 		let height = HEIGHT_FILTER;
 		if (filter) {
 			height += this.getListHeight() + offset;

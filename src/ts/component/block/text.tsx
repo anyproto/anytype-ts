@@ -770,7 +770,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (ret) {
 			return;
 		};
-		
+
 		focus.set(id, range);
 
 		if (!keyboard.isSpecial(e)) {
@@ -935,16 +935,20 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		let ret = false;
+		let diff = 0;
 
 		keyboard.shortcut('backspace, delete', e, () => { 
 			menuStore.close('blockContext'); 
 			ret = true;
 		});
 
+		keyboard.shortcut('alt+backspace', e, () => { 
+			diff += this.text.length - value.length;
+		});
+
 		this.placeholderCheck();
 
 		let text = block.canHaveMarks() ? parsed.text : value;
-		
 		if (!block.isTextCode()) {
 			text = Mark.fromUnicode(text);
 		};
@@ -952,8 +956,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);
 
-			const diff = value.length - text.length;
 			const { focused, range } = focus.state;
+
+			diff += marksChanged ? (value.length - text.length) : 0;
 
 			focus.set(focused, { from: range.from - diff, to: range.to - diff });
 			focus.apply();
@@ -1006,7 +1011,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 							// Try to fix async detailsUpdate event
 							window.setTimeout(() => {
-								focus.set(block.id, { from: to, to: to });
+								focus.set(block.id, { from: to, to });
 								focus.apply();
 							}, 50);
 						});
