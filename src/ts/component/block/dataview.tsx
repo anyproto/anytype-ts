@@ -507,6 +507,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {};
 		const flags: I.ObjectFlag[] = [];
+		const hoverArea = $(this.node).find('.hoverArea');
 
 		if (!types.length || isCollection) {
 			flags.push(I.ObjectFlag.SelectType);
@@ -515,7 +516,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const menuParam: any = {
 			onClose: () => {
 				this.creating = false;
-				$(this.node).removeClass('withTemplateSelector');
+				hoverArea.removeClass('active');
 			}
 		};
 
@@ -623,7 +624,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const showMenu = () => {
-			$(this.node).addClass('withTemplateSelector');
+			hoverArea.addClass('active');
 
 			menuStore.open('searchObject', {
 				...menuParam,
