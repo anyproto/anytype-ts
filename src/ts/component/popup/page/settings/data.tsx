@@ -47,20 +47,18 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                     </div>
 
                     {canMove ? (
-                        <div id="row-location" className="item cp" onClick={this.onLocationMove}>
-                            <Label text={translate('popupSettingsAccountMoveTitle')} />
-                            <div className="select">
-                                <div className="item">
-                                    <div className="name">{walletPath == accountPath ? 'Default' : 'Custom'}</div>
-                                </div>
+                        <div id="row-location" className="item accountLocation cp" onClick={this.onLocationMove}>
+                            <div>
+                                <Label text={translate('popupSettingsAccountMoveTitle')} />
                             </div>
+                            <Label className="locationLabel" text={walletPath == accountPath ? 'Default' : 'Custom'} />
                         </div>
                     ) : ''}
                 </div>
 
                 <Title className="sub" text={translate('popupSettingsDataManagementDeleteTitle')} />
                 <Label className="description" text={translate('popupSettingsDataManagementDeleteText')} />
-                <Button onClick={() => { onPage('delete'); }} className="red blank" text={translate('popupSettingsDataManagementDeleteButton')} />
+                <Button className="c36" onClick={() => { onPage('delete'); }} color="red" text={translate('popupSettingsDataManagementDeleteButton')} />
 
             </React.Fragment>
         );

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title, Label, Textarea, Button } from 'Component';
+import { Title, Label, Textarea, Button, Phrase } from 'Component';
 import { I, C, translate, analytics, UtilCommon, Preview } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -9,6 +9,7 @@ import Head from './head';
 interface State {
 	entropy: string;
 	showCode: boolean;
+	phraseCopied: boolean;
 };
 
 const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends React.Component<I.PopupSettings, State> {
@@ -18,18 +19,18 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	state = {
 		entropy: '',
 		showCode: false,
+		phraseCopied: false
 	};
 
 	constructor (props: I.PopupSettings) {
 		super(props);
 
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
 		this.onCopy = this.onCopy.bind(this);
 		this.onLogout = this.onLogout.bind(this);
 	};
 
 	render () {
+		const { phraseCopied } = this.state;
 		return (
 			<div
 				ref={node => this.node = node}
@@ -39,20 +40,13 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 				<Title text={translate('popupSettingsPhraseTitle')} />
 				<Label className="description" text={translate('popupSettingsPhraseText')} />
 				
-				<div className="inputs">
-					<div className="textareaWrap">
-						<Textarea 
-							ref={ref => this.refPhrase = ref} 
-							id="phrase" 
-							value={translate('popupSettingsPhraseStub')} 
-							className="isBlurred"
-							onFocus={this.onFocus} 
-							onBlur={this.onBlur} 
-							onCopy={this.onCopy}
-							placeholder="witch collapse practice feed shame open despair creek road again ice least lake tree young address brain envelope" 
-							readonly={true} 
-						/>
-					</div>
+				<div className="inputs" onClick={this.onCopy}>
+					<Phrase
+						ref={(ref) => (this.refPhrase = ref)}
+						value={authStore.phrase}
+						readonly={true}
+						isHidden={!phraseCopied}
+					/>
 				</div>
 
 				<div className="buttons">
@@ -75,32 +69,11 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 		analytics.event('ScreenKeychain', { type: 'BeforeLogout' });
 	};
 
-	onFocus () {
-		const node = $(this.node);
-		const phrase = node.find('#phrase');
-
-		this.refPhrase.setValue(authStore.phrase);
-		this.refPhrase.select();
-
-		phrase.removeClass('isBlurred');
-	};
-
-	onBlur () {
-		const node = $(this.node);
-		const phrase = node.find('#phrase');
-
-		this.refPhrase.setValue(translate('popupSettingsPhraseStub'));
-
-		phrase.addClass('isBlurred');
-		window.getSelection().removeAllRanges();
-	};
-
-	onCopy () {
-		this.refPhrase.focus();
-
+	onCopy = () => {
+		this.refPhrase.onToggle();
+		this.setState({ phraseCopied: true });
 		UtilCommon.clipboardCopy({ text: authStore.phrase });
 		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
-
 		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};
 

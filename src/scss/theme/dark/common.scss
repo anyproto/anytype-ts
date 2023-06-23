@@ -64,6 +64,11 @@ html.themeDark {
 	}
 
 	.objectManagerWrapper {
+        .controls .side.left .element:hover { background-color: $colorHoverMedium; }
+        .icon.checkbox { background-image: url('#{$themePath}/icon/archive/checkbox0.svg') !important; }
+        .icon.checkbox.active { background-image: url('#{$themePath}/icon/archive/checkbox1.svg') !important; }
+        .icon.remove { background-image: url('#{$themePath}/icon/menu/action/remove0.svg'); }
+        .icon.search { background-image: url('#{$themePath}/icon/menu/action/search0.svg'); }
 		.controls, .emptySearch { border-color: $colorLinePrimary; }
 	}
 
@@ -239,6 +244,7 @@ html.themeDark {
     }
 
     .tooltip { background: $colorBgIcon; color: $colorPrimary; }
+    .tooltip.big { background: $colorBgLight; border: 1px solid rgba(229, 229, 229, 0.1); }
 
     /* Icon */
 

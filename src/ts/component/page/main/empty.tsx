@@ -55,7 +55,7 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	};
 	
 	onDashboard () {
-		UtilMenu.dashboardSelect('#empty-dashboard-select');
+		UtilMenu.dashboardSelect('#empty-dashboard-select', true);
 	};
 
 });

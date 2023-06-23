@@ -75,7 +75,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					<div className="headerContent">
 						<div className="name">
-							<Label className="small" text="Space name" />
+							<Label className="small" text={translate('popupSettingsSpaceIndexSpaceNameLabel')} />
 							<Input
 								ref={ref => this.refName = ref}
 								value={name}
@@ -85,7 +85,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 						</div>
 
-						<div className="spaceType">Personal</div>
+						<Label
+							className="spaceType"
+							text={translate('popupSettingsSpaceIndexSpaceTypePersonal')}
+							onMouseEnter={this.onSpaceTypeTooltip}
+							onMouseLeave={e => Preview.tooltipHide(false)}
+						/>
 					</div>
 				</div>
 
@@ -237,6 +242,17 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onName (e: any, v: string) {
 		UtilObject.setName(commonStore.workspace, this.checkName(v));
+	};
+
+	onSpaceTypeTooltip (e) {
+		Preview.tooltipShow({
+			title: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle'),
+			text: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipText'),
+			className: 'big',
+			element: $(e.currentTarget),
+			typeY: I.MenuDirection.Bottom,
+			typeX: I.MenuDirection.Left
+		});
 	};
 
 	checkName (v: string): string {

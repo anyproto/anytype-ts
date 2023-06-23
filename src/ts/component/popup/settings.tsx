@@ -127,6 +127,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					setLoading={this.setLoading}
 				/>
 			);
+
+			if (this.isSubPage(page)) {
+				cnr.push('isSubPage');
+			};
 		};
 
 		const Item = (action: any) => {
@@ -240,25 +244,33 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			return [
 				{ 
 					name: 'Space', isHidden: true, children: [
-						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager', 'importIndex', 'exportIndex' ] },
+						{
+							id: 'spaceIndex',
+							name: 'Space',
+							subPages: [
+								'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
+								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown', 'importCsv',
+								'exportIndex', 'exportProtobuf', 'exportMarkdown'
+							]
+						},
 					]
 				},
 			];
 		} else {
 			return [
 				{ children: [ { id: 'account', name: 'Profile', subPages: [ 'logout' ] } ] },
-				{ 
-					name: 'Void & key', children: [
-						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
-						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
-					]
-				},
-				{ 
+				{
 					name: 'Application', children: [
 						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 						{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
 						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
-					] 
+					]
+				},
+				{ 
+					name: 'Void & Key', children: [
+						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
+						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
+					]
 				}
 			];
 		};
@@ -368,6 +380,18 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		} else {
 			obj.find(`#item-${active}`).addClass('active');
 		};
+	};
+
+	isSubPage (page) {
+		const items = this.getItems();
+
+		for (const item of items) {
+			if ((item.subPages || []).includes(page)) {
+				return true;
+			};
+		};
+
+		return false;
 	};
 
 	resize () {

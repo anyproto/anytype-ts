@@ -30,22 +30,19 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 					<Label text={translate('popupSettingsExportMarkdownText2')} />
 				</div>
 
-				<div className="rows">
+				<div className="actionItems">
 					{items.map((item: any, i: number) => (
-						<div key={i} className="row">
-							<div className="side left">
-								<Label text={item.name} />
-							</div>
-							<div className="side right">
-								<Switch
-									className="big"
-									value={this.data[item.id]}
-									onChange={(e: any, v: boolean) => {
-										this.data[item.id] = v;
-										this.save();
-									}}
-								/>
-							</div>
+						<div key={i} className="item">
+							<Label text={item.name} />
+
+							<Switch
+								className="big"
+								value={this.data[item.id]}
+								onChange={(e: any, v: boolean) => {
+									this.data[item.id] = v;
+									this.save();
+								}}
+							/>
 						</div>
 					))}
 				</div>

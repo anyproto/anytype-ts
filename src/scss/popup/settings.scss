@@ -72,13 +72,14 @@
 
 			> .side.right { width: 70%; padding: 44px 54px; overflow-x: hidden; overflow-y: auto; }
 			> .side.right.isFull { width: 100%; }
+			> .side.right.isSubPage { padding-top: 22px; }
 			> .side.right {
 				.head { width: 100%; margin: 0px 0px 36px 0px; }
 				.head {
 					.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
 					
 					.element { 
-						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 4px; 
+						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 6px 2px 8px;
 						border-radius: 6px; margin-left: -5px;
 					}
 					.element:hover { background: $colorHoverMedium; }
@@ -137,21 +138,14 @@
 				.actionItems {
 					.item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
 					.item:last-child { border-bottom: 0; }
+					.item.red { color: $colorRed; }
+
+					.item {
+						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+					}
 				}
 			}
 		}
-
-		.side.right.tabLogout,
-		.side.right.tabDelete,
-		.side.right.tabPinSelect,
-		.side.right.tabImportNotion,
-		.side.right.tabImportNotionHelp,
-		.side.right.tabImportNotionWarning,
-		.side.right.tabImportMarkdown,
-		.side.right.tabImportCsv,
-		.side.right.tabExportMarkdown,
-		.side.right.tabExportProtobuf
-		{ padding-top: 22px; }
 
 		.side.right.tabAccount {
 			.sections { display: flex; flex-direction: column; height: 100%; }
@@ -163,14 +157,15 @@
 				.section {
 					.iconWrapper { margin-bottom: 0; }
 					.title { @include text-header3; margin: 0; }
-					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorBorderDark; border-radius: 6px; }
-					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorYellow; padding: 5px 11px; }
+					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorBorderLight; border-radius: 10px; }
+					.input:hover:not(.isReadonly) { border-color: $colorBorderDark; }
+					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorOrange; padding: 5px 11px; }
 
 					.accountId { position: relative; }
 					.accountId {
 						.input { background-color: unset; @include text-small; color: $colorDarkGrey; }
 						.icon.copy {
-							width: 20px; height: 20px; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
+							width: 20px; height: 20px; z-index: -1; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
 							opacity: 0; transition: $transitionAllCommon;
 						}
 					}
@@ -194,8 +189,9 @@
 					.spaceType {
 						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
 						background: $colorHoverLight url('~img/icon/space/personal.svg') 4px 2px no-repeat;
-						@include text-small; color: $colorDarkGrey;
+						@include text-small; color: $colorDarkGrey; transition: $transitionAllCommon;
 					}
+					.spaceType:hover { background-color: $colorHoverMedium; }
 				}
 			}
 
@@ -205,7 +201,7 @@
 					.title { @include text-header3; margin-bottom: 12px; }
 					.label { @include text-small; color: $colorDarkGrey; }
 
-					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; }
+					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; overflow: hidden; }
 					.sectionContent .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
 					.sectionContent .item:last-child { border-bottom: 0; }
 					.sectionContent .item {
@@ -231,7 +227,7 @@
 				}
 
 				.section.sectionSpaceManager .sectionContent .item {
-					.storageLabel { margin-bottom: 12px; }
+					.storageLabel { margin-bottom: 12px; line-height: 18px; }
 					.storageLabel .label { display: inline; }
 					.storageLabel .label.extend { color: $colorRed; cursor: pointer; }
 
@@ -241,7 +237,8 @@
 					.progressBar .fill { background: $colorRed; }
 				}
 
-				.section.sectionIntegrations .sectionContent .item { cursor: pointer; }
+				.section.sectionIntegrations .sectionContent .item { cursor: pointer; transition: $transitionAllCommon; }
+				.section.sectionIntegrations .sectionContent .item:hover { background: $colorHoverLight; }
 				.section.sectionIntegrations .sectionContent .item {
 					.side.left { display: flex; gap: 0 12px; }
 					.side.left {
@@ -252,6 +249,7 @@
 				}
 
 				.section.sectionInfo .sectionContent {
+					.item .sides { align-items: center; }
 					.item.itemSpaceId,
 					.item.itemAccountId { align-items: center; cursor: pointer; }
 
@@ -261,6 +259,15 @@
 					.item.itemSpaceId:hover .icon,
 					.item.itemAccountId:hover .icon { opacity: 1; }
 				}
+			}
+		}
+
+		.side.right.tabLogout,
+		.side.right.tabPhrase {
+			.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 18px 21px; line-height: unset; }
+			.phraseWrapper {
+				.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; word-break: unset; }
+				.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }
 			}
 		}
 
@@ -286,7 +293,20 @@
 				}
 			}
 
+			.accountLocation {
+				.locationDescription { @include text-small; color: $colorDarkGrey; }
+				.locationLabel { color: $colorDarkGrey; }
+			}
+
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
+		}
+
+		.side.right.tabPinIndex {
+			.actionItems {
+				.item { @include text-common; padding: 20px 16px; }
+				.item.cp:hover { background-color: $colorHoverLight; }
+				.arrow { width: 6px; height: 10px; }
+			}
 		}
 
 		.side.right.tabSpaceStorageManager { padding: 22px 0px 0px 0px; }
@@ -366,30 +386,35 @@
 			}
 		}
 
-		.side.right.tabPersonal {
-			.title { margin-bottom: 32px; }
-
+		.side.right.tabImportCsv,
+		.side.right.tabPersonal,
+		.side.right.tabPinIndex {
 			.select {
 				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
 				height: 28px; padding: 0px 26px 0 12px; border-radius: 8px; transition: $transitionAllCommon;
 				display: flex; align-items: center;
 			}
+			.select:hover { background: $colorHoverMedium; }
 			.select {
 				.item { border-bottom: 0; color: $colorBlack; }
 				.icon.arrow { right: 3px !important; }
 			}
 		}
 
+		.side.right.tabPersonal {
+			.title { margin-bottom: 32px; }
+		}
+
 		.side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
-			.items { display: flex; gap: 16px; flex-wrap: wrap; }
+			.items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 			.item { 
-				width: 164px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
+				height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
 				position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
 			}
 
 			@media (max-width: 700px) {
-				.items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+				.items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 				.item { width: auto; }
 			}
 
@@ -417,7 +442,9 @@
 		.side.right.tabImportNotion {
 			.inputWrapper { flex-direction: row; align-items: flex-start; gap: 0px 8px; margin: 0px 0px 58px 0px; }
 			.inputWrapper { 
-				.input { height: 36px; border: 1px solid $colorBorderDark; border-radius: 6px; }
+				.input { height: 36px; border: 1px solid $colorBorderLight; border-radius: 8px; }
+				.input:hover { border-color: $colorBorderDark; }
+				.input:focus { border-color: $colorOrange; }
 				.button { margin: 0px; flex-shrink: 0; }
 				.errorWrapper { flex-grow: 1; }
 				.error { @include text-small; margin: 2px 0px 0px 0px; }
@@ -487,7 +514,7 @@
 				.label:last-child { margin: 0px; }
 			}
 
-			.rows { margin: 24px 0px; }
+			.actionItems { margin: 24px 0px; }
 		}
 
 		.side.right.tabExportMarkdown,
@@ -497,9 +524,9 @@
 				.label:last-child { margin: 0px; }
 			}
 
-			.rows { margin: 24px 0px; }
+			.actionItems { margin: 32px 0px 24px 0px; }
 		}
 	}
 
-	.popupSettings.isSpace .innerWrap { width: 684px; }
+	.popupSettings.isSpace .innerWrap { width: 684px; height: 700px; }
 }

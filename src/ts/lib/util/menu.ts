@@ -366,7 +366,7 @@ class UtilMenu {
 		return UtilCommon.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string) {
+	dashboardSelect (element: string, openRoute?: boolean) {
 		const { workspace } = commonStore;
 		const space = UtilObject.getSpace();
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
@@ -382,7 +382,11 @@ class UtilMenu {
 					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
 				};
 
-				UtilObject.openHome('route');
+				menuStore.closeAll();
+
+				if (openRoute) {
+					UtilObject.openHome('route');
+				};
 			});
 		};
 
