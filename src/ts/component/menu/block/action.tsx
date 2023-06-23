@@ -145,7 +145,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 	onKeyDown (e: any) {
 		const { onKeyDown, param } = this.props;
 		const { data } = param;
-		const { rootId, blockIds, blockRemove } = data;
+		const { rootId, blockIds, blockRemove, onCopy } = data;
 		const { filter } = this.state;
 		const { focused } = focus.state;
 		const cmd = keyboard.cmdKey();
@@ -153,14 +153,18 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let ret = false;
 
 		if (!filter && blockRemove) {
-			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
+			keyboard.shortcut('backspace, delete', e, () => {
 				blockRemove();
 				ret = true;
 			});
 		};
 
+		keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+			onCopy(e, pressed.match('x') ? true : false);
+		});
+
 		if (focused || (!focused && keyboard.isFocused)) {
-			keyboard.shortcut(`${cmd}+d`, e, (pressed: string) => {
+			keyboard.shortcut(`${cmd}+d`, e, () => {
 				Action.duplicate(rootId, rootId, blockIds[blockIds.length - 1], blockIds, I.BlockPosition.Bottom, () => { 
 					focus.clear(true); 
 				});

@@ -498,7 +498,7 @@ const Block = observer(class Block extends React.Component<Props> {
 	};
 
 	menuOpen (param?: Partial<I.MenuParam>) {
-		const { dataset, rootId, block, blockRemove } = this.props;
+		const { dataset, rootId, block, blockRemove, onCopy } = this.props;
 		const { selection } = dataset || {};
 
 		// Hide block menus and plus button
@@ -518,6 +518,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				rootId,
 				dataset,
 				blockRemove,
+				onCopy,
 			}
 		}, param || {});
 
