@@ -412,6 +412,10 @@ class UtilMenu {
 					{ id: I.HomePredefinedId.Existing, name: 'Existing object', arrow: true },
 				],
 				onOver: (e: any, item: any) => {
+					if (!menuContext) {
+						return;
+					};
+
 					if (!item.arrow) {
 						menuStore.closeAll([ 'searchObject' ]);
 						return;

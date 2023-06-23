@@ -22,17 +22,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	render () {
 		const { onPage } = this.props;
-		const { bytesUsed, bytesLimit } = commonStore.spaceStorage;
+		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
 		const { account } = authStore;
 		const space = UtilObject.getSpace() || {};
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
-		const notExisting = [ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId);
 
 		const percentageUsed = Math.floor(UtilCommon.getPercent(bytesUsed, bytesLimit));
 		const currentUsage = String(UtilFile.size(bytesUsed));
 		const limitUsage = String(UtilFile.size(bytesLimit));
-		const isRed = percentageUsed >= 90;
+		const isRed = (percentageUsed >= 90) || (localUsage > bytesLimit);
 		const usageCn = [ 'item' ];
 
 		let extend = null;

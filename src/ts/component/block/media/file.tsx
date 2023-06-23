@@ -120,11 +120,13 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 	};
 	
 	onOpen (e: any) {
+		if (e.button) {
+			return;
+		};
+
 		const { block } = this.props;
-		const { content } = block;
-		const { hash } = content;
 		
-		UtilObject.openPopup({ id: hash, layout: I.ObjectLayout.File });
+		UtilObject.openPopup({ id: block.content.hash, layout: I.ObjectLayout.File });
 	};
 	
 });

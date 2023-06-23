@@ -68,7 +68,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			<div className="inner" style={{ paddingLeft }}>
 				<div
 					className="clickable"
-					onMouseDown={(e: React.MouseEvent) => { onClick(e, object); }}
+					onMouseDown={e => onClick(e, object)}
 				>
 					{arrow}
 					<IconObject 

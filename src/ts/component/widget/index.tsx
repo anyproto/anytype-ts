@@ -107,12 +107,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		};
 
 		if (layout != I.WidgetLayout.Space) {
-			let onClick = null;
-			if (!this.isCollection(targetBlockId)) {
-				onClick = e => UtilObject.openEvent(e, object);
-			} else {
-				onClick = () => this.onSetPreview();
-			};
+			const onClick = this.isCollection(targetBlockId) ? this.onSetPreview : this.onClick;
 
 			head = (
 				<div className="head">
@@ -244,7 +239,9 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	onClick (e: React.MouseEvent): void {
-		UtilObject.openEvent(e, this.getObject());
+		if (!e.button) {
+			UtilObject.openEvent(e, this.getObject());
+		};
 	};
 
 	onOptions (e: React.MouseEvent): void {

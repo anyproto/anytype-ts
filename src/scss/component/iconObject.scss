@@ -56,10 +56,10 @@
 
 .iconObject.withLetter { background-color: $colorVeryLightGrey; }
 
-.iconObject.withImage { border-radius: 4px; }
-.iconObject.withImage.c96 { border-radius: 6px; }
-.iconObject.withImage.c112, .iconObject.withImage.c128 { border-radius: 8px; }
+.iconObject.withImage { border-radius: 4px !important; background-color: unset !important; }
+.iconObject.withImage.c96 { border-radius: 6px !important; }
+.iconObject.withImage.c112, .iconObject.withImage.c128 { border-radius: 8px !important; }
+
 .iconObject.isHuman { border-radius: 100% !important; }
-.iconObject.isHuman.withImage { background-color: unset !important; }
 
 .iconObject.withOption.isSpace { background: #000; }

@@ -372,6 +372,10 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	};
 
 	onClick (e: React.MouseEvent, item: unknown): void {
+		if (e.button) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 

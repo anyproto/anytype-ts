@@ -481,7 +481,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 
-		if (root.isObjectSet() || root.isObjectCollection()) {
+		if (root.isLocked() || root.isObjectSet() || root.isObjectCollection()) {
 			return;
 		};
 

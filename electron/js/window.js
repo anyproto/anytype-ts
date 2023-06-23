@@ -141,6 +141,7 @@ class WindowManager {
 			width: 400, 
 			height: 400, 
 			useContentSize: true,
+			backgroundColor: Util.getBgColor(Util.getTheme()),
 		});
 
 		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}`));

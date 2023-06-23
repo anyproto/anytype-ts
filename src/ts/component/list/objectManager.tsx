@@ -23,14 +23,14 @@ interface Props {
 };
 
 interface State {
-    loading: boolean;
+    isLoading: boolean;
 };
 
 const ListObjectManager = observer(class ListObjectManager extends React.Component<Props, State> {
 
     _isMounted = false;
     state = {
-        loading: false,
+        isLoading: false,
     };
 
     top = 0;
@@ -57,7 +57,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             return null;
         };
 
-        const { loading } = this.state;
+        const { isLoading } = this.state;
         const { buttons, rowHeight, Info, iconSize } = this.props;
         const items = this.getItems();
         const cnControls = [ 'controls' ];
@@ -147,7 +147,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         );
 
         let content = null;
-        if (!items.length) {
+        if (!items.length && !isLoading) {
             if (!filter) {
                 controls = null;
             } else {
@@ -160,7 +160,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         } else {
             content = (
                 <div className="items">
-                    {loading ? <Loader id="loader" /> : (
+                    {isLoading ? <Loader /> : (
                         <InfiniteLoader
                             rowCount={items.length}
                             loadMoreRows={() => {}}
@@ -340,7 +340,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             filters.push({ operator: I.FilterOperator.And, relationKey: 'name', condition: I.FilterCondition.Like, value: filter });
         };
 
-        this.setState({ loading: true });
+        this.setState({ isLoading: true });
 
         UtilData.searchSubscribe({
             subId,
@@ -349,7 +349,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
             withArchived,
             sources: sources || []
         }, () => {
-            this.setState({ loading: false });
+           this.setState({ isLoading: false });
         });
     };
 

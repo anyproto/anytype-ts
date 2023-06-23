@@ -36,15 +36,6 @@ interface Props {
 	onMouseLeave?(e: any): void;
 };
 
-const IDS40 = [ 
-	I.ObjectLayout.Page, 
-	I.ObjectLayout.Set, 
-	I.ObjectLayout.Collection,
-	I.ObjectLayout.File, 
-	I.ObjectLayout.Image, 
-	I.ObjectLayout.Type,
-];
-
 const LAYOUT_EMOJI = [ 
 	I.ObjectLayout.Page, 
 	I.ObjectLayout.Set, 
@@ -428,9 +419,6 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		if ((size == 18) && (layout == I.ObjectLayout.Task)) {
 			s = 16;
-		};
-		if ((size == 48) && (IDS40.indexOf(layout) >= 0)) {
-			s = 40;
 		};
 		if ((size == 48) && (layout == I.ObjectLayout.Relation)) {
 			s = 28;

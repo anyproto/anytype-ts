@@ -396,8 +396,8 @@ class CommonStore {
 		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
 	};
 
-	spaceStorageSet (usage: any) {
-		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, usage));
+	spaceStorageSet (value: Partial<SpaceStorage>) {
+		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
 	};
 
 };

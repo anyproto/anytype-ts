@@ -94,8 +94,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 				ref={node => this.node = node}
 				className="item"
 				key={object.id}
-				onMouseDown={(e) => this.onClick(e)}
-				onContextMenu={(e) => this.onContext(e, false)}
+				onMouseDown={e => this.onClick(e)}
+				onContextMenu={e => this.onContext(e, false)}
 				style={style}
 			>
 				{inner}
@@ -112,6 +112,10 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 	};
 
 	onClick = (e: React.MouseEvent): void => {
+		if (e.button) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
 
