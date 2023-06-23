@@ -507,7 +507,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {};
 		const flags: I.ObjectFlag[] = [];
-		const hoverArea = $(this.node).find('.hoverArea');
+		const node = $(this.node);
+		const hoverArea = node.find('.hoverArea');
 
 		if (!types.length || isCollection) {
 			flags.push(I.ObjectFlag.SelectType);
