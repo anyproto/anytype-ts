@@ -13,7 +13,7 @@ $colorInputOpaque: #17171799;
 $colorPopUp: #141414;
 $colorErrorBackground: #240e07;
 
-$shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #252525 inset;
+$shadow: 0px 0px 0px 1px #252525 inset;
 
 html.bodyIndex, html.bodyAuth {
 	body { background: $colorDark !important; color: $colorSecondary; overflow: hidden; }
@@ -49,7 +49,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		}
 	}
 
-	.tooltip { padding: 12px 16px; background: $colorPopUp; color: $colorSecondary; box-shadow: $shadow; @include text-common; }
+	.tooltip { padding: 12px 16px; background: $colorPopUp !important; color: $colorSecondary; box-shadow: $shadow !important; @include text-common; }
 	.tooltip {
 		.txt { line-height: 22px; }
 		b { display: block; font-weight: 500; color: $colorPrimary; }
