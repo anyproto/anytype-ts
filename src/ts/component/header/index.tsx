@@ -9,7 +9,6 @@ import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
 import HeaderMainStore from './main/store';
 import HeaderMainEmpty from './main/empty';
-import HeaderMainTemplate from './main/template';
 
 interface Props extends I.HeaderComponent {
 	component: string;
@@ -24,7 +23,6 @@ const Components = {
 	mainNavigation:		 HeaderMainNavigation,
 	mainStore:			 HeaderMainStore,
 	mainEmpty:			 HeaderMainEmpty,
-	mainTemplate:		 HeaderMainTemplate,
 };
 
 class Header extends React.Component<Props> {
@@ -45,15 +43,8 @@ class Header extends React.Component<Props> {
 	
 	render () {
 		const { component, className, rootId } = this.props;
+		const Component = Components[component] || null;
 		const cn = [ 'header', component, className ];
-		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-
-		let Component = Components[component] || null;
-
-		if (UtilObject.isTemplate(object.type)) {
-			Component = Components['mainTemplate'];
-			cn.push('mainTemplate');
-		};
 
 		if (![ 'authIndex', 'mainIndex' ].includes(component)) {
 			cn.push('isCommon');

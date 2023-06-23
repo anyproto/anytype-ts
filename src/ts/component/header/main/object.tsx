@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Sync, ObjectName } from 'Component';
+import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
 import { I, UtilData, UtilObject, keyboard, sidebar } from 'Lib';
-import { blockStore, detailStore, popupStore, menuStore } from 'Store';
+import { blockStore, detailStore, popupStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
@@ -19,11 +19,41 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	render () {
 		const { rootId, onSearch, onTooltipShow, onTooltipHide } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled' ]);
+		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType' ]);
 		const isLocked = root ? root.isLocked() : false;
 		const showMenu = !UtilObject.isStoreType(object.type);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
+
+		let center = (
+			<div
+				id="path"
+				className="path"
+				onClick={onSearch}
+				onMouseOver={e => onTooltipShow(e, 'Click to search')}
+				onMouseOut={onTooltipHide}
+			>
+				<div className="inner">
+					<IconObject object={object} size={18} />
+					<ObjectName object={object} />
+					{isLocked ? <Icon className="lock" /> : ''}
+				</div>
+			</div>
+		);
+
+		if (UtilObject.isTemplate(object.type)) {
+			const type = dbStore.getType(object.targetObjectType);
+
+			center = (
+				<div className="templateBanner">
+					<Label text="You are editing a template of" />
+					<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
+						<IconObject object={type} />
+						<ObjectName object={type} />
+					</div>
+				</div>
+			);
+		};
 
 		return (
 			<React.Fragment>
@@ -40,19 +70,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				</div>
 
 				<div className="side center">
-					<div 
-						id="path" 
-						className="path" 
-						onClick={onSearch} 
-						onMouseOver={e => onTooltipShow(e, 'Click to search')} 
-						onMouseOut={onTooltipHide}
-					>	
-						<div className="inner">
-							<IconObject object={object} size={18} />
-							<ObjectName object={object} />
-							{isLocked ? <Icon className="lock" /> : ''}
-						</div>
-					</div>
+					{center}
 				</div>
 
 				<div className="side right">
