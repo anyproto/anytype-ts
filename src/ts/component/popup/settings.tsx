@@ -127,6 +127,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 					setLoading={this.setLoading}
 				/>
 			);
+
+			if (this.isSubPage(page)) {
+				cnr.push('isSubPage');
+			};
 		};
 
 		const Item = (action: any) => {
@@ -240,7 +244,15 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			return [
 				{ 
 					name: 'Space', isHidden: true, children: [
-						{ id: 'spaceIndex', name: 'Space', subPages: [ 'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager', 'importIndex', 'exportIndex' ] },
+						{
+							id: 'spaceIndex',
+							name: 'Space',
+							subPages: [
+								'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
+								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown', 'importCsv',
+								'exportIndex', 'exportProtobuf', 'exportMarkdown'
+							]
+						},
 					]
 				},
 			];
@@ -368,6 +380,18 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		} else {
 			obj.find(`#item-${active}`).addClass('active');
 		};
+	};
+
+	isSubPage (page) {
+		const items = this.getItems();
+
+		for (const item of items) {
+			if ((item.subPages || []).includes(page)) {
+				return true;
+			};
+		};
+
+		return false;
 	};
 
 	resize () {
