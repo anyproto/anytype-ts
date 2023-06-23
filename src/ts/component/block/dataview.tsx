@@ -513,7 +513,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const menuParam: any = {
-			onClose: () => { this.creating = false; },
+			onClose: () => {
+				this.creating = false;
+				$(this.node).removeClass('withTemplateSelector');
+			}
 		};
 
 		if (dir) {
@@ -620,6 +623,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const showMenu = () => {
+			$(this.node).addClass('withTemplateSelector');
+
 			menuStore.open('searchObject', {
 				...menuParam,
 				className: 'single',
@@ -648,9 +653,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					},
 					onSelect: (item: any) => {
 						create(item);
-
 						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
-					},
+					}
 				}
 			});
 		};
