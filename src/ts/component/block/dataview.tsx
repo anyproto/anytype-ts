@@ -507,13 +507,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const details: any = {};
 		const flags: I.ObjectFlag[] = [];
+		const hoverArea = $(this.node).find('.hoverArea');
 
 		if (!types.length || isCollection) {
 			flags.push(I.ObjectFlag.SelectType);
 		};
 
 		const menuParam: any = {
-			onClose: () => { this.creating = false; },
+			onClose: () => {
+				this.creating = false;
+				hoverArea.removeClass('active');
+			}
 		};
 
 		if (dir) {
@@ -620,6 +624,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const showMenu = () => {
+			hoverArea.addClass('active');
+
 			menuStore.open('searchObject', {
 				...menuParam,
 				className: 'single',
@@ -648,9 +654,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					},
 					onSelect: (item: any) => {
 						create(item);
-
 						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
-					},
+					}
 				}
 			});
 		};
