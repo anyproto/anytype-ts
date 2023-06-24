@@ -149,9 +149,11 @@ class Storage {
 
 	setScroll (key: string, rootId: string, scroll: number) {
 		const obj = this.get('scroll') || {};
-		obj[key] = obj[key] || {};
-		obj[key][rootId] = Number(scroll) || 0;
-		this.set('scroll', obj, true);
+		try {
+			obj[key] = obj[key] || {};
+			obj[key][rootId] = Number(scroll) || 0;
+			this.set('scroll', obj, true);
+		} catch (e) { /**/ };
 		return obj;
 	};
 
