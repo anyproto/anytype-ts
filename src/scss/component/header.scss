@@ -109,6 +109,12 @@
 	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }
 
+.header.mainObject {
+	.templateBanner { display: flex; gap: 0 4px; padding: 6px 8px; border-radius: 6px; background: $colorVeryLightGrey; }
+	.typeName { display: flex; gap: 0 4px; cursor: pointer; }
+	.typeName .name { font-weight: 600; }
+}
+
 .popup {
 	.header { position: sticky; padding: 0px; border-radius: 12px 12px 0px 0px; top: 0px !important; }
 	.header {
