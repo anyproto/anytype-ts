@@ -263,7 +263,7 @@ html.themeDark {
     .iconObject.withLetter
     { background-color: $colorBgIcon; }
 
-	.iconObject.withOption.isSpace { background: $colorHoverMedium; }
+	.iconObject.withOption.isSpace { background: $colorHoverMedium !important; }
 
     /* EditorControls */
 
