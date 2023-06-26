@@ -47,7 +47,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                     </div>
 
                     {canMove ? (
-                        <div id="row-location" className="item accountLocation cp" onClick={this.onLocationMove}>
+                        <div id="row-location" className="item accountLocation" onClick={this.onLocationMove}>
                             <div>
                                 <Label text={translate('popupSettingsAccountMoveTitle')} />
                             </div>

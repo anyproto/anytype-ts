@@ -81,7 +81,7 @@ class Phrase extends React.Component<Props, State> {
 			const color = COLORS[index % COLORS.length];
 			const cn = isHidden ? `bg bg-${color}` : `textColor textColor-${color}`;
 
-			return <span className={[ 'word', cn ].join(' ')} key={index}>{UtilCommon.ucFirst(word)}</span>;
+			return <span className={[ 'word', cn ].join(' ')} key={index}>{word}</span>;
 		};
 
 		return (
@@ -130,6 +130,10 @@ class Phrase extends React.Component<Props, State> {
 		this.placeholderCheck();
 	};
 
+	componentWillUnmount () {
+		window.clearTimeout(this.timeout);
+	};
+
 	init () {
 		const node = $(this.node);
 
@@ -166,20 +170,26 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: React.KeyboardEvent) {
-		const value = this.getEntryValue();
-
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
-
-			if (!value.length) {
-				return;
-			};
-
-			this.clear();
-			this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
+			this.updateValue();
 		});
 
 		this.placeholderCheck();
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.updateValue(), 1000);
+	};
+
+	updateValue () {
+		const value = this.getEntryValue();
+
+		if (!value.length) {
+			return;
+		};
+
+		this.clear();
+		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
 	};
 
 	onPaste (e) {
@@ -231,15 +241,15 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	getEntryValue () {
-		return this.normalizeWhiteSpace(this.entry.text());
+		return this.normalizeWhiteSpace(this.entry.text()).toLowerCase();
 	};
 
 	normalizeWhiteSpace = (val: string) => {
-		return val.replace(/\s\s+/g, ' ').trim() || '';
+		return String(val || '').replace(/\s\s+/g, ' ').trim() || '';
 	};
 
 	getValue () {
-		return this.state.phrase.join(' ').trim();
+		return this.state.phrase.join(' ').trim().toLowerCase();
 	};
 
 	placeholderCheck () {

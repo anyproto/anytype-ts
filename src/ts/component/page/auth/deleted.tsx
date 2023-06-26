@@ -23,9 +23,10 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	constructor (props: I.PageComponent) {
         super(props);
 
-		this.onRemoveLocalData = this.onRemoveLocalData.bind(this);
+		this.onRemove = this.onRemove.bind(this);
 		this.onExport = this.onExport.bind(this);
 		this.onCancel = this.onCancel.bind(this);
+		this.onLogout = this.onLogout.bind(this);
 	};
 	
 	render () {
@@ -38,7 +39,6 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		const duration = Math.max(0, account.status.date - UtilCommon.time());
 		const days = Math.max(1, Math.ceil(duration / 86400));
 		const dt = `${days} ${UtilCommon.cntWord(days, 'day', 'days')}`;
-
 		const daysUntilDeletion = Math.ceil(Math.max(0, (account.status.date - UtilCommon.time()) / 86400 ));
 
 		// Deletion Status
@@ -52,9 +52,6 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		let title = '';
 		let description = '';
 		let cancelButton = null;
-
-		const exportButton = <Button color="blank" text={translate('authDeleteExportButton')} onClick={this.onExport} />;
-		const removeButton = <span className="remove" onClick={this.onRemoveLocalData}>{translate('authDeleteRemoveButton')}</span>
 
 		switch (status) {
 			case I.AccountStatusType.PendingDeletion: {
@@ -86,7 +83,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 									totalValue={DAYS}
 									startAngle={270}
 									lengthAngle={-360}
-									data={[ { title: '', value: daysUntilDeletion, color: '#5c5a54' } ]}
+									data={[ { title: '', value: daysUntilDeletion, color: '#d4d4d4' } ]}
 								/>
 							</div>
 						</div>
@@ -98,21 +95,23 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 								
 					<div className="animation buttons">
 						{cancelButton}
-						{exportButton}
-						{removeButton}
+						<Button color="blank" text={translate('authDeleteExportButton')} onClick={this.onExport} />
+						<div className="remove" onClick={this.onRemove}>{translate('authDeleteRemoveButton')}</div>
 					</div>
 				</Frame>
+
+				<div className="animation small bottom" onClick={this.onLogout}>
+					Log out
+				</div>
 			</div>
 		);
 	};
 
 	componentDidMount() {
-		window.setTimeout(() => {
-			Survey.check(I.SurveyType.Delete);
-		}, Constant.delay.popup);
+		window.setTimeout(() => Survey.check(I.SurveyType.Delete), Constant.delay.popup);
 	};
 
-	onRemoveLocalData () {
+	onRemove () {
 		popupStore.open('confirm', {
 			data: {
 				title: translate('authDeleteRemovePopupTitle'),
@@ -136,6 +135,11 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 			UtilObject.openHome('route');
 			analytics.event('CancelDeletion');
 		});
+	};
+
+	onLogout () {
+		UtilCommon.route('/', { replace: true, animate: true });
+		window.setTimeout(() => authStore.logout(false), Constant.delay.route * 2);
 	};
 	
 });

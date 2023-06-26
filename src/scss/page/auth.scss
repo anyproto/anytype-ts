@@ -13,7 +13,7 @@ $colorInputOpaque: #17171799;
 $colorPopUp: #141414;
 $colorErrorBackground: #240e07;
 
-$shadow: 0px 4px 16px rgb(0 0 0 / 20%), 0px 0px 0px 1px #252525 inset;
+$shadow: 0px 0px 0px 1px #252525 inset;
 
 html.bodyIndex, html.bodyAuth {
 	body { background: $colorDark !important; color: $colorSecondary; overflow: hidden; }
@@ -49,7 +49,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		}
 	}
 
-	.tooltip { padding: 12px 16px; background: $colorPopUp; color: $colorSecondary; box-shadow: $shadow; @include text-common; }
+	.tooltip { padding: 12px 16px; background: $colorPopUp !important; color: $colorSecondary; box-shadow: $shadow !important; @include text-common; }
 	.tooltip {
 		.txt { line-height: 22px; }
 		b { display: block; font-weight: 500; color: $colorPrimary; }
@@ -71,7 +71,7 @@ html.bodyAuthDeleted {
 	.footer { width: 100% !important; }
 
 	.icon.arrow.back {
-		position: fixed; top: 50%; left: 10px; width: 28px; height: 56px; cursor: pointer; margin-top: -22px; background-image: url('~img/arrow/auth0.svg');
+		position: fixed; top: 50%; left: 10px; width: 28px; height: 56px; margin-top: -22px; background-image: url('~img/arrow/auth0.svg');
 		background-position: center; background-repeat: no-repeat; background-size: 8px 24px;
 		z-index: 2;
 	}
@@ -99,7 +99,7 @@ html.bodyAuthDeleted {
 	.button.blank { border-color: $colorButtonStroke !important; color: $colorPrimary !important; background: none; }
 	.button:not(.disabled):hover{ background: $colorButtonBlankHover !important; }
 
-	.small { color: $colorSecondary; cursor: pointer; }
+	.small { color: $colorSecondary; }
 	.small:hover { color: $colorPrimary; }
 
 	.error { color: $colorError; margin: 0.3em 0px; }
@@ -133,17 +133,6 @@ html.bodyAuthDeleted {
 
 	.title { margin: 0px 0px 20px 0px; }
 	.phraseWrapper { margin: 0px 0px 20px 0px; }
-
-	.bottom { 
-		position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px;
-		opacity: 0.6;
-	}
-	.bottom {
-		.icon { background-image: url('~img/icon/footer/gear0.svg'); }
-	}
-	.bottom:hover {
-		.icon { background-image: url('~img/icon/footer/gear1.svg'); }
-	}
 }
 
 .pageAuthInvite {
@@ -182,6 +171,13 @@ html.bodyAuthDeleted {
 	.frame { display: flex; flex-direction: column; align-items: center; }
 	.title { @include text-description; color: $colorPrimary; }
 	.label { color: $colorSecondary; }
+	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
+	.bottom {
+		.icon { background-image: url('~img/icon/footer/gear0.svg'); }
+	}
+	.bottom:hover {
+		.icon { background-image: url('~img/icon/footer/gear1.svg'); }
+	}
 }
 
 .pageAuthOnboard, .pageAuthLogin {
@@ -209,8 +205,6 @@ html.bodyAuthDeleted {
 		.icon.gear { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
 
-	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; }
-	
 	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: $colorSecondary; color: black; }
 	.questionMark:hover { background-color: $colorPrimary; }
 
@@ -221,7 +215,7 @@ html.bodyAuthDeleted {
 
 	.inputWrapper {
 		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: $colorPrimary; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
-		.input:hover { cursor: pointer; filter: brightness(1.2) }
+		.input:hover { filter: brightness(1.2) }
 		.input::placeholder { color: $colorTertiary !important; }
 	}
 
@@ -259,20 +253,16 @@ html.bodyAuthDeleted {
 
 .pageAuthDeleted {
 	canvas { height: 100vh; width: 100vw; }
-	.title { color: $colorPrimary }
+
+	.title { color: $colorPrimary; margin: 0px 0px 10px 0px; }
 	.frame { width: 500px; }
-	.label { font-size: 16px;}
+	.label { @include text-paragraph; margin: 0px 0px 20px 0px; }
+
+	.pie { margin: 0px 0px 10px 0px; }
 	.pie {
 		.inner { display: inline-block; padding: 8px; border: 1px solid $colorSecondary; border-radius: 100%; width: 64px; height: 64px; }
 	}
 
-	.buttons { margin: 16px;}
-	.button { color: $colorPrimary }
-	.remove { color: $colorRed; font-weight: 500; font-size: 16px; cursor: pointer; }
-
-	.row { 
-		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; position: relative; 
-		@include text-paragraph; line-height: 28px;
-	}
-	.row.red { color: $colorRed; }
+	.button { width: 320px; }
+	.remove { color: $colorRed; }
 }

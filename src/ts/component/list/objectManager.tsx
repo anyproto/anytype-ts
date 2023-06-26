@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
-import { Checkbox, Filter, Icon, IconObject, Label, Loader, ObjectName, EmptySearch } from 'Component';
+import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch } from 'Component';
 import { UtilData, I, UtilCommon, translate } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';

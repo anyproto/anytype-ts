@@ -45,7 +45,7 @@ class Select extends React.Component<Props, State> {
 	};
 	
 	render () {
-		const { id, className, arrowClassName, readonly } = this.props;
+		const { id, className, arrowClassName, readonly, isMultiple } = this.props;
 		const { options } = this.state;
 		const cn = [ 'select' ];
 		const acn = [ 'arrow', (arrowClassName ? arrowClassName : '') ];

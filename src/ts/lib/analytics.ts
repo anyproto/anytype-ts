@@ -312,8 +312,8 @@ class Analytics {
 
 			case 'OnboardingTooltip':
 			case 'ClickOnboardingTooltip': {
-				data.id = UtilCommon.ucFirst(data.id);
-				data.type = UtilCommon.ucFirst(data.type);
+				data.id = UtilCommon.toUpperCamelCase(`-${data.id}`);
+				data.type = UtilCommon.toUpperCamelCase(`-${data.type}`);
 				break;
 			};
 

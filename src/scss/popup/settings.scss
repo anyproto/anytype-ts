@@ -143,6 +143,17 @@
 						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
 					}
 				}
+
+				.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 16px 12px; line-height: unset; }
+				.phraseWrapper {
+					.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; word-break: unset; }
+					.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }
+					.bg { filter: blur(8px); opacity: 0.5; }
+
+					.icon { width: 28px; height: 28px; background-size: 20px; margin: 0px; top: 12px; right: 12px; border-radius: 6px; z-index: 1; }
+					.icon.hide { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
+					.icon.see { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: $colorVeryLightGrey; }
+				}
 			}
 		}
 
@@ -197,7 +208,9 @@
 			}
 
 			.sections {
-				.section { margin-bottom: 32px; }
+				.section { margin: 0px 0px 32px 0px; }
+				.section:last-child { margin: 0px; }
+
 				.section {
 					.title { @include text-header3; margin-bottom: 12px; }
 					.label { @include text-small; color: $colorDarkGrey; }
@@ -217,9 +230,12 @@
 							.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
 							.title:last-child { margin-bottom: 0px; }
 
-							.button { white-space: nowrap; }
+							.button { white-space: nowrap; max-width: 200px; }
 							.button.dashboardSelect {
 								.icon { width: 8px; height: 8px; margin-left: 6px; }
+							}
+							.button {
+								.txt { @include text-overflow-nw; }
 							}
 
 							.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
@@ -268,6 +284,26 @@
 					}
 				}
 
+				.section.sectionSpaceManager {
+					.sectionContent {
+						.item {
+							.storageLabel { margin-bottom: 12px; line-height: 18px; }
+							.storageLabel {
+								.label { display: inline; }
+								.label.extend { color: $colorRed; }
+							}
+							.progressBar {
+								.fill { background: $colorLime; }
+							}
+						}
+						.item.red {
+							.progressBar {
+								.fill { background: $colorRed; }
+							}
+						}
+					}
+				}
+
 				.section.sectionInfo {
 					.sectionContent {
 						.item {
@@ -287,15 +323,33 @@
 						}
 					}
 				}
-			}
-		}
 
-		.side.right.tabLogout,
-		.side.right.tabPhrase {
-			.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 18px 21px; line-height: unset; }
-			.phraseWrapper {
-				.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; word-break: unset; }
-				.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }
+				.section.sectionIntegrations {
+					.sectionContent {
+						.item { transition: $transitionAllCommon; }
+						.item:hover { background: $colorHoverLight; }
+						.item {
+							.side.left { display: flex; gap: 0 12px; }
+							.side.left {
+								.icon { width: 22px; height: 22px; }
+								.title { margin-bottom: 0; }
+							}
+							.arrow { width: 6px; height: 11px; }
+						}
+					}
+				}
+
+				.section.sectionInfo {
+					.sectionContent {
+						.item {
+							.sides { align-items: center; }
+							.icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
+						}
+						.item:hover {
+							.icon { opacity: 1; }
+						}
+					}
+				}
 			}
 		}
 

@@ -145,16 +145,13 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 	};
 
-	componentWillUnmount(): void {
-		const { param } = this.props;
+	onClose () {
+		const { param, close } = this.props;
 		const { data } = param;
 		const { key, current } = data;
 
+		close();
 		analytics.event('ClickOnboardingTooltip', { type: 'close', id: key, step: (current + 1) });
-	};
-
-	onClose () {
-		this.props.close();
 	};
 
 	rebind () {

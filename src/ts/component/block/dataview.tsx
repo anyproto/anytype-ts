@@ -518,7 +518,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			onClose: () => {
 				this.creating = false;
 				hoverArea.removeClass('active');
-			}
+			},
 		};
 
 		if (dir) {
@@ -538,7 +538,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (relations.length) {
 			relations.forEach((it: any) => {
 				if (it.objectTypes.length && !details.type) {
-					details.type = it.objectTypes[0];
+					const first = it.objectTypes[0];
+
+					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
+						details.type = first;
+					};
 				};
 
 				details[it.relationKey] = Relation.formatValue(it, null, true);

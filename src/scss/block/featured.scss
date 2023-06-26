@@ -2,7 +2,7 @@
 
 .blocks {
 	.block.blockFeatured { 
-		@include text-common; line-height: 28px; color: $colorDarkGrey; padding: 0px 0px 30px 0px; white-space: nowrap; display: flex; 
+		@include text-common; line-height: 28px; color: $colorDarkGrey; padding: 0px 0px 24px 0px; white-space: nowrap; display: flex; 
 		margin-top: -3px;
 	}
 	.block.blockFeatured {
@@ -59,7 +59,7 @@
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
 	}
-	.block.blockFeatured:hover > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	.block.blockFeatured.align0 {
 		.cell.first { margin-left: -6px; }

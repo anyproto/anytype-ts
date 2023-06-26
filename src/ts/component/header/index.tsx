@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, UtilObject, Renderer, keyboard, sidebar, Preview } from 'Lib';
-import { menuStore } from 'Store';
+import { detailStore, menuStore } from 'Store';
 
 import HeaderAuthIndex from './auth';
 import HeaderMainObject from './main/object';
@@ -42,7 +42,7 @@ class Header extends React.Component<Props> {
 	};
 	
 	render () {
-		const { component, className } = this.props;
+		const { component, className, rootId } = this.props;
 		const Component = Components[component] || null;
 		const cn = [ 'header', component, className ];
 

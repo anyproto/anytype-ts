@@ -90,7 +90,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				<div className="content">
 					{head}
 
-					<div className="cp" onClick={this.onClick}>
+					<div onClick={this.onClick}>
 						{content}
 					</div>
 				</div>
