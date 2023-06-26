@@ -408,7 +408,7 @@ class Mark {
 		return obj;
 	};
 	
-	fromHtml (html: string): { marks: I.Mark[], text: string } {
+	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string } {
 		const rh = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
 		const rp = new RegExp('data-param="([^"]*)"', 'i');
 		const obj = this.cleanHtml(html);
@@ -484,7 +484,7 @@ class Mark {
 			return '';
 		});
 
-		return this.fromMarkdown(text, marks);
+		return this.fromMarkdown(text, marks, restricted);
 	};
 
 	// Unicode symbols
@@ -508,7 +508,7 @@ class Mark {
 		return text;
 	};
 
-	fromMarkdown (html: string, marks: I.Mark[]) {
+	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]) {
 		let text = html;
 		let test = /[`\*_~\[]{1}/.test(text);
 
@@ -518,6 +518,10 @@ class Mark {
 
 		// Markdown
 		for (let item of this.regexpMarkdown) {
+			if (restricted.includes(item.type)) {
+				continue;
+			};
+
 			html = text;
 			html.replace(item.reg, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
 				p1 = String(p1 || '');
