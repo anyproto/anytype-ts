@@ -81,7 +81,7 @@ class Phrase extends React.Component<Props, State> {
 			const color = COLORS[index % COLORS.length];
 			const cn = isHidden ? `bg bg-${color}` : `textColor textColor-${color}`;
 
-			return <span className={[ 'word', cn ].join(' ')} key={index}>{UtilCommon.ucFirst(word)}</span>;
+			return <span className={[ 'word', cn ].join(' ')} key={index}>{word}</span>;
 		};
 
 		return (
