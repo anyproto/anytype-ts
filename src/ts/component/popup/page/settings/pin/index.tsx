@@ -31,12 +31,12 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 							/>
 						</div>
 
-						<div className="item cp" onClick={this.onChangePin}>
+						<div className="item" onClick={this.onChangePin}>
 							<Label text={translate('popupSettingsPinChange')} />
 							<Icon className="arrow" />
 						</div>
 
-						<div className="item cp red" onClick={this.onTurnOffPin}>
+						<div className="item red" onClick={this.onTurnOffPin}>
 							<Label text={translate('popupSettingsPinOff')} />
 							<Icon className="arrow" />
 						</div>

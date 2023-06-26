@@ -394,7 +394,7 @@ class UtilMenu {
 		let value = space.spaceDashboardId;
 
 		if (![ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(value)) {
-			value = I.HomePredefinedId.Existing;
+			value = '';
 		};
 
 		menuStore.open('select', {

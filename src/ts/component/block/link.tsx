@@ -71,10 +71,6 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 				</div>
 			);
 		} else {
-			if (!isArchived) {
-				cn.push('cp');
-			};
-
 			const cnc = [ 'linkCard', UtilData.layoutClass(object.id, layout), 'c' + size ];
 			const cns = [ 'sides' ];
 			const cnl = [ 'side', 'left' ];

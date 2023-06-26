@@ -57,7 +57,7 @@
             .info { width: calc(100% - 100px); flex-grow: 1; }
 
             .icon.checkbox {
-                flex-shrink: 0; cursor: pointer !important; background-image: url('~img/icon/archive/checkbox0.svg');
+                flex-shrink: 0; cursor: default !important; background-image: url('~img/icon/archive/checkbox0.svg');
                 width: 18px; height: 18px; transition: none; flex-basis: 18px;
             }
             .icon.checkbox.active { background-image: url('~img/icon/archive/checkbox1.svg'); }

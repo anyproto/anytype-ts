@@ -61,7 +61,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 			return (
 				<tr className={cn.join(' ')}>
 					<td className="cell">
-						<div className="cellContent isName cp" onClick={(e: any) => { UtilObject.openEvent(e, item); }}>
+						<div className="cellContent isName" onClick={(e: any) => { UtilObject.openEvent(e, item); }}>
 							<div className="flex">
 								<IconObject object={item} />
 								<ObjectName object={item} />

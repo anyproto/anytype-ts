@@ -111,7 +111,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									</div>
 									<div className="side right">
 										<Button onClick={() => onPage('spaceStorageManager')} text={translate('popupSettingsSpaceIndexStorageManageFiles')} color="blank" className="c28" />
-
 									</div>
 								</div>
 
@@ -125,8 +124,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										<Label text={translate(`popupSettingsSpaceIndexHomepageDescription`)} />
 									</div>
 									<div className="side right">
-										<div onClick={this.onDashboard} id="dashboard" className="button blank c28 dashboardSelect">
-											{home ? home.name : 'Select'}
+										<div onClick={this.onDashboard} id="dashboard" className="button blank c28">
+											<div className="txt">{home ? home.name : 'Select'}</div>
 											<Icon className="arrow down" />
 										</div>
 									</div>
@@ -171,7 +170,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<Title text={translate(`popupSettingsSpaceIndexSpaceInfoTitle`)} />
 						<div className="sectionContent">
 
-							<div onClick={() => UtilCommon.clipboard('Space ID', space.id)} className="item itemSpaceId">
+							<div onClick={() => UtilCommon.clipboard('Space ID', space.id)} className="item">
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexSpaceIdTitle`)} />
@@ -183,7 +182,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								</div>
 							</div>
 
-							<div onClick={() => UtilCommon.clipboard('Account ID', account.id)} className="item itemAccountId">
+							<div onClick={() => UtilCommon.clipboard('Account ID', account.id)} className="item">
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexCreatedByTitle`)} />

@@ -16,7 +16,6 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 	render () {
 		const space = UtilObject.getSpace();
 		const home = UtilObject.getSpaceDashboard();
-		const notExisting = [ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(space.spaceDashboardId);
 
 		return (
 			<div 
@@ -38,9 +37,6 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 						<div className="side right">
 							<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
 								<div className="item">
-									{home && !notExisting ? (
-										<IconObject size={20} iconSize={20} object={home} />
- 									) : ''}
 									<div className="name">
 										{home ? home.name : 'Select'}
 									</div>
