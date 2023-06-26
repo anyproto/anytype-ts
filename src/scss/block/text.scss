@@ -109,7 +109,7 @@
 	/* Description */
 
 	.block.blockText.textDescription:hover > .wrapMenu > .icon.dnd { opacity: 1; }
-	.block.blockText.textDescription { padding: 0px 0px 4px 0px; @include text-description; }
+	.block.blockText.textDescription { @include text-description; }
 
 	/* Header1 */
 
@@ -126,7 +126,7 @@
 
 	/* Header2 */
 	
-	.block.blockText.textHeader2 { padding: 14px 0px 0px 0px; }
+	.block.blockText.textHeader2 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget mention {
 		name { font-weight: inherit; }
@@ -138,7 +138,7 @@
 
 	/* Header3 */
 	
-	.block.blockText.textHeader3 { padding: 14px 0px 0px 0px; }
+	.block.blockText.textHeader3 { padding: 12px 0px 0px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget mention {
 		name { font-weight: inherit; }
