@@ -398,6 +398,7 @@ class UtilMenu {
 		};
 
 		menuStore.open('select', {
+			className: 'noTick',
 			element,
 			horizontal: I.MenuDirection.Right,
 			subIds: [ 'searchObject' ],

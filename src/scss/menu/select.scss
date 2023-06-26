@@ -37,4 +37,10 @@
 	.menu.menuSelect.center {
 		.item { text-align: center; }
 	}
+
+	.menu.menuSelect.noTick {
+		.item.withCheckbox {
+			.icon.chk { display: none !important; }
+		}
+	}
 }
