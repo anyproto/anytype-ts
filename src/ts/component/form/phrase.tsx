@@ -166,20 +166,26 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onKeyUp (e: React.KeyboardEvent) {
-		const value = this.getEntryValue();
-
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
-
-			if (!value.length) {
-				return;
-			};
-
-			this.clear();
-			this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
+			this.updateValue();
 		});
 
 		this.placeholderCheck();
+
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => this.updateValue(), 500);
+	};
+
+	updateValue () {
+		const value = this.getEntryValue();
+
+		if (!value.length) {
+			return;
+		};
+
+		this.clear();
+		this.setState(({ phrase }) => ({ phrase: this.checkValue(phrase.concat([ value ])) }));
 	};
 
 	onPaste (e) {
