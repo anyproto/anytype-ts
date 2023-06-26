@@ -130,6 +130,10 @@ class Phrase extends React.Component<Props, State> {
 		this.placeholderCheck();
 	};
 
+	componentWillUnmount () {
+		window.clearTimeout(this.timeout);
+	};
+
 	init () {
 		const node = $(this.node);
 
