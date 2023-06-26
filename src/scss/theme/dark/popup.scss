@@ -50,6 +50,8 @@
 
 				.actionItems,
 				.actionItems > .item { border-color: $colorLineSecondary; }
+
+				.phraseWrapper { background-color: $colorBgLight; }
 			}
 		}
 
@@ -73,9 +75,7 @@
 		}
 
         .side.right.tabPhrase {
-			.phraseWrapper { background-color: $colorBgLight; }
             .qrWrap { background: $colorMediumGrey; }
-			.textareaWrap { background-color: $colorBgLight; }
         }
 
 		.side.right.tabAccount {

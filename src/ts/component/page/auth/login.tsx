@@ -54,11 +54,9 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 				</Frame>
 
 				{config.experimental ? (
-					<div className="animation">
-						<div className="animation small bottom" onClick={this.onSelfHost}>
-							<Icon />
-							{translate('authLoginSelfHost')}
-						</div>
+					<div className="animation small bottom" onClick={this.onSelfHost}>
+						<Icon />
+						{translate('authLoginSelfHost')}
 					</div>
 				) : ''}
 			</div>

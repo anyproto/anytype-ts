@@ -143,6 +143,12 @@
 						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
 					}
 				}
+
+				.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 18px 21px; line-height: unset; }
+				.phraseWrapper {
+					.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; word-break: unset; }
+					.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }
+				}
 			}
 		}
 
@@ -258,15 +264,6 @@
 					.item.itemSpaceId:hover .icon,
 					.item.itemAccountId:hover .icon { opacity: 1; }
 				}
-			}
-		}
-
-		.side.right.tabLogout,
-		.side.right.tabPhrase {
-			.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 18px 21px; line-height: unset; }
-			.phraseWrapper {
-				.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; word-break: unset; }
-				.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }
 			}
 		}
 
