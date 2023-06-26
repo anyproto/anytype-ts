@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName } from 'Component';
-import { I, keyboard, Storage, ObjectUtil } from 'Lib';
+import { I, keyboard, Storage, UtilObject } from 'Lib';
 import { blockStore, dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -68,11 +68,11 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 			<div className="inner" style={{ paddingLeft }}>
 				<div
 					className="clickable"
-					onMouseDown={(e: React.MouseEvent) => { onClick(e, object); }}
+					onMouseDown={e => onClick(e, object)}
 				>
 					{arrow}
 					<IconObject 
-						id={`widget-icon-${id}`}
+						id={`widget-icon-${treeKey}`}
 						object={object} 
 						size={20} 
 						canEdit={!isReadonly && !isArchived} 
@@ -166,13 +166,13 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 	onSelect (icon: string) {
 		const { id } = this.props;
 
-		ObjectUtil.setIcon(id, icon, '');
+		UtilObject.setIcon(id, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { id } = this.props;
 
-		ObjectUtil.setIcon(id, '', hash);
+		UtilObject.setIcon(id, '', hash);
 	};
 
 	onCheckbox () {
@@ -181,7 +181,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const subId = dbStore.getSubId(subKey, parentId);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 
-		ObjectUtil.setDone(id, !object.done);
+		UtilObject.setDone(id, !object.done);
 	};
 
 });

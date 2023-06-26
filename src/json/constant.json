@@ -18,12 +18,7 @@
 
 	"limit": {
 		"menuRecords": 100,
-		"widgets": 20,
-		"widgetRecords": {
-			"tree": 20,
-			"list": 10,
-			"compact": 20
-		}
+		"widgets": 20
 	},
 
 	"default": {
@@ -40,7 +35,8 @@
 	"delay": {
 		"menu": 160,
 		"popup": 310,
-		"toast": 2500
+		"toast": 2500,
+		"route": 250
 	},
 	
 	"extension": {

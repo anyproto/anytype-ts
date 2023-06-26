@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Relation, Util } from 'Lib';
+import { I, Relation, UtilCommon } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
 import { detailStore } from 'Store';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
@@ -54,12 +54,12 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				let name = String(filterOption.name || '').toLowerCase();
 
 				if (quickOption == I.FilterQuickOption.ExactDate) {
-					v.push(value !== null ? Util.date('d.m.Y', value) : '');
+					v.push(value !== null ? UtilCommon.date('d.m.Y', value) : '');
 				} else
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
 					value = Number(value) || 0;
 					name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `%d %s ago` : `%d %s from now`;
-					v.push(Util.sprintf(name, value, Util.cntWord(value, 'day', 'days')));
+					v.push(UtilCommon.sprintf(name, value, UtilCommon.cntWord(value, 'day', 'days')));
 				} else 
 				if (filterOption) {
 					v.push(name);

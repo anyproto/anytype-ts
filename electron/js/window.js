@@ -27,7 +27,7 @@ class WindowManager {
 		const { languages, zoom } = ConfigManager.config;
 
 		param = Object.assign({
-			backgroundColor: Util.getBgColor(Util.getTheme()),
+			backgroundColor: Util.getBgColor('dark'),
 			icon: path.join(Util.imagePath(), 'icon.png'),
 			show: false,
 			titleBarStyle: 'hidden-inset',
@@ -141,6 +141,7 @@ class WindowManager {
 			width: 400, 
 			height: 400, 
 			useContentSize: true,
+			backgroundColor: Util.getBgColor(Util.getTheme()),
 		});
 
 		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}`));
@@ -190,7 +191,7 @@ class WindowManager {
 				}).then((result) => {
 					const fp = result.filePath;
 					if (!fp) {
-						Util.send(win, 'command', 'saveAsHTMLSuccess');
+						Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 					} else {
 						Util[cmd](win, path.dirname(fp), path.basename(fp), param.options);
 					};

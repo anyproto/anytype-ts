@@ -1,11 +1,16 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, focus } from 'Lib';
+import { I, UtilCommon, focus, Preview } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const AUTH_IDS = [ 'settings' ];
+const SHOW_DIMMER = [
+	'settings',
+	'confirm',
+	'migration',
+];
 
 class PopupStore {
 
@@ -50,6 +55,12 @@ class PopupStore {
 			this.update(id, param);
 		} else {
 			this.popupList.push({ id, param });
+		};
+
+		Preview.previewHide(true);
+
+		if (this.checkShowDimmer(this.popupList)) {
+			$('#navigationPanel').hide();
 		};
 	};
 
@@ -108,15 +119,19 @@ class PopupStore {
 			item.param.onClose();
 		};
 		
-		const el = $(`#${Util.toCamelCase(`popup-${id}`)}`);
+		const el = $(`#${UtilCommon.toCamelCase(`popup-${id}`)}`);
+		const filtered = this.popupList.filter(it => it.id != id);
+
 		if (el.length) {
-			raf(() => {
-				el.css({ transform: '' }).removeClass('show');
-			});
+			raf(() => { el.css({ transform: '' }).removeClass('show'); });
+		};
+
+		if (!this.checkShowDimmer(filtered)) {
+			$('#navigationPanel').show();
 		};
 		
 		window.setTimeout(() => {
-			this.popupList = this.popupList.filter(it => it.id != id);
+			this.popupList = filtered;
 			
 			if (callBack) {
 				callBack();
@@ -128,17 +143,14 @@ class PopupStore {
 
     closeAll (ids?: string[], callBack?: () => void) {
 		const items = ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
+		const length = items.length;
 
 		items.forEach(it => this.close(it.id));
 
 		this.clearTimeout();
 
 		if (callBack) {
-			this.timeout = window.setTimeout(() => {
-				if (callBack) {
-					callBack();
-				};
-			}, Constant.delay.popup);
+			this.timeout = window.setTimeout(() => callBack(), length ? Constant.delay.popup : 0);
 		};
 	};
 
@@ -150,6 +162,21 @@ class PopupStore {
 
     clearTimeout () {
 		window.clearTimeout(this.timeout);
+	};
+
+	showDimmerIds () {
+		return SHOW_DIMMER;
+	};
+
+	checkShowDimmer (list: I.Popup[]) {
+		let ret = false;
+		for (const item of list) {
+			if (SHOW_DIMMER.includes(item.id)) {
+				ret = true;
+				break;
+			};
+		};
+		return ret;
 	};
 
 };

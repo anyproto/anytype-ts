@@ -1,12 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { I, Util } from 'Lib';
+import { I, UtilCommon } from 'Lib';
 
 interface Props {
 	id?: string;
 	text: string;
 	className?: string;
 	dataset?: any;
+	onMouseEnter?: (e: any) => void;
+	onMouseLeave?: (e: any) => void;
 	onClick?: (e: any) => void;
 };
 
@@ -29,13 +31,15 @@ class Label extends React.Component<Props> {
 				className={cn.join(' ')} 
 				dangerouslySetInnerHTML={{ __html: text }} 
 				onClick={onClick} 
-				{...Util.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
+				onMouseEnter={this.props.onMouseEnter}
+				onMouseLeave={this.props.onMouseLeave}
+				{...UtilCommon.dataProps({ ...dataset, content: text, 'animation-type': I.AnimType.Text })}
 			/>
 		);
 	};
 	
 	componentDidMount () {
-		Util.renderLinks($(this.node));
+		UtilCommon.renderLinks($(this.node));
 	};
 	
 };

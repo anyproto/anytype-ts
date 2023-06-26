@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { I, Action } from 'Lib';
-import { Button, Label } from 'Component';
+import { Label } from 'Component';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -16,16 +16,15 @@ const MenuAccountPath = observer(class MenuAccountPath extends React.Component<I
 		const { accountPath } = authStore;
 
         return (
-            <div>
-                <Label className="bold" text="Account data location" />
-                <Label text={accountPath} onClick={this.onClick} />
-                <Button onClick={this.onClick} text={'Customize'} color="blank" className="c28" />
-            </div>
+            <React.Fragment>
+                <Label className="small" text="Your key files will be stored here. Click to change the path" />
+                <Label className="path" text={accountPath} onClick={this.onClick} />
+            </React.Fragment>
         );
     };
 
-    onClick (e: any) {
-		Action.openDir(paths => authStore.accountPathSet(paths[0]));
+    onClick () {
+		Action.openDir({}, paths => authStore.accountPathSet(paths[0]));
     };
 
 });

@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, Mark, DataUtil, focus, keyboard, Storage } from 'Lib';
+import { I, C, Mark, UtilData, focus, keyboard, Storage } from 'Lib';
 import { blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -27,7 +27,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 		
 		const { type, content } = block;
 		const { style } = content;
-		const styleIcon = DataUtil.styleIcon(type, style);
+		const styleIcon = UtilData.styleIcon(type, style);
 		const colorMark = Mark.getInRange(marks, I.MarkType.Color, range) || {};
 		const bgMark = Mark.getInRange(marks, I.MarkType.BgColor, range) || {};
 		const canTurn = block.canTurn() && !isInsideTable;
@@ -50,12 +50,12 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			{ type: I.MarkType.Link, icon: 'link', name: 'Link', caption: `${cmd} + K` },
 			{ type: I.MarkType.Code, icon: 'kbd', name: 'Code', caption: `${cmd} + L` },
 		];
-		
+
 		// You can't make headers bold, since they are already bold
 		if (block.isTextHeader()) {
 			markActions = markActions.filter(it => ![ I.MarkType.Bold ].includes(it.type));
 		};
-
+		
 		return (
 			<div className="flex">
 				{canTurn ? (
@@ -268,7 +268,7 @@ const MenuBlockContext = observer(class MenuBlockContext extends React.Component
 			
 			case I.MarkType.BgColor:
 			case I.MarkType.Color: {
-				let storageKey = ''
+				let storageKey = '';
 
 				switch (type) {
 					case I.MarkType.Color: {

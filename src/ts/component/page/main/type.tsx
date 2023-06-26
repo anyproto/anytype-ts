@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, DataUtil, ObjectUtil, MenuUtil, Util, focus, Action, analytics, Relation } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -19,7 +19,7 @@ const NO_TEMPLATES = [
 	Constant.typeId.set, 
 	Constant.typeId.collection,
 	Constant.typeId.bookmark,
-].concat(ObjectUtil.getFileTypes()).concat(ObjectUtil.getSystemTypes());
+].concat(UtilObject.getFileTypes()).concat(UtilObject.getSystemTypes());
 
 const PageMainType = observer(class PageMainType extends React.Component<I.PageComponent, State> {
 
@@ -60,19 +60,19 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		const { config } = commonStore;
 		const rootId = this.getRootId();
-		const check = DataUtil.checkDetails(rootId);
+		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
-		const layout: any = MenuUtil.getLayouts().find(it => it.id == object.recommendedLayout) || {};
+		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		const systemRelations = Relation.systemKeys();
 
-		const allowedObject = object.isInstalled && ObjectUtil.getPageLayouts().includes(object.recommendedLayout);
+		const allowedObject = object.isInstalled && UtilObject.getPageLayouts().includes(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
@@ -95,11 +95,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return config.debug.ho ? true : !it.isHidden;
 		});
 
-		const isFileType = ObjectUtil.isFileType(rootId);
+		const isFileType = UtilObject.isFileType(rootId);
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: 'Updated',  
-				mapper: (v: any) => Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
+				mapper: (v: any) => UtilCommon.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
 			},
 		];
 
@@ -128,7 +128,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		return (
 			<div>
-				<Header component="mainObject" ref={ref => { this.refHeader = ref; }} {...this.props} rootId={rootId} />
+				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div className={[ 'blocks', 'wrapper', check.className ].join(' ')}>
 					<Controls key="editorControls" {...this.props} rootId={rootId} resize={() => {}} />
@@ -137,7 +137,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{totalTemplate} {Util.cntWord(totalTemplate, 'template', 'templates')}
+								{totalTemplate} {UtilCommon.cntWord(totalTemplate, 'template', 'templates')}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
@@ -150,11 +150,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 								<div className="content">
 									<ListObjectPreview 
 										key="listTemplate"
-										ref={ref => { this.refListPreview = ref; }}
+										ref={ref => this.refListPreview = ref}
 										getItems={() => templates}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
-										onClick={(e: any, item: any) => { ObjectUtil.openPopup(item); }} 
+										onClick={(e: any, item: any) => { UtilObject.openPopup(item); }} 
 									/>
 								</div>
 							) : (
@@ -180,7 +180,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 											<Select 
 												id="recommendedLayout" 
 												value={object.recommendedLayout} 
-												options={MenuUtil.turnLayouts()} 
+												options={UtilMenu.turnLayouts()} 
 												arrowClassName="light" 
 												onChange={this.onLayout} 
 											/>
@@ -195,7 +195,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 							) : ''}
 
 							<div className="section relation">
-								<div className="title">{relations.length} {Util.cntWord(relations.length, 'relation', 'relations')}</div>
+								<div className="title">{relations.length} {UtilCommon.cntWord(relations.length, 'relation', 'relations')}</div>
 								<div className="content">
 									{relations.map((item: any, i: number) => (
 										<ItemRelation key={i} {...item} />
@@ -208,7 +208,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{totalObject} {Util.cntWord(totalObject, 'object', 'objects')}</div>
+							<div className="title">{totalObject} {UtilCommon.cntWord(totalObject, 'object', 'objects')}</div>
 							<div className="content">
 								<ListObject rootId={rootId} columns={columns} />
 							</div>
@@ -250,7 +250,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
 				} else {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 				return;
 			};
@@ -278,7 +278,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			subId: this.getSubIdTemplate(),
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.template, Constant.typeId.template ] },
@@ -310,9 +310,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		const details: any = { 
 			type: Constant.typeId.template, 
 			targetObjectType: rootId,
+			layout: object.recommendedLayout,
 		};
 
 		C.ObjectCreate(details, [], '', (message) => {
@@ -323,7 +325,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: rootId });
 
-			ObjectUtil.openPopup(message.details, {
+			UtilObject.openPopup(message.details, {
 				onClose: () => {
 					if (this.refListPreview) {
 						this.refListPreview.updateItem(message.objectId);
@@ -336,8 +338,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = dbStore.getType(rootId);
-		const isSetType = ObjectUtil.isSetType(rootId);
-		const allowedObject = ObjectUtil.getPageLayouts().includes(type.recommendedLayout) || isSetType;
+		const isSetType = UtilObject.isSetType(rootId);
+		const allowedObject = UtilObject.getPageLayouts().includes(type.recommendedLayout) || isSetType;
 		const options = [];
 
 		if (allowedObject) {
@@ -385,8 +387,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		const create = (template: any) => {
-			ObjectUtil.create('', '', details, I.BlockPosition.Bottom, template?.id, {}, [], (message: any) => {
-				ObjectUtil.openPopup({ ...details, id: message.targetId });
+			UtilObject.create('', '', details, I.BlockPosition.Bottom, template?.id, {}, [], (message: any) => {
+				UtilObject.openPopup({ ...details, id: message.targetId });
 
 				analytics.event('CreateObject', {
 					route: 'ObjectType',
@@ -406,7 +408,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			});
 		};
 
-		DataUtil.checkTemplateCnt([ rootId ], (message: any) => {
+		UtilData.checkTemplateCnt([ rootId ], (message: any) => {
 			if (message.records.length > 1) {
 				showMenu();
 			} else {
@@ -434,7 +436,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		C.ObjectCreateSet([ rootId ], details, '', (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
-				ObjectUtil.openPopup(message.details);
+				UtilObject.openPopup(message.details);
 			};
 		});
 	};

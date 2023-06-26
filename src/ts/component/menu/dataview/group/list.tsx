@@ -93,6 +93,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 		
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
+
 			return (
 				<CellMeasurer
 					key={param.key}
@@ -114,11 +115,11 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 					isRowLoaded={() => true}
 					threshold={LIMIT}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<AutoSizer className="scrollArea">
 							{({ width, height }) => (
 								<VList
-									ref={ref => { this.refList = ref; }}
+									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}

@@ -55,6 +55,15 @@
 					.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 				}
 
+				.item.itemAccount { padding: 8px; gap: 0 14px; align-items: center; }
+				.item.itemAccount {
+					.name { @include text-common; font-weight: 600; }
+					.onlineStatus { @include text-small; color: $colorDarkGrey; font-weight: 400; text-transform: capitalize; display: flex; gap: 0 6px; align-items: center; }
+					.onlineStatus:before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+					.onlineStatus.online:before { background: $colorLime; }
+					.onlineStatus.offline:before { background: $colorRed; }
+				}
+
 				.select { transition: none; border: 0px; color: $colorMediumGrey; max-width: 100%; }
 				.select { 
 					.icon.arrow { top: 3px; margin: 0px !important; }
@@ -63,13 +72,14 @@
 
 			> .side.right { width: 70%; padding: 44px 54px; overflow-x: hidden; overflow-y: auto; }
 			> .side.right.isFull { width: 100%; }
+			> .side.right.isSubPage { padding-top: 22px; }
 			> .side.right {
 				.head { width: 100%; margin: 0px 0px 36px 0px; }
 				.head {
-					.icon.back { width: 8px; height: 8px; cursor: pointer; background-image: url('~img/icon/popup/settings/back.svg'); }
+					.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
 					
 					.element { 
-						color: $colorDarkGrey; cursor: pointer; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 4px; 
+						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 6px 2px 8px;
 						border-radius: 6px; margin-left: -5px;
 					}
 					.element:hover { background: $colorHoverMedium; }
@@ -109,9 +119,9 @@
 
 				.iconWrapper { position: relative; margin: 0px 0px 12px 0px; display: inline-block; }
 				.iconWrapper {
-					.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: rgba(255,255,255,0.3); }
+					.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: $colorBgLoader; }
 
-					.iconObject { flex-shrink: 0; cursor: pointer; }
+					.iconObject { flex-shrink: 0; }
 					.iconObject:after {
 						content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
 						background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
@@ -123,62 +133,214 @@
 				.icon.logo { width: 54px; height: 54px; margin: 0px 0px 16px 0px; }
 
 				ol, ul { padding-left: 1.35em; margin: 8px 0px; }
+
+				.actionItems { border: 1px solid $colorBorderLight; border-radius: 12px; margin-bottom: 40px; }
+				.actionItems {
+					> .item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid $colorBorderLight; }
+					> .item:last-child { border-bottom: 0; }
+					> .item.red { color: $colorRed; }
+					> .item {
+						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+					}
+				}
+
+				.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 16px 12px; line-height: unset; }
+				.phraseWrapper {
+					.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; word-break: unset; }
+					.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }
+					.bg { filter: blur(8px); opacity: 0.5; }
+
+					.icon { width: 28px; height: 28px; background-size: 20px; margin: 0px; top: 12px; right: 12px; border-radius: 6px; z-index: 1; }
+					.icon.hide { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
+					.icon.see { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: $colorVeryLightGrey; }
+				}
 			}
 		}
 
-		.side.right.tabLogout,
-		.side.right.tabDelete,
-		.side.right.tabPinSelect,
-		.side.right.tabImportNotion,
-		.side.right.tabImportNotionHelp,
-		.side.right.tabImportNotionWarning,
-		.side.right.tabImportMarkdown,
-		.side.right.tabImportCsv,
-		.side.right.tabExportMarkdown,
-		.side.right.tabExportProtobuf,
-		.side.right.tabStorageManager
-		{ padding-top: 22px; }
+		.side.right.tabAccount {
+			.sections { display: flex; flex-direction: column; height: 100%; }
+			.sections {
+				.section { margin-bottom: 40px; display: flex; flex-direction: column; gap: 12px 0px; }
+				.section.top { margin-bottom: 16px; }
+				.section.bottom { height: 100%; flex-direction: row; align-items: end; margin-bottom: 0; }
+
+				.section {
+					.iconWrapper { margin-bottom: 0; }
+					.title { @include text-header3; margin: 0; }
+					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorBorderLight; border-radius: 10px; }
+					.input:hover:not(.isReadonly) { border-color: $colorBorderDark; }
+					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorOrange; padding: 5px 11px; }
+
+					.accountId { position: relative; }
+					.accountId {
+						.input { background-color: unset; @include text-small; color: $colorDarkGrey; }
+						.icon.copy {
+							width: 20px; height: 20px; z-index: -1; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
+							opacity: 0; transition: $transitionAllCommon;
+						}
+					}
+					.accountId:hover .icon.copy { opacity: 1; }
+				}
+			}
+		}
 
 		.side.right.tabSpaceIndex {
-			> .iconObject { margin: 0px 0px 12px 0px; }
+			.spaceSettingsIndexHeader { display: flex; align-items: center; margin-bottom: 32px; }
+			.spaceSettingsIndexHeader {
+				.iconWrapper { margin-bottom: 0; }
+
+				.headerContent { margin-left: 24px; width: 100%; }
+				.headerContent {
+					.input { padding: 0; }
+
+					.name { margin-bottom: 8px; }
+					.name .input { @include text-header1; }
+
+					.spaceType {
+						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
+						background: $colorHoverLight url('~img/icon/space/personal.svg') 4px 2px no-repeat;
+						@include text-small; color: $colorDarkGrey; transition: $transitionAllCommon;
+					}
+					.spaceType:hover { background-color: $colorHoverMedium; }
+				}
+			}
+
+			.sections {
+				.section { margin: 0px 0px 32px 0px; }
+				.section:last-child { margin: 0px; }
+
+				.section {
+					.title { @include text-header3; margin-bottom: 12px; }
+					.label { @include text-small; color: $colorDarkGrey; }
+
+					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; overflow: hidden; }
+					.sectionContent {
+						.item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
+						.item:last-child { border-bottom: 0; }
+
+						.item {
+							.sides { display: flex; justify-content: space-between; }
+							.sides {
+								.side { width: unset; background: unset; padding: unset; }
+								.left { margin-right: 16px; }
+								.right { flex-shrink: 0; }
+							}
+
+							.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
+							.title:last-child { margin-bottom: 0px; }
+
+							.button { max-width: 200px; }
+							.button {
+								.txt { @include text-overflow-nw; }
+							}
+
+							.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
+							.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
+							.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+							.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+							.icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
+						}
+					}
+				}
+
+				.section.sectionSpaceManager {
+					.sectionContent {
+						.item {
+							.storageLabel { margin-bottom: 12px; line-height: 18px; }
+							.storageLabel {
+								.label { display: inline; }
+								.label.extend { color: $colorRed; }
+							}
+							.progressBar {
+								.fill { background: $colorLime; }
+							}
+						}
+						.item.red {
+							.progressBar {
+								.fill { background: $colorRed; }
+							}
+						}
+					}
+				}
+
+				.section.sectionIntegrations {
+					.sectionContent {
+						.item { transition: $transitionAllCommon; }
+						.item:hover { background: $colorHoverLight; }
+						.item {
+							.side.left { display: flex; gap: 0 12px; }
+							.side.left {
+								.icon { width: 22px; height: 22px; }
+								.title { margin-bottom: 0; }
+							}
+							.arrow { width: 6px; height: 11px; }
+						}
+					}
+				}
+
+				.section.sectionInfo {
+					.sectionContent {
+						.item {
+							.sides { align-items: center; }
+							.icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
+						}
+						.item:hover {
+							.icon { opacity: 1; }
+						}
+					}
+				}
+			}
 		}
 
 		.side.right.tabPhrase {
 			.inputs { margin: 0px 0px 54px 0px; }
 
-			.qrWrap { 
-				padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; 
-				cursor: pointer; 
-			}
+			.qrWrap { padding: 8px; border-radius: 4px; width: 132px; height: 132px; background: $colorVeryLightGrey; overflow: hidden; }
 			.qrWrap {
 				canvas { width: 100%; height: 100%; }
 			}
 		}
 
-		.side.right.tabStorageIndex {
-			.title { margin-bottom:  32px; }
-
+		.side.right.tabDataManagement {
 			.description {
 				.label { display: inline; }
-				.label.extend { cursor: pointer; color: $colorRed; }
+				.label.extend { color: $colorRed; }
 			}
 
-			.storageUsage { display: flex; justify-content: space-between; align-items: center; }
 			.storageUsage {
-				.space { margin-bottom: 16px; }
+				.space { margin-bottom: 0px; padding: 0; }
 				.space {
 					.txt .type.red { color: $colorRed; }
 				}
 			}
 
+			.accountLocation {
+				.locationDescription { @include text-small; color: $colorDarkGrey; }
+				.locationLabel { color: $colorDarkGrey; }
+			}
+
 			.iconObject { background-color: $colorVeryLightGrey; border-radius: 4px; }
 		}
 
-		.side.right.tabStorageManager { padding-bottom: 0px; }
-		.side.right.tabStorageManager {
+		.side.right.tabPinIndex {
+			.actionItems {
+				> .item { @include text-common; padding: 20px 16px; }
+				> .item.cp:hover { background-color: $colorHoverLight; }
+				.arrow { width: 6px; height: 10px; }
+			}
+		}
+
+		.side.right.tabSpaceStorageManager { padding: 22px 0px 0px 0px; }
+		.side.right.tabSpaceStorageManager {
 			> .wrap { height: 100%; display: flex; flex-direction: column; }
+			> .wrap {
+				.head, .title { padding: 0px 54px; }
+			}
 
 			.objectManagerWrapper {
+				.controlsWrapper, .ReactVirtualized__List { padding: 0px 54px; }
+				.emptySearch { margin: 0px 54px; }
+
 				.items {
 					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 0; padding: 0; }
 					.item { gap: 0px 12px; margin-bottom: 0px; }
@@ -204,14 +366,14 @@
 				p.first { margin: 0px 0px 20px 0px; }
 			}
 
-			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; cursor: pointer; }
+			.check { border-top: 1px solid $colorBorderLight; padding: 16px 0px 12px 0px; display: flex; align-items: center; gap: 0px 8px; }
 		}
 
 		.side.right.tabAppearance {
-			.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 32px 0px; flex-wrap: wrap; }
+			.buttons { display: flex; gap: 16px 34px; margin: 0px 0px 46px 0px; flex-wrap: wrap; }
 			.label.section { margin-bottom: 8px; }
 
-			.btn { text-align: center; @include text-small; color: $colorDarkGrey; cursor: pointer; }
+			.btn { text-align: center; @include text-small; color: $colorDarkGrey; }
 			.btn {
 				.bg { 
 					width: 120px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; 
@@ -245,16 +407,34 @@
 			}
 		}
 
+		.side.right.tabImportCsv,
+		.side.right.tabPersonal,
+		.side.right.tabPinIndex {
+			.select {
+				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
+				min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px;
+			}
+			.select:hover { background: $colorHoverMedium; }
+			.select {
+				.item { border-bottom: 0; color: $colorBlack; }
+				.icon.arrow { right: 3px !important; }
+			}
+		}
+
+		.side.right.tabPersonal {
+			.title { margin-bottom: 32px; }
+		}
+
 		.side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
-			.items { display: flex; gap: 16px; flex-wrap: wrap; }
+			.items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 			.item { 
-				width: 164px; height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
+				height: 94px; border: 1px solid $colorBorderLight; border-radius: 8px; transition: $transitionAllCommon;
 				position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
 			}
 
 			@media (max-width: 700px) {
-				.items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+				.items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 				.item { width: auto; }
 			}
 
@@ -282,7 +462,9 @@
 		.side.right.tabImportNotion {
 			.inputWrapper { flex-direction: row; align-items: flex-start; gap: 0px 8px; margin: 0px 0px 58px 0px; }
 			.inputWrapper { 
-				.input { height: 36px; border: 1px solid $colorBorderDark; border-radius: 6px; }
+				.input { height: 36px; border: 1px solid $colorBorderLight; border-radius: 8px; }
+				.input:hover { border-color: $colorBorderDark; }
+				.input:focus { border-color: $colorOrange; }
 				.button { margin: 0px; flex-shrink: 0; }
 				.errorWrapper { flex-grow: 1; }
 				.error { @include text-small; margin: 2px 0px 0px 0px; }
@@ -294,7 +476,7 @@
 
 				.btn { 
 					display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: $colorDarkGrey; 
-					cursor: pointer; transition: $transitionAllCommon;
+					transition: $transitionAllCommon;
 				}
 				.btn {
 					.icon.help { width: 14px; height: 14px; background-image: url('~img/icon/popup/settings/help0.svg'); transition: $transitionAllCommon; }
@@ -352,7 +534,7 @@
 				.label:last-child { margin: 0px; }
 			}
 
-			.rows { margin: 24px 0px; }
+			.actionItems { margin: 24px 0px; }
 		}
 
 		.side.right.tabExportMarkdown,
@@ -362,7 +544,9 @@
 				.label:last-child { margin: 0px; }
 			}
 
-			.rows { margin: 24px 0px; }
+			.actionItems { margin: 32px 0px 24px 0px; }
 		}
 	}
+
+	.popupSettings.isSpace .innerWrap { width: 684px; height: 700px; }
 }

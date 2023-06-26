@@ -1,0 +1,48 @@
+@import "~scss/_vars";
+
+$colorTertiary: #505050;
+$colorInputOpaque: #17171799;
+$colorErrorBackground: #240e07;
+
+.phraseWrapper {
+	border-radius: 24px; background: $colorInputOpaque; width: 100%; position: relative; padding: 23px 48px;
+	font-size: 18px; line-height: 38px; transition: $transitionAllCommon; text-align: center; letter-spacing: -0.12px;
+}
+.phraseWrapper {
+	.phraseInnerWrapper { word-break: break-word; min-height: 38px; position: relative; z-index: 1; }
+
+	.word { 
+		font-size: 18px; line-height: 18px; height: 18px; user-select: text !important; display: inline; margin: 10px; vertical-align: middle;
+		white-space: nowrap; text-transform: lowercase;
+	}
+	.word:empty { margin: 0px; }
+
+	.bg { border-radius: 8px; filter: blur(10px); }
+	.bg-orange { background: $colorOrange !important; user-select: none !important; }
+	.bg-red { background: $colorRed !important; }
+	.bg-pink { background: $colorPink !important; }
+	.bg-purple { background: $colorPurple !important; }
+	.bg-blue { background: $colorBlue !important; }
+	.bg-ice { background: $colorIce !important; }
+	.bg-lime { background: $colorLime !important; }
+	.bg-green { background: $colorGreen !important; }
+
+	.placeholder { color: $colorTertiary; top: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
+	#entry { 
+		display: inline; font-size: 18px; line-height: 18px; height: 18px; -webkit-user-modify: read-write-plaintext-only; user-select: text; 
+		vertical-align: middle; margin-left: 10px; text-transform: lowercase;
+	}
+
+	.icon { 
+		height: 20px; width: 20px; vertical-align: top; transition: $transitionAllCommon; position: absolute;
+		right: -32px; top: 50%; margin: -10px 0px 0px 0px; cursor: default;
+	}
+	.icon.see { background-image: url('~img/icon/keyphrase/see0.svg'); }
+	.icon.see:hover { background-image: url('~img/icon/keyphrase/see1.svg'); }
+	.icon.hide { background-image: url('~img/icon/keyphrase/hide0.svg'); }
+	.icon.hide:hover { background-image: url('~img/icon/keyphrase/hide1.svg'); }
+}
+.phraseWrapper.isReadonly {
+	#entry { display: none; }
+}
+.phraseWrapper.hasError { background: $colorErrorBackground; }

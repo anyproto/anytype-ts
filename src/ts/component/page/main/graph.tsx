@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, Util, analytics, DataUtil, ObjectUtil, keyboard } from 'Lib';
+import { I, C, UtilCommon, analytics, UtilData, UtilObject, keyboard } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const ctrl = keyboard.cmdSymbol();
@@ -91,20 +91,19 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	unbind () {
-		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage`);
+		$(window).off(`keydown.graphPage updateGraphRoot.graphPage removeGraphNode.graphPage sidebarResize.graphPage`);
 	};
 
 	rebind () {
 		const win = $(window);
 
 		this.unbind();
-		win.on(`keydown.graphPage`, (e: any) => { this.onKeyDown(e); });
-		win.on('updateGraphRoot.graphPage', (e: any, data: any) => { 
-			this.initRootId(data.id);
-		});
+		win.on(`keydown.graphPage`, e => this.onKeyDown(e));
+		win.on('updateGraphRoot.graphPage', (e: any, data: any) => this.initRootId(data.id));
 		win.on('removeGraphNode.graphPage', (e: any, data: any) => { 
-			this.refGraph.send('onRemoveNode', { ids: Util.objectCopy(data.ids) });
+			this.refGraph?.send('onRemoveNode', { ids: UtilCommon.objectCopy(data.ids) });
 		});
+		win.on('sidebarResize.graphPage', () => this.resize());
 	};
 
 	initRootId (id: string) {
@@ -120,7 +119,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 		keyboard.shortcut('escape', e, (pressed: string) => {
 			this.ids = [];
-			this.refGraph.send('onSetSelected', { ids: [] });
+			this.refGraph?.send('onSetSelected', { ids: [] });
 		});
 
 		if (this.ids.length) {
@@ -128,7 +127,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				C.ObjectListSetIsArchived(this.ids, true, (message: any) => {
 					if (!message.error.code) {
 						this.data.nodes = this.data.nodes.filter(d => !this.ids.includes(d.id));
-						this.refGraph.send('onRemoveNode', { ids: this.ids });
+						this.refGraph?.send('onRemoveNode', { ids: this.ids });
 					};
 				});
 				
@@ -140,7 +139,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	load () {
 		this.setLoading(true);
 
-		C.ObjectGraph(DataUtil.graphFilters(), 0, [], Constant.graphRelationKeys, (message: any) => {
+		C.ObjectGraph(UtilData.graphFilters(), 0, [], Constant.graphRelationKeys, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -168,7 +167,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 			this.data.nodes = message.nodes.map(it => detailStore.mapper(it));
 
-			DataUtil.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
+			UtilData.onSubscribe(Constant.subId.graph, 'id', Constant.graphRelationKeys, {
 				error: {},
 				records: message.nodes,
 				dependencies: [],
@@ -201,7 +200,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	resize () {
 		const win = $(window);
-		const obj = Util.getPageContainer(this.props.isPopup);
+		const obj = UtilCommon.getPageContainer(this.props.isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
 		const isPopup = this.props.isPopup && !obj.hasClass('full');
@@ -226,12 +225,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 	onClickObject (id: string) {
 		this.ids = [];
-
-		if (this.refGraph) {
-			this.refGraph.send('onSetSelected', { ids: this.ids });
-		};
+		this.refGraph?.send('onSetSelected', { ids: [] });
 		
-		ObjectUtil.openAuto(this.data.nodes.find(d => d.id == id));
+		UtilObject.openAuto(this.data.nodes.find(d => d.id == id));
 	};
 
 	getRootId () {
@@ -240,17 +236,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	onSelect (id: string, related?: string[]) {
-		const { root } = blockStore;
 		const isSelected = this.ids.includes(id);
-
-		if (id === root) {
-			return;
-		};
 
 		let ids = [ id ];
 
 		if (related && related.length) {
-
 			if (!isSelected) {
 				this.ids = [];
 			};
@@ -259,10 +249,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		};
 
 		ids.forEach((id) => {
-			if (id === root) {
-				return;
-			};
-
 			if (isSelected) {
 				this.ids = this.ids.filter(it => it != id);
 				return;
@@ -270,7 +256,8 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 
 			this.ids = this.ids.includes(id) ? this.ids.filter(it => it != id) : this.ids.concat([ id ]);
 		});
-		this.refGraph.send('onSetSelected', { ids: this.ids });
+
+		this.refGraph?.send('onSetSelected', { ids: this.ids });
 	};
 
 	getNode (id: string) {
@@ -278,7 +265,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	addNewNode (id: string, cb: (target: any) => void) {
-		ObjectUtil.getById(id, (object: any) => {
+		UtilObject.getById(id, (object: any) => {
 			const target = this.refGraph.nodeMapper(object);
 
 			this.data.nodes.push(target);
@@ -289,7 +276,6 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	onContextMenu (id: string, param: any) {
-		const { root } = blockStore;
 		const ids = this.ids.length ? this.ids : [ id ];
 
 		menuStore.open('dataviewContext', {
@@ -302,16 +288,16 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					let target = this.getNode(targetId);
 					if (target) {
 						this.data.edges.push(this.refGraph.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
-						this.refGraph.send('onSetEdges', { edges: this.data.edges });
+						this.refGraph?.send('onSetEdges', { edges: this.data.edges });
 					} else {
-						this.addNewNode(targetId, target => this.refGraph.send('onAddNode', { target, sourceId }));
+						this.addNewNode(targetId, target => this.refGraph?.send('onAddNode', { target, sourceId }));
 					};
 				},
 				onSelect: (itemId: string) => {
 					switch (itemId) {
 						case 'archive': {
 							this.data.nodes = this.data.nodes.filter(d => !ids.includes(d.id));
-							this.refGraph.send('onRemoveNode', { ids });
+							this.refGraph?.send('onRemoveNode', { ids });
 							break;
 						};
 
@@ -321,10 +307,9 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 								
 								if (node) {
 									node.isFavorite = true;
-									this.data.edges.push({ type: I.EdgeType.Link, source: root, target: id });
 								};
 							});
-							this.refGraph.send('onSetEdges', { edges: this.data.edges });
+							this.refGraph?.send('onSetEdges', { edges: this.data.edges });
 							break;
 						};
 
@@ -336,21 +321,12 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 									node.isFavorite = false;
 								};
 							});
-
-							this.data.edges = this.data.edges.filter(d => {
-								if ((d.source == root) && ids.includes(d.target)) {
-									return false;
-								};
-								return true;
-							});
-
-							this.refGraph.send('onSetEdges', { edges: this.data.edges });
 							break;
 						};
 					};
 
 					this.ids = [];
-					this.refGraph.send('onSetSelected', { ids: this.ids });
+					this.refGraph?.send('onSetSelected', { ids: this.ids });
 				},
 			}
 		});
@@ -364,27 +340,26 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					{ id: 'newObject', name: 'New object' },
 				],
 				onSelect: (e: any, item: any) => {
-
 					switch (item.id) {
-
 						case 'newObject': {
-							ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
-								ObjectUtil.openPopup({ id: message.targetId }, {
+							UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
+								UtilObject.openPopup({ id: message.targetId }, {
 									onClose: () => {
 										this.addNewNode(message.targetId, target => {
 											target = Object.assign(target, { x: data.x, y: data.y });
-											this.refGraph.send('onAddNode', { target });
+											this.refGraph?.send('onAddNode', { target });
 										});
 									}
 								});
 
-								analytics.event('CreateObject', { route: 'Graph' });
+								analytics.event('CreateObject', { 
+									objectType: commonStore.type, 
+									route: 'Graph',
+								});
 							});
 							break;
 						};
-
 					};
-
 				},
 			}
 		});
@@ -394,7 +369,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 		const tab = Tabs.find(it => it.id == id);
 
 		if (tab) {
-			ObjectUtil.openAuto({ id: this.getRootId(), layout: tab.layout });
+			UtilObject.openAuto({ id: this.getRootId(), layout: tab.layout });
 		};
 	};
 

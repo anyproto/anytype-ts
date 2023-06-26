@@ -37,20 +37,25 @@ select:-webkit-autofill:focus { transition: background-color 5000s ease-in-out 0
 input, textarea, select { font-family: 'Inter'; }
 
 #drag { -webkit-app-region: drag; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1; user-select: none; pointer-events: all; }
-#root-loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #fff; z-index: 1000; transition: opacity 0.5s ease-in-out; }
+#root-loader { position: fixed; width: 100%; height: 100%; left: 0px; top: 0px; background: #060606; z-index: 1000; transition: opacity 0.5s ease-in-out; }
 #root-loader {
 	.inner { 
 		width: 120px; text-align: center; position: absolute; transform: translate3d(-50%,-50%,0px); display: flex; flex-direction: column; gap: 6px 0px;
 		left: 50%; top: 50%;
 	}
-	.anim { opacity: 1; transform: translate3d(0px,0px,0px); transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
-	.anim.from { opacity: 0; transform: translate3d(0px,40px,0px); }
-	.anim.to { opacity: 0; transform: translate3d(0px,-40px,0px); }
+	.anim { opacity: 1; transform: scale3d(1,1,1); transition-duration: 0.5s; transition-property: opacity, transform; transition-timing-function: ease-in-out; }
+	.anim.from { opacity: 0; transform: scale3d(0.8,0.8,1); }
+	.anim.to { opacity: 0; transform: translate3d(0px,-20px,0px); }
 
 	.logo { width: 120px; height: 24px; background: url('~img/logo/color.svg') no-repeat; background-size: 100%; }
-	.version { @include text-small; color: #75bdec; transition-delay: 0.25s; }
+	.version { @include text-small; color: #fff; transition-delay: 0.25s; }
 }
 
+#globalFade { 
+	position: fixed; z-index: 10000; background: #fff; left: 0px; top: 0px; width: 100%; height: 100%; display: none; opacity: 0;
+	transition: opacity 0.25s ease-in-out;
+}
+#globalFade.show { opacity: 1; }
 #graphPreview { position: fixed; z-index: 1000; }
 
 html.platformWindows {
@@ -71,11 +76,10 @@ html.platformWindows, html.platformLinux {
 .dn { display: none !important; }
 .txt { vertical-align: middle; display: inline-block; line-height: 1; }
 .flex { display: flex; }
-.cp { cursor: pointer !important; }
 .nw { white-space: nowrap; }
 .through { pointer-events: none; }
 .rel { position: relative; }
-.disabled { opacity: 0.5 !important; cursor: default !important; }
+.disabled { opacity: 0.5; cursor: default !important; }
 .dis { cursor: default !important; }
 .isReadonly { -webkit-user-modify: unset !important; cursor: default !important; }
 .no-br { border-radius: unset !important; }
@@ -91,9 +95,9 @@ html.platformWindows, html.platformLinux {
 .isBlurred { filter: blur(7px); }
 .animationWord { display: inline-block; }
 
-.fileWrap { position: relative; overflow: hidden; cursor: pointer; }
+.fileWrap { position: relative; overflow: hidden; }
 .fileWrap { 
-	.input-file { position: absolute; left: 0px; top: 0px; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 100; padding: 0px; } 
+	.input-file { position: absolute; left: 0px; top: 0px; opacity: 0; width: 100%; height: 100%; z-index: 100; padding: 0px; } 
 }
 
 .editableWrap { position: relative; }

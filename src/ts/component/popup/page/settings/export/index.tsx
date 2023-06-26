@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, Util, translate } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import { observer } from 'mobx-react';
+
+import Head from '../head';
 
 interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any) => void;
@@ -11,6 +13,7 @@ interface Props extends I.PopupSettings {
 const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex extends React.Component<Props> {
 
 	render () {
+		const { onPage } = this.props;
 		const items = this.getItems();
 
 		const Item = (item: any) => {
@@ -24,6 +27,7 @@ const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex
 
 		return (
 			<React.Fragment>
+				<Head onPage={() => onPage('spaceIndex')} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsExportTitle')} />
 				<Label className="description" text={translate('popupSettingsExportText')} />
 
@@ -40,12 +44,12 @@ const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex
 		const { onPage } = this.props;
 		const items = this.getItems();
 		const item = items.find(it => it.id == id);
-		const fn = Util.toCamelCase('onExport-' + item.id);
+		const fn = UtilCommon.toCamelCase('onExport-' + item.id);
 
 		if (item.skipPage && this[fn]) {
 			this[fn]();
 		} else {
-			onPage(Util.toCamelCase('export-' + item.id));
+			onPage(UtilCommon.toCamelCase('export-' + item.id));
 		};
 	};
 

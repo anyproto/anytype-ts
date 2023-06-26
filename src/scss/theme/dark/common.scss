@@ -11,6 +11,7 @@ html.themeDark {
     a:hover { color: $colorOrange; }
 
     #root-loader { background: $colorBlack; }
+	#globalFade { background: $colorBlack; }
 
     .cover::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.2);
@@ -63,17 +64,22 @@ html.themeDark {
 	}
 
 	.objectManagerWrapper {
-		.controls, .managerEmpty { border-color: $colorLinePrimary; }
+        .controls .side.left .element:hover { background-color: $colorHoverMedium; }
+        .icon.checkbox { background-image: url('#{$themePath}/icon/archive/checkbox0.svg') !important; }
+        .icon.checkbox.active { background-image: url('#{$themePath}/icon/archive/checkbox1.svg') !important; }
+        .icon.remove { background-image: url('#{$themePath}/icon/menu/action/remove0.svg'); }
+        .icon.search { background-image: url('#{$themePath}/icon/menu/action/search0.svg'); }
+		.controls, .emptySearch { border-color: $colorLinePrimary; }
 	}
 
-	.progressBar { background: $colorBgLight; }
 	.progressBar {
-		.progressBarFill { background: $colorOrange; }
+        .bar { background: $colorBgLight; }
+        .fill { background: $colorOrange; }
 	}
 
     /* Components */
 
-	@keyframes fill {
+	@keyframes dots {
 		0% { background-color: $colorPrimary; }
 		32% { background-color: $colorPrimary; }
 		100% { background-color: rgba(0,0,0,0); }
@@ -81,7 +87,7 @@ html.themeDark {
 
     .loaderWrapper {
         .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
-		.dot { animation-name: fill; }
+		.dot { animation-name: dots; }
     }
 
     .mediaAudio {
@@ -108,10 +114,12 @@ html.themeDark {
 	}
 
     .button.blank { color: $colorPrimary; border-color: $colorLineSecondary; }
-    .button.blank:hover { border-color: #525148; background: $colorHoverMedium; }
+    .button.blank:not(.disabled):hover { border-color: #525148; background: $colorHoverMedium; }
 
-	.button.red { border-color: $colorLineSecondary; }
-    .button.red:hover { border-color: #581f0c; background: #311107; }
+	.button.red,
+    .button.red.blank { border-color: $colorLineSecondary; background: none; color: $colorRed; }
+    .button.red:hover,
+    .button.red.blank:hover { border-color: #581f0c; background: #311107; }
 
     .filter {
         .line { background: $colorLineSecondary; }
@@ -219,7 +227,7 @@ html.themeDark {
         .icon.arrow:hover { background-image: url('#{$themePath}/arrow/pager1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/pager0.svg'); }
 
-        .icon.arrow.end { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); cursor: pointer; }
+        .icon.arrow.end { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); }
         .icon.arrow.end:hover { background-image: url('#{$themePath}/arrow/pagerEnd1.svg'); }
         .icon.arrow.end.disabled:hover { background-image: url('#{$themePath}/arrow/pagerEnd0.svg'); }
     }
@@ -236,6 +244,7 @@ html.themeDark {
     }
 
     .tooltip { background: $colorBgIcon; color: $colorPrimary; }
+    .tooltip.big { background: $colorBgLight; border: 1px solid rgba(229, 229, 229, 0.1); }
 
     /* Icon */
 
@@ -254,7 +263,7 @@ html.themeDark {
     .iconObject.withLetter
     { background-color: $colorBgIcon; }
 
-	.iconObject.withOption.isSpace { background: $colorHoverMedium; }
+	.iconObject.withOption.isSpace { background: $colorHoverMedium !important; }
 
     /* EditorControls */
 
@@ -330,7 +339,7 @@ html.themeDark {
 
 	/* Navigation */
 
-	.navigationPanel { background: rgba(255,255,255,0.15); }
+	.navigationPanel { background: rgba(141, 141, 141, 0.4); }
 	.navigationPanel {
 		.iconWrap:hover { background-color: $colorHoverMedium; }
 	}

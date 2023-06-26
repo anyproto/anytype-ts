@@ -13,8 +13,8 @@
         }
 
 		.inner { 
-			display: flex; border: 1px solid $colorBorderLight; transition: border-color $transitionCommon; cursor: pointer; 
-			position: relative; border-radius: 12px; overflow: hidden;
+			display: flex; border: 1px solid $colorBorderLight; transition: border-color $transitionCommon; 
+			position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 		}
 		.inner:hover { border-color: $colorBorderDark; }
 		.inner.bgColor { border: 0px; }

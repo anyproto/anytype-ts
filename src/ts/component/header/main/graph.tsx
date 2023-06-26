@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, ObjectUtil, DataUtil, keyboard, sidebar } from 'Lib';
+import { I, UtilObject, UtilData, keyboard, sidebar } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
@@ -51,9 +51,9 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-search" className="search big" tooltip="Search" onClick={this.onSearch} />
-					<Icon id="button-header-filter" className="filter big dn" tooltip="Filters" onClick={this.onFilter} />
-					<Icon id="button-header-settings" className="settings big" tooltip="Settings" onClick={this.onSettings} />
+					<Icon id="button-header-search" className="btn-search big" tooltip="Search" onClick={this.onSearch} />
+					<Icon id="button-header-filter" className="btn-filter big dn" tooltip="Filters" onClick={this.onFilter} />
+					<Icon id="button-header-settings" className="btn-settings big" tooltip="Settings" onClick={this.onSettings} />
 				</div>
 			</React.Fragment>
 		);
@@ -64,7 +64,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 	};
 
 	onOpen () {
-		ObjectUtil.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
+		UtilObject.openRoute({ rootId: this.rootId, layout: I.ObjectLayout.Graph });
 	};
 
 	onSearch () {
@@ -77,7 +77,7 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				rootId: this.rootId,
 				blockId: this.rootId,
 				blockIds: [ this.rootId ],
-				filters: DataUtil.graphFilters(),
+				filters: UtilData.graphFilters(),
 				filter: graph.filter,
 				canAdd: true,
 				onSelect: (item: any) => {

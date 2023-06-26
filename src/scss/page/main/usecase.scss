@@ -1,0 +1,39 @@
+@import "~scss/_vars";
+
+.pageMainUsecase {
+	.frame { width: 830px; box-shadow: 0px 6px 24px rgba(0,0,0,0.2); border-radius: 12px; padding: 44px 48px 36px; text-align: left; }
+	.frame {
+		> .title { @include text-header1; margin-bottom: 8px; }
+		> .label { color: $colorDarkGrey; margin-bottom: 18px; }
+
+		.list { display: grid; gap: 0px 16px; margin-bottom: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+		.list {
+			.item { 
+				position: relative; overflow: hidden; min-height: 236px; transition: $transitionAllCommon; 
+				border: 1px solid $colorBorderDark; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between;
+			}
+			.item:hover { border-color: $colorBlack; }
+			.item {
+				.head { padding: 16px; }
+
+				.title { @include text-header3; margin-bottom: 8px; }
+				.label { @include text-small; color: $colorDarkGrey; }
+
+				.picture { height: 50%; width: 100%; position: relative; }
+				.picture {
+					img { width: 100%; display: block; position: absolute; right: 0px; bottom: 0px; }
+				}
+			}
+		}
+
+		.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: $colorBgLoader; z-index: 1; }
+	}
+
+	@media (max-width: 862px) {
+		.frame { width: calc(100% - 32px); }
+	}
+}
+
+html.bodyMainUsecase {
+	.navigationPanel { display: none !important; }
+}

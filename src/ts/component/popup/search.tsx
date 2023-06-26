@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Input, Loader, IconObject, ObjectName, EmptySearch, Label, Filter } from 'Component';
-import { I, Util, DataUtil, ObjectUtil, keyboard, Key, focus, translate, analytics } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, keyboard, Key, focus, translate, analytics } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -136,7 +136,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				</div>
 
 				{!items.length && !loading ? (
-					<EmptySearch text={filter ? Util.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
+					<EmptySearch text={filter ? UtilCommon.sprintf(translate('popupSearchEmptyFilter'), filter) : translate('popupSearchEmpty')} />
 				) : ''}
 				
 				{this.cache && items.length && !loading ? (
@@ -147,11 +147,11 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 							isRowLoaded={({ index }) => !!items[index]}
 							threshold={LIMIT_HEIGHT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -334,7 +334,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const filter = this.getFilter();
-		const skipTypes = [].concat(ObjectUtil.getFileTypes()).concat(ObjectUtil.getSystemTypes());
+		const skipTypes = [].concat(UtilObject.getFileTypes()).concat(UtilObject.getSystemTypes());
 
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
@@ -347,7 +347,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			fullText: filter,
@@ -367,7 +367,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records);
+			this.items = this.items.concat(message.records || []);
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -435,9 +435,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.props.close();
 
 		if (item.isObject) {
-			const filter = Util.filterFix(this.getFilter());
+			const filter = UtilCommon.filterFix(this.getFilter());
 
-			ObjectUtil.openEvent(e, { ...item, id: item.id });
+			UtilObject.openEvent(e, { ...item, id: item.id });
 			analytics.event('SearchResult', { index: item.index + 1, length: filter.length });
 		} else {
 			switch (item.id) {
@@ -471,7 +471,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
 		const content = obj.find('.content');
-		const { wh } = Util.getWindowDimensions();
+		const { wh } = UtilCommon.getWindowDimensions();
 		const height = Math.min(wh - 64, HEIGHT_ITEM * LIMIT_HEIGHT);
 
 		content.css({ height });

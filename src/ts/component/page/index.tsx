@@ -2,19 +2,17 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, Util, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, DataUtil, ObjectUtil } from 'Lib';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject } from 'Lib';
 import { Sidebar, Navigation } from 'Component';
 import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
-import PageAuthInvite from './auth/invite';
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
-import PageAuthPinCheck from './auth/pin/check';
+import PageAuthPinCheck from './auth/pinCheck';
 import PageAuthSetup from './auth/setup';
-import PageAuthAccountSelect from './auth/account/select';
-import PageAuthRegister from './auth/register';
-import PageAuthSuccess from './auth/success';
+import PageAuthAccountSelect from './auth/accountSelect';
+import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
 
 import PageMainEmpty from './main/empty';
@@ -30,17 +28,17 @@ import PageMainNavigation from './main/navigation';
 import PageMainCreate from './main/create';
 import PageMainArchive from './main/archive';
 import PageMainBlock from './main/block';
+import PageMainUsecase from './main/usecase';
 
-const Components: any = {
-	'/':					 PageAuthSelect,
-	'auth/invite':			 PageAuthInvite,
+const Components = {
+	'index/index':			 PageAuthSelect,
+
 	'auth/select':			 PageAuthSelect,
-	'auth/register':		 PageAuthRegister,
 	'auth/login':			 PageAuthLogin,
 	'auth/pin-check':		 PageAuthPinCheck,
 	'auth/setup':			 PageAuthSetup,
 	'auth/account-select':	 PageAuthAccountSelect,
-	'auth/success':			 PageAuthSuccess,
+	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
 
 	'main/empty':			 PageMainEmpty,		
@@ -56,6 +54,7 @@ const Components: any = {
 	'main/create':			 PageMainCreate,
 	'main/archive':			 PageMainArchive,
 	'main/block':			 PageMainBlock,
+	'main/usecase':			 PageMainUsecase,
 };
 
 const Titles = {
@@ -70,17 +69,15 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	_isMounted = false;
 	refChild: any = null;
-	refSidebar: any = null;
 	frame = 0;
 
 	render () {
 		const { isPopup } = this.props;
 		const { config, theme } = commonStore;
 		const { account } = authStore;
-		const match = this.getMatch();
-		const { page, action } = match.params || {};
+		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
-		const showSidebar = page == 'main';
+		const showSidebar = this.isMain() && !this.isMainUsecase();
 
 		if (account) {
 			const { status } = account || {};
@@ -94,7 +91,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		const wrap = (
 			<div id="page" className={'page ' + this.getClass('page')}>
-				<Component ref={ref => this.refChild = ref} refSidebar={this.refSidebar} {...this.props} />
+				<Component ref={ref => this.refChild = ref} {...this.props} />
 			</div>
 		);
 
@@ -104,15 +101,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		} else {
 			content = (
 				<div className="pageFlex">
-					<Sidebar 
-						ref={ref => { 
-							if (!this.refSidebar) {
-								this.refSidebar = ref; 
-								this.forceUpdate(); 
-							};
-						}} 
-						{...this.props} 
-					/>
+					<Sidebar {...this.props} />
 					<div id="sidebarDummyLeft" className="sidebarDummy left" />
 					{wrap}
 					<div id="sidebarDummyRight" className="sidebarDummy right" />
@@ -151,25 +140,36 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		return (isPopup ? matchPopup : match) || { params: {} };
 	};
 
-	getRootId () {
+	getMatchParams () {
 		const match = this.getMatch();
-		return match?.params?.id || blockStore.root;
+		const page = String(match?.params?.page || 'index');
+		const action = String(match?.params?.action || 'index');
+		const id = String(match?.params?.id || '');
+
+		return { page, action, id };
+	};
+
+	getRootId () {
+		const { id } = this.getMatchParams();
+		const home = UtilObject.getSpaceDashboard();
+
+		return id || home?.id;
 	};
 
 	init () {
 		const { account } = authStore;
-		const { isPopup, history } = this.props;
+		const { isPopup } = this.props;
 		const match = this.getMatch();
-		const { page, action } = match.params || {};
-		const isIndex = !page;
-		const isAuth = page == 'auth';
-		const isMain = page == 'main';
-		const isMainIndex = isMain && (action == 'index');
-		const isPinCheck = isAuth && (action == 'pin-check');
+		const { page, action } = this.getMatchParams();
+		const isIndex = this.isIndex();
+		const isAuth = this.isAuth();
+		const isMain = this.isMain();
+		const isPinCheck = this.isAuthPinCheck();
 		const pin = Storage.get('pin');
 		const win = $(window);
 		const path = [ page, action ].join('/');
 		const Component = Components[path];
+		const routeParam = { replace: true };
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
@@ -179,22 +179,22 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		if (isMain && !account) {
-			Util.route('/');
+			UtilCommon.route('/', routeParam);
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			Util.route('/auth/pin-check');
+			UtilCommon.route('/auth/pin-check', routeParam);
 			return;
 		};
 
 		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
-			Util.route('/auth/deleted');
+			UtilCommon.route('/auth/deleted', routeParam);
 			return;
 		};
 
 		if (!isPopup && Titles[action]) {
-			DataUtil.setWindowTitleText(Titles[action]);
+			UtilData.setWindowTitleText(Titles[action]);
 		};
 
 		this.setBodyClass();
@@ -208,8 +208,8 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			keyboard.setMatch(match);
 		};
 
-		this.onboardingCheck();
-		Onboarding.start(Util.toCamelCase([ page, action ].join('-')), isPopup);
+		this.dashboardOnboardingCheck();
+		Onboarding.start(UtilCommon.toCamelCase([ page, action ].join('-')), isPopup);
 		Highlight.showAll();
 		
 		if (isPopup) {
@@ -221,30 +221,24 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 				return;
 			};
 
-			if (isMainIndex) {
-				Survey.check(I.SurveyType.Register);
-				Survey.check(I.SurveyType.Pmf);
-				Survey.check(I.SurveyType.Object);
+			Survey.check(I.SurveyType.Register);
+			Survey.check(I.SurveyType.Pmf);
+			Survey.check(I.SurveyType.Object);
 
-				Storage.delete('redirect');
-			} else {
-				Storage.set('survey', { askPmf: true });
-				Storage.set('redirect', history.location.pathname);
-			};
+			Storage.set('survey', { askPmf: true });
 		}, Constant.delay.popup);
 	};
 
-	onboardingCheck () {
-		const match = this.getMatch();
-		const home = ObjectUtil.getSpaceDashboard();
-		const { id } = match.params;
+	dashboardOnboardingCheck () {
+		const home = UtilObject.getSpaceDashboard();
+		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 
 		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('dashboard')) {
 			return;
 		};
 
-		popupStore.open('migration', { data: { type: 'onboarding' } });
+		Onboarding.start('dashboard', false, false);
 	};
 
 	unbind () {
@@ -253,14 +247,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 	};
 	
 	event () {
-		let match = this.getMatch();
-		let page = String(match.params.page || 'index');
-		let action = String(match.params.action || 'index');
-		let id = String(match.params.id || '');
-		let params: any = { page, action };
-		let isMain = page == 'main';
-		let isMainType = isMain && (action == 'type');
-		let isMainRelation = isMain && (action == 'relation');
+		const { page, action, id } = this.getMatchParams();
+		const params = { page, action, id: undefined };
+		const isMainType = this.isMainType();
+		const isMainRelation = this.isMainRelation();
 
 		if (isMainType || isMainRelation) {
 			params.id = id;
@@ -268,14 +258,53 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		analytics.event('page', { params });
 	};
-	
+
+	isIndex () {
+		const { page } = this.getMatchParams();
+		return page == 'index';
+	};
+
+	isAuth () {
+		const { page } = this.getMatchParams();
+		return page == 'auth';
+	};
+
+	isAuthPinCheck () {
+		const { action } = this.getMatchParams();
+		return this.isAuth() && (action == 'pin-check');
+	};
+
+	isMain () {
+		const { page } = this.getMatchParams();
+		return page == 'main';
+	};
+
+	isMainIndex () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'index');
+	};
+
+	isMainType () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'type');
+	};
+
+	isMainRelation () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'relation');
+	};
+
+	isMainUsecase () {
+		const { action } = this.getMatchParams();
+		return this.isMain() && (action == 'usecase');
+	};
+
 	getClass (prefix: string) {
 		const { isPopup } = this.props;
-		const match = this.getMatch();
-		const page = match.params.page || 'index';
+		const { page } = this.getMatchParams();
 		
 		return [ 
-			Util.toCamelCase([ prefix, page ].join('-')),
+			UtilCommon.toCamelCase([ prefix, page ].join('-')),
 			this.getId(prefix),
 			(isPopup ? 'isPopup' : 'isFull'),
 		].join(' ');
@@ -289,10 +318,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		const { config } = commonStore;
-		const platform = Util.getPlatform();
+		const platform = UtilCommon.getPlatform();
 		const cn = [ 
 			this.getClass('body'), 
-			Util.toCamelCase([ 'platform', platform ].join('-')),
+			UtilCommon.toCamelCase([ 'platform', platform ].join('-')),
 		];
 		const obj = $('html');
 
@@ -309,14 +338,14 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const page = match.params.page || 'index';
 		const action = match.params.action || 'index';
 
-		return Util.toCamelCase([ prefix, page, action ].join('-'));
+		return UtilCommon.toCamelCase([ prefix, page, action ].join('-'));
 	};
 
 	storageGet () {
 		return Storage.get(this.getId('page')) || {};
 	};
 
-	storageSet (data: any) {
+	storageSet (data) {
 		Storage.set(this.getId('page'), data);
 	};
 	

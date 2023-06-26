@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { InfiniteLoader, AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { I, Relation, DataUtil, Util } from 'Lib';
+import { I, Relation, UtilData, UtilCommon } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
@@ -12,7 +12,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	cache: any = {};
 	cellPositioner: any = null;
-	ref: any = null;
+	ref = null;
 	width = 0;
 	columnCount = 0;
 
@@ -159,7 +159,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		return (
 			<div className="wrap">
 				<div className={cn.join(' ')}>
-					<div className={[ 'galleryWrap', DataUtil.cardSizeClass(cardSize) ].join(' ')}>
+					<div className={[ 'galleryWrap', UtilData.cardSizeClass(cardSize) ].join(' ')}>
 						{content}
 					</div>
 
@@ -225,7 +225,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	getRecords () {
 		const { getRecords } = this.props;
-		const records = Util.objectCopy(getRecords());
+		const records = UtilCommon.objectCopy(getRecords());
 		
 		records.push('add-record');
 

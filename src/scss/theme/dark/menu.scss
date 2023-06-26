@@ -299,7 +299,6 @@
 	.menu.menuOnboarding {
 		a { color: $colorWhite; }
 		.highlight { background: $colorLineSecondary; color: $colorOrange; }
-        .icon.close { background-color: $colorHoverMedium; }
 
         .bottom {
             .round {
@@ -310,7 +309,7 @@
                 .step:not(.active) { background: $colorLineSecondary; }
                 .step:not(.active):hover { background: $colorLinePrimary; }
             }
-            .category { color: #5c5A54; }
+            .category { color: #5c5a54; }
         }
 	}
 

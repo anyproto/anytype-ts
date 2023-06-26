@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, ObjectUtil, keyboard, Relation } from 'Lib';
+import { I, UtilObject, keyboard, Relation } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 
 const HEIGHT = 28;
@@ -93,18 +93,18 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			);
 		};
 
-		const List = SortableContainer((item: any) => (
+		const List = SortableContainer(() => (
 			<InfiniteLoader
 				rowCount={items.length}
 				loadMoreRows={() => {}}
 				isRowLoaded={() => true}
 				threshold={LIMIT}
 			>
-				{({ onRowsRendered, registerChild }) => (
+				{({ onRowsRendered }) => (
 					<AutoSizer className="scrollArea">
 						{({ width, height }) => (
 							<VList
-								ref={ref => { this.refList = ref; }}
+								ref={ref => this.refList = ref}
 								width={width}
 								height={height}
 								deferredMeasurmentCache={this.cache}
@@ -168,8 +168,8 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -203,7 +203,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		if (item.id == 'add') {
 			this.onAdd();
 		} else {
-			ObjectUtil.openEvent(e, item);
+			UtilObject.openEvent(e, item);
 		};
 	};
 
@@ -288,7 +288,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 		const offset = 16;
 		const height = Math.max(HEIGHT + offset, Math.min(300, items.length * HEIGHT + offset));
 
-		obj.css({ height: height });
+		obj.css({ height });
 		position();
 	};
 

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, Util, Relation } from 'Lib';
+import { Dataview, I, C, UtilCommon, Relation, keyboard, UtilObject } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -13,8 +13,7 @@ interface Props extends I.WidgetComponent {
 };
 
 interface State {
-	loading: boolean;
-	viewId: string;
+	isLoading: boolean;
 };
 
 const BLOCK_ID = 'dataview';
@@ -24,25 +23,30 @@ const HEIGHT_LIST = 64;
 
 const WidgetList = observer(class WidgetList extends React.Component<Props, State> {
 
-	node: any = null;
+	node = null;
+	refSelect = null;
 	state = {
-		loading: false,
-		viewId: '',
+		isLoading: false,
 	};
 	cache: any = null;
 
 	render (): React.ReactNode {
-		const { block, isCollection, isPreview } = this.props;
+		const { parent, block, isCollection, isPreview, sortFavorite } = this.props;
+		const { viewId, limit } = parent.content;
 		const { targetBlockId } = block.content;
-		const { loading, viewId } = this.state;
+		const { isLoading } = this.state;
 		const rootId = this.getRootId();
-		const views = dbStore.getViews(rootId, BLOCK_ID);
+		const views = dbStore.getViews(rootId, BLOCK_ID).map(it => ({ ...it, name: it.name || UtilObject.defaultName('Page') }));
 		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const records = dbStore.getRecords(subId, '');
 		const { total } = dbStore.getMeta(subId, '');
+		const isSelect = !isPreview || !UtilCommon.isPlatformMac();
+
+		let records = this.getRecords();
+		if (targetBlockId == Constant.widgetId.favorite) {
+			records = sortFavorite(records);
+		};
+
 		const length = records.length;
-		const platform = Util.getPlatform();
-		const isSelect = !isPreview || (platform != I.Platform.Mac);
 
 		if (!this.cache) {
 			return null;
@@ -50,7 +54,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 		let content = null;
 
-		if (loading) {
+		if (isLoading) {
 			content = <Loader />;
 		} else
 		if (!length) {
@@ -117,6 +121,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			if (isSelect) {
 				viewSelect = (
 					<Select 
+						ref={ref => this.refSelect = ref}
 						id={`select-view-${rootId}`} 
 						value={viewId} 
 						options={views} 
@@ -131,7 +136,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 						className={[ 'viewItem', (item.id == viewId ? 'active' : '') ].join(' ')} 
 						onClick={() => this.onChangeView(item.id)}
 					>
-						{Util.shorten(item.name, 32)}
+						{UtilCommon.shorten(item.name, 32)}
 					</div>
 				);
 
@@ -165,36 +170,33 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	componentDidMount (): void {
-		const { block, isCollection, getData } = this.props;
+		const { parent, block, isCollection, getData } = this.props;
+		const { viewId } = parent.content;
 		const { targetBlockId } = block.content;
 
-		if (!isCollection(targetBlockId)) {
-			this.setState({ loading: true });
+		if (isCollection(targetBlockId)) {
+			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
+		} else {
+			this.setState({ isLoading: true });
 
 			C.ObjectShow(targetBlockId, this.getTraceId(), () => {
-				this.setState({ loading: false });
+				this.setState({ isLoading: false });
 
-				const view = Dataview.getView(this.getRootId(), BLOCK_ID);
+				const view = Dataview.getView(this.getRootId(), BLOCK_ID, viewId);
 				if (view) {
-					this.onChangeView(view.id);
 					this.load(view.id);
 				};
 			});
-		} else {
-			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => { this.resize(); });
 		};
-
-		this.resize();
 	};
 
 	componentDidUpdate (): void {
-		const { block, isCollection } = this.props;
+		const { parent, block, isCollection } = this.props;
+		const { viewId } = parent.content;
 		const { targetBlockId } = block.content;
-		const { viewId } = this.state;
 		const rootId = this.getRootId();
 		const view = Dataview.getView(rootId, BLOCK_ID);
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const records = dbStore.getRecords(subId, '');
+		const records = this.getRecords();		
 
 		if (!isCollection(targetBlockId) && view && (viewId != view.id)) {
 			this.load(viewId);
@@ -219,6 +221,49 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 		C.ObjectSearchUnsubscribe([ subId ]);
 	};
 
+	updateData () {
+		const { block, isCollection, getData } = this.props;
+		const { targetBlockId } = block.content;
+		const rootId = this.getRootId();
+		const srcBlock = blockStore.getLeaf(targetBlockId, BLOCK_ID);
+
+		// Update block in widget with source block if object is open
+		if (srcBlock) {
+			let dstBlock = blockStore.getLeaf(rootId, BLOCK_ID);
+
+			if (dstBlock) {
+				dstBlock = Object.assign(dstBlock, srcBlock);
+			};
+		};
+
+		if (isCollection(targetBlockId)) {
+			getData(dbStore.getSubId(this.getRootId(), BLOCK_ID), () => this.resize());
+		} else {
+			const view = Dataview.getView(this.getRootId(), BLOCK_ID);
+			if (view) {
+				this.load(view.id);
+			};
+		};
+	};
+
+	updateViews () {
+		const { block } = this.props;
+		const { targetBlockId } = block.content;
+		const views = dbStore.getViews(targetBlockId, BLOCK_ID);
+		const rootId = this.getRootId();
+
+		if (!views.length || (targetBlockId != keyboard.getRootId())) {
+			return;
+		};
+
+		dbStore.viewsClear(rootId, BLOCK_ID);
+		dbStore.viewsSet(rootId, BLOCK_ID, views);
+
+		if (this.refSelect) {
+			this.refSelect.setOptions(views);
+		};
+	};
+
 	getTraceId = (): string => {
 		return [ 'widget', this.props.block.id ].join('-');
 	};
@@ -232,20 +277,16 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 
 	load = (viewId: string) => {
 		const { widgets } = blockStore;
-		const { block, isPreview, isCompact } = this.props;
+		const { block, parent, getLimit } = this.props;
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(widgets, targetBlockId);
 		const setOf = Relation.getArrayValue(object.setOf);
 		const target = detailStore.get(widgets, targetBlockId);
 		const isCollection = target.type == Constant.typeId.collection;
+		const limit = getLimit(parent.content);
 
 		if (!setOf.length && !isCollection) {
 			return;
-		};
-
-		let limit = 0;
-		if (!isPreview) {
-			limit = isCompact ? Constant.limit.widgetRecords.compact : Constant.limit.widgetRecords.list;
 		};
 
 		Dataview.getData({
@@ -262,15 +303,24 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 	};
 
 	onChangeView = (viewId: string): void => {
-		this.setState({ viewId });
+		const { parent } = this.props;
+
+		C.BlockWidgetSetViewId(blockStore.widgets, parent.id, viewId);
+	};
+
+	getRecords () {
+		const { parent } = this.props;
+		const { viewId } = parent.content;
+		const rootId = this.getRootId();
+		const subId = dbStore.getSubId(rootId, BLOCK_ID);
+		const records = dbStore.getRecords(subId, '');
+
+		return Dataview.applyObjectOrder(rootId, BLOCK_ID, viewId, '', UtilCommon.objectCopy(records));
 	};
 
 	resize () {
 		const { parent, isPreview } = this.props;
-		const rootId = this.getRootId();
-		const subId = dbStore.getSubId(rootId, BLOCK_ID);
-		const records = dbStore.getRecords(subId, '');
-		const length = records.length;
+		const length = this.getRecords().length;
 
 		raf(() => {
 			const node = $(this.node);

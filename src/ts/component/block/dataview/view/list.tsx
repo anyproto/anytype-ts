@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { dbStore } from 'Store';
 import { Icon, LoadMore } from 'Component';
-import { I, translate, Util } from 'Lib';
+import { I, translate, UtilCommon } from 'Lib';
 import Row from './list/row';
 
 const HEIGHT = 34;
@@ -12,7 +12,7 @@ const HEIGHT = 34;
 const ViewList = observer(class ViewList extends React.Component<I.ViewComponent> {
 
 	node: any = null;
-	ref: any = null;
+	ref = null;
 
 	constructor (props: I.ViewComponent) {
 		super (props);
@@ -125,7 +125,7 @@ const ViewList = observer(class ViewList extends React.Component<I.ViewComponent
 	};
 
 	componentDidUpdate () {
-		Util.triggerResizeEditor(this.props.isPopup);
+		UtilCommon.triggerResizeEditor(this.props.isPopup);
 	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {

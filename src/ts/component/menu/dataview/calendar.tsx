@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Util, translate } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import { Select } from 'Component';
 import { observer } from 'mobx-react';
 import { menuStore } from 'Store';
@@ -23,11 +23,11 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { value } = data;
 		const items = this.getData();
 
-		const d = Number(Util.date('j', value));
-		const m = Number(Util.date('n', value));
-		const y = Number(Util.date('Y', value));
+		const d = Number(UtilCommon.date('j', value));
+		const m = Number(UtilCommon.date('n', value));
+		const y = Number(UtilCommon.date('Y', value));
 
-		const today = Util.time();
+		const today = UtilCommon.time();
 		const tomorrow = today + 86400;
 
 		const days = [];
@@ -56,7 +56,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								id="month"
 								value={String(m || '')} 
 								options={months} 
-								onChange={m => { this.setValue(Util.timestamp(y, m, 1), false, false); }} 
+								onChange={m => { this.setValue(UtilCommon.timestamp(y, m, 1), false, false); }} 
 								menuParam={{ 
 									classNameWrap, 
 									className: 'orange',
@@ -70,7 +70,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								id="year" 
 								value={String(y || '')} 
 								options={years} 
-								onChange={y => this.setValue(Util.timestamp(y, m, 1), false, false)} 
+								onChange={y => this.setValue(UtilCommon.timestamp(y, m, 1), false, false)} 
 								menuParam={{ 
 									classNameWrap, 
 									className: 'orange center',
@@ -104,7 +104,7 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 								className={cn.join(' ')} 
 								onClick={(e: any) => { 
 									e.stopPropagation();
-									this.setValue(Util.timestamp(item.y, item.m, item.d), true, true); 
+									this.setValue(UtilCommon.timestamp(item.y, item.m, item.d), true, true); 
 								}}
 							>
 								{item.d}
@@ -114,8 +114,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 				</div>
 				<div className="line" />
 				<div className="foot">
-					<div className="btn" onClick={() => { this.setValue(Util.mergeTimeWithDate(today, value), true, true); }}>{translate('menuCalendarToday')}</div>
-					<div className="btn" onClick={() => { this.setValue(Util.mergeTimeWithDate(tomorrow, value), true, true); }}>{translate('menuCalendarTomorrow')}</div>
+					<div className="btn" onClick={() => { this.setValue(UtilCommon.mergeTimeWithDate(today, value), true, true); }}>{translate('menuCalendarToday')}</div>
+					<div className="btn" onClick={() => { this.setValue(UtilCommon.mergeTimeWithDate(tomorrow, value), true, true); }}>{translate('menuCalendarTomorrow')}</div>
 				</div>
 			</div>
 		);
@@ -126,8 +126,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { data } = param;
 		const { value } = data;
 
-		const m = Number(Util.date('n', value));
-		const y = Number(Util.date('Y', value));
+		const m = Number(UtilCommon.date('n', value));
+		const y = Number(UtilCommon.date('Y', value));
 
 		this.refMonth.setValue(m);
 		this.refYear.setValue(y);
@@ -156,8 +156,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 		const { data } = param;
 		const { value } = data;
 		
-		const m = Number(Util.date('n', value));
-		const y = Number(Util.date('Y', value));
+		const m = Number(UtilCommon.date('n', value));
+		const y = Number(UtilCommon.date('Y', value));
 		const md = Constant.monthDays;
 		
 		// February
@@ -165,8 +165,8 @@ const MenuCalendar = observer(class MenuCalendar extends React.Component<I.Menu,
 			md[2] = 29;
 		};
 		
-		const wdf = Number(Util.date('N', Util.timestamp(y, m, 1)));
-		const wdl = Number(Util.date('N', Util.timestamp(y, m, md[m])));
+		const wdf = Number(UtilCommon.date('N', UtilCommon.timestamp(y, m, 1)));
+		const wdl = Number(UtilCommon.date('N', UtilCommon.timestamp(y, m, md[m])));
 		let pm = m - 1;
 		let nm = m + 1;
 		let py = y;

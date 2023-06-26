@@ -1,15 +1,14 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, M, Util, Storage, Mark, translate, keyboard } from 'Lib';
+import { I, M, UtilCommon, Storage, Mark, translate, keyboard } from 'Lib';
 import { detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class BlockStore {
 
-    public rootId = '';
     public profileId = '';
 	public widgetsId = '';
-    public recentId = '';
+	public rootId = '';
 
     public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
     public blockMap: Map<string, Map<string, I.Block>> = new Map();
@@ -17,16 +16,11 @@ class BlockStore {
 
     constructor() {
         makeObservable(this, {
-            rootId: observable,
             profileId: observable,
-            recentId: observable,
-            root: computed,
             profile: computed,
-            recent: computed,
-            rootSet: action,
+			root: computed,
             profileSet: action,
             widgetsSet: action,
-            recentSet: action,
             set: action,
             clear: action,
             clearAll: action,
@@ -38,10 +32,6 @@ class BlockStore {
         });
     }
 
-    get root (): string {
-		return this.rootId;
-	};
-
     get profile (): string {
 		return this.profileId;
 	};
@@ -50,12 +40,8 @@ class BlockStore {
 		return this.widgetsId;
 	};
 
-    get recent (): string {
-		return this.recentId;
-	};
-
-    rootSet (id: string) {
-		this.rootId = String(id || '');
+	get root (): string {
+		return this.rootId;
 	};
 
 	profileSet (id: string) {
@@ -66,8 +52,8 @@ class BlockStore {
 		this.widgetsId = String(id || '');
 	};
 
-    recentSet (id: string) {
-		this.recentId = String(id || '');
+	rootSet (id: string) {
+		this.rootId = String(id || '');
 	};
 	
     set (rootId: string, blocks: I.Block[]) {
@@ -111,7 +97,6 @@ class BlockStore {
     clearAll () {
 		this.profileSet('');
 		this.widgetsSet('');
-		this.recentSet('');
 		this.rootSet('');
 
 		this.blockMap.clear();
@@ -122,7 +107,7 @@ class BlockStore {
 	setStructure (rootId: string, list: any[]) {
 		const map: Map<string, I.BlockStructure> = new Map();
 
-		list = Util.objectCopy(list || []);
+		list = UtilCommon.objectCopy(list || []);
 		list.map((item: any) => {
 			map.set(item.id, {
 				parentId: '',
@@ -152,7 +137,7 @@ class BlockStore {
 
 		let element = this.getMapElement(rootId, blockId);
 		if (!element) {
-			element = new M.BlockStructure({ parentId: '', childrenIds: childrenIds });
+			element = new M.BlockStructure({ parentId: '', childrenIds });
 		} else {
 			set(element, 'childrenIds', childrenIds);
 		};
@@ -258,7 +243,7 @@ class BlockStore {
 		const block = blockStore.getLeaf(rootId, blockId);
 		const parent = blockStore.getLeaf(rootId, block.parentId);
 
-		if (parent.isPage() || parent.isLayoutDiv()) {
+		if (!parent || (parent && (parent.isPage() || parent.isLayoutDiv()))) {
 			return block;
 		} else {
 			return this.getHighestParent(rootId, parent.id);
@@ -317,7 +302,7 @@ class BlockStore {
 	};
 
     getTree (rootId: string, list: any[]): any[] {
-		list = Util.objectCopy(list || []);
+		list = UtilCommon.objectCopy(list || []);
 		for (const item of list) {
 			item.childBlocks = this.getTree(item.id, this.getChildren(rootId, item.id));
 		};
@@ -392,12 +377,12 @@ class BlockStore {
 		v ? element.addClass('isToggled') : element.removeClass('isToggled');
 		Storage.setToggle(rootId, blockId, v);
 		
-		Util.triggerResizeEditor(keyboard.isPopup());
+		UtilCommon.triggerResizeEditor(keyboard.isPopup());
 		element.find('.resizable').trigger('resizeInit');
 	};
 
 	updateMarkup (rootId: string) {
-		const blocks = Util.objectCopy(this.getBlocks(rootId, it => it.isText()));
+		const blocks = UtilCommon.objectCopy(this.getBlocks(rootId, it => it.isText()));
 
 		for (const block of blocks) {
 			const marks = block.content.marks || [];
@@ -426,7 +411,7 @@ class BlockStore {
 
 				const old = text.substr(from, to - from);
 
-				let name = Util.shorten(object.name, 30);
+				let name = UtilCommon.shorten(object.name, 30);
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
@@ -434,7 +419,7 @@ class BlockStore {
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
-					text = Util.stringInsert(text, name, mark.range.from, mark.range.to);
+					text = UtilCommon.stringInsert(text, name, mark.range.from, mark.range.to);
 
 					if (d != 0) {
 						mark.range.to -= d;
@@ -489,6 +474,26 @@ class BlockStore {
 	checkBlockTypeExists (rootId: string): boolean {
 		const header = this.getMapElement(rootId, Constant.blockId.header);
 		return header ? header.childrenIds.includes(Constant.blockId.type) : false;
+	};
+
+	updateWidgetViews (rootId: string) {
+		this.triggerWidgetEvent('updateWidgetViews', rootId);
+	};
+
+	updateWidgetData (rootId: string) {
+		this.triggerWidgetEvent('updateWidgetData', rootId);
+	};
+
+	triggerWidgetEvent (code: string, rootId: string) {
+		const win = $(window);
+		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
+
+		blocks.forEach(block => {
+			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.content.targetBlockId == rootId));
+			if (children.length) {
+				win.trigger(`${code}.${block.id}`);
+			};
+		});
 	};
 
 };

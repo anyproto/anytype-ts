@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.31.54",
+	"version": "0.32.10-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -142,7 +142,8 @@
 		"buildDependenciesFromSource": true,
 		"generateUpdatesFilesForAllChannels": true,
 		"beforeBuild": "./electron/hook/beforebuild.js",
-		"afterSign": "./electron/hook/notarize.js",
+		"afterSign": "./electron/hook/aftersign.js",
+		"artifactBuildCompleted": "./electron/hook/afterbuild.js",
 		"appId": "com.anytype.anytype",
 		"compression": "normal",
 		"productName": "Anytype",
@@ -157,11 +158,13 @@
 		],
 		"asarUnpack": [
 			"dist/main.js",
+			"dist/main.js.map",
 			"dist/index.html",
 			"dist/run.js",
 			"dist/lib",
 			"dist/anytypeHelper",
 			"dist/anytypeHelper.exe",
+			"dist/font/**/*",
 			"dist/workers/**/*",
 			"dist/*.node",
 			"dist/img/**/*",
@@ -191,6 +194,7 @@
 			"!dist/*",
 			"dist/index.html",
 			"dist/main.js",
+			"dist/main.js.map",
 			"dist/run.js",
 			"dist/lib/**/*",
 			"dist/img/**/*",
@@ -199,6 +203,7 @@
 			"dist/anytypeHelper.exe",
 			"dist/anytypeHelper",
 			"dist/*.node",
+			"dist/font/**/*",
 			"dist/workers/**/*",
 			"!node_modules/**/*",
 			{

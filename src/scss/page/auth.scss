@@ -1,20 +1,84 @@
 @import "~scss/_vars";
 
-html.bodyAuth, html.bodyIndex {
-	.navigationPanel { display: none; }
+$colorPrimary: #d4d4d4;
+$colorSecondary: #8d8d8d;
+$colorTertiary: #505050;
+$colorError: #8a351a;
+
+$colorDark: #060606;
+$colorButtonStroke: #252525;
+$colorButtonBlackHover: rgba(37, 37, 37, 0.8);
+$colorButtonBlankHover: rgba(23, 23, 23, 0.8);
+$colorInputOpaque: #17171799;
+$colorPopUp: #141414;
+$colorErrorBackground: #240e07;
+
+$shadow: 0px 0px 0px 1px #252525 inset;
+
+html.bodyIndex, html.bodyAuth {
+	body { background: $colorDark !important; color: $colorSecondary; overflow: hidden; }
+	.navigationPanel { display: none !important; }
+}
+
+html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
+	#popupConfirm-innerWrap { background: $colorPopUp; width: 542px; box-shadow: $shadow; }
+	#popupConfirm-innerWrap h1 { color: $colorPrimary; }
+	#popupConfirm-innerWrap {
+		.content { text-align: left; }
+
+		.button.disabled { color: $colorTertiary }
+
+		.button.black { color: $colorPrimary; background: $colorButtonStroke; }
+		.button.black:not(.disabled):hover { background: $colorButtonBlackHover; }
+		
+		.button.blank { border-color: $colorButtonStroke; color: $colorPrimary; background: none; }
+		.button.blank:hover { background: $colorButtonBlankHover; }
+
+		h1 { font-size: 18px; margin-bottom: 16px; }
+		b { display: block; font-weight: 700; color: $colorPrimary; margin-bottom: 8px; }
+		p { margin-bottom: 8px; }
+		ul { list-style-position: inside; padding-left: 0.75em; margin-bottom: 8px; }
+		ul.last { margin: 0px; }
+	}
+
+	.menus {
+		.menu.menuAccountPath { background: $colorPopUp; box-shadow: $shadow; width: 460px; } 
+		.menu.menuAccountPath {
+			.label { color: $colorSecondary; }
+			.label.path { color: $colorPrimary; }
+		}
+	}
+
+	.tooltip { padding: 12px 16px; background: $colorPopUp !important; color: $colorSecondary; box-shadow: $shadow !important; @include text-common; }
+	.tooltip {
+		.txt { line-height: 22px; }
+		b { display: block; font-weight: 500; color: $colorPrimary; }
+		ul { list-style-position: inside; padding-left: 0.75em; }
+	}
+}
+
+html.bodyAuthDeleted {
+	#popupConfirm-innerWrap {
+		.buttons { flex-direction: row-reverse; justify-content: space-between; width: 100%; }
+	}
 }
 
 .pageAuth, .pageIndex {
-	.frame { width: 672px; padding: 60px 48px 48px 48px; text-align: center; }
-	.title { margin-bottom: 22px; }
-	.label { margin-bottom: 26px; }
+	.frame { text-align: center; background: none !important; }
 	.input { height: 40px; border: solid 1px $colorBorderDark; }
 
 	.header { width: 100% !important; }
 	.footer { width: 100% !important; }
 
+	.icon.arrow.back {
+		position: fixed; top: 50%; left: 10px; width: 28px; height: 56px; margin-top: -22px; background-image: url('~img/arrow/auth0.svg');
+		background-position: center; background-repeat: no-repeat; background-size: 8px 24px;
+		z-index: 2;
+	}
+	.icon.arrow.back:hover { background-image: url('~img/arrow/auth1.svg'); }
+	
 	.authBackWrap { 
-		position: absolute; top: 4px; left: 4px; display: flex; align-items: center; flex-wrap: nowrap; cursor: pointer; color: $colorDarkGrey; 
+		position: absolute; top: 4px; left: 4px; display: flex; align-items: center; flex-wrap: nowrap; color: $colorDarkGrey; 
 		line-height: 28px; padding: 0px 6px 0px 0px; border-radius: 4px;
 	}
 	.authBackWrap {
@@ -24,44 +88,77 @@ html.bodyAuth, html.bodyIndex {
 
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
+
+	.buttons { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
+	.button { width: 192px; }
+	.button.disabled { color: $colorTertiary }
 	
-	.button { margin-right: 16px; width: 176px; }
-	.button:last-child { margin: 0px; }
+	.button.black { color: $colorPrimary !important; background: $colorButtonStroke !important; }
+	.button.black:not(.disabled):hover { background: $colorButtonBlackHover !important; }
+
+	.button.blank { border-color: $colorButtonStroke !important; color: $colorPrimary !important; background: none; }
+	.button:not(.disabled):hover{ background: $colorButtonBlankHover !important; }
+
+	.small { color: $colorSecondary; }
+	.small:hover { color: $colorPrimary; }
+
+	.error { color: $colorError; margin: 0.3em 0px; }
+	.withError { background: $colorErrorBackground; }
+
+	@keyframes dots {
+		0% { background-color: $colorWhite; }
+		32% { background-color: $colorWhite; }
+		100% { background-color: rgba(0,0,0,0); }
+	}
+
+	.loaderWrapper {
+		.dot { animation-name: dots !important; }
+    }
 }
 
-.pageIndex.pageIndexIndex,
-.pageAuth.pageAuthSelect,
-.pageAuthLogin,
-.pageAuthInvite
-.pageAuthRegister {
-	.button { font-size: 16px; letter-spacing: -0.2px; }
+.pageIndexIndex, .pageAuthSelect {
+	.frame { width: 830px; }
+	.title { font-family: 'Riccione'; font-size: 102px; line-height: 90px; letter-spacing: -3px; font-weight: 500; margin-bottom: 24px; color: $colorPrimary; }
+	.label { font-size: 16px; line-height: 26px; letter-spacing: -0.28px; width: 448px; margin: 0px auto 22px auto; color: $colorSecondary; }
+
+	@media (max-width: 862px) {
+		.frame { width: calc(100% - 32px); }
+	}
 }
 
-.pageIndex.pageIndexIndex,
-.pageAuth.pageAuthSelect {
-	.frame { padding: 59px 112px 48px 112px; }
-	.title { font-size: 44px; line-height: 40px; letter-spacing: -1px; font-weight: 700; }
-	.label { font-size: 18px; line-height: 26px; letter-spacing: -0.28px; }
+.pageAuthLogin {
+	.form { width: 100%; }
+	.icon { height: 20px; width: 20px; }
+	.error { position: absolute; z-index: 1; width: 100%; left: 0px; top: -32px; }
+
+	.title { margin: 0px 0px 20px 0px; }
+	.phraseWrapper { margin: 0px 0px 20px 0px; }
 }
 
-.pageAuthLogin,
 .pageAuthInvite {
+	.frame { padding: 64px; }
+	.label { width: 500px; }
 	.input { text-align: center; border: solid 0px; border-bottom: solid 1px $colorBorderDark; font-family: 'Plex'; margin-bottom: 32px; }
 }
 
 .pageAuthPinCheck {
-	.input { width: 40px; margin-right: 8px; padding: 0px; text-align: center; vertical-align: top; font-size: 18px; }
-	.input:last-child { margin: 0px; }
+	.title { font-size: 22px; margin-bottom: 20px; }
+	.pin { display: flex; gap: 0px 8px; flex-direction: row; }
+	.pin {
+		.input { 
+			width: 86px; height: 86px; border-radius: 24px; background: $colorInputOpaque; padding: 0px; text-align: center; 
+			vertical-align: top; font-size: 18px; border-width: 2px; border-color: rgba(0,0,0,0);
+		}
+		.input.active { box-shadow: 0px 0px; border-color: $colorOrange; }
+	}
 }
 
 .pageAuthSetup {
-	.title { margin: 0px; }
-	.title.withLabel { margin-bottom: 22px; }
-	.button { width: auto; }
+	.wrapper { transition: opacity 0.5s ease-in-out; }
+	.frame { width: 480px; }
 
-	.importBackupWrap { text-align: left; }
 	.importBackupWrap {
-		.title { @include text-header1; margin: 0px 0px 16px 0px; }
+		.title { margin: 0px 0px 12px 0px; }
 		.label { margin: 0px 0px 32px 0px; }
 	}
 }
@@ -70,45 +167,102 @@ html.bodyAuth, html.bodyIndex {
 	.frame { padding-bottom: 48px; }
 }
 
-.pageAuthSuccess {
-	.label { margin-bottom: 10px; }
-	.textareaWrap { color: $colorIce; }
-	.button { width: 210px; }
+.pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {
+	.frame { display: flex; flex-direction: column; align-items: center; }
+	.title { @include text-description; color: $colorPrimary; }
+	.label { color: $colorSecondary; }
+	.bottom { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; opacity: 0.6; }
+	.bottom {
+		.icon { background-image: url('~img/icon/footer/gear0.svg'); }
+	}
+	.bottom:hover {
+		.icon { background-image: url('~img/icon/footer/gear1.svg'); }
+	}
 }
 
-.pageAuthRegister {
-	.advanced { line-height: 24px; cursor: pointer; position: absolute; top: 8px; right: 16px; color: $colorDarkGrey; transition: $transitionAllCommon; }
-	.advanced:hover { color: $colorBlack; }
+.pageAuthOnboard, .pageAuthLogin {
+	.frame { width: 1064px; top: 40%; margin-top: 0px !important; }
 
-	.frame { padding-bottom: 36px; }
-	.fileWrap { background-color: $colorBorderDark; display: block; margin: 0px auto 24px; }
+	@media (max-width: 1160px) {
+		.frame { width: calc(100% - 96px); }
+	}
+}
 
-	.label { margin-bottom: 0; }
-	.input-text { display: block; text-align: center; padding-bottom: 9px; width: 360px; margin: 0px auto 32px; font-size: 28px; line-height: 32px; font-weight: 700; border: solid 0px; border-bottom: solid 1px $colorBorderDark; }
-	.button { vertical-align: middle; width: 134px; padding: 0px; }
-	.iconObject { background-image: url('~img/icon/camera.svg'); background-size: 40px 30px; background-repeat: no-repeat; background-position: center; }
-	.iconObject.active {
-		.image { background-size: cover; }
+.pageAuthOnboard {
+	.title { margin: 0px 0px 10px 0px; }
+	.label { margin: 0px 0px 20px 0px; }
+	.dotIndicator { margin: 0px 0px 8px 0px; }
+
+	canvas { height: 100vh; width: 100vw; }
+
+	.label { width: 415px; }
+	.button { min-width: 192px; width: auto; }
+
+	.icon.gear { background-image: url('~img/icon/footer/gear0.svg'); height: 20px; width: 20px; }
+
+	#accountPath { display: flex; align-items: center; flex-direction: row; gap: 0px 6px; }
+	#accountPath:hover {
+		.icon.gear { background-image: url('~img/icon/footer/gear1.svg'); }
 	}
 
-	.row.flex { flex-direction: row; align-items: center; gap: 0px 16px; margin-bottom: 16px; }
+	.questionMark { border-radius: 100%; width: 16px; height: 16px; font-size: 13px; line-height: 16px; display: inline-block; background-color: $colorSecondary; color: black; }
+	.questionMark:hover { background-color: $colorPrimary; }
 
-	.row.location { @include text-small; @include text-overflow-nw; }
+	.phraseWrapper, .inputWrapper { margin: 0px 0px 20px 0px; }
+	.phraseWrapper {
+		.icon { display: none; }
+	}
+
+	.inputWrapper {
+		.input { border-radius: 26px; border: none; background: $colorInputOpaque; color: $colorPrimary; font-size: 18px; padding: 36px 26px; width: 392px; height: auto; }
+		.input:hover { filter: brightness(1.2) }
+		.input::placeholder { color: $colorTertiary !important; }
+	}
+
+	.soulContent { position: relative; width: 100px; margin-top: 28px; }
+	.soulContent {
+		.account, .space, .line { transition: all 600ms ease-in; position: absolute; display: flex; flex-direction: column; }
+		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
+		.account { z-index: 2; }
+		.space { transition: all 600ms ease-in, opacity 300ms ease-in; z-index: 1; opacity: 0; }
+		.iconObject.withOption.isSpace { background: $colorBlack; border-radius: 8px; }
+		
+		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: $colorWhite; }
+		.line.left { right: 50%; }
+		.line.right { left: 50%; }
+		.iconObject { margin: 0; }
+		.accountName, .spaceName { text-overflow: ellipsis; overflow: hidden; width: 120px; color: $colorPrimary; }
+	}
+
+	.soulContent.soulCreating {
+		.iconObject { background: $colorWhite; box-shadow: 0px 0px 0px 0px $colorWhite; animation: pulse 2s infinite; }
+
+		@keyframes pulse {
+			0% { transform: scale(1); }
+			70% { transform: scale(1.05); }
+			100% { transform: scale(1); }
+		}
+	}
+
+	.soulContent.spaceCreating {
+		.account { transform: translateX(-70px); }
+		.space { transform: translateX(70px); opacity: 1; }
+		.line { width: 70px; }
+	}
 }
 
 .pageAuthDeleted {
-	.frame { width: 672px; }
-	.title { text-align: center; @include text-header1; margin-bottom: 20px; }
-	.label { margin-bottom: 10px; }
+	canvas { height: 100vh; width: 100vw; }
 
-	.pie { text-align: center; margin-bottom: 20px; }
+	.title { color: $colorPrimary; margin: 0px 0px 10px 0px; }
+	.frame { width: 500px; }
+	.label { @include text-paragraph; margin: 0px 0px 20px 0px; }
+
+	.pie { margin: 0px 0px 10px 0px; }
 	.pie {
-		.inner { display: inline-block; padding: 8px; border: 1.5px solid $colorBorderDark; border-radius: 100%; width: 64px; height: 64px; }
+		.inner { display: inline-block; padding: 8px; border: 1px solid $colorSecondary; border-radius: 100%; width: 64px; height: 64px; }
 	}
 
-	.row { 
-		padding: 18px 0px 17px 0px; border-bottom: 1px solid $colorBorderLight; cursor: pointer; position: relative; 
-		@include text-paragraph; line-height: 28px;
-	}
-	.row.red { color: $colorRed; }
+	.button { width: 320px; }
+	.remove { color: $colorRed; }
 }

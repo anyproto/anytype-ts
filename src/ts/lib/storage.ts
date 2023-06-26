@@ -1,4 +1,12 @@
-import { Util } from 'Lib';
+import { UtilCommon } from 'Lib';
+import { commonStore } from 'Store';
+
+const SPACE_KEYS = [
+	'toggle',
+	'defaultType',
+	'lastOpened',
+	'scroll',
+];
 
 class Storage {
 	
@@ -8,16 +16,31 @@ class Storage {
 		this.storage = localStorage;
 	};
 
-	get (key: string): any {
-		let o = String(this.storage[key] || '');
-		if (!o) {
+	parse (s: string) {
+		if (!s) {
 			return;
 		};
+
 		let ret = '';
-		try { ret = JSON.parse(o); } catch (e) { /**/ };
+		try { ret = JSON.parse(s); } catch (e) { /**/ };
 		return ret;
 	};
-	
+
+	get (key: string): any {
+		let o = String(this.storage[key] || '');
+
+		if (this.isSpaceKey(key)) {
+			if (o) {
+				delete(this.storage[key]);
+				this.set(key, this.parse(o), true);
+			};
+
+			return this.getSpaceKey(key);
+		} else {
+			return this.parse(o);
+		};
+	};
+
 	set (key: string, obj: any, del?: boolean): void {
 		if (!key) {
 			console.log('[Storage].set: key not specified');
@@ -36,16 +59,58 @@ class Storage {
 		} else {
 			o = obj;
 		};
-		this.storage[key] = JSON.stringify(o);
+
+		if (this.isSpaceKey(key)) {
+			this.setSpaceKey(key, o);
+		} else {
+			this.storage[key] = JSON.stringify(o);
+		};
 	};
 	
 	delete (key: string) {
-		delete(this.storage[key]);
+		if (this.isSpaceKey(key)) {
+			const obj = this.getSpace();
+
+			delete(obj[commonStore.workspace][key]);
+
+			this.setSpace(obj);
+		} else {
+			delete(this.storage[key]);
+		};
+	};
+
+	isSpaceKey (key: string): boolean {
+		return SPACE_KEYS.includes(key);
+	};
+
+	setSpaceKey (key: string, value: any) {
+		const obj = this.getSpace();
+
+		obj[commonStore.workspace][key] = value;
+
+		this.setSpace(obj);
+	};
+
+	getSpaceKey (key: string) {
+		const obj = this.getSpace();
+		return obj[commonStore.workspace][key];
+	};
+
+	getSpace () {
+		const obj = this.get('space') || {};
+
+		obj[commonStore.workspace] = obj[commonStore.workspace] || {};
+
+		return obj;
+	};
+
+	setSpace (obj: any) {
+		this.set('space', obj, true);
 	};
 
 	setToggle (rootId: string, id: string, value: boolean) {
 		let obj = this.get('toggle');
-		if (!obj || Util.hasProperty(obj, 'length')) {
+		if (!obj || UtilCommon.hasProperty(obj, 'length')) {
 			obj = {};
 		};
 		
@@ -58,7 +123,6 @@ class Storage {
 		list = [ ...new Set(list) ];
 
 		obj[rootId] = list;
-
 		this.set('toggle', obj, true);
 		return obj;
 	};
@@ -85,9 +149,11 @@ class Storage {
 
 	setScroll (key: string, rootId: string, scroll: number) {
 		const obj = this.get('scroll') || {};
-		obj[key] = obj[key] || {};
-		obj[key][rootId] = Number(scroll) || 0;
-		this.set('scroll', obj, true);
+		try {
+			obj[key] = obj[key] || {};
+			obj[key][rootId] = Number(scroll) || 0;
+			this.set('scroll', obj, true);
+		} catch (e) { /**/ };
 		return obj;
 	};
 
@@ -113,6 +179,7 @@ class Storage {
 
 	getHighlight (key: string) {
 		const highlights = this.get('highlights') || {};
+
 		return highlights[key] || false;
 	};
 
@@ -127,17 +194,9 @@ class Storage {
 	logout () {
 		const keys = [ 
 			'accountId', 
-			'scroll', 
-			'toggle', 
-			'crumbs', 
-			'tabIndex', 
 			'tabStore', 
-			'linkSettings', 
 			'graph',
-			'gateway',
-			'dataPath',
-			'writing',
-			'timezone',
+			'space',
 		];
 
 		keys.forEach(key => this.delete(key));

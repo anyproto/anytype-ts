@@ -27,7 +27,7 @@
 		.row { padding: 0px 12px; }
 		
 		.item { 
-			cursor: pointer; width: 40px; height: 40px; position: relative; border-radius: 6px; display: inline-block;
+			width: 40px; height: 40px; position: relative; border-radius: 6px; display: inline-block;
 			vertical-align: top; padding: 0px;
 		}
 		.item:hover, .item.active { background: $colorVeryLightGrey; }
@@ -73,7 +73,7 @@
 	
 	.menu.menuSmileSkin { padding: 4px 10px; white-space: nowrap; }
 	.menu.menuSmileSkin {
-		.item { display: inline-block; vertical-align: top; width: 40px; height: 40px; cursor: pointer; position: relative; border-radius: 6px; }
+		.item { display: inline-block; vertical-align: top; width: 40px; height: 40px; position: relative; border-radius: 6px; }
 		.item {
 			.iconObject { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
 			.iconEmoji .emoji-mart-emoji span { margin-top: 2px; }

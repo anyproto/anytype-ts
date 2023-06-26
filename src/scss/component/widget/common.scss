@@ -5,7 +5,7 @@
 .widget {
 	.head { 
 		width: 100%; position: relative; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; justify-content: space-between; 
-		cursor: pointer; padding: 12px 8px 10px 16px;
+		padding: 12px 8px 10px 16px;
 	}
 	.head {
 		.clickable { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; flex-grow: 1; width: 100%; }
@@ -37,7 +37,7 @@
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
 
-	.icon.remove { position: absolute; top: -15px; right: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: pointer !important; }
+	.icon.remove { position: absolute; top: -15px; right: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }
 	.icon.remove {
 		.inner {
 			height: 20px; width: 20px; border-radius: 50%; background-color: $colorWhite;

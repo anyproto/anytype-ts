@@ -77,7 +77,7 @@
 	"headerHistoryRestore": { "en": "Restore version" },
 
 	"confirmUpdateTitle": { "en": "It's time to update" },
-	"confirmUpdateText": { "en": "Some of your data was managed in a newer version of Anytype.<br/>Please update the app to work with all your docs and the latest features." },
+	"confirmUpdateText": { "en": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features." },
 	"confirmUpdateConfirm": { "en": "Update" },
 
 	"authInviteTitle": { "en": "Welcome to Anytype" },
@@ -90,14 +90,14 @@
 		"en": "the everything app",
 		"ru": "Организуй все"
 	},
-	"authSelectLabel": { "en": "Welcome to Anytype: a place to securely write notes and documents, manage tasks, and save important content from the web." },
+	"authSelectLabel": { "en": "For those who celebrate trust &amp; autonomy. Anytype is your safe space to write, plan, think and organise everything that matters to you." },
 	"authSelectLogin": { "en": "Login" },
 	"authSelectSignup": { "en": "Join" },
 
-	"authLoginTitle": { "en": "Login with recovery phrase" },
-	"authLoginLabel": { "en": "Type your recovery phrase" },
-	"authLoginPhrase": { "en": "witch collapse practice feed shame open despair creek road again ice least" },
-	"authLoginLogin": { "en": "Continue" },
+	"authLoginSelfHost": { "en": "Self-host" },
+	"authLoginSubmit": { "en": "Login" },
+	"authLoginLostPhrase": { "en": "I've lost the phrase" },
+	"authLoginLostPhrasePopupContent": { "en": "<h1>Anytype cannot recover recovery phrase for you</h1><p>There is technically no possible way access it, as it's not stored on Anytype side. Check out the places where it can be stored:</p> <ul class=\"last\"><li>In system password storage. We did it for you automatically</li><li>Inside a password manager if you use one</li><li>On a piece of paper stored in a secure place chosen prior</li></ul>" },
 
 	"authRegisterTitle": { "en": "Add name and profile picture" },
 	"authRegisterLabel": { "en": "New profile" },
@@ -105,22 +105,57 @@
 	"authRegisterSubmit": { "en": "Create" },
 	"authRegisterAdvanced": {"en": "Advanced"},
 
-	"authSetupLogin": { "en": "Logging in..." },
-	"authSetupRegister": { "en": "Creating profile..." },
-	"authSetupSelect": { "en": "Selecting profile..." },
-	"authSetupShare": { "en": "Adding space" },
+	"authDeleteTitle": { "en": "Delete profile" },
+	"authDeleteTitleDeleted": { "en": "Account data removed from the backup node" },
+	"authDeleteDescription": { "en": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices." },
+	"authDeleteDescriptionDeleted": { "en": "All logged-in devices may have your data locally. However, you are not able to sign into Anytype on new devices using your keychain phrase." },
+	"authDeleteCancelButton": { "en": "Cancel deletion" },
+	"authDeleteExportButton": { "en": "Export data to markdown" },
+	"authDeleteRemoveButton": { "en": "Remove local data" },
+	"authDeleteRemovePopupTitle": { "en": "Are you sure you want to delete your local account data?" },
+	"authDeleteRemovePopupText": { "en": "These objects will be deleted irrevocably. You can't undo this action." },
+	"authDeleteRemovePopupConfirm": { "en": "Delete" },
 
-	"authSuccessTitle": { "en": "Congratulations!" },
-	"authSuccessLabel": { "en": "You've created your first profile! It is stored on your device and nobody will know about it until you share it!" },
-	"authSuccessSubmit": { "en": "Let's start!" },
-	"authSuccessCopy": { "en": "Show and copy phrase" },
-
-	"authPinCheckTitle": { "en": "Enter pin code" },
+	"authPinCheckTitle": { "en": "Enter pin" },
 	"authPinCheckError": { "en": "Incorrect pin" },
 
-	"archiveEmptyLabel": { "en": "Your bin is empty"},
+	"authOnboardSubmit": { "en": "Next" },
+	"authOnboardGoAhead": { "en": "Go ahead" },
+	"authOnboardMoreInfo": { "en": "More info" },
+	"authOnboardAccountDataLocation": { "en": "Account data location" },
 
-	"indexHi": { "en": "Hi, %s" },
+	"authOnboardVoidTitle": { "en": "This is the Void" },
+	"authOnboardVoidLabel": { "en": "It is an encrypted location for everything you create. Everything is stored on your device, and backed up to the distributed network." },
+
+	"authOnboardPhraseTitle": { "en": "End-to-end Encryption" },
+	"authOnboardPhraseLabel": { "en": "Your data is encrypted by the Key which is represented by the Recovery phrase. Store it securely. This is the only way to log in and access your Void. <span class='questionMark'>?</span>" },
+	"authOnboardPhraseTooltip": { "en": "<b>How to secure your phrase?</b> <ul><li>In system password storage. We will do it for you</li><li>On a piece of paper stored in a secure place</li><li>Inside a password manager if you use one</li></ul>" },
+	"authOnboardPhraseMoreInfoPopupContent": { "en": "<b>Anytype uses recovery phrase instead of login and password to encrypt your data</b><ul><li>Phrase is randomly generated on your device and stored locally</li><li>No one can access your data without recovery phrase</li><li>Phrase ensures only you own your data, but if you lose it there is no way to recover it.</li></ul><b>If you lose recovery phrase there is no way to recover it</b><ul><li>Anytype cannot recover it for you</li><li>There is technically no possible way access it, as it’s not stored on anytype side</li><li>Anytype will never reach out to ask for it</li><li>Sharing the phase equals sharing the ownership of account</li><li>The ordering of the words in a recovery phrase matters</li></ul><b>Store recovery phrase in secure place In system password storage</b><ul><li>In system password storage. We will do it for you</li><li>Inside password manager if you use one</li><li>On a piece of paper in safe and secure place</li></ul>" },
+	"authOnboardPhraseSubmit": { "en": "Show and copy" },
+
+	"authOnboardOfflineTitle": { "en": "Offline-first application" },
+	"authOnboardOfflineLabel": { "en": "Your data is kept locally on your device. A connection to a distributed network is needed to synchronize your data across devices and back it up" },
+	"authOnboardOfflineSubmit": { "en": "Establish Connection" },
+
+	"authOnboardSoulTitle": { "en": "Anytype Identity" },
+	"authOnboardSoulLabel": { "en": "Anytype uses asymmetric encryption for verification, using a public key for identification and a private key for authorization. Enter your name to associate it with your public key." },
+	"authOnboardSoulSubmit": { "en": "Go to the app" },
+
+	"authOnboardSoulCreatingTitle": { "en": "Creating your Identity..." },
+
+	"authOnboardSpaceCreatingTitle": { "en": "Setting up the Personal space..." },
+
+	"authUsecaseTitle": { "en":  "How would you like to start?" },
+	"authUsecaseLabel": { "en":  "We'll load some templates to get you started" },
+	"authUsecaseCase1Title": { "en": "Personal projects" },
+	"authUsecaseCase1Label": { "en": "Manage your personal projects and tasks with complete privacy" },
+	"authUsecaseCase2Title": { "en": "Bookshelf" },
+	"authUsecaseCase2Label": { "en": "Create your own base of knowledge with books, movies, recipes, and more" },
+	"authUsecaseCase3Title": { "en": "Diary and Quick notes" },
+	"authUsecaseCase3Label": { "en": "Keep your daily notes and self-reflections secure and private" },
+	"authUsecaseSkip": { "en":  "Skip" },
+
+	"pageMainArchiveEmpty": { "en": "Your bin is empty" },
 
 	"editorControlIcon": { "en": "Icon" },
 	"editorControlCover": { "en": "Cover" },
@@ -129,7 +164,7 @@
 
 	"setTitle": { "en": "New set" },
 	"setText": { "en": "Choose an object type for this set" },
-	
+
 	"blockNameParagraph": { "en": "Text" },
 	"blockTextParagraph": { "en": "Write a plain text" },
 
@@ -145,6 +180,7 @@
 	"blockNameQuote": { "en": "Highlighted" },
 	"blockTextQuote": { "en": "Spotlight, that needs special attention" },
 
+	
 	"blockNameCallout": { "en": "Callout" },
 	"blockTextCallout": { "en": "Bordered text with icon" },
 
@@ -207,7 +243,7 @@
 
 	"blockNameSimpleTable": { "en": "Table 3x3" },
 	"blockTextSimpleTable": { "en": "Create a simple table" },
-	
+
 	"blockNameTableOfContents": { "en": "Table of contents" },
 	"blockTextTableOfContents": { "en": "" },
 
@@ -234,12 +270,28 @@
 	"blockBookmarkError": { "en": "There was an error fetching the url" },
 
 	"popupSettingsTitle": { "en": "Settings" },
+
+	"popupSettingsAccountPersonalInformationTitle": { "en": "Personal information" },
+	"popupSettingsAccountPersonalInformationNamePlaceholder": { "en": "Your name" },
+	"popupSettingsAccountPersonalInformationDescriptionPlaceholder": { "en": "A few words about yourself" },
+	"popupSettingsAccountAnytypeIdentityTitle": { "en": "Anytype identity" },
+	"popupSettingsAccountAnytypeIdentityAccountId": { "en": "Account ID" },
+
 	"popupSettingsAccountTitle": { "en": "Profile" },
 	"popupSettingsAccountDeleteTitle": { "en": "Delete account" },
 	"popupSettingsAccountMoveTitle": { "en": "Account data location" },
 	"popupSettingsSpaceTitle": { "en": "Space" },
 	"popupSettingsPersonalTitle": { "en": "Preferences" },
+	"popupSettingsPersonalDefaultObjectType": { "en": "Default object type" },
+	"popupSettingsPersonalDefaultObjectTypeSelect": { "en": "Select" },
+	"popupSettingsPersonalSpellcheckLanguages": { "en": "Spellcheck languages" },
 	"popupSettingsAppearanceTitle": { "en": "Appearance" },
+	"popupSettingsAppearanceColorMode": { "en": "Color mode" },
+	"popupSettingsAppearanceColorModeButtonLight": { "en": "Light" },
+	"popupSettingsAppearanceColorModeButtonDark": { "en": "Dark" },
+	"popupSettingsAppearanceColorModeButtonSystem": { "en": "System" },
+	"popupSettingsAppearancePersonalisation": { "en": "Personalisation" },
+	"popupSettingsAppearancePersonalisationSidebar": { "en": "Automatically show and hide sidebar" },
 	"popupSettingsWallpaperTitle": { "en": "Wallpaper" },
 	"popupSettingsWallpaperText": { "en": "Choose or upload the wallpaper. For best results upload high resolution images." },
 	"popupSettingsPicture": { "en": "Pictures" },
@@ -269,17 +321,43 @@
 	"popupSettingsPinSelectRepeat": { "en": "Repeat pin code" },
 	"popupSettingsPinSelectError": { "en": "Pin codes do not match, please try again" },
 
-	"popupSettingsStorageIndexTitle": { "en": "File storage" },
-	"popupSettingsStorageIndexRemoteStorage": { "en": "Remote storage" },
-	"popupSettingsStorageIndexText": { "en": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally." },
-	"popupSettingsStorageIndexUsage": { "en": "%s of %s used" },
-	"popupSettingsStorageIndexManageFiles": { "en": "Manage files" },
-	"popupSettingsStorageIndexLocalStorageTitle": { "en": "Local storage" },
-	"popupSettingsStorageIndexLocalStorageText": { "en": "In order to save space on your local device, you can offload all your files to our encrypted backup node. The files will be loaded back when you open them." },
-	"popupSettingsStorageIndexLocalStorageUsage": { "en": "%s used" },
-	"popupSettingsStorageIndexOffloadFiles": { "en": "Offload files" },
-	"popupSettingsStorageManagerTitle": { "en": "Synced files" },
-	"popupSettingsStorageEmptyLabel": { "en": "Your storage is empty" },
+	"popupSettingsDataManagementTitle": { "en": "Data management" },
+	"popupSettingsDataManagementLocalStorageTitle": { "en": "Local storage" },
+	"popupSettingsDataManagementLocalStorageText": { "en": "In order to save space on your local device, you can offload all your files to our encrypted backup node. The files will be loaded back when you open them." },
+	"popupSettingsDataManagementLocalStorageUsage": { "en": "%s used" },
+	"popupSettingsDataManagementOffloadFiles": { "en": "Offload files" },
+	"popupSettingsDataManagementDeleteTitle": { "en": "Danger zone" },
+	"popupSettingsDataManagementDeleteText": { "en": "Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your encrypted account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices." },
+	"popupSettingsDataManagementDeleteButton": { "en": "Delete account" },
+
+	"popupSettingsSpaceIndex": { "en": "" },
+	"popupSettingsSpaceIndexSpaceNameLabel": { "en": "Space name" },
+	"popupSettingsSpaceIndexDescriptionPlaceholder": { "en": "Add a few words about the space..." },
+	"popupSettingsSpaceIndexSpaceTypePersonal": { "en": "Personal space" },
+	"popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle": { "en": "End-to-end encryption (E2EE)" },
+	"popupSettingsSpaceIndexSpaceTypePersonalTooltipText": { "en": "This space was created with end-to-end encryption, ensuring the privacy and security of user data and allowing for confident online or offline interaction." },
+	"popupSettingsSpaceIndexManageSpaceTitle": { "en": "Manage Space" },
+	"popupSettingsSpaceIndexRemoteStorageTitle": { "en": "Remote Storage" },
+	"popupSettingsSpaceIndexRemoteStorageExtend": { "en": "Get more space" },
+	"popupSettingsSpaceIndexStorageText": { "en": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally." },
+	"popupSettingsSpaceIndexStorageManageFiles": { "en": "Manage files" },
+	"popupSettingsSpaceIndexHomepageTitle": { "en": "Homepage" },
+	"popupSettingsSpaceIndexHomepageDescription": { "en": "Select an object to show when you login" },
+	"popupSettingsSpaceIndexIntegrationsTitle": { "en": "Integrations" },
+	"popupSettingsSpaceIndexImportDataTitle": { "en": "Import data" },
+	"popupSettingsSpaceIndexExportDataTitle": { "en": "Export data" },
+	"popupSettingsSpaceIndexSpaceInfoTitle": { "en": "Space information" },
+	"popupSettingsSpaceIndexSpaceIdTitle": { "en": "Space ID" },
+	"popupSettingsSpaceIndexCreatedByTitle": { "en": "Created by" },
+	"popupSettingsSpaceIndexCreationDateTitle": { "en": "Creation date" },
+
+	"popupSettingsSpaceStorageManagerTitle": { "en": "Synced files" },
+	"popupSettingsSpaceStorageManagerEmptyLabel": { "en": "Your storage is empty" },
+	"popupSettingsSpaceStorageManagerDeletionWarningTitle": { "en": "Are you sure you want to delete %s %s?" },
+	"popupSettingsSpaceStorageManagerDeletionWarningTitleObject": { "en": "object" },
+	"popupSettingsSpaceStorageManagerDeletionWarningTitleObjects": { "en": "objects" },
+	"popupSettingsSpaceStorageManagerDeletionWarningText": { "en": "These objects will be deleted irrevocably. You can't undo this action." },
+	"popupSettingsSpaceStorageManagerDeletionWarningConfirm": { "en": "Delete" },
 
 	"popupSettingsImportTitle": { "en": "Import" },
 	"popupSettingsImportText": { "en": "Choose application or format of data source" },
@@ -310,7 +388,8 @@
 	"popupSettingsSpaceInviteMemberTypeTextEditor": { "en": "Editor can can edit objects and invite other members to collaborate but can’t edit space settings." },
 	"popupSettingsSpaceInviteMemberTypeTextAdmin": { "en": "Admin can do everything in this space including moving it to the bin." },
 	"popupSettingsSpaceInviteButton": { "en": "Copy invite link" },
-	"popupSettingsSpaceHomepageTitle": { "en": "Home page" },
+	"popupSettingsSpaceHomepageTitle": { "en": "Homepage" },
+	"popupSettingsSpaceHomepageText": { "en": "Select an object to show when you login" },
 	"popupSettingsSpaceTeam": { "en": "%s team" },
 	"popupSettingsSpaceTeamTitle": { "en": "Space team" },
 	"popupSettingsSpaceTeamMembers": { "en": "%s members" },
@@ -323,11 +402,6 @@
 	"popupSettingsSpaceRemoveTitle": { "en": "Move to Bin" },
 	"popupSettingsSpaceRemoveText": { "en": "Members could no longer see any objects inside" },
 	"popupSettingsSpaceRemoveButton": { "en": "Move to bin" },
-
-	"popupArchiveTitle": { "en": "Archive" },
-	"popupArchiveSelectAll": { "en": "Select All" },
-	"popupArchivePutBack": { "en": "Put it back" },
-	"popupArchiveDelete": { "en": "Delete" },
 
 	"popupHelpLabel": { "en": "Stay tuned for Anytype's news" },
 
@@ -409,18 +483,21 @@
 
 	"inputWithFileTextUrl": { "en": "Paste a link" },
 
-	"syncStatus0": { "en": "Preparing..." },
-	"syncStatus1": { "en": "No connection" },
-	"syncStatus2": { "en": "Syncing..." },
-	"syncStatus3": { "en": "Synced" },
-	"syncStatus4": { "en": "Not syncing" },
-	"syncStatus5": { "en": "Backup disabled" },
+	"threadStatus0": { "en": "Preparing..." },
+	"threadStatus1": { "en": "No connection" },
+	"threadStatus2": { "en": "Syncing..." },
+	"threadStatus3": { "en": "Synced" },
+	"threadStatus4": { "en": "Not syncing" },
+	"threadStatus5": { "en": "Incompatible version" },
 
-	"tooltip0": { "en": "Initializing sync" },
-	"tooltip1": { "en": "Anytype node is not connected" },
-	"tooltip2": { "en": "Downloading or uploading data to some node" },
-	"tooltip3": { "en": "Backed up on one node at least" },
-	"tooltip4": { "en": "Failed to sync, trying again..." },
+	"threadStatus0Tooltip": { "en": "Initializing sync" },
+	"threadStatus1Tooltip": { "en": "Anytype node is not connected" },
+	"threadStatus2Tooltip": { "en": "Downloading or uploading data to some node" },
+	"threadStatus3Tooltip": { "en": "Backed up on one node at least" },
+	"threadStatus4Tooltip": { "en": "Failed to sync, trying again..." },
+	"threadStatus5Tooltip": { "en": "We have updated the protocol version. Click to update and sync the objects." },
+
+	"toastRecoveryCopiedClipboard": { "en": "Recovery phrase copied to clipboard"  },
 
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },
@@ -467,13 +544,13 @@
 	"placeholderFilter": { "en": "Type to filter" },
 	"placeholderCellCommon": { "en": "No value" },
 	"placeholderCell0": { "en": "Enter text" },
-	"placeholderCell1": { "en": "Enter name" },	
-	"placeholderCell2": { "en": "Enter number" },	
-	"placeholderCell3": { "en": "Select status" },	
-	"placeholderCell4": { "en": "Enter date" },	
-	"placeholderCell5": { "en": "Select files" },	
-	"placeholderCell7": { "en": "Enter URL" },	
-	"placeholderCell8": { "en": "Enter e-mail" },	
+	"placeholderCell1": { "en": "Enter name" },
+	"placeholderCell2": { "en": "Enter number" },
+	"placeholderCell3": { "en": "Select status" },
+	"placeholderCell4": { "en": "Enter date" },
+	"placeholderCell5": { "en": "Select files" },
+	"placeholderCell7": { "en": "Enter URL" },
+	"placeholderCell8": { "en": "Enter e-mail" },
 	"placeholderCell9": { "en": "Enter phone" },
 	"placeholderCell11": { "en": "Select tags" },
 	"placeholderCell100": { "en": "Select objects" },
@@ -515,6 +592,8 @@
 	"widgetSet": { "en": "Sets" },
 	"widgetCollection": { "en": "Collections" },
 
-	"spaceType0": { "en": "Personal space" }
+	"spaceType0": { "en": "Personal space" },
+
+	"phrasePlaceholder": { "en": "Please enter your Recovery phrase here" }
 
 }

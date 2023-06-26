@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Select, Button, IconObject, ObjectName, Filter } from 'Component';
-import { C, I, translate, Util } from 'Lib';
+import { C, I, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, InfiniteLoader } from 'react-virtualized';
 import Head from '../head';
@@ -85,9 +85,8 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
         return (
             <div ref={node => this.node = node}>
                 <Head {...this.props} returnTo="spaceIndex" name={translate('popupSettingsSpaceIndexTitle')} />
-                <Title text={Util.sprintf(translate('popupSettingsSpaceTeam'), space.name)} />
-
-                <Label className="counter" text={Util.sprintf(translate('popupSettingsSpaceTeamMembers'), length)} />
+                <Title text={UtilCommon.sprintf(translate('popupSettingsSpaceTeam'), space.name)} />
+                <Label className="counter" text={UtilCommon.sprintf(translate('popupSettingsSpaceTeamMembers'), length)} />
 
                 {length > FILTER_LIMIT ? (
 					<Filter

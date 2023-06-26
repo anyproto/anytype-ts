@@ -1,15 +1,23 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader } from 'Component';
-import { I, keyboard, Util } from 'Lib';
+import { I, keyboard, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 
 const BORDER = 16;
+const WIDTH_DEFAULT = 450;
+const HEIGHT_DEFAULT = 300;
+const WIDTH_VIDEO = 672;
+const HEIGHT_VIDEO = 382;
 
 class PopupPreview extends React.Component<I.Popup> {
 	
+	isLoaded = false;
+	width = 0;
+	height = 0;
+
 	render () {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { src, type } = data;
 
@@ -17,7 +25,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		switch (type) {
 			case I.FileType.Image: {
-				content = <img className="media" src={src} />
+				content = <img className="media" src={src} onClick={() => close()} />
 				break;
 			};
 
@@ -43,6 +51,7 @@ class PopupPreview extends React.Component<I.Popup> {
 	};
 	
 	componentDidUpdate () {
+		this.isLoaded = false;
 		this.resize();
 	};
 
@@ -58,8 +67,8 @@ class PopupPreview extends React.Component<I.Popup> {
 		this.unbind();
 
 		const win = $(window);
-		win.on('resize.popupPreview', () => { this.resize(); });
-		win.on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		win.on('resize.popupPreview', () => this.resize());
+		win.on('keydown.menu', e => this.onKeyDown(e));
 	};
 
 	onKeyDown (e: any) {
@@ -73,7 +82,7 @@ class PopupPreview extends React.Component<I.Popup> {
 		const obj = $(`#${getId()}-innerWrap`);
 		const wrap = obj.find('#wrap');
 		const loader = obj.find('#loader');
-		const { ww, wh } = Util.getWindowDimensions();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
 		const mh = wh - BORDER * 2;
 		const sidebar = $('#sidebar');
 
@@ -85,54 +94,79 @@ class PopupPreview extends React.Component<I.Popup> {
 		const onError = () => {
 			wrap.addClass('brokenMedia');
 			loader.remove();
+
+			this.isLoaded = true;
 		};
 
 		switch (type) {
 			case I.FileType.Image: {
-				wrap.css({ height: 450, width: 300 });
+				if (this.isLoaded) {
+					this.resizeImage(mw, mh, this.width, this.height);
+					break;
+				};
+
+				wrap.css({ width: WIDTH_DEFAULT, height: HEIGHT_DEFAULT });
 				position();
 
 				const img = new Image();
 				img.onload = () => {
-					const cw = img.width;
-					const ch = img.height;
+					this.width = img.width;
+					this.height = img.height;
 
-					let width = 0, height = 0;
-					if (cw > ch) {
-						width = Math.min(mw, cw);
-						height = Math.min(mh, width / (cw / ch));
-					} else {
-						height = Math.min(mh, ch);
-						width = Math.min(mw, height / (ch / cw));
-					};
-
-					wrap.css({ height, width });
 					loader.remove();
-					position();
+
+					this.resizeImage(mw, mh, this.width, this.height);
+					this.isLoaded = true;
 				};
 
 				img.onerror = onError;
-
 				img.src = src;
 				break;
 			};
 
 			case I.FileType.Video: {
-				const video = obj.find('video').get(0);
-				const width = 672;
-				const height = 382;
+				if (this.isLoaded) {
+					position();
+					break;
+				};
 
-				video.oncanplay = () => { loader.remove(); };
-				video.onerror = onError;
+				const video = obj.find('video');
+				const videoEl = video.get(0)
+				const width = WIDTH_VIDEO;
+				const height = HEIGHT_VIDEO;
 
-				wrap.css({ height, width });
-				$(video).css({ height, width });
+				videoEl.oncanplay = () => { 
+					loader.remove(); 
+					this.isLoaded = true;
+				};
+				videoEl.onerror = onError;
+
+				wrap.css({ width, height });
+				video.css({ width, height });
 				position();
 			};
 		};
 
 	};
-	
+
+	resizeImage (maxWidth: number, maxHeight: number, width: number, height: number) {
+		const { getId, position } = this.props;
+		const obj = $(`#${getId()}-innerWrap`);
+		const wrap = obj.find('#wrap');
+
+		let w = 0, h = 0;
+		if (width > height) {
+			w = Math.min(maxWidth, width);
+			h = Math.min(maxHeight, w / (width / height));
+		} else {
+			h = Math.min(maxHeight, height);
+			w = Math.min(maxWidth, h / (height / width));
+		};
+
+		wrap.css({ width: w, height: h });
+		position();
+	};
+
 };
 
 export default PopupPreview;

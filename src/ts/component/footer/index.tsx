@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ObjectUtil, I, sidebar } from 'Lib';
+import { UtilObject, I, sidebar } from 'Lib';
 import { menuStore } from 'Store';
 
 import FooterAuthIndex from './auth';
@@ -7,6 +7,7 @@ import FooterMainObject from './main/object';
 
 interface Props extends I.FooterComponent {
 	component: string;
+	className?: string;
 };
 
 const Components = {
@@ -26,9 +27,9 @@ class Footer extends React.Component<Props> {
 	};
 	
 	render () {
-		const { component } = this.props;
+		const { component, className } = this.props;
 		const Component = Components[component] || null;
-		const cn = [ 'footer', component ];
+		const cn = [ 'footer', component, className ];
 
 		return (
 			<div id="footer" className={cn.join(' ')}>
@@ -52,8 +53,8 @@ class Footer extends React.Component<Props> {
 	};
 
 	onAdd () {
-		ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
-			ObjectUtil.openAuto({ id: message.targetId });
+		UtilObject.create('', '', {}, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.DeleteEmpty, I.ObjectFlag.SelectType ], (message: any) => {
+			UtilObject.openAuto({ id: message.targetId });
 		});
 	};
 

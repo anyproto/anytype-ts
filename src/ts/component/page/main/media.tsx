@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
-import { I, M, C, Util, Action, Renderer, ObjectUtil } from 'Lib';
+import { I, M, C, UtilCommon, Action, Renderer, UtilObject } from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
@@ -173,7 +173,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 				return;
 			};
@@ -262,7 +262,7 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 		const node = $(this.node);
 		const blocks = node.find('#blocks');
 		const empty = node.find('#empty');
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const wh = container.height() - 60;
 
 		if (blocks.hasClass('vertical')) {

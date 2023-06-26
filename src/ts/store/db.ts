@@ -1,5 +1,5 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
-import { I, M, Util, Dataview } from 'ts/lib';
+import { I, M, UtilCommon, Dataview } from 'ts/lib';
 import { detailStore } from 'ts/store';
 
 import Constant from 'json/constant.json';
@@ -48,7 +48,7 @@ class DbStore {
 		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).
 			concat(list.map(it => ({ relationKey: it.relationKey, format: it.format })));
 
-		this.relationMap.set(key, Util.arrayUniqueObjects(relations, 'relationKey'));
+		this.relationMap.set(key, UtilCommon.arrayUniqueObjects(relations, 'relationKey'));
 	};
 
 	relationListDelete (rootId: string, blockId: string, keys: string[]) {
@@ -90,6 +90,8 @@ class DbStore {
 			if (i1 < i2) return -1;
 			return 0;
 		});
+
+		this.viewsSet(rootId, blockId, views);
 	};
 
     viewsClear (rootId: string, blockId: string) {

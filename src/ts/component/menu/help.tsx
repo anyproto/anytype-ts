@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, Util, Onboarding, keyboard, analytics, Renderer, Highlight } from 'Lib';
-import { popupStore } from 'Store';
+import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilObject } from 'Lib';
+import { popupStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 
 class MenuHelp extends React.Component<I.Menu> {
@@ -90,21 +90,30 @@ class MenuHelp extends React.Component<I.Menu> {
 
 	onClick (e: any, item: any) {
 		const { getId, close } = this.props;
+		const rootId = keyboard.getRootId();
+		const isPopup = keyboard.isPopup();
+		const isEditor = keyboard.isMainEditor();
 		const isGraph = keyboard.isMainGraph();
+		const isSet = keyboard.isMainSet();
+		const isStore = keyboard.isMainStore();
+		const storeTab = Storage.get('tabStore');
+		const isStoreType = isStore && (storeTab == I.StoreTab.Type);
+		const isStoreRelation = isStore && (storeTab == I.StoreTab.Relation);
+		const home = UtilObject.getSpaceDashboard();
 
 		close();
-		analytics.event(Util.toUpperCamelCase([ getId(), item.id ].join('-')));
+		analytics.event(UtilCommon.toUpperCamelCase([ getId(), item.id ].join('-')));
 
 		Highlight.hide(item.id);
 
 		switch (item.id) {
 			case 'whatsNew': {
-				popupStore.open('help', { data: { document: item.document } });
+				popupStore.open('help', { preventResize: true, data: { document: item.document } });
 				break;
 			};
 
 			case 'shortcut': {
-				popupStore.open('shortcut', {});
+				popupStore.open('shortcut', { preventResize: true });
 				break;
 			};
 
@@ -127,10 +136,38 @@ class MenuHelp extends React.Component<I.Menu> {
 			};
 
 			case 'hints': {
+				const isPopup = keyboard.isPopup();
+				const rootId = keyboard.getRootId();
+				const isEditor = keyboard.isMainEditor();
+				const isSet = keyboard.isMainSet();
+
+				let key = '';
+
+				if (isEditor && home && (rootId == home.id)) {
+					key = 'dashboard';
+				} else 
+				if (isSet) {
+					key = 'mainSet';
+				} else
+				if (isEditor) {
+					key = blockStore.checkBlockTypeExists(rootId) ? 'objectCreationStart' : 'editor';
+				} else
 				if (isGraph) {
-					Onboarding.start('mainGraph', keyboard.isPopup(), true);
+					key = 'mainGraph';
+				} else
+				if (isStoreType) {
+					key = 'storeType';
+				} else
+				if (isStoreRelation) {
+					key = 'storeRelation';
 				} else {
-					popupStore.open('migration', { data: { type: 'onboarding' } });
+					const { page, action } = keyboard.getMatch().params;
+
+					key = UtilCommon.toCamelCase([ page, action ].join('-'));
+				};
+
+				if (key) {
+					Onboarding.start(key, isPopup, true);
 				};
 				break;
 			};

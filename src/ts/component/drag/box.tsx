@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Util } from 'Lib';
+import { UtilCommon } from 'Lib';
 
 interface Props {
 	children?: React.ReactNode;
@@ -129,7 +129,7 @@ class DragBox extends React.Component<Props> {
 			const el = $(items.get(i));
 			const rect = this.cache[el.data('id')];
 
-			if (rect && Util.rectsCollide({ x: center, y, width: 2, height }, rect)) {
+			if (rect && UtilCommon.rectsCollide({ x: center, y, width: 2, height }, rect)) {
 				const isLeft = center <= rect.x + rect.width / 2;
 				this.newIndex = i;
 				el.addClass('isOver ' + (isLeft ? 'left' : 'right'));

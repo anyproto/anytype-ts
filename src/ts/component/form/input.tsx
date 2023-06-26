@@ -16,6 +16,7 @@ interface Props {
 	readonly?: boolean;
 	accept?: string;
 	maskOptions?: any;
+	focusOnMount?: boolean;
 	onChange?(e: any, value: string): void;
 	onPaste?(e: any, value: string): void;
 	onKeyUp?(e: any, value: string): void;
@@ -108,6 +109,9 @@ class Input extends React.Component<Props, State> {
 		this.setValue(this.props.value);
 		this.setState({ type: this.props.type });
 		this.initMask();
+		if (this.props.focusOnMount) {
+			this.focus();
+		}
 	};
 	
 	componentWillUnmount () {

@@ -16,7 +16,7 @@
 	.side.right { padding: 0px 12px; width: 20%; flex-shrink: 0; justify-content: end; gap: 0px 8px; }
 
 	.path { 
-		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; cursor: pointer; transition: $transitionAllCommon;
+		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; transition: $transitionAllCommon;
 		@include text-overflow-nw; padding: 0px 6px; -webkit-app-region: no-drag;
 	}
 
@@ -51,7 +51,7 @@
 .header.authIndex { height: 38px; }
 .header.authIndex {
 	.logo {
-		width: 90px; height: 13px; background: url('~img/logo/white.svg') no-repeat; display: inline-block; vertical-align: middle;
+		width: 90px; height: 13px; background: url('~img/logo/capital.svg') no-repeat; display: inline-block; vertical-align: middle;
 		background-position: center center; background-size: 100% 100%; transition: none;
 	}
 }
@@ -66,7 +66,7 @@
 	}
 
 	.item { 
-		color: $colorDarkGrey; transition: $transitionAllCommon; cursor: pointer; height: 20px; line-height: 20px; 
+		color: $colorDarkGrey; transition: $transitionAllCommon; height: 20px; line-height: 20px; 
 		display: inline-block; vertical-align: middle; white-space: nowrap;
 	}
 	.item {
@@ -105,9 +105,17 @@
 	}
 	.filterWrap.active { width: 200px; }
 
-	.icon.search { background-image: url('~img/icon/header/search.svg'); }
-	.icon.filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-	.icon.settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+	.icon.btn-search { background-image: url('~img/icon/header/search.svg'); }
+	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
+	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
+}
+
+.header.mainObject {
+	.templateBanner { display: flex; gap: 0px 4px; padding: 6px 8px; border-radius: 6px; background: $colorVeryLightGrey; }
+	.typeName { display: flex; gap: 0px 4px; }
+	.typeName {
+		.name { font-weight: 600; }
+	}
 }
 
 .popup {

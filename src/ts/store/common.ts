@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import $ from 'jquery';
-import { analytics, I, Storage, Util, ObjectUtil, Renderer } from 'Lib';
+import { analytics, I, Storage, UtilCommon, UtilObject, Renderer } from 'Lib';
 import { blockStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 import * as Sentry from '@sentry/browser';
@@ -8,12 +8,6 @@ import * as Sentry from '@sentry/browser';
 interface Filter {
 	from: number;
 	text: string;
-};
-
-interface Cover {
-	id: string;
-	image: string;
-	type: I.CoverType;
 };
 
 interface Graph {
@@ -52,12 +46,6 @@ class CommonStore {
 	public workspaceId = '';
 	public notionToken = '';
 
-	public coverObj: Cover = { 
-		id: '', 
-		type: 0, 
-		image: '',
-	};
-
 	public previewObj: I.Preview = { 
 		type: null, 
 		target: null, 
@@ -84,7 +72,6 @@ class CommonStore {
 
     constructor() {
         makeObservable(this, {
-            coverObj: observable,
             progressObj: observable,
             filterObj: observable,
             gatewayUrl: observable,
@@ -104,12 +91,10 @@ class CommonStore {
             preview: computed,
 			toast: computed,
             filter: computed,
-            cover: computed,
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
 			workspace: computed,
-            coverSet: action,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -146,10 +131,6 @@ class CommonStore {
 		return this.filterObj;
 	};
 
-    get cover(): Cover {
-		return this.coverObj;
-	};
-
     get gateway(): string {
 		return String(this.gatewayUrl || '');
 	};
@@ -163,7 +144,7 @@ class CommonStore {
 
 		const type = dbStore.getType(typeId);
 
-		if (!type || !type.isInstalled || !ObjectUtil.getPageLayouts().includes(type.recommendedLayout)) {
+		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
 			return Constant.typeId.note;
 		};
 
@@ -213,20 +194,6 @@ class CommonStore {
 		};
 
 		return { ...this.spaceStorageObj, bytesUsed, localUsage };
-	};
-
-    coverSet (id: string, image: string, type: I.CoverType) {
-		this.coverObj = { id, image, type };
-	};
-
-    coverSetDefault () {
-		const cover = this.coverGetDefault();
-
-		this.coverSet(cover.id, '', cover.type);
-	};
-
-	coverGetDefault () {
-		return { id: Constant.default.cover, type: I.CoverType.Gradient };
 	};
 
     gatewaySet (v: string) {
@@ -283,8 +250,8 @@ class CommonStore {
 		const ids = [ objectId, targetId, originId ].filter(it => it);
 
 		if (ids.length) {
-			ObjectUtil.getByIds(ids, (objects: any[]) => {
-				const map = Util.mapToObject(objects, 'id');
+			UtilObject.getByIds(ids, (objects: any[]) => {
+				const map = UtilCommon.mapToObject(objects, 'id');
 
 				if (targetId && map[targetId]) {
 					toast.target = map[targetId];
@@ -325,16 +292,19 @@ class CommonStore {
 
 	pinTimeSet (v: string) {
 		this.pinTimeId = Number(v) || Constant.default.pinTime;
+
 		Storage.set('pinTime', this.pinTimeId);
 	};
 
 	autoSidebarSet (v: boolean) {
 		this.autoSidebarValue = Boolean(v);
+
 		Storage.set('autoSidebar', this.autoSidebarValue);
 	};
 
 	isSidebarFixedSet (v: boolean) {
 		this.isSidebarFixedValue = Boolean(v);
+
 		Storage.set('isSidebarFixed', this.isSidebarFixedValue);
 	};
 
@@ -348,9 +318,7 @@ class CommonStore {
 	};
 
 	themeSet (v: string) {
-		this.themeId = v;
-		Storage.set('theme', v);
-		
+		this.themeId = String(v || '');
 		this.setThemeClass();
 	};
 
@@ -374,7 +342,7 @@ class CommonStore {
 		const head = $('head');
 		const c = this.getThemeClass();
 
-		Util.addBodyClass('theme', c);
+		UtilCommon.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
 
 		head.find('#link-prism').remove();
@@ -428,8 +396,8 @@ class CommonStore {
 		this.configObj.debug.ui ? html.addClass('debug') : html.removeClass('debug');
 	};
 
-	spaceStorageSet (usage: any) {
-		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, usage));
+	spaceStorageSet (value: Partial<SpaceStorage>) {
+		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
 	};
 
 };

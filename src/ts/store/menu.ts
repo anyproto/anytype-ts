@@ -1,6 +1,6 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
-import { I, Util, Preview } from 'Lib';
+import { I, UtilCommon, Preview } from 'Lib';
 import Constant from 'json/constant.json';
 
 
@@ -105,7 +105,7 @@ class MenuStore {
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
 		const t = noAnimation ? 0 : Constant.delay.menu;
-		const el = $('#' + Util.toCamelCase('menu-' + id));
+		const el = $('#' + UtilCommon.toCamelCase('menu-' + id));
 
 		if (subIds && subIds.length) {
 			this.closeAll(subIds);
@@ -155,14 +155,9 @@ class MenuStore {
 
 	onCloseAll (timeout: number, callBack?: () => void) {
 		this.clearTimeout();
-		if (!callBack) {
-			return;
-		};
 
-		if (timeout) {
+		if (callBack) {
 			this.timeout = window.setTimeout(() => callBack(), timeout);
-		} else {
-			callBack();
 		};
 	};
 

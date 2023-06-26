@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import $ from 'jquery';
-import { I, C, MenuUtil, Relation, translate, keyboard } from 'Lib';
+import { I, C, UtilMenu, Relation, translate, keyboard } from 'Lib';
 import { Filter, MenuItemVertical } from 'Component';
 import { menuStore } from 'Store';
 
@@ -45,7 +45,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		return (
 			<div>
 				<Filter
-					ref={ref => { this.refName = ref; }}
+					ref={ref => this.refName = ref}
 					placeholder={translate('menuDataviewOptionEditPlaceholder')}
 					placeholderFocus={translate('menuDataviewOptionEditPlaceholder')}
 					className={'textColor-' + this.color}
@@ -98,7 +98,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	getSections () {
-		const colors = MenuUtil.getBgColors().filter(it => it.id != 'bgColor-default');
+		const colors = UtilMenu.getBgColors().filter(it => it.id != 'bgColor-default');
 
 		return [
 			{ children: colors },
