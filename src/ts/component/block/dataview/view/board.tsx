@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, UtilCommon, UtilData, Dataview, analytics, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, Dataview, analytics, keyboard, Relation } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
@@ -219,7 +219,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		if (relations.length) {
 			relations.forEach((it: any) => {
 				if (it.objectTypes.length && !details.type) {
-					details.type = it.objectTypes[0];
+					const first = it.objectTypes[0];
+
+					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
+						details.type = first;
+					};
 				};
 
 				details[it.relationKey] = Relation.formatValue(it, null, true);
