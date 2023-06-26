@@ -43,6 +43,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.setPreview = this.setPreview.bind(this);
 		this.setEditing = this.setEditing.bind(this);
 		this.onLibrary = this.onLibrary.bind(this);
+		this.onArchive = this.onArchive.bind(this);
 	};
 
 	render(): React.ReactNode {
