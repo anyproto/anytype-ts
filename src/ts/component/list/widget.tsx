@@ -33,7 +33,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 	constructor (props: Props) {
 		super(props);
 
-		this.toggleEditMode = this.toggleEditMode.bind(this);
+		this.onEdit = this.onEdit.bind(this);
 		this.addWidget = this.addWidget.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.onDragOver = this.onDragOver.bind(this);
@@ -42,6 +42,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		this.onContextMenu = this.onContextMenu.bind(this);
 		this.setPreview = this.setPreview.bind(this);
 		this.setEditing = this.setEditing.bind(this);
+		this.onLibrary = this.onLibrary.bind(this);
 	};
 
 	render(): React.ReactNode {
@@ -103,9 +104,9 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 					buttons.push({ id: 'widget-list-add', text: 'Add', onClick: this.addWidget });
 				};
 
-				buttons.push({ id: 'widget-list-done', text: 'Done', onClick: this.toggleEditMode });
+				buttons.push({ id: 'widget-list-done', text: 'Done', onClick: this.onEdit });
 			} else {
-				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: 'Edit widgets', onClick: this.toggleEditMode });
+				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: 'Edit widgets', onClick: this.onEdit });
 			};
 
 			content = (
@@ -137,7 +138,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						color="" 
 						className="widget" 
 						icon="store" 
-						onClick={e => !isEditing ? UtilObject.openEvent(e, { layout: I.ObjectLayout.Store }) : null} 
+						onClick={this.onLibrary} 
 					/>
 
 					<Button 
@@ -145,7 +146,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						color="" 
 						className="widget" 
 						icon="bin" 
-						onClick={e => !isEditing ? UtilObject.openEvent(e, { layout: I.ObjectLayout.Archive }) : null} 
+						onClick={this.onArchive} 
 					/>
 
 					<div className="buttons">
@@ -176,11 +177,14 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		$(this.node).scrollTop(this.top);
 	};
 
-	toggleEditMode (): void {
-		if (!this.state.isEditing) {
+	onEdit (): void {
+		const { isEditing } = this.state;
+		
+		this.setState({ isEditing: !isEditing });
+
+		if (!isEditing) {
 			analytics.event('EditWidget');
 		};
-		this.setState({ isEditing: !this.state.isEditing });
 	};
 
 	addWidget (): void {
@@ -281,6 +285,22 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 	onScroll () {
 		this.top = $(this.node).scrollTop();
+	};
+
+	onLibrary (e: any) {
+		const { isEditing } = this.state;
+
+		if (!isEditing && !e.button) {
+			UtilObject.openEvent(e, { layout: I.ObjectLayout.Store })
+		};
+	};
+
+	onArchive (e: any) {
+		const { isEditing } = this.state;
+
+		if (!isEditing && !e.button) {
+			UtilObject.openEvent(e, { layout: I.ObjectLayout.Archive })
+		};
 	};
 
 	onContextMenu () {
