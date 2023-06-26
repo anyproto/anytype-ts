@@ -51,7 +51,10 @@
 				.actionItems,
 				.actionItems > .item { border-color: $colorLineSecondary; }
 
-				.phraseWrapper { background-color: $colorHoverMedium; }
+				.phraseWrapper { background-color: $colorLineTertiary; }
+				.phraseWrapper {
+					.icon.see { background-color: $colorLineTertiary; }
+				}
 			}
 		}
 
