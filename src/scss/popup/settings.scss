@@ -144,7 +144,7 @@
 					}
 				}
 
-				.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 12px 16px; line-height: unset; }
+				.phraseWrapper { border-radius: 12px; background-color: $colorVeryLightGrey; padding: 16px 12px; line-height: unset; }
 				.phraseWrapper {
 					.phraseInnerWrapper { min-height: unset; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; word-break: unset; }
 					.word { font-size: 12px; line-height: 18px; font-weight: 500; margin: 0; }

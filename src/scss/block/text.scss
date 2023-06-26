@@ -114,7 +114,7 @@
 	/* Header1 */
 
 	.block.blockText.textHeader1 { padding: 22px 0px 0px 0px; }
-	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget { @include text-header1; font-weight: 500; line-height: 35px; padding: 3px 0px 1px 0px; }
+	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget { @include text-header1; line-height: 35px; padding: 3px 0px 1px 0px; }
 	.block.blockText.textHeader1 > .wrapContent > .selectable > .dropTarget mention {
 		name { font-weight: inherit; }
 	}
@@ -127,7 +127,7 @@
 	/* Header2 */
 	
 	.block.blockText.textHeader2 { padding: 14px 0px 0px 0px; }
-	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget { @include text-header2; font-weight: 500; padding: 2px 0px 1px 0px; }
+	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget { @include text-header2; padding: 2px 0px 1px 0px; }
 	.block.blockText.textHeader2 > .wrapContent > .selectable > .dropTarget mention {
 		name { font-weight: inherit; }
 	}
@@ -139,7 +139,7 @@
 	/* Header3 */
 	
 	.block.blockText.textHeader3 { padding: 14px 0px 0px 0px; }
-	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget { @include text-header3; font-weight: 500; padding: 1px 0px 2px 0px; }
+	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget { @include text-header3; padding: 1px 0px 2px 0px; }
 	.block.blockText.textHeader3 > .wrapContent > .selectable > .dropTarget mention {
 		name { font-weight: inherit; }
 	}
