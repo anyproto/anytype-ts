@@ -90,7 +90,7 @@
 		"en": "the everything app",
 		"ru": "Организуй все"
 	},
-	"authSelectLabel": { "en": "Welcome to Anytype: a place to securely write notes and documents, manage tasks, and save important content from the web." },
+	"authSelectLabel": { "en": "For those who celebrate trust &amp; autonomy. Anytype is your safe space to write, plan, think and organise everything that matters to you." },
 	"authSelectLogin": { "en": "Login" },
 	"authSelectSignup": { "en": "Join" },
 
@@ -141,9 +141,9 @@
 	"authOnboardSoulLabel": { "en": "Anytype uses asymmetric encryption for verification, using a public key for identification and a private key for authorization. Enter your name to associate it with your public key." },
 	"authOnboardSoulSubmit": { "en": "Go to the app" },
 
-	"authOnboardSoulCreatingTitle": { "en": "Creating soul..." },
+	"authOnboardSoulCreatingTitle": { "en": "Creating your Identity..." },
 
-	"authOnboardSpaceCreatingTitle": { "en": "Setting up your personal Space..." },
+	"authOnboardSpaceCreatingTitle": { "en": "Setting up the Personal space..." },
 
 	"authUsecaseTitle": { "en":  "How would you like to start?" },
 	"authUsecaseLabel": { "en":  "We'll load some templates to get you started" },
