@@ -59,7 +59,7 @@
 
 		.cellContent.c-checkbox { padding: 5px 3px; }
 	}
-	.block.blockFeatured:hover > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block.blockFeatured > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	.block.blockFeatured.align0 {
 		.cell.first { margin-left: -6px; }

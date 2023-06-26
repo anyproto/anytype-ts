@@ -104,11 +104,11 @@
 		#value { -webkit-user-modify: read-write-plaintext-only; }
 	}
 	.block.blockText.textTitle > .wrapContent > .selectable > .dropTarget { padding: 0px; }
-	.block.blockText.textTitle:hover > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block.blockText.textTitle > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 
 	/* Description */
 
-	.block.blockText.textDescription:hover > .wrapMenu > .icon.dnd { opacity: 1; }
+	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
 	.block.blockText.textDescription { @include text-description; }
 
 	/* Header1 */
