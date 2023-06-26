@@ -136,6 +136,7 @@
 
 	.block.blockLink.card { padding: 6px 0px; }
 	.block.blockLink.card {
+		.linkCard { box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05); border-radius: 12px; }
 		.linkCard {
 			.side.left { padding: 16px; border: 1px solid $colorBorderLight; border-radius: 12px; flex-direction: column; justify-content: center; }
 			.side.right { border-radius: 0px 12px 12px 0px; }
