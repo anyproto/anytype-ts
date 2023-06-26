@@ -231,15 +231,15 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	getEntryValue () {
-		return this.normalizeWhiteSpace(this.entry.text());
+		return this.normalizeWhiteSpace(this.entry.text()).toLowerCase();
 	};
 
 	normalizeWhiteSpace = (val: string) => {
-		return val.replace(/\s\s+/g, ' ').trim() || '';
+		return String(val || '').replace(/\s\s+/g, ' ').trim() || '';
 	};
 
 	getValue () {
-		return this.state.phrase.join(' ').trim();
+		return this.state.phrase.join(' ').trim().toLowerCase();
 	};
 
 	placeholderCheck () {

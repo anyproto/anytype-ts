@@ -13,7 +13,7 @@ $colorErrorBackground: #240e07;
 
 	.word { 
 		font-size: 18px; line-height: 18px; height: 18px; user-select: text !important; display: inline; margin: 10px; vertical-align: middle;
-		white-space: nowrap;
+		white-space: nowrap; text-transform: lowercase;
 	}
 	.word:empty { margin: 0px; }
 
@@ -30,7 +30,7 @@ $colorErrorBackground: #240e07;
 	.placeholder { color: $colorTertiary; top: 0; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	#entry { 
 		display: inline; font-size: 18px; line-height: 18px; height: 18px; -webkit-user-modify: read-write-plaintext-only; user-select: text; 
-		vertical-align: middle;
+		vertical-align: middle; margin-left: 10px; text-transform: lowercase;
 	}
 
 	.icon { 
