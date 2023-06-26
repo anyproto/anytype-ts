@@ -183,7 +183,9 @@
 					.input { padding: 0; }
 
 					.name { margin-bottom: 8px; }
-					.name .input { @include text-header1; }
+					.name {
+						.input { @include text-header1; }
+					}
 
 					.spaceType {
 						display: inline-block; width: unset; padding: 3px 7px 3px 26px; border-radius: 6px;
@@ -201,62 +203,89 @@
 					.label { @include text-small; color: $colorDarkGrey; }
 
 					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; overflow: hidden; }
-					.sectionContent .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
-					.sectionContent .item:last-child { border-bottom: 0; }
-					.sectionContent .item {
-						.sides { display: flex; justify-content: space-between; }
-						.sides {
-							.side { width: unset; background: unset; padding: unset; }
-							.left { margin-right: 16px; }
-							.right { flex-shrink: 0; }
+					.sectionContent {
+						.item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
+						.item:last-child { border-bottom: 0; }
+						.item {
+							.sides { display: flex; justify-content: space-between; }
+							.sides {
+								.side { width: unset; background: unset; padding: unset; }
+								.left { margin-right: 16px; }
+								.right { flex-shrink: 0; }
+							}
+
+							.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
+							.title:last-child { margin-bottom: 0px; }
+
+							.button { white-space: nowrap; }
+							.button.dashboardSelect {
+								.icon { width: 8px; height: 8px; margin-left: 6px; }
+							}
+
+							.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
+							.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
+							.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+							.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
+							.icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
+						}
+					}
+				}
+
+				.section.sectionSpaceManager {
+					.sectionContent {
+						.item {
+							.storageLabel { margin-bottom: 12px; line-height: 18px; }
+							.storageLabel {
+								.label { display: inline; }
+								.label.extend { color: $colorRed; cursor: pointer; }
+							}
+
+							.progressBar {
+								.fill { background: $colorLime; }
+							}
 						}
 
-						.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
-						.title:last-child { margin-bottom: 0px; }
-
-						.button { white-space: nowrap; }
-						.button.dashboardSelect .icon { width: 8px; height: 8px; margin-left: 6px; }
-
-						.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
-						.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
-						.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
-						.icon.arrow { background-image: url('~img/icon/popup/settings/forward.svg'); }
-						.icon.arrow.down { background-image: url('~img/arrow/button/black.svg'); }
+						.item.red {
+							.progressBar {
+								.fill { background: $colorRed; }
+							}
+						}
 					}
 				}
 
-				.section.sectionSpaceManager .sectionContent .item {
-					.storageLabel { margin-bottom: 12px; line-height: 18px; }
-					.storageLabel .label { display: inline; }
-					.storageLabel .label.extend { color: $colorRed; cursor: pointer; }
-
-					.progressBar .fill { background: $colorLime; }
-				}
-				.section.sectionSpaceManager .sectionContent .item.red {
-					.progressBar .fill { background: $colorRed; }
-				}
-
-				.section.sectionIntegrations .sectionContent .item { cursor: pointer; transition: $transitionAllCommon; }
-				.section.sectionIntegrations .sectionContent .item:hover { background: $colorHoverLight; }
-				.section.sectionIntegrations .sectionContent .item {
-					.side.left { display: flex; gap: 0 12px; }
-					.side.left {
-						.icon { width: 22px; height: 22px; }
-						.title { margin-bottom: 0; }
+				.section.sectionIntegrations {
+					.sectionContent {
+						.item { cursor: pointer; transition: $transitionAllCommon; }
+						.item:hover { background: $colorHoverLight; }
+						.item {
+							.side.left { display: flex; gap: 0 12px; }
+							.side.left {
+								.icon { width: 22px; height: 22px; }
+								.title { margin-bottom: 0; }
+							}
+							.arrow { width: 6px; height: 11px; }
+						}
 					}
-					.arrow { width: 6px; height: 11px; }
 				}
 
-				.section.sectionInfo .sectionContent {
-					.item .sides { align-items: center; }
-					.item.itemSpaceId,
-					.item.itemAccountId { align-items: center; cursor: pointer; }
+				.section.sectionInfo {
+					.sectionContent {
+						.item {
+							.sides { align-items: center; }
+						}
+						.item.itemSpaceId,
+						.item.itemAccountId { align-items: center; cursor: pointer; }
 
-					.item.itemSpaceId .icon,
-					.item.itemAccountId .icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
+						.item.itemSpaceId,
+						.item.itemAccountId {
+							.icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
+						}
 
-					.item.itemSpaceId:hover .icon,
-					.item.itemAccountId:hover .icon { opacity: 1; }
+						.item.itemSpaceId:hover,
+						.item.itemAccountId:hover {
+							.icon { opacity: 1; }
+						}
+					}
 				}
 			}
 		}
