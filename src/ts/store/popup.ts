@@ -142,16 +142,23 @@ class PopupStore {
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
-		const items = ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
-		const length = items.length;
+		const items = this.getItems(ids);
+		const timeout = this.getTimeout(items);
 
 		items.forEach(it => this.close(it.id));
 
 		this.clearTimeout();
-
 		if (callBack) {
-			this.timeout = window.setTimeout(() => callBack(), length ? Constant.delay.popup : 0);
+			this.timeout = window.setTimeout(() => callBack(), timeout);
 		};
+	};
+
+	getItems (ids?: string[]) {
+		return ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
+	};
+
+	getTimeout (items: I.Popup[]) {
+		return items.length ? Constant.delay.popup : 0;
 	};
 
 	closeLast () {

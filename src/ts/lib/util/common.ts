@@ -796,8 +796,15 @@ class UtilCommon {
 		const { replace, animate } = param;
 		const method = replace ? 'replace' : 'push';
 
+		let timeout = menuStore.getTimeout(menuStore.getItems());
+		if (!timeout) {
+			timeout = popupStore.getTimeout(popupStore.getItems());
+		};
+
 		menuStore.closeAll();
-		popupStore.closeAll(null, () => { 
+		popupStore.closeAll();
+
+		window.setTimeout(() => {
 			Preview.hideAll();
 
 			if (animate) {
@@ -815,7 +822,7 @@ class UtilCommon {
 			} else {
 				this.history[method](route); 
 			};
-		});
+		}, timeout);
 	};
 
 	intercept (obj: any, change: any) {
