@@ -602,6 +602,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 
+				if (object.type == Constant.typeId.note) {
+					this.onCellClick(e, 'name', object.id);
+				};
+
 				analytics.event('CreateObject', {
 					route: 'Set',
 					objectType: object.type,
