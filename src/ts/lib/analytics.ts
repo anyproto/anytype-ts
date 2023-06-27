@@ -357,8 +357,6 @@ class Analytics {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
 		const map = {
-			'index/index':		 'ScreenIndex',
-
 			'auth/login':		 'ScreenLogin',
 
 			'main/graph':		 'ScreenGraph',
