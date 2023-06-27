@@ -175,7 +175,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								arrayLimit={2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
-								placeholder={translate('placeholderCellCommon')}
 							/>
 						</span>
 					);
