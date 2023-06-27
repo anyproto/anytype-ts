@@ -67,7 +67,7 @@
 
 	.item { 
 		color: $colorDarkGrey; transition: $transitionAllCommon; height: 20px; line-height: 20px; 
-		display: inline-block; vertical-align: middle; white-space: nowrap;
+		display: inline-block; vertical-align: middle; white-space: nowrap; -webkit-app-region: no-drag;
 	}
 	.item {
 		.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/history0.svg'); margin: 0px; vertical-align: top; }
