@@ -534,6 +534,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							lang: (Storage.get('codeLang') || Constant.default.codeLang),
 						};
 					};
+
+					if ([ I.TextStyle.Code, I.TextStyle.Callout ].includes(param.content.style)) {
+						param.bgColor = 'grey';
+					};
 				};
 
 				if (item.type == I.BlockType.File) {
@@ -564,7 +568,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						});
 					});
 				} else
-				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
+				if ((item.type == I.BlockType.Text) && ![ I.TextStyle.Code, I.TextStyle.Callout ].includes(item.itemId)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, (message: any) => {
 						onCommand(message.blockId || blockId);
 

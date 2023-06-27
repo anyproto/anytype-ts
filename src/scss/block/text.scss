@@ -163,7 +163,7 @@
 	/* Callout */
 	
 	.block.blockText.textCallout { min-width: 130px; }
-	.block.blockText.textCallout > .wrapContent { background: $colorVeryLightGrey; border-radius: 2px; margin: 6px 0px; }
+	.block.blockText.textCallout > .wrapContent { border-radius: 2px; margin: 6px 0px; }
 	.block.blockText.textCallout > .wrapContent > .selectable { position: static; }
 	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget { padding: 16px 16px 0px 16px; }
 	.block.blockText.textCallout > .wrapContent > .selectable > .dropTarget > .flex { gap: 0px 14px; }
@@ -181,7 +181,7 @@
 	/* Code */
 
 	.block.blockText.textCode { padding: 6px 0px; }
-	.block.blockText.textCode > .wrapContent > .selectable { background: $colorVeryLightGrey; border-radius: 6px; }
+	.block.blockText.textCode > .wrapContent > .selectable { border-radius: 6px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 24px 0px 0px 0px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget .placeholder { display: none !important; }

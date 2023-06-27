@@ -36,7 +36,6 @@ class Block implements I.Block {
 	childrenIds: string[] = [];
 	hAlign: I.BlockHAlign = I.BlockHAlign.Left;
 	vAlign: I.BlockVAlign = I.BlockVAlign.Top;
-
 	bgColor = '';
 	fields: any = {};
 	content: any = {};
