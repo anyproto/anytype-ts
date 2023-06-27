@@ -122,10 +122,10 @@
 					.loaderWrapper { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 1; background: $colorBgLoader; }
 
 					.iconObject { flex-shrink: 0; }
-					.iconObject:after {
-						content: ''; position: absolute; left: 50%; top: 50%; width: 40px; height: 30px; margin: -15px 0px 0px -20px;
+					.iconObject::after {
+						content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
 						background: url('~img/icon/camera.svg') no-repeat center; background-size: 40px 30px;
-						transition: $transitionAllCommon; opacity: 0;
+						transition: $transitionAllCommon; opacity: 0; background-color: rgba(0,0,0,0.1);
 					}
 					.iconObject:hover:after { opacity: 1; }
 				}
