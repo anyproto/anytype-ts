@@ -368,7 +368,6 @@ class UtilMenu {
 
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { workspace } = commonStore;
-		const space = UtilObject.getSpace();
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const onSelect = (object: any, update: boolean) => {
 			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
@@ -391,11 +390,6 @@ class UtilMenu {
 		};
 
 		let menuContext = null;
-		let value = space.spaceDashboardId;
-
-		if (![ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(value)) {
-			value = '';
-		};
 
 		menuStore.open('select', {
 			element,
@@ -405,7 +399,6 @@ class UtilMenu {
 				menuContext = context;
 			},
 			data: {
-				value,
 				options: [
 					{ id: I.HomePredefinedId.Graph, name: 'Graph' },
 					{ id: I.HomePredefinedId.Last, name: 'Last opened object' },

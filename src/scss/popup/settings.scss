@@ -34,6 +34,7 @@
 				.iconObject.withLetter { background-color: $colorBorderDark; }
 
 				.section { margin: 0px 0px 16px 0px; }
+				.section.account { margin-bottom: 8px; }
 				.section:last-child { margin: 0px; }
 				.section {
 					> .name { @include text-small; color: $colorDarkGrey; margin: 0px 0px 4px 0px; padding: 0px 8px; }

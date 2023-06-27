@@ -134,7 +134,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		};
 
 		const Item = (action: any) => {
-			const itemCn = [ 'item' ];
+			const cn = [ 'item' ];
 
 			let icon = null;
 			let name = null;
@@ -146,7 +146,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 				icon = <IconObject object={profile} size={40} iconSize={40} forceLetter={true} />;
 				name = profile.name;
-				itemCn.push('itemAccount');
+				cn.push('itemAccount');
 				// onlineStatus = <div className={[ 'onlineStatus', status ].join(' ')}>{status}</div>
 			} else {
 				icon = <Icon className={action.icon || action.id} />;
@@ -156,7 +156,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			return (
 				<div
 					id={`item-${action.id}`}
-					className={itemCn.join(' ')}
+					className={cn.join(' ')}
 					onClick={() => this.onPage(action.id)}
 				>
 					{icon}
@@ -169,7 +169,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		};
 
 		const Section = (item: any) => (
-			<div className="section">
+			<div className={[ 'section', String(item.id || '') ].join(' ')}>
 				{item.name ? <div className="name">{item.name}</div> : ''}
 
 				<div className="items">
@@ -258,7 +258,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			];
 		} else {
 			return [
-				{ children: [ { id: 'account', name: 'Profile', subPages: [ 'logout' ] } ] },
+				{ id: 'account', children: [ { id: 'account', name: 'Profile', subPages: [ 'logout' ] } ] },
 				{
 					name: 'Application', children: [
 						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
