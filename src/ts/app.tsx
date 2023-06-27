@@ -276,8 +276,7 @@ Sentry.init({
 });
 
 class RoutePage extends React.Component<RouteComponentProps> {
-
-	render() {
+	render () {
 		return (
 			<SelectionProvider>
 				<DragProvider>
@@ -432,11 +431,10 @@ class App extends React.Component<object, State> {
 		commonStore.themeSet(config.theme);
 		commonStore.languagesSet(languages);
 
-		analytics.init();
-
 		authStore.walletPathSet(dataPath);
 		authStore.accountPathSet(dataPath);
 
+		analytics.init();
 		this.initStorage();
 
 		if (redirect) {

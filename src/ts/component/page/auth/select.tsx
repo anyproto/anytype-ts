@@ -36,7 +36,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 
 	componentDidMount(): void {
 		Animation.to();
-		analytics.event('ScreenIndex');
+		window.setTimeout(() => analytics.event('ScreenIndex'), 100);
 	};
 
 	componentDidUpdate(): void {
