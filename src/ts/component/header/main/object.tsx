@@ -35,7 +35,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 					{type ? (
 						<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
 							of
-							<IconObject object={type} />
+							<IconObject size={16} object={type} />
 							<ObjectName object={type} />
 						</div>
 					) : ''}
