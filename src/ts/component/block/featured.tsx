@@ -40,7 +40,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		this.elementMapper = this.elementMapper.bind(this);
-		this.getPlaceholder = this.getPlaceholder.bind(this);
 	};
 
 	render () {
@@ -135,7 +134,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					const canEdit = allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
 					const check = Relation.checkRelationValue(relation, object[relationKey]);
-					const placeholder = this.getPlaceholder(relationKey);
 
 					if (!check && !canEdit) {
 						return null;
@@ -177,7 +175,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								arrayLimit={2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
-								placeholder={placeholder}
+								placeholder={translate(`placeholderCell${relation.format}`)}
 							/>
 						</span>
 					);
@@ -267,62 +265,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		];
 
 		return (object.featuredRelations || []).filter(it => dbStore.getRelationByKey(it) && !skipIds.includes(it));
-	};
-
-	getPlaceholder (relationKey): string {
-		const relation = dbStore.getRelationByKey(relationKey);
-
-		let key = '';
-
-		switch (relation.format) {
-			default: {
-				key = 'placeholderCellCommon'
-				break;
-			};
-			case I.RelationType.ShortText:
-			case I.RelationType.LongText: {
-				key = 'placeholderCell0';
-				break;
-			};
-			case I.RelationType.Object: {
-				key = 'placeholderCell100';
-				break;
-			};
-			case I.RelationType.Number: {
-				key = 'placeholderCell2';
-				break;
-			};
-			case I.RelationType.Status: {
-				key = 'placeholderCell3';
-				break;
-			};
-			case I.RelationType.Date: {
-				key = 'placeholderCell4';
-				break;
-			};
-			case I.RelationType.File: {
-				key = 'placeholderCell5';
-				break;
-			};
-			case I.RelationType.Url: {
-				key = 'placeholderCell7';
-				break;
-			};
-			case I.RelationType.Email: {
-				key = 'placeholderCell8';
-				break;
-			};
-			case I.RelationType.Phone: {
-				key = 'placeholderCell9';
-				break;
-			};
-			case I.RelationType.Tag: {
-				key = 'placeholderCell11';
-				break;
-			};
-		};
-
-		return translate(key);
 	};
 
 	onFocus () {
