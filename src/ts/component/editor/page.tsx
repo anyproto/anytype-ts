@@ -1575,6 +1575,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		this.scrollTop = top;
 
+		console.log(top);
+		console.trace();
+
 		Storage.setScroll('editor' + (isPopup ? 'Popup' : ''), rootId, top);
 		Preview.previewHide(false);
 	};
@@ -1646,7 +1649,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			});
 
 			if (cut) {
-				menuStore.close('blockContext');
+				menuStore.closeAll([ 'blockContext', 'blockAction' ]);
 
 				focus.set(focused, { from: range.from, to: range.from });
 				focus.apply();
@@ -2036,7 +2039,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		blockIds = blockIds.filter((it: string) => {  
-			let block = blockStore.getLeaf(rootId, it);
+			const block = blockStore.getLeaf(rootId, it);
 			return block && block.isDeletable();
 		});
 
@@ -2045,7 +2048,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		};
 
 		focus.clear(true);
-		const next = blockStore.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
+		let next = blockStore.getNextBlock(rootId, blockIds[0], -1, it => it.isFocusable());
 
 		C.BlockListDelete(rootId, blockIds, (message: any) => {
 			if (message.error.code) {
@@ -2053,7 +2056,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 			
 			if (next) {
-				let length = next.getLength();
+				const parent = blockStore.getHighestParent(rootId, next.id);
+
+				// If highest parent is closed toggle, next is parent
+				if (parent && parent.isTextToggle() && !Storage.checkToggle(rootId, parent.id)) {
+					next = parent;
+				};
+
+				const length = next.getLength();
 				this.focus(next.id, length, length, true);
 			};
 		});
