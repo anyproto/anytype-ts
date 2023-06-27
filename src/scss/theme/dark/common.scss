@@ -298,6 +298,8 @@ html.themeDark {
         .tabs {
             .tab.active, .tab:hover { color: $colorPrimary; border-color: $colorLinePrimary; }
         }
+
+		.templateBanner { background: $colorLineTertiary; color: $colorPrimary; }
     }
 	.header.isCommon.active {
 		.path { background-color: $colorHoverMedium; color: $colorPrimary; }

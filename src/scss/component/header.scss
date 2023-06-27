@@ -91,6 +91,16 @@
 		.iconObject { flex-shrink: 0; }
 	}
 	.path:hover { border-color: $colorBorderLight; }
+
+	.templateBanner {
+		display: flex; align-items: center; gap: 0px 4px; height: 32px; padding: 6px 8px; @include text-small; border-radius: 6px; background: $colorVeryLightGrey;
+	}
+	.templateBanner {
+		.typeName { display: flex; gap: 0px 4px; }
+		.typeName {
+			.name { font-weight: 600; }
+		}
+	}
 }
 
 .header.mainGraph {
@@ -107,17 +117,6 @@
 	.icon.btn-search { background-image: url('~img/icon/header/search.svg'); }
 	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
 	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
-}
-
-.header.mainObject {
-	.templateBanner {
-		display: flex; align-items: center; gap: 0px 4px; height: 32px; padding: 6px 8px;
-		@include text-small; border-radius: 6px; background: $colorVeryLightGrey;
-	}
-	.typeName { display: flex; gap: 0px 4px; }
-	.typeName {
-		.name { font-weight: 600; }
-	}
 }
 
 .popup {
