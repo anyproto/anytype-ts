@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
-import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation } from 'Lib';
+import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -151,6 +151,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 			};
 
 			UtilData.onAuth(message.account, { routeParam: { animate } });
+			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
 
