@@ -40,6 +40,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onRelation = this.onRelation.bind(this);
 		this.elementMapper = this.elementMapper.bind(this);
+		this.getPlaceholder = this.getPlaceholder.bind(this);
 	};
 
 	render () {
@@ -134,6 +135,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					const canEdit = allowedValue && !relation.isReadonlyValue;
 					const cn = [ 'cell', (canEdit ? 'canEdit' : '') ];
 					const check = Relation.checkRelationValue(relation, object[relationKey]);
+					const placeholder = this.getPlaceholder(relationKey);
 
 					if (!check && !canEdit) {
 						return null;
@@ -175,7 +177,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								arrayLimit={2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
-								placeholder={translate('placeholderCellCommon')}
+								placeholder={placeholder}
 							/>
 						</span>
 					);
@@ -265,6 +267,62 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		];
 
 		return (object.featuredRelations || []).filter(it => dbStore.getRelationByKey(it) && !skipIds.includes(it));
+	};
+
+	getPlaceholder (relationKey: string): string {
+		const relation = dbStore.getRelationByKey(relationKey);
+
+		let placeholder: string = '';
+
+		switch (relation.format) {
+			default: {
+				placeholder = translate('placeholderCellCommon');
+				break;
+			};
+			case I.RelationType.ShortText:
+			case I.RelationType.LongText: {
+				placeholder = translate('placeholderCell0');
+				break;
+			};
+			case I.RelationType.Object: {
+				placeholder = translate('placeholderCell101');
+				break;
+			};
+			case I.RelationType.Number: {
+				placeholder = translate('placeholderCell2');
+				break;
+			};
+			case I.RelationType.Status: {
+				placeholder = translate('placeholderCell3');
+				break;
+			};
+			case I.RelationType.Date: {
+				placeholder = translate('placeholderCell4');
+				break;
+			};
+			case I.RelationType.File: {
+				placeholder = translate('placeholderCell5');
+				break;
+			};
+			case I.RelationType.Url: {
+				placeholder = translate('placeholderCell7');
+				break;
+			};
+			case I.RelationType.Email: {
+				placeholder = translate('placeholderCell8');
+				break;
+			};
+			case I.RelationType.Phone: {
+				placeholder = translate('placeholderCell9');
+				break;
+			};
+			case I.RelationType.Tag: {
+				placeholder = translate('placeholderCell11');
+				break;
+			};
+		}
+
+		return placeholder;
 	};
 
 	onFocus () {
