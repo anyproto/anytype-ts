@@ -232,7 +232,7 @@
 
 							.button { max-width: 200px; }
 							.button {
-								.txt { @include text-overflow-nw; }
+								.txt { @include text-overflow-nw; line-height: unset; }
 							}
 
 							.icon.import { background-image: url('~img/icon/popup/settings/import.svg'); }
