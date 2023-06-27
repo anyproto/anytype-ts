@@ -110,6 +110,16 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					{ action: 'manageStorage', label: 'Manage files' } 
 				]);
             };
+
+            case I.ToastAction.TemplateCreate: {
+                if (!object) {
+                    break;
+                };
+
+                textObject = <Element {...object} />;
+                textAction = translate('toastTemplateCreate');
+                break;
+            };
         };
 
         return (
