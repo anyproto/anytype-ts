@@ -43,7 +43,7 @@ const PopupSettingsPageAppearance = observer(class PopupSettingsPageAppearance e
 
 						<Label text={translate('popupSettingsAppearancePersonalisationSidebar')} />
 
-						<Switch value={autoSidebar} onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
+						<Switch className="big" value={autoSidebar} onChange={(e: any, v: boolean) => { commonStore.autoSidebarSet(v); }}/>
 					</div>
 				</div>
 			</React.Fragment>
