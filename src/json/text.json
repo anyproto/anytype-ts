@@ -498,6 +498,7 @@
 	"threadStatus5Tooltip": { "en": "We have updated the protocol version. Click to update and sync the objects." },
 
 	"toastRecoveryCopiedClipboard": { "en": "Recovery phrase copied to clipboard"  },
+	"toastTemplateCreate": { "en": "is saved as a template!"  },
 
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },
