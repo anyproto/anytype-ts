@@ -269,60 +269,60 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		return (object.featuredRelations || []).filter(it => dbStore.getRelationByKey(it) && !skipIds.includes(it));
 	};
 
-	getPlaceholder (relationKey: string): string {
+	getPlaceholder (relationKey): string {
 		const relation = dbStore.getRelationByKey(relationKey);
 
-		let placeholder: string = '';
+		let key = '';
 
 		switch (relation.format) {
 			default: {
-				placeholder = translate('placeholderCellCommon');
+				key = 'placeholderCellCommon'
 				break;
 			};
 			case I.RelationType.ShortText:
 			case I.RelationType.LongText: {
-				placeholder = translate('placeholderCell0');
+				key = 'placeholderCell0';
 				break;
 			};
 			case I.RelationType.Object: {
-				placeholder = translate('placeholderCell101');
+				key = 'placeholderCell100';
 				break;
 			};
 			case I.RelationType.Number: {
-				placeholder = translate('placeholderCell2');
+				key = 'placeholderCell2';
 				break;
 			};
 			case I.RelationType.Status: {
-				placeholder = translate('placeholderCell3');
+				key = 'placeholderCell3';
 				break;
 			};
 			case I.RelationType.Date: {
-				placeholder = translate('placeholderCell4');
+				key = 'placeholderCell4';
 				break;
 			};
 			case I.RelationType.File: {
-				placeholder = translate('placeholderCell5');
+				key = 'placeholderCell5';
 				break;
 			};
 			case I.RelationType.Url: {
-				placeholder = translate('placeholderCell7');
+				key = 'placeholderCell7';
 				break;
 			};
 			case I.RelationType.Email: {
-				placeholder = translate('placeholderCell8');
+				key = 'placeholderCell8';
 				break;
 			};
 			case I.RelationType.Phone: {
-				placeholder = translate('placeholderCell9');
+				key = 'placeholderCell9';
 				break;
 			};
 			case I.RelationType.Tag: {
-				placeholder = translate('placeholderCell11');
+				key = 'placeholderCell11';
 				break;
 			};
-		}
+		};
 
-		return placeholder;
+		return translate(key);
 	};
 
 	onFocus () {
