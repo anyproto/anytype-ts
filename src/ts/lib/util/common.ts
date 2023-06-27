@@ -296,9 +296,9 @@ class UtilCommon {
 		document.execCommand('copy');
 	};
 
-	clipboard (label: string, value: string) {
-		this.clipboardCopy({ text: value });
-		Preview.toastShow({ text: label + ' copied to clipboard' });
+	clipboardCopyToast (label: string, text: string) {
+		this.clipboardCopy({ text });
+		Preview.toastShow({ text: `${label} has been copied to clipboard` });
 	};
 	
 	cacheImages (images: string[], callBack?: () => void) {

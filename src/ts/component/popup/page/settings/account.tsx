@@ -84,7 +84,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						<Input
 							value={account.id}
 							readonly={true}
-							onFocus={() => UtilCommon.clipboard(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
+							onFocus={() => UtilCommon.clipboardCopyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
 						/>
 						<Icon className="copy" />
 					</div>

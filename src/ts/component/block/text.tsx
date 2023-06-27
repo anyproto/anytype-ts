@@ -147,6 +147,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 								<Icon className="codeWrap" />
 								<div className="txt">{fields.isUnwrapped ? 'Wrap' : 'Unwrap'}</div>
 							</div>
+
 							<div className="btn" onClick={this.onCopy}>
 								<Icon className="copy" />
 								<div className="txt">Copy</div>
@@ -1219,6 +1220,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					blocks: [ block ],
 				},
 			});
+
+			Preview.toastShow({ text: `Block has been copied to clipboard` });
 		});
 	};
 	
