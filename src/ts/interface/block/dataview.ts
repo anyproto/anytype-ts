@@ -134,6 +134,7 @@ export interface ViewComponent {
 	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;
 	onSourceTypeSelect?(element: any): void;
+	refCells?: any;
 };
 
 export interface ViewEmpty {

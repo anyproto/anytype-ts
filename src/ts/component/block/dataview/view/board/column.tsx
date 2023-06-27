@@ -10,7 +10,7 @@ import Cell from 'Component/block/dataview/cell';
 interface Props extends I.ViewComponent {
 	id: string;
 	value: any;
-	onRecordAdd (groupId: string, dir: number): void;
+	onColumnRecordAdd (e: any, groupId: string, dir: number): void;
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
@@ -34,7 +34,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, getLimit, onRecordAdd, value, onDragStartColumn } = this.props;
+		const { rootId, block, id, getSubId, getView, getLimit, onColumnRecordAdd, value, onDragStartColumn } = this.props;
 		const view = getView();
 		const subId = getSubId();
 		const items = this.getItems();
@@ -115,7 +115,7 @@ const Column = observer(class Column extends React.Component<Props> {
 						{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
 						{isAllowedObject ? (
-							<div id={`record-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
+							<div id={`record-${id}-add`} className="card add" onClick={(e) => { onColumnRecordAdd(e, id, 1); }}>
 								<Icon className="plus" />
 							</div>
 						) : ''}
@@ -225,9 +225,9 @@ const Column = observer(class Column extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, onRecordAdd } = this.props;
+		const { id, onColumnRecordAdd } = this.props;
 
-		onRecordAdd(id, -1);
+		onColumnRecordAdd(e, id, -1);
 	};
 
 	onMore (e: any) {
