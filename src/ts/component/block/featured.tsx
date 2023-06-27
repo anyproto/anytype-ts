@@ -52,6 +52,45 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
 		const bullet = <div className="bullet" />;
+		const typeName = (
+			<div className="name">
+				{type && !type.isDeleted && !type._empty_ ? UtilCommon.shorten(type.name, 32) : (
+					<span className="textColor-red">
+						{translate('commonDeletedType')}
+					</span>
+				)}
+			</div>
+		);
+
+		let typeRelation = null;
+
+		if (UtilObject.isTemplate(object.type)) {
+			typeRelation = (
+				<span className="cell">
+					<div
+						id={Relation.cellId(PREFIX, 'type', object.id)}
+						className="cellContent type disabled"
+					>
+						{typeName}
+					</div>
+				</span>
+			);
+		} else
+		if (featuredRelations.includes('type')) {
+			typeRelation = (
+				<span className="cell canEdit">
+					<div
+						id={Relation.cellId(PREFIX, 'type', object.id)}
+						className="cellContent type"
+						onClick={this.onType}
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
+						onMouseLeave={this.onMouseLeave}
+					>
+						{typeName}
+					</div>
+				</span>
+			);
+		};
 
 		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.type).map(it => it.name);
 		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.relation).map(it => it.name);
@@ -85,25 +124,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyUp={this.onKeyUp}
 			>
 				<span id="onboardingAnchor" />
-				{featuredRelations.includes('type') ? (
-					<span className="cell canEdit">
-						<div
-							id={Relation.cellId(PREFIX, 'type', object.id)}
-							className="cellContent type"
-							onClick={this.onType}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
-							onMouseLeave={this.onMouseLeave}
-						>
-							<div className="name">
-								{type && !type.isDeleted && !type._empty_ ? UtilCommon.shorten(type.name, 32) : (
-									<span className="textColor-red">
-										{translate('commonDeletedType')}
-									</span>
-								)}
-							</div>
-						</div>
-					</span>
-				) : ''}
+
+				{typeRelation}
 
 				{featuredRelations.includes('setOf') ? (
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
