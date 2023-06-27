@@ -110,7 +110,10 @@
 }
 
 .header.mainObject {
-	.templateBanner { display: flex; gap: 0px 4px; padding: 6px 8px; border-radius: 6px; background: $colorVeryLightGrey; }
+	.templateBanner {
+		display: flex; align-items: center; gap: 0px 4px; height: 32px; padding: 6px 8px;
+		@include text-small; border-radius: 6px; background: $colorVeryLightGrey;
+	}
 	.typeName { display: flex; gap: 0px 4px; }
 	.typeName {
 		.name { font-weight: 600; }
