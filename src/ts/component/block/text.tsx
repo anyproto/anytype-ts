@@ -1165,7 +1165,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.props.onToggle(e);
 	};
 	
-	onCheckbox (e: any) {
+	onCheckbox () {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { checked } = content;
@@ -1199,7 +1199,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 
-	onToggleWrap (e: any) {
+	onToggleWrap () {
 		const { rootId, block } = this.props;
 		const { id, fields } = block;
 
@@ -1208,7 +1208,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		]);
 	};
 
-	onCopy (e: any) {
+	onCopy () {
 		const { rootId, block } = this.props;
 
 		C.BlockCopy(rootId, [ block ], { from: 0, to: 0 }, (message: any) => {
@@ -1225,7 +1225,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 	
-	onSelect (e: any) {
+	onSelect () {
 		const { rootId, dataset, block, isPopup, isInsideTable } = this.props;
 		const ids = UtilData.selectionGet('', false, true, this.props);
 
@@ -1328,7 +1328,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 	};
 	
-	onMouseUp (e: any) {
+	onMouseUp () {
 		window.clearTimeout(this.timeoutClick);
 		this.timeoutClick = window.setTimeout(() => { this.clicks = 0; }, 300);
 	};
