@@ -88,6 +88,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			const isTargetTop = item.hasClass('targetTop');
 			const isTargetBot = item.hasClass('targetBot');
 			const isTargetCol = item.hasClass('targetCol');
+			const isEmptyToggle = item.hasClass('emptyToggle');
 
 			let x = offset.left;
 			let y = offset.top;
@@ -116,6 +117,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				isTargetTop,
 				isTargetBot,
 				isTargetCol,
+				isEmptyToggle,
 			});
 		});
 	};
@@ -498,6 +500,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		let isTargetTop = false;
 		let isTargetBot = false;
 		let isTargetCol = false;
+		let isEmptyToggle = false;
 		let obj = null;
 		let type: any = '';
 		let style = 0;
@@ -521,6 +524,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				isTargetTop = this.hoverData.isTargetTop;
 				isTargetBot = this.hoverData.isTargetBot;
 				isTargetCol = this.hoverData.isTargetCol;
+				isEmptyToggle = this.hoverData.isEmptyToggle;
 
 				obj = $(this.hoverData.obj);
 				type = obj.attr('data-type');
@@ -610,6 +614,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 				if (isTargetBot || isTargetCol) {
 					this.setPosition(I.BlockPosition.Bottom);
+				};
+
+				if (isEmptyToggle) {
+					this.setPosition(I.BlockPosition.InnerFirst);
 				};
 			};
 
