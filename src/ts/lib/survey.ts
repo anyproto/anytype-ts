@@ -21,7 +21,7 @@ class Survey {
             case I.SurveyType.Delete:
                 this.checkDelete();
                 break;
-        }
+        };
     };
 
     show (type: I.SurveyType) {
