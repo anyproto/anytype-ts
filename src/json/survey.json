@@ -1,17 +1,17 @@
 {
- 	"register": {
+ 	"0": {
 		"url": "https://anytype.typeform.com/to/GlS8NAKb"
 	},
 
-	"pmf": {
-		"url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s"
-	},
-
-	"delete": {
+	"1": {
 		"url": "https://anytype.typeform.com/to/lSyoRr8U"
 	},
 
-	"object": {
+	"2": {
+		"url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s"
+	},
+
+	"3": {
 		"url": "https://anytype.typeform.com/to/edqF9PKQ"
 	}
 }

@@ -181,10 +181,10 @@ export interface ButtonComponent {
 };
 
 export enum SurveyType {
-	Register 	= 'register',
-	Delete 		= 'delete',
-	Pmf 		= 'pmf',
-	Object 		= 'object',
+	Register 	= 0,
+	Delete 		= 1,
+	Pmf 		= 2,
+	Object 		= 3,
 };
 
 export enum SliceOperation {

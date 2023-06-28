@@ -5,64 +5,46 @@ import Surveys from 'json/survey.json';
 class Survey {
 
     check (type: I.SurveyType) {
-        switch (type) {
-            case I.SurveyType.Register:
-                this.checkRegister();
-                break;
+		const fn = `check${I.SurveyType[type]}`;
 
-            case I.SurveyType.Pmf:
-                this.checkPmf();
-                break;
-
-            case I.SurveyType.Object:
-                this.checkObject();
-                break;
-
-            case I.SurveyType.Delete:
-                this.checkDelete();
-                break;
-        };
+		if (this[fn]) {
+			this[fn]();
+		};
     };
 
     show (type: I.SurveyType) {
-        const prefix = UtilCommon.toCamelCase('survey-' + type);
+        const prefix = `survey${type}`;
 
-        analytics.event('SurveyShow', { type });
+		popupStore.open('confirm', {
+			data: {
+				title: translate(`${prefix}Title`),
+				text: translate(`${prefix}Text`),
+				textConfirm: translate(`${prefix}Confirm`),
+				textCancel: translate(`${prefix}Cancel`),
+				canConfirm: true,
+				canCancel: true,
+				onConfirm: () => this.onConfirm(type),
+				onCancel: () => this.onSkip(type),
+			}
+		});
 
-        popupStore.open('confirm', {
-            onClose: () => {
-                this.onSkip(type);
-            },
-            data: {
-                title: translate(prefix + 'Title'),
-                text: translate(prefix + 'Text'),
-                textConfirm: translate(prefix + 'Confirm'),
-                textCancel: translate(prefix + 'Cancel'),
-                canConfirm: true,
-                canCancel: true,
-                onConfirm: () => {
-                    this.onConfirm(type);
-                },
-                onCancel: () => {
-                    this.onSkip(type);
-                }
-            }
-        });
+		analytics.event('SurveyShow', { type });
     };
 
     onConfirm (type: I.SurveyType) {
         const { account } = authStore;
         const survey = Surveys[type];
-        const prefix = UtilCommon.toCamelCase('survey-' + type);
 		const param: any = {};
+
+		param[type] = param[type] || {};
 
         switch (type) {
 			default:
-				param[`${type}Complete`] = true;
+				param[type].complete = true;
 				break;
 
             case I.SurveyType.Pmf:
-                param.pmfCompleteTime = UtilCommon.time();
+                param[type].time = UtilCommon.time();
                 break;
         };
 
@@ -74,14 +56,16 @@ class Survey {
     onSkip (type: I.SurveyType) {
 		const param: any = {};
 
+		param[type] = param[type] || {};
+
         switch (type) {
 			default:
-				param[`${type}Complete`] = true;
+				param[type].complete = true;
 				break;
 
             case I.SurveyType.Pmf:
-                param.pmfCanceled = true;
-                param.pmfCompleteTime = UtilCommon.time();
+                param[type].cancel = true;
+                param[type].time = UtilCommon.time();
                 break;
         };
 
@@ -89,24 +73,36 @@ class Survey {
 		analytics.event('SurveySkip', { type });
     };
 
-    checkPmf () {
-        const surveyStorage = Storage.get('survey') || {};
-        const lastTime = Number(Storage.get('lastSurveyTime')) || Number(surveyStorage.pmfCompleteTime) || 0;
-        const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || Number(surveyStorage.pmfCanceled) || false;
-        const askPmf = Number(surveyStorage.askPmf) || false;
-        const days = lastTime ? 90 : 30;
-        const surveyTime = (lastTime <= UtilCommon.time() - 86400 * days);
+	getStorage (type: I.SurveyType) {
+		const obj = Storage.get('survey') || {};
+		return obj[type] || {};
+	};
 
-        if (askPmf && !popupStore.isOpen() && !lastCanceled && surveyTime) {
+	isComplete (type: I.SurveyType) {
+		return this.getStorage(type).complete;
+	};
+
+    checkPmf () {
+		const storage = Storage.get('survey') || {};
+        const obj = storage[I.SurveyType.Pmf] || {};
+        const lastTime = Number(Storage.get('lastSurveyTime')) || Number(obj.time) || 0;
+        const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || obj.cancel || false;
+        const days = lastTime ? 90 : 30;
+        const surveyTime = lastTime <= UtilCommon.time() - 86400 * days;
+
+		console.log(storage.askPmf, popupStore.isOpen(), lastCanceled, surveyTime);
+
+        if (storage.askPmf && !popupStore.isOpen() && !lastCanceled && surveyTime) {
             this.show(I.SurveyType.Pmf);
         };
     };
 
     checkRegister () {
         const timeRegister = Number(Storage.get('timeRegister')) || 0;
-        const surveyStorage = Storage.get('survey') || {};
-        const isComplete = surveyStorage.registerComplete || false;
-        const surveyTime = timeRegister && UtilCommon.time() - 86400 * 7 - timeRegister > 0;
+		const isComplete = this.isComplete(I.SurveyType.Register);
+        const surveyTime = timeRegister && ((UtilCommon.time() - 86400 * 7 - timeRegister) > 0);
+
+		console.log(isComplete, popupStore.isOpen(), surveyTime);
 
         if (!isComplete && surveyTime && !popupStore.isOpen()) {
             this.show(I.SurveyType.Register);
@@ -114,8 +110,7 @@ class Survey {
     };
 
     checkDelete () {
-        const surveyStorage = Storage.get('survey') || {};
-        const isComplete = Number(surveyStorage.deleteComplete) || false;
+        const isComplete = this.isComplete(I.SurveyType.Delete);
 
         if (!isComplete) {
             this.show(I.SurveyType.Delete);
@@ -124,8 +119,7 @@ class Survey {
 
     checkObject () {
         const timeRegister = Number(Storage.get('timeRegister')) || 0;
-        const surveyStorage = Storage.get('survey') || {};
-        const isComplete = Number(surveyStorage.objectComplete) || false;
+		const isComplete = this.isComplete(I.SurveyType.Object);
 
         if (isComplete || !timeRegister) {
             return;
