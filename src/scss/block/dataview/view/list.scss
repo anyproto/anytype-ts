@@ -8,6 +8,9 @@
 
 		    .row { height: 100%; width: 100%; display: block; white-space: nowrap; position: relative; }
 			.row.isDone * { color: $colorDarkGrey; }
+			.row.isEditing {
+				.cellContent:not(.isName) { display: none; }
+			}
 
 			.dropTarget { height: 100%; padding: 0px 0px 10px 0px; }
 
@@ -31,6 +34,7 @@
             .cellContent.isName { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; color: $colorBlack; }
 			.cellContent.isName {
 				.name { display: inline-block; line-height: 24px; vertical-align: top; font-weight: 500; max-width: 500px; }
+				.input.name { padding: 0; @include text-paragraph; }
 			}
 
 			.cellContent.c-select, 
