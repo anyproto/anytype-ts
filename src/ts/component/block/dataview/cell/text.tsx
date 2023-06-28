@@ -220,15 +220,20 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, cellPosition, getView } = this.props;
+		const { id, relation, cellPosition, getView, recordId, viewType } = this.props;
 		const cell = $(`#${id}`);
 
 		let view = null;
 		let viewRelation: any = {};
+		let card = null;
 		
 		if (getView) {
 			view = getView();
 			viewRelation = view.getRelation(relation.relationKey);
+		};
+
+		if (viewType != I.ViewType.Grid) {
+			card = $(`#record-${recordId}`);
 		};
 
 		if (isEditing) {
@@ -259,6 +264,9 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 
 			cell.addClass('isEditing');
+			if (card.length) {
+				card.addClass('isEditing');
+			};
 
 			if (cellPosition) {
 				cellPosition(id);
@@ -266,6 +274,10 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 		} else {
 			cell.removeClass('isEditing');
 			cell.find('.cellContent').css({ left: '', right: '' });
+
+			if (card.length) {
+				card.removeClass('isEditing');
+			};
 		};
 
 		if (commonStore.cellId) {

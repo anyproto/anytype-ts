@@ -190,6 +190,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						onDragRecordStart={this.onDragRecordStart}
 						onSelectEnd={this.onSelectEnd}
 						onSelectToggle={this.onSelectToggle}
+						refCells={this.refCells}
 					/>
 				</div>
 			);
@@ -598,12 +599,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
 				const ref = this.refCells.get(id);
 
-				if (ref && view.isGrid() && (object.type != Constant.typeId.note)) {
-					window.setTimeout(() => { ref.onClick(e); }, 15);
-				};
-
 				if (object.type == Constant.typeId.note) {
 					this.onCellClick(e, 'name', object.id);
+				} else
+				if (ref) {
+					window.setTimeout(() => { ref.onClick(e); }, 15);
 				};
 
 				analytics.event('CreateObject', {

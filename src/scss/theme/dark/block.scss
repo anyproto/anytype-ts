@@ -170,6 +170,8 @@
             .card {
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
+
+			.card.isEditing { border: 2px solid $colorOrange; }
         }
 
         .viewContent.viewBoard {
@@ -191,6 +193,10 @@
 			.card.add:hover {
                 .icon { background-image: url('#{$themePath}/icon/plus/column1.svg'); }
             }
+
+			.card.isEditing {
+				.cardContent { border: 2px solid $colorOrange; }
+			}
         }
 
 		.content {

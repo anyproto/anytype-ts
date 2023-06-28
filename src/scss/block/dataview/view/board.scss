@@ -81,6 +81,7 @@
 			.card {
 				.cellContent.isName {
 					.name { @include clamp2; white-space: normal; }
+					.input.name { padding: 0; height: unset; }
 				}
 
 				.cardContent { 
@@ -130,6 +131,9 @@
             }
 
 			.card.add.isOver.bottom::before { top: -6px; }
+			.card.isEditing {
+				.cardContent { border: 2px solid $colorOrange; padding: 15px; }
+			}
         }
     }
 }

@@ -70,7 +70,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 									ref={ref => this.columnRefs[group.id] = ref}
 									{...this.props} 
 									{...group}
-									onRecordAdd={this.onRecordAdd}
+									onColumnRecordAdd={this.onRecordAdd}
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
 									getSubId={() => dbStore.getGroupSubId(rootId, block.id, group.id)}
@@ -180,12 +180,12 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		});
 	};
 
-	onRecordAdd (groupId: string, dir: number) {
+	onRecordAdd (e: any, groupId: string, dir: number) {
 		if (this.creating) {
 			return;
 		};
 
-		const { rootId, block, getView, isInline, isCollection, objectOrderUpdate } = this.props;
+		const { rootId, block, getView, getIdPrefix, isInline, isCollection, objectOrderUpdate, refCells } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
 		const objectId = isInline ? block.content.targetObjectId : rootId;
@@ -274,6 +274,13 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
 					dbStore.recordsSet(subId, '', update);
 				});
+
+				const id = Relation.cellId(getIdPrefix(), 'name', object.id);
+				const ref = refCells.get(id);
+
+				if (ref && (object.type != Constant.typeId.note)) {
+					window.setTimeout(() => { ref.onClick(e); }, 15);
+				};
 
 				analytics.event('CreateObject', {
 					route: isCollection ? 'Collection' : 'Set',

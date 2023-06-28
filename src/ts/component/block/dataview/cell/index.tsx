@@ -488,13 +488,10 @@ class Cell extends React.Component<Props> {
 		if (!relation || !record || readonly || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
-		if (relation.format == I.RelationType.Checkbox) {
-			return true;
-		};
 		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
 			return false;
 		};
-		return viewType == I.ViewType.Grid;
+		return true;
 	};
 	
 };
