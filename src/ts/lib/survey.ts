@@ -90,8 +90,6 @@ class Survey {
         const days = lastTime ? 90 : 30;
         const surveyTime = lastTime <= UtilCommon.time() - 86400 * days;
 
-		console.log(storage.askPmf, popupStore.isOpen(), lastCanceled, surveyTime);
-
         if (storage.askPmf && !popupStore.isOpen() && !lastCanceled && surveyTime) {
             this.show(I.SurveyType.Pmf);
         };
@@ -101,8 +99,6 @@ class Survey {
         const timeRegister = Number(Storage.get('timeRegister')) || 0;
 		const isComplete = this.isComplete(I.SurveyType.Register);
         const surveyTime = timeRegister && ((UtilCommon.time() - 86400 * 7 - timeRegister) > 0);
-
-		console.log(isComplete, popupStore.isOpen(), surveyTime);
 
         if (!isComplete && surveyTime && !popupStore.isOpen()) {
             this.show(I.SurveyType.Register);

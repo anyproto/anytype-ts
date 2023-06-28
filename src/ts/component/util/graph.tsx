@@ -273,7 +273,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 			body.append(el);
 			ReactDOM.render(<PreviewDefault object={this.subject} className="previewGraph" />, el.get(0), position);
 
-			analytics.event('GraphSelectNode', { objectType: this.subject.type });
+			analytics.event('SelectGraphNode', { objectType: this.subject.type, layout: this.subject.layout });
 		} else {
 			position();
 		};

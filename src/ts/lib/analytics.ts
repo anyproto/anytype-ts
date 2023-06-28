@@ -147,6 +147,7 @@ class Analytics {
 				break;
 			};
 
+			case 'SelectGraphNode':
 			case 'CreateObject': {
 				data.layout = I.ObjectLayout[data.layout];
 				break;
