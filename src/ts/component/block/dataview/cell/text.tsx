@@ -264,7 +264,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 
 			cell.addClass('isEditing');
-			if (card.length) {
+			if (card && card.length) {
 				card.addClass('isEditing');
 			};
 
@@ -275,7 +275,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			cell.removeClass('isEditing');
 			cell.find('.cellContent').css({ left: '', right: '' });
 
-			if (card.length) {
+			if (card && card.length) {
 				card.removeClass('isEditing');
 			};
 		};
