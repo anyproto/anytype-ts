@@ -67,10 +67,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (UtilObject.isTemplate(object.type)) {
 			typeRelation = (
 				<span className="cell">
-					<div
-						id={Relation.cellId(PREFIX, 'type', object.id)}
-						className="cellContent type disabled"
-					>
+					<div className="cellContent type disabled">
 						{typeName}
 					</div>
 				</span>

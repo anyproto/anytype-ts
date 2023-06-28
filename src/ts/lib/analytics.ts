@@ -15,7 +15,6 @@ const URL = 'amplitude.anytype.io';
 
 class Analytics {
 	
-	isInit = false;
 	instance: any = null;
 
 	debug () {
@@ -29,7 +28,7 @@ class Analytics {
 	};
 	
 	init () {
-		if (this.isInit) {
+		if (this.instance) {
 			return;
 		};
 
@@ -68,7 +67,6 @@ class Analytics {
 
 		this.removeContext();
 		this.log('[Analytics].init');
-		this.isInit = true;
 	};
 
 	profile (id: string) {
@@ -357,8 +355,6 @@ class Analytics {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
 		const map = {
-			'index/index':		 'ScreenIndex',
-
 			'auth/login':		 'ScreenLogin',
 
 			'main/graph':		 'ScreenGraph',

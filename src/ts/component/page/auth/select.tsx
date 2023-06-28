@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Button, Header, Footer } from 'Component';
-import { I, UtilCommon, translate, Animation } from 'Lib';
+import { I, UtilCommon, translate, Animation, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent> {
@@ -36,6 +36,7 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 
 	componentDidMount(): void {
 		Animation.to();
+		window.setTimeout(() => analytics.event('ScreenIndex'), 100);
 	};
 
 	componentDidUpdate(): void {

@@ -28,7 +28,7 @@ class WindowManager {
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
-			icon: path.join(Util.imagePath(), 'icon.png'),
+			icon: this.getIcon(),
 			show: false,
 			titleBarStyle: 'hidden-inset',
 			webPreferences: {},
@@ -134,6 +134,14 @@ class WindowManager {
 			win.loadURL('file://' + path.join(Util.appPath, 'dist', 'index.html'));
 		};
 		return win;
+	};
+
+	getIcon () {
+		if (is.windows) {
+			return path.join(Util.imagePath(), 'icon32x32.png');
+		} else {
+			return path.join(Util.imagePath(), 'icon.png');
+		};
 	};
 
 	createAbout () {
