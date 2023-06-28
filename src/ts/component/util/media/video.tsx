@@ -30,7 +30,7 @@ class MediaVideo extends React.Component<Props> {
                 <video className="media" controls={false} preload="auto" src={src} />
 
                 <div className="controls">
-                    <Icon className="play" onMouseDown={this.onPlayClick} />
+                    <Icon className="play" onClick={this.onPlayClick} />
                 </div>
             </div>
         );
