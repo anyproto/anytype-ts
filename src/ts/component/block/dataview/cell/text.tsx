@@ -220,8 +220,9 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, cellPosition, getView } = this.props;
+		const { id, relation, cellPosition, getView, recordId } = this.props;
 		const cell = $(`#${id}`);
+		const card = $(`#record-${recordId}`);
 
 		let view = null;
 		let viewRelation: any = {};
@@ -259,12 +260,15 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			};
 
 			cell.addClass('isEditing');
+			card.addClass('isEditing');
 
 			if (cellPosition) {
 				cellPosition(id);
 			};
 		} else {
 			cell.removeClass('isEditing');
+			card.removeClass('isEditing');
+
 			cell.find('.cellContent').css({ left: '', right: '' });
 		};
 
