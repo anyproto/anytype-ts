@@ -65,6 +65,10 @@
 		.select {
 			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
 		}
+		.select.checkboxValue {
+			.item { @include text-common; }
+			.icon.arrow { right: -8px !important; }
+		}
 
 		.item { display: flex; }
 		.item.withCaption { align-items: center; justify-content: space-between; }

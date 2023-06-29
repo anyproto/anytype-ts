@@ -156,7 +156,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 					<div className="item">
 						<Select 
 							id={[ 'filter', 'checkbox', item.id ].join('-')} 
-							className="operator" 
+							className="checkboxValue" 
 							arrowClassName="light"
 							options={checkboxOptions} 
 							value={item.value ? '1' : '0'} 
