@@ -39,11 +39,6 @@
 			.button { color: $colorBlack; }
 		}
 
-		.dataviewControls {
-			.side.left { flex-grow: 1; }
-			.side.right { flex-shrink: 0; gap: 0px 12px; justify-content: flex-end; }
-		}
-
 		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: $colorBlack; }
 		.dataviewHead {
 			.icon.source { width: 28px; height: 28px; background-size: 24px; background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; }
@@ -73,7 +68,10 @@
 			> .sides {
 				> .side { padding: 15px 0px; white-space: nowrap; line-height: 28px; display: flex; flex-direction: row; align-items: center; }
 				> .side.left { flex-grow: 1; padding-left: 14px; }
-				> .side.right { flex-shrink: 0; gap: 0px 12px; justify-content: flex-end; }
+				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; }
+				> .side.right {
+					.button { margin-left: 6px; }
+				}
 			}
 
 			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; transition: $transitionAllCommon; }
@@ -179,7 +177,7 @@
 			> .sides {
 				> .side { padding: 0px 0px 8px 0px; }
 				> .side.left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px 0px; }
-				> .side.right { transition: opacity $transitionCommon; opacity: 0; gap: 0px 6px; }
+				> .side.right { transition: opacity $transitionCommon; opacity: 0; }
 			}
 
 			.views { gap: 0px 12px; }
