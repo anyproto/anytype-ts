@@ -221,6 +221,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	componentWillUnmount () {
 		window.clearTimeout(this.timeoutMenu);
 		window.clearTimeout(this.timeoutFilter);
+
 		keyboard.setFocus(false);
 		menuStore.close('smileSkin');
 	};
