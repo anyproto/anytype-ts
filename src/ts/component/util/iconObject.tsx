@@ -126,7 +126,6 @@ Relation.big[I.RelationType.Phone] = require('img/icon/relation/big/phone.svg').
 Relation.big[I.RelationType.Tag] = require('img/icon/relation/big/tag.svg').default;
 Relation.big[I.RelationType.Object] = require('img/icon/relation/big/object.svg').default;
 
-const Home = require('img/icon/home.svg').default;
 const CheckboxTask0 = require('img/icon/object/checkbox0.svg').default;
 const CheckboxTask1 = require('img/icon/object/checkbox1.svg').default;
 const Ghost = require('img/icon/ghost.svg').default;
@@ -185,7 +184,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { id, name, iconEmoji, iconImage, iconOption, iconClass, done, relationFormat, isDeleted } = object || {};
 		const cn = [ 'iconObject', 'c' + size, UtilData.layoutClass(object.id, layout) ];
 		const iconSize = this.iconSize();
-		
+
 		if (className) {
 			cn.push(className);
 		};

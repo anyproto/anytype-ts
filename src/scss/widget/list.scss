@@ -53,6 +53,7 @@
 			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; }
 			.dropTarget { border-radius: 6px; height: 100%; }
 			.iconObject { flex-shrink: 0; }
+			.iconObject.isTask { background: none; }
 
 			.name { @include text-overflow-nw; }
 			.descr { @include text-small; color: $colorDarkGrey; @include text-overflow-nw; }
