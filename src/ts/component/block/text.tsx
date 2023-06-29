@@ -631,6 +631,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let value = this.getValue();
 		let ret = false;
 
+		const key = e.key.toLowerCase();
 		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
@@ -782,26 +783,23 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.onSmile();
 		});
 
-		if (twineOpen.includes(e.key)) {
-			if (!range || range.from == range.to) {
-				return;
-			};
+		if (range && (range.from != range.to) && twineOpen.includes(key)) {
 			e.preventDefault();
 
-			const closingSymbol = twineClose[e.key] || e.key;
+			const l = e.key.length;
+			const cut = value.slice(range.from, range.to);
+			const closingSymbol = twineClose[key] || key;
 
-			this.marks = Mark.adjust(this.marks, range.from, 1);
-			this.marks = Mark.adjust(this.marks, range.to, 1);
-			value = UtilCommon.stringInsert(value, e.key, range.from, range.from);
-			value = UtilCommon.stringInsert(value, closingSymbol, range.to + 1, range.to + 1);
+			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
+			this.marks = Mark.adjust(this.marks, range.from, l);
+
 			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				focus.set(block.id, { from: range.from + 1, to: range.to + 1 });
+				focus.set(block.id, { from: range.from + l, to: range.to + l });
 				focus.apply();
 			});
-			
+
 			ret = true;
 		};
-
 		if (ret) {
 			return;
 		};
