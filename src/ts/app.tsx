@@ -40,9 +40,6 @@ import 'scss/component/header.scss';
 import 'scss/component/headSimple.scss';
 import 'scss/component/icon.scss';
 import 'scss/component/iconObject.scss';
-import 'scss/component/list/previewObject.scss';
-import 'scss/component/list/widget.scss';
-import 'scss/component/list/objectManager.scss';
 import 'scss/component/loader.scss';
 import 'scss/component/pager.scss';
 import 'scss/component/progress.scss';
@@ -54,25 +51,6 @@ import 'scss/component/title.scss';
 import 'scss/component/toast.scss';
 import 'scss/component/tooltip.scss';
 import 'scss/component/navigation.scss';
-
-import 'scss/component/form/button.scss';
-import 'scss/component/form/drag.scss';
-import 'scss/component/form/filter.scss';
-import 'scss/component/form/input.scss';
-import 'scss/component/form/inputWithFile.scss';
-import 'scss/component/form/phrase.scss';
-import 'scss/component/form/pin.scss';
-import 'scss/component/form/select.scss';
-import 'scss/component/form/switch.scss';
-import 'scss/component/form/textarea.scss';
-
-import 'scss/component/widget/common.scss';
-import 'scss/component/widget/space.scss';
-import 'scss/component/widget/list.scss';
-import 'scss/component/widget/tree.scss';
-
-import 'scss/component/list/object.scss';
-import 'scss/component/list/previewObject.scss';
 
 import 'scss/component/preview/common.scss';
 import 'scss/component/preview/link.scss';
@@ -126,6 +104,27 @@ import 'scss/block/table.scss';
 import 'scss/block/tableOfContents.scss';
 import 'scss/block/text.scss';
 import 'scss/block/type.scss';
+
+import 'scss/form/button.scss';
+import 'scss/form/drag.scss';
+import 'scss/form/filter.scss';
+import 'scss/form/input.scss';
+import 'scss/form/inputWithFile.scss';
+import 'scss/form/phrase.scss';
+import 'scss/form/pin.scss';
+import 'scss/form/select.scss';
+import 'scss/form/switch.scss';
+import 'scss/form/textarea.scss';
+
+import 'scss/list/object.scss';
+import 'scss/list/widget.scss';
+import 'scss/list/previewObject.scss';
+import 'scss/list/objectManager.scss';
+
+import 'scss/widget/common.scss';
+import 'scss/widget/space.scss';
+import 'scss/widget/list.scss';
+import 'scss/widget/tree.scss';
 
 import 'scss/popup/common.scss';
 import 'scss/popup/confirm.scss';

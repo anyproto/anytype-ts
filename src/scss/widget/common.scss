@@ -37,7 +37,7 @@
 
 	.contentWrapper { transition: height 0.4s $easeInQuint; }
 
-	.icon.remove { position: absolute; top: -15px; right: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }
+	.icon.remove { position: absolute; top: -15px; left: -15px; height: 40px; width: 40px; display: none; z-index: 2; cursor: default !important; }
 	.icon.remove {
 		.inner {
 			height: 20px; width: 20px; border-radius: 50%; background-color: $colorWhite;
