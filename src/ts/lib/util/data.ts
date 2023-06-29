@@ -769,9 +769,8 @@ class UtilData {
 
 	graphFilters () {
 		const { workspace } = commonStore;
-		const { profile } = blockStore;
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
-		const skipIds = [ '_anytype_profile', profile ];
+		const skipIds = [ '_anytype_profile' ];
 
 		return [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
