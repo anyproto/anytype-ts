@@ -19,24 +19,18 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 
 		return (
 			<div className="body">
-				<div className="side left" onClick={this.onOpenSettings}>
-					<IconObject 
-						id="widget-space-icon" 
-						object={{ ...space, layout: I.ObjectLayout.Space }} 
-						forceLetter={true} 
-						size={36}
-						canEdit={true} 
-						onSelect={this.onSelect} 
-						onUpload={this.onUpload}
-					/>
-					<div className="txt">
-						<ObjectName object={space} />
-						<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
-					</div>
-				</div>
-
-				<div className="side right">
-					<Icon className="settings" tooltip="Settings" onClick={this.onOpenSettings} />
+				<IconObject 
+					id="widget-space-icon" 
+					object={{ ...space, layout: I.ObjectLayout.Space }} 
+					forceLetter={true} 
+					size={36}
+					canEdit={true} 
+					onSelect={this.onSelect} 
+					onUpload={this.onUpload}
+				/>
+				<div className="txt">
+					<ObjectName object={space} />
+					<div className="type">{translate(`spaceType${space.spaceType}`)}</div>
 				</div>
 			</div>
 		);
