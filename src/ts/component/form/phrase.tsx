@@ -2,13 +2,16 @@ import * as React from 'react';
 import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { UtilCommon, keyboard, translate } from 'Lib';
+import { keyboard, translate, Storage } from 'Lib';
+import { popupStore } from 'Store';
 
 interface Props {
 	value: string;
 	readonly?: boolean;
 	isHidden?: boolean;
+	checkPin?: boolean;
 	onChange?: (phrase: string) => void;
+	onToggle?: (isHidden: boolean) => void;
 };
 
 interface State {
@@ -220,7 +223,26 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	onToggle () {
-		this.setState({ isHidden: !this.state.isHidden });
+		const { checkPin, onToggle } = this.props;
+		const { isHidden } = this.state;
+		const pin = Storage.get('pin');
+		const callBack = () => {
+			this.setState({ isHidden: !isHidden });
+
+			if (onToggle) {
+				onToggle(!isHidden);
+			};
+		};
+
+		if (isHidden && checkPin && pin) {
+			popupStore.open('pin', {
+				data: {
+					onSuccess: callBack
+				}
+			});
+		} else {
+			callBack();
+		};
 	};
 
 	checkValue (v: string[]) {

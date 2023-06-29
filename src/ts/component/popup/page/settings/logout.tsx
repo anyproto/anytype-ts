@@ -9,7 +9,6 @@ import Head from './head';
 interface State {
 	entropy: string;
 	showCode: boolean;
-	phraseCopied: boolean;
 };
 
 const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends React.Component<I.PopupSettings, State> {
@@ -19,7 +18,6 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	state = {
 		entropy: '',
 		showCode: false,
-		phraseCopied: false
 	};
 
 	constructor (props: I.PopupSettings) {
@@ -30,7 +28,6 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	};
 
 	render () {
-		const { phraseCopied } = this.state;
 		return (
 			<div
 				ref={node => this.node = node}
@@ -42,10 +39,12 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 				
 				<div className="inputs" onClick={this.onCopy}>
 					<Phrase
-						ref={(ref) => (this.refPhrase = ref)}
+						ref={ref => this.refPhrase = ref}
 						value={authStore.phrase}
 						readonly={true}
-						isHidden={!phraseCopied}
+						isHidden={true}
+						checkPin={true}
+						onToggle={this.onToggle}
 					/>
 				</div>
 
@@ -69,12 +68,16 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 		analytics.event('ScreenKeychain', { type: 'BeforeLogout' });
 	};
 
-	onCopy = () => {
+	onToggle (isHidden: boolean): void {
+		if (!isHidden) {
+			UtilCommon.clipboardCopy({ text: authStore.phrase });
+			Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
+			analytics.event('KeychainCopy', { type: 'BeforeLogout' });
+		};
+	};
+
+	onCopy () {
 		this.refPhrase.onToggle();
-		this.setState({ phraseCopied: true });
-		UtilCommon.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
-		analytics.event('KeychainCopy', { type: 'BeforeLogout' });
 	};
 
 	onLogout () {

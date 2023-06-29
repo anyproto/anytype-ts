@@ -304,20 +304,8 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const { param } = this.props;
 		const { data } = param;
 		const { page } = data || {};
-		const pin = Storage.get('pin');
 
 		this.prevPage = page;
-
-		if (pin && (id == 'phrase') && !this.pinConfirmed) {
-			this.setConfirmPin(() => { 
-				this.setPinConfirmed(true);
-				this.onPage('phrase');
-				this.setPinConfirmed(false);
-			});
-
-			this.onPage('pinConfirm');
-			return;
-		};
 
 		popupStore.updateData(this.props.id, { page: id });
 		analytics.event('settings', { params: { id } });

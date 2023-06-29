@@ -8,7 +8,6 @@ import { commonStore, authStore } from 'Store';
 interface State {
 	entropy: string;
 	showCode: boolean;
-	phraseCopied: boolean;
 };
 
 const QRColor = {
@@ -23,7 +22,6 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	state = {
 		entropy: '',
 		showCode: false,
-		phraseCopied: false
 	};
 
 	constructor (props: I.PopupSettings) {
@@ -31,10 +29,11 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 		this.onCode = this.onCode.bind(this);
 		this.onCopy = this.onCopy.bind(this);
+		this.onToggle = this.onToggle.bind(this);
 	};
 
 	render () {
-		const { entropy, showCode, phraseCopied } = this.state;
+		const { entropy, showCode } = this.state;
 		const theme = commonStore.getThemeClass();
 
 		return (
@@ -46,10 +45,12 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 				
 				<div className="inputs" onClick={this.onCopy}>
 					<Phrase
-						ref={(ref) => (this.refPhrase = ref)}
+						ref={ref => this.refPhrase = ref}
 						value={authStore.phrase}
 						readonly={true}
-						isHidden={!phraseCopied}
+						isHidden={true}
+						checkPin={true}
+						onToggle={this.onToggle}
 					/>
 				</div>
 
@@ -77,11 +78,16 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 		analytics.event('ScreenKeychain', { type: 'ScreenSettings' });
 	};
 
-	onCopy = () => {
+	onToggle (isHidden: boolean): void {
+		if (!isHidden) {
+			UtilCommon.clipboardCopy({ text: authStore.phrase });
+			Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
+			analytics.event('KeychainCopy', { type: 'ScreenSettings' });
+		};
+	};
+
+	onCopy () {
 		this.refPhrase.onToggle();
-		this.setState({ phraseCopied: true });
-		UtilCommon.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
 	};
 
 	onCode () {

@@ -1,0 +1,9 @@
+@import "~scss/_vars";
+
+.popups {
+	.popup.popupPin {
+		.innerWrap { width: 424px; padding: 32px 32px 22px 32px; text-align: center; }
+		.title { @include text-header3; margin-bottom: 24px; }
+		.error { margin: 8px 0px 0px 0px; }
+	}
+}
