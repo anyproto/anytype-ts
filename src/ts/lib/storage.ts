@@ -197,6 +197,7 @@ class Storage {
 			'tabStore', 
 			'graph',
 			'space',
+			'pin',
 		];
 
 		keys.forEach(key => this.delete(key));

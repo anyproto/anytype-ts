@@ -253,7 +253,7 @@
 	"blockNameCollection": { "en": "Inline collection" },
 	"blockTextCollection": { "en": "Add inline collection of objects with different properties" },
 
-	"blockTextToggleEmpty": { "en": "Empty toggle. Click and drop block inside" },
+	"blockTextToggleEmpty": { "en": "Empty toggle. Click or drop block inside" },
 
 	"blockFileDownload": { "en": "Download" },
 
