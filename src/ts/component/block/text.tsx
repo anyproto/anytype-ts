@@ -622,7 +622,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
-		
+
 		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
 			e.preventDefault();
 			return;
@@ -634,7 +634,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
-		
+
 		const menuOpen = menuStore.isOpen();
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
@@ -655,6 +655,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+space`, preventDefault: false },
 			{ key: `ctrl+shift+l`, preventDefault: false },
 		];
+		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
+		const twineClose = {
+			'[': ']',
+			'{': '}',
+			'(': ')'
+		};
 
 		for (let i = 0; i < 9; ++i) {
 			saveKeys.push({ key: `${cmd}+${i}`, preventDefault: false });
@@ -775,6 +781,26 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			e.preventDefault();
 			this.onSmile();
 		});
+
+		if (twineOpen.includes(e.key)) {
+			if (!range || range.from == range.to) {
+				return;
+			};
+			e.preventDefault();
+
+			const closingSymbol = twineClose[e.key] || e.key;
+
+			this.marks = Mark.adjust(this.marks, range.from, 1);
+			this.marks = Mark.adjust(this.marks, range.to, 1);
+			value = UtilCommon.stringInsert(value, e.key, range.from, range.from);
+			value = UtilCommon.stringInsert(value, closingSymbol, range.to + 1, range.to + 1);
+			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+				focus.set(block.id, { from: range.from + 1, to: range.to + 1 });
+				focus.apply();
+			});
+			
+			ret = true;
+		};
 
 		if (ret) {
 			return;
