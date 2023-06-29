@@ -129,7 +129,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	onRelation () {
-		const { isPopup, rootId } = this.props;
+		const { isPopup, rootId, menuOpen } = this.props;
 		const cnw = [ 'fixed' ];
 		const root = blockStore.getLeaf(rootId, rootId);
 		const isLocked = root ? root.isLocked() : false;
@@ -138,8 +138,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			cnw.push('fromHeader');
 		};
 
-		const param: any = {
-			element: '#button-header-relation',
+		menuOpen('blockRelationView', '#button-header-relation', {
 			noFlipX: true,
 			noFlipY: true,
 			horizontal: I.MenuDirection.Right,
@@ -150,9 +149,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				rootId,
 				readonly: isLocked,
 			},
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+		});
 	};
 
 	setTitle () {

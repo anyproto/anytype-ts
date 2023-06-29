@@ -103,11 +103,6 @@ class Header extends React.Component<Props> {
 	};
 
 	menuOpen (id: string, elementId: string, param: Partial<I.MenuParam>) {
-		if (menuStore.isOpen()) {
-			menuStore.closeAll();
-			return;
-		};
-
 		const { isPopup } = this.props;
 		const st = $(window).scrollTop();
 		const element = $(`${this.getContainer()} ${elementId}`);
@@ -121,7 +116,7 @@ class Header extends React.Component<Props> {
 			menuParam.classNameWrap = 'fixed fromHeader';
 		};
 
-		menuStore.closeAll(null, () => { menuStore.open(id, menuParam); });
+		menuStore.closeAllForced(null, () => { menuStore.open(id, menuParam); });
 	};
 
 	getContainer () {
