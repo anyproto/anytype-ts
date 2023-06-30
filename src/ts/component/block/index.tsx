@@ -445,10 +445,8 @@ const Block = observer(class Block extends React.Component<Props> {
 	onMenuDown (e: any) {
 		e.stopPropagation();
 
-		const { block } = this.props;
-
 		focus.clear(true);
-		this.ids = UtilData.selectionGet(block.id, true, false, this.props);
+		this.ids = UtilData.selectionGet(this.props.block.id, false, false, this.props);
 	};
 	
 	onMenuClick () {
