@@ -312,7 +312,7 @@ class UtilData {
 			},
 			{
 				subId: Constant.subId.space,
-				keys: Constant.defaultRelationKeys.concat([ 'spaceDashboardId', 'spaceAccessibility', 'createdDate' ]),
+				keys: this.spaceRelationKeys(),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space },
 				],
@@ -336,6 +336,10 @@ class UtilData {
 		for (const item of list) {
 			this.searchSubscribe(item, () => cb(item));
 		};
+	};
+
+	spaceRelationKeys () {
+		return Constant.defaultRelationKeys.concat([ 'spaceDashboardId', 'spaceAccessibility', 'createdDate' ]);
 	};
 
 	createSession (callBack?: (message: any) => void) {

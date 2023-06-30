@@ -151,6 +151,7 @@ import 'scss/menu/smile.scss';
 import 'scss/menu/thread.scss';
 import 'scss/menu/type.scss';
 import 'scss/menu/widget.scss';
+import 'scss/menu/space.scss';
 
 import 'scss/menu/account/path.scss';
 

@@ -5,6 +5,7 @@ import raf from 'raf';
 import { Dimmer, Icon } from 'Component';
 import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
+import Constant from 'json/constant.json';
 
 import MenuAccountPath from './account/path';
 
@@ -48,6 +49,8 @@ import MenuRelationSuggest from './relation/suggest';
 import MenuTypeSuggest from './type/suggest';
 
 import MenuGraphSettings from './graph/settings';
+import MenuWidget from './widget';
+import MenuSpace from './space';
 
 import MenuDataviewRelationList from './dataview/relation/list';
 import MenuDataviewRelationEdit from './dataview/relation/edit';
@@ -70,10 +73,6 @@ import MenuDataviewText from './dataview/text';
 import MenuDataviewSource from './dataview/source';
 import MenuDataviewContext from './dataview/context';
 import MenuDataviewCreateBookmark from './dataview/create/bookmark';
-
-import MenuWidget from './widget';
-
-import Constant from 'json/constant.json';
 
 interface State {
 	tab: string;
@@ -127,6 +126,8 @@ const Components: any = {
 	typeSuggest:			 MenuTypeSuggest,
 
 	graphSettings:			 MenuGraphSettings,
+	widget:					 MenuWidget,
+	space:					 MenuSpace,
 
 	dataviewRelationList:	 MenuDataviewRelationList,
 	dataviewRelationEdit:	 MenuDataviewRelationEdit,
@@ -149,8 +150,6 @@ const Components: any = {
 	dataviewSource:			 MenuDataviewSource,
 	dataviewContext:		 MenuDataviewContext,
 	dataviewCreateBookmark:	 MenuDataviewCreateBookmark,
-
-	widget:				 MenuWidget,
 };
 
 const Menu = observer(class Menu extends React.Component<I.Menu, State> {

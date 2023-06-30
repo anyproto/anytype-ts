@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { Icon, IconObject } from 'Component';
-import { commonStore, detailStore, blockStore, popupStore } from 'Store';
+import { commonStore, detailStore, blockStore, menuStore } from 'Store';
 import { I, UtilObject, keyboard, Storage, UtilCommon, Preview } from 'Lib';
 import Constant from 'json/constant.json';
 
@@ -75,6 +75,7 @@ class Navigation extends React.Component {
 					<div className="line" />
 
 					<div 
+						id="button-navigation-profile"
 						className="iconWrap"
 						onClick={this.onProfile}
 						onMouseEnter={e => this.onTooltipShow(e, 'Settings')}
@@ -135,7 +136,13 @@ class Navigation extends React.Component {
 	};
 
 	onProfile () {
-		popupStore.open('settings', {});
+		menuStore.open('space', {
+			element: '#navigationPanel',
+			type: I.MenuType.Horizontal,
+			horizontal: I.MenuDirection.Center,
+			vertical: I.MenuDirection.Top,
+			offsetY: -12,
+		});
 	};
 
 	resize () {
@@ -143,6 +150,7 @@ class Navigation extends React.Component {
 			return;
 		};
 
+		const win = $(window);
 		const node = $(this.node);
 		const coords = Storage.get('navigation') || {};
 		const { ww, wh } = UtilCommon.getWindowDimensions();
@@ -174,6 +182,8 @@ class Navigation extends React.Component {
 		};
 	
 		this.setStyle(coords.x, coords.y);
+
+		win.trigger('resize.menuSpace');
 	};
 
 	onDragStart (e: any) {
