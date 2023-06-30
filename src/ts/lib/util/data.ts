@@ -181,13 +181,13 @@ class UtilData {
 		return ids;
 	};
 	
-	onAuth (account: I.Account, param?: any, callBack?: () => void) {
+	onAuth (account: I.Account, info: I.AccountInfo, param?: any, callBack?: () => void) {
 		if (!account) {
 			console.error('[onAuth] No account defined');
 			return;
 		};
 
-		commonStore.infoSet(account.info);
+		commonStore.infoSet(info);
 		commonStore.configSet(account.config, false);
 		authStore.accountSet(account);
 
@@ -339,7 +339,7 @@ class UtilData {
 	};
 
 	spaceRelationKeys () {
-		return Constant.defaultRelationKeys.concat([ 'spaceDashboardId', 'spaceAccessibility', 'createdDate' ]);
+		return Constant.defaultRelationKeys.concat([ 'spaceId', 'spaceDashboardId', 'spaceAccessibility', 'createdDate' ]);
 	};
 
 	createSession (callBack?: (message: any) => void) {

@@ -86,6 +86,14 @@ const WalletCloseSession = (token: string, callBack?: (message: any) => void) =>
 	dispatcher.request(WalletCloseSession.name, request, callBack);
 };
 
+const WalletSetSessionSpaceID = (spaceId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Wallet.SetSessionSpaceID.Request();
+
+	request.setSpaceid(spaceId);
+
+	dispatcher.request(WalletSetSessionSpaceID.name, request, callBack);
+};
+
 // ---------------------- WORKSPACE ---------------------- //
 
 const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
@@ -94,6 +102,11 @@ const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
 	request.setName(name);
 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
+};
+
+const WorkspaceInfo = (callBack?: (message: any) => void) => {
+	const request = new Commands.Empty();
+	dispatcher.request(WorkspaceInfo.name, request, callBack);
 };
 
 const WorkspaceObjectAdd = (objectId: string, callBack?: (message: any) => void) => {
@@ -1736,8 +1749,10 @@ export {
 	WalletConvert,
 	WalletCreateSession,
 	WalletCloseSession,
+	WalletSetSessionSpaceID,
 
 	WorkspaceCreate,
+	WorkspaceInfo,
 	WorkspaceObjectAdd,
 	WorkspaceObjectListRemove,
 

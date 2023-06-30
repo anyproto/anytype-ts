@@ -404,7 +404,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			UtilObject.setName(workspace, name);
 
 			window.setTimeout(() => {
-				UtilData.onAuth(this.account, {}, () => {
+				UtilData.onAuth(this.account, this.account.info, {}, () => {
 					UtilCommon.route('/main/usecase', { replace: true, animate: true });
 				});
 			}, 2000);

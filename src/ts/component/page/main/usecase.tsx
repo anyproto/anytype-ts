@@ -88,7 +88,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 			analytics.event('SelectUsecase', { type: id });
 			commonStore.redirectSet('/main/graph');
 
-			UtilData.onAuth(authStore.account, { routeParam: { animate: true } }, () => {
+			UtilData.onAuth(authStore.account, authStore.account.info, { routeParam: { animate: true } }, () => {
 				const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
 				if (blocks.length) {
 					Storage.setToggle('widget', blocks[0].parentId, true);

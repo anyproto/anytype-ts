@@ -355,6 +355,12 @@ export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
 	};
 };
 
+export const WorkspaceInfo = (response: Rpc.Workspace.Info.Response) => {
+	return {
+		info: Mapper.From.AccountInfo(response.getInfo()),
+	};
+};
+
 export const WorkspaceObjectAdd = (response: Rpc.Workspace.Object.Add.Response) => {
 	return {
 		objectId: response.getObjectid(),

@@ -6,9 +6,10 @@ import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
-	icon: string;
-	hash: string;
 	name: string;
+	iconEmoji: string;
+	iconOption: number;
+	iconImage: string;
 };
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
@@ -16,9 +17,10 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	refName: any = null;
 
 	state = {
-		icon: '',
-		hash: '',
 		name: '',
+		iconEmoji: '',
+		iconOption: UtilCommon.rand(1, Constant.iconCnt),
+		iconImage: '',
 	};
 
 	constructor (props: any) {
@@ -31,13 +33,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	render () {
-		const { icon, hash, name } = this.state;
+		const { name, iconOption, iconEmoji, iconImage } = this.state;
 		const space = {
 			layout: I.ObjectLayout.Space,
 			name,
-			iconOption: UtilCommon.rand(1, Constant.iconCnt),
-			iconEmoji: icon,
-			iconImage: hash,
+			iconOption,
+			iconEmoji,
+			iconImage,
 		};
 
 		return (
@@ -111,12 +113,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		menuStore.closeAll([ 'select', 'searchObject' ]);	
 	};
 
-	onSelect (icon: string) {
-		this.setState({ icon, hash: '' });
+	onSelect (iconEmoji: string) {
+		this.setState({ iconEmoji, iconImage: '' });
 	};
 
-	onUpload (hash: string) {
-		this.setState({ icon: '', hash });
+	onUpload (iconImage: string) {
+		this.setState({ iconEmoji: '', iconImage });
 	};
 
 	onName (e: any, v: string) {

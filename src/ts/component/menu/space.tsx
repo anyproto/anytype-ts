@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, UtilData } from 'Lib';
-import { dbStore, detailStore } from 'Store';
+import { I, C, UtilData, UtilObject } from 'Lib';
+import { authStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -18,9 +18,10 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	
 	render () {
 		const items = this.getItems();
+		const space = UtilObject.getSpace();
 
 		const Item = (item) => (
-			<div className="item" onClick={this.onClick}>
+			<div className={[ 'item', (item.spaceId == space.spaceId ? 'active' : '') ].join(' ')} onClick={e => this.onClick(e, item)}>
 				<div className="iconWrap">
 					<IconObject object={item} size={96} />
 				</div>
@@ -48,7 +49,21 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		return dbStore.getRecords(subId, '').map(id => detailStore.get(subId, id, UtilData.spaceRelationKeys()));
 	};
 
-	onClick () {
+	onClick (e: any, item: any) {
+		const space = UtilObject.getSpace();
+		const { close } = this.props;
+
+		if (space.spaceId == item.spaceId) {
+			return;
+		};
+
+		C.WalletSetSessionSpaceID(item.spaceId, () => {
+			C.WorkspaceInfo((message: any) => {
+				UtilData.onAuth(authStore.account, message.info);
+			});
+		});
+
+		close();
 	};
 
 	resize () {

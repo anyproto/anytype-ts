@@ -353,7 +353,7 @@ class Action {
 							return;
 						};
 
-						UtilData.onAuth(message.account, { routeParam: { animate: true } }, () => {
+						UtilData.onAuth(message.account, message.account.info, { routeParam: { animate: true } }, () => {
 							window.setTimeout(() => {
 								popupStore.open('migration', { data: { type: 'import' } });
 							}, Constant.delay.popup);
