@@ -225,6 +225,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const filter = String(data.filter || '');
 		const skipKeys = data.skipKeys || [];
 		const filters: any[] = [
+			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.In, value: [ commonStore.workspace, Constant.storeSpaceId ] },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
 			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
 		];
@@ -389,7 +390,6 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				];
 
 				menuParam.data = Object.assign(menuParam.data, {
-					ignoreWorkspace: true,
 					keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 					filters,
 					sorts: [

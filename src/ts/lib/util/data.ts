@@ -276,12 +276,12 @@ class UtilData {
 					{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.Equal, value: true },
 				],
 				noDeps: true,
-				ignoreWorkspace: true,
 			},
 			{
 				subId: Constant.subId.type,
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.In, value: [ commonStore.workspace, Constant.storeSpaceId ] },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
 				],
 				noDeps: true,
@@ -292,6 +292,7 @@ class UtilData {
 				subId: Constant.subId.relation,
 				keys: Constant.relationRelationKeys,
 				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.In, value: [ commonStore.workspace, Constant.storeSpaceId ] },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
 				],
 				noDeps: true,
