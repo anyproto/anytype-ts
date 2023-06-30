@@ -39,7 +39,8 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	onOpenSettings (e: React.MouseEvent) {
 		e.stopPropagation();
 
-		popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true }, className: 'isSpace' });
+		//popupStore.open('settings', { data: { page: 'spaceIndex', isSpace: true }, className: 'isSpace' });
+		popupStore.open('settings', { data: { page: 'spaceCreate', isSpace: true }, className: 'isSpaceCreate' });
 	};
 
 	onSelect (icon: string) {

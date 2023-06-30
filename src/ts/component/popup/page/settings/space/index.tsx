@@ -59,7 +59,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		return (
 			<React.Fragment>
 
-				<div className="spaceSettingsIndexHeader">
+				<div className="spaceHeader">
 					<div className="iconWrapper">
 						<IconObject
 							id="spaceIcon"
@@ -124,9 +124,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										<Label text={translate(`popupSettingsSpaceIndexHomepageDescription`)} />
 									</div>
 									<div className="side right">
-										<div onClick={this.onDashboard} id="dashboard" className="button blank c28">
-											<div className="txt">{home ? home.name : 'Select'}</div>
-											<Icon className="arrow down" />
+										<div id="empty-dashboard-select" className="select" onClick={this.onDashboard}>
+											<div className="item">
+												<div className="name">
+													{home ? home.name : 'Select'}
+												</div>
+											</div>
+											<Icon className="arrow light" />
 										</div>
 									</div>
 								</div>
@@ -216,7 +220,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onDashboard () {
-		UtilMenu.dashboardSelect(`#${this.props.getId()} #dashboard`);
+		UtilMenu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
 	};
 
 	onExtend () {
@@ -255,7 +259,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	checkName (v: string): string {
-		if ((v == UtilObject.defaultName('Space')) || (v == UtilObject.defaultName('Page'))) {
+		if ([ UtilObject.defaultName('Space'), UtilObject.defaultName('Page') ].includes(v)) {
 			v = '';
 		};
 		return v;

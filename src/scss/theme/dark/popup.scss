@@ -59,16 +59,23 @@
 		}
 
 		.side.right.tabSpaceIndex {
-			.spaceSettingsIndexHeader .headerContent .spaceType { background-color: $colorHoverMedium; }
-			.sections .section .sectionContent { border-color: $colorLineSecondary; }
-
-			.sections .section .sectionContent {
-				.item { border-color: $colorLineSecondary; }
-				.item {
-					.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+			.spaceHeader {
+				.headerContent {
+					.spaceType { background-color: $colorHoverMedium; }
 				}
-				.item.red {
-					.progressBar .fill { background: $colorRed; }
+			}
+			.sections {
+				.section {
+					.sectionContent { border-color: $colorLineSecondary; }
+					.sectionContent {
+						.item { border-color: $colorLineSecondary; }
+						.item {
+							.icon.arrow.down { background-image: url('#{$themePath}/arrow/button/black.svg'); }
+						}
+						.item.red {
+							.progressBar .fill { background: $colorRed; }
+						}
+					}
 				}
 			}
 		}

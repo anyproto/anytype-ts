@@ -15,19 +15,8 @@
 		}
 		.content { height: 100%; }
 
-		.space {
-			display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px;
-			border-radius: 8px; transition: $transitionAllCommon;
-		}
-		.space {
-			.iconObject { flex-shrink: 0; }
-			.txt { width: calc(100% - 40px); }
-			.name { @include text-common; font-weight: 600; }
-			.type { @include text-small; color: $colorDarkGrey; }
-		}
-
-		.sides { display: flex; height: 100%; }
-		.sides {
+		.mainSides { display: flex; height: 100%; }
+		.mainSides {
 			> .side { position: relative; height: 100%; }
 			> .side.left { width: 30%; background: $colorVeryLightGrey; padding: 16px 8px; overflow-x: hidden; overflow-y: auto; }
 			> .side.left {
@@ -107,11 +96,6 @@
 				.label.small, .label.section { @include text-small; }
 				.label.section { margin: 30px 0px 4px 0px; }
 
-				.select { border: 0px; color: $colorDarkGrey;  cursor: default; }
-				.select {
-					.icon.arrow { margin: 0px !important; top: 3px; }
-				}
-
 				.name { width: 100%; }
 				.name {
 					.label { margin: 0px 0px 6px 0px; }
@@ -155,6 +139,16 @@
 					.icon.hide { background-image: url('~img/icon/popup/settings/phraseToggle0.svg'); }
 					.icon.see { background-image: url('~img/icon/popup/settings/phraseToggle1.svg'); background-color: $colorVeryLightGrey; }
 				}
+
+				.select {
+					background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
+					min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px;
+				}
+				.select:hover { background: $colorHoverMedium; }
+				.select {
+					.item { border-bottom: 0; color: $colorBlack; }
+					.icon.arrow { right: 3px !important; }
+				}
 			}
 		}
 
@@ -185,9 +179,9 @@
 			}
 		}
 
-		.side.right.tabSpaceIndex {
-			.spaceSettingsIndexHeader { display: flex; align-items: center; margin-bottom: 32px; }
-			.spaceSettingsIndexHeader {
+		.side.right.tabSpaceIndex, .side.right.tabSpaceCreate {
+			.spaceHeader { display: flex; align-items: center; margin-bottom: 32px; }
+			.spaceHeader {
 				.iconWrapper { margin-bottom: 0; }
 
 				.headerContent { margin-left: 24px; width: 100%; }
@@ -216,10 +210,10 @@
 
 					.sectionContent { border-radius: 12px; border: 1px solid $colorBorderLight; overflow: hidden; }
 					.sectionContent {
-						.item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
-						.item:last-child { border-bottom: 0; }
+						> .item { padding: 16px; border-bottom: 1px solid $colorBorderLight; }
+						> .item:last-child { border-bottom: 0; }
 
-						.item {
+						> .item {
 							.sides { display: flex; justify-content: space-between; }
 							.sides {
 								.side { width: unset; background: unset; padding: unset; }
@@ -246,7 +240,7 @@
 
 				.section.sectionSpaceManager {
 					.sectionContent {
-						.item {
+						> .item {
 							.storageLabel { margin-bottom: 12px; line-height: 18px; }
 							.storageLabel {
 								.label { display: inline; }
@@ -256,7 +250,7 @@
 								.fill { background: $colorLime; }
 							}
 						}
-						.item.red {
+						> .item.red {
 							.progressBar {
 								.fill { background: $colorRed; }
 							}
@@ -266,9 +260,9 @@
 
 				.section.sectionIntegrations {
 					.sectionContent {
-						.item { transition: $transitionAllCommon; }
-						.item:hover { background: $colorHoverLight; }
-						.item {
+						> .item { transition: $transitionAllCommon; }
+						> .item:hover { background: $colorHoverLight; }
+						> .item {
 							.side.left { display: flex; gap: 0 12px; }
 							.side.left {
 								.icon { width: 22px; height: 22px; }
@@ -281,16 +275,22 @@
 
 				.section.sectionInfo {
 					.sectionContent {
-						.item {
+						> .item {
 							.sides { align-items: center; }
 							.icon { width: 22px; height: 22px; margin-right: 2px; opacity: 0; transition: $transitionAllCommon; }
 						}
-						.item:hover {
+						> .item:hover {
 							.icon { opacity: 1; }
 						}
 					}
 				}
 			}
+		}
+
+		.side.right.tabSpaceCreate {
+			.title { margin: 0px 0px 26px 0px; }
+			.spaceHeader { margin: 0px 0px 24px 0px; }
+			.sections { margin: 0px 0px 24px 0px; }
 		}
 
 		.side.right.tabPhrase {
@@ -405,20 +405,6 @@
 			}
 			.btn.system.active {
 				.bg::before { box-shadow: 0px 0px; }
-			}
-		}
-
-		.side.right.tabImportCsv,
-		.side.right.tabPersonal,
-		.side.right.tabPinIndex {
-			.select {
-				background: none; border: solid 1px $colorBorderDark; font-weight: 400; text-decoration: none;
-				min-height: 28px; padding: 3px 26px 3px 12px; border-radius: 8px;
-			}
-			.select:hover { background: $colorHoverMedium; }
-			.select {
-				.item { border-bottom: 0; color: $colorBlack; }
-				.icon.arrow { right: 3px !important; }
 			}
 		}
 
@@ -549,5 +535,11 @@
 		}
 	}
 
-	.popupSettings.isSpace .innerWrap { width: 684px; height: 700px; }
+	.popupSettings.isSpace {
+		.innerWrap { width: 684px; height: 700px; }
+	}
+
+	.popupSettings.isSpaceCreate {
+		.innerWrap { width: 684px; height: 406px; }
+	}
 }

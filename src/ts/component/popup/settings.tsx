@@ -30,6 +30,7 @@ import PageExportProtobuf from './page/settings/export/protobuf';
 import PageExportMarkdown from './page/settings/export/markdown';
 
 import PageSpaceIndex from './page/settings/space/index';
+import PageSpaceCreate from './page/settings/space/create';
 import PageSpaceStorageManager from './page/settings/space/storage';
 import PageSpaceInvite from './page/settings/space/invite';
 import PageSpaceTeam from './page/settings/space/team';
@@ -66,6 +67,7 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
+	spaceCreate:		 PageSpaceCreate,
 	spaceStorageManager: PageSpaceStorageManager,
 	spaceInvite:		 PageSpaceInvite,
 	spaceTeam:		 	 PageSpaceTeam,
@@ -183,7 +185,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		return (
 			<div 
 				ref={node => this.node = node}
-				className="sides"
+				className="mainSides"
 			>
 				{sections.length ? (
 					<div id="sideLeft" className="side left">
@@ -248,10 +250,11 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 							id: 'spaceIndex',
 							name: 'Space',
 							subPages: [
-								'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
+								'spaceInvite', 'spaceCreate', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
 								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown', 'importCsv',
 								'exportIndex', 'exportProtobuf', 'exportMarkdown'
-							]
+							],
+							noHeader: [ 'spaceCreate' ],
 						},
 					]
 				},
@@ -374,7 +377,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const items = this.getItems();
 
 		for (const item of items) {
-			if ((item.subPages || []).includes(page)) {
+			if ((item.subPages || []).includes(page) && !(item.noHeader || []).includes(page)) {
 				return true;
 			};
 		};
