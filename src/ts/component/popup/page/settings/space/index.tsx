@@ -9,7 +9,6 @@ import Url from 'json/url.json';
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
 
 	refName: any = null;
-	dashboardId = '';
 
 	constructor (props: any) {
 		super(props);

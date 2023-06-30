@@ -5,13 +5,21 @@ import { UtilObject, UtilCommon, I, C, translate, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings> {
+interface State {
+	icon: string;
+	hash: string;
+	name: string;
+};
+
+const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
 
 	refName: any = null;
-	dashboardId = '';
-	icon = '';
-	hash = '';
-	name = '';
+
+	state = {
+		icon: '',
+		hash: '',
+		name: '',
+	};
 
 	constructor (props: any) {
 		super(props);
@@ -23,6 +31,15 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	render () {
+		const { icon, hash, name } = this.state;
+		const space = {
+			layout: I.ObjectLayout.Space,
+			name,
+			iconOption: UtilCommon.rand(1, Constant.iconCnt),
+			iconEmoji: icon,
+			iconImage: hash,
+		};
+
 		return (
 			<React.Fragment>
 
@@ -33,7 +50,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 						<IconObject
 							id="spaceIcon"
 							size={96}
-							object={{ layout: I.ObjectLayout.Space, iconOption: UtilCommon.rand(1, Constant.iconCnt) }}
+							object={space}
 							forceLetter={true}
 							canEdit={true}
 							menuParam={{ horizontal: I.MenuDirection.Center }}
@@ -95,24 +112,33 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onSelect (icon: string) {
-		this.icon = icon;
-		this.hash = '';
+		this.setState({ icon, hash: '' });
 	};
 
 	onUpload (hash: string) {
-		this.icon = '';
-		this.hash = hash;
+		this.setState({ icon: '', hash });
 	};
 
 	onName (e: any, v: string) {
-		this.name = this.checkName(v);
+		let ret = false;
+		
+		keyboard.shortcut('enter', e, () => {
+			this.onSubmit();
+			ret = true;
+		});
 
-		keyboard.shortcut('enter', e, () => this.onSubmit());
+		if (!ret) {
+			this.setState({ name: this.checkName(v) });
+		};
 	};
 
 	onSubmit () {
-		C.WorkspaceCreate(this.name, (message: any) => {
+		const { close } = this.props;
+
+		C.WorkspaceCreate(this.state.name, (message: any) => {
 			console.log(message.objectId);
+
+			close();
 		});
 	};
 
