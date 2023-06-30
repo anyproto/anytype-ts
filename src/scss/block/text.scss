@@ -151,8 +151,15 @@
 	/* Quote */
 	
 	.block.blockText.textQuote { padding: 6px 0px 6px 0px; }
-	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget { @include text-quote; padding: 1px 0px 2px 0px; }
-	.block.blockText.textQuote > .wrapContent > .additional > .line { width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 1.5px solid $colorBlack; }
+	.block.blockText.textQuote {
+		> .wrapContent {
+			> .selectable > .dropTarget { @include text-quote; padding: 1px 0px 2px 0px; }
+
+			> .additional {
+				> .line { width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 1.5px solid; }
+			}
+		}
+	}
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap { padding-left: 28px; }
 	.block.blockText.textQuote > .wrapContent > .selectable > .dropTarget > .flex > .editableWrap > .placeholder { left: 28px; }
 

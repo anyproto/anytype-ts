@@ -110,7 +110,7 @@ const Block = observer(class Block extends React.Component<Props> {
 				};
 
 				if (block.isTextQuote()) {
-					additional = <div className="line" />;
+					additional = <div className={[ 'line', (content.color ? `textColor-${content.color}` : '') ].join(' ')} />;
 				};
 
 				if (block.isTextTitle() || block.isTextDescription()) {
