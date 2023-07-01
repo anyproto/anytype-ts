@@ -196,7 +196,7 @@ class UtilData {
 		const { redirect } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
-		const routeParam = Object.assign({ replace: true}, (param || {}).routeParam || {});
+		const routeParam = Object.assign({ replace: true }, (param || {}).routeParam || {});
 
 		if (!profile) {
 			console.error('[onAuth] No profile defined');
