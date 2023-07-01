@@ -15,7 +15,7 @@
 					width: 100%; height: 104px; border: 4px solid rgba(255,255,255,0); border-radius: 8px; overflow: hidden; 
 					transition: border $transitionCommon;
 				}
-				.iconObject { border-radius: 0px; background: $colorVeryLightGrey; }
+				.iconObject { border-radius: 0px; }
 				.name { @include text-overflow-nw; @include text-small; width: 100%; text-align: center; }
 			}
 			.item:hover, .item.active {

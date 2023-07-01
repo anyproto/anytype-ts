@@ -23,7 +23,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		const Item = (item) => (
 			<div className={[ 'item', (item.spaceId == space.spaceId ? 'active' : '') ].join(' ')} onClick={e => this.onClick(e, item)}>
 				<div className="iconWrap">
-					<IconObject object={item} size={96} />
+					<IconObject object={item} size={96} forceLetter={true} />
 				</div>
 				<ObjectName object={item} />
 			</div>
