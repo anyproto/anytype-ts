@@ -7,16 +7,12 @@ import { C, I, UtilCommon, analytics, translate } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface Props extends I.PageComponent {
-	isPopup?: boolean;
-};
-
-const PageMainArchive = observer(class PageMainArchive extends React.Component<Props, {}> {
+const PageMainArchive = observer(class PageMainArchive extends React.Component<I.PageComponent> {
 
 	refManager: any = null;
 	rowLength = 0;
 
-	constructor (props: Props) {
+	constructor (props: I.PageComponent) {
 		super(props);
 
 		this.onRestore = this.onRestore.bind(this);

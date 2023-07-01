@@ -15,6 +15,7 @@ import PageAuthAccountSelect from './auth/accountSelect';
 import PageAuthOnboard from './auth/onboard';
 import PageAuthDeleted from './auth/deleted';
 
+import PageMainBlank from './main/blank';
 import PageMainEmpty from './main/empty';
 import PageMainEdit from './main/edit';
 import PageMainHistory from './main/history';
@@ -41,6 +42,7 @@ const Components = {
 	'auth/onboard':			 PageAuthOnboard,
 	'auth/deleted':			 PageAuthDeleted,
 
+	'main/blank':			 PageMainBlank,		
 	'main/empty':			 PageMainEmpty,		
 	'main/edit':			 PageMainEdit,
 	'main/history':			 PageMainHistory,
