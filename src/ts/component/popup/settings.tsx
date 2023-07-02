@@ -146,7 +146,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 				const isOnline = true;
 				const status = isOnline ? 'online' : 'offline';
 
-				icon = <IconObject object={profile} size={40} iconSize={40} forceLetter={true} />;
+				icon = <IconObject object={profile} size={36} iconSize={36} forceLetter={true} />;
 				name = profile.name;
 				cn.push('itemAccount');
 				// onlineStatus = <div className={[ 'onlineStatus', status ].join(' ')}>{status}</div>

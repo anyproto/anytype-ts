@@ -15,6 +15,17 @@
 		}
 		.content { height: 100%; }
 
+		.space {
+			display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px;
+			border-radius: 8px; transition: $transitionAllCommon;
+		}
+		.space {
+			.iconObject { flex-shrink: 0; }
+			.txt { width: calc(100% - 40px); }
+			.name { @include text-common; }
+			.type { @include text-small; color: $colorDarkGrey; }
+		}
+
 		.mainSides { display: flex; height: 100%; }
 		.mainSides {
 			> .side { position: relative; height: 100%; }
@@ -69,8 +80,8 @@
 					.icon.back { width: 8px; height: 8px; background-image: url('~img/icon/popup/settings/back.svg'); }
 					
 					.element { 
-						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 6px 2px 8px;
-						border-radius: 6px; margin-left: -5px;
+						color: $colorDarkGrey; display: inline-flex; gap: 0px 6px; align-items: center; padding: 2px 8px 2px 6px;
+						border-radius: 6px; margin-left: -6px;
 					}
 					.element:hover { background: $colorHoverMedium; }
 				}

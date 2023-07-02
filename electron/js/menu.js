@@ -47,7 +47,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Space settings', click: () => this.openSettings('spaceIndex', { className: 'isSpace' }) },
+					{ label: 'Space settings', click: () => this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }) },
 					{ label: 'Account settings', click: () => this.openSettings('') },
 
 					Separator,
@@ -62,8 +62,8 @@ class MenuManager {
 					{ label: 'Show logs', click: () => { shell.openPath(logPath); } },
 
 					Separator,
-					{ label: 'Import', click: () => this.openSettings('importIndex') },
-					{ label: 'Export', click: () => this.openSettings('exportIndex') },
+					{ label: 'Import', click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: 'Export', click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
 					{ label: 'Save as file', click: () => Util.send(this.win, 'commandGlobal', 'save') },
 
 					Separator,
@@ -283,13 +283,13 @@ class MenuManager {
 
 			Separator,
 
-			{ label: 'Space settings', click: () => { show(); this.openSettings('spaceIndex', { className: 'isSpace' }); } },
+			{ label: 'Space settings', click: () => { show(); this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
 			{ label: 'Account settings', click: () => { show(); this.openSettings(''); } },
 
 			Separator,
 
-			{ label: 'Import', click: () => { show(); this.openSettings('importIndex'); } },
-			{ label: 'Export', click: () => { show(); this.openSettings('exportIndex'); } },
+			{ label: 'Import', click: () => { show(); this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
+			{ label: 'Export', click: () => { show(); this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
 			
 			Separator,
 
@@ -308,10 +308,16 @@ class MenuManager {
 	};
 
 	openSettings (page, param) {
+		param = param || {};
+		param.data = param.data || {};
+
 		const Api = require('./api.js');
 
 		if (Api.isPinChecked) {
-			Util.send(this.win, 'popup', 'settings', Object.assign({ data: { page } }, param || {}), true); 
+			const popupParam = Object.assign({}, param);
+			popupParam.data = Object.assign({ page }, param.data);
+
+			Util.send(this.win, 'popup', 'settings', popupParam, true); 
 		};
 	};
 
