@@ -138,8 +138,11 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 
 	onLogout () {
-		UtilCommon.route('/', { replace: true, animate: true });
-		window.setTimeout(() => authStore.logout(false), Constant.delay.route * 2);
+		UtilCommon.route('/', { 
+			replace: true, 
+			animate: true,
+			onFadeIn: () => authStore.logout(false),
+		});
 	};
 	
 });

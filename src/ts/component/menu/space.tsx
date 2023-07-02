@@ -59,15 +59,16 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 
 		C.WalletSetSessionSpaceID(item.spaceId, () => {
 			C.WorkspaceInfo((message: any) => {
-				UtilCommon.route('/main/blank', { replace: true, animate: true });
-
-				window.setTimeout(() => {
-					blockStore.clear(blockStore.widgets);
-				}, Constant.delay.route);
-
-				window.setTimeout(() => {
-					UtilData.onAuth(authStore.account, message.info);
-				}, Constant.delay.route * 2);
+				UtilCommon.route('/main/blank', { 
+					replace: true, 
+					animate: true,
+					onFadeOut: () => {
+						blockStore.clear(blockStore.widgets);
+					},
+					onFadeIn: () => {
+						UtilData.onAuth(authStore.account, message.info);
+					},
+				});
 			});
 		});
 

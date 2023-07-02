@@ -792,8 +792,8 @@ class UtilCommon {
 		return { page, action, id };
 	};
 
-	route (route: string, param: Partial<{ replace: boolean, animate: boolean }>) {
-		const { replace, animate } = param;
+	route (route: string, param: Partial<{ replace: boolean, animate: boolean, onFadeOut: () => void, onFadeIn?: () => void }>) {
+		const { replace, animate, onFadeOut, onFadeIn } = param;
 		const method = replace ? 'replace' : 'push';
 
 		let timeout = menuStore.getTimeout(menuStore.getItems());
@@ -814,11 +814,21 @@ class UtilCommon {
 				window.setTimeout(() => fade.addClass('show'), 15);
 
 				window.setTimeout(() => {
+					if (onFadeOut) {
+						onFadeOut();
+					};
+
 					this.history[method](route); 
 					fade.removeClass('show');
-
-					window.setTimeout(() => fade.hide(), Constant.delay.route);
 				}, Constant.delay.route);
+
+				window.setTimeout(() => {
+					if (onFadeIn) {
+						onFadeIn();
+					};
+
+					fade.hide();
+				}, Constant.delay.route * 2);
 			} else {
 				this.history[method](route); 
 			};
