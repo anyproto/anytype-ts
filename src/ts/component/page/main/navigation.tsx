@@ -283,9 +283,8 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			return;
 		};
 
+		const { isPopup } = this.props;
 		const node = $(this.node);
-		const obj = UtilCommon.getPageContainer(this.props.isPopup);
-		const isPopup = this.props.isPopup && !obj.hasClass('full');
 
 		raf(() => {
 			const container = UtilCommon.getScrollContainer(isPopup);

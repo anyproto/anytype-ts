@@ -116,13 +116,13 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 	};
 
 	resize () {
+		const { isPopup } = this.props;
 		const win = $(window);
-		const container = UtilCommon.getPageContainer(this.props.isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const node = $(ReactDOM.findDOMNode(this));
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
 		const hh = UtilCommon.sizeHeader();
-		const isPopup = this.props.isPopup && !container.hasClass('full');
 		const wh = isPopup ? container.height() : win.height();
 		const rowLength = this.getRowLength();
 
