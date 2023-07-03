@@ -138,8 +138,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { close } = this.props;
 
 		C.WorkspaceCreate(this.state.name, (message: any) => {
-			console.log(message.objectId);
-
 			close();
 		});
 	};

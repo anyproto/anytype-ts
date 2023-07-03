@@ -261,6 +261,7 @@ class UtilData {
 						subId: Constant.subId.profile, 
 						ids: [ profile ], 
 						noDeps: true,
+						ignoreWorkspace: true,
 					});
 				};
 			});
