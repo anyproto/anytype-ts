@@ -38,7 +38,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	groupCache: any[] = [];
 	aliases = {};
 	row: number = -1;
-	n: number = -1;
+	n: number = 0;
 	active: any = null;
 
 	constructor (props: I.Menu) {
@@ -46,7 +46,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
-		this.onSubmit = this.onSubmit.bind(this);
 		this.onRandom = this.onRandom.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onRemove = this.onRemove.bind(this);
@@ -158,7 +157,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
 										onScroll={this.onScroll}
-										scrollToAlignment="start"
+										scrollToAlignment="center"
 									/>
 								)}
 							</AutoSizer>
@@ -356,12 +355,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
 	};
 
-	onSubmit (e: any) {
-		e.preventDefault();
-		
-		this.onKeyUp(e, true);
-	};
-	
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
@@ -374,123 +367,23 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return;
 		};
 
+		const { close } = this.props;
+
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		const rows = this.getItems();
-
-		let currentRow: any = null;
-
-		const onArrowDown = () => {
-			this.row++;
-			if (this.row > rows.length - 1) {
-				this.row = 0;
-			};
-
-			currentRow = rows[this.row];
-			if (!currentRow.children) {
-				onArrowDown();
-				return;
-			};
-
-			if (this.n == -1) {
-				this.n = 0;
-			};
-
-			if (this.n > currentRow.children.length) {
-				this.n = 0;
-			};
-
-			this.setActive(currentRow.children[this.n], this.row);
-		};
-
-		const onArrowUp = () => {
-			this.row--;
-
-			if (this.row < 0) {
-				this.row = rows.length - 1;
-			};
-
-			currentRow = rows[this.row];
-			if (!currentRow.children) {
-				onArrowUp();
-				return;
-			};
-
-			if (this.n < 0 || this.n > currentRow.children.length - 1) {
-				this.n = currentRow.children.length - 1;
-			};
-
-			this.setActive(currentRow.children[this.n], this.row);
-		};
-
-		const onArrowLeft = () => {
-			this.n--;
-
-			if (this.row == -1) {
-				this.row = rows.length - 1;
-			};
-
-			currentRow = rows[this.row];
-			if (!currentRow.children) {
-				onArrowUp();
-				return;
-			};
-
-			if (this.n < 0) {
-				this.n = LIMIT_ROW - 1;
-				onArrowUp();
-				return;
-			};
-
-			this.setActive(currentRow.children[this.n], this.row);
-		};
-
-		const onArrowRight = () => {
-			this.n++;
-
-			if (this.row == -1) {
-				this.row = 0;
-			};
-
-			currentRow = rows[this.row];
-			if (!currentRow.children) {
-				onArrowDown();
-				return;
-			};
-
-			if (this.n > currentRow.children.length -1) {
-				this.n = 0;
-				onArrowDown();
-				return;
-			};
-
-			this.setActive(currentRow.children[this.n], this.row);
-		};
-
-		keyboard.shortcut('arrowup', e, () => {
+		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			e.preventDefault();
-			onArrowUp();
+			this.onArrowVertical(pressed.match(/arrowup/) ? -1 : 1);
 		});
 
-		keyboard.shortcut('arrowdown', e, () => {
+		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			e.preventDefault();
-			onArrowDown();
-		});
-
-		keyboard.shortcut('arrowleft', e, () => {
-			e.preventDefault();
-			onArrowLeft();
-		});
-
-		keyboard.shortcut('arrowright', e, () => {
-			e.preventDefault();
-			onArrowRight();
+			this.onArrowHorizontal(pressed.match(/arrowleft/) ? -1 : 1);
 		});
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
-			const { close } = this.props;
 
 			if (this.active) {
 				this.onSelect(this.active.itemId, this.skin);
@@ -502,29 +395,83 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	setActive (item?: any, row?: number) {
 		const node = $(this.node);
 
-		if (!item) {
-			this.active = null;
-			Preview.tooltipHide(false);
-		} else {
-			this.active = item;
-		};
-
 		if (row) {
 			this.refList.scrollToRow(Math.max(0, row));
 		};
 
-		keyboard.disableMouse(true);
 		node.find('.active').removeClass('active');
+
+		this.active = item;
+
 		if (this.active) {
-			node.find('#item-' + $.escapeSelector(this.active.id)).addClass('active');
+			const item = node.find(`#item-${$.escapeSelector(this.active.id)}`);
+
+			item.addClass('active');
 
 			Preview.tooltipShow({
-				text: this.aliases[item.itemId] || item.itemId,
-				element: node.find('#item-' + $.escapeSelector(this.active.id)),
+				text: this.aliases[this.active.itemId] || this.active.itemId,
+				element: item,
 			});
+		} else {
+			Preview.tooltipHide(false);
 		};
 	};
-	
+
+	onArrowVertical (dir: number) {
+		const rows = this.getItems();
+
+		this.row += dir;
+		const current = rows[this.row];
+
+		if (!current.children) {
+			this.onArrowVertical(dir);
+			return;
+		};
+
+		// Arrow up
+		if (this.row < 0) {
+			this.row = rows.length - 1;
+		};
+
+		// Arrow down
+		if (this.row > rows.length - 1) {
+			this.row = 0;
+		};
+
+		if (this.n > current.children.length) {
+			this.n = 0;
+		};
+
+		this.setActive(current.children[this.n], this.row);
+	};
+
+	onArrowHorizontal (dir: number) {
+		if (this.row == -1) {
+			return;
+		};
+
+		this.n += dir;
+
+		const rows = this.getItems();
+		const current = rows[this.row];
+
+		// Arrow left
+		if (this.n < 0) {
+			this.n = LIMIT_ROW - 1;
+			this.onArrowVertical(dir);
+			return;
+		};
+
+		// Arrow right
+		if (this.n > current.children.length - 1) {
+			this.n = 0;
+			this.onArrowVertical(dir);
+			return;
+		};
+
+		this.setActive(current.children[this.n], this.row);
+	};
+
 	onRandom () {
 		const param = UtilSmile.randomParam();
 
@@ -609,7 +556,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	onSkin (e: any, n: string, id: string) {
-		const { close } = this.props;
+		const { getId, close } = this.props;
 		const item = EmojiData.emojis[id];
 
 		if (!item || !item.skin_variations) {
@@ -618,7 +565,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		menuStore.open('smileSkin', {
 			type: I.MenuType.Horizontal,
-			element: '.menuSmile #item-' + $.escapeSelector(n),
+			element: `#${getId()} #item-${$.escapeSelector(n)}`,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			data: {
