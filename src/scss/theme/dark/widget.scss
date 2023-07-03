@@ -24,9 +24,7 @@
 }
 
 .widget.widgetSpace {
-	.side.left {
-		.iconObject:not(.withOption) { background-color: $colorBgIcon; }
-	}
+	.iconObject:not(.withOption) { background-color: $colorBgIcon; }
 	.icon:hover { background-color: $colorHoverMedium; }
 }
 

@@ -71,9 +71,15 @@ class MenuStore {
 		return this.menuList.find(it => it.id == id);
 	};
 
-    isOpen (id?: string, key?: string): boolean {
+    isOpen (id?: string, key?: string, filter?: string[]): boolean {
 		if (!id) {
-			return this.menuList.length > 0;
+			let length = 0;
+			if (filter) {
+				length = this.menuList.filter(it => filter ? !filter.includes(it.id) : true).length;
+			} else {
+				length = this.menuList.length;
+			};
+			return length > 0;
 		};
 
 		const item = this.get(id);

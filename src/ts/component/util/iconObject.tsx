@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { IconEmoji } from 'Component';
 import { I, Preview, UtilSmile, UtilData, UtilFile, UtilObject } from 'Lib';
 import { commonStore, menuStore } from 'Store';
+import Constant from 'json/constant.json';
 import Colors from 'json/colors.json';
 
 interface Props {
@@ -240,7 +241,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 			case I.ObjectLayout.Task: {
 				icn = icn.concat([ 'iconCheckbox', 'c' + iconSize ]);
-				icon = <img src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
+				icon = <img id="checkbox" src={done ? CheckboxTask1 : CheckboxTask0} className={icn.join(' ')} />;
 				break;
 			};
 

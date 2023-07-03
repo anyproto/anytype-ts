@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, IconObject, Header, Icon } from 'Component';
+import { Title, Label, IconObject, Header, Footer, Icon } from 'Component';
 import { I, UtilMenu, UtilObject } from 'Lib';
 
 const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.PageComponent> {
@@ -46,6 +46,8 @@ const PageMainEmpty = observer(class PageMainEmpty extends React.Component<I.Pag
 						</div>
 					</div>
 				</div>
+
+				<Footer component="mainObject" />
 			</div>
 		);
 	};

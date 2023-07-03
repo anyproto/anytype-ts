@@ -11,9 +11,16 @@ const WORD_DELAY_COEF = 0.1;
 
 class Animation {
 
+	isAnimating = false;
+
 	to (callBack?: () => void) {
+		if (this.isAnimating) {
+			return;
+		};
+
 		const css = { opacity: 0, transform: 'scale3d(0.9,0.9,1)' };
 
+		this.isAnimating = true;
 		this.initNodes(css, I.AnimDirection.To);
 
 		raf(() => {
@@ -23,14 +30,17 @@ class Animation {
 			$('.animationWord').css(css);
 		});
 
-		if (callBack) {
-			window.setTimeout(callBack, this.getDuration());
-		};
+		this.finish(callBack);
 	};
 
 	from (callBack?: () => void) {
+		if (this.isAnimating) {
+			return;
+		};
+
 		const css = { opacity: 1, transform: 'scale3d(1,1,1)' };
 
+		this.isAnimating = true;
 		this.initNodes(css, I.AnimDirection.From);
 
 		raf(() => {
@@ -40,9 +50,17 @@ class Animation {
 			$('.animationWord').css(css);
 		});
 
-		if (callBack) {
-			window.setTimeout(callBack, this.getDuration());
-		};
+		this.finish(callBack);
+	};
+
+	finish (callBack?: () => void) {
+		window.setTimeout(() => {
+			if (callBack) {
+				callBack();
+			};
+
+			this.isAnimating = false;
+		}, this.getDuration());
 	};
 
 	getSortedNodes (dir: I.AnimDirection) {

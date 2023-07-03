@@ -17,6 +17,7 @@ interface Props {
 	isReversed?: boolean;
 	children?: React.ReactNode;
 	onClick?(e: any): void;
+	onContextMenu?(e: any): void;
 };
 
 class DropTarget extends React.Component<Props> {
@@ -28,7 +29,10 @@ class DropTarget extends React.Component<Props> {
 	};
 	
 	render () {
-		const { id, rootId, cacheKey, targetContextId, dropType, type, style, children, className, canDropMiddle, isTargetTop, isTargetBottom, isTargetColumn, isReversed } = this.props;
+		const { 
+			id, rootId, cacheKey, targetContextId, dropType, type, style, children, className, canDropMiddle, isTargetTop, isTargetBottom, isTargetColumn, 
+			isReversed, onContextMenu,
+		} = this.props;
 		const key = [ dropType, cacheKey || id ];
 		const cn = [ 'dropTarget', 'isDroppable', 'root-' + rootId, 'drop-target-' + id ];
 
@@ -53,6 +57,7 @@ class DropTarget extends React.Component<Props> {
 				key={'drop-target-' + id}
 				className={cn.join(' ')} 
 				onClick={this.onClick} 
+				onContextMenu={onContextMenu}
 				{...UtilCommon.dataProps({
 					id,
 					type,
