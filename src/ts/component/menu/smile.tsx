@@ -105,9 +105,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 							</div>
 						) : (
 							<div className="row">
-								{item.children.map((smile: any, i: number) => (
-									<Item key={i} id={smile.id} {...smile} />
-								))}
+								{item.children.map((smile: any, i: number) => {
+									smile.position = { row: param.index, n: i };
+									return (
+										<Item key={i} id={smile.id} {...smile} />
+									);
+								})}
 							</div>
 						)}
 					</div>
@@ -367,6 +370,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	onKeyDown (e: any) {
+		if (menuStore.isOpen('smileSkin')) {
+			return;
+		};
+
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
@@ -376,19 +383,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		let currentRow: any = null;
 		let ret = false;
-
-		if (this.refFilter.isFocused && this.row == -1) {
-			// keyboard.shortcut('arrowdown, arrowright', e, () => {
-			// 	this.refFilter.blur();
-			// 	this.row = 0;
-			// 	this.n = 0;
-			// });
-			// keyboard.shortcut('arrowup, arrowleft', e, () => {
-			// 	this.refFilter.blur();
-			// 	this.row = rows.length - 1;
-			// 	this.n = LIMIT_ROW - 1;
-			// });
-		};
 
 		if (ret) {
 			return;
@@ -414,7 +408,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				this.n = 0;
 			};
 
-			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
 			this.setActive(currentRow.children[this.n], this.row);
 		};
 
@@ -435,7 +428,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				this.n = currentRow.children.length - 1;
 			};
 
-			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
 			this.setActive(currentRow.children[this.n], this.row);
 		};
 
@@ -458,7 +450,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
 			this.setActive(currentRow.children[this.n], this.row);
 		};
 
@@ -481,7 +472,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
 			this.setActive(currentRow.children[this.n], this.row);
 		};
 
@@ -504,6 +494,16 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			e.preventDefault();
 			onArrowRight();
 		});
+
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			const { close } = this.props;
+
+			if (this.active) {
+				this.onSelect(this.active.itemId, this.skin);
+				close();
+			};
+		});
 	};
 
 	setActive (item?: any, row?: number) {
@@ -515,13 +515,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			this.active = item;
 		};
 
+		if (row) {
+			this.refList.scrollToRow(Math.max(0, row));
+		};
+
 		node.find('.active').removeClass('active');
 		if (this.active) {
 			node.find('#item-' + $.escapeSelector(this.active.id)).addClass('active');
-		};
-
-		if (row && this.refList) {
-			this.refList.scrollToRow(row);
 		};
 	};
 	
@@ -570,10 +570,16 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			text: this.aliases[item.itemId] || item.itemId,
 			element: $(e.currentTarget),
 		});
+
+		this.row = item.position.row;
+		this.n = item.position.n;
+		this.setActive(item);
 	};
 
 	onMouseLeave () {
 		Preview.tooltipHide(false);
+		this.setActive(null);
+		this.n = -1;
 	};
 	
 	onMouseDown (e: any, n: string, id: string, skin: number) {
@@ -675,6 +681,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const idx = items.findIndex(it => it.id == id);
 
 		this.refList.scrollToRow(Math.max(0, idx));
+		this.row = Math.max(0, idx);
+		this.n = -1;
 	};
 
 	getGroupCache () {
