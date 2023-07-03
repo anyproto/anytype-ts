@@ -367,15 +367,15 @@ class UtilMenu {
 	};
 
 	dashboardSelect (element: string, openRoute?: boolean) {
-		const { workspace } = commonStore;
+		const { space } = commonStore;
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const onSelect = (object: any, update: boolean) => {
-			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
+			C.ObjectWorkspaceSetDashboard(space, object.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: object.id } }, false);
+				detailStore.update(Constant.subId.space, { id: space, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
 					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);

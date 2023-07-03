@@ -227,7 +227,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { skipIds } = data;
 		const filter = String(data.filter || '');
 		const sorts = [
-			{ relationKey: 'workspaceId', type: I.SortType.Desc },
+			{ relationKey: 'spaceId', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
@@ -283,12 +283,12 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getSections () {
-		const { workspace } = commonStore;
+		const { space } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
-		const library = items.filter(it => (it.workspaceId == workspace));
+		const library = items.filter(it => (it.spaceId == space));
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
@@ -296,7 +296,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		if (filter) {
-			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 			sections = sections.concat([
 				{ id: 'store', name: 'Anytype library', children: store },
@@ -390,7 +390,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				menuParam.className = 'single';
 
 				let filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.type },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 				];
@@ -461,7 +461,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 
 	getLibrarySources () {
-		return this.items.filter(it => (it.workspaceId == commonStore.workspace)).map(it => it.sourceObject).filter(it => it);
+		return this.items.filter(it => (it.spaceId == commonStore.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

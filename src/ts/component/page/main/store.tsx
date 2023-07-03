@@ -432,7 +432,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getData (clear: boolean, callBack?: (message: any) => void) {
-		const { workspace } = commonStore;
+		const { space } = commonStore;
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
 		];
@@ -444,11 +444,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.view) {
 			case View.Marketplace:
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId });
 				break;
 
 			case View.Library:
-				filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+				filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 				break;
 		};
 

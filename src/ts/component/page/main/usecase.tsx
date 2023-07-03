@@ -2,8 +2,8 @@ import * as React from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
-import { C, I, translate, analytics, UtilData, Storage } from 'Lib';
-import { authStore, blockStore, commonStore } from 'Store';
+import { C, I, translate, analytics, UtilCommon, Storage } from 'Lib';
+import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -86,16 +86,14 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 
         C.ObjectImportUseCase(id, () => {
 			analytics.event('SelectUsecase', { type: id });
-			commonStore.redirectSet('/main/graph');
 
-			UtilData.onAuth(authStore.account, authStore.account.info, { routeParam: { animate: true } }, () => {
-				const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
-				if (blocks.length) {
-					Storage.setToggle('widget', blocks[0].parentId, true);
-				};
+			const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
+			if (blocks.length) {
+				Storage.setToggle('widget', blocks[0].parentId, true);
+			};
 
-				this.setState({ isLoading: false });
-			});
+			this.setState({ isLoading: false });
+			UtilCommon.route('/main/graph', { animate: true });
         });
     };
 

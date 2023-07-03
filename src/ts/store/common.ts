@@ -43,7 +43,7 @@ class CommonStore {
 	public isSidebarFixedValue = false;
 	public redirect = '';
 	public languages: string[] = [];
-	public workspaceId = '';
+	public spaceId = '';
 	public notionToken = '';
 
 	public previewObj: I.Preview = { 
@@ -85,7 +85,7 @@ class CommonStore {
 			isFullScreen: observable,
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
-			workspaceId: observable,
+			spaceId: observable,
             config: computed,
             progress: computed,
             preview: computed,
@@ -94,7 +94,7 @@ class CommonStore {
             gateway: computed,
 			theme: computed,
 			nativeTheme: computed,
-			workspace: computed,
+			space: computed,
             gatewaySet: action,
             progressSet: action,
             progressClear: action,
@@ -106,7 +106,7 @@ class CommonStore {
 			toastClear: action,
 			themeSet: action,
 			nativeThemeSet: action,
-			workspaceSet: action,
+			spaceSet: action,
 			spaceStorageSet: action,
 		});
     };
@@ -175,8 +175,8 @@ class CommonStore {
 		return this.nativeThemeIsDark ? 'dark' : '';
 	};
 
-	get workspace(): string {
-		return String(this.workspaceId || '');
+	get space(): string {
+		return String(this.spaceId || '');
 	};
 
 	get graph(): Graph {
@@ -272,8 +272,8 @@ class CommonStore {
 		};
 	};
 
-	workspaceSet (id: string) {
-		this.workspaceId = String(id || '');
+	spaceSet (id: string) {
+		this.spaceId = String(id || '');
 	};
 
 	previewClear () {
@@ -369,7 +369,7 @@ class CommonStore {
 		blockStore.widgetsSet(info.widgetsId);
 
 		this.gatewaySet(info.gatewayUrl);
-		this.workspaceSet(info.accountSpaceId);
+		this.spaceSet(info.accountSpaceId);
 
 		analytics.device(info.deviceId);
 		analytics.profile(info.analyticsId);

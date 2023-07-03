@@ -15,17 +15,6 @@
 		}
 		.content { height: 100%; }
 
-		.space {
-			display: flex; flex-direction: row; padding: 8px; gap: 0px 12px; align-items: center; margin: 0px 0px 12px 0px;
-			border-radius: 8px; transition: $transitionAllCommon;
-		}
-		.space {
-			.iconObject { flex-shrink: 0; }
-			.txt { width: calc(100% - 40px); }
-			.name { @include text-common; }
-			.type { @include text-small; color: $colorDarkGrey; }
-		}
-
 		.mainSides { display: flex; height: 100%; }
 		.mainSides {
 			> .side { position: relative; height: 100%; }
@@ -56,10 +45,10 @@
 					.icon.export { background-image: url('~img/icon/popup/settings/export.svg'); }
 				}
 
-				.item.itemAccount { padding: 8px; gap: 0 14px; align-items: center; }
+				.item.itemAccount { padding: 8px; gap: 0px 14px; align-items: center; }
 				.item.itemAccount {
 					.name { @include text-common; font-weight: 600; }
-					.onlineStatus { @include text-small; color: $colorDarkGrey; font-weight: 400; text-transform: capitalize; display: flex; gap: 0 6px; align-items: center; }
+					.onlineStatus { @include text-small; color: $colorDarkGrey; font-weight: 400; text-transform: capitalize; display: flex; gap: 0px 6px; align-items: center; }
 					.onlineStatus:before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
 					.onlineStatus.online:before { background: $colorLime; }
 					.onlineStatus.offline:before { background: $colorRed; }
@@ -176,7 +165,7 @@
 					.input { @include text-common; height: 40px; padding: 6px 12px; border: 1px solid $colorBorderLight; border-radius: 10px; }
 					.input:hover:not(.isReadonly) { border-color: $colorBorderDark; }
 					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorOrange; padding: 5px 11px; }
-
+ 
 					.accountId { position: relative; }
 					.accountId {
 						.input { background-color: unset; @include text-small; color: $colorDarkGrey; }
@@ -225,11 +214,11 @@
 						> .item:last-child { border-bottom: 0; }
 
 						> .item {
-							.sides { display: flex; justify-content: space-between; }
+							.sides { display: flex; justify-content: space-between; gap: 0px 16px; }
 							.sides {
 								.side { width: unset; background: unset; padding: unset; }
-								.left { margin-right: 16px; }
-								.right { flex-shrink: 0; }
+								.side.left { flex-grow: 1; }
+								.side.right { flex-shrink: 0; }
 							}
 
 							.title { @include text-common; font-weight: 400; margin-bottom: 4px; }
@@ -320,9 +309,14 @@
 			}
 
 			.storageUsage {
-				.space { margin-bottom: 0px; padding: 0; }
-				.space {
-					.txt .type.red { color: $colorRed; }
+				.side.left {
+					display: flex; flex-direction: row; gap: 0px 12px; align-items: center; border-radius: 8px; transition: $transitionAllCommon;
+				}
+				.side.left {
+					.iconObject { flex-shrink: 0; }
+					.txt { width: calc(100% - 40px); }
+					.name { @include text-common; }
+					.type { @include text-small; color: $colorDarkGrey; }
 				}
 			}
 

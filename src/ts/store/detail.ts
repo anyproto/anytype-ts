@@ -226,7 +226,7 @@ class DetailStore {
 	private mapObjectType (object: any) {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-		object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 
 		if (object.isDeleted) {
@@ -243,7 +243,7 @@ class DetailStore {
 		object.objectTypes = Relation.getArrayValue(object.relationFormatObjectTypes);
 		object.isReadonlyRelation = Boolean(object.isReadonly);
 		object.isReadonlyValue = Boolean(object.relationReadonlyValue);
-		object.isInstalled = object.workspaceId != Constant.storeSpaceId;
+		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 
 		if (object.isDeleted) {

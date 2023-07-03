@@ -274,7 +274,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	loadTemplates () {
-		const { workspace } = commonStore;
+		const { space } = commonStore;
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
@@ -283,7 +283,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			filters: [
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.template, Constant.typeId.template ] },
 				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
-				{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? workspace : Constant.storeSpaceId },
+				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? space : Constant.storeSpaceId },
 			],
 			sorts: [
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, includeTime: true }

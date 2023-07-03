@@ -71,7 +71,7 @@ class Storage {
 		if (this.isSpaceKey(key)) {
 			const obj = this.getSpace();
 
-			delete(obj[commonStore.workspace][key]);
+			delete(obj[commonStore.space][key]);
 
 			this.setSpace(obj);
 		} else {
@@ -86,20 +86,20 @@ class Storage {
 	setSpaceKey (key: string, value: any) {
 		const obj = this.getSpace();
 
-		obj[commonStore.workspace][key] = value;
+		obj[commonStore.space][key] = value;
 
 		this.setSpace(obj);
 	};
 
 	getSpaceKey (key: string) {
 		const obj = this.getSpace();
-		return obj[commonStore.workspace][key];
+		return obj[commonStore.space][key];
 	};
 
 	getSpace () {
 		const obj = this.get('space') || {};
 
-		obj[commonStore.workspace] = obj[commonStore.workspace] || {};
+		obj[commonStore.space] = obj[commonStore.space] || {};
 
 		return obj;
 	};

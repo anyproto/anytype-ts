@@ -211,11 +211,11 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onSelect (icon: string) {
-		UtilObject.setIcon(commonStore.workspace, icon, '');
+		UtilObject.setIcon(commonStore.space, icon, '');
 	};
 
 	onUpload (hash: string) {
-		UtilObject.setIcon(commonStore.workspace, '', hash);
+		UtilObject.setIcon(commonStore.space, '', hash);
 	};
 
 	onDashboard () {
@@ -225,7 +225,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	onExtend () {
 		const { account } = authStore;
 		const { bytesLimit } = commonStore.spaceStorage;
-		const space = detailStore.get(Constant.subId.space, commonStore.workspace);
+		const space = detailStore.get(Constant.subId.space, commonStore.space);
 		const limit = String(UtilFile.size(bytesLimit)).replace(' ', '');
 
 		if (!account || !space || !bytesLimit) {
@@ -243,7 +243,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		UtilObject.setName(commonStore.workspace, this.checkName(v));
+		UtilObject.setName(commonStore.space, this.checkName(v));
 	};
 
 	onSpaceTypeTooltip (e) {

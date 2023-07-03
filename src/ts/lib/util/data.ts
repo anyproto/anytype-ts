@@ -281,7 +281,7 @@ class UtilData {
 				subId: Constant.subId.type,
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.In, value: [ commonStore.workspace, Constant.storeSpaceId ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ commonStore.space, Constant.storeSpaceId ] },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
 				],
 				noDeps: true,
@@ -292,7 +292,7 @@ class UtilData {
 				subId: Constant.subId.relation,
 				keys: Constant.relationRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.In, value: [ commonStore.workspace, Constant.storeSpaceId ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ commonStore.space, Constant.storeSpaceId ] },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
 				],
 				noDeps: true,
@@ -384,7 +384,7 @@ class UtilData {
 
 	getObjectTypesForNewObject (param?: any) {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
-		const { workspace, config } = commonStore;
+		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
 		const page = dbStore.getType(Constant.typeId.page);
 		const note = dbStore.getType(Constant.typeId.note);
@@ -406,7 +406,7 @@ class UtilData {
 
 		if (!withDefault) {
 			items = items.concat(dbStore.getTypes().filter(it => {
-				if (!pageLayouts.includes(it.recommendedLayout) || skip.includes(it.id) || (it.workspaceId != workspace)) {
+				if (!pageLayouts.includes(it.recommendedLayout) || skip.includes(it.id) || (it.spaceId != space)) {
 					return false;
 				};
 				return config.debug.ho ? true : !it.isHidden;
@@ -618,7 +618,7 @@ class UtilData {
 	};
 
 	searchSubscribe (param: SearchSubscribeParams, callBack?: (message: any) => void) {
-		const { config, workspace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			subId: '',
@@ -648,8 +648,8 @@ class UtilData {
 			return;
 		};
 
-		if (!ignoreWorkspace && workspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+		if (!ignoreWorkspace && space) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -714,7 +714,7 @@ class UtilData {
 	};
 
 	search (param: SearchSubscribeParams & { fullText?: string }, callBack?: (message: any) => void) {
-		const { config, workspace } = commonStore;
+		const { config, space } = commonStore;
 
 		param = Object.assign({
 			idField: 'id',
@@ -733,8 +733,8 @@ class UtilData {
 		const { idField, filters, sorts, offset, limit, ignoreWorkspace, ignoreDeleted, ignoreHidden, withArchived } = param;
 		const keys: string[] = [ ...new Set(param.keys as string[]) ];
 
-		if (!ignoreWorkspace && workspace) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace });
+		if (!ignoreWorkspace && space) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space });
 		};
 
 		if (ignoreHidden && !config.debug.ho) {
@@ -773,7 +773,7 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { workspace } = commonStore;
+		const { space } = commonStore;
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const skipIds = [ '_anytype_profile' ];
 
@@ -783,7 +783,7 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
-			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: workspace },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space },
 		];
 	};
 

@@ -44,11 +44,11 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	onSelect (icon: string) {
-		UtilObject.setIcon(commonStore.workspace, icon, '');
+		UtilObject.setIcon(commonStore.space, icon, '');
 	};
 
 	onUpload (hash: string) {
-		UtilObject.setIcon(commonStore.workspace, '', hash);
+		UtilObject.setIcon(commonStore.space, '', hash);
 	};
 
 });

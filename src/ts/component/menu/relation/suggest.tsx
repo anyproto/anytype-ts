@@ -225,12 +225,12 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const filter = String(data.filter || '');
 		const skipKeys = data.skipKeys || [];
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.In, value: [ commonStore.workspace, Constant.storeSpaceId ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ commonStore.space, Constant.storeSpaceId ] },
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
 			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
 		];
 		const sorts = [
-			{ relationKey: 'workspaceId', type: I.SortType.Desc },
+			{ relationKey: 'spaceId', type: I.SortType.Desc },
 			{ relationKey: 'name', type: I.SortType.Asc },
 		];
 
@@ -275,12 +275,12 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	getSections () {
-		const { workspace } = commonStore;
+		const { space } = commonStore;
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
 		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
-		const library = items.filter(it => (it.workspaceId == workspace));
+		const library = items.filter(it => (it.spaceId == space));
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
@@ -288,7 +288,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		];
 
 		if (filter) {
-			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
+			const store = items.filter(it => (it.spaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 			sections = sections.concat([
 				{ id: 'store', name: 'Anytype library', children: store },
 				{ children: [ { id: 'add', name: `Create relation "${filter}"` } ] }
@@ -383,7 +383,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				menuParam.className = 'single';
 
 				const filters: I.Filter[] = [
-					{ operator: I.FilterOperator.And, relationKey: 'workspaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.relation },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 					{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
@@ -468,7 +468,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 
 	getLibrarySources () {
-		return this.items.filter(it => (it.workspaceId == commonStore.workspace)).map(it => it.sourceObject).filter(it => it);
+		return this.items.filter(it => (it.spaceId == commonStore.space)).map(it => it.sourceObject).filter(it => it);
 	};
 
 	resize () {

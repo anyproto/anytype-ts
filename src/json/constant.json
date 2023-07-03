@@ -71,7 +71,7 @@
 	"popupPinIds": [ "search" ],
 
 	"defaultRelationKeys": [ 
-		"id", "workspaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
+		"id", "spaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
 		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions"
 	],
 
@@ -81,7 +81,7 @@
 	],
 
 	"relationRelationKeys": [
-		"id", "workspaceId", "type", "layout", "name", "relationFormat", "relationKey", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
+		"id", "spaceId", "type", "layout", "name", "relationFormat", "relationKey", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "restrictions",
 		"relationMaxCount", "relationReadonlyValue", "relationDefaultValue", "relationFormatObjectTypes", "sourceObject", "restrictions"
 	],
 

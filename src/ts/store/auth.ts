@@ -156,7 +156,7 @@ class AuthStore {
 
 		keyboard.setPinChecked(false);
 
-		commonStore.workspaceSet('');
+		commonStore.spaceSet('');
 
 		blockStore.clearAll();
 		detailStore.clearAll();
