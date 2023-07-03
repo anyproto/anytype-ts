@@ -37,11 +37,15 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	cache: any = null;
 	groupCache: any[] = [];
 	aliases = {};
+	row: number = -1;
+	n: number = -1;
+	active: any = null;
 
 	constructor (props: I.Menu) {
 		super(props);
 		
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onRandom = this.onRandom.bind(this);
 		this.onUpload = this.onUpload.bind(this);
@@ -205,6 +209,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				this.refFilter.focus();
 			};
 		}, 15);
+
+		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
 	};
 	
 	componentDidUpdate () {
@@ -224,6 +230,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		keyboard.setFocus(false);
 		menuStore.close('smileSkin');
+
+		$(window).off('keydown.menu');
 	};
 
 	checkRecent (sections: any[]) {
@@ -347,6 +355,160 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.timeoutFilter = window.setTimeout(() => {
 			this.setState({ page: 0, filter: UtilCommon.filterFix(this.refFilter.getValue()) });
 		}, force ? 0 : 50);
+	};
+
+	onKeyDown (e: any) {
+		e.stopPropagation();
+		keyboard.disableMouse(true);
+
+		const rows = this.getItems();
+		const shortcutClose = [ 'escape' ];
+		const shortcutSelect = [ 'tab', 'enter' ];
+
+		let currentRow: any = null;
+		let ret = false;
+
+		if (this.refFilter.isFocused && this.row == -1) {
+			// keyboard.shortcut('arrowdown, arrowright', e, () => {
+			// 	this.refFilter.blur();
+			// 	this.row = 0;
+			// 	this.n = 0;
+			// });
+			// keyboard.shortcut('arrowup, arrowleft', e, () => {
+			// 	this.refFilter.blur();
+			// 	this.row = rows.length - 1;
+			// 	this.n = LIMIT_ROW - 1;
+			// });
+		};
+
+		if (ret) {
+			return;
+		};
+
+		const onArrowDown = () => {
+			this.row++;
+			if (this.row > rows.length - 1) {
+				this.row = 0;
+			};
+
+			currentRow = rows[this.row];
+			if (!currentRow.children) {
+				onArrowDown();
+				return;
+			};
+
+			if (this.n == -1) {
+				this.n = 0;
+			};
+
+			if (this.n > currentRow.children.length) {
+				this.n = 0;
+			};
+
+			this.setActive(currentRow.children[this.n]);
+			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
+		};
+
+		const onArrowUp = () => {
+			this.row--;
+
+			if (this.row < 0) {
+				this.row = rows.length - 1;
+			};
+
+			currentRow = rows[this.row];
+			if (!currentRow.children) {
+				onArrowUp();
+				return;
+			};
+
+			if (this.n < 0 || this.n > currentRow.children.length - 1) {
+				this.n = currentRow.children.length - 1;
+			};
+
+			this.setActive(currentRow.children[this.n]);
+			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
+		};
+
+		const onArrowLeft = () => {
+			this.n--;
+
+			if (this.row == -1) {
+				this.row = rows.length - 1;
+			};
+
+			currentRow = rows[this.row];
+			if (!currentRow.children) {
+				onArrowUp();
+				return;
+			};
+
+			if (this.n < 0) {
+				this.n = LIMIT_ROW - 1;
+				onArrowUp();
+				return;
+			};
+
+			this.setActive(currentRow.children[this.n]);
+		};
+
+		const onArrowRight = () => {
+			this.n++;
+
+			if (this.row == -1) {
+				this.row = 0;
+			};
+
+			currentRow = rows[this.row];
+			if (!currentRow.children) {
+				onArrowDown();
+				return;
+			};
+
+			if (this.n > currentRow.children.length -1) {
+				this.n = 0;
+				onArrowDown();
+				return;
+			};
+
+			this.setActive(currentRow.children[this.n]);
+		};
+
+		keyboard.shortcut('arrowup', e, () => {
+			e.preventDefault();
+			onArrowUp();
+		});
+
+		keyboard.shortcut('arrowdown', e, () => {
+			e.preventDefault();
+			onArrowDown();
+		});
+
+		keyboard.shortcut('arrowleft', e, () => {
+			e.preventDefault();
+			onArrowLeft();
+		});
+
+		keyboard.shortcut('arrowright', e, () => {
+			e.preventDefault();
+			onArrowRight();
+		});
+	};
+
+	setActive (item?: any) {
+		const node = $(this.node);
+
+		if (!item) {
+			this.active = null;
+		} else {
+			this.active = item;
+		};
+
+		node.find('.active').removeClass('active');
+		if (this.active) {
+			console.log('ACTIVE: ', node.find('#item-' + this.active.smile))
+			node.find('#item-' + this.active.smile).addClass('active');
+		};
 	};
 	
 	onRandom () {
