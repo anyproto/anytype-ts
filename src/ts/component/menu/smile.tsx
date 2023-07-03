@@ -212,7 +212,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			};
 		}, 15);
 
-		$(window).on('keydown.smile', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.smile', e => this.onKeyDown(e));
 	};
 	
 	componentDidUpdate () {

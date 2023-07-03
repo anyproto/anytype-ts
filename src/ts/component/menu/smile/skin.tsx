@@ -21,7 +21,7 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 		const { smileId } = data;
 		
 		const Item = (item: any) => (
-			<div id={'skin-' + item.skin} className="item" onMouseDown={(e: any) => { this.onClick(e, item.skin); }}>
+			<div id={`skin-${item.skin}`} className="item" onMouseDown={e => this.onClick(e, item.skin)}>
 				<IconObject size={32} object={{ iconEmoji: UtilSmile.nativeById(smileId, item.skin) }} />
 			</div>
 		);
@@ -36,11 +36,15 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 	};
 
 	componentDidMount () {
-		$(window).on('keydown.skin', (e: any) => { this.onKeyDown(e); });
+		const { getId } = this.props;
+
+		$(window).on(`keydown.${getId()}`, e => this.onKeyDown(e));
 	};
 
 	componentWillUnmount () {
-		$(window).off('keydown.skin');
+		const { getId } = this.props;
+
+		$(window).on(`keydown.${getId()}`
 	};
 
 	onClick (e: any, id: number) {
@@ -56,23 +60,21 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 	};
 
 	onKeyDown (e) {
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed) => {
+		const { param, close } = this.props;
+		const { data } = param;
+		const { onSelect } = data;
+
+		keyboard.shortcut('arrowup, arrowdown', e, () => {
 			e.preventDefault();
 		});
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed) => {
 			e.preventDefault();
+
 			const node = $(this.node);
-
-			let dir = 1;
-			let skin;
-
-			if (pressed == 'arrowleft') {
-				dir = -1;
-			};
+			const dir = pressed == 'arrowleft' ? -1 : 1;
 
 			this.n += dir;
-
 			if (this.n < 0) {
 				this.n = SKINS.length - 1;
 			} else
@@ -80,9 +82,8 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 				this.n = 0;
 			};
 
-			skin = SKINS[this.n];
 			node.find('.active').removeClass('active');
-			node.find('#skin-' + skin).addClass('active');
+			node.find(`#skin-${SKINS[this.n]}`).addClass('active');
 		});
 
 		keyboard.shortcut('enter', e, () => {
@@ -90,10 +91,6 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 			e.stopPropagation();
 
 			if (SKINS[this.n]) {
-				const { param, close } = this.props;
-				const { data } = param;
-				const { onSelect } = data;
-
 				onSelect(SKINS[this.n]);
 				close();
 			};
