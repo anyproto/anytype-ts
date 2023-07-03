@@ -22,6 +22,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	refFrame: Frame = null;
 	refPhrase: Phrase = null;
 	account: I.Account = null;
+	isDelayed = false;
 
 	state: State = {
 		stage: Stage.Void,
@@ -245,6 +246,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	canMoveForward = (): boolean => {
 		const { stage } = this.state;
 
+		if (this.isDelayed) {
+			return false;
+		};
+
 		let ret = false;
 		if ([ Stage.Void, Stage.Phrase, Stage.Offline ].includes(stage)) {
 			ret = true;
@@ -277,7 +282,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return;
 		};
 
-		const delay = (cb, duration) => () => window.setTimeout(cb, duration);
+		const delay = (cb, duration: number) => () => {
+			this.isDelayed = true;
+			window.setTimeout(() => {
+				this.isDelayed = false;
+				cb();
+			}, duration);
+		};
 		const incrementAnimation = (cb?) => () => this.setState((prev) => ({ ...prev, animationStage: prev.animationStage + 1 }), cb);
 		const incrementOnboarding = (cb?) => () => this.setState((prev) => ({ ...prev, stage: prev.stage + 1 }), cb);
 
@@ -404,9 +415,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			UtilObject.setName(workspace, name);
 
 			window.setTimeout(() => {
-				UtilData.onAuth(this.account, {}, () => {
-					UtilCommon.route('/main/usecase', { replace: true, animate: true });
-				});
+				commonStore.redirectSet('/main/usecase');
+				UtilData.onAuth(this.account, { routeParam: { replace: true, animate: true } });
 			}, 2000);
 		});
 	};

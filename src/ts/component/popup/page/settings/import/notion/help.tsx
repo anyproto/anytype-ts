@@ -31,7 +31,7 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 						<img src="./img/help/notion/1-4.png" />
 					</li>
 					<li>
-						You integration will be created permanently. Internal integration Token requires for connecting and importing your content from Notion. Copy it.
+						You integration will be created permanently. Internal Integration Token requires for connecting and importing your content from Notion. Copy it.
 						<img src="./img/help/notion/1-5.png" />
 					</li>
 				</ol>
@@ -43,7 +43,7 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 						<img src="./img/help/notion/2-1.png" />
 					</li>
 					<li>
-						Press Confirm. Now you just need to paste your Internal integration Token to Anytype.
+						Press Confirm. Now you just need to paste your Internal Integration Token to Anytype.
 						<img src="./img/help/notion/2-2.png" />
 					</li>
 				</ol>

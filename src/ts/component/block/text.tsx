@@ -622,7 +622,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
-		
+
 		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
 			e.preventDefault();
 			return;
@@ -631,11 +631,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let value = this.getValue();
 		let ret = false;
 
+		const key = e.key.toLowerCase();
 		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
-		
-		const menuOpen = menuStore.isOpen();
+
+		const menuOpen = menuStore.isOpen('', '', [ 'onboarding' ]);
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		const menuOpenSmile = menuStore.isOpen('smile');
@@ -655,6 +656,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+space`, preventDefault: false },
 			{ key: `ctrl+shift+l`, preventDefault: false },
 		];
+		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
+		const twineClose = {
+			'[': ']',
+			'{': '}',
+			'(': ')'
+		};
 
 		for (let i = 0; i < 9; ++i) {
 			saveKeys.push({ key: `${cmd}+${i}`, preventDefault: false });
@@ -684,12 +691,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			ret = true;
 		});
 
-		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, (pressed: string) => {
+		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, () => {
 			keyboard.disableContextClose(false);
 		});
 
 		saveKeys.forEach((item: any) => {
-			keyboard.shortcut(item.key, e, (pressed: string) => {
+			keyboard.shortcut(item.key, e, () => {
 				if (item.preventDefault) {
 					e.preventDefault();
 				};
@@ -701,7 +708,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			});
 		});
 
-		keyboard.shortcut('tab', e, (pressed: string) => {
+		keyboard.shortcut('tab', e, () => {
 			e.preventDefault();
 
 			if (!range) {
@@ -767,7 +774,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e, ${cmd}+dot`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+e, ${cmd}+dot`, e, () => {
 			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};
@@ -776,6 +783,23 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.onSmile();
 		});
 
+		if (range && (range.from != range.to) && twineOpen.includes(key)) {
+			e.preventDefault();
+
+			const l = e.key.length;
+			const cut = value.slice(range.from, range.to);
+			const closingSymbol = twineClose[key] || key;
+
+			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
+			this.marks = Mark.adjust(this.marks, range.from, l);
+
+			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+				focus.set(block.id, { from: range.from + l, to: range.to + l });
+				focus.apply();
+			});
+
+			ret = true;
+		};
 		if (ret) {
 			return;
 		};
@@ -829,10 +853,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			content: {},
 		};
 
-		const symbolBefore = range ? value[range.from - 1] : '';
-		const isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
-		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const oneSymbolBefore = range ? value[range.from - 1] : '';
+		const twoSymbolBefore = range ? value[range.from - 2] : '';
+		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
+		const canOpenMenuAdd = (oneSymbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMentionMenu = (oneSymbolBefore == '@') && !this.preventMenu && (isAllowedMention || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const parsed = this.getMarksFromHtml();
 		const marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
 
@@ -1086,7 +1111,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.text = value;
 
-		if (menuStore.isOpen()) {
+		if (menuStore.isOpen('', '', [ 'onboarding' ])) {
 			return;
 		};
 

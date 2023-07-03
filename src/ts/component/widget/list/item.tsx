@@ -35,6 +35,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 		const { isReadonly, isArchived, restrictions, source, done } = object;
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+		const iconKey = `widget-icon-${block.id}-${id}`;
 
 		let descr = null;
 		if (object.type == Constant.typeId.bookmark) {
@@ -54,7 +55,8 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		let inner = (
 			<div className="inner">
 				<IconObject 
-					id={`widget-icon-${id}`}
+					id={iconKey}
+					key={iconKey}
 					object={object} 
 					size={isCompact ? 18 : 48} 
 					iconSize={isCompact ? 18 : 28}
