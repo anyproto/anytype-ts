@@ -423,8 +423,17 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			};
 
 			e.preventDefault();
+
+			const item = EmojiData.emojis[this.active.itemId];
+
+			if (!item || !item.skin_variations) {
+				this.onSelect(this.active.itemId, this.skin);
+				close();
+			} else {
+				this.onSkin(e, this.active.id, this.active.itemId);
+			};
+
 			Preview.tooltipHide(true);
-			this.onSkin(e, this.active.id, this.active.itemId);
 		});
 	};
 
