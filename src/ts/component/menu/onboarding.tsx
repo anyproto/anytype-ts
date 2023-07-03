@@ -208,13 +208,13 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onButton (e: any, action: string) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { key, current } = data;
 
 		switch (action) {
 			case 'close': {
-				this.onClose();
+				close();
 				break;
 			};
 
@@ -229,7 +229,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			};
 
 			case 'dashboard': {
-				this.onClose();
+				close();
 				UtilObject.openHome('route');
 				break;
 			};
@@ -248,7 +248,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		if ((dir > 0) && (current == items.length - 1)) {
-			this.onClose();
+			close();
 			return;
 		};
 
