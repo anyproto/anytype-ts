@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch } from 'Component';
-import { I, C, UtilCommon, UtilSmile, keyboard, translate, analytics, Preview, Action } from 'Lib';
+import { I, C, UtilCommon, UtilSmile, UtilMenu, keyboard, translate, analytics, Preview, Action } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import EmojiData from 'json/emoji.json';
@@ -67,15 +67,15 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		const Item = (item: any) => {
-			const str = `:${item.smile}::skin-${item.skin}:`;
+			const str = `:${item.itemId}::skin-${item.skin}:`;
 			return (
 				<div 
 					id={'item-' + item.id} 
 					className="item" 
 					onMouseEnter={e => this.onMouseEnter(e, item)}
 					onMouseLeave={() => this.onMouseLeave()} 
-					onMouseDown={e => this.onMouseDown(e, item.id, item.smile, item.skin)}
-					onContextMenu={e => this.onSkin(e, item.id, item.smile)}
+					onMouseDown={e => this.onMouseDown(e, item.id, item.itemId, item.skin)}
+					onContextMenu={e => this.onSkin(e, item.id, item.itemId)}
 				>
 					<div 
 						className="iconObject c32" 
@@ -106,7 +106,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 						) : (
 							<div className="row">
 								{item.children.map((smile: any, i: number) => (
-									<Item key={i} id={smile.smile} {...smile} />
+									<Item key={i} id={smile.id} {...smile} />
 								))}
 							</div>
 						)}
@@ -210,7 +210,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			};
 		}, 15);
 
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.smile', (e: any) => { this.onKeyDown(e); });
 	};
 	
 	componentDidUpdate () {
@@ -231,7 +231,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		keyboard.setFocus(false);
 		menuStore.close('smileSkin');
 
-		$(window).off('keydown.menu');
+		$(window).off('keydown.smile');
 	};
 
 	checkRecent (sections: any[]) {
@@ -239,6 +239,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const recent = storageGet().recent || [];
 
 		if (recent && recent.length) {
+			recent.forEach((el: any) => {
+				if (el.smile) {
+					el.id = el.smile;
+				};
+			});
+
 			sections.unshift({ id: ID_RECENT, name: 'Recently used', children: recent });
 		};
 
@@ -261,7 +267,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				name: it.name,
 				children: it.emojis.map(id => {
 					const item = EmojiData.emojis[id] || {};
-					return { smile: id, skin: this.skin, keywords: item.keywords || [] };
+					return { id, skin: this.skin, keywords: item.keywords || [] };
 				}),
 			});
 		});
@@ -269,7 +275,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		if (filter) {
 			sections = sections.filter((s: any) => {
 				s.children = (s.children || []).filter(c => {
-					if (c.smile.match(reg)) {
+					if (c.id.match(reg)) {
 						return true;
 					};
 					for (let w of c.keywords) {
@@ -282,8 +288,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				return s.children.length > 0;
 			});
 		};
+
+		sections = this.checkRecent(sections);
+		sections = UtilMenu.sectionsMap(sections);
 		
-		return this.checkRecent(sections);
+		return sections;
 	};
 
 	getItems () {
@@ -405,8 +414,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				this.n = 0;
 			};
 
-			this.setActive(currentRow.children[this.n]);
 			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
+			this.setActive(currentRow.children[this.n], this.row);
 		};
 
 		const onArrowUp = () => {
@@ -426,8 +435,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				this.n = currentRow.children.length - 1;
 			};
 
-			this.setActive(currentRow.children[this.n]);
 			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
+			this.setActive(currentRow.children[this.n], this.row);
 		};
 
 		const onArrowLeft = () => {
@@ -449,7 +458,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			this.setActive(currentRow.children[this.n]);
+			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
+			this.setActive(currentRow.children[this.n], this.row);
 		};
 
 		const onArrowRight = () => {
@@ -471,7 +481,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				return;
 			};
 
-			this.setActive(currentRow.children[this.n]);
+			console.log('CUR: ', this.row, this.n, currentRow.children[this.n])
+			this.setActive(currentRow.children[this.n], this.row);
 		};
 
 		keyboard.shortcut('arrowup', e, () => {
@@ -495,7 +506,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		});
 	};
 
-	setActive (item?: any) {
+	setActive (item?: any, row?: number) {
 		const node = $(this.node);
 
 		if (!item) {
@@ -506,8 +517,11 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		node.find('.active').removeClass('active');
 		if (this.active) {
-			console.log('ACTIVE: ', node.find('#item-' + this.active.smile))
-			node.find('#item-' + this.active.smile).addClass('active');
+			node.find('#item-' + $.escapeSelector(this.active.id)).addClass('active');
+		};
+
+		if (row && this.refList) {
+			this.refList.scrollToRow(row);
 		};
 	};
 	
@@ -553,7 +567,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	onMouseEnter (e: any, item: any) {
 		Preview.tooltipShow({ 
-			text: this.aliases[item.smile] || item.smile, 
+			text: this.aliases[item.itemId] || item.itemId,
 			element: $(e.currentTarget),
 		});
 	};
@@ -562,7 +576,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		Preview.tooltipHide(false);
 	};
 	
-	onMouseDown (e: any, n: number, id: string, skin: number) {
+	onMouseDown (e: any, n: string, id: string, skin: number) {
 		const { close } = this.props;
 		const win = $(window);
 		const item = EmojiData.emojis[id];
@@ -594,7 +608,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		});
 	};
 
-	onSkin (e: any, n: number, id: string) {
+	onSkin (e: any, n: string, id: string) {
 		const { close } = this.props;
 		const item = EmojiData.emojis[id];
 
@@ -604,7 +618,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		menuStore.open('smileSkin', {
 			type: I.MenuType.Horizontal,
-			element: '.menuSmile #item-' + n,
+			element: '.menuSmile #item-' + $.escapeSelector(n),
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Center,
 			data: {
@@ -631,12 +645,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		let ids = storageGet().recent || [];
 		
 		ids = ids.map((it: any) => {
-			it.key = [ it.smile, it.skin ].join(',');
+			it.key = [ it.id, it.skin ].join(',');
 			return it;
 		});
 		
 		ids.unshift({ 
-			smile: id, 
+			id: id,
 			skin: skin, 
 			key: [ id, skin ].join(',') 
 		});
