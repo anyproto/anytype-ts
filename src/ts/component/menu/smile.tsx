@@ -511,6 +511,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		if (!item) {
 			this.active = null;
+			Preview.tooltipHide(false);
 		} else {
 			this.active = item;
 		};
@@ -518,10 +519,16 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		if (row) {
 			this.refList.scrollToRow(Math.max(0, row));
 		};
-
+		
+		keyboard.disableMouse(true);
 		node.find('.active').removeClass('active');
 		if (this.active) {
 			node.find('#item-' + $.escapeSelector(this.active.id)).addClass('active');
+
+			Preview.tooltipShow({
+				text: this.aliases[item.itemId] || item.itemId,
+				element: node.find('#item-' + $.escapeSelector(this.active.id)),
+			});
 		};
 	};
 	
@@ -566,18 +573,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		Preview.tooltipShow({ 
-			text: this.aliases[item.itemId] || item.itemId,
-			element: $(e.currentTarget),
-		});
-
 		this.row = item.position.row;
 		this.n = item.position.n;
 		this.setActive(item);
 	};
 
 	onMouseLeave () {
-		Preview.tooltipHide(false);
 		this.setActive(null);
 		this.n = -1;
 	};
