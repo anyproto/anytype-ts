@@ -10,6 +10,7 @@ const SHOW_DIMMER = [
 	'settings',
 	'confirm',
 	'migration',
+	'pin',
 ];
 
 class PopupStore {
