@@ -378,15 +378,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		keyboard.disableMouse(true);
 
 		const rows = this.getItems();
-		const shortcutClose = [ 'escape' ];
-		const shortcutSelect = [ 'tab', 'enter' ];
 
 		let currentRow: any = null;
-		let ret = false;
-
-		if (ret) {
-			return;
-		};
 
 		const onArrowDown = () => {
 			this.row++;
@@ -519,7 +512,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		if (row) {
 			this.refList.scrollToRow(Math.max(0, row));
 		};
-		
+
 		keyboard.disableMouse(true);
 		node.find('.active').removeClass('active');
 		if (this.active) {
