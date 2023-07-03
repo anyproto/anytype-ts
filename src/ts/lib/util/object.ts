@@ -1,5 +1,5 @@
 import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage } from 'Lib';
-import { commonStore, blockStore, popupStore, detailStore } from 'Store';
+import { commonStore, blockStore, popupStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilObject {
@@ -23,7 +23,10 @@ class UtilObject {
 	};
 
 	getSpace () {
-		return detailStore.get(Constant.subId.space, commonStore.space)
+		const subId = Constant.subId.space;
+		const records = dbStore.getRecords(subId, '').map(it => detailStore.get(subId, it)).filter(it => it.spaceId == commonStore.space);
+
+		return records.length ? records[0] : { _empty_: true };
 	};
 
 	getSpaceDashboard () {
