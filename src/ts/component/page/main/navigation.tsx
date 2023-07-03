@@ -486,7 +486,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 		let root = rootId ? rootId : match.params.id;
 		if (root == I.HomePredefinedId.Graph) {
-			root = UtilObject.lastOpened()?.id;
+			root = UtilObject.getLastOpened()?.id;
 		};
 		return root;
 	};

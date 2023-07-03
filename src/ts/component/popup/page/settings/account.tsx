@@ -41,7 +41,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 	render () {
 		const { error, loading } = this.state;
 		const { account } = authStore;
-		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
+		const profile = UtilObject.getProfile();
 
 		return (
 			<div className="sections">

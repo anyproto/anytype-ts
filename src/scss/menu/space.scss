@@ -7,6 +7,14 @@
 	}
 
 	.menu.menuSpace { 
+		.head { 
+			display: flex; flex-direction: row; align-items: center; justify-content: space-between; margin: 0px 0px 20px 0px; 
+			@include text-paragraph; font-weight: 500;
+		}
+		.head {
+			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
+		}
+
 		.items { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; }
 		.items {
 			.item { width: 104px; display: flex; flex-direction: column; align-items: center; gap: 6px 0px; }
@@ -18,8 +26,18 @@
 				.iconObject { border-radius: 0px; }
 				.name { @include text-overflow-nw; @include text-small; width: 100%; text-align: center; }
 			}
+			.item.add {
+				.iconWrap { 
+					border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.40); background: rgba(255, 255, 255, 0.20); 
+					background: url('~img/icon/plus/space.svg') no-repeat; background-size: 20px; background-position: center;
+				}
+			}
+
 			.item:hover, .item.active {
 				.iconWrap { border-color: #fff; }
+			}
+			.item.add:hover { 
+				.iconWrap { border-width: 4px; }
 			}
 		}
 	}

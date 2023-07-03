@@ -31,7 +31,7 @@ class Navigation extends React.Component {
 	render () {
 		const cmd = keyboard.cmdSymbol();
 		const alt = keyboard.altSymbol();
-		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
+		const profile = UtilObject.getProfile();
 		const isWin = UtilCommon.isPlatformWindows();
 		const cb = isWin ? `${alt} + ←` : `${cmd} + ←`;
 		const cf = isWin ? `${alt} + →` : `${cmd} + →`;

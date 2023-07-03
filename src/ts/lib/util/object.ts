@@ -37,10 +37,10 @@ class UtilObject {
 
 		let home = null;
 		if (space.spaceDashboardId == I.HomePredefinedId.Graph) {
-			home = this.graph();
+			home = this.getGraph();
 		} else
 		if (space.spaceDashboardId == I.HomePredefinedId.Last) {
-			home = this.lastOpened();
+			home = this.getLastOpened();
 		} else {
 			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
 		};
@@ -51,7 +51,11 @@ class UtilObject {
 		return home;
 	};
 
-	graph () {
+	getProfile () {
+		return detailStore.get(Constant.subId.profile, blockStore.profile)
+	};
+
+	getGraph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
 			name: 'Graph', 
@@ -60,7 +64,7 @@ class UtilObject {
 		};
 	};
 
-	lastOpened () {
+	getLastOpened () {
 		return { 
 			id: I.HomePredefinedId.Last,
 			name: 'Last opened object', 

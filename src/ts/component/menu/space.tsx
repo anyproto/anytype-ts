@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { IconObject, ObjectName } from 'Component';
+import { IconObject, Icon, ObjectName } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon } from 'Lib';
-import { authStore, dbStore, detailStore, blockStore } from 'Store';
+import { authStore, dbStore, detailStore, blockStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -13,12 +13,15 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	constructor (props: I.Menu) {
 		super(props);
 		
-		this.onClick = this.onClick.bind(this)
+		this.onClick = this.onClick.bind(this);
+		this.onAdd = this.onAdd.bind(this);
+		this.onSettings = this.onSettings.bind(this);
 	};
 	
 	render () {
 		const items = this.getItems();
 		const space = UtilObject.getSpace();
+		const profile = UtilObject.getProfile();
 
 		const Item = (item) => (
 			<div className={[ 'item', (item.spaceId == space.spaceId ? 'active' : '') ].join(' ')} onClick={e => this.onClick(e, item)}>
@@ -34,11 +37,21 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 				ref={node => this.node = node}
 			>
 				<div className="head">
+					<div className="side left">
+						<IconObject object={profile} size={48} />
+						<ObjectName object={profile} />
+					</div>
+					<div className="side left">
+						<Icon className="settings" onClick={this.onSettings} />
+					</div>
 				</div>
 				<div className="items">
 					{items.map((item) => (
 						<Item key={`item-space-${item.id}`} {...item} />
 					))}
+					<div className="item add" onClick={this.onAdd}>
+						<div className="iconWrap" />
+					</div>
 				</div>
 			</div>
 		);
@@ -73,6 +86,16 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		});
 
 		close();
+	};
+
+	onAdd () {
+		popupStore.open('settings', { data: { page: 'spaceCreate', isSpace: true }, className: 'isSpaceCreate' });
+		this.props.close();
+	};
+
+	onSettings () {
+		popupStore.open('settings', {});
+		this.props.close();
 	};
 
 	resize () {
