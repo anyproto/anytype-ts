@@ -29,7 +29,7 @@ class MenuManager {
 			{
 				label: 'Anytype',
 				submenu: [
-					{ label: 'About Anytype', click: () => { WindowManager.createAbout(); } },
+					{ label: 'About Anytype', click: () => WindowManager.createAbout() },
 
 					Separator,
 
@@ -43,12 +43,16 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Check for updates', click: () => { Api.updateCheck(this.win); } },
-					{ label: 'Settings', click: () => { this.openSettings('account'); } },
+					{ label: 'Check for updates', click: () => Api.updateCheck(this.win) },
 
 					Separator,
 
-					{ label: 'Quit', accelerator: 'CmdOrCtrl+Q', click: () => { Api.exit(this.win, false); } },
+					{ label: 'Space settings', click: () => this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: 'Account settings', click: () => this.openSettings('') },
+
+					Separator,
+
+					{ label: 'Quit', accelerator: 'CmdOrCtrl+Q', click: () => Api.exit(this.win, false) },
 				]
 			},
 			{
@@ -58,14 +62,14 @@ class MenuManager {
 					{ label: 'Show logs', click: () => { shell.openPath(logPath); } },
 
 					Separator,
-					{ label: 'Import', click: () => { this.openSettings('importIndex'); } },
-					{ label: 'Export', click: () => { this.openSettings('exportIndex'); } },
-					{ label: 'Save as file', click: () => { Util.send(this.win, 'commandGlobal', 'save'); } },
+					{ label: 'Import', click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: 'Export', click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: 'Save as file', click: () => Util.send(this.win, 'commandGlobal', 'save') },
 
 					Separator,
 
-					{ label: 'Space debug', click: () => { Util.send(this.win, 'commandGlobal', 'debugSpace'); } },
-					{ label: 'Current object debug', click: () => { this.win.show(); Util.send(this.win, 'commandGlobal', 'debugTree'); } },
+					{ label: 'Space debug', click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
+					{ label: 'Current object debug', click: () => { Util.send(this.win, 'commandGlobal', 'debugTree'); } },
 
 					Separator,
 
@@ -111,51 +115,30 @@ class MenuManager {
 							};
 						}
 					},
-					{
-						label: 'Search', accelerator: 'CmdOrCtrl+F',
-						click: () => { Util.send(this.win, 'commandGlobal', 'search'); }
-					},
+					{ label: 'Search', accelerator: 'CmdOrCtrl+F', click: () => Util.send(this.win, 'commandGlobal', 'search') },
 
 					Separator,
 
-					{
-						label: 'Print', accelerator: 'CmdOrCtrl+P',
-						click: () => { Util.send(this.win, 'commandGlobal', 'print'); }
-					},
+					{ label: 'Print', accelerator: 'CmdOrCtrl+P', click: () => Util.send(this.win, 'commandGlobal', 'print') },
 				]
 			},
 			{
 				role: 'windowMenu',
 				submenu: [
-					{ 
-						label: 'New window', accelerator: 'CmdOrCtrl+Shift+N',
-						click: () => { WindowManager.createMain({ isChild: true }); } 
-					},
-					{ 
-						label: 'New object', accelerator: 'CmdOrCtrl+Alt+N',
-						click: () => { WindowManager.createMain({ route: '/main/create', isChild: true }); } 
-					},
+					{ label: 'New window', accelerator: 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
+					{ label: 'New object', accelerator: 'CmdOrCtrl+Alt+N', click: () => WindowManager.createMain({ route: '/main/create', isChild: true }) },
 
 					Separator,
 
 					{ role: 'minimize' },
-					{
-						label: 'Zoom in', accelerator: 'CmdOrCtrl+=',
-						click: () => { Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1); }
-					},
-					{
-						label: 'Zoom out', accelerator: 'CmdOrCtrl+-',
-						click: () => { Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1); }
-					},
-					{
-						label: 'Default zoom', accelerator: 'CmdOrCtrl+0',
-						click: () => { Api.setZoom(this.win, 0); }
-					},
+					{ label: 'Zoom in', accelerator: 'CmdOrCtrl+=', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1) },
+					{ label: 'Zoom out', accelerator: 'CmdOrCtrl+-', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
+					{ label: 'Default zoom', accelerator: 'CmdOrCtrl+0', click: () => Api.setZoom(this.win, 0) },
 					{
 						label: 'Fullscreen', accelerator: 'CmdOrCtrl+Alt+F', type: 'checkbox', checked: this.win.isFullScreen(),
-						click: () => { this.win.setFullScreen(!this.win.isFullScreen()); }
+						click: () => this.win.setFullScreen(!this.win.isFullScreen())
 					},
-					{ label: 'Reload', accelerator: 'CmdOrCtrl+R', click: () => { this.win.reload(); } }
+					{ label: 'Reload', accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
 				]
 			},
 			{
@@ -163,24 +146,24 @@ class MenuManager {
 				submenu: [
 					{
 						label: `What's new (${app.getVersion()})`,
-						click: () => { Util.send(this.win, 'popup', 'help', { preventResize: true, data: { document: 'whatsNew' } }); }
+						click: () => Util.send(this.win, 'popup', 'help', { preventResize: true, data: { document: 'whatsNew' } })
 					},
 					{
 						label: 'Shortcuts', accelerator: 'Ctrl+Space',
-						click: () => { Util.send(this.win, 'popup', 'shortcut', { preventResize: true }); }
+						click: () => Util.send(this.win, 'popup', 'shortcut', { preventResize: true })
 					},
 
 					Separator,
 
-					{ label: 'Anytype Community', click: () => { Util.send(this.win, 'commandGlobal', 'community'); } },
-					{ label: 'Help and Tutorials', click: () => { Util.send(this.win, 'commandGlobal', 'tutorial'); } },
-					{ label: 'Contact Us', click: () => { Util.send(this.win, 'commandGlobal', 'contact'); } },
-					{ label: 'Technical Information', click: () => { Util.send(this.win, 'commandGlobal', 'tech'); } },
+					{ label: 'Anytype Community', click: () => Util.send(this.win, 'commandGlobal', 'community') },
+					{ label: 'Help and Tutorials', click: () => Util.send(this.win, 'commandGlobal', 'tutorial') },
+					{ label: 'Contact Us', click: () => Util.send(this.win, 'commandGlobal', 'contact') },
+					{ label: 'Technical Information', click: () => Util.send(this.win, 'commandGlobal', 'tech') },
 
 					Separator,
 
-					{ label: 'Terms of Use', click: () => { Util.send(this.win, 'commandGlobal', 'terms'); } },
-					{ label: 'Privacy Policy', click: () => { Util.send(this.win, 'commandGlobal', 'privacy'); } },
+					{ label: 'Terms of Use', click: () => Util.send(this.win, 'commandGlobal', 'terms') },
+					{ label: 'Privacy Policy', click: () => Util.send(this.win, 'commandGlobal', 'privacy') },
 
 				]
 			},
@@ -218,7 +201,7 @@ class MenuManager {
 				label: 'Debug',
 				submenu: [
 					{ label: 'Flags', submenu: flagMenu },
-					{ label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I', click: () => { this.win.webContents.openDevTools(); } },
+					{ label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.webContents.openDevTools() },
 				]
 			});
 		//};
@@ -252,31 +235,17 @@ class MenuManager {
 
 				Separator,
 
-				{
-					label: 'Export templates',
-					click: () => { Util.send(this.win, 'commandGlobal', 'exportTemplates'); }
-				},
-				{
-					label: 'Export objects',
-					click: () => { Util.send(this.win, 'commandGlobal', 'exportObjects'); }
-				},
-				{
-					label: 'Export localstore',
-					click: () => { Util.send(this.win, 'commandGlobal', 'exportLocalstore'); }
-				},
-
-				Separator,
-				{
-					label: 'Reset onboarding',
-					click: () => { Util.send(this.win, 'commandGlobal', 'resetOnboarding'); }
-				},
+				{ label: 'Export templates', click: () => Util.send(this.win, 'commandGlobal', 'exportTemplates') },
+				{ label: 'Export objects', click: () => Util.send(this.win, 'commandGlobal', 'exportObjects') },
+				{ label: 'Export localstore', click: () => { Util.send(this.win, 'commandGlobal', 'exportLocalstore'); } },
 
 				Separator,
 
-				{
-					label: 'Relaunch',
-					click: () => { Api.exit(this.win, true); }
-				},
+				{ label: 'Reset onboarding', click: () => Util.send(this.win, 'commandGlobal', 'resetOnboarding') },
+
+				Separator,
+
+				{ label: 'Relaunch', click: () => Api.exit(this.win, true) },
 			]
 		};
 
@@ -290,7 +259,6 @@ class MenuManager {
 
 	initTray () {
 		const Api = require('./api.js');
-		const UpdateManager = require('./update.js');
 
 		const show = () => {
 			if (this.win) {
@@ -307,17 +275,21 @@ class MenuManager {
 		this.tray = new Tray (this.getTrayIcon());
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
-			{ label: 'Open Anytype', click: () => { show(); } },
+			{ label: 'Open Anytype', click: () => show() },
 
 			Separator,
 
-			{ label: 'Settings', click: () => { show(); this.openSettings(''); } },
 			{ label: 'Check for updates', click: () => { show(); Api.updateCheck(this.win); } },
 
 			Separator,
 
-			{ label: 'Import', click: () => { show(); this.openSettings('importIndex'); } },
-			{ label: 'Export', click: () => { show(); this.openSettings('exportIndex'); } },
+			{ label: 'Space settings', click: () => { show(); this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
+			{ label: 'Account settings', click: () => { show(); this.openSettings(''); } },
+
+			Separator,
+
+			{ label: 'Import', click: () => { show(); this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
+			{ label: 'Export', click: () => { show(); this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
 			
 			Separator,
 
@@ -335,11 +307,17 @@ class MenuManager {
 		]));
 	};
 
-	openSettings (page) {
+	openSettings (page, param) {
+		param = param || {};
+		param.data = param.data || {};
+
 		const Api = require('./api.js');
 
 		if (Api.isPinChecked) {
-			Util.send(this.win, 'popup', 'settings', { data: { page } }, true); 
+			const popupParam = Object.assign({}, param);
+			popupParam.data = Object.assign({ page }, param.data);
+
+			Util.send(this.win, 'popup', 'settings', popupParam, true); 
 		};
 	};
 
