@@ -208,13 +208,13 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onButton (e: any, action: string) {
-		const { param } = this.props;
+		const { param, close } = this.props;
 		const { data } = param;
 		const { key, current } = data;
 
 		switch (action) {
 			case 'close': {
-				this.onClose();
+				close();
 				break;
 			};
 
@@ -229,7 +229,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			};
 
 			case 'dashboard': {
-				this.onClose();
+				close();
 				UtilObject.openHome('route');
 				break;
 			};
@@ -239,7 +239,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onArrow (e: any, dir: number) {
-		const { data } = this.props.param;
+		const { param, close } = this.props;
+		const { data } = param;
 		const { key, current } = data;
 		const items = Docs.Help.Onboarding[key].items;
 
@@ -248,7 +249,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		};
 
 		if ((dir > 0) && (current == items.length - 1)) {
-			this.onClose();
+			close();
 			return;
 		};
 
@@ -256,7 +257,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 	};
 
 	onClick (e: any, next: number) {
-		const { data, onOpen, onClose } = this.props.param;
+		const { param } = this.props;
+		const { data, onOpen, onClose } = param;
 		const { key, isPopup, options } = data;
 		const section = Docs.Help.Onboarding[key];
 		const { items } = section;
@@ -266,33 +268,33 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 			return;
 		};
 
-		let param = Onboarding.getParam(section, item, isPopup);
+		let menuParam = Onboarding.getParam(section, item, isPopup);
 
 		if (options.parseParam) {
-			param = options.parseParam(param);
+			menuParam = options.parseParam(menuParam);
 		};
 
 		menuStore.open('onboarding', {
-			...param,
+			...menuParam,
 			onOpen: () => {
 				if (onOpen) {
 					onOpen();
 				};
-				if (param.onOpen) {
-					param.onOpen();
+				if (menuParam.onOpen) {
+					menuParam.onOpen();
 				};
 			},
 			onClose: () => {
 				if (onClose) {
 					onClose();
 				};
-				if (param.onClose) {
-					param.onClose();
+				if (menuParam.onClose) {
+					menuParam.onClose();
 				};
 			},
 			data: {
 				...data,
-				...param.data,
+				...menuParam.data,
 				current: next,
 			},
 		});
