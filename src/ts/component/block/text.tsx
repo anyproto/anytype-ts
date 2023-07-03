@@ -656,7 +656,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+space`, preventDefault: false },
 			{ key: `ctrl+shift+l`, preventDefault: false },
 		];
-		const twineOpen = [ '[', '{', '\'', '\"', '(', '`' ];
+		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
 		const twineClose = {
 			'[': ']',
 			'{': '}',
