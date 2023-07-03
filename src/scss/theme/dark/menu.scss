@@ -92,6 +92,8 @@
             .btn:hover, .btn.active { color: $colorPrimary; }
         }
 
+        .item.active { background-color: $colorLineSecondary; }
+
 		.foot {
 			.icon:hover { background-color: $colorBgIcon; }
 			.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
