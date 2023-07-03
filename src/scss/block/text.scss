@@ -109,7 +109,6 @@
 	/* Description */
 
 	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
-	.block.blockText.textDescription { @include text-description; }
 
 	/* Header1 */
 
@@ -153,7 +152,7 @@
 	.block.blockText.textQuote { padding: 6px 0px 6px 0px; }
 	.block.blockText.textQuote {
 		> .wrapContent {
-			> .selectable > .dropTarget { @include text-quote; padding: 1px 0px 2px 0px; }
+			> .selectable > .dropTarget { padding: 1px 0px 2px 0px; }
 
 			> .additional {
 				> .line { width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 1.5px solid; }

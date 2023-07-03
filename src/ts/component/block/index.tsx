@@ -271,22 +271,32 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		if (canDrop) {
 			object = (
-				<DropTarget {...this.props} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle}>
+				<DropTarget 
+					{...this.props} 
+					rootId={rootId} 
+					id={id} 
+					style={style} 
+					type={type} 
+					dropType={I.DropType.Block} 
+					canDropMiddle={canDropMiddle} 
+					onContextMenu={this.onContextMenu}
+				>
 					{blockComponent}
 				</DropTarget>
 			);
 
-			targetTop = <DropTarget {...this.props} isTargetTop={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
 			targetBot = <DropTarget {...this.props} isTargetBottom={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
 		} else {
-			object = <div className="dropTarget">{blockComponent}</div>;
-
-			targetTop = <div className="dropTarget targetTop" />;
+			object = <div className="dropTarget" onContextMenu={this.onContextMenu}>{blockComponent}</div>;
 			targetBot = <div className="dropTarget targetBot" />;
 		};
 
-		if (!block.isLayoutRow()) {
-			targetTop = null;
+		if (block.isLayoutRow()) {
+			if (canDrop) {
+				targetTop = <DropTarget {...this.props} isTargetTop={true} rootId={rootId} id={id} style={style} type={type} dropType={I.DropType.Block} canDropMiddle={canDropMiddle} />;
+			} else {
+				targetTop = <div className="dropTarget targetTop" />;
+			};
 		};
 
 		if (block.isLayoutColumn() && canDrop) {
@@ -338,7 +348,6 @@ const Block = observer(class Block extends React.Component<Props> {
 				className={cn.join(' ')} 
 				style={css}
 				{...UtilCommon.dataProps({ id })}
-				onContextMenu={this.onContextMenu} 
 			>
 				<div className="wrapMenu">
 					<Icon 
