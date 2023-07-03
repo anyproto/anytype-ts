@@ -9,10 +9,16 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 
 	ref = null;
 	node: any = null;
-	n: number = -1;
+	n: number = 0;
 
 	state = {
 		filter: ''
+	};
+
+	constructor (props: I.Menu) {
+		super(props);
+
+		this.onMouseEnter = this.onMouseEnter.bind(this);
 	};
 
 	render () {
@@ -21,7 +27,12 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 		const { smileId } = data;
 		
 		const Item = (item: any) => (
-			<div id={`skin-${item.skin}`} className="item" onMouseDown={e => this.onClick(e, item.skin)}>
+			<div 
+				id={`skin-${item.skin}`} 
+				className="item" 
+				onMouseDown={e => this.onClick(e, item.skin)}
+				onMouseEnter={e => this.onMouseEnter(e, item.skin)}
+			>
 				<IconObject size={32} object={{ iconEmoji: UtilSmile.nativeById(smileId, item.skin) }} />
 			</div>
 		);
@@ -37,6 +48,7 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 
 	componentDidMount () {
 		this.rebind();
+		this.setActive();
 	};
 
 	componentWillUnmount () {
@@ -52,6 +64,7 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 	};
 
 	rebind () {
+		this.unbind();
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
 	};
 
@@ -71,20 +84,22 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 		close();
 	};
 
+	onMouseEnter (e: any, id: number) {
+		if (!keyboard.isMouseDisabled) {
+			this.n = SKINS.indexOf(id);
+			this.setActive();
+		};
+	};
+
 	onKeyDown (e) {
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect } = data;
 
-		keyboard.shortcut('arrowup, arrowdown', e, () => {
-			e.preventDefault();
-		});
-
-		keyboard.shortcut('arrowleft, arrowright', e, (pressed) => {
+		keyboard.shortcut('arrowleft, arrowright, arrowup, arrowdown', e, (pressed) => {
 			e.preventDefault();
 
-			const node = $(this.node);
-			const dir = pressed == 'arrowleft' ? -1 : 1;
+			const dir = [ 'arrowleft', 'arrowup' ].includes(pressed) ? -1 : 1;
 
 			this.n += dir;
 			if (this.n < 0) {
@@ -94,11 +109,10 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 				this.n = 0;
 			};
 
-			node.find('.active').removeClass('active');
-			node.find(`#skin-${SKINS[this.n]}`).addClass('active');
+			this.setActive();
 		});
 
-		keyboard.shortcut('enter', e, () => {
+		keyboard.shortcut('enter, space, tab', e, () => {
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -107,6 +121,13 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 				close();
 			};
 		});
+	};
+
+	setActive () {
+		const node = $(this.node);
+
+		node.find('.active').removeClass('active');
+		node.find(`#skin-${SKINS[this.n]}`).addClass('active');
 	};
 	
 };
