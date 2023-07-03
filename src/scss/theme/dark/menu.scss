@@ -92,8 +92,10 @@
             .btn:hover, .btn.active { color: $colorPrimary; }
         }
 
+		.item.active { background: $colorHoverMedium; }
+
 		.foot {
-			.icon:hover { background-color: $colorBgIcon; }
+			.icon:hover { background-color: $colorHoverMedium; }
 			.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
 			.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
 			.icon.nature.active { background-image: url('#{$themePath}/icon/emoji/nature1.svg'); }
@@ -104,6 +106,12 @@
 			.icon.symbols.active { background-image: url('#{$themePath}/icon/emoji/symbols1.svg'); }
 			.icon.flags.active { background-image: url('#{$themePath}/icon/emoji/flags1.svg'); }
 		}
+    }
+
+	/* MenuSmileSkin */
+
+	.menu.menuSmileSkin {
+		.item.active { background: $colorHoverMedium; }
     }
 
     /* MenuBlockCover */

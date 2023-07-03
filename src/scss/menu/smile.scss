@@ -26,11 +26,10 @@
 		
 		.row { padding: 0px 12px; }
 		
-		.item { 
-			width: 40px; height: 40px; position: relative; border-radius: 6px; display: inline-block;
-			vertical-align: top; padding: 0px;
-		}
-		.item:hover, .item.active { background: $colorVeryLightGrey; }
+		.item { width: 40px; height: 40px; position: relative; border-radius: 6px; display: inline-block; vertical-align: top; padding: 0px; }
+		.item::before { display: none; }
+		.item.active { background: $colorHoverMedium; }
+
 		.item {
 			.iconObject { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
 			.iconEmoji .emoji-mart-emoji { vertical-align: top; }
@@ -40,7 +39,7 @@
 		.foot { padding: 5px 16px 6px 16px; border-top: 1px solid $colorBorderLight; display: flex; justify-content: space-between; }
 		.foot {
 			.icon { width: 32px; height: 32px; border-radius: 4px; background-size: 20px; flex-shrink: 0; transition: $transitionAllCommon; }
-			.icon:hover { background-color: $colorVeryLightGrey; }
+			.icon:hover { background-color: $colorHoverMedium; }
 
 			.icon.recent { background-image: url('~img/icon/emoji/recent0.svg'); }
 			.icon.recent.active { background-image: url('~img/icon/emoji/recent1.svg'); }
@@ -78,7 +77,7 @@
 			.iconObject { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
 			.iconEmoji .emoji-mart-emoji span { margin-top: 2px; }
 		}
-		.item:hover, .item.active { background: $colorVeryLightGrey; }
+		.item.active { background: $colorHoverMedium; }
 		.item:last-child { margin: 0px; }
 	}
 }
