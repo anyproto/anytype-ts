@@ -30,7 +30,7 @@
 			width: 40px; height: 40px; position: relative; border-radius: 6px; display: inline-block;
 			vertical-align: top; padding: 0px;
 		}
-		.item:hover, .item.active { background: $colorVeryLightGrey; }
+		.item.active { background: $colorVeryLightGrey; }
 		.item {
 			.iconObject { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
 			.iconEmoji .emoji-mart-emoji { vertical-align: top; }
@@ -78,7 +78,7 @@
 			.iconObject { position: absolute; left: 50%; top: 50%; margin: -16px 0px 0px -16px; width: 32px; height: 32px; line-height: 32px; }
 			.iconEmoji .emoji-mart-emoji span { margin-top: 2px; }
 		}
-		.item:hover, .item.active { background: $colorVeryLightGrey; }
+		.item.active { background: $colorVeryLightGrey; }
 		.item:last-child { margin: 0px; }
 	}
 }

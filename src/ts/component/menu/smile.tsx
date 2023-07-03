@@ -50,6 +50,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.onUpload = this.onUpload.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.onScroll = this.onScroll.bind(this);
+		this.unbind = this.unbind.bind(this);
+		this.rebind = this.rebind.bind(this);
 	};
 	
 	render () {
@@ -212,7 +214,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			};
 		}, 15);
 
-		$(window).on('keydown.smile', e => this.onKeyDown(e));
+		this.rebind();
 	};
 	
 	componentDidUpdate () {
@@ -227,13 +229,30 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 	
 	componentWillUnmount () {
+		const { param } = this.props;
+		const { data } = param;
+		const { rebind } = data;
+
 		window.clearTimeout(this.timeoutMenu);
 		window.clearTimeout(this.timeoutFilter);
 
 		keyboard.setFocus(false);
 		menuStore.close('smileSkin');
 
-		$(window).off('keydown.smile');
+		this.unbind();
+
+		if (rebind) {
+			rebind();
+		};
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+	};
+
+	unbind () {
+		$(window).off('keydown.menu');
 	};
 
 	checkRecent (sections: any[]) {
@@ -374,11 +393,18 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			e.preventDefault();
+
+			this.refFilter.blur();
 			this.onArrowVertical(pressed.match(/arrowup/) ? -1 : 1);
 		});
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+			if (this.refFilter.isFocused && this.refFilter.getValue().length) {
+				return;
+			};
+
 			e.preventDefault();
+			this.refFilter.blur();
 			this.onArrowHorizontal(pressed.match(/arrowleft/) ? -1 : 1);
 		});
 
@@ -390,6 +416,16 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				close();
 			};
 		});
+
+		keyboard.shortcut('tab, space', e, () => {
+			if (this.refFilter.isFocused || !this.active) {
+				return;
+			};
+
+			e.preventDefault();
+			Preview.tooltipHide(true);
+			this.onSkin(e, this.active.id, this.active.itemId);
+		});
 	};
 
 	setActive (item?: any, row?: number) {
@@ -399,6 +435,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			this.refList.scrollToRow(Math.max(0, row));
 		};
 
+		Preview.tooltipHide(false);
 		node.find('.active').removeClass('active');
 
 		this.active = item;
@@ -412,8 +449,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				text: this.aliases[this.active.itemId] || this.active.itemId,
 				element: item,
 			});
-		} else {
-			Preview.tooltipHide(false);
 		};
 	};
 
@@ -421,12 +456,6 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		const rows = this.getItems();
 
 		this.row += dir;
-		const current = rows[this.row];
-
-		if (!current.children) {
-			this.onArrowVertical(dir);
-			return;
-		};
 
 		// Arrow up
 		if (this.row < 0) {
@@ -436,6 +465,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		// Arrow down
 		if (this.row > rows.length - 1) {
 			this.row = 0;
+		};
+
+		const current = rows[this.row];
+
+		if (!current.children) {
+			this.onArrowVertical(dir);
+			return;
 		};
 
 		if (this.n > current.children.length) {
@@ -513,14 +549,18 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	};
 
 	onMouseEnter (e: any, item: any) {
-		this.row = item.position.row;
-		this.n = item.position.n;
-		this.setActive(item);
+		if (!keyboard.isMouseDisabled) {
+			this.row = item.position.row;
+			this.n = item.position.n;
+			this.setActive(item);
+		};
 	};
 
 	onMouseLeave () {
-		this.setActive(null);
-		this.n = -1;
+		if (!keyboard.isMouseDisabled) {
+			this.setActive(null);
+			this.n = 0;
+		};
 	};
 	
 	onMouseDown (e: any, n: string, id: string, skin: number) {
@@ -574,7 +614,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 					this.onSelect(id, skin);
 
 					close();
-				}
+				},
+				rebind: this.rebind
 			},
 			onClose: () => {
 				this.id = '';
