@@ -636,7 +636,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
 
-		const menuOpen = menuStore.isOpen();
+		const menuOpen = menuStore.isOpen('', '', [ 'onboarding' ]);
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		const menuOpenSmile = menuStore.isOpen('smile');
@@ -691,12 +691,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			ret = true;
 		});
 
-		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, (pressed: string) => {
+		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, () => {
 			keyboard.disableContextClose(false);
 		});
 
 		saveKeys.forEach((item: any) => {
-			keyboard.shortcut(item.key, e, (pressed: string) => {
+			keyboard.shortcut(item.key, e, () => {
 				if (item.preventDefault) {
 					e.preventDefault();
 				};
@@ -708,7 +708,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			});
 		});
 
-		keyboard.shortcut('tab', e, (pressed: string) => {
+		keyboard.shortcut('tab', e, () => {
 			e.preventDefault();
 
 			if (!range) {
@@ -774,7 +774,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e, ${cmd}+dot`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+e, ${cmd}+dot`, e, () => {
 			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};
@@ -1111,7 +1111,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.text = value;
 
-		if (menuStore.isOpen()) {
+		if (menuStore.isOpen('', '', [ 'onboarding' ])) {
 			return;
 		};
 

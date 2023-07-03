@@ -87,9 +87,15 @@ class PopupStore {
 		};
 	};
 
-    isOpen (id?: string): boolean {
+    isOpen (id?: string, filter?: string[]): boolean {
 		if (!id) {
-			return this.popupList.length > 0;
+			let length = 0;
+			if (filter) {
+				length = this.popupList.filter(it => filter ? !filter.includes(it.id) : true).length;
+			} else {
+				length = this.popupList.length;
+			};
+			return length > 0;
 		};
 		return this.get(id) ? true : false;
 	};
