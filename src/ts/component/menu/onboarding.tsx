@@ -141,7 +141,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		UtilCommon.renderLinks(node);
 
 		if (showConfetti && (current == l - 1)) {
-			this.confetti({ particleCount: 150, spread: 60, origin: { x: 0.5, y: 1 } });
+			this.confettiShot();
 		};
 	};
 
