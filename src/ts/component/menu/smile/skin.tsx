@@ -44,7 +44,7 @@ class MenuSmileSkin extends React.Component<I.Menu> {
 	componentWillUnmount () {
 		const { getId } = this.props;
 
-		$(window).on(`keydown.${getId()}`
+		$(window).off(`keydown.${getId()}`);
 	};
 
 	onClick (e: any, id: number) {
