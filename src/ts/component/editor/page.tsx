@@ -254,6 +254,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 
+	close () {
+		const { isPopup, rootId, match } = this.props;
+
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+		if (keyboard.isCloseDisabled) {
+			close = false;
+		};
+
+		if (close) {
+			Action.pageClose(rootId, true);
+		};
+	};
+
 	onCommand (cmd: string, arg: any) {
 		if (keyboard.isFocused) {
 			return;
@@ -300,22 +316,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!length) {
 			focus.set(block.id, { from: length, to: length });
 			focus.apply();
-		};
-	};
-	
-	close () {
-		const { isPopup, rootId, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == rootId)) {
-			close = false;
-		};
-		if (keyboard.isCloseDisabled) {
-			close = false;
-		};
-
-		if (close) {
-			Action.pageClose(rootId, true);
 		};
 	};
 	

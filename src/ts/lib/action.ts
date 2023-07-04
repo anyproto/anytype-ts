@@ -6,6 +6,7 @@ class Action {
 
 	pageClose (rootId: string, close: boolean) {
 		const { profile } = blockStore;
+
 		if (rootId == profile) {
 			return;
 		};
