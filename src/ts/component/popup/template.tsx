@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Loader, Title, Label, ListObjectPreview } from 'Component';
 import { I, focus, UtilCommon, UtilData } from 'Lib';
-import { dbStore } from 'Store';
+import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -109,8 +109,24 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 				return;
 			};
 
-			this.setState({ loading: false, items: message.records || [] });
+			const templates = this.getBlank().concat(message.records || []);
+			this.setState({ loading: false, items: templates });
 		});
+	};
+
+	getBlank () {
+		const { workspace } = commonStore;
+
+		return [{
+			description: '',
+			id: Constant.templateId.blank,
+			layout: 0,
+			name: 'Blank',
+			restrictions: [],
+			snippet: '',
+			type: Constant.typeId.template,
+			workspaceId: workspace,
+		}];
 	};
 
 	onKeyUp (e: any) {

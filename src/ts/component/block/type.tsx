@@ -266,7 +266,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 	onCreate (typeId: any, template: any) {
 		const { rootId, isPopup } = this.props;
 
-		if (template) {
+		if (template && (template.id != Constant.templateId.blank)) {
 			C.ObjectApplyTemplate(rootId, template.id, this.onTemplate);
 		} else {
 			C.ObjectSetObjectType(rootId, typeId, this.onTemplate);

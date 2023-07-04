@@ -136,6 +136,10 @@
 
 	"storeSpaceId": "_anytype_marketplace",
 
+	"templateId": {
+		"blank": "blank"
+	},
+
 	"blockId": {
 		"title": "title",
 		"description": "description",
