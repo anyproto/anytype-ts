@@ -197,6 +197,12 @@ html.themeDark {
         }
     }
 
+    .previewObject.blank {
+        .heading {
+            .name { color: $colorSecondary; }
+        }
+    }
+
     /* Preview */
 
     .previewWrapper {

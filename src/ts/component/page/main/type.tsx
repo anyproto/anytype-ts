@@ -154,7 +154,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 										getItems={() => templates}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
-										onClick={(e: any, item: any) => { UtilObject.openPopup(item); }} 
+										onClick={(e: any, item: any) => { UtilObject.openPopup(item); }}
+										withBlank={true}
 									/>
 								</div>
 							) : (

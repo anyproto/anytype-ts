@@ -9,6 +9,8 @@ interface Props {
 	canAdd?: boolean;
 	onClick?: (e: any, item: any) => void;
 	onAdd?: (e: any) => void;
+	withBlank?: boolean;
+	onBlank?: (e: any) => void;
 };
 
 const WIDTH = 344;
@@ -28,7 +30,7 @@ class ListObjectPreview extends React.Component<Props> {
 	refObj: any = {};
 
 	render () {
-		const { getItems, canAdd, onAdd } = this.props;
+		const { getItems, canAdd, onAdd, withBlank, onBlank } = this.props;
 		const items = getItems();
 
 		const Item = (item: any) => {
@@ -48,6 +50,21 @@ class ListObjectPreview extends React.Component<Props> {
 			);
 		};
 
+		const ItemBlank = () => {
+			return (
+				<div className="item" onClick={onBlank ? onBlank : null}>
+					<div className="previewObject blank">
+						<div className="scroller">
+							<div className="heading">
+								<div className="name">Blank</div>
+							</div>
+						</div>
+						<div className="border" />
+					</div>
+				</div>
+			);
+		};
+
 		const ItemAdd = () => (
 			<div className="item add" onClick={onAdd}>
 				<Icon className="plus" />
@@ -61,6 +78,7 @@ class ListObjectPreview extends React.Component<Props> {
 			>
 				<div className="wrap">
 					<div id="scroll" className="scroll">
+						{withBlank ? <ItemBlank /> : ''}
 						{items.map((item: any, i: number) => (
 							<Item key={i} {...item} index={i} />
 						))}
@@ -80,7 +98,6 @@ class ListObjectPreview extends React.Component<Props> {
 
 	componentDidUpdate () {
 		this.resize();
-		this.setActive();
 	};
 
 	getMaxPage () {
