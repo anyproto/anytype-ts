@@ -362,6 +362,10 @@ class Keyboard {
 					return;
 				};
 
+				if ((route.page == 'main') && (route.action == 'usecase')) {
+					return;
+				};
+
 				if ((route.page == 'main') && (route.action == 'history')) {
 					prev = UtilCommon.history.entries[UtilCommon.history.index - 3];
 					if (prev) {
