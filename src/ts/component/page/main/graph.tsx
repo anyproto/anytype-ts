@@ -199,11 +199,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	resize () {
+		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = UtilCommon.getPageContainer(this.props.isPopup);
+		const obj = UtilCommon.getPageContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
-		const isPopup = this.props.isPopup && !obj.hasClass('full');
 		const oh = obj.height();
 		const header = node.find('#header');
 		const hh = header.height();

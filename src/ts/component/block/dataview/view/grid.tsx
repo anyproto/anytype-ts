@@ -78,33 +78,31 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
 							{({ height, isScrolling, registerChild, scrollTop }) => (
 								<AutoSizer disableHeight={true}>
-									{({ width }) => {
-										return (
-											<div ref={registerChild}>
-												<List
-													autoHeight={true}
-													height={Number(height) || 0}
-													width={Number(width) || 0}
-													isScrolling={isScrolling}
-													rowCount={length}
-													rowHeight={this.getRowHeight()}
-													onRowsRendered={onRowsRendered}
-													rowRenderer={({ key, index, style }) => (
-														<BodyRow 
-															key={'grid-row-' + view.id + index} 
-															{...this.props} 
-															readonly={!isAllowedObject}
-															recordId={records[index]}
-															style={{ ...style, top: style.top + 2 }}
-															cellPosition={this.cellPosition}
-															getColumnWidths={this.getColumnWidths}
-														/>
-													)}
-													scrollTop={scrollTop}
-												/>
-											</div>
-										);
-									}}
+									{({ width }) => (
+										<div ref={registerChild}>
+											<List
+												autoHeight={true}
+												height={Number(height) || 0}
+												width={Number(width) || 0}
+												isScrolling={isScrolling}
+												rowCount={length}
+												rowHeight={this.getRowHeight()}
+												onRowsRendered={onRowsRendered}
+												rowRenderer={({ key, index, style }) => (
+													<BodyRow 
+														key={'grid-row-' + view.id + index} 
+														{...this.props} 
+														readonly={!isAllowedObject}
+														recordId={records[index]}
+														style={{ ...style, top: style.top + 2 }}
+														cellPosition={this.cellPosition}
+														getColumnWidths={this.getColumnWidths}
+													/>
+												)}
+												scrollTop={scrollTop}
+											/>
+										</div>
+									)}
 								</AutoSizer>
 							)}
 						</WindowScroller>
