@@ -138,6 +138,8 @@ class Navigation extends React.Component {
 	onProfile () {
 		menuStore.open('space', {
 			element: '#navigationPanel',
+			className: 'fixed',
+			classNameWrap: 'fromNavigation',
 			type: I.MenuType.Horizontal,
 			horizontal: I.MenuDirection.Center,
 			vertical: I.MenuDirection.Top,

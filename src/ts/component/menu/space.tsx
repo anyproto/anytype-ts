@@ -99,6 +99,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	resize () {
+		this.props.position();
 	};
 	
 });
