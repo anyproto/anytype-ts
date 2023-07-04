@@ -331,7 +331,7 @@ class Keyboard {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 
-		if (authStore.accountIsDeleted() || authStore.accountIsPending()) {
+		if (authStore.accountIsDeleted() || authStore.accountIsPending() || !this.checkBack()) {
 			return;
 		};
 
@@ -344,7 +344,9 @@ class Keyboard {
 				});
 			};
 		} else {
-			let prev = UtilCommon.history.entries[UtilCommon.history.index - 1];
+			const history = UtilCommon.history;
+
+			let prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
 				UtilObject.openHome('route');
@@ -354,23 +356,15 @@ class Keyboard {
 			if (prev) {
 				const route = UtilCommon.getRoute(prev.pathname);
 
-				if ([ 'index', 'auth' ].includes(route.page) && account) {
-					return;
-				};
-
-				if ((route.page == 'main') && !account) {
-					return;
-				};
-
 				if ((route.page == 'main') && (route.action == 'history')) {
-					prev = UtilCommon.history.entries[UtilCommon.history.index - 3];
+					prev = history.entries[history.index - 3];
 					if (prev) {
 						UtilCommon.route(prev.pathname, {});
 					};
 					return;
 				};
 
-				UtilCommon.history.goBack();
+				history.goBack();
 			};
 		};
 
@@ -381,6 +375,10 @@ class Keyboard {
 
 	onForward () {
 		const isPopup = this.isPopup();
+
+		if (!this.checkForward()) {
+			return;
+		};
 
 		if (isPopup) {
 			historyPopup.goForward((match: any) => { 
@@ -395,6 +393,7 @@ class Keyboard {
 	};
 
 	checkBack (): boolean {
+		const { account } = authStore;
 		const isPopup = this.isPopup();
 		const history = UtilCommon.history;
 
@@ -402,22 +401,31 @@ class Keyboard {
 			return;
 		};
 
-		let ret = true;
 		if (!isPopup) {
-			ret = history.index - 1 >= 0;
+			let prev = history.entries[history.index - 1];
 
-			if (history.index === 0) {
-				const entry = history.entries[history.index];
-				const route = UtilCommon.getRoute(entry.pathname);
-				const home = UtilObject.getSpaceDashboard();
+			if (account && !prev) {
+				return false;
+			};
 
-				if (home && (route.id != home.id)) {
-					ret = true;
+			if (prev) {
+				const route = UtilCommon.getRoute(prev.pathname);
+
+				if ([ 'index', 'auth' ].includes(route.page) && account) {
+					return false;
+				};
+
+				if ((route.page == 'main') && !account) {
+					return false;
+				};
+
+				if ((route.page == 'main') && (route.action == 'usecase')) {
+					return false;
 				};
 			};
 		};
 
-		return ret;
+		return true;
 	};
 
 	checkForward (): boolean {

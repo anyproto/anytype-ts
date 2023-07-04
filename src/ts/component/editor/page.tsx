@@ -348,7 +348,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 
 		win.on('focus.editor' + namespace, () => {
-			const isPopupOpen = popupStore.isOpen() && !keyboard.isPopup();
+			const isPopupOpen = popupStore.isOpen('', [ 'page' ]);
 			const isMenuOpen = menuStore.isOpen();
 			const isMenuContextOpen = menuStore.isOpen('blockContext');
 
@@ -403,7 +403,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			keyboard.isDragging || 
 			(selection && selection.isSelecting) || 
 			menuOpen || 
-			(!isPopup && popupStore.isOpen()) ||
+			popupStore.isOpen('', [ 'page' ]) ||
 			isLoading
 		) {
 			out();
@@ -766,7 +766,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			// Search
 			keyboard.shortcut(`${cmd}+f`, e, () => {
-				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from), 'editor');
+				keyboard.onSearchMenu(text.substring(range.from, range.to - range.from), 'editor');
 			});
 
 			if (block.isTextToggle()) {

@@ -1,11 +1,9 @@
 @import "~scss/_vars";
 
 .pageMainStore {
-	.wrapper { height: 100%; width: 100%; margin: 0px 0px 0px -50%; position: absolute; left: 50%; top: 0px; }
-
 	.content { height: 100%; padding-top: 40px; }
 
-	.body { width: 100%; height: 100%; display: flex; flex-direction: column; }
+	.body { display: flex; flex-direction: column; }
 	.body {
 		.mid { text-align: center; padding: 60px 0px 52px 0px; margin: 0px auto; max-width: 640px; }
 		.mid {

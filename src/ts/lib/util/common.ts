@@ -130,14 +130,14 @@ class UtilCommon {
 	
 	toUpperCamelCase (str: string) {
 		const s = this.toCamelCase(str);
-		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length);
+		return s.substring(0, 1).toUpperCase() + s.substring(1, s.length);
 	};
 	
 	toCamelCase (str: string) {
 		const s = String(str || '').replace(/[_\-\s]([a-zA-Z]{1})/g, (s: string, p1: string) => {
 			return String(p1 || '').toUpperCase();
 		});
-		return s.substr(0, 1).toLowerCase() + s.substr(1, s.length);
+		return s.substring(0, 1).toLowerCase() + s.substring(1, s.length);
 	};
 
 	fromCamelCase (str: string, symbol: string) {
@@ -148,7 +148,7 @@ class UtilCommon {
 		if (!s) {
 			return '';
 		};
-		return s.substr(0, 1).toUpperCase() + s.substr(1, s.length).toLowerCase();
+		return s.substring(0, 1).toUpperCase() + s.substring(1, s.length).toLowerCase();
 	};
 
 	objectCopy (o: any): any {
@@ -254,19 +254,19 @@ class UtilCommon {
 	};
 
 	stringCut (haystack: string, start: number, end: number): string {
-		return String(haystack || '').substr(0, start) + haystack.substr(end);
+		return String(haystack || '').substring(0, start) + haystack.substring(end);
 	};
 
 	stringInsert (haystack: string, needle: string, start: number, end: number): string {
 		haystack = String(haystack || '');
-		return haystack.substr(0, start) + needle + haystack.substr(end);
+		return haystack.substring(0, start) + needle + haystack.substring(end);
 	};
 	
 	shorten (s: string, l?: number, noEnding?: boolean) {
 		s = String(s || '');
 		l = Number(l) || 16;
 		if (s.length > l) {
-			s = s.substr(0, l) + (!noEnding ? '...' : '');
+			s = s.substring(0, l) + (!noEnding ? '...' : '');
 		};
 		return s;
 	};
@@ -415,7 +415,7 @@ class UtilCommon {
 			},
 			D: () => {
 				let t = f.l(); 
-				return t.substr(0,3);
+				return t.substring(0,3);
 			},
 			j: () => {
 				return d.getDate();
@@ -428,7 +428,7 @@ class UtilCommon {
 				return pad(f.n(), 2);
 			},
 			M: () => {
-				return f.F().substr(0, 3);
+				return f.F().substring(0, 3);
 			},
 			n: () => {
 				return d.getMonth() + 1;
@@ -715,10 +715,10 @@ class UtilCommon {
 	cntWord (cnt: any, w1: string, w2?: string) {
 		cnt = String(cnt || '');
 		w2 = w2 ? w2 : w1 + 's';
-		if (cnt.substr(-2) == 11) {
+		if (cnt.substring(-2) == 11) {
 			return w2;
 		};
-		return cnt.substr(-1) == '1' ? w1 : w2;
+		return cnt.substring(-1) == '1' ? w1 : w2;
 	};
 
 	getPlatform () {

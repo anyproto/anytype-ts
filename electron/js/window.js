@@ -28,7 +28,6 @@ class WindowManager {
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
-			icon: this.getIcon(),
 			show: false,
 			titleBarStyle: 'hidden-inset',
 			webPreferences: {},
@@ -94,12 +93,10 @@ class WindowManager {
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
 			param.trafficLightPosition = { x: 20, y: 18 };
-		};
-
+		} else
 		if (is.windows) {
-			param.icon = path.join(Util.imagePath(), 'icon64x64.png');
-		};
-
+			param.icon = path.join(Util.imagePath(), 'icon32x32.png');
+		} else
 		if (is.linux) {
 			param.icon = image;
 		};
@@ -134,14 +131,6 @@ class WindowManager {
 			win.loadURL('file://' + path.join(Util.appPath, 'dist', 'index.html'));
 		};
 		return win;
-	};
-
-	getIcon () {
-		if (is.windows) {
-			return path.join(Util.imagePath(), 'icon32x32.png');
-		} else {
-			return path.join(Util.imagePath(), 'icon.png');
-		};
 	};
 
 	createAbout () {

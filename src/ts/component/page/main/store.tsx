@@ -1,7 +1,7 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
 import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
@@ -61,10 +61,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return null;
 		};
 
+		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
 		const sources = this.getSources();
 		const limit = this.getLimit();
+		const length = items.length;
 
 		let title = '';
 		let placeholder = '';
@@ -215,28 +217,37 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				<div className="body">
 					<div className="items">
 						<InfiniteLoader
-							rowCount={items.length}
 							loadMoreRows={() => {}}
-							isRowLoaded={() => true}
+							isRowLoaded={({ index }) => !!items[index]}
+							rowCount={length}
+							threshold={10}
 						>
 							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											onScroll={this.onScroll}
-											scrollToAlignment="start"
-										/>
+								<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+									{({ height, isScrolling, registerChild, scrollTop }) => (
+										<AutoSizer disableHeight={true}>
+											{({ width }) => {
+												return (
+													<div ref={registerChild}>
+														<List
+															autoHeight={true}
+															height={Number(height) || 0}
+															width={Number(width) || 0}
+															isScrolling={isScrolling}
+															rowCount={length}
+															rowHeight={({ index }) => this.getRowHeight(items[index])}
+															onRowsRendered={onRowsRendered}
+															rowRenderer={rowRenderer}
+															onScroll={this.onScroll}
+															scrollTop={scrollTop}
+															scrollToAlignment="start"
+														/>
+													</div>
+												);
+											}}
+										</AutoSizer>
 									)}
-								</AutoSizer>
+								</WindowScroller>
 							)}
 						</InfiniteLoader>
 					</div>
@@ -621,52 +632,32 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	resize () {
-		const container = UtilCommon.getPageContainer(this.props.isPopup);
-		const win = $(window);
 		const node = $(this.node);
-		const content = $('#popupPage .content');
-		const body = node.find('.body');
-		const hh = UtilCommon.sizeHeader();
-		const isPopup = this.isPopup();
 		const limit = this.getLimit();
-		const wh = isPopup ? container.height() : win.height();
 		const midHeight = node.find('.mid').outerHeight();
 		const filter = node.find('#store-filter');
+		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
+		const items = this.getItems();
+		const height = items.reduce((res, current) => res += this.getRowHeight(current), 0);
 
-		node.css({ height: wh });
-		
-		if (isPopup) {
-			body.css({ height: wh - hh });
-			content.css({ minHeight: 'unset', height: '100%' });
-		} else {
-			body.css({ height: '' });
-			content.css({ minHeight: '', height: '' });
-		};
+		grid.css({ height });
 
 		if ((limit != this.limit) || (midHeight != this.midHeight)) {
 			this.limit = limit;
 			this.midHeight = midHeight;
 
 			raf.cancel(this.frame);
-			this.frame = raf(() => { this.forceUpdate(); });
+			this.frame = raf(() => this.forceUpdate());
 		};
 
-		if (!menuStore.get(this.getMenuId())) {
-			return;
-		}
+		if (menuStore.isOpen(this.getMenuId())) {
+			if (this.refFilter && this.filter.length) {
+				this.refFilter.setValue(this.filter);
+				this.refFilter.focus();
+			};
 
-		if (this.refFilter && this.filter.length) {
-			this.refFilter.setValue(this.filter);
-			this.refFilter.focus();
+			menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
 		};
-		menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
-	};
-
-	isPopup () {
-		const { isPopup } = this.props;
-		const container = UtilCommon.getPageContainer(isPopup);
-
-		return isPopup && !container.hasClass('full');
 	};
 
 });

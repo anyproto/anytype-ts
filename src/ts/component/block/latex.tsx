@@ -227,7 +227,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 		if (menuOpen) {
 			const d = range.start - filter.from;
 			if (d >= 0) {
-				const part = value.substr(filter.from, d).replace(/^\\/, '');
+				const part = value.substring(filter.from, d).replace(/^\\/, '');
 				commonStore.filterSetText(part);
 			};
 		};
