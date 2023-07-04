@@ -883,7 +883,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				if (!ret && range) {
 					const d = range.from - filter.from;
 					if (d >= 0) {
-						const part = value.substr(filter.from, d).replace(/^\//, '');
+						const part = value.substring(filter.from, d).replace(/^\//, '');
 						commonStore.filterSetText(part);
 					};
 				};

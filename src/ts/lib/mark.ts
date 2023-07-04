@@ -79,7 +79,7 @@ class Mark {
 		];
 
 		for (let item of Markdown) {
-			const non = UtilCommon.filterFix(item.key.substr(0, 1));
+			const non = UtilCommon.filterFix(item.key.substring(0, 1));
 			const k = UtilCommon.filterFix(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,

@@ -766,7 +766,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			// Search
 			keyboard.shortcut(`${cmd}+f`, e, () => {
-				keyboard.onSearchMenu(text.substr(range.from, range.to - range.from), 'editor');
+				keyboard.onSearchMenu(text.substring(range.from, range.to - range.from), 'editor');
 			});
 
 			if (block.isTextToggle()) {
