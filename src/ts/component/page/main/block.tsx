@@ -156,7 +156,7 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 			const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
 
 			container.css({ minHeight: isPopup ? '' : win.height() });
-			node.css({ paddingTop: isPopup && !container.hasClass('full') ? 0 : hh });
+			node.css({ paddingTop: isPopup ? 0 : hh });
 		});
 	};
 
