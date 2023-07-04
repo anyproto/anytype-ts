@@ -132,7 +132,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		close();
 		window.setTimeout(() => {
 			if (onSelect) {
-				onSelect(item);
+				onSelect(UtilData.checkBlankTemplate(item));
 			};
 		}, Constant.delay.popup);
 	};

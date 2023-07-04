@@ -542,7 +542,14 @@ class UtilData {
 
 	// Check if there are at least 2 templates for object types
 	checkTemplateCnt (ids: string[], callBack?: (message: any) => void) {
-		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeId.template, ids, 2, callBack);
+		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeId.template, ids, 1, callBack);
+	};
+
+	checkBlankTemplate (template) {
+		if (template.id == Constant.templateId.blank) {
+			return null;
+		};
+		return template;
 	};
 
 	// Check if there is at least 1 set for object types

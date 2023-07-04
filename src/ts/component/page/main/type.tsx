@@ -410,10 +410,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		UtilData.checkTemplateCnt([ rootId ], (message: any) => {
-			if (message.records.length > 1) {
+			if (message.records.length) {
 				showMenu();
 			} else {
-				create(message.records.length ? message.records[0] : '');
+				create('');
 			};
 		});
 	};

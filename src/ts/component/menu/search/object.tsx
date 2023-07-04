@@ -240,10 +240,14 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, label, canAdd, addParam } = data;
+		const { filter, label, canAdd, addParam, withBlank } = data;
 
 		let items = [].concat(this.items);
 		let length = items.length;
+
+		if (withBlank) {
+			items.unshift({ id: Constant.templateId.blank, name: 'Blank', isBlank: true })
+		};
 
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });

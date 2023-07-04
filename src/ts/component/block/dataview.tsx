@@ -645,6 +645,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					label: 'Choose a template',
 					noFilter: true,
 					noIcon: true,
+					withBlank: true,
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
 						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
@@ -653,6 +654,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
 					onOver: (e: any, context: any, item: any) => {
+						if (item.isBlank) {
+							menuStore.closeAll([ 'previewObject' ]);
+							return;
+						};
+
 						menuStore.open('previewObject', {
 							element: `#${context.props.getId()} #item-${item.id}`,
 							offsetX: context.props.getSize().width,
@@ -662,7 +668,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						});
 					},
 					onSelect: (item: any) => {
-						create(item);
+						create(UtilData.checkBlankTemplate(item));
 						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
 					}
 				}
@@ -670,10 +676,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		UtilData.checkTemplateCnt(setOf, (message: any) => {
-			if (message.records.length > 1) {
+			if (message.records.length) {
 				withPopup ? showPopup() : showMenu();
 			} else {
-				create(message.records.length ? message.records[0] : '');
+				create('');
 			};
 		});
 	};
