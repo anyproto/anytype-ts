@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate } from 'Lib';
+import { I, UtilCommon, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore } from 'Store';
 
@@ -51,6 +51,8 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		} else {
 			onPage(UtilCommon.toCamelCase('import-' + item.id));
 		};
+
+		analytics.event('ClickImport', { type: item.id });
 	};
 
 	getItems () {

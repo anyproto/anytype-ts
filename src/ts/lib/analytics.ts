@@ -229,12 +229,14 @@ class Analytics {
 				break;
 			};
 
+			case 'ClickExport':
 			case 'Export': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ExportType[data.type];
 				break;
 			};
 
+			case 'ClickImport':
 			case 'Import': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ImportType[data.type];
