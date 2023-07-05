@@ -51,8 +51,6 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		} else {
 			onPage(UtilCommon.toCamelCase('import-' + item.id));
 		};
-
-		analytics.event('ClickImport', { type: item.id });
 	};
 
 	getItems () {

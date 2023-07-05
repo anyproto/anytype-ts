@@ -51,8 +51,6 @@ const PopupSettingsPageExportIndex = observer(class PopupSettingsPageExportIndex
 		} else {
 			onPage(UtilCommon.toCamelCase('export-' + item.id));
 		};
-
-		analytics.event('ClickExport', { type: item.id });
 	};
 
 	getItems (): any[] {
