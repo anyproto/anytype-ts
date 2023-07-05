@@ -333,9 +333,9 @@ class MenuManager {
 			icon = 'icon32x32.png';
 		} else 
 		if (is.linux) {
-			icon = 'icon-tray-white.png';
+			icon = 'iconTrayWhite.png';
 		} else {
-			icon = `icon-tray-${(Util.isDarkTheme() ? 'white' : 'black')}.png`;
+			icon = `iconTrayTemplate.png`;
 		};
 		return path.join(Util.imagePath(), icon);
 	};
