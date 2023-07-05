@@ -858,11 +858,17 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
 		const canOpenMenuAdd = (oneSymbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const canOpenMentionMenu = (oneSymbolBefore == '@') && !this.preventMenu && (isAllowedMention || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const parsed = this.getMarksFromHtml();
-		const marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
-
+		
 		this.preventMenu = false;
-		this.marks = parsed.marks;
+
+		let parsed: any = {};
+		let marksChanged = false;
+		if (block.canHaveMarks()) {
+			parsed = this.getMarksFromHtml();
+			marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
+
+			this.marks = parsed.marks;
+		};
 
 		if (menuOpenAdd || menuOpenMention) {
 			window.clearTimeout(this.timeoutFilter);
@@ -982,10 +988,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.placeholderCheck();
 
-		let text = block.canHaveMarks() ? parsed.text : value;
-		if (!block.isTextCode()) {
-			text = Mark.fromUnicode(text);
+		let text = value;
+		if (block.canHaveMarks()) {
+			text = Mark.fromUnicode(parsed.text);
 		};
+
+		console.log(marksChanged, this.marks, text);
 
 		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);
