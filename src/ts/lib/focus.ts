@@ -96,23 +96,24 @@ class Focus {
 			return;
 		};
 
-		const node = $('.focusable.c' + id);
+		const node = $(`.focusable.c${id}`);
 		if (!node.length) {
 			return;
 		};
 
 		const container = UtilCommon.getScrollContainer(isPopup);
-		const h = container.height();
+		const ch = container.height();
 		const no = node.offset().top;
-		const o = Constant.size.lastBlock + UtilCommon.sizeHeader();
+		const hh = UtilCommon.sizeHeader();
+		const o = Constant.size.lastBlock + hh;
 		const st = container.scrollTop();
 		const y = isPopup ? (no - container.offset().top + st) : no;
 
-		if ((y >= st) && (y <= st + h - o)) {
+		if ((y >= st) && (y <= st + ch - o)) {
 			return;
 		};
 
-		container.scrollTop(Math.max(y, h - o) - h + o);
+		container.scrollTop(Math.max(y, ch - o) - ch + o);
 	};
 
 };

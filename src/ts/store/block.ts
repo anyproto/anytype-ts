@@ -254,6 +254,30 @@ class BlockStore {
 		};
 	};
 
+	// Check if blockId is inside parentId children recursively
+	checkIsChild (rootId: string, parentId: string, blockId: string): boolean {
+		const element = this.getMapElement(rootId, parentId);
+
+		if (!element.childrenIds.length) {
+			return false;
+		};
+
+		if (element.childrenIds.includes(blockId)) {
+			return true;
+		};
+
+		let ret = false;
+
+		for (let childId of element.childrenIds) {
+			ret = this.checkIsChild(rootId, childId, blockId);
+			if (ret) {
+				break;
+			};
+		};
+
+		return ret;
+	};
+
     updateNumbers (rootId: string) {
 		const root = this.wrapTree(rootId, rootId);
 		if (!root) {
