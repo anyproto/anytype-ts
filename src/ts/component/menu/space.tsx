@@ -77,10 +77,8 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 					animate: true,
 					onFadeOut: () => {
 						blockStore.clear(blockStore.widgets);
-					},
-					onFadeIn: () => {
 						UtilData.onAuth(authStore.account, message.info);
-					},
+					}
 				});
 			});
 		});
