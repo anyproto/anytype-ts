@@ -1353,11 +1353,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (selection && (this.clicks == 3)) {
 			e.preventDefault();
 			e.stopPropagation();
-			
-			this.clicks = 0;
 
-			focus.set(block.id, { from: 0, to: block.getLength() });
-			focus.apply();
+			menuStore.closeAll([ 'blockContext' ], () => {
+				this.clicks = 0;
+
+				focus.set(block.id, { from: 0, to: block.getLength() });
+				focus.apply();
+
+				this.onSelect();
+			});
 		};
 	};
 	
