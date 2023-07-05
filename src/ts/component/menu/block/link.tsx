@@ -400,7 +400,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const { data } = param;
 		const { filter } = data;
 		const obj = $(`#${getId()} .content`);
-		const offset = 16;
+		const offset = 12;
 
 		let height = HEIGHT_FILTER;
 		if (filter) {

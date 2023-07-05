@@ -59,7 +59,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			<div 
 				ref={node => this.node = node} 
 				id="scrollWrap"
-				className="wrap"
+				className="scrollWrap"
 			>
 				<div id="scroll" className="scroll">
 					<div className={cn.join(' ')}>

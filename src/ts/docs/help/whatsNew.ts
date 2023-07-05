@@ -11,7 +11,7 @@ const h3 = (t: string) => block(I.TextStyle.Header1, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-const video = (src: string) => text(`<video src="${src}" controls autoplay loop class="full" />`);
+const video = (src: string) => text(`<video src="${src}" controls class="full" />`);
 const img = (src: string, c: string) => text(`<img src="${src}" class="${c}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 

@@ -328,6 +328,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		items.off('mouseenter.link');
 		items.on('mouseenter.link', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const url = String(element.attr('href') || '');
@@ -405,8 +410,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		items.off('mouseenter.object mouseleave.object');
-		items.on('mouseleave.object', () => { Preview.tooltipHide(false); });
+		items.on('mouseleave.object', () => Preview.tooltipHide(false));
 		items.on('mouseenter.object', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const param = String(element.attr('data-param') || '');
@@ -503,8 +513,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 		
 		items.off('mouseenter.mention');
-
 		items.on('mouseenter.mention', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const param = String(element.attr('data-param') || '');
@@ -558,11 +572,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const smile = item.find('smile');
-			if (!smile.length) {
-				return;
+			if (smile.length) {
+				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
-
-			ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 		});
 	};
 
@@ -858,11 +870,17 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
 		const canOpenMenuAdd = (oneSymbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const canOpenMentionMenu = (oneSymbolBefore == '@') && !this.preventMenu && (isAllowedMention || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const parsed = this.getMarksFromHtml();
-		const marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
-
+		
 		this.preventMenu = false;
-		this.marks = parsed.marks;
+
+		let parsed: any = {};
+		let marksChanged = false;
+		if (block.canHaveMarks()) {
+			parsed = this.getMarksFromHtml();
+			marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
+
+			this.marks = parsed.marks;
+		};
 
 		if (menuOpenAdd || menuOpenMention) {
 			window.clearTimeout(this.timeoutFilter);
@@ -982,10 +1000,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.placeholderCheck();
 
-		let text = block.canHaveMarks() ? parsed.text : value;
-		if (!block.isTextCode()) {
-			text = Mark.fromUnicode(text);
+		let text = value;
+		if (block.canHaveMarks()) {
+			text = Mark.fromUnicode(parsed.text);
 		};
+
+		console.log(marksChanged, this.marks, text);
 
 		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);
@@ -1018,11 +1038,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			menuStore.open('blockMention', {
 				element: el,
 				recalcRect: () => {
-					const rect = UtilCommon.selectionRect();
+					const rect = UtilCommon.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 				},
 				offsetX: () => {
-					const rect = UtilCommon.selectionRect();
+					const rect = UtilCommon.getSelectionRect();
 					return rect ? 0 : Constant.size.blockMenu;
 				},
 				noFlipX: false,
@@ -1064,11 +1084,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		menuStore.open('smile', {
 			element: `#block-${block.id}`,
 			recalcRect: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? 0 : Constant.size.blockMenu;
 			},
 			data: {
@@ -1309,7 +1329,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				menuStore.open('blockContext', {
 					element: el,
 					recalcRect: () => { 
-						const rect = UtilCommon.selectionRect();
+						const rect = UtilCommon.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
 					type: I.MenuType.Horizontal,
@@ -1345,11 +1365,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (selection && (this.clicks == 3)) {
 			e.preventDefault();
 			e.stopPropagation();
-			
-			this.clicks = 0;
 
-			focus.set(block.id, { from: 0, to: block.getLength() });
-			focus.apply();
+			menuStore.closeAll([ 'blockContext' ], () => {
+				this.clicks = 0;
+
+				focus.set(block.id, { from: 0, to: block.getLength() });
+				focus.apply();
+
+				this.onSelect();
+			});
 		};
 	};
 	

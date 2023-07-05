@@ -241,6 +241,10 @@ class BlockStore {
 
     getHighestParent (rootId: string, blockId: string): I.Block {
 		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return null;
+		};
+
 		const parent = blockStore.getLeaf(rootId, block.parentId);
 
 		if (!parent || (parent && (parent.isPage() || parent.isLayoutDiv()))) {
@@ -248,6 +252,30 @@ class BlockStore {
 		} else {
 			return this.getHighestParent(rootId, parent.id);
 		};
+	};
+
+	// Check if blockId is inside parentId children recursively
+	checkIsChild (rootId: string, parentId: string, blockId: string): boolean {
+		const element = this.getMapElement(rootId, parentId);
+
+		if (!element.childrenIds.length) {
+			return false;
+		};
+
+		if (element.childrenIds.includes(blockId)) {
+			return true;
+		};
+
+		let ret = false;
+
+		for (let childId of element.childrenIds) {
+			ret = this.checkIsChild(rootId, childId, blockId);
+			if (ret) {
+				break;
+			};
+		};
+
+		return ret;
 	};
 
     updateNumbers (rootId: string) {

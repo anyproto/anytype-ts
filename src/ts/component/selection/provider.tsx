@@ -308,7 +308,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		const el = $('#selection-rect');
-		const range = UtilCommon.selectionRange();
+		const range = UtilCommon.getSelectionRange();
 		const isPopup = keyboard.isPopup();
 
 		let x1 = this.x;

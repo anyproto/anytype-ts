@@ -39,7 +39,7 @@
 				}
 			}
 
-			.pager { flex-shrink: 0; }
+			.pager { flex-shrink: 0; cursor: default; }
 			.pager {
 				.icon { opacity: 0 !important; }
 			}

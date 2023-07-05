@@ -254,6 +254,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 
+	close () {
+		const { isPopup, rootId, match } = this.props;
+
+		let close = true;
+		if (isPopup && (match.params.id == rootId)) {
+			close = false;
+		};
+		if (keyboard.isCloseDisabled) {
+			close = false;
+		};
+
+		if (close) {
+			Action.pageClose(rootId, true);
+		};
+	};
+
 	onCommand (cmd: string, arg: any) {
 		if (keyboard.isFocused) {
 			return;
@@ -300,22 +316,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (!length) {
 			focus.set(block.id, { from: length, to: length });
 			focus.apply();
-		};
-	};
-	
-	close () {
-		const { isPopup, rootId, match } = this.props;
-		
-		let close = true;
-		if (isPopup && (match.params.id == rootId)) {
-			close = false;
-		};
-		if (keyboard.isCloseDisabled) {
-			close = false;
-		};
-
-		if (close) {
-			Action.pageClose(rootId, true);
 		};
 	};
 	
@@ -982,7 +982,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onCtrlShiftArrowEditor (e: any, pressed: string) {
 		e.preventDefault();
 
-		const { dataset, rootId } = this.props;
+		const { dataset, rootId, isPopup } = this.props;
 		const { selection } = dataset || {};
 		const dir = pressed.match(Key.up) ? -1 : 1;
 		const ids = selection.get(I.SelectType.Block, false);
@@ -1014,16 +1014,19 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		let isFirst = block.id == parentElement.childrenIds[0];
-		let isLast = block.id == parentElement.childrenIds[parentElement.childrenIds.length - 1];
-		let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-
-		if ((dir > 0) && next.canHaveChildren() && nextElement.childrenIds.length) {
-			position = isLast ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
+		if (!parentElement.childrenIds.length) {
+			return;
 		};
 
+		const first = parentElement.childrenIds[0];
+		const last = parentElement.childrenIds[parentElement.childrenIds.length - 1];
+
+		let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+		if ((dir > 0) && next.canHaveChildren() && nextElement.childrenIds.length) {
+			position = (block.id == last) ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
+		};
 		if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
-			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+			position = (block.id == first) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
 		Action.move(rootId, rootId, next.id, ids, position, () => { 
@@ -1036,6 +1039,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			selection.renderSelection(); 
+			focus.scroll(isPopup, ids[0]);
 		});
 	};
 
@@ -1043,7 +1047,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	onCtrlShiftArrowBlock (e: any, pressed: string) {
 		e.preventDefault();
 
-		const { rootId } = this.props;
+		const { rootId, isPopup } = this.props;
 		const { focused } = focus.state;
 		const block = blockStore.getLeaf(rootId, focused);
 
@@ -1053,7 +1057,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const dir = pressed.match(Key.up) ? -1 : 1;
 		const next = blockStore.getNextBlock(rootId, block.id, dir, (it: any) => {
-			return !it.isIcon() && !it.isTextTitle() && !it.isTextDescription() && !it.isFeatured() && !it.isSystem();
+			return (
+				!it.isIcon() && 
+				!it.isTextTitle() && 
+				!it.isTextDescription() && 
+				!it.isFeatured() && 
+				!it.isSystem() && 
+				!blockStore.checkIsChild(rootId, block.id, it.id)
+			);
 		});
 
 		if (!next) {
@@ -1070,17 +1081,22 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
-		let isFirst = block.id == parentElement.childrenIds[0];
-		let isLast = block.id == parentElement.childrenIds[parentElement.childrenIds.length - 1];
+		if (!parentElement.childrenIds.length) {
+			return;
+		};
+
+		const first = parentElement.childrenIds[0];
+		const last = parentElement.childrenIds[parentElement.childrenIds.length - 1];
+
 		let position = dir < 0 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-
 		if ((dir > 0) && next.canHaveChildren() && nextElement.childrenIds.length) {
-			position = isLast ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
+			position = (block.id == last) ? I.BlockPosition.Top : I.BlockPosition.InnerFirst;
+		};
+		if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
+			position = (block.id == first) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
-		if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
-			position = isFirst ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-		};
+		console.log(next);
 
 		Action.move(rootId, rootId, next.id, [ block.id ], position, () => {
 			if (nextParent && nextParent.isTextToggle()) {
@@ -1092,6 +1108,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			focus.apply(); 
+			focus.scroll(isPopup, block.id);
 		});
 	};
 
@@ -1153,7 +1170,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const element = $(`#block-${block.id}`);
 		const value = element.find('#value');
 
-		let sRect = UtilCommon.selectionRect();
+		let sRect = UtilCommon.getSelectionRect();
 		let vRect: any = {};
 		if (value && value.length) {
 			vRect = value.get(0).getBoundingClientRect();
@@ -1206,7 +1223,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockLink', {
 					recalcRect: () => {
-						const rect = UtilCommon.selectionRect();
+						const rect = UtilCommon.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 					},
 					horizontal: I.MenuDirection.Center,
@@ -1546,11 +1563,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			element: $(`#block-${blockId}`),
 			subIds: Constant.menuIds.add,
 			recalcRect: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? 0 : Constant.size.blockMenu;
 			},
 			commonFilter: true,

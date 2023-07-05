@@ -75,6 +75,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 								iconSize={20}
 								block={block}
 								className="noPlus"
+								isSelectionDisabled={true}
 							/>
 						))}
 					</div>

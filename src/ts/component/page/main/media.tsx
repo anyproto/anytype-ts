@@ -113,7 +113,14 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 									<ObjectName className="title" object={object} />
 									<div className="descr">{object.description}</div>
 
-									<Block {...this.props} key={featured.id} rootId={rootId} iconSize={20} block={featured} isSelectionDisabled={true} />
+									<Block 
+										{...this.props} 
+										key={featured.id} 
+										rootId={rootId} 
+										iconSize={20} 
+										block={featured} 
+										isSelectionDisabled={true} 
+									/>
 
 									<div className="buttons">
 										<Button text="Open" color="blank" onClick={this.onOpen} />
@@ -123,7 +130,14 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 
 								<div className="section">
 									{relations.map((item: any) => (
-										<Block {...this.props} key={item.id} rootId={rootId} block={item} readonly={true} isSelectionDisabled={true} />
+										<Block 
+											{...this.props} 
+											key={item.id} 
+											rootId={rootId} 
+											block={item} 
+											readonly={true} 
+											isSelectionDisabled={true} 
+										/>
 									))}
 								</div>
 							</div>

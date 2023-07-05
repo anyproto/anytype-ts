@@ -83,7 +83,17 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			if (featuredRelations.includes('description')) {
 				descr = <Editor className="descr" id="description" />;
 			};
-			featured = <Block {...this.props} key={blockFeatured.id} rootId={rootId} iconSize={20} block={blockFeatured} className="small" />;
+			featured = (
+				<Block 
+					{...this.props} 
+					key={blockFeatured.id} 
+					rootId={rootId} 
+					iconSize={20} 
+					block={blockFeatured} 
+					className="small" 
+					isSelectionDisabled={true}
+				/>
+			);
 		};
 
 		if ([ Constant.typeId.type, Constant.typeId.relation ].includes(object.type)) {
