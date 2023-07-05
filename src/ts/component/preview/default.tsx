@@ -70,7 +70,8 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 	};
 
 	init () {
-		const { object, position } = this.props;
+		const { position } = this.props;
+		const object = this.props.object || this.state.object;
 
 		object ? position && position() : this.load();
 	};

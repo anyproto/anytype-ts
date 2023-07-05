@@ -328,7 +328,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		items.off('mouseenter.link');
 		items.on('mouseenter.link', e => {
-			if (UtilCommon.getSelectionRange()) {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
 				return;
 			};
 
@@ -411,7 +412,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		items.off('mouseenter.object mouseleave.object');
 		items.on('mouseleave.object', () => Preview.tooltipHide(false));
 		items.on('mouseenter.object', e => {
-			if (UtilCommon.getSelectionRange()) {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
 				return;
 			};
 
@@ -512,7 +514,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		
 		items.off('mouseenter.mention');
 		items.on('mouseenter.mention', e => {
-			if (UtilCommon.getSelectionRange()) {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
 				return;
 			};
 
