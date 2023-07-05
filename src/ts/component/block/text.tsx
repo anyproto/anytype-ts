@@ -328,6 +328,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		items.off('mouseenter.link');
 		items.on('mouseenter.link', e => {
+			if (UtilCommon.getSelectionRange()) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const url = String(element.attr('href') || '');
@@ -405,8 +409,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		items.off('mouseenter.object mouseleave.object');
-		items.on('mouseleave.object', () => { Preview.tooltipHide(false); });
+		items.on('mouseleave.object', () => Preview.tooltipHide(false));
 		items.on('mouseenter.object', e => {
+			if (UtilCommon.getSelectionRange()) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const param = String(element.attr('data-param') || '');
@@ -503,8 +511,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 		
 		items.off('mouseenter.mention');
-
 		items.on('mouseenter.mention', e => {
+			if (UtilCommon.getSelectionRange()) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const param = String(element.attr('data-param') || '');
@@ -558,11 +569,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const smile = item.find('smile');
-			if (!smile.length) {
-				return;
+			if (smile.length) {
+				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
-
-			ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 		});
 	};
 
@@ -1026,11 +1035,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			menuStore.open('blockMention', {
 				element: el,
 				recalcRect: () => {
-					const rect = UtilCommon.selectionRect();
+					const rect = UtilCommon.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 				},
 				offsetX: () => {
-					const rect = UtilCommon.selectionRect();
+					const rect = UtilCommon.getSelectionRect();
 					return rect ? 0 : Constant.size.blockMenu;
 				},
 				noFlipX: false,
@@ -1072,11 +1081,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		menuStore.open('smile', {
 			element: `#block-${block.id}`,
 			recalcRect: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? 0 : Constant.size.blockMenu;
 			},
 			data: {
@@ -1317,7 +1326,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				menuStore.open('blockContext', {
 					element: el,
 					recalcRect: () => { 
-						const rect = UtilCommon.selectionRect();
+						const rect = UtilCommon.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
 					type: I.MenuType.Horizontal,

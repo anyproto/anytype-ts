@@ -1170,7 +1170,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const element = $(`#block-${block.id}`);
 		const value = element.find('#value');
 
-		let sRect = UtilCommon.selectionRect();
+		let sRect = UtilCommon.getSelectionRect();
 		let vRect: any = {};
 		if (value && value.length) {
 			vRect = value.get(0).getBoundingClientRect();
@@ -1223,7 +1223,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			menuStore.close('blockContext', () => {
 				menuStore.open('blockLink', {
 					recalcRect: () => {
-						const rect = UtilCommon.selectionRect();
+						const rect = UtilCommon.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 					},
 					horizontal: I.MenuDirection.Center,
@@ -1563,11 +1563,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			element: $(`#block-${blockId}`),
 			subIds: Constant.menuIds.add,
 			recalcRect: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? 0 : Constant.size.blockMenu;
 			},
 			commonFilter: true,

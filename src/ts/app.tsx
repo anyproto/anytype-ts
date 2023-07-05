@@ -655,7 +655,7 @@ class App extends React.Component<object, State> {
 
 		menuStore.open('select', {
 			recalcRect: () => { 
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 			},
 			onOpen: () => { menuStore.close('blockContext'); },

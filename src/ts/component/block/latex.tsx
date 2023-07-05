@@ -237,7 +237,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 	};
 
 	updateRect () {
-		const rect = UtilCommon.selectionRect();
+		const rect = UtilCommon.getSelectionRect();
 		if (!rect || !menuStore.isOpen('blockLatex')) {
 			return;
 		};
@@ -299,7 +299,7 @@ const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComp
 		const recalcRect = () => {
 			let rect = null;
 			if (element == 'input') {
-				rect = UtilCommon.selectionRect();
+				rect = UtilCommon.getSelectionRect();
 			};
 			return rect ? { ...rect, y: rect.y + this.win.scrollTop() } : null;
 		};

@@ -133,7 +133,7 @@ class Keyboard {
 			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
 
-			if (!UtilCommon.selectionRange() && isMac) {
+			if (!UtilCommon.getSelectionRange() && isMac) {
 				keyboard.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
 				keyboard.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
 			};
@@ -148,7 +148,7 @@ class Keyboard {
 			if (popupStore.isOpen()) {
 				let canClose = true;
 
-				if (UtilCommon.selectionRange()) {
+				if (UtilCommon.getSelectionRange()) {
 					$(document.activeElement).blur();
 					window.getSelection().removeAllRanges();
 					canClose = false;
@@ -277,7 +277,7 @@ class Keyboard {
 
 	// Check if smth is selected
 	checkSelection () {
-		const range = UtilCommon.selectionRange();
+		const range = UtilCommon.getSelectionRange();
 
 		if ((range && !range.collapsed) || (this.selection && this.selection.get(I.SelectType.Block).length)) {
 			return true;

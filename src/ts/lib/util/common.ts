@@ -686,7 +686,7 @@ class UtilCommon {
 		return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$/.test(String(v || ''));
 	};
 
-	selectionRange (): Range {
+	getSelectionRange (): Range {
 		let sel: Selection = window.getSelection();
 		let range: Range = null;
 
@@ -697,9 +697,9 @@ class UtilCommon {
 		return range;
 	};
 
-	selectionRect () {
+	getSelectionRect () {
 		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
-		let range = this.selectionRange();
+		let range = this.getSelectionRange();
 		if (range) {
 			rect = range.getBoundingClientRect() as DOMRect;
 		};
