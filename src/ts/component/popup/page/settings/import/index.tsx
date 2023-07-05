@@ -81,6 +81,8 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 			fileOptions.properties.push('openDirectory');
 		};
 
+		analytics.event('ClickImport', { type });
+
 		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
