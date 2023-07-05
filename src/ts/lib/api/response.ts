@@ -351,7 +351,7 @@ export const TemplateClone = (response: Rpc.Template.Clone.Response) => {
 
 export const WorkspaceCreate = (response: Rpc.Workspace.Create.Response) => {
 	return {
-		objectId: response.getWorkspaceid(),
+		objectId: response.getSpaceid(),
 	};
 };
 

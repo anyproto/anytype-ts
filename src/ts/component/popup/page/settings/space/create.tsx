@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Title, Label, Input, IconObject, Button, Select } from 'Component';
+import { Title, Label, Input, IconObject, Button, Select, Loader } from 'Component';
 import { UtilObject, UtilCommon, I, C, translate, keyboard } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -10,6 +10,8 @@ interface State {
 	iconEmoji: string;
 	iconOption: number;
 	iconImage: string;
+	useCase: I.Usecase;
+	isLoading: boolean;
 };
 
 const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends React.Component<I.PopupSettings, State> {
@@ -21,6 +23,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		iconEmoji: '',
 		iconOption: UtilCommon.rand(1, Constant.iconCnt),
 		iconImage: '',
+		useCase: 0,
+		isLoading: false,
 	};
 
 	constructor (props: any) {
@@ -33,7 +37,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	render () {
-		const { name, iconOption, iconEmoji, iconImage } = this.state;
+		const { name, iconOption, iconEmoji, iconImage, useCase, isLoading } = this.state;
 		const space = {
 			layout: I.ObjectLayout.Space,
 			name,
@@ -44,6 +48,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 		return (
 			<React.Fragment>
+
+				{isLoading ? <Loader /> : ''}
 
 				<Title text="Create a space" />
 
@@ -91,7 +97,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 									<div className="side right">
 										<Select 
 											id="select-usecase"
-											value=""
+											value={String(useCase || '')}
 											options={[]}
 										/>
 									</div>
@@ -136,8 +142,16 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 	onSubmit () {
 		const { close } = this.props;
+		const { isLoading } = this.state;
 
-		C.WorkspaceCreate(this.state.name, (message: any) => {
+		if (isLoading) {
+			return;
+		};
+
+		this.setState({ isLoading: true });
+
+		C.WorkspaceCreate(this.state,  this.state.useCase, () => {
+			this.setState({ isLoading: false });
 			close();
 		});
 	};

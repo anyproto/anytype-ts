@@ -291,6 +291,7 @@
 			.title { margin: 0px 0px 26px 0px; }
 			.spaceHeader { margin: 0px 0px 24px 0px; }
 			.sections { margin: 0px 0px 24px 0px; }
+			.loaderWrapper { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: $colorBgLoader; z-index: 1; }
 		}
 
 		.side.right.tabPhrase {

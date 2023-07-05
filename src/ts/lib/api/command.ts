@@ -96,10 +96,11 @@ const WalletSetSessionSpaceID = (spaceId: string, callBack?: (message: any) => v
 
 // ---------------------- WORKSPACE ---------------------- //
 
-const WorkspaceCreate = (name: string, callBack?: (message: any) => void) => {
+const WorkspaceCreate = (details: any, useCase: I.Usecase, callBack?: (message: any) => void) => {
 	const request = new Rpc.Workspace.Create.Request();
 
-	request.setName(name);
+	request.setDetails(Encode.encodeStruct(details));
+	request.setUsecase(useCase as number);
 
 	dispatcher.request(WorkspaceCreate.name, request, callBack);
 };
