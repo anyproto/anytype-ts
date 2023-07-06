@@ -338,6 +338,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onCreate () {
 		const rootId = this.getRootId();
 		const type = dbStore.getType(rootId);
+
+		if (!type) {
+			return;
+		};
+
 		const isSetType = UtilObject.isSetType(rootId);
 		const allowedObject = UtilObject.getPageLayouts().includes(type.recommendedLayout) || isSetType;
 		const options = [];
