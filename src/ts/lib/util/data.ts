@@ -540,7 +540,7 @@ class UtilData {
 		});
 	};
 
-	// Check if there are at least 1 templates for object types
+	// Check if there are at least 1 template for object types
 	checkTemplateCnt (ids: string[], callBack?: (message: any) => void) {
 		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeId.template, ids, 1, callBack);
 	};
