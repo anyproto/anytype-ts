@@ -15,7 +15,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 	};
 
 	render (): React.ReactNode {
-		const space = UtilObject.getSpace();
+		const space = UtilObject.getWorkspace();
 
 		return (
 			<div className="body" onClick={this.onOpenSettings}>

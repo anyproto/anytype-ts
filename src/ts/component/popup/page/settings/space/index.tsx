@@ -23,7 +23,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { onPage } = this.props;
 		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
 		const { account } = authStore;
-		const space = UtilObject.getSpace() || {};
+		const space = UtilObject.getWorkspace() || {};
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
 
@@ -210,14 +210,6 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		menuStore.closeAll([ 'select', 'searchObject' ]);	
 	};
 
-	onSelect (icon: string) {
-		UtilObject.setIcon(commonStore.space, icon, '');
-	};
-
-	onUpload (hash: string) {
-		UtilObject.setIcon(commonStore.space, '', hash);
-	};
-
 	onDashboard () {
 		UtilMenu.dashboardSelect(`#${this.props.getId()} #empty-dashboard-select`);
 	};
@@ -243,7 +235,21 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		UtilObject.setName(commonStore.space, this.checkName(v));
+		const space = UtilObject.getWorkspace();
+
+		UtilObject.setName(space.id, this.checkName(v));
+	};
+
+	onSelect (icon: string) {
+		const space = UtilObject.getWorkspace();
+
+		UtilObject.setIcon(space.id, icon, '');
+	};
+
+	onUpload (hash: string) {
+		const space = UtilObject.getWorkspace();
+
+		UtilObject.setIcon(space.id, '', hash);
 	};
 
 	onSpaceTypeTooltip (e) {

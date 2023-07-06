@@ -22,7 +22,7 @@ class UtilObject {
 		};
 	};
 
-	getSpace () {
+	getWorkspace () {
 		const subId = Constant.subId.space;
 		const records = dbStore.getRecords(subId, '').map(it => detailStore.get(subId, it)).filter(it => it.spaceId == commonStore.space);
 
@@ -30,7 +30,7 @@ class UtilObject {
 	};
 
 	getSpaceDashboard () {
-		const space = this.getSpace();
+		const space = this.getWorkspace();
 		if (!space.spaceDashboardId) {
 			return null;
 		};

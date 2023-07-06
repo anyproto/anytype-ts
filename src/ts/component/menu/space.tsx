@@ -20,7 +20,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	
 	render () {
 		const items = this.getItems();
-		const space = UtilObject.getSpace();
+		const space = UtilObject.getWorkspace();
 		const profile = UtilObject.getProfile();
 
 		const Item = (item) => (
@@ -63,7 +63,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	onClick (e: any, item: any) {
-		const space = UtilObject.getSpace();
+		const space = UtilObject.getWorkspace();
 		const { close } = this.props;
 
 		if (space.spaceId == item.spaceId) {
