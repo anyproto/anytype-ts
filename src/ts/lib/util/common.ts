@@ -716,7 +716,6 @@ class UtilCommon {
 		cnt = String(cnt || '');
 
 		w2 = w2 ? w2 : w1 + 's';
-
 		if (cnt.substr(-2) == 11) {
 			return w2;
 		};
