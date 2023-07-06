@@ -65,7 +65,7 @@
 
     .menu.menuBlockAdd {
         .item.isBig {
-            .iconObject { background: $colorBgIcon; }
+            .iconObject { background: $colorLineTertiary; }
 
             .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph1.svg'); }
             
@@ -199,7 +199,7 @@
 
     .menu.menuSearchObject.big {
         .item {
-            .iconObject { background: $colorBgIcon; }
+            .iconObject { background: $colorLineTertiary; }
         }
     }
 
@@ -266,7 +266,7 @@
 
 	.menu.menuBlockLink {
 		.item {
-			.iconObject { background-color: $colorBgIcon; }
+			.iconObject { background-color: $colorLineTertiary; }
 		}
 
 		.item.add { color: $colorPrimary; }
