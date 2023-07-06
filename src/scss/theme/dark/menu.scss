@@ -325,8 +325,7 @@
 
 	.menu.menuSearchText {
 		.buttons {
-			.btn { color: $colorSecondary; }
-			.btn:hover { color: $colorPrimary; }
+			.line { background: $colorLineSecondary; }
 		}
 	}
 
