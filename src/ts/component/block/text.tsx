@@ -900,8 +900,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 				if (!ret && range) {
 					const d = range.from - filter.from;
+
 					if (d >= 0) {
-						const part = value.substring(filter.from, d).replace(/^\//, '');
+						const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
 						commonStore.filterSetText(part);
 					};
 				};
@@ -1004,8 +1005,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (block.canHaveMarks()) {
 			text = Mark.fromUnicode(parsed.text);
 		};
-
-		console.log(marksChanged, this.marks, text);
 
 		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);

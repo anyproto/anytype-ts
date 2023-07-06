@@ -766,7 +766,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			// Search
 			keyboard.shortcut(`${cmd}+f`, e, () => {
-				keyboard.onSearchMenu(text.substring(range.from, range.to - range.from), 'editor');
+				keyboard.onSearchMenu(text.substring(range.from, range.to), 'editor');
 			});
 
 			if (block.isTextToggle()) {
@@ -1095,8 +1095,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if ((dir < 0) && nextParent.canHaveChildren() && nextParentElement.childrenIds.length && (element.parentId != nextParent.id)) {
 			position = (block.id == first) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
-
-		console.log(next);
 
 		Action.move(rootId, rootId, next.id, [ block.id ], position, () => {
 			if (nextParent && nextParent.isTextToggle()) {

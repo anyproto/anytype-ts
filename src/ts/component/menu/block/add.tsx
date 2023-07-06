@@ -381,11 +381,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			className: param.className,
 			data: {
 				rebind: this.rebind,
-				rootId: rootId,
+				rootId,
 				skipIds: [ rootId ],
-				blockId: blockId,
+				blockId,
 				blockIds: [ blockId ],
-				position: position,
+				position,
 				onSelect: () => {
 					$(`#block-${blockId} .value`).text(text);
 
