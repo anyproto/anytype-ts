@@ -1005,8 +1005,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			text = Mark.fromUnicode(parsed.text);
 		};
 
-		console.log(marksChanged, this.marks, text);
-
 		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);
 

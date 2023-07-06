@@ -1096,8 +1096,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			position = (block.id == first) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 		};
 
-		console.log(next);
-
 		Action.move(rootId, rootId, next.id, [ block.id ], position, () => {
 			if (nextParent && nextParent.isTextToggle()) {
 				blockStore.toggle(rootId, nextParent.id, true);
