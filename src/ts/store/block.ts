@@ -437,7 +437,7 @@ class BlockStore {
 					continue;
 				};
 
-				const old = text.substring(from, to - from);
+				const old = text.substring(from, to);
 
 				let name = UtilCommon.shorten(object.name, 30);
 				if (object.layout == I.ObjectLayout.Note) {
