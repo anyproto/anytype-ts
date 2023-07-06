@@ -23,7 +23,7 @@ class UtilObject {
 	};
 
 	getSpace () {
-		return detailStore.get(Constant.subId.space, commonStore.workspace)
+		return detailStore.get(Constant.subId.space, commonStore.workspace);
 	};
 
 	getSpaceDashboard () {
