@@ -192,7 +192,7 @@ class UtilData {
 		authStore.accountSet(account);
 
 		const pin = Storage.get('pin');
-		const { profile, widgets, root } = blockStore;
+		const { profile, widgets } = blockStore;
 		const { redirect } = commonStore;
 		const color = Storage.get('color');
 		const bgColor = Storage.get('bgColor');
@@ -217,14 +217,8 @@ class UtilData {
 			};
 		});
 
-		C.ObjectOpen(root, '', (message: any) => {
+		C.ObjectOpen(blockStore.rootId, '', (message: any) => {
 			if (!UtilCommon.checkError(message.error.code)) {
-				return;
-			};
-
-			const object = detailStore.get(root, root, Constant.coverRelationKeys, true);
-			if (object._empty_) {
-				console.error('Dashboard is empty');
 				return;
 			};
 
@@ -786,6 +780,28 @@ class UtilData {
 			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space },
 		];
+	};
+
+	switchSpace (id: string, callBack?: () => void) {
+		const { space } = commonStore;
+
+		if (space == id) {
+			return;
+		};
+
+		C.WalletSetSessionSpaceID(id, () => {
+			C.WorkspaceInfo((message: any) => {
+				UtilCommon.route('/main/blank', { 
+					replace: true, 
+					animate: true,
+					onFadeOut: () => {
+						blockStore.clear(blockStore.widgets);
+
+						this.onAuth(authStore.account, message.info, callBack);
+					}
+				});
+			});
+		});
 	};
 
 };

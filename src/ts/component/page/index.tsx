@@ -75,7 +75,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	render () {
 		const { isPopup } = this.props;
-		const { config, theme } = commonStore;
+		const { config, theme, space } = commonStore;
 		const { account } = authStore;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
@@ -147,8 +147,9 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const page = String(match?.params?.page || 'index');
 		const action = String(match?.params?.action || 'index');
 		const id = String(match?.params?.id || '');
+		const spaceId = String(match?.params?.spaceId || '');
 
-		return { page, action, id };
+		return { page, action, id, spaceId };
 	};
 
 	getRootId () {
@@ -162,7 +163,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { isPopup } = this.props;
 		const match = this.getMatch();
-		const { page, action } = this.getMatchParams();
+		const { page, action, spaceId } = this.getMatchParams();
 		const isIndex = this.isIndex();
 		const isAuth = this.isAuth();
 		const isMain = this.isMain();
@@ -182,6 +183,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		if (isMain && !account) {
 			UtilCommon.route('/', routeParam);
+			return;
+		};
+
+		if (spaceId && (spaceId != commonStore.space)) {
+			UtilData.switchSpace(spaceId);
 			return;
 		};
 

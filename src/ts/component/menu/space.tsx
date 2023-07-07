@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon } from 'Lib';
-import { authStore, dbStore, detailStore, blockStore, popupStore } from 'Store';
+import { I, UtilData, UtilObject } from 'Lib';
+import { dbStore, detailStore, commonStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -63,27 +63,8 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	onClick (e: any, item: any) {
-		const space = UtilObject.getWorkspace();
-		const { close } = this.props;
-
-		if (space.spaceId == item.spaceId) {
-			return;
-		};
-
-		C.WalletSetSessionSpaceID(item.spaceId, () => {
-			C.WorkspaceInfo((message: any) => {
-				UtilCommon.route('/main/blank', { 
-					replace: true, 
-					animate: true,
-					onFadeOut: () => {
-						blockStore.clear(blockStore.widgets);
-						UtilData.onAuth(authStore.account, message.info);
-					}
-				});
-			});
-		});
-
-		close();
+		UtilData.switchSpace(item.spaceId);
+		this.props.close();
 	};
 
 	onAdd () {

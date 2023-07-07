@@ -104,7 +104,7 @@ class UtilObject {
 			return '';
 		};
 
-		return [ 'main', action, object.id ].join('/');
+		return [ 'main', action, object.id, 'space', object.spaceId ].join('/');
 	};
 
 	openEvent (e: any, object: any, param?: any) {
