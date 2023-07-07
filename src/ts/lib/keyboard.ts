@@ -62,6 +62,8 @@ class Keyboard {
 			if (!commonStore.isSidebarFixed) {
 				sidebar.hide();
 			};
+
+			menuStore.closeAll([ 'blockContext' ]);
 		});
 
 		doc.off('mouseleave.common').on('mouseleave.common', () => {

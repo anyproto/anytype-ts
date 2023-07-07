@@ -112,6 +112,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 						placeholder="Enter your name"
 						value={authStore.name}
 						onKeyUp={(e, v) => authStore.nameSet(v)}
+						maxLength={255}
 					/>
 				</div>
 			);

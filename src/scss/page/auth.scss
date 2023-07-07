@@ -224,7 +224,7 @@ html.bodyAuthDeleted {
 		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
 		.account { z-index: 2; }
 		.space { transition: all 600ms ease-in, opacity 300ms ease-in; z-index: 1; opacity: 0; }
-		.iconObject.withOption.isSpace { background: $colorBlack !important; border-radius: 8px; }
+		.iconObject.withOption.isSpace { background: $colorLineTertiary !important; border-radius: 8px; }
 		
 		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: $colorWhite; }
 		.line.left { right: 50%; }

@@ -36,6 +36,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 		].map(it => ({ ...it, id: String(it.id) }));
 		const { delimiter, delimiters } = this.delimiterOptions();
 
+		this.init();
+
 		return (
 			<div>
 				<Head {...this.props} returnTo="importIndex" name={translate('popupSettingsImportTitle')} />
@@ -116,6 +118,12 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 	};
 
 	componentDidMount(): void {
+		this.init();
+		this.refMode.setValue(String(this.data.mode));
+		this.refDelimiter.setValue(this.data.delimiter);
+	};
+
+	init () {
 		const { storageGet } = this.props;
 		const options = storageGet().csv || {};
 
@@ -125,9 +133,6 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			transpose: Boolean(options.transpose),
 			delimiter: String(options.delimiter || ','),
 		};
-
-		this.refMode.setValue(String(this.data.mode));
-		this.refDelimiter.setValue(this.data.delimiter);
 	};
 
 	onFilterKeyUp (e: React.KeyboardEvent, v: string) {

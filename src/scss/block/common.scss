@@ -53,9 +53,37 @@
 
 	.block.index0 { padding-top: 0px !important; }
 
-	.block > .wrapContent > .selectable { position: relative; }
-	.block:not(.blockLayout.layoutDiv) > .wrapContent > .children > .block.first { padding-top: 0px; }
-	.block > .wrapContent > .children > .block.last { margin: 0px; }
+	.block {
+		> .wrapContent {
+			> .selectable { position: relative; }
+		}
+	}
+
+	.block:not(.blockLayout.layoutDiv) {
+		> .wrapContent {
+			> .children {
+				> .block.first { padding-top: 0px; }
+				> .block.first {
+					.colResize {
+						.inner { top: 0px; height: calc(100% + 15px); }
+					}
+				}
+
+				> .block.last { padding-bottom: 0px; }
+				> .block.last {
+					.colResize {
+						.inner { top: 0px; height: calc(100% + 15px); }
+					}
+				}
+
+				> .block.first.last {
+					.colResize {
+						.inner { top: 0px; height: 100%; }
+					}
+				}
+			}
+		}
+	}
 
 	.block.isReadonly {
 		.colResize { display: none; }
