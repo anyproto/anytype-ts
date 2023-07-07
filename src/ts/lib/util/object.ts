@@ -157,7 +157,7 @@ class UtilObject {
 		if (!object) {
 			return;
 		};
-
+	
 		// Prevent opening object in popup from different space
 		if (object.spaceId != commonStore.space) {
 			this.openRoute(object, param);

@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockType { padding: 0px 0px 18px 0px; }
+	.block.blockType { padding: 0px 0px 18px 0px !important; }
 	.block.blockType { 
 		.wrapMenu { visibility: hidden; }
 		.focusable.isFocused { background: none; }
