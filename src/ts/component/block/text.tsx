@@ -1316,13 +1316,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			const pageContainer = UtilCommon.getPageContainer(isPopup);
-
-			pageContainer.off('click.context').on('click.context', () => { 
-				pageContainer.off('click.context');
-				menuStore.close('blockContext'); 
-			});
-
 			this.setText(this.marks, true, () => {
 				menuStore.open('blockContext', {
 					element: el,
@@ -1349,6 +1342,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						onChange,
 					},
 				});
+
+				window.setTimeout(() => {
+					const pageContainer = UtilCommon.getPageContainer(isPopup);
+
+					pageContainer.off('click.context').on('click.context', () => { 
+						pageContainer.off('click.context');
+						menuStore.close('blockContext'); 
+					});
+				}, Constant.delay.menu);
 			});
 		}, 150);
 	};
