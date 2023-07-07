@@ -175,7 +175,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
                 };
 
                 UtilObject.setIcon(blockStore.profile, '', message.hash, () => {
-                    this.setState({ loading: false });
+                    //this.setState({ loading: false });
                 });
             });
 		});

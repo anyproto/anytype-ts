@@ -105,14 +105,13 @@ html.bodyAuthDeleted {
 	.error { color: $colorError; margin: 0.3em 0px; }
 	.withError { background: $colorErrorBackground; }
 
-	@keyframes dots {
-		0% { background-color: $colorWhite; }
-		32% { background-color: $colorWhite; }
-		100% { background-color: rgba(0,0,0,0); }
-	}
-
 	.loaderWrapper {
-		.dot { animation-name: dots !important; }
+		@keyframes dots-white {
+			0% { background-color: $colorWhite; }
+			32% { background-color: $colorWhite; }
+			100% { background-color: rgba(0,0,0,0); }
+		}
+		.dots .dot { animation-name: dots-white; }
     }
 }
 

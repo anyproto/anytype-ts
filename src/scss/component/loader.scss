@@ -1,18 +1,18 @@
 @import "~scss/_vars";
 
-@keyframes rotate {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-}
-
-@keyframes dots {
-	0% { background-color: $colorBlack; }
-	32% { background-color: $colorBlack; }
-	100% { background-color: rgba(0,0,0,0); }
-}
-
 .loaderWrapper { width: 24px; height: 24px; margin: 0px auto; position: relative; }
 .loaderWrapper {
+	@keyframes rotate {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+
+	@keyframes dots-light {
+		0% { background-color: $colorBlack; }
+		32% { background-color: $colorBlack; }
+		100% { background-color: rgba(0,0,0,0); }
+	}
+
 	.loader {
 		border: 2px solid $colorBorderLight; border-radius: 100%; width: 24px; height: 24px; border-left: 2px solid $colorMediumGrey; position: absolute; 
 		left: 50%; top: 50%; margin: -12px 0px 0px -12px; transform: translateZ(0); animation: rotate 0.8s infinite linear;
@@ -21,7 +21,7 @@
 	.dots { display: inline-block; width: 28px; height: 4px; position: absolute; left: 50%; top: 50%; margin: -2px 0px 0px -14px; }
 	.dots {
 		.dot { 
-			width: 4px; height: 4px; border-radius: 50%; animation: dots 0.6s cubic-bezier(0.22, 1, 0.36, 1) infinite; 
+			width: 4px; height: 4px; border-radius: 50%; animation: dots-light 0.6s cubic-bezier(0.22, 1, 0.36, 1) infinite; 
 			display: inline-block; vertical-align: top; background-color: rgba(0,0,0,0); margin-right: 8px;
 		}
 		.dot:last-child { margin: 0px; }
