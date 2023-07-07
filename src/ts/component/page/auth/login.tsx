@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Frame, Title, Error, Button, Header, Icon, Phrase } from 'Component';
-import { I, UtilCommon, translate, C, keyboard, Animation } from 'Lib';
+import { Frame, Error, Button, Header, Icon, Phrase } from 'Component';
+import { I, UtilRouter, translate, C, keyboard, Animation } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -105,7 +105,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			};
 
 			authStore.phraseSet(phrase);
-			Animation.from(() => UtilCommon.changeRoute('/auth/account-select', { replace: true }));
+			Animation.from(() => UtilRouter.go('/auth/account-select', { replace: true }));
 		});
 	};
 
@@ -125,7 +125,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	onCancel () {
-		Animation.from(() => UtilCommon.changeRoute('/auth/select', { replace: true }));
+		Animation.from(() => UtilRouter.go('/auth/select', { replace: true }));
 	};
 
 	onSelfHost () {

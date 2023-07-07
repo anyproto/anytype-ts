@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { Title, Label, IconObject, ObjectName, Button, ProgressBar } from 'Component';
-import { analytics, C, UtilObject, UtilFile, I, translate, UtilCommon, Renderer } from 'Lib';
+import { Title, Label, IconObject, ObjectName, Button } from 'Component';
+import { analytics, C, UtilRouter, UtilFile, I, translate, UtilCommon } from 'Lib';
 import { observer } from 'mobx-react';
-import { authStore, commonStore, detailStore, popupStore } from 'Store';
-import Constant from 'json/constant.json';
-import Url from 'json/url.json';
+import { authStore, commonStore, popupStore } from 'Store';
 
 interface Props extends I.PopupSettings {
     onPage: (id: string) => void;
@@ -121,7 +119,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
                 if (message.error.code) {
                     this.setState({ error: message.error.description });
                 } else {
-                    UtilCommon.changeRoute('/auth/setup/init', {});
+                    UtilRouter.go('/auth/setup/init', {});
                 };
                 setLoading(false);
             });

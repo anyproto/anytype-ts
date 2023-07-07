@@ -1,4 +1,4 @@
-import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage } from 'Lib';
+import { I, C, keyboard, UtilCommon, history as historyPopup, Renderer, UtilFile, translate, Storage, UtilRouter } from 'Lib';
 import { commonStore, blockStore, popupStore, dbStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -104,7 +104,7 @@ class UtilObject {
 			return '';
 		};
 
-		return [ 'main', action, object.id, 'space', object.spaceId ].join('/');
+		return UtilRouter.build({ page: 'main', action, id: object.id, spaceId: object.spaceId });
 	};
 
 	openEvent (e: any, object: any, param?: any) {
@@ -136,7 +136,7 @@ class UtilObject {
 		};
 
 		keyboard.setSource(null);
-		UtilCommon.changeRoute('/' + route, param || {});
+		UtilRouter.go('/' + route, param || {});
 	};
 
 	openWindow (object: any) {

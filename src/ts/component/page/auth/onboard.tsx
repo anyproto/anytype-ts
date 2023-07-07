@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, DotIndicator, Phrase, Error, Icon, IconObject, Input } from 'Component';
-import { I, translate, Animation, C, UtilData, Storage, UtilCommon, Renderer, analytics, Preview, keyboard, UtilObject } from 'Lib';
+import { I, translate, Animation, C, UtilData, Storage, UtilCommon, Renderer, analytics, Preview, keyboard, UtilObject, UtilRouter } from 'Lib';
 import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
@@ -336,7 +336,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage, animationStage } = this.state;
 
 		if (stage == Stage.Void) {
-			UtilCommon.changeRoute('/', { replace: true });
+			UtilRouter.go('/', { replace: true });
 			return;
 		};
 
@@ -425,7 +425,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	showErrorAndExit = (message) => {
 		const error = Errors.AccountCreate[message.error.code] || message.error.description;
 
-		this.setState({ error }, () => window.setTimeout(() => UtilCommon.changeRoute('/', { replace: true }), 3000));
+		this.setState({ error }, () => window.setTimeout(() => UtilRouter.go('/', { replace: true }), 3000));
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */

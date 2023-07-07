@@ -2,5 +2,5 @@
 	{ "path": "/" },
 	{ "path": "/:page/:action/:id?" },
 	{ "path": "/:page/:action/:id?/block/:blockId?" },
-	{ "path": "/:page/:action/:id?/space/:spaceId?" }
+	{ "path": "/:page/:action/:id?/spaceId/:spaceId?" }
 ]

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Header, Button } from 'Component';
-import { I, UtilCommon, C, Action, Survey, UtilObject, analytics, translate } from 'Lib';
+import { I, UtilCommon, UtilRouter, C, Action, Survey, UtilObject, analytics, translate } from 'Lib';
 import { authStore, popupStore } from 'Store';
 import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
@@ -119,7 +119,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
 					authStore.logout(true);
-					UtilCommon.changeRoute('/', { replace: true });
+					UtilRouter.go('/', { replace: true });
 				},
 			},
 		});
@@ -138,7 +138,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 
 	onLogout () {
-		UtilCommon.changeRoute('/', { 
+		UtilRouter.go('/', { 
 			replace: true, 
 			animate: true,
 			onFadeIn: () => authStore.logout(false),

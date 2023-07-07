@@ -1,4 +1,4 @@
-import { UtilCommon } from 'Lib';
+import { UtilRouter } from 'Lib';
 
 class History {
 
@@ -42,7 +42,7 @@ class History {
 	};
 
 	go (route: string, callBack: (match: any) => void) {
-		callBack({ route, params: UtilCommon.getRoute(route) });
+		callBack({ route, params: UtilRouter.getParam(route) });
 	};
 
 	goBack (callBack: (match: any) => void) {

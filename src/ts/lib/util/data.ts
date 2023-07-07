@@ -1,4 +1,4 @@
-import { I, C, keyboard, translate, UtilCommon, Storage, analytics, dispatcher, Mark, UtilObject } from 'Lib';
+import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -227,10 +227,10 @@ class UtilData {
 					commonStore.defaultTypeSet(commonStore.type);
 
 					if (pin && !keyboard.isPinChecked) {
-						UtilCommon.changeRoute('/auth/pin-check', routeParam);
+						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
 						if (redirect) {
-							UtilCommon.changeRoute(redirect, routeParam);
+							UtilRouter.go(redirect, routeParam);
 						} else {
 							UtilObject.openHome('route', routeParam);
 						};
@@ -791,7 +791,7 @@ class UtilData {
 
 		C.WalletSetSessionSpaceID(id, () => {
 			C.WorkspaceInfo((message: any) => {
-				UtilCommon.changeRoute('/main/blank', { 
+				UtilRouter.go('/main/blank', { 
 					replace: true, 
 					animate: true,
 					onFadeOut: () => {
@@ -799,9 +799,7 @@ class UtilData {
 						if (route) {
 							commonStore.redirectSet(route);
 						};
-
 						blockStore.clear(blockStore.widgets);
-
 						this.onAuth(authStore.account, message.info, callBack);
 					}
 				});

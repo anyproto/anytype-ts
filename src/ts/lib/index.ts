@@ -13,6 +13,7 @@ import UtilSmile from './util/smile';
 import UtilFile from './util/file';
 import UtilObject from './util/object';
 import UtilMenu from './util/menu';
+import UtilRouter from './util/router';
 
 import { keyboard, Key } from './keyboard';
 import { sidebar } from './sidebar';
@@ -88,4 +89,5 @@ export {
 	UtilFile,
 	UtilObject,
 	UtilMenu,
+	UtilRouter,
 };

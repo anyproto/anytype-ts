@@ -5,7 +5,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
-import { I, C, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
+import { I, C, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer, UtilRouter } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -344,9 +344,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			let type;
 
 			if (isInside) {
-				route = '/' + url.split('://')[1];
-
-				const routeParam = UtilCommon.getRoute(route);
+				const routeParam = UtilRouter.getParam(url.split('://')[1]);
 				const object = detailStore.get(rootId, routeParam.id, []);
 
 				target = object.id;
@@ -370,7 +368,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			element.off('click.link').on('click.link', e => {
 				e.preventDefault();
 				if (isInside) {
-					UtilCommon.changeRoute(route, {});
+					UtilRouter.go(route, {});
 				} else {
 					Renderer.send('urlOpen', target);
 				};

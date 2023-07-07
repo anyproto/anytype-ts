@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Title, Label, Textarea, Button, Phrase } from 'Component';
-import { I, C, translate, analytics, UtilCommon, Preview } from 'Lib';
+import { Title, Label, Button, Phrase } from 'Component';
+import { I, C, translate, analytics, UtilCommon, Preview, UtilRouter } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
 import Head from './head';
 
 interface State {
@@ -83,7 +82,7 @@ const PopupSettingsPageLogout = observer(class PopupSettingsPageLogout extends R
 	onLogout () {
 		const { setPinConfirmed } = this.props;
 
-		UtilCommon.changeRoute('/', { 
+		UtilRouter.go('/', { 
 			replace: true, 
 			animate: true,
 			onFadeIn: () => {

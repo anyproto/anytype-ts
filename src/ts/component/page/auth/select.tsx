@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Button, Header, Footer } from 'Component';
-import { I, UtilCommon, translate, Animation, analytics } from 'Lib';
+import { I, UtilRouter, translate, Animation, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 
 const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.PageComponent> {
@@ -44,11 +44,11 @@ const PageAuthSelect = observer(class PageAuthSelect extends React.Component<I.P
 	};
 
 	onLogin () {
-		Animation.from(() => UtilCommon.changeRoute('/auth/login', {}));
+		Animation.from(() => UtilRouter.go('/auth/login', {}));
 	};
 
 	onRegister () {
-		Animation.from(() => UtilCommon.changeRoute('/auth/onboard', {}));
+		Animation.from(() => UtilRouter.go('/auth/onboard', {}));
 	};
 	
 });

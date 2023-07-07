@@ -11,7 +11,7 @@ import { enableLogging } from 'mobx-logger';
 import { Page, SelectionProvider, DragProvider, Progress, Toast, Preview as PreviewIndex, Navigation, ListPopup, ListMenu } from './component';
 import { commonStore, authStore, blockStore, detailStore, dbStore, menuStore, popupStore } from './store';
 import { 
-	I, C, UtilCommon, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
+	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey
 } from 'Lib';
 
@@ -384,7 +384,7 @@ class App extends React.Component<object, State> {
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => UtilCommon.changeRoute(route, {}));
+		Renderer.on('route', (e: any, route: string) => UtilRouter.go(route, {}));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
@@ -506,7 +506,7 @@ class App extends React.Component<object, State> {
 
 		if (value) {
 			authStore.phraseSet(value);
-			UtilCommon.changeRoute('/auth/setup/init', { replace: true });
+			UtilRouter.go('/auth/setup/init', { replace: true });
 		} else {
 			Storage.logout();
 		};

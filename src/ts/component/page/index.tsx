@@ -2,9 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject } from 'Lib';
-import { Sidebar, Navigation } from 'Component';
-import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
+import { I, Onboarding, UtilCommon, UtilRouter, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject } from 'Lib';
+import { Sidebar } from 'Component';
+import { authStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PageAuthSelect from './auth/select';
@@ -75,7 +75,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	render () {
 		const { isPopup } = this.props;
-		const { config, theme, space } = commonStore;
+		const { config, theme } = commonStore;
 		const { account } = authStore;
 		const { page, action } = this.getMatchParams();
 		const path = [ page, action ].join('/');
@@ -183,22 +183,17 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		if (isMain && !account) {
-			UtilCommon.changeRoute('/', routeParam);
-			return;
-		};
-
-		if (spaceId && (spaceId != commonStore.space)) {
-			UtilData.switchSpace(spaceId, UtilCommon.buildRoute(param));
+			UtilRouter.go('/', routeParam);
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			UtilCommon.changeRoute('/auth/pin-check', routeParam);
+			UtilRouter.go('/auth/pin-check', routeParam);
 			return;
 		};
 
 		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
-			UtilCommon.changeRoute('/auth/deleted', routeParam);
+			UtilRouter.go('/auth/deleted', routeParam);
 			return;
 		};
 

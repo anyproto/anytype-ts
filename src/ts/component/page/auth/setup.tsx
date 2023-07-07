@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
-import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics } from 'Lib';
+import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics, UtilRouter } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -60,7 +60,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 						<div className="buttons">
 							<div className="animation">
-								<Button text={translate('commonBack')} onClick={() => UtilCommon.changeRoute('/', {})} />
+								<Button text={translate('commonBack')} onClick={() => UtilRouter.go('/', {})} />
 							</div>
 						</div>
 					</React.Fragment>
@@ -138,7 +138,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					authStore.phraseSet(phrase);
 					this.select(accountId, walletPath, false);
 				} else {
-					UtilCommon.changeRoute('/auth/account-select', { replace: true });
+					UtilRouter.go('/auth/account-select', { replace: true });
 				};
 			});
 		});
@@ -170,7 +170,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		UtilCommon.changeRoute('/auth/select', {});
+		UtilRouter.go('/auth/select', {});
 	};
 	
 });

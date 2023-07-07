@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, UtilCommon, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, Preview, Action } from 'Lib';
+import { I, C, UtilCommon, UtilRouter, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, Preview, Action } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -354,12 +354,12 @@ class Keyboard {
 			};
 
 			if (prev) {
-				const route = UtilCommon.getRoute(prev.pathname);
+				const route = UtilRouter.getParam(prev.pathname);
 
 				if ((route.page == 'main') && (route.action == 'history')) {
 					prev = history.entries[history.index - 3];
 					if (prev) {
-						UtilCommon.changeRoute(prev.pathname, {});
+						UtilRouter.go(prev.pathname, {});
 					};
 					return;
 				};
@@ -409,7 +409,7 @@ class Keyboard {
 			};
 
 			if (prev) {
-				const route = UtilCommon.getRoute(prev.pathname);
+				const route = UtilRouter.getParam(prev.pathname);
 
 				if ([ 'index', 'auth' ].includes(route.page) && account) {
 					return false;
@@ -854,7 +854,7 @@ class Keyboard {
 			};
 
 			this.setPinChecked(false);
-			UtilCommon.changeRoute('/auth/pin-check', { replace: true, animate: true });
+			UtilRouter.go('/auth/pin-check', { replace: true, animate: true });
 		}, pinTime);
 	};
 

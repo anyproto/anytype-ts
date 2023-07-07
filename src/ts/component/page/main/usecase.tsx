@@ -2,7 +2,7 @@ import * as React from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
-import { C, I, translate, analytics, UtilCommon, Storage } from 'Lib';
+import { C, I, translate, analytics, UtilRouter, Storage } from 'Lib';
 import { blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -93,7 +93,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 			};
 
 			this.setState({ isLoading: false });
-			UtilCommon.changeRoute('/main/graph', { animate: true });
+			UtilRouter.go('/main/graph', { animate: true });
         });
     };
 

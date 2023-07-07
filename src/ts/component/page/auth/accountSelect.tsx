@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Error, Header, Footer } from 'Component';
-import { I, C, UtilCommon, UtilData, Renderer } from 'Lib';
+import { I, C, UtilCommon, UtilRouter, UtilData, Renderer } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
@@ -65,7 +65,7 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		authStore.accountSet(account);
 
 		Renderer.send('keytarSet', account.id, phrase);
-		UtilCommon.changeRoute('/auth/setup/select', { replace: true });
+		UtilRouter.go('/auth/setup/select', { replace: true });
 	};
 
 });

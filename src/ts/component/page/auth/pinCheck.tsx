@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Frame, Title, Error, Pin, Header } from 'Component';
-import { I, UtilCommon, Storage, translate, keyboard, UtilObject } from 'Lib';
+import { I, UtilRouter, Storage, translate, keyboard, UtilObject } from 'Lib';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -72,9 +72,9 @@ const PageAuthPinCheck = observer(class PageAuthPinCheck extends React.Component
 		keyboard.setPinChecked(true);
 
 		if (account) {
-			redirect ? UtilCommon.changeRoute(redirect, routeParam) : UtilObject.openHome('route', routeParam);
+			redirect ? UtilRouter.go(redirect, routeParam) : UtilObject.openHome('route', routeParam);
 		} else {
-			UtilCommon.changeRoute('/', routeParam);
+			UtilRouter.go('/', routeParam);
 		};
 	};
 	
