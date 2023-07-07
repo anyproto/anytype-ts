@@ -55,7 +55,7 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 
 			authStore.accountSet({ status: message.status });		
 			this.props.close();
-			UtilCommon.route('/auth/deleted', { replace: true });
+			UtilCommon.changeRoute('/auth/deleted', { replace: true });
 
 			analytics.event('DeleteAccount');
 		});

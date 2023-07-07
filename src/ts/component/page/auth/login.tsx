@@ -105,7 +105,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 			};
 
 			authStore.phraseSet(phrase);
-			Animation.from(() => UtilCommon.route('/auth/account-select', { replace: true }));
+			Animation.from(() => UtilCommon.changeRoute('/auth/account-select', { replace: true }));
 		});
 	};
 
@@ -125,7 +125,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 	};
 	
 	onCancel () {
-		Animation.from(() => UtilCommon.route('/auth/select', { replace: true }));
+		Animation.from(() => UtilCommon.changeRoute('/auth/select', { replace: true }));
 	};
 
 	onSelfHost () {

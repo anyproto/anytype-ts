@@ -336,7 +336,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const { stage, animationStage } = this.state;
 
 		if (stage == Stage.Void) {
-			UtilCommon.route('/', { replace: true });
+			UtilCommon.changeRoute('/', { replace: true });
 			return;
 		};
 
@@ -425,7 +425,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	showErrorAndExit = (message) => {
 		const error = Errors.AccountCreate[message.error.code] || message.error.description;
 
-		this.setState({ error }, () => window.setTimeout(() => UtilCommon.route('/', { replace: true }), 3000));
+		this.setState({ error }, () => window.setTimeout(() => UtilCommon.changeRoute('/', { replace: true }), 3000));
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */

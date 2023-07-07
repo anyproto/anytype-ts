@@ -163,6 +163,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { account } = authStore;
 		const { isPopup } = this.props;
 		const match = this.getMatch();
+		const param = this.getMatchParams();
 		const { page, action, spaceId } = this.getMatchParams();
 		const isIndex = this.isIndex();
 		const isAuth = this.isAuth();
@@ -182,22 +183,22 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		};
 
 		if (isMain && !account) {
-			UtilCommon.route('/', routeParam);
+			UtilCommon.changeRoute('/', routeParam);
 			return;
 		};
 
 		if (spaceId && (spaceId != commonStore.space)) {
-			UtilData.switchSpace(spaceId);
+			UtilData.switchSpace(spaceId, UtilCommon.buildRoute(param));
 			return;
 		};
 
 		if (pin && !keyboard.isPinChecked && !isPinCheck && !isAuth && !isIndex) {
-			UtilCommon.route('/auth/pin-check', routeParam);
+			UtilCommon.changeRoute('/auth/pin-check', routeParam);
 			return;
 		};
 
 		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
-			UtilCommon.route('/auth/deleted', routeParam);
+			UtilCommon.changeRoute('/auth/deleted', routeParam);
 			return;
 		};
 

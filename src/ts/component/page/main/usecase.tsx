@@ -93,7 +93,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 			};
 
 			this.setState({ isLoading: false });
-			UtilCommon.route('/main/graph', { animate: true });
+			UtilCommon.changeRoute('/main/graph', { animate: true });
         });
     };
 

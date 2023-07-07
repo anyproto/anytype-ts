@@ -1,3 +1,5 @@
+import { UtilCommon } from 'Lib';
+
 class History {
 
 	list: string[] = [];
@@ -31,11 +33,6 @@ class History {
 		return [ match.params.page, match.params.action, match.params.id ].join('/');
 	};
 
-	getParams (route: string) {
-		const [ page, action, id ] = route.split('/');
-		return { page, action, id };
-	};
-
 	checkBack () {
 		return this.index - 1 >= 0;
 	};
@@ -45,7 +42,7 @@ class History {
 	};
 
 	go (route: string, callBack: (match: any) => void) {
-		callBack({ route, params: this.getParams(route) });
+		callBack({ route, params: UtilCommon.getRoute(route) });
 	};
 
 	goBack (callBack: (match: any) => void) {

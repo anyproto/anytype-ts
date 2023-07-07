@@ -359,7 +359,7 @@ class Keyboard {
 				if ((route.page == 'main') && (route.action == 'history')) {
 					prev = history.entries[history.index - 3];
 					if (prev) {
-						UtilCommon.route(prev.pathname, {});
+						UtilCommon.changeRoute(prev.pathname, {});
 					};
 					return;
 				};
@@ -854,7 +854,7 @@ class Keyboard {
 			};
 
 			this.setPinChecked(false);
-			UtilCommon.route('/auth/pin-check', { replace: true, animate: true });
+			UtilCommon.changeRoute('/auth/pin-check', { replace: true, animate: true });
 		}, pinTime);
 	};
 

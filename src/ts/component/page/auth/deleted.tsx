@@ -119,7 +119,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 				textConfirm: translate('authDeleteRemovePopupConfirm'),
 				onConfirm: () => { 
 					authStore.logout(true);
-					UtilCommon.route('/', { replace: true });
+					UtilCommon.changeRoute('/', { replace: true });
 				},
 			},
 		});
@@ -138,7 +138,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 	};
 
 	onLogout () {
-		UtilCommon.route('/', { 
+		UtilCommon.changeRoute('/', { 
 			replace: true, 
 			animate: true,
 			onFadeIn: () => authStore.logout(false),

@@ -384,7 +384,7 @@ class App extends React.Component<object, State> {
 	registerIpcEvents () {
 		Renderer.on('init', this.onInit);
 		Renderer.on('keytarGet', this.onKeytarGet);
-		Renderer.on('route', (e: any, route: string) => UtilCommon.route(route, {}));
+		Renderer.on('route', (e: any, route: string) => UtilCommon.changeRoute(route, {}));
 		Renderer.on('popup', this.onPopup);
 		Renderer.on('checking-for-update', this.onUpdateCheck);
 		Renderer.on('update-available', this.onUpdateAvailable);
@@ -506,7 +506,7 @@ class App extends React.Component<object, State> {
 
 		if (value) {
 			authStore.phraseSet(value);
-			UtilCommon.route('/auth/setup/init', { replace: true });
+			UtilCommon.changeRoute('/auth/setup/init', { replace: true });
 		} else {
 			Storage.logout();
 		};

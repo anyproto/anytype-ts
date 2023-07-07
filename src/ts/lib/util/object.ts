@@ -136,7 +136,7 @@ class UtilObject {
 		};
 
 		keyboard.setSource(null);
-		UtilCommon.route('/' + route, param || {});
+		UtilCommon.changeRoute('/' + route, param || {});
 	};
 
 	openWindow (object: any) {

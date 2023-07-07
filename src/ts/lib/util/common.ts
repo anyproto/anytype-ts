@@ -782,18 +782,29 @@ class UtilCommon {
 		return url.indexOf('://') >= 0 ? String(url.split('://')[0] || '') : '';
 	};
 
-	getRoute (path: string): { page: string, action: string, id: string } {
+	getRoute (path: string): any {
 		let route = path.split('/');
+
 		route.shift();
 
 		const page = String(route[0] || 'index');
 		const action = String(route[1] || 'index');
 		const id = String(route[2] || '');
 
-		return { page, action, id };
+		return { page, action, id, spaceId: '' };
 	};
 
-	route (route: string, param: Partial<{ replace: boolean, animate: boolean, onFadeOut: () => void, onFadeIn?: () => void }>) {
+	buildRoute (param: Partial<{ page: string; action: string; id: string; spaceId: string; }>): string {
+		let route = [ '', param.page, param.action, param.id];
+
+		if (param.spaceId) {
+			route = route.concat([ 'space', param.spaceId ]);
+		};
+
+		return route.join('/');
+	};
+
+	changeRoute (route: string, param: Partial<{ replace: boolean, animate: boolean, onFadeOut: () => void, onFadeIn?: () => void }>) {
 		const { replace, animate, onFadeOut, onFadeIn } = param;
 		const method = replace ? 'replace' : 'push';
 

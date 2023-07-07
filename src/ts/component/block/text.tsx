@@ -370,7 +370,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			element.off('click.link').on('click.link', e => {
 				e.preventDefault();
 				if (isInside) {
-					UtilCommon.route(route, {});
+					UtilCommon.changeRoute(route, {});
 				} else {
 					Renderer.send('urlOpen', target);
 				};

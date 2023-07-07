@@ -60,7 +60,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 						<div className="buttons">
 							<div className="animation">
-								<Button text={translate('commonBack')} onClick={() => UtilCommon.route('/', {})} />
+								<Button text={translate('commonBack')} onClick={() => UtilCommon.changeRoute('/', {})} />
 							</div>
 						</div>
 					</React.Fragment>
@@ -138,7 +138,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					authStore.phraseSet(phrase);
 					this.select(accountId, walletPath, false);
 				} else {
-					UtilCommon.route('/auth/account-select', { replace: true });
+					UtilCommon.changeRoute('/auth/account-select', { replace: true });
 				};
 			});
 		});
@@ -170,7 +170,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		UtilCommon.route('/auth/select', {});
+		UtilCommon.changeRoute('/auth/select', {});
 	};
 	
 });

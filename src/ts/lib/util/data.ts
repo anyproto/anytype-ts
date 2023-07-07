@@ -227,10 +227,10 @@ class UtilData {
 					commonStore.defaultTypeSet(commonStore.type);
 
 					if (pin && !keyboard.isPinChecked) {
-						UtilCommon.route('/auth/pin-check', routeParam);
+						UtilCommon.changeRoute('/auth/pin-check', routeParam);
 					} else {
 						if (redirect) {
-							UtilCommon.route(redirect, routeParam);
+							UtilCommon.changeRoute(redirect, routeParam);
 						} else {
 							UtilObject.openHome('route', routeParam);
 						};
@@ -782,7 +782,7 @@ class UtilData {
 		];
 	};
 
-	switchSpace (id: string, callBack?: () => void) {
+	switchSpace (id: string, route?: string, callBack?: () => void) {
 		const { space } = commonStore;
 
 		if (space == id) {
@@ -791,10 +791,15 @@ class UtilData {
 
 		C.WalletSetSessionSpaceID(id, () => {
 			C.WorkspaceInfo((message: any) => {
-				UtilCommon.route('/main/blank', { 
+				UtilCommon.changeRoute('/main/blank', { 
 					replace: true, 
 					animate: true,
 					onFadeOut: () => {
+						commonStore.spaceSet(id);
+						if (route) {
+							commonStore.redirectSet(route);
+						};
+
 						blockStore.clear(blockStore.widgets);
 
 						this.onAuth(authStore.account, message.info, callBack);
