@@ -40,6 +40,10 @@ class UtilRouter {
 	};
 
 	go (route: string, param: Partial<{ replace: boolean, animate: boolean, onFadeOut: () => void, onFadeIn?: () => void }>) {
+		if (!route) {
+			return;
+		};
+
 		const { replace, animate, onFadeOut, onFadeIn } = param;
 		const routeParam = this.getParam(route);
 		const method = replace ? 'replace' : 'push';

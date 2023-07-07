@@ -344,7 +344,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			let type;
 
 			if (isInside) {
-				const routeParam = UtilRouter.getParam(url.split('://')[1]);
+				route = '/' + url.split('://')[1];
+
+				const routeParam = UtilRouter.getParam(route);
 				const object = detailStore.get(rootId, routeParam.id, []);
 
 				target = object.id;
