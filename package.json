@@ -37,6 +37,7 @@
 		"name": "Any Association",
 		"email": "info@anytype.io"
 	},
+	"license" : "SEE LICENSE IN LICENSE.md",
 	"bugs": {
 		"url": "https://github.com/anyproto/anytype-ts/issues"
 	},
