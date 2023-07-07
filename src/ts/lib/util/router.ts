@@ -5,8 +5,7 @@ import Constant from 'json/constant.json';
 class UtilRouter {
 
 	getParam (path: string): any {
-		let route = path.split('/');
-
+		const route = path.split('/');
 		if (!route.length) {
 			return {};
 		};
@@ -27,12 +26,11 @@ class UtilRouter {
 				i++;
 			};
 		};
-
 		return param;
 	};
 
 	build (param: Partial<{ page: string; action: string; id: string; spaceId: string; }>): string {
-		let route = [ param.page, param.action, param.id];
+		let route = [ param.page, param.action, param.id ];
 
 		if (param.spaceId) {
 			route = route.concat([ 'spaceId', param.spaceId ]);
