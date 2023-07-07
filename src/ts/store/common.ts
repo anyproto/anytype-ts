@@ -362,8 +362,6 @@ class CommonStore {
 	};
 
 	infoSet (info: I.AccountInfo) {
-		console.log('[commonStore.infoSet]', info);
-
 		blockStore.rootSet(info.homeObjectId);
 		blockStore.profileSet(info.profileObjectId);
 		blockStore.widgetsSet(info.widgetsId);

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Cell } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, translate, Onboarding, history as historyPopup, keyboard } from 'Lib';
+import { ObjectType, Cell } from 'Component';
+import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -54,11 +54,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const bullet = <div className="bullet" />;
 		const typeName = (
 			<div className="name">
-				{type && !type.isDeleted && !type._empty_ ? UtilCommon.shorten(type.name, 32) : (
-					<span className="textColor-red">
-						{translate('commonDeletedType')}
-					</span>
-				)}
+				<ObjectType object={type} />
 			</div>
 		);
 
