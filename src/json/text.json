@@ -145,17 +145,20 @@
 
 	"authOnboardSpaceCreatingTitle": { "en": "Setting up your Personal space..." },
 
-	"authUsecaseTitle": { "en":  "How would you like to start?" },
-	"authUsecaseLabel": { "en":  "We'll load some templates to get you started" },
-	"authUsecaseCase1Title": { "en": "Personal projects" },
-	"authUsecaseCase1Label": { "en": "Manage your personal projects and tasks with complete privacy" },
-	"authUsecaseCase2Title": { "en": "Bookshelf" },
-	"authUsecaseCase2Label": { "en": "Create your own base of knowledge with books, movies, recipes, and more" },
-	"authUsecaseCase3Title": { "en": "Diary and Quick notes" },
-	"authUsecaseCase3Label": { "en": "Keep your daily notes and self-reflections secure and private" },
-	"authUsecaseSkip": { "en":  "Skip" },
+	"usecase0Title": { "en": "Empty" },
+	"usecase0Label": { "en": "Just a blank canvas" },
+	"usecase1Title": { "en": "Personal projects" },
+	"usecase1Label": { "en": "Manage your personal projects and tasks with complete privacy" },
+	"usecase2Title": { "en": "Bookshelf" },
+	"usecase2Label": { "en": "Create your own base of knowledge with books, movies, recipes, and more" },
+	"usecase3Title": { "en": "Diary and Quick notes" },
+	"usecase3Label": { "en": "Keep your daily notes and self-reflections secure and private" },
 
 	"pageMainArchiveEmpty": { "en": "Your bin is empty" },
+
+	"pageMainUsecaseTitle": { "en":  "How would you like to start?" },
+	"pageMainUsecaseLabel": { "en":  "We'll load some templates to get you started" },
+	"pageMainUsecaseSkip": { "en":  "Skip" },
 
 	"editorControlIcon": { "en": "Icon" },
 	"editorControlCover": { "en": "Cover" },

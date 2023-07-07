@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
+import _ from 'lodash';
 import { Title, Label, Input, IconObject, Button, Select, Loader } from 'Component';
 import { UtilObject, UtilCommon, I, C, translate, keyboard } from 'Lib';
 import { menuStore } from 'Store';
@@ -45,6 +46,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			iconEmoji,
 			iconImage,
 		};
+		const options = this.getUsecaseOptions();
 
 		return (
 			<React.Fragment>
@@ -98,7 +100,12 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 										<Select 
 											id="select-usecase"
 											value={String(useCase || '')}
-											options={[]}
+											options={options}
+											onChange={id => this.setState({ useCase: Number(id) || 0 })}
+											menuParam={{
+												width: 360,
+												horizontal: I.MenuDirection.Center,
+											}}
 										/>
 									</div>
 								</div>
@@ -161,6 +168,21 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 			v = '';
 		};
 		return v;
+	};
+
+	getUsecaseOptions () {
+		return [
+			{ id: I.Usecase.None }
+		].concat(_.shuffle([
+			{ id: I.Usecase.Personal },
+			{ id: I.Usecase.Notes },
+			{ id: I.Usecase.Knowledge },
+        ])).map(it => ({
+			...it,
+			name: translate(`usecase${it.id}Title`),
+			description: translate(`usecase${it.id}Label`),
+			withDescription: true,
+		}));
 	};
 
 });
