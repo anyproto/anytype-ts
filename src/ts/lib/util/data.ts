@@ -782,31 +782,6 @@ class UtilData {
 		];
 	};
 
-	switchSpace (id: string, route?: string, callBack?: () => void) {
-		const { space } = commonStore;
-
-		if (space == id) {
-			return;
-		};
-
-		C.WalletSetSessionSpaceID(id, () => {
-			C.WorkspaceInfo((message: any) => {
-				UtilRouter.go('/main/blank', { 
-					replace: true, 
-					animate: true,
-					onFadeOut: () => {
-						commonStore.spaceSet(id);
-						if (route) {
-							commonStore.redirectSet(route);
-						};
-						blockStore.clear(blockStore.widgets);
-						this.onAuth(authStore.account, message.info, callBack);
-					}
-				});
-			});
-		});
-	};
-
 };
 
 export default new UtilData();

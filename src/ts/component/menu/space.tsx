@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName } from 'Component';
-import { I, UtilData, UtilObject } from 'Lib';
-import { dbStore, detailStore, commonStore, popupStore } from 'Store';
+import { I, UtilData, UtilObject, UtilRouter } from 'Lib';
+import { dbStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
@@ -63,7 +63,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 	};
 
 	onClick (e: any, item: any) {
-		UtilData.switchSpace(item.spaceId);
+		UtilRouter.switchSpace(item.spaceId);
 		this.props.close();
 	};
 

@@ -1,5 +1,5 @@
-import { UtilCommon, UtilData, Preview } from 'Lib';
-import { commonStore, menuStore, popupStore } from 'Store';
+import { C, UtilCommon, UtilData, Preview } from 'Lib';
+import { commonStore, blockStore, authStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class UtilRouter {
@@ -57,7 +57,7 @@ class UtilRouter {
 		popupStore.closeAll();
 
 		if (routeParam.spaceId && (routeParam.spaceId != commonStore.space)) {
-			UtilData.switchSpace(routeParam.spaceId, route);
+			this.switchSpace(routeParam.spaceId, route);
 			return;
 		};
 
@@ -90,6 +90,32 @@ class UtilRouter {
 				UtilCommon.history[method](route); 
 			};
 		}, timeout);
+	};
+
+	switchSpace (id: string, route?: string, callBack?: () => void) {
+		const { space } = commonStore;
+
+		if (space == id) {
+			return;
+		};
+
+		C.WalletSetSessionSpaceID(id, () => {
+			C.WorkspaceInfo((message: any) => {
+				this.go('/main/blank', { 
+					replace: true, 
+					animate: true,
+					onFadeOut: () => {
+						commonStore.spaceSet(id);
+						if (route) {
+							commonStore.redirectSet(route);
+						};
+
+						blockStore.clear(blockStore.widgets);
+						UtilData.onAuth(authStore.account, message.info, callBack);
+					}
+				});
+			});
+		});
 	};
 
 };
