@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
-import { Title, Label, Textarea, Phrase } from 'Component';
+import { Title, Label, Phrase } from 'Component';
 import { I, C, translate, analytics, UtilCommon, Preview } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { commonStore, authStore, popupStore } from 'Store';
 
 interface State {
 	entropy: string;
@@ -91,7 +91,13 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	};
 
 	onCode () {
-		 this.setState({ showCode: !this.state.showCode });
+		popupStore.open('pin', { 
+			data: { 
+				onSuccess: () => {
+					this.setState({ showCode: !this.state.showCode });
+				},
+			} 
+		});
 	};
 
 });
