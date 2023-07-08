@@ -127,7 +127,11 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 						options={views} 
 						onChange={this.onChangeView}
 						arrowClassName="light"
-						menuParam={{ width: 300 }}
+						menuParam={{ 
+							width: 300,
+							className: 'fixed',
+							classNameWrap: 'fromSidebar',
+						}}
 					/>
 				);
 			} else {
