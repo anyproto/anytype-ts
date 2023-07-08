@@ -283,7 +283,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				};
 
 				analytics.event('CreateObject', {
-					route: isCollection ? 'Collection' : 'Set',
+					route: (isCollection ? 'Collection' : 'Set'),
 					objectType: object.type,
 					layout: object.layout,
 					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
