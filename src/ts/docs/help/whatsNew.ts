@@ -6,8 +6,8 @@ const hl = (t: string) => `<span class="highlight">${t}</span>`;
 const block = (style: I.TextStyle, text: string) => ({ style, text });
 const title = (t: string) => block(I.TextStyle.Title, t);
 const h1 = (t: string) => block(I.TextStyle.Header1, t);
-const h2 = (t: string) => block(I.TextStyle.Header1, t);
-const h3 = (t: string) => block(I.TextStyle.Header1, t);
+const h2 = (t: string) => block(I.TextStyle.Header2, t);
+const h3 = (t: string) => block(I.TextStyle.Header3, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
@@ -19,7 +19,49 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Welcome to the Space Jam 🌌`),
+	title(`Enter the Void 😶‍🌫️`),
+
+	text(`After an enormous pre-beta launch, we're following up this month with an update to inject some magic into our onboarding experience.`),
+	text(`Before we get to the good stuff: this is our last release before we officially launch our public beta(!). On July 19, we'll be opening our repositories and celebrating this occasion with a 24-hour AMA on <a href="https://www.producthunt.com/products/anytype">Product Hunt</a>.`),
+	text(`We'd absolutely love for you to join our launch by following us on <a href="https://www.producthunt.com/products/anytype">Product Hunt</a>, bringing us your juicy questions and comments with you on launch day, and maybe even telling a friend.`),
+	text(`And now, without further ado:`),
+
+	h2(`💎 Highlights of this Release:`),
+
+	bullet(`<b>Redesigned onboarding &amp; login experience</b>`),
+
+	video(`./img/help/33/onboarding.mp4`),
+	text(`We're calling this one feature, but it's really a whole series of features and designs wrapped into one experience that comprises everything from installation to login.`),
+	text(`During the onboarding experience, new users are situated within the "Void" to understand where their space will be created.`),
+	text(`From there, users receive supplemental education on the importance of protecting and backing up their recovery phrases. Finally, users are able to visualize their identity and personal space as two distinct entities.`),
+	text(`Although this flow is primarily designed for new users, existing account holders will also get to join in on some of the fun. You'll notice when logging in or out of your account, that your recovery phrase window got a colorful new design and that the void concept has been introduced uniformly in all accounts.`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+
+	bullet(`<b>Account & Space Settings Menu Updates</b>`),
+	text(`We've re-arranged some of the elements in your account and space settings menu to work more intuitively - namely, import and export menus have moved from your account to your space settings.`),
+	text(`We've also added a description field to your account settings, which is reflected in your profile object as Relation: Description.`),
+
+	bullet(`<b>Views in Set widgets are now correctly updated when something is changed in source set</b>`),
+	text(`No need to re-create your widgets - any changes you make to your sets will be instantly reflected in the corresponding set widget.`),
+
+	h2(`🛠️ Tech & Performance:`),
+
+	bullet(`<b>Windows build now signed with certificate</b>`),
+	text(`Say goodbye to Windows Defender alerts - our security certificate has now been signed`),
+
+	h2(`🐛 Bug Fixes:`),
+
+	bullet(`<b>Fixed: "Last opened" homepage setting now working correctly</b>`),
+	bullet(`<b>Fixed: Image popups no longer flickering when resizing windows.</b> Thanks, <a href="https://community.anytype.io/t/image-popup-flickering-around-when-resizing-window/9580">jannis</a>!`),
+	bullet(`<b>Fixed: Right-clicking on file no longer opens object.</b> Thanks, <a href="https://community.anytype.io/t/right-click-on-file-opens-its-object-page/9496">person</a>!`),
+	bullet(`<b>Fixed: Right-clicking on object from sidebar no longer opens object.</b> Thanks, <a href="https://community.anytype.io/t/sidebar-right-click-bug/9605">isle9</a>!`),
+	bullet(`<b>Fixed: It's now possible to copy text from block when block menu is open.</b> Thanks, <a href="https://community.anytype.io/t/use-blocks-tab-to-copy-and-paste/9003">sooyoung</a>!`),
+	bullet(`<b>Fixed: Caret position no longer jumps on alt + delete</b>`),
+
+	div(),
+
+	h1(`Release 0.32.0: Welcome to the Space Jam 🌌`),
 	text(`Well folks, this is the release. THE release which integrates our Anysync protocol, introduces spaces to the anyverse, and opens the path towards multiplayer mode and the browser-like experience we wish to introduce. We are incredibly thankful to all @nightlytypes and new beta users who bravely tested multiple migrations and pre-release versions to help us roll out a polished product to the rest of our community.`),
 	text(`More than 300 bugs, polishes, and features were merged into this one update, so we won't detail each and every one of them. Instead, in this month's What's New edition, we'll be focusing on the main changes you'll notice once you've installed the new app, and describing each in greater detail.`),
 
