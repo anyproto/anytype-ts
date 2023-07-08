@@ -17,10 +17,10 @@
 
 	.path { 
 		width: 66%; display: inline-block; border-radius: 6px; height: 28px; line-height: 26px; transition: $transitionAllCommon;
-		@include text-overflow-nw; padding: 0px 6px;
+		@include text-overflow-nw; padding: 0px 6px; -webkit-app-region: no-drag;
 	}
 
-	.tabs { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; height: 100%; }
+	.tabs { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; height: 100%; -webkit-app-region: no-drag; }
 	.tabs {
 		.tab { 
 			font-weight: 700; color: $colorMediumGrey; transition: $transitionAllCommon; text-align: center;
@@ -30,6 +30,7 @@
 		.tab.active { color: $colorBlack; border-color: $colorBlack; }
 	}
 
+	.sync { -webkit-app-region: no-drag; }
 	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
 
 	.icon.big { width: 28px; height: 28px; background-size: 20px; border-radius: 6px; }
@@ -66,7 +67,7 @@
 
 	.item { 
 		color: $colorDarkGrey; transition: $transitionAllCommon; height: 20px; line-height: 20px; 
-		display: inline-block; vertical-align: middle; white-space: nowrap;
+		display: inline-block; vertical-align: middle; white-space: nowrap; -webkit-app-region: no-drag;
 	}
 	.item {
 		.icon.arrow { width: 20px; height: 20px; background-image: url('~img/arrow/history0.svg'); margin: 0px; vertical-align: top; }

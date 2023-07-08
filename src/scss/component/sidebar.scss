@@ -32,7 +32,7 @@
 	.over {
 		> .head { height: 52px; cursor: default; }
 		> .head {
-			.icon { display: block; }
+			.icon { display: block; -webkit-app-region: no-drag; }
 			.icon:hover { background-color: $colorHoverMedium; }
 		}
 		> .body { height: calc(100% - 52px); }
