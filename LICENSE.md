@@ -11,9 +11,9 @@ redistribute the Software, but only
 If Licensee makes available a copy of the Software to any third party, 
 the Software must be subject to the terms of this license only, and Licensee 
 must provide a copy of this license to that third party. 
-If you make changes or additions to the Software, you may license those 
-changes or additions under terms of your choice, but you cannot change 
-the license for the Software.
+If Licensee makes changes or additions to the Software, Licensee may license 
+those changes or additions under terms of your choice, but Licensee cannot 
+change the license for the Software.
 
 These terms do not allow Licensee to sublicense or transfer any of Licensee’s 
 rights to anyone else. These terms do not imply any other licenses not 
@@ -41,6 +41,7 @@ Any Association or its affiliates.
 development use, or evaluating the Software, but does not include uses where 
 the Software facilitates any transaction of economic value other than on 
 Allowed Networks. 
+
 Any use that is not a Non-Commercial Use is a “Commercial Use.”
 
 “Allowed Networks” (https://networks.any.coop) are the networks, 
