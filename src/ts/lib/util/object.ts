@@ -119,13 +119,6 @@ class UtilObject {
 	};
 
 	openAuto (object: any, param?: any) {
-
-		// Prevent opening popup when object is from different space
-		if (object.spaceId != commonStore.space) {
-			this.openRoute(object, param);
-			return;
-		};
-
 		popupStore.isOpen('page') ? this.openPopup(object, param) : this.openRoute(object, param);
 	};
 	
@@ -151,12 +144,6 @@ class UtilObject {
 			return;
 		};
 	
-		// Prevent opening popup when object is from different space
-		if (object.spaceId != commonStore.space) {
-			this.openRoute(object, param);
-			return;
-		};
-
 		const action = this.actionByLayout(object.layout);
 
 		param = param || {};
