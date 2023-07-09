@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, UtilMenu, UtilObject } from 'Lib';
+import { analytics, C, I, keyboard, UtilMenu, UtilObject } from 'Lib';
 import { blockStore } from 'Store';
 
 class MenuTemplate extends React.Component<I.Menu> {
