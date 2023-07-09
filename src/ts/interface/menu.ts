@@ -85,9 +85,11 @@ export interface MenuItem {
 	withDescription?: boolean;
 	withSwitch?: boolean;
 	withSelect?: boolean;
+	withMore?: boolean;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;
 	onSwitch?(e: any, v: boolean): void;
 	onSelect?(id: string): void;
+	onMore?(e: any): void;
 };

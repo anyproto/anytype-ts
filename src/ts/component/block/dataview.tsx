@@ -646,6 +646,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					noFilter: true,
 					noIcon: true,
 					withBlank: true,
+					withMore: true,
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
 						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
@@ -669,7 +670,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					},
 					onSelect: (item: any) => {
 						create(UtilData.checkBlankTemplate(item));
+						menuStore.closeAll([ 'dataviewTemplate' ]);
 						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
+					},
+					onMore: (e: any, item: any) => {
+						e.preventDefault();
+						e.stopPropagation();
+
+						if (menuStore.isOpen('dataviewTemplate')) {
+							menuStore.close('dataviewTemplate');
+							return;
+						};
+
+						menuStore.closeAll([ 'previewObject' ]);
+						menuStore.open('dataviewTemplate', {
+							element: e.currentTarget,
+							isSub: true,
+							vertical: I.MenuDirection.Bottom,
+							horizontal: I.MenuDirection.Right,
+							data: {
+								onOver: () => menuStore.closeAll([ 'previewObject' ]),
+								template: item
+							}
+						});
 					}
 				}
 			});
