@@ -47,7 +47,9 @@ class Util {
 	};
 
 	getTheme () {
-		switch (ConfigManager.config.theme) {
+		const theme = ConfigManager.config.theme;
+
+		switch (theme) {
 			default:
 				return theme;
 
