@@ -635,17 +635,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const showMenu = () => {
 			hoverArea.addClass('active');
 
+			let menuContext = null;
+
 			menuStore.open('searchObject', {
 				...menuParam,
+				offsetY: 10,
 				className: 'single',
-				subIds: [ 'previewObject' ],
+				subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+				onOpen: (context: any) => {
+					menuContext = context;
+				},
 				data: {
 					label: 'Choose a template',
 					noFilter: true,
 					noIcon: true,
-					withBlank: true,
+					mapElement: it => ({ ...it, withMore: true }),
+					dataChange: (items: any[]) => {
+						const fixed: any[] = [
+							{ id: Constant.templateId.blank, name: 'Blank', isBlank: true },
+						];
+						return !items.length ? fixed : fixed.concat(items);
+					},
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
 						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
@@ -655,13 +667,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					],
 					onOver: (e: any, context: any, item: any) => {
 						if (item.isBlank) {
-							menuStore.closeAll([ 'previewObject' ]);
+							menuStore.closeAll(Constant.menuIds.dataviewTemplate);
 							return;
 						};
 
 						menuStore.open('previewObject', {
-							element: `#${context.props.getId()} #item-${item.id}`,
-							offsetX: context.props.getSize().width,
+							element: `#${menuContext.getId()} #item-${item.id}`,
+							offsetX: menuContext.getSize().width,
 							isSub: true,
 							vertical: I.MenuDirection.Center,
 							data: { rootId: item.id }
@@ -669,7 +681,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					},
 					onSelect: (item: any) => {
 						create(UtilData.checkBlankTemplate(item));
-						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
+						menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
+					},
+					onMore: (e: any, item: any) => {
+						e.preventDefault();
+						e.stopPropagation();
+
+						if (menuStore.isOpen('dataviewTemplate', item.id)) {
+							menuStore.close('dataviewTemplate');
+							return;
+						};
+
+						menuStore.closeAll(Constant.menuIds.dataviewTemplate);
+						menuStore.open('dataviewTemplate', {
+							menuKey: item.id,
+							element: `#${menuContext.getId()} #item-${item.id}`,
+							//isSub: true,
+							vertical: I.MenuDirection.Bottom,
+							horizontal: I.MenuDirection.Right,
+							data: {
+								onOver: () => menuStore.closeAll([ 'previewObject' ]),
+								template: item
+							}
+						});
 					}
 				}
 			});

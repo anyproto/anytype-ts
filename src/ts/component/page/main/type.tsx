@@ -324,7 +324,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			};
 
 			focus.clear(true);
-			analytics.event('CreateTemplate', { objectType: rootId });
+			analytics.event('CreateTemplate', { objectType: rootId, route: 'Library' });
 
 			UtilObject.openPopup(message.details, {
 				onClose: () => {
