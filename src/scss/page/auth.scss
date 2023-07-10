@@ -235,11 +235,11 @@ html.bodyAuthDeleted {
 	}
 
 	.soulContent.soulCreating {
-		.iconObject { background: $colorWhite; box-shadow: 0px 0px 0px 0px $colorWhite; animation: pulse 2s infinite; }
+		.iconObject { background: $colorWhite; box-shadow: 0px 0px 0px 0px $colorWhite; animation: pulse 1.5s infinite; }
 
 		@keyframes pulse {
 			0% { transform: scale(1); }
-			70% { transform: scale(1.05); }
+			70% { transform: scale(1.1); }
 			100% { transform: scale(1); }
 		}
 	}

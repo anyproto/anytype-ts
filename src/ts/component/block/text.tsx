@@ -877,8 +877,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let marksChanged = false;
 		if (block.canHaveMarks()) {
 			parsed = this.getMarksFromHtml();
-			marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
-
+			//marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
 			this.marks = parsed.marks;
 		};
 
@@ -1007,7 +1006,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);
-
 			const { focused, range } = focus.state;
 
 			diff += marksChanged ? (value.length - text.length) : 0;
