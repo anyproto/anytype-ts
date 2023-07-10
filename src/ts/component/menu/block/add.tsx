@@ -562,6 +562,22 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 				if (item.type == I.BlockType.Table) {
 					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						const { rows, columns } = blockStore.getTableData(rootId, message.blockId);
+						if (!rows.length || !columns.length) {
+							return;
+						};
+
+						C.BlockTableRowListFill(rootId, [ rows[0].id ], () => {
+							const cellId = [ rows[0].id, columns[0].id ].join('-');
+
+							focus.set(cellId, { from: 0, to: 0 });
+							focus.apply();
+						});
+
 						analytics.event('CreateBlock', { 
 							middleTime: message.middleTime, 
 							type: param.type, 

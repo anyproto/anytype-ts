@@ -225,6 +225,12 @@ export const BlockCreate = (response: Rpc.Block.Create.Response) => {
 	};
 };
 
+export const BlockTableCreate = (response: Rpc.BlockTable.Create.Response) => {
+	return {
+		blockId: response.getBlockid(),
+	};
+};
+
 export const BlockSplit = (response: Rpc.Block.Split.Response) => {
 	return {
 		blockId: response.getBlockid(),

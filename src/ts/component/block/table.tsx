@@ -164,14 +164,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	getData () {
 		const { rootId, block } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const children = blockStore.getChildren(rootId, block.id);
-		const rowContainer = children.find(it => it.isLayoutTableRows());
-		const columnContainer = children.find(it => it.isLayoutTableColumns());
-		const columns = columnContainer ? blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn()) : [];
-		const rows = rowContainer ? blockStore.unwrapTree([ blockStore.wrapTree(rootId, rowContainer.id) ]).filter(it => it.isTableRow()) : [];
-
-		return { columnContainer, columns, rowContainer, rows };
+		return blockStore.getTableData(rootId, block.id);
 	};
 
 	onHandleColumn (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
