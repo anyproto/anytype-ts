@@ -82,6 +82,7 @@ mkdir -p dist/lib/json
 mv -fv json/* "dist/lib/json"
 rm -rf protobuf
 rm -rf relations
+rm -rf json
 rm -rf $FILE
 
 printf "Done\n\n"
