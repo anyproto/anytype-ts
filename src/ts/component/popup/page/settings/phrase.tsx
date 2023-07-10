@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import QRCode from 'qrcode.react';
 import { Title, Label, Phrase } from 'Component';
-import { I, C, translate, analytics, UtilCommon, Preview } from 'Lib';
+import { I, C, translate, analytics, UtilCommon, Preview, Storage } from 'Lib';
 import { commonStore, authStore, popupStore } from 'Store';
 
 interface State {
@@ -91,13 +91,12 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	};
 
 	onCode () {
-		popupStore.open('pin', { 
-			data: { 
-				onSuccess: () => {
-					this.setState({ showCode: !this.state.showCode });
-				},
-			} 
-		});
+		const pin = Storage.get('pin');
+		const onSuccess = () => {
+			this.setState({ showCode: !this.state.showCode });
+		};
+
+		pin ? popupStore.open('pin', { data: { onSuccess } }) : onSuccess();
 	};
 
 });
