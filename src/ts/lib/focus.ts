@@ -88,10 +88,6 @@ class Focus {
 			keyboard.setFocus(true);
 			setRange(el, { start: range.from, end: range.to });
 		};
-
-		console.log('FOCUS APPLY');
-		console.trace();
-
 		return this;
 	};
 	
