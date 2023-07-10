@@ -1,8 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { analytics, C, I, keyboard, UtilMenu, UtilObject } from 'Lib';
-import { blockStore } from 'Store';
+import { I, keyboard, UtilObject } from 'Lib';
 
 class MenuTemplate extends React.Component<I.Menu> {
 
@@ -23,8 +22,8 @@ class MenuTemplate extends React.Component<I.Menu> {
                     <MenuItemVertical
                         key={i}
                         {...action}
-                        onMouseEnter={(e: any) => { this.onMouseEnter(e, action); }}
-                        onClick={(e: any) => this.onClick(e, action)}
+                        onMouseEnter={e => this.onMouseEnter(e, action)}
+                        onClick={e => this.onClick(e, action)}
                     />
                 ))}
             </div>
@@ -37,8 +36,8 @@ class MenuTemplate extends React.Component<I.Menu> {
 
     rebind () {
         this.unbind();
-        $(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-        window.setTimeout(() => { this.props.setActive(); }, 15);
+        $(window).on('keydown.menu', e => this.props.onKeyDown(e));
+        window.setTimeout(() => this.props.setActive(), 15);
     };
 
     unbind () {
@@ -50,26 +49,21 @@ class MenuTemplate extends React.Component<I.Menu> {
         const { data } = param;
         const { template } = data;
         const { isBlank, isDefault } = template;
-        const items: any[] = [
-            { id: 'duplicate', name: 'Duplicate' }
-        ];
-
-        if (!isBlank) {
-            items.unshift({ id: 'edit', name: 'Edit template' });
-            items.push({ id: 'delete', name: 'Delete' });
-        };
-
-        if (!isDefault) {
-            items.unshift({ id: 'default', name: 'Set as default' });
-        }
-
-        return items;
+       
+		 return [
+			!isDefault ? ({ id: 'default', name: 'Set as default' }) : null,
+			!isBlank ? ({ id: 'edit', name: 'Edit template' }) : null,
+			{ id: 'duplicate', name: 'Duplicate' },
+			!isBlank ? ({ id: 'delete', name: 'Delete' }) : null,
+		].filter(it => it);
     };
 
     onClick (e: any, item: any) {
-        const { param } = this.props;
+        const { param, close } = this.props;
         const { data } = param;
         const { template } = data;
+
+		close();
 
         switch (item.id) {
             case 'default': {
@@ -89,8 +83,6 @@ class MenuTemplate extends React.Component<I.Menu> {
                 break;
             };
         };
-
-        this.props.close();
     };
 
     onMouseEnter (e: any, item: any) {

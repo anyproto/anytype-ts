@@ -46,7 +46,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { isLoading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, placeholder, label, isBig, noFilter, noIcon, withMore, onMore } = data;
+		const { filter, value, placeholder, label, isBig, noFilter, noIcon, onMore } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
@@ -104,17 +104,13 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					props.object = undefined;
 				};
 
-				if (withMore) {
-					props.withMore = true;
-				};
-
 				content = (
 					<MenuItemVertical
 						{...props}
 						name={<ObjectName object={item} />}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
-						onClick={(e: any) => { this.onClick(e, item); }}
-						onMore={onMore ? (e: any) => onMore(e, item) : undefined}
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onClick={e => this.onClick(e, item)}
+						onMore={onMore ? e => onMore(e, item) : undefined}
 						style={param.style}
 						checkbox={checkbox}
 						className={cn.join(' ')}
@@ -245,14 +241,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, label, canAdd, addParam, withBlank } = data;
+		const { filter, label, canAdd, addParam, mapElement } = data;
 
 		let items = [].concat(this.items);
 		let length = items.length;
-
-		if (withBlank) {
-			items.unshift({ id: Constant.templateId.blank, name: 'Blank', isBlank: true })
-		};
 
 		if (label && length) {
 			items.unshift({ isSection: true, name: label });
@@ -269,6 +261,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			if (filter) {
 				items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"`, isAdd: true });
 			};
+		};
+
+		if (mapElement) {
+			items = items.map(mapElement);
 		};
 
 		return items;

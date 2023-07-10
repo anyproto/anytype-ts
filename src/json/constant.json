@@ -65,7 +65,8 @@
 		"featuredType":	 [ "searchObject", "typeSuggest" ],
 		"dataviewHead":	 [ "dataviewSource", "searchObject" ],
 		"store":		 [ "typeSuggest", "relationSuggest" ],
-		"widget":		 [ "searchObject", "select" ]
+		"widget":		 [ "searchObject", "select" ],
+		"dataviewTemplate": [ "previewObject" ]
 	},
 
 	"popupPinIds": [ "search" ],
