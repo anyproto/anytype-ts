@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.32.17-beta",
+	"version": "0.32.18-beta",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -37,7 +37,7 @@
 		"name": "Any Association",
 		"email": "info@anytype.io"
 	},
-	"license" : "SEE LICENSE IN LICENSE.md",
+	"license": "SEE LICENSE IN LICENSE.md",
 	"bugs": {
 		"url": "https://github.com/anyproto/anytype-ts/issues"
 	},
