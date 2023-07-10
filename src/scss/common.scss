@@ -1,6 +1,6 @@
 @import "~scss/_vars";
 
-* { padding: 0px; margin: 0px; border: 0px; box-sizing: border-box; }
+* { padding: 0px; margin: 0px; border: 0px; box-sizing: border-box; overscroll-behavior: none; }
 html, body { height: 100%; }
 
 body {
