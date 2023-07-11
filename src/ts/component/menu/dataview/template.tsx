@@ -61,13 +61,15 @@ class MenuTemplate extends React.Component<I.Menu> {
     onClick (e: any, item: any) {
         const { param, close } = this.props;
         const { data } = param;
-        const { template } = data;
+        const { template, onSetDefault } = data;
 
 		close();
 
         switch (item.id) {
             case 'default': {
-                console.log('SET TEMPLATE AS DEFAULT FOR THIS ... ???');
+                if (onSetDefault) {
+                    onSetDefault();
+                };
                 break;
             };
             case 'edit': {

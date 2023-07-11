@@ -700,8 +700,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							vertical: I.MenuDirection.Bottom,
 							horizontal: I.MenuDirection.Right,
 							data: {
+								template: item,
 								onOver: () => menuStore.closeAll([ 'previewObject' ]),
-								template: item
+								onSetDefault: () => console.log('SET DEFAULT TEMPLATE FOR THIS VIEW')
 							}
 						});
 					}

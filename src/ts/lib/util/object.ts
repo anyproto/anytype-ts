@@ -228,6 +228,10 @@ class UtilObject {
 		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
 
+	setDefaultTemplateId (rootId: string, templateId: string, callBack?: (message: any) => void) {
+		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: templateId } ], callBack);
+	};
+
 	defaultName (key: string) {
 		return translate(`defaultName${key}`);
 	};
