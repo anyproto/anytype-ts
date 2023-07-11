@@ -1,4 +1,7 @@
 const { exec } = require('child_process');
+const fs = require('fs');
+const crypto = require('crypto');
+const path = require('path');
 
 require('dotenv').config();
 
@@ -19,8 +22,26 @@ function execPromise (command) {
     });
 };
 
+function hashFile (file, algorithm, encoding, options) {
+	return new Promise((resolve, reject) => {
+		
+		const hash = crypto.createHash(algorithm);
+
+		hash.on('error', reject).setEncoding(encoding);
+
+		fs.createReadStream(file, { ...options, highWaterMark: 1024 * 1024 /* better to use more memory but hash faster */ })
+		.on('error', reject)
+		.on('end', () => {
+			hash.end()
+			resolve(hash.read())
+		})
+		.pipe(hash, { end: false });
+	});
+};
+
 exports.default = async function (context) {
-	const { packager, file } = context;
+	const { packager, file, updateInfo } = context;
+	const version = packager.appInfo.version;
 
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
@@ -40,7 +61,50 @@ exports.default = async function (context) {
 		].join(' ');
 
 		console.log(cmd);
-		return await execPromise(cmd);
+
+		const ret = await execPromise(cmd);
+		const stats = fs.statSync(fileName);
+		const hex = await hashFile(fileName, 'sha512', 'base64', {});
+		const size = stats.size;
+
+		console.log([
+			`Old size: ${updateInfo.size}`,
+			`Old sha512: ${updateInfo.sha512}`,
+			`New size: ${size}`,
+			`New sha512: ${hex}`,
+		].join('\n'));
+
+		let files = [];
+		if (version.match('alpha')) {
+			files = files.concat([ 'alpha' ]);
+		} else
+		if (version.match('beta')) {
+			files = files.concat([ 'alpha', 'beta' ]);
+		} else {
+			files = files.concat([ 'alpha', 'beta', 'latest' ]);
+		};
+
+		console.log(`Files to update: ${files.join(', ')}`);
+
+		files.forEach(it => {
+			const fp = path.join(path.dirname(fileName), `${it}.yml`);
+			const dir = fs.readdirSync(path.dirname(fileName));
+
+			console.log(dir);
+
+			let fc = fs.readFileSync(fp);
+
+			console.log(`File ${fp}: ${fc}`);
+
+			fc = fc.replace(/sha512: .*$/g, `sha512: ${hex}`);
+			fc = fc.replace(/size: .*$/g, `size: ${size}`);
+
+			fs.writeFileSync(fp, fc);
+
+			console.log(fc);
+		});
+
+		return ret;
 	};
 
 	return null;

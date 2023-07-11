@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.32.19-beta",
+	"version": "0.32.21-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -144,7 +144,6 @@
 		"generateUpdatesFilesForAllChannels": true,
 		"beforeBuild": "./electron/hook/beforebuild.js",
 		"afterSign": "./electron/hook/aftersign.js",
-		"artifactBuildCompleted": "./electron/hook/afterbuild.js",
 		"appId": "com.anytype.anytype",
 		"compression": "normal",
 		"productName": "Anytype",
@@ -517,6 +516,7 @@
 			]
 		},
 		"win": {
+			"sign": "./electron/hook/customSign.js",
 			"target": "nsis",
 			"icon": "electron/img/icon256x256.png",
 			"publish": [
