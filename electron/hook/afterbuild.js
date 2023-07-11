@@ -1,6 +1,7 @@
 const { exec } = require('child_process');
 const fs = require('fs');
 const crypto = require('crypto');
+const path = require('path');
 
 require('dotenv').config();
 
