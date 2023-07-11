@@ -30,7 +30,7 @@ function hashFile (file, algorithm, encoding, options) {
 
 		fs.createReadStream(file, { ...options, highWaterMark: 1024 * 1024 /* better to use more memory but hash faster */ })
 		.on('error', reject)
-		.on("end", () => {
+		.on('end', () => {
 			hash.end()
 			resolve(hash.read())
 		})
@@ -40,8 +40,7 @@ function hashFile (file, algorithm, encoding, options) {
 
 exports.default = async function (context) {
 	const { packager, file } = context;
-
-	console.log(context);
+	const version = context.appInfo.version;
 
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
@@ -65,13 +64,38 @@ exports.default = async function (context) {
 		const ret = await execPromise(cmd);
 		const stats = fs.statSync(fileName);
 		const hex = await hashFile(fileName, 'sha512', 'base64', {});
+		const size = stats.size;
 
 		console.log([
 			`Old size: ${context.updateInfo.size}`,
 			`Old sha512: ${context.updateInfo.sha512}`,
-			`New size: ${stats.size}`,
+			`New size: ${size}`,
 			`New sha512: ${hex}`,
 		].join('\n'));
+
+		let files = [];
+		if (version.match('alpha')) {
+			files = files.concat([ 'alpha' ]);
+		} else
+		if (version.match('beta')) {
+			files = files.concat([ 'alpha', 'beta' ]);
+		} else {
+			files = files.concat([ 'alpha', 'beta', 'latest' ]);
+		};
+
+		console.log(`Files to update: ${files.join(', ')}`);
+
+		files.forEach(it => {
+			const fp = path.join(path.dirname(fileName), `${it}.yml`);
+			let fc = fs.readFileSync(fp);
+
+			console.log(`File ${fp}: ${fc}`);
+
+			fc = fc.replace(/sha512: .*$/g, `sha512: ${hex}`);
+			fc = fc.replace(/size: .*$/g, `size: ${size}`);
+
+			console.log(fc);
+		});
 
 		return ret;
 	};
