@@ -1,4 +1,6 @@
 const { exec } = require('child_process');
+const fs = require('fs');
+const crypto = require('crypto');
 
 require('dotenv').config();
 
@@ -22,6 +24,8 @@ function execPromise (command) {
 exports.default = async function (context) {
 	const { packager, file } = context;
 
+	console.log(context);
+
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
 		const cmd = [
@@ -40,7 +44,25 @@ exports.default = async function (context) {
 		].join(' ');
 
 		console.log(cmd);
-		return await execPromise(cmd);
+
+		const ret = await execPromise(cmd);
+		const stats = fs.statSync(fileName);
+		const size = stats.size;
+		const fileBuffer = fs.readFileSync(fileName);
+		const hashSum = crypto.createHash('sha512');
+		
+		hashSum.update(fileBuffer);
+
+		const hex = hashSum.digest('hex');
+
+		console.log([
+			`Old size: ${context.updateInfo.size}`,
+			`Old sha512: ${context.updateInfo.sha512}`,
+			`New size: ${stats.size}`,
+			`New sha512: ${hex}`,
+		].join('\n'));
+
+		return ret;
 	};
 
 	return null;
