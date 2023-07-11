@@ -648,7 +648,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					menuContext = context;
 				},
 				data: {
-					label: 'Choose a template',
+					label: 'Select template',
 					noFilter: true,
 					noIcon: true,
 					mapElement: it => ({ ...it, withMore: true }),
