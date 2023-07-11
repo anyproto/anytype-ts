@@ -1,9 +1,11 @@
 name: Release
 
+#on:
+#  push:
+#    tags:        
+#      - v*
 on:
   push:
-    tags:        
-      - v*
 
 jobs:
   release:
@@ -12,7 +14,8 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.16.x ]
-        os: [ macos-latest, ubuntu-latest, windows-latest ] 
+        #os: [ macos-latest, ubuntu-latest, windows-latest ] 
+        os: [ windows-latest ] 
 
     steps:
       - name: Setup

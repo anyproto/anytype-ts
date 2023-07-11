@@ -40,8 +40,8 @@ function hashFile (file, algorithm, encoding, options) {
 };
 
 exports.default = async function (context) {
-	const { packager, file } = context;
-	const version = context.packager.appInfo.version;
+	const { packager, file, updateInfo } = context;
+	const version = packager.appInfo.version;
 
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
@@ -68,8 +68,8 @@ exports.default = async function (context) {
 		const size = stats.size;
 
 		console.log([
-			`Old size: ${context.updateInfo.size}`,
-			`Old sha512: ${context.updateInfo.sha512}`,
+			`Old size: ${updateInfo.size}`,
+			`Old sha512: ${updateInfo.sha512}`,
 			`New size: ${size}`,
 			`New sha512: ${hex}`,
 		].join('\n'));
