@@ -24,7 +24,7 @@ function execPromise (command) {
 function hashFile (file, algorithm, encoding, options) {
 	return new Promise<string>((resolve, reject) => {
 		
-		const hash = createHash(algorithm);
+		const hash = crypto.createHash(algorithm);
 
 		hash.on('error', reject).setEncoding(encoding);
 
@@ -64,7 +64,7 @@ exports.default = async function (context) {
 
 		const ret = await execPromise(cmd);
 		const stats = fs.statSync(fileName);
-		const hex = await hashFile(fileName, 'sha512', 'base64');
+		const hex = await hashFile(fileName, 'sha512', 'base64', {});
 
 		console.log([
 			`Old size: ${context.updateInfo.size}`,
