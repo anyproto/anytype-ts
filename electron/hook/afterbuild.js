@@ -99,6 +99,8 @@ exports.default = async function (context) {
 			fc = fc.replace(/sha512: .*$/g, `sha512: ${hex}`);
 			fc = fc.replace(/size: .*$/g, `size: ${size}`);
 
+			fs.writeFileSync(fp, fc);
+
 			console.log(fc);
 		});
 
