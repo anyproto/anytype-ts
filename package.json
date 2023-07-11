@@ -516,7 +516,7 @@
 			]
 		},
 		"win": {
-			"sign": "./electron/hook/customSign.js",
+			"sign": "./electron/hook/sign.js",
 			"target": "nsis",
 			"icon": "electron/img/icon256x256.png",
 			"publish": [
