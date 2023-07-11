@@ -22,7 +22,7 @@ function execPromise (command) {
 };
 
 function hashFile (file, algorithm, encoding, options) {
-	return new Promise<string>((resolve, reject) => {
+	return new Promise((resolve, reject) => {
 		
 		const hash = crypto.createHash(algorithm);
 
