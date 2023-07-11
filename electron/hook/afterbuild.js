@@ -88,6 +88,10 @@ exports.default = async function (context) {
 
 		files.forEach(it => {
 			const fp = path.join(path.dirname(fileName), `${it}.yml`);
+			const dir = fs.readdirSync(path.dirname(fileName));
+
+			console.log(dir);
+
 			let fc = fs.readFileSync(fp);
 
 			console.log(`File ${fp}: ${fc}`);
