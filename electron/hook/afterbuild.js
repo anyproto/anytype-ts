@@ -21,6 +21,23 @@ function execPromise (command) {
     });
 };
 
+function hashFile (file, algorithm, encoding, options) {
+	return new Promise<string>((resolve, reject) => {
+		
+		const hash = createHash(algorithm);
+
+		hash.on('error', reject).setEncoding(encoding);
+
+		fs.createReadStream(file, { ...options, highWaterMark: 1024 * 1024 /* better to use more memory but hash faster */ })
+		.on('error', reject)
+		.on("end", () => {
+			hash.end()
+			resolve(hash.read())
+		})
+		.pipe(hash, { end: false });
+	});
+};
+
 exports.default = async function (context) {
 	const { packager, file } = context;
 
@@ -47,13 +64,7 @@ exports.default = async function (context) {
 
 		const ret = await execPromise(cmd);
 		const stats = fs.statSync(fileName);
-		const size = stats.size;
-		const fileBuffer = fs.readFileSync(fileName);
-		const hashSum = crypto.createHash('sha512');
-		
-		hashSum.update(fileBuffer);
-
-		const hex = hashSum.digest('hex');
+		const hex = await hashFile(fileName, 'sha512', 'base64');
 
 		console.log([
 			`Old size: ${context.updateInfo.size}`,
