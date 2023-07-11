@@ -40,7 +40,7 @@ function hashFile (file, algorithm, encoding, options) {
 
 exports.default = async function (context) {
 	const { packager, file } = context;
-	const version = context.appInfo.version;
+	const version = context.packager.appInfo.version;
 
 	if (packager.platform.name == 'windows') {
 		const fileName = file.replace('.blockmap', '');
