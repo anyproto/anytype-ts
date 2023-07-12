@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, Preview } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -66,8 +66,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
 		const { defaultTemplateId } = detailStore.get(rootId, rootId, [ 'defaultTemplateId' ]);
-		console.log('ROOT ID: ', rootId)
-		console.log('DEFAULT TEMPLATE ID: ', defaultTemplateId)
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
@@ -160,6 +158,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 										onMenu={(e: any, item: any) => this.onMenu(item)}
 										onClick={(e: any, item: any) => UtilObject.openPopup(item)}
 										withBlank={true}
+										defaultId={defaultTemplateId || Constant.templateId.blank}
 									/>
 								</div>
 							) : (
@@ -510,13 +509,25 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onMenu (item: any) {
+		const rootId = this.getRootId();
+		const { defaultTemplateId } = detailStore.get(rootId, rootId, [ 'defaultTemplateId' ]);
+		const template: any = { id: item.id };
+
 		if (menuStore.isOpen('dataviewTemplate', item.id)) {
 			menuStore.close('dataviewTemplate');
 			return;
 		};
 
-		if (item.id == Constant.templateId.blank) {
-			item.isBlank = true;
+		if (template.id == Constant.templateId.blank) {
+			template.isBlank = true;
+
+			if (!defaultTemplateId) {
+				template.isDefault = true;
+			};
+		};
+
+		if (template.id == defaultTemplateId) {
+			template.isDefault = true;
 		};
 
 		menuStore.closeAll(Constant.menuIds.dataviewTemplate);
@@ -525,11 +536,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			element: `#item-${item.id} .more`,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
-			onOpen: () => $(`#item-${item.id} .more`).addClass('hover'),
-			onClose: () => $(`#item-${item.id} .more`).removeClass('hover'),
+			onOpen: () => $(`#item-${item.id}`).addClass('active'),
+			onClose: () => $(`#item-${item.id}`).removeClass('active'),
 			data: {
-				template: item,
-				onSetDefault: () => console.log('SET DEFAULT TEMPLATE FOR THIS TYPE')
+				template: template,
+				onSetDefault: () => {
+					UtilObject.setDefaultTemplateId(rootId, item.id);
+				}
 			}
 		});
 	};

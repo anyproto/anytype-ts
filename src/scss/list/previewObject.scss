@@ -14,20 +14,28 @@
 		}
 		.hoverArea.hover:before, .hoverArea:hover:before { display: block; }
 
-		.icon.more {
+		> .icon.more { opacity: 0; }
+		> .icon.more {
 			width: 28px; height: 28px; background-size: 20px; position: absolute; right: 8px; top: 8px;
 			border-radius: 6px; z-index: 10; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer;
 		}
-		.icon.more:hover,
-		.icon.more.hover { background-color: $colorHoverMedium; }
+		> .icon.more:hover,
+		> .icon.more.hover { background-color: $colorHoverMedium; }
+
+		> .defaultLabel {
+			position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500;
+			padding: 1px 4px; border-radius: 4px; background: $colorVeryLightGrey; color: $colorDarkGrey;
+		}
 
 		.previewObject { width: 344px; height: 216px; }
 		.icon.plus { width: 28px; height: 28px; position: absolute; left: 50%; top: 50%; margin: -14px 0px 0px -14px; background-image: url('~img/icon/plus/templateBig.svg'); }
 	}
 
-	.item > .icon.more { opacity: 0; }
-	.item:hover > .icon.more,
-	.item > .icon.more.hover { opacity: 1; }
+	.item:hover,
+	.item.active {
+		> .icon.more { opacity: 1; }
+		> .defaultLabel { opacity: 0; }
+	}
 
 	.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorDarkGrey; }
 	.item > .name {

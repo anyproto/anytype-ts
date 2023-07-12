@@ -13,6 +13,7 @@ interface Props {
 	withBlank?: boolean;
 	onBlank?: (e: any) => void;
 	onMenu?: (e: any, item: any) => void;
+	defaultId?: string;
 };
 
 const WIDTH = 344;
@@ -32,12 +33,20 @@ class ListObjectPreview extends React.Component<Props> {
 	refObj: any = {};
 
 	render () {
-		const { getItems, canAdd, onAdd, withBlank, onBlank, onMenu } = this.props;
+		const { getItems, canAdd, onAdd, withBlank, onBlank, onMenu, defaultId } = this.props;
 		const items = getItems();
+
+		const DefaultLabel = (item: any) => {
+			if (!defaultId || defaultId != item.id) {
+				return null;
+			};
+			return <div className="defaultLabel">Default</div>;
+		};
 
 		const Item = (item: any) => {
 			return (
 				<div id={'item-' + item.id} className="item">
+					<DefaultLabel {...item} />
 					{onMenu ? <Icon className="more" onClick={e => onMenu(e, item)} /> : ''}
 
 					<div
@@ -58,6 +67,7 @@ class ListObjectPreview extends React.Component<Props> {
 		const ItemBlank = () => {
 			return (
 				<div id={`item-${Constant.templateId.blank}`} className="item" onClick={onBlank}>
+					<DefaultLabel {...{id: Constant.templateId.blank}} />
 					{onMenu ? <Icon className="more" onClick={e => onMenu(e, { id: Constant.templateId.blank })} /> : ''}
 					<div className="previewObject blank">
 						<div className="scroller">
@@ -126,6 +136,7 @@ class ListObjectPreview extends React.Component<Props> {
 
 	onMouseLeave (e: any, item: any) {
 		const node = $(this.node);
+		node.find('.item.hover').removeClass('hover');
 		node.find('.hoverArea.hover').removeClass('hover');
 	};
 
@@ -147,7 +158,9 @@ class ListObjectPreview extends React.Component<Props> {
 
 		const node = $(this.node);
 
+		node.find('.item.hover').removeClass('hover');
 		node.find('.hoverArea.hover').removeClass('hover');
+		node.find(`#item-${item.id}`).addClass('hover');
 		node.find(`#item-${item.id} .hoverArea`).addClass('hover');
 	};
 
