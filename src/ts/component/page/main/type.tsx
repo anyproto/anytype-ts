@@ -510,7 +510,28 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onMenu (item: any) {
-		console.log('MENU ITEM: ', item)
+		if (menuStore.isOpen('dataviewTemplate', item.id)) {
+			menuStore.close('dataviewTemplate');
+			return;
+		};
+
+		if (item.id == Constant.templateId.blank) {
+			item.isBlank = true;
+		};
+
+		menuStore.closeAll(Constant.menuIds.dataviewTemplate);
+		menuStore.open('dataviewTemplate', {
+			menuKey: item.id,
+			element: `#item-${item.id} .more`,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			onOpen: () => $(`#item-${item.id} .more`).addClass('hover'),
+			onClose: () => $(`#item-${item.id} .more`).removeClass('hover'),
+			data: {
+				template: item,
+				onSetDefault: () => console.log('SET DEFAULT TEMPLATE FOR THIS TYPE')
+			}
+		});
 	};
 
 	getRootId () {

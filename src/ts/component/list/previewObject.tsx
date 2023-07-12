@@ -57,7 +57,7 @@ class ListObjectPreview extends React.Component<Props> {
 
 		const ItemBlank = () => {
 			return (
-				<div className="item" onClick={onBlank}>
+				<div id={`item-${Constant.templateId.blank}`} className="item" onClick={onBlank}>
 					{onMenu ? <Icon className="more" onClick={e => onMenu(e, { id: Constant.templateId.blank })} /> : ''}
 					<div className="previewObject blank">
 						<div className="scroller">
