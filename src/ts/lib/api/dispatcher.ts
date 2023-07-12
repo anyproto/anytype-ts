@@ -974,7 +974,8 @@ class Dispatcher {
 								};
 
 								case I.ProgressType.Export: { 
-									title = 'The export process is complete!'; 
+									title = 'The export process is complete!';
+									text = 'You can find the exported objects in the folder you selected.';
 									break; 
 								};
 							};
