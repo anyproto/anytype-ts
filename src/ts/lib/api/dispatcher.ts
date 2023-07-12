@@ -980,7 +980,15 @@ class Dispatcher {
 							};
 
 							if (showPopup) {
-								window.setTimeout(() => { popupStore.open('confirm', { data: { title, text } }); }, Constant.delay.popup);
+								window.setTimeout(() => { 
+									popupStore.open('confirm', { 
+										data: { 
+											title, 
+											text,
+											textConfirm: 'Ok! I got it!',
+										} 
+									}); 
+								}, Constant.delay.popup);
 							};
 							break;
 						};
