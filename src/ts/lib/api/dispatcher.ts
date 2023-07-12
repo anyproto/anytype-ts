@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
-import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
+import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import { UtilCommon, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
@@ -958,16 +958,29 @@ class Dispatcher {
 						case I.ProgressState.Canceled: {
 							commonStore.progressClear();
 
-							if (state == I.ProgressState.Done) {
-								let toast = '';
-								switch (type) {
-									case I.ProgressType.Import: { toast = 'Import finished'; break; };
-									case I.ProgressType.Export: { toast = 'Export finished'; break; };
+							if (state != I.ProgressState.Done) {
+								break;
+							};
+
+							let title = '';
+							let text = '';
+							let showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type);
+
+							switch (type) {
+								case I.ProgressType.Import: { 
+									title = 'The import process is complete!';
+									text = 'Now the data is yours. You will find the imported objects in your favorite collection.'; 
+									break; 
 								};
 
-								if (toast) {
-									Preview.toastShow({ text: toast });
+								case I.ProgressType.Export: { 
+									title = 'The export process is complete!'; 
+									break; 
 								};
+							};
+
+							if (showPopup) {
+								window.setTimeout(() => { popupStore.open('confirm', { data: { title, text } }); }, Constant.delay.popup);
 							};
 							break;
 						};
