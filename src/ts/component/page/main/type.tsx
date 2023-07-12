@@ -65,7 +65,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const subIdTemplate = this.getSubIdTemplate();
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
-		const defaultTemplateId = detailStore.get(rootId, rootId, [ 'defaultTemplateId' ]);
+		const { defaultTemplateId } = detailStore.get(rootId, rootId, [ 'defaultTemplateId' ]);
 		console.log('ROOT ID: ', rootId)
 		console.log('DEFAULT TEMPLATE ID: ', defaultTemplateId)
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
@@ -157,7 +157,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 										getItems={() => templates}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
-										onClick={(e: any, item: any) => { UtilObject.openPopup(item); }}
+										onMenu={(e: any, item: any) => this.onMenu(item)}
+										onClick={(e: any, item: any) => UtilObject.openPopup(item)}
 										withBlank={true}
 									/>
 								</div>
@@ -506,6 +507,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			{ key: 'recommendedLayout', value: Number(layout) || I.ObjectLayout.Page } 
 		]);
 		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });
+	};
+
+	onMenu (item: any) {
+		console.log('MENU ITEM: ', item)
 	};
 
 	getRootId () {

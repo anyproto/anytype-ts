@@ -2,6 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
 import { keyboard } from 'Lib';
+import Constant from 'json/constant.json';
 
 interface Props {
 	getItems: () => any[];
@@ -11,6 +12,7 @@ interface Props {
 	onAdd?: (e: any) => void;
 	withBlank?: boolean;
 	onBlank?: (e: any) => void;
+	onMenu?: (e: any, item: any) => void;
 };
 
 const WIDTH = 344;
@@ -30,29 +32,33 @@ class ListObjectPreview extends React.Component<Props> {
 	refObj: any = {};
 
 	render () {
-		const { getItems, canAdd, onAdd, withBlank, onBlank } = this.props;
+		const { getItems, canAdd, onAdd, withBlank, onBlank, onMenu } = this.props;
 		const items = getItems();
 
 		const Item = (item: any) => {
 			return (
-				<div 
-					id={'item-' + item.id} 
-					className="item" 
-					onMouseEnter={e => this.onMouseEnter(e, item)} 
-					onMouseLeave={e => this.onMouseLeave(e, item)}
-				>
-					<PreviewObject 
-						ref={ref => this.refObj[item.id] = ref} 
-						rootId={item.id} 
-						onClick={e => this.onClick(e, item)} 
-					/>
+				<div id={'item-' + item.id} className="item">
+					{onMenu ? <Icon className="more" onClick={e => onMenu(e, item)} /> : ''}
+
+					<div
+						className="hoverArea"
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onMouseLeave={e => this.onMouseLeave(e, item)}
+					>
+						<PreviewObject
+							ref={ref => this.refObj[item.id] = ref}
+							rootId={item.id}
+							onClick={e => this.onClick(e, item)}
+						/>
+					</div>
 				</div>
 			);
 		};
 
 		const ItemBlank = () => {
 			return (
-				<div className="item" onClick={onBlank ? onBlank : null}>
+				<div className="item" onClick={onBlank}>
+					{onMenu ? <Icon className="more" onClick={e => onMenu(e, { id: Constant.templateId.blank })} /> : ''}
 					<div className="previewObject blank">
 						<div className="scroller">
 							<div className="heading">
@@ -120,7 +126,7 @@ class ListObjectPreview extends React.Component<Props> {
 
 	onMouseLeave (e: any, item: any) {
 		const node = $(this.node);
-		node.find('.item.hover').removeClass('hover');
+		node.find('.hoverArea.hover').removeClass('hover');
 	};
 
 	onClick (e: any, item: any) {
@@ -141,8 +147,8 @@ class ListObjectPreview extends React.Component<Props> {
 
 		const node = $(this.node);
 
-		node.find('.item.hover').removeClass('hover');
-		node.find('#item-' + item.id).addClass('hover');
+		node.find('.hoverArea.hover').removeClass('hover');
+		node.find(`#item-${item.id} .hoverArea`).addClass('hover');
 	};
 
 	onKeyUp (e: any) {
