@@ -315,6 +315,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
+		const subId = this.getSubIdTemplate();
 		const object = detailStore.get(rootId, rootId);
 		const details: any = { 
 			type: Constant.typeId.template, 
@@ -326,6 +327,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			if (message.error.code) {
 				return;
 			};
+
+			dbStore.recordAdd(subId, '', message.objectId, 0);
 
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: rootId, route: 'Library' });
