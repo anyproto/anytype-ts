@@ -64,8 +64,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
 
-		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
-		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
+		const templates = dbStore.getRecords(subIdTemplate, '');
+		const totalTemplate = templates.length;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
@@ -151,7 +151,9 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={ref => this.refListPreview = ref}
-										getItems={() => templates}
+										getItems={() => {
+											return dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
+										}}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onMenu={(e: any, item: any) => this.onMenu(item)}
