@@ -69,7 +69,9 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 		$('.cellKeyHover').removeClass('cellKeyHover');
 	};
 
-	onEdit () {
+	onEdit (e: any) {
+		e.stopPropagation();
+
 		const { rootId, block, readonly, loadData, getView, getTarget, relationKey, isInline, isCollection } = this.props;
 		const relation = dbStore.getRelationByKey(relationKey);
 
