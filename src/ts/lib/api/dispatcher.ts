@@ -987,6 +987,7 @@ class Dispatcher {
 											title, 
 											text,
 											textConfirm: 'Ok! I got it!',
+											canCancel: false,
 										} 
 									}); 
 								}, Constant.delay.popup);
