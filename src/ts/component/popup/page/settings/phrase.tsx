@@ -91,12 +91,13 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 	};
 
 	onCode () {
+		const { showCode } = this.state;
 		const pin = Storage.get('pin');
 		const onSuccess = () => {
-			this.setState({ showCode: !this.state.showCode });
+			this.setState({ showCode: !showCode });
 		};
 
-		pin ? popupStore.open('pin', { data: { onSuccess } }) : onSuccess();
+		pin && !showCode ? popupStore.open('pin', { data: { onSuccess } }) : onSuccess();
 	};
 
 });
