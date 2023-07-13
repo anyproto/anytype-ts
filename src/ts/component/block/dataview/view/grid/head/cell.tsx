@@ -70,6 +70,7 @@ const HeadCell = observer(class HeadCell extends React.Component<Props> {
 	};
 
 	onEdit (e: any) {
+		e.preventDefault();
 		e.stopPropagation();
 
 		const { rootId, block, readonly, loadData, getView, getTarget, relationKey, isInline, isCollection } = this.props;
