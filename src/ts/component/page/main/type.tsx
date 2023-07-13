@@ -65,7 +65,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const subIdTemplate = this.getSubIdTemplate();
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
-		const { defaultTemplateId } = detailStore.get(rootId, rootId, [ 'defaultTemplateId' ]);
 		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
@@ -158,7 +157,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 										onMenu={(e: any, item: any) => this.onMenu(item)}
 										onClick={(e: any, item: any) => UtilObject.openPopup(item)}
 										withBlank={true}
-										defaultId={defaultTemplateId || Constant.templateId.blank}
+										defaultId={object.defaultTemplateId || Constant.templateId.blank}
 									/>
 								</div>
 							) : (
@@ -510,7 +509,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onMenu (item: any) {
 		const rootId = this.getRootId();
-		const { defaultTemplateId } = detailStore.get(rootId, rootId, [ 'defaultTemplateId' ]);
+		const object = detailStore.get(rootId, rootId);
+		const { defaultTemplateId } = object;
 		const template: any = { id: item.id };
 
 		if (menuStore.isOpen('dataviewTemplate', item.id)) {
@@ -521,7 +521,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		if (template.id == Constant.templateId.blank) {
 			template.isBlank = true;
 
-			if (!defaultTemplateId) {
+			if (!object.defaultTemplateId) {
 				template.isDefault = true;
 			};
 		};
@@ -530,20 +530,21 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			template.isDefault = true;
 		};
 
-		menuStore.closeAll(Constant.menuIds.dataviewTemplate);
-		menuStore.open('dataviewTemplate', {
-			menuKey: item.id,
-			element: `#item-${item.id} .more`,
-			vertical: I.MenuDirection.Bottom,
-			horizontal: I.MenuDirection.Right,
-			onOpen: () => $(`#item-${item.id}`).addClass('active'),
-			onClose: () => $(`#item-${item.id}`).removeClass('active'),
-			data: {
-				template: template,
-				onSetDefault: () => {
-					UtilObject.setDefaultTemplateId(rootId, item.id);
+		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
+			menuStore.open('dataviewTemplate', {
+				menuKey: item.id,
+				element: `#item-${item.id} .more`,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				onOpen: () => $(`#item-${item.id}`).addClass('active'),
+				onClose: () => $(`#item-${item.id}`).removeClass('active'),
+				data: {
+					template,
+					onSetDefault: () => {
+						UtilObject.setDefaultTemplateId(rootId, item.id);
+					}
 				}
-			}
+			});
 		});
 	};
 
