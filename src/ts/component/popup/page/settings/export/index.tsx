@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate, analytics } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import { observer } from 'mobx-react';
-
 import Head from '../head';
 
 interface Props extends I.PopupSettings {
