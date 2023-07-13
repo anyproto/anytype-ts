@@ -12,10 +12,7 @@ export default {
                 video: './img/help/onboarding/space.mp4',
                 noButton: true,
                 buttons: [
-                    { text: 'Next', action: 'dashboard' }
-                ],
-                forceButtons: [
-                    { text: 'Close', action: 'close' }
+                    { text: 'Next', action: 'dashboard' },
                 ],
             }
         ],
