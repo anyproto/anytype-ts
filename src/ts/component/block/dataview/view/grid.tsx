@@ -213,9 +213,10 @@ const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
 					const ww = wrapper.width();
 					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
 					const margin = (cw - ww) / 2;
+					const offset = 8;
 
-					scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
-					wrap.css({ width: vw + margin, paddingRight: margin - 8 });
+					scroll.css({ width: cw - offset, marginLeft: -margin - 2, paddingLeft: margin });
+					wrap.css({ width: vw + margin - offset, paddingRight: margin - offset });
 				} else {
 					const parentObj = $(`#block-${parent.id}`);
 					const vw = parentObj.length ? (parentObj.width() - Constant.size.blockMenu) : 0;
