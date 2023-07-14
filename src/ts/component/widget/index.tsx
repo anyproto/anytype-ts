@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName } from 'Component';
 import { I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, detailStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import WidgetSpace from './space';
@@ -332,15 +332,17 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block } = this.props;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content;
-		const limit = this.getLimit(block.content);
 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 		];
 
+		let limit = this.getLimit(block.content);
+
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
+				limit = 0;
 				break;
 			};
 
@@ -367,7 +369,16 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			sorts,
 			limit,
 			keys: Constant.sidebarRelationKeys,
-		}, callBack);
+		}, () => {
+			if (targetBlockId == Constant.widgetId.favorite) {
+				const records = this.sortFavorite(dbStore.getRecords(subId, '')).slice(0, this.getLimit(block.content));
+				dbStore.recordsSet(subId, '', records);
+			};
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	sortFavorite (records: string[]): string[] {

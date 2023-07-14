@@ -34,11 +34,3 @@
 		.katex { line-height: 1.5em; text-align: inherit; }
 	}
 }
-
-html.platformMac {
-	.blocks {
-		.block.blockLatex {
-			#value::-webkit-scrollbar { display: none; }
-		}
-	}
-}

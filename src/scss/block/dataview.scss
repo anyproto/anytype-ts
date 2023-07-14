@@ -219,17 +219,6 @@
 	
 }
 
-html.platformMac {
-	.blocks {
-		.block.blockDataview {
-			.content {
-				.scroll { padding: 0px; }
-				.scroll::-webkit-scrollbar { display: none; }
-			}
-		}
-	}
-}
-
 html.platformWindows {
 	.blocks {
 		.block.blockDataview {
