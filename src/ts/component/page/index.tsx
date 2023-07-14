@@ -234,7 +234,11 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const { id } = this.getMatchParams();
 		const isPopup = keyboard.isPopup();
 
-		if (!home || !id || (home.id != id) || (home.id == I.HomePredefinedId.Graph) || isPopup || Storage.getOnboarding('dashboard')) {
+		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('dashboard')) {
+			return;
+		};
+
+		if ([ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(home.id)) {
 			return;
 		};
 
