@@ -326,7 +326,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.loadData] No sources');
 			return;
-		}
+		};
 
 		if (clear) {
 			dbStore.recordsSet(subId, '', []);

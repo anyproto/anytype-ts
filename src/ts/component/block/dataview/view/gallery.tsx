@@ -12,7 +12,8 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	cache: any = {};
 	cellPositioner: any = null;
-	ref = null;
+	refList = null;
+	refLoader = null;
 	width = 0;
 	columnCount = 0;
 
@@ -99,7 +100,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 				>
 					{({ measure }) => (
 						<div key={'gallery-card-' + view.id + param.index} className="row" style={style}>
-							{item.children.map((id: string) => row(id))}
+							{item.children.map(id => row(id))}
 						</div>
 					)}
 				</CellMeasurer>
@@ -112,15 +113,16 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			const records = this.getRecords();
 			content = (
 				<React.Fragment>
-					{records.map((id: string) => row(id))}
+					{records.map(id => row(id))}
 				</React.Fragment>
 			);
 		} else {
 			content = (
 				<InfiniteLoader
+					ref={ref => this.refLoader = ref}
 					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => !!records[index]}
-					rowCount={total}
+					isRowLoaded={({ index }) => !!items[index]}
+					rowCount={items.length}
 					threshold={10}
 				>
 					{({ onRowsRendered }) => (
@@ -133,7 +135,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 												<div ref={registerChild}>
 													<List
 														autoHeight={true}
-														ref={ref => this.ref = ref}
+														ref={ref => this.refList = ref}
 														width={width}
 														height={height}
 														deferredMeasurmentCache={this.cache}
@@ -181,16 +183,19 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	reset () {
 		const { isInline } = this.props;
-		if (isInline || !this.ref) {
+		if (isInline) {
 			return;
 		};
 
-		this.setDimensions();
+		this.setColumnCount();
 		this.cache.clearAll();
-		this.ref.recomputeRowHeights(0);
+
+		if (this.refList) {
+			this.refList.recomputeRowHeights(0);
+		};
 	};
 
-	setDimensions () {
+	setColumnCount () {
 		const { getView } = this.props;
 		const view = getView();
 		const { margin } = Constant.size.dataview.gallery;
@@ -233,7 +238,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getItems () {
-		this.setDimensions();
+		this.setColumnCount();
 
 		const records = this.getRecords();
 		const ret: any[] = [];
