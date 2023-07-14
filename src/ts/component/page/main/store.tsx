@@ -275,14 +275,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	componentDidUpdate () {
-		const { isPopup } = this.props;
-
 		this.resize();
+
 		if (this.refList) {
 			this.refList.recomputeRowHeights();
 		};
-
-		Onboarding.start(UtilCommon.toCamelCase('store-' + this.tab), isPopup);
 	};
 
 	componentWillUnmount () {
@@ -304,8 +301,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onKeyDown (e: any) {
 		const cmd = keyboard.cmdKey();
 
-		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(I.StoreTab.Type, true); });
-		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(I.StoreTab.Relation, true); });
+		keyboard.shortcut(`${cmd}+t`, e, () => this.onTab(I.StoreTab.Type, true));
+		keyboard.shortcut(`${cmd}+alt+t`, e, () => this.onTab(I.StoreTab.Relation, true));
 	};
 
 	getRowHeight (item: any) {
