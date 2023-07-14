@@ -329,7 +329,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	getData (subId: string, callBack?: () => void) {
-		const { block } = this.props;
+		const { block, isPreview } = this.props;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content;
 		const sorts = [];
@@ -342,7 +342,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
-				limit = 0;
 				break;
 			};
 
@@ -371,7 +370,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			keys: Constant.sidebarRelationKeys,
 		}, () => {
 			if (targetBlockId == Constant.widgetId.favorite) {
-				const records = this.sortFavorite(dbStore.getRecords(subId, '')).slice(0, this.getLimit(block.content));
+				let records = this.sortFavorite(dbStore.getRecords(subId, ''));
+
+				if (!isPreview) {
+					records = records.slice(0, this.getLimit(block.content));
+				};
+
 				dbStore.recordsSet(subId, '', records);
 			};
 
