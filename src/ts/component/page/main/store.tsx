@@ -383,7 +383,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const filter = node.find('#store-filter');
 
 		const menuParam: any = {
-			element: filter,
+			element: '#store-filter',
 			commonFilter: true,
 			horizontal: I.MenuDirection.Center,
 			width: filter.outerWidth(),
