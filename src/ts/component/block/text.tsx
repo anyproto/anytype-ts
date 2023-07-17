@@ -281,7 +281,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				html = Prism.highlight(html, grammar, lang);
 			};
 		} else {
-			html = Mark.fromUnicode(html);
+			html = Mark.fromUnicode(html, this.marks);
 			html = Mark.toHtml(html, this.marks);
 		};
 
@@ -999,10 +999,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.placeholderCheck();
 
-		let text = value;
-		if (block.canHaveMarks()) {
-			text = Mark.fromUnicode(parsed.text);
-		};
+		const text = block.canHaveMarks() ? parsed.text : value;
 
 		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);

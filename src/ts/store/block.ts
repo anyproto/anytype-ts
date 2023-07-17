@@ -443,7 +443,7 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
-				name = Mark.fromUnicode(name).trim();
+				name = Mark.fromUnicode(name, marks).trim();
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
