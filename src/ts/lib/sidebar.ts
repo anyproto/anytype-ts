@@ -424,10 +424,6 @@ class Sidebar {
 		this.set({ width }, force);
 	};
 
-	setHeight (height: number, force?: boolean): void {
-		this.set({ height }, force);
-	};
-
 	public setAnimating (v: boolean) {
 		this.isAnimating = v;
 	};
