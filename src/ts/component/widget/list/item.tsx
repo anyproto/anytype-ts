@@ -137,13 +137,10 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const more = node.find('.icon.more');
 		const { x, y } = keyboard.mouse.page;
 		const menuParam: any = {
+			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			onOpen: () => {
-				node.addClass('active');
-			},
-			onClose: () => {
-				node.removeClass('active');
-			},
+			onOpen: () => { node.addClass('active'); },
+			onClose: () => { node.removeClass('active'); },
 			data: {
 				objectIds: [ id ],
 				subId,
