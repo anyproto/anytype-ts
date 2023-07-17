@@ -181,6 +181,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onRecordAdd (e: any, groupId: string, dir: number) {
+		if (e.persist) {
+			e.persist();
+		};
+
 		if (this.creating) {
 			return;
 		};
@@ -262,24 +266,25 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
 				const oldIndex = records.indexOf(message.objectId);
-				const newIndex = dir > 0 ? records.length : 0;
-				const update = arrayMove(records, oldIndex, newIndex);
+
+				if (oldIndex < 0) {
+					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+				};
 
 				if (isCollection) {
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
 
 				detailStore.update(subId, { id: object.id, details: object }, true);
-
-				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
-					dbStore.recordsSet(subId, '', update);
+				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
+					dbStore.recordsSet(subId, '', records);
 				});
 
 				const id = Relation.cellId(getIdPrefix(), 'name', object.id);
 				const ref = refCells.get(id);
 
 				if (ref && (object.type != Constant.typeId.note)) {
-					window.setTimeout(() => { ref.onClick(e); }, 15);
+					window.setTimeout(() => ref.onClick(e), 15);
 				};
 
 				analytics.event('CreateObject', {

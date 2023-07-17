@@ -134,7 +134,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 								className="addRecord c28" 
 								tooltip="Create new object" 
 								text="New" 
-								onClick={(e: any) => onRecordAdd(e, -1)} 
+								onClick={e => onRecordAdd(e, -1)} 
 							/>
  						) : ''}
 					</div>
