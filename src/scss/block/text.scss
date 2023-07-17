@@ -187,7 +187,7 @@
 	/* Code */
 
 	.block.blockText.textCode { padding: 6px 0px; }
-	.block.blockText.textCode > .wrapContent { background-color: $colorVeryLightGrey; }
+	.block.blockText.textCode > .wrapContent { border-radius: 2px; background-color: $colorVeryLightGrey; }
 	.block.blockText.textCode > .wrapContent > .selectable { border-radius: 6px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget { padding: 24px 0px 0px 0px; }
 	.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { padding: 16px; }
