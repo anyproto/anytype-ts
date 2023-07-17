@@ -59,7 +59,7 @@
 		}
 	}
 
-	.block:not(.blockLayout.layoutDiv) {
+	.block:not(.blockLayout.layoutDiv):not(.blockLayout.layoutHeader) {
 		> .wrapContent {
 			> .children {
 				> .block.first { padding-top: 0px; }
