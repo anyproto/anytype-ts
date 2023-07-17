@@ -16,15 +16,15 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	refLoader = null;
 	width = 0;
 	columnCount = 0;
+	length = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
 
-		const { width, height } = Constant.size.dataview.gallery;
+		const { height } = Constant.size.dataview.gallery;
 
 		this.cache = new CellMeasurerCache({
 			defaultHeight: height,
-			defaultWidth: width,
 			fixedWidth: true,
 		});
 
@@ -118,43 +118,26 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			);
 		} else {
 			content = (
-				<InfiniteLoader
-					ref={ref => this.refLoader = ref}
-					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => !!items[index]}
-					rowCount={items.length}
-					threshold={10}
-				>
-					{({ onRowsRendered }) => (
-						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-							{({ height, isScrolling, registerChild, scrollTop }) => {
-								return (
-									<AutoSizer disableHeight={true} onResize={this.onResize}>
-										{({ width }) => {
-											return (
-												<div ref={registerChild}>
-													<List
-														autoHeight={true}
-														ref={ref => this.refList = ref}
-														width={width}
-														height={height}
-														deferredMeasurmentCache={this.cache}
-														rowCount={items.length}
-														rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
-														rowRenderer={rowRenderer}
-														onRowsRendered={onRowsRendered}
-														overscanRowCount={20}
-														scrollToAlignment="start"
-													/>
-												</div>
-											);
-										}}
-									</AutoSizer>
-								);
-							}}
-						</WindowScroller>
+				<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+					{({ height }) => (
+						<AutoSizer disableHeight={true} onResize={this.onResize}>
+							{({ width }) => (
+								<List
+									autoHeight={true}
+									ref={ref => this.refList = ref}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
+									rowRenderer={rowRenderer}
+									overscanRowCount={20}
+									scrollToAlignment="start"
+								/>
+							)}
+						</AutoSizer>
 					)}
-				</InfiniteLoader>
+				</WindowScroller>
 			);
 		};
 
