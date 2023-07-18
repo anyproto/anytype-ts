@@ -390,7 +390,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					this.account = message.account;
 
-					commonStore.infoSet(message.account.info);
+					UtilData.onInfo(message.account.info);
 					commonStore.configSet(message.account.config, false);
 
 					Renderer.send('keytarSet', message.account.id, phrase);

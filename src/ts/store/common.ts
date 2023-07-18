@@ -361,19 +361,6 @@ class CommonStore {
 		this.languages = v;
 	};
 
-	infoSet (info: I.AccountInfo) {
-		blockStore.rootSet(info.homeObjectId);
-		blockStore.profileSet(info.profileObjectId);
-		blockStore.widgetsSet(info.widgetsId);
-
-		this.gatewaySet(info.gatewayUrl);
-		this.spaceSet(info.accountSpaceId);
-
-		analytics.device(info.deviceId);
-		analytics.profile(info.analyticsId);
-		Sentry.setUser({ id: info.analyticsId });
-	};
-
 	configSet (config: any, force: boolean) {
 		const html = $('html');
 		

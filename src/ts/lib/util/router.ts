@@ -105,7 +105,6 @@ class UtilRouter {
 					replace: true, 
 					animate: true,
 					onFadeOut: () => {
-						commonStore.spaceSet(id);
 						if (route) {
 							commonStore.redirectSet(route);
 						};

@@ -1,6 +1,7 @@
 import { I, C, keyboard, translate, UtilCommon, UtilRouter, Storage, analytics, dispatcher, Mark, UtilObject } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
+import * as Sentry from '@sentry/browser';
 
 type SearchSubscribeParams = Partial<{
 	subId: string;
@@ -180,6 +181,20 @@ class UtilData {
 		};
 		return ids;
 	};
+
+	onInfo (info: I.AccountInfo) {
+		blockStore.rootSet(info.homeObjectId);
+		blockStore.profileSet(info.profileObjectId);
+		blockStore.widgetsSet(info.widgetsId);
+
+		commonStore.gatewaySet(info.gatewayUrl);
+		commonStore.spaceSet(info.accountSpaceId);
+
+		analytics.device(info.deviceId);
+		analytics.profile(info.analyticsId);
+
+		Sentry.setUser({ id: info.analyticsId });
+	};
 	
 	onAuth (account: I.Account, info: I.AccountInfo, param?: any, callBack?: () => void) {
 		if (!account) {
@@ -187,7 +202,7 @@ class UtilData {
 			return;
 		};
 
-		commonStore.infoSet(info);
+		this.onInfo(info);
 		commonStore.configSet(account.config, false);
 		authStore.accountSet(account);
 
