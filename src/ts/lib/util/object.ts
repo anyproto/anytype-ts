@@ -287,8 +287,7 @@ class UtilObject {
 			};
 
 			if (callBack) {
-				const records = message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_);
-				callBack(records);
+				callBack(message.records.map(it => detailStore.mapper(it)).filter(it => !it._empty_));
 			};
 		});
 	};
@@ -335,8 +334,8 @@ class UtilObject {
 
 	getStoreTypes () {
 		return [
-			Constant.storeTypeId.type,
-			Constant.storeTypeId.relation,
+			Constant.storeTypeKey.type,
+			Constant.storeTypeKey.relation,
 		];
 	};
 

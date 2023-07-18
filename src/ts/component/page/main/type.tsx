@@ -281,7 +281,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		UtilData.searchSubscribe({
 			subId: this.getSubIdTemplate(),
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.template, Constant.typeKey.template ] },
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeKey.template, Constant.typeKey.template ] },
 				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
 				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? space : Constant.storeSpaceId },
 			],

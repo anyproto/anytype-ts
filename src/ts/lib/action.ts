@@ -248,12 +248,12 @@ class Action {
 			let subId = '';
 
 			switch (object.type) {
-				case Constant.storeTypeId.type:
+				case Constant.storeTypeKey.type:
 					toast = `Object type <b>${object.name}</b> has been added to your library`;
 					subId = Constant.subId.type;
 					break;
 
-				case Constant.storeTypeId.relation:
+				case Constant.storeTypeKey.relation:
 					toast = `Relation <b>${object.name}</b> has been added to your library`;
 					subId = Constant.subId.relation;
 					break;

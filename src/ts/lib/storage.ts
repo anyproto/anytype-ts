@@ -3,7 +3,6 @@ import { commonStore } from 'Store';
 
 const SPACE_KEYS = [
 	'toggle',
-	'defaultType',
 	'lastOpened',
 	'scroll',
 ];

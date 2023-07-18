@@ -46,9 +46,9 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = [ 
 			Constant.typeKey.type, 
-			Constant.storeTypeId.type, 
+			Constant.storeTypeKey.type, 
 			Constant.typeKey.relation, 
-			Constant.storeTypeId.relation,
+			Constant.storeTypeKey.relation,
 		].includes(object.type);
 
 		let canEditIcon = allowDetails;
@@ -292,11 +292,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let sources: string[] = [];
 
 		switch (object.type) {
-			case Constant.storeTypeId.type:
+			case Constant.storeTypeKey.type:
 				sources = dbStore.getTypes().map(it => it.sourceObject);
 				break;
 
-			case Constant.storeTypeId.relation:
+			case Constant.storeTypeKey.relation:
 				sources = dbStore.getRelations().map(it => it.sourceObject);
 				break;
 		};

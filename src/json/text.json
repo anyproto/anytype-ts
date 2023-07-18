@@ -20,6 +20,7 @@
 	"commonArchived": { "en": "Object is in the bin" },
 	"commonEmpty": { "en": "Empty" },
 	"commonBack": { "en": "Back" },
+	"commonSelect": { "en": "Select" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -286,7 +287,6 @@
 	"popupSettingsSpaceTitle": { "en": "Space" },
 	"popupSettingsPersonalTitle": { "en": "Preferences" },
 	"popupSettingsPersonalDefaultObjectType": { "en": "Default object type" },
-	"popupSettingsPersonalDefaultObjectTypeSelect": { "en": "Select" },
 	"popupSettingsPersonalSpellcheckLanguages": { "en": "Spellcheck languages" },
 	"popupSettingsAppearanceTitle": { "en": "Appearance" },
 	"popupSettingsAppearanceColorMode": { "en": "Color mode" },

@@ -36,7 +36,7 @@ class CommonStore {
     public cellId = '';
 	public themeId = '';
 	public nativeThemeIsDark = false;
-	public typeId = '';
+	public typeKey = '';
 	public pinTimeId = 0;
 	public isFullScreen = false;
 	public autoSidebarValue = false;
@@ -81,7 +81,7 @@ class CommonStore {
 			spaceStorageObj: observable,
 			themeId: observable,
 			nativeThemeIsDark: observable,
-			typeId: observable,
+			typeKey: observable,
 			isFullScreen: observable,
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
@@ -136,19 +136,19 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const typeId = String(this.typeId || Storage.get('defaultType') || '');
+		const typeKey = String(this.typeKey || Storage.get('defaultType') || '');
 
-		if (!typeId) {
+		if (!typeKey) {
 			return Constant.typeKey.note;
 		};
 
-		const type = dbStore.getTypeById(typeId);
+		const type = dbStore.getTypeByKey(typeKey);
 
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
 			return Constant.typeKey.note;
 		};
 
-		return typeId;
+		return typeKey;
 	};
 
 	get fullscreen(): boolean {
@@ -284,10 +284,10 @@ class CommonStore {
 		this.toastObj = null;
 	};
 
-	defaultTypeSet (v: string) {
-		this.typeId = String(v || '');
+	typeSet (v: string) {
+		this.typeKey = String(v || '');
 
-		Storage.set('defaultType', this.typeId);
+		Storage.set('defaultType', this.typeKey);
 	};
 
 	pinTimeSet (v: string) {

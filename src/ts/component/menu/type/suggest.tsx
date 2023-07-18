@@ -232,7 +232,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		let filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeKey.type, Constant.storeTypeId.type ] },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeKey.type, Constant.storeTypeKey.type ] },
 		];
 		if (data.filters) {
 			filters = filters.concat(data.filters);
@@ -391,7 +391,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 				let filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeId.type },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.storeTypeKey.type },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: sources },
 				];
 				if (data.filters) {
@@ -405,9 +405,8 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 					sorts: [
 						{ relationKey: 'name', type: I.SortType.Asc },
 					],
-					onSelect: (item: any) => {
-						this.onClick(e, detailStore.mapper(item));
-					},
+					onSelect: item => this.onClick(e, item),
+					dataMapper: it => detailStore.mapper(it),
 				});
 				break;
 			};
@@ -436,7 +435,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			close(); 
 
 			if (onClick) {
-				onClick(item);
+				onClick(detailStore.mapper(item));
 			};
 		};
 

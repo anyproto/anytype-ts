@@ -15,7 +15,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	render () {
 		const { config } = commonStore;
-		const type = dbStore.getTypeById(commonStore.type);
+		const type = dbStore.getTypeByKey(commonStore.type);
 		const languages = this.getLanguages();
 
 		return (
@@ -28,7 +28,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 						<div id="defaultType" className="select" onClick={this.onType}>
 							<div className="item">
-								<div className="name">{type?.name || translate('popupSettingsPersonalDefaultObjectTypeSelect')}</div>
+								<div className="name">{type?.name || translate('commonSelect')}</div>
 							</div>
 							<Icon className="arrow black" />
 						</div>
@@ -66,16 +66,11 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 				],
 				onClick: (item: any) => {
-					this.onTypeChange(item.id);
+					commonStore.typeSet(item.typeKey);
+					analytics.event('DefaultTypeChange', { objectType: item.typeKey });
 				},
 			}
 		});
-	};
-
-	onTypeChange (id: string) {
-		commonStore.defaultTypeSet(id);
-
-		analytics.event('DefaultTypeChange', { objectType: id });
 	};
 
 	getLanguages () {

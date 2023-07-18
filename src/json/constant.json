@@ -128,7 +128,7 @@
 		"date": "ot-date"
 	},
 
-	"storeTypeId": {
+	"storeTypeKey": {
 		"relation": "_otrelation",
 		"type": "_otobjectType",
 		"template": "_ottemplate"

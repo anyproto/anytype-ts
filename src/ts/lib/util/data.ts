@@ -239,7 +239,7 @@ class UtilData {
 
 			C.ObjectOpen(widgets, '', () => {
 				this.createsSubscriptions(() => {
-					commonStore.defaultTypeSet(commonStore.type);
+					commonStore.typeSet(commonStore.type);
 
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
@@ -292,7 +292,7 @@ class UtilData {
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.type, Constant.typeKey.type ] },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeKey.type, Constant.typeKey.type ] },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -306,7 +306,7 @@ class UtilData {
 				keys: Constant.relationRelationKeys,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.relation, Constant.typeKey.relation ] },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeKey.relation, Constant.typeKey.relation ] },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,

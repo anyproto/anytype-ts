@@ -175,13 +175,13 @@ class DetailStore {
 
 		switch (object.type) {
 			case Constant.typeKey.type:
-			case Constant.storeTypeId.type: {
+			case Constant.storeTypeKey.type: {
 				object = this.mapObjectType(object);
 				break;
 			};
 
 			case Constant.typeKey.relation:
-			case Constant.storeTypeId.relation: {
+			case Constant.storeTypeKey.relation: {
 				object = this.mapRelation(object);
 				break;
 			};
