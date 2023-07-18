@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch } from 'Component';
-import { I, UtilCommon, translate, keyboard } from 'Lib';
+import { I, UtilCommon, translate, keyboard, analytics } from 'Lib';
 import { menuStore } from 'Store';
 import Head from '../head';
 
@@ -197,6 +197,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			options.properties.push('openDirectory');
 		};
 
+		analytics.event('ClickImport', { type: I.ImportType.Csv });
+
 		window.Electron.showOpenDialog(options).then((result: any) => {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
@@ -204,10 +206,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			};
 
 			close();
-			onImport(I.ImportType.Csv, { 
-				paths,
-				...this.data,
-			});
+			onImport(I.ImportType.Csv, { paths, ...this.data });
 		});
 	};
 
