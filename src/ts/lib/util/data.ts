@@ -277,7 +277,7 @@ class UtilData {
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.type, Constant.typeId.type ] },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.type, Constant.typeKey.type ] },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -291,7 +291,7 @@ class UtilData {
 				keys: Constant.relationRelationKeys,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.relation, Constant.typeId.relation ] },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.relation, Constant.typeKey.relation ] },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -304,7 +304,7 @@ class UtilData {
 				subId: Constant.subId.option,
 				keys: Constant.optionRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.option },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.option },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -313,7 +313,7 @@ class UtilData {
 				subId: Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.space },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.space },
 				],
 				ignoreWorkspace: true,
 			}
@@ -384,27 +384,27 @@ class UtilData {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
-		const page = dbStore.getTypeById(Constant.typeId.page);
-		const note = dbStore.getTypeById(Constant.typeId.note);
-		const set = dbStore.getTypeById(Constant.typeId.set);
-		const task = dbStore.getTypeById(Constant.typeId.task);
-		const bookmark = dbStore.getTypeById(Constant.typeId.bookmark);
-		const collection = dbStore.getTypeById(Constant.typeId.collection);
+		const page = dbStore.getTypeByKey(Constant.typeKey.page);
+		const note = dbStore.getTypeByKey(Constant.typeKey.note);
+		const set = dbStore.getTypeByKey(Constant.typeKey.set);
+		const task = dbStore.getTypeByKey(Constant.typeKey.task);
+		const bookmark = dbStore.getTypeByKey(Constant.typeKey.bookmark);
+		const collection = dbStore.getTypeByKey(Constant.typeKey.collection);
 
 		const skip = [ 
-			Constant.typeId.note, 
-			Constant.typeId.page, 
-			Constant.typeId.set, 
-			Constant.typeId.collection,
-			Constant.typeId.task,
-			Constant.typeId.bookmark,
+			Constant.typeKey.note, 
+			Constant.typeKey.page, 
+			Constant.typeKey.set, 
+			Constant.typeKey.collection,
+			Constant.typeKey.task,
+			Constant.typeKey.bookmark,
 		];
 	
 		let items: any[] = [];
 
 		if (!withDefault) {
 			items = items.concat(dbStore.getTypes().filter(it => {
-				if (!pageLayouts.includes(it.recommendedLayout) || skip.includes(it.id) || (it.spaceId != space)) {
+				if (!pageLayouts.includes(it.recommendedLayout) || skip.includes(it.typeKey) || (it.spaceId != space)) {
 					return false;
 				};
 				return config.debug.ho ? true : !it.isHidden;
@@ -430,7 +430,7 @@ class UtilData {
 		};
 
 		if (page && note) {
-			if (commonStore.type == Constant.typeId.note) {
+			if (commonStore.type == Constant.typeKey.note) {
 				items = [ page, note ].concat(items);
 			} else {
 				items = [ note, page ].concat(items);
@@ -545,12 +545,12 @@ class UtilData {
 
 	// Check if there are at least 2 templates for object types
 	checkTemplateCnt (ids: string[], callBack?: (message: any) => void) {
-		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeId.template, ids, 2, callBack);
+		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeKey.template, ids, 2, callBack);
 	};
 
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		this.checkObjectWithRelationCnt('setOf', Constant.typeId.set, ids, 2, callBack);
+		this.checkObjectWithRelationCnt('setOf', Constant.typeKey.set, ids, 2, callBack);
 	};
 
 	defaultLinkSettings () {

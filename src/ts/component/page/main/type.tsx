@@ -15,10 +15,10 @@ interface State {
 };
 
 const NO_TEMPLATES = [ 
-	Constant.typeId.note, 
-	Constant.typeId.set, 
-	Constant.typeId.collection,
-	Constant.typeId.bookmark,
+	Constant.typeKey.note, 
+	Constant.typeKey.set, 
+	Constant.typeKey.collection,
+	Constant.typeKey.bookmark,
 ].concat(UtilObject.getFileTypes()).concat(UtilObject.getSystemTypes());
 
 const PageMainType = observer(class PageMainType extends React.Component<I.PageComponent, State> {
@@ -76,7 +76,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
-		const allowedLayout = rootId != Constant.typeId.bookmark;
+		const allowedLayout = rootId != Constant.typeKey.bookmark;
 
 		if (!recommendedRelations.includes('rel-description')) {
 			recommendedRelations.push('rel-description');
@@ -281,7 +281,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		UtilData.searchSubscribe({
 			subId: this.getSubIdTemplate(),
 			filters: [
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.template, Constant.typeId.template ] },
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.template, Constant.typeKey.template ] },
 				{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: rootId },
 				{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: object.isInstalled ? space : Constant.storeSpaceId },
 			],
@@ -312,7 +312,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		const details: any = { 
-			type: Constant.typeId.template, 
+			type: Constant.typeKey.template, 
 			targetObjectType: rootId,
 			layout: object.recommendedLayout,
 		};
@@ -362,7 +362,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'object':
-							if (rootId == Constant.typeId.bookmark) {
+							if (rootId == Constant.typeKey.bookmark) {
 								this.onBookmarkAdd();
 							} else {
 								this.onObjectAdd();
@@ -384,10 +384,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			type: rootId,
 		};
 
-		if (rootId == Constant.typeId.set) {
+		if (rootId == Constant.typeKey.set) {
 			details.layout = I.ObjectLayout.Set;
 		} else
-		if (rootId == Constant.typeId.collection) {
+		if (rootId == Constant.typeKey.collection) {
 			details.layout = I.ObjectLayout.Collection;
 		};
 

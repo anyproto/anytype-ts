@@ -207,19 +207,19 @@ const Card = observer(class Card extends React.Component<Props> {
 			);
 		} else {
 			switch (item.type) {
-				case Constant.typeId.image: {
+				case Constant.typeKey.image: {
 					cn.push('coverImage');
 					mc = <img src={commonStore.imageUrl(item.id, 600)}/>;
 					break;
 				};
 
-				case Constant.typeId.audio: {
+				case Constant.typeKey.audio: {
 					cn.push('coverAudio');
 					mc = <MediaAudio playlist={[ { name: item.name, src: commonStore.fileUrl(item.id) } ]}/>;
 					break;
 				};
 
-				case Constant.typeId.video: {
+				case Constant.typeKey.video: {
 					cn.push('coverVideo');
 					mc = <MediaVideo src={commonStore.fileUrl(item.id)}/>;
 					break;

@@ -160,14 +160,14 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		if (isCollection) {
 			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, onCreate);
 					analytics.event('InlineSetSetSource', { type: 'newObject' });
 				});
 			};
 
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.collection },
 			]);
 		} else {
 			addParam.name = 'Create new set';
@@ -183,7 +183,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			};
 
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.set },
 				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 		};

@@ -419,13 +419,15 @@ class Relation {
 			let el = null;
 
 			switch (type) {
-				case Constant.typeId.type:
+				case Constant.typeKey.type: {
 					el = dbStore.getTypeById(id);
 					break;
+				};
 
-				case Constant.typeId.relation:
+				case Constant.typeKey.relation: {
 					el = dbStore.getRelationById(id);
 					break;
+				};
 			};
 
 			if (el) {

@@ -281,7 +281,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	mapper (item) {
 		let links = [];
 
-		if (item.type != Constant.typeId.set) {
+		if (item.type != Constant.typeKey.set) {
 			links = this.filterDeletedLinks(Relation.getArrayValue(item.links));
 		};
 

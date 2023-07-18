@@ -108,7 +108,7 @@
 		"files": "files"
 	},
 
-	"typeId": {
+	"typeKey": {
 		"page": "ot-page",
 		"set": "ot-set",
 		"space": "ot-space",

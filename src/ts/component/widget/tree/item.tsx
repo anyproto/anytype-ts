@@ -45,10 +45,10 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		let arrow = null;
 		let onArrowClick = null;
 
-		if (type == Constant.typeId.collection) {
+		if (type == Constant.typeKey.collection) {
 			arrow = <Icon className="collection" />;
 		} else
-		if (type == Constant.typeId.set) {
+		if (type == Constant.typeKey.set) {
 			arrow = <Icon className="set" />;
 		} else
 		if (numChildren > 0) {

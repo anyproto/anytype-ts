@@ -1816,7 +1816,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 								analytics.event('CreateObject', {
 									route: 'Bookmark',
-									objectType: Constant.typeId.bookmark,
+									objectType: Constant.typeKey.bookmark,
 									layout: I.ObjectLayout.Bookmark,
 									template: '',
 								});

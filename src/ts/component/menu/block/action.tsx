@@ -600,11 +600,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = () => {
-						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', () => onCreate());
+						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', () => onCreate());
 					};
 
 					filters = filters.concat([
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.collection },
 					]);
 				} else {
 					addParam.onClick = () => {
@@ -612,7 +612,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					};
 
 					filters = filters.concat([
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.set },
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 					]);
 				};

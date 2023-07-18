@@ -45,14 +45,14 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
 		const isTypeOrRelation = [ 
-			Constant.typeId.type, 
+			Constant.typeKey.type, 
 			Constant.storeTypeId.type, 
-			Constant.typeId.relation, 
+			Constant.typeKey.relation, 
 			Constant.storeTypeId.relation,
 		].includes(object.type);
 
 		let canEditIcon = allowDetails;
-		if (object.type == Constant.typeId.relation) {
+		if (object.type == Constant.typeKey.relation) {
 			canEditIcon = false;
 		};
 
@@ -96,11 +96,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			);
 		};
 
-		if ([ Constant.typeId.type, Constant.typeId.relation ].includes(object.type)) {
+		if ([ Constant.typeKey.type, Constant.typeKey.relation ].includes(object.type)) {
 			let text = 'Create';
 			let arrow = false;
 
-			if (object.type == Constant.typeId.relation) {
+			if (object.type == Constant.typeKey.relation) {
 				text = 'Create set';
 			} else {
 				arrow = true;

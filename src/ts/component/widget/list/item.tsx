@@ -38,7 +38,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		const iconKey = `widget-icon-${block.id}-${id}`;
 
 		let descr = null;
-		if (object.type == Constant.typeId.bookmark) {
+		if (object.type == Constant.typeKey.bookmark) {
 			descr = (
 				<div className="descr">
 					{UtilCommon.shortUrl(source)}

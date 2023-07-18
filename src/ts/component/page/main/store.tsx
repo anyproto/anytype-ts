@@ -504,8 +504,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 			case View.Library:
 				switch (this.tab) {
-					case I.StoreTab.Type:		 type = Constant.typeId.type; break;
-					case I.StoreTab.Relation:	 type = Constant.typeId.relation; break;
+					case I.StoreTab.Type:		 type = Constant.typeKey.type; break;
+					case I.StoreTab.Relation:	 type = Constant.typeKey.relation; break;
 				};
 				break;
 		};

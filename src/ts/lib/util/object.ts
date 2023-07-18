@@ -310,26 +310,26 @@ class UtilObject {
 	};
 
 	isTemplate (type: string) {
-		return type == Constant.typeId.template;
+		return type == Constant.typeKey.template;
 	};
 
 	getFileTypes () {
 		return [
-			Constant.typeId.file, 
-			Constant.typeId.image, 
-			Constant.typeId.audio, 
-			Constant.typeId.video,
+			Constant.typeKey.file, 
+			Constant.typeKey.image, 
+			Constant.typeKey.audio, 
+			Constant.typeKey.video,
 		];
 	};
 
 	getSystemTypes () {
 		return [
-			Constant.typeId.type,
-			Constant.typeId.template,
-			Constant.typeId.relation,
-			Constant.typeId.option,
-			Constant.typeId.dashboard,
-			Constant.typeId.date,
+			Constant.typeKey.type,
+			Constant.typeKey.template,
+			Constant.typeKey.relation,
+			Constant.typeKey.option,
+			Constant.typeKey.dashboard,
+			Constant.typeKey.date,
 		].concat(this.getStoreTypes());
 	};
 
@@ -342,8 +342,8 @@ class UtilObject {
 
 	getSetTypes () {
 		return [ 
-			Constant.typeId.set, 
-			Constant.typeId.collection,
+			Constant.typeKey.set, 
+			Constant.typeKey.collection,
 		];
 	};
 

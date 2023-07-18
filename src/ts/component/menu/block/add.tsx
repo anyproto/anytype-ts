@@ -598,11 +598,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				if (item.isObject) {
 					const details: any = { type: item.objectTypeId };
 
-					if (item.objectTypeId == Constant.typeId.set) {
+					if (item.objectTypeId == Constant.typeKey.set) {
 						details.layout = I.ObjectLayout.Set;
 					};
 
-					if (item.objectTypeId == Constant.typeId.collection) {
+					if (item.objectTypeId == Constant.typeKey.collection) {
 						details.layout = I.ObjectLayout.Collection;
 					};
 

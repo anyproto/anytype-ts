@@ -208,7 +208,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const { data } = param;
 		const { skipIds } = data;
 		const filter = this.getFilter();
-		const skipTypes = UtilObject.getSystemTypes().filter(it => it != Constant.typeId.date);
+		const skipTypes = UtilObject.getSystemTypes().filter(it => it != Constant.typeKey.date);
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
 		];

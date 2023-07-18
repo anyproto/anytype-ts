@@ -226,7 +226,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const skipKeys = data.skipKeys || [];
 		const filters: any[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ commonStore.space, Constant.storeSpaceId ] },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeKey.relation, Constant.storeTypeId.relation ] },
 			{ operator: I.FilterOperator.And, relationKey: 'relationKey', condition: I.FilterCondition.NotIn, value: skipKeys },
 		];
 		const sorts = [

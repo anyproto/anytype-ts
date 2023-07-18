@@ -85,8 +85,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			);
 		};
 
-		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.type).map(it => it.name);
-		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.relation).map(it => it.name);
+		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeKey.type).map(it => it.name);
+		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeKey.relation).map(it => it.name);
 		let setOfString = [];
 		let tl = types.length;
 		let rl = relations.length;
@@ -257,8 +257,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const setOf = Relation.getArrayValue(object.setOf);
-		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeId.relation);
+		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeKey.type);
+		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeKey.relation);
 
 		if (!setOf.length) {
 			this.onSource();
@@ -357,7 +357,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			options.push({ id: 'change', name: 'Change type', arrow: true });
 		};
 
-		if (!typeIsDeleted && (object.type === Constant.typeId.set)) {
+		if (!typeIsDeleted && (object.type === Constant.typeKey.set)) {
 			options.push({ id: 'turnCollection', name: 'Turn set into collection' });
 		};
 
@@ -450,7 +450,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.set },
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: [ object.type ] }
 					],
 					onSelect: (item: any) => {

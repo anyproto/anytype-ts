@@ -97,10 +97,10 @@ class DetailStore {
 		};
 
 		// Update relationKeyMap and typeKeyMap in dbStore to keep consistency
-		if (item.details.type == Constant.typeId.relation) {
+		if (item.details.type == Constant.typeKey.relation) {
 			dbStore.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
 		};
-		if (item.details.type == Constant.typeId.type) {
+		if (item.details.type == Constant.typeKey.type) {
 			dbStore.typeKeyMapSet(item.details.spaceId, item.details.typeKey, item.details.id);
 		};
 
@@ -174,34 +174,34 @@ class DetailStore {
 		};
 
 		switch (object.type) {
-			case Constant.typeId.type:
+			case Constant.typeKey.type:
 			case Constant.storeTypeId.type: {
 				object = this.mapObjectType(object);
 				break;
 			};
 
-			case Constant.typeId.relation:
+			case Constant.typeKey.relation:
 			case Constant.storeTypeId.relation: {
 				object = this.mapRelation(object);
 				break;
 			};
 
-			case Constant.typeId.option: {
+			case Constant.typeKey.option: {
 				object = this.mapOption(object);
 				break;
 			};
 
-			case Constant.typeId.set: {
+			case Constant.typeKey.set: {
 				object = this.mapSet(object);
 				break;
 			};
 
-			case Constant.typeId.space: {
+			case Constant.typeKey.space: {
 				object = this.mapSpace(object);
 				break;
 			};
 
-			case Constant.typeId.template: {
+			case Constant.typeKey.template: {
 				object = this.mapTemplate(object);
 				break;
 			};
@@ -235,7 +235,7 @@ class DetailStore {
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
-		object.typeKey = Relation.getStringValue(object.typeKey);
+		object.typeKey = Relation.getStringValue(object.id);
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');

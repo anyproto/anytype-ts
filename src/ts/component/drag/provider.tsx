@@ -327,7 +327,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 		const processAddRecord = () => {
 			UtilObject.getById(targetContextId, (object) => {
-				if (object.type === Constant.typeId.collection) {
+				if (object.type === Constant.typeKey.collection) {
 					// add to collection
 					C.ObjectCollectionAdd(targetContextId, ids);
 				} else {

@@ -288,7 +288,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.option ] },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeKey.option ] },
 		].concat(data.filters || []);
 
 		const sorts = [].concat(data.sorts || []);
@@ -304,7 +304,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 		if ([ I.NavigationType.Link ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.relation ] });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeKey.relation ] });
 		};
 
 		if (clear) {
@@ -426,7 +426,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 							return;
 						};
 
-						const isCollection = target.type == Constant.typeId.collection;
+						const isCollection = target.type == Constant.typeKey.collection;
 						const action = isCollection ? I.ToastAction.Collection : I.ToastAction.Link;
 						const linkType = isCollection ? 'Collection' : 'Object';
 
@@ -434,7 +434,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						analytics.event('LinkToObject', { objectType: target.type, linkType });
 					};
 
-					if (target.type == Constant.typeId.collection) {
+					if (target.type == Constant.typeKey.collection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
 						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.type), cb);
@@ -462,7 +462,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const param: Partial<I.Block> = {};
 
 		switch (type) {
-			case Constant.typeId.bookmark: {
+			case Constant.typeKey.bookmark: {
 				param.type = I.BlockType.Bookmark;
 				param.content = {
 					state: I.BookmarkState.Done,

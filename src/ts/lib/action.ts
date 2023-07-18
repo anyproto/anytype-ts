@@ -274,13 +274,13 @@ class Action {
 		let toast = '';
 		
 		switch (object.type) {
-			case Constant.typeId.type:
+			case Constant.typeKey.type:
 				title = 'Are you sure you want to remove this Type?';
 				text = 'This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.';
 				toast = `Object type <b>${object.name}</b> has been removed from your library`;
 				break;
 
-			case Constant.typeId.relation:
+			case Constant.typeKey.relation:
 				title = 'Are you sure you want to remove this Relation?';
 				text = 'This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.';
 				toast = `Relation <b>${object.name}</b> has been removed from your library`;

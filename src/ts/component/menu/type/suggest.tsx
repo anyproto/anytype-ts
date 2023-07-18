@@ -232,7 +232,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		];
 
 		let filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeKey.type, Constant.storeTypeId.type ] },
 		];
 		if (data.filters) {
 			filters = filters.concat(data.filters);

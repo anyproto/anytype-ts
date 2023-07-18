@@ -439,9 +439,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				nameAdd: 'Add object type',
 				placeholderFocus: 'Filter object types...',
 				value: this.objectTypes, 
-				types: [ Constant.typeId.type ],
+				types: [ Constant.typeKey.type ],
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: Constant.typeId.type },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: Constant.typeKey.type },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 				],
 				relation: observable.box(relation),

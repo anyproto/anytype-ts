@@ -198,8 +198,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const node = $(this.node);
 		const element = node.find(`#record-${groupId}-add`);
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.relation);
 		const details: any = {};
 		const conditions = [
 			I.FilterCondition.Equal,
@@ -283,7 +283,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const id = Relation.cellId(getIdPrefix(), 'name', object.id);
 				const ref = refCells.get(id);
 
-				if (ref && (object.type != Constant.typeId.note)) {
+				if (ref && (object.type != Constant.typeKey.note)) {
 					window.setTimeout(() => ref.onClick(e), 15);
 				};
 
@@ -296,7 +296,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			});
 		};
 
-		if (details.type == Constant.typeId.bookmark) {
+		if (details.type == Constant.typeKey.bookmark) {
 			menuStore.open('dataviewCreateBookmark', {
 				type: I.MenuType.Horizontal,
 				element,

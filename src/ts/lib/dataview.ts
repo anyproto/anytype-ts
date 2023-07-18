@@ -204,7 +204,7 @@ class Dataview {
 		const isInline = !UtilObject.getSetTypes().includes(type);
 
 		if (!isInline) {
-			return type == Constant.typeId.collection;
+			return type == Constant.typeKey.collection;
 		};
 
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -215,7 +215,7 @@ class Dataview {
 		const { targetObjectId, isCollection } = block.content;
 		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'type' ], true) : null;
 
-		return targetObjectId ? target.type == Constant.typeId.collection : isCollection;
+		return targetObjectId ? target.type == Constant.typeKey.collection : isCollection;
 	};
 
 	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {

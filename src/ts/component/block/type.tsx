@@ -249,13 +249,13 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		setLoading(true);
 
 		switch (type) {
-			case Constant.typeId.set: {
+			case Constant.typeKey.set: {
 				layout = I.ObjectLayout.Set;
 				C.ObjectToSet(rootId, [], cb);
 				break;
 			};
 
-			case Constant.typeId.collection: {
+			case Constant.typeKey.collection: {
 				layout = I.ObjectLayout.Collection;
 				C.ObjectToCollection(rootId, cb);
 				break;

@@ -457,8 +457,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { rootId } = this.props;
 		const target = this.getTarget();
-		const types = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.type).map(it => it.id);
-		const relations = Relation.getSetOfObjects(rootId, target.id, Constant.typeId.relation).map(it => it.id);
+		const types = Relation.getSetOfObjects(rootId, target.id, Constant.typeKey.type).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, target.id, Constant.typeKey.relation).map(it => it.id);
 
 		return [].concat(types).concat(relations);
 	};
@@ -504,8 +504,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.AllIn,
 		]; 
 
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.relation);
 		const details: any = {};
 		const flags: I.ObjectFlag[] = [];
 		const node = $(this.node);
@@ -599,7 +599,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
 				const ref = this.refCells.get(id);
 
-				if (object.type == Constant.typeId.note) {
+				if (object.type == Constant.typeKey.note) {
 					this.onCellClick(e, 'name', object.id);
 				} else
 				if (ref) {
@@ -615,7 +615,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		if (details.type == Constant.typeId.bookmark) {
+		if (details.type == Constant.typeKey.bookmark) {
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,
@@ -646,7 +646,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					noFilter: true,
 					noIcon: true,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.template },
 						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
 					],
 					sorts: [
@@ -777,13 +777,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isCollection) {
 			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', (message: any) => { 
 					onSelect(message.details, true); 
 				});
 			};
 
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.collection },
 			]);
 		} else {
 			addParam.name = 'Create new set';
@@ -792,7 +792,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.set },
 				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 		};
@@ -994,7 +994,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	isAllowedObject () {
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
-		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeId.type).map(it => it.id);
+		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeKey.type).map(it => it.id);
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 
 		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
