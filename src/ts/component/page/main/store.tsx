@@ -614,8 +614,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.top = scrollTop;
 		};
 
+		if (this.refFilter) {
+			this.refFilter.forceUpdate();
+		};
+
 		for (let menu of menus) {
-			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
+			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${menu.id}`));
 		};
 	};
 
@@ -653,7 +657,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				this.refFilter.focus();
 			};
 
-			menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
+			menuStore.update(this.getMenuId(), { width: filter.outerWidth() });
 		};
 	};
 
