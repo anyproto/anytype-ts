@@ -172,15 +172,19 @@
 					.input:hover:not(.isReadonly) { border-color: $colorBorderDark; }
 					.input:focus:not(.isReadonly) { border-width: 2px; border-color: $colorOrange; padding: 5px 11px; }
 
-					.accountId { position: relative; }
-					.accountId {
-						.input { background-color: unset; @include text-small; color: $colorDarkGrey; }
+					.input.isReadonly { background-color: unset; }
+
+					.inputWrapper.withIcon { position: relative; }
+					.inputWrapper.withIcon {
+						.input { @include text-small; color: $colorDarkGrey; }
 						.icon.copy {
 							width: 20px; height: 20px; z-index: -1; position: absolute; right: 14px; top: 10px; background-image: url('~img/icon/menu/action/copy0.svg');
 							opacity: 0; transition: $transitionAllCommon;
 						}
 					}
-					.accountId:hover .icon.copy { opacity: 1; }
+					.inputWrapper.withIcon:hover {
+						.icon.copy { opacity: 1; }
+					}
 				}
 			}
 		}
