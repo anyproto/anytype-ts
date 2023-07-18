@@ -77,7 +77,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedLayout = rootId != Constant.typeId.bookmark;
 
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
-		let totalTemplate = Number(dbStore.getMeta(subIdTemplate, '').total) + 1;
+		let totalTemplate = Number(dbStore.getMeta(subIdTemplate, '').total);
 
 		if (allowedTemplate) {
 			totalTemplate += 1;
