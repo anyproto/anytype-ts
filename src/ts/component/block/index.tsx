@@ -484,7 +484,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (!block.isSelectable() || (block.isText() && (focused == block.id))) {
+		if (!block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable()) {
 			return;
 		};
 

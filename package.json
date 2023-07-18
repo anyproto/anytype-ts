@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.32.17-beta",
+	"version": "0.33.2",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -37,6 +37,7 @@
 		"name": "Any Association",
 		"email": "info@anytype.io"
 	},
+	"license": "SEE LICENSE IN LICENSE.md",
 	"bugs": {
 		"url": "https://github.com/anyproto/anytype-ts/issues"
 	},
@@ -143,7 +144,6 @@
 		"generateUpdatesFilesForAllChannels": true,
 		"beforeBuild": "./electron/hook/beforebuild.js",
 		"afterSign": "./electron/hook/aftersign.js",
-		"artifactBuildCompleted": "./electron/hook/afterbuild.js",
 		"appId": "com.anytype.anytype",
 		"compression": "normal",
 		"productName": "Anytype",
@@ -516,6 +516,7 @@
 			]
 		},
 		"win": {
+			"sign": "./electron/hook/sign.js",
 			"target": "nsis",
 			"icon": "electron/img/icon256x256.png",
 			"publish": [

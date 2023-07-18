@@ -6,18 +6,13 @@ export default {
         items: [
             {
                 description: `
-					<p>
-						<b>Welcome to your Anytype Space.</b> Space is essentially a graph, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.
-					</p>
-					<p>To access your Homepage, click the icon in the center of your screen.</p>
+					<p><b>Welcome to your Anytype Space.</b> Space is a graph of interconnected objects, providing a natural way to organize information.</p>
+					<p>To access your Homepage, click on its icon in the graph or the <span class="highlight">Next</span> button.</p>
 				`,
                 video: './img/help/onboarding/space.mp4',
                 noButton: true,
                 buttons: [
-                    { text: 'Next', action: 'dashboard' }
-                ],
-                forceButtons: [
-                    { text: 'Close', action: 'close' }
+                    { text: 'Next', action: 'dashboard' },
                 ],
             }
         ],
@@ -59,7 +54,7 @@ export default {
 					<p>
 						<b>View sets or collections as an entire object, or place them inline in documents.</b> The first column will contain the collecting objects, and the others will show their relations.
 					</p>
-					<p>Filter and adjust objects by any relation, such as today’s notes (filter by date) or project documents (filter by project).</p>
+					<p>Filter and adjust objects by any relation, such as today's notes (filter by date) or project documents (filter by project).</p>
 				`,
                 buttonText: 'Great! I will try',
             }

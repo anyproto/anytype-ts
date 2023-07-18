@@ -184,7 +184,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
-		const { data, classNameWrap } = param;
+		const { data, className, classNameWrap } = param;
 		const { objectIds, onLinkTo } = data;
 
 		if (!keyboard.isMouseDisabled) {
@@ -204,6 +204,7 @@ class MenuContext extends React.Component<I.Menu> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			className,
 			classNameWrap,
 			data: {
 				rebind: this.rebind,

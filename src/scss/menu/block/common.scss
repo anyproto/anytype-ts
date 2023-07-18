@@ -9,7 +9,7 @@
 
 	.menu.menuBlockMore { width: 256px; }
 	.menu.menuBlockMore {
-		.content { overflow: visible; max-height: unset; }
+		.content { overflow: visible !important; max-height: unset; }
 		.item { display: flex; }
 		.item {
 			.name { @include text-overflow-nw; }

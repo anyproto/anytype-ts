@@ -443,7 +443,7 @@ class BlockStore {
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
-				name = Mark.fromUnicode(name).trim();
+				name = Mark.fromUnicode(name, marks).trim();
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
@@ -522,6 +522,17 @@ class BlockStore {
 				win.trigger(`${code}.${block.id}`);
 			};
 		});
+	};
+
+	getTableData (rootId: string, blockId: string) {
+		const childrenIds = this.getChildrenIds(rootId, blockId);
+		const children = this.getChildren(rootId, blockId);
+		const rowContainer = children.find(it => it.isLayoutTableRows());
+		const columnContainer = children.find(it => it.isLayoutTableColumns());
+		const columns = columnContainer ? this.getChildren(rootId, columnContainer.id, it => it.isTableColumn()) : [];
+		const rows = rowContainer ? this.unwrapTree([ this.wrapTree(rootId, rowContainer.id) ]).filter(it => it.isTableRow()) : [];
+
+		return { childrenIds, columnContainer, columns, rowContainer, rows };
 	};
 
 };

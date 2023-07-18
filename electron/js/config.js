@@ -21,6 +21,7 @@ class ConfigManager {
 		storage.get(CONFIG_NAME, (error, data) => {
 			this.config = data || {};
 			this.checkChannel();
+			this.checkTheme();
 
 			console.log('[ConfigManager].init:', this.config);
 
@@ -37,6 +38,7 @@ class ConfigManager {
 	set (obj, callBack) {
 		this.config = Object.assign(this.config, obj);
 		this.checkChannel();
+		this.checkTheme();
 
 		console.log('[ConfigManager].set:', this.config);
 
@@ -45,6 +47,10 @@ class ConfigManager {
 				callBack(error);
 			};
 		});
+	};
+
+	checkTheme () {
+		this.config.theme = (undefined !== this.config.theme) ? this.config.theme : 'system';
 	};
 
 	checkChannel () {

@@ -275,14 +275,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	componentDidUpdate () {
-		const { isPopup } = this.props;
-
 		this.resize();
+
 		if (this.refList) {
 			this.refList.recomputeRowHeights();
 		};
-
-		Onboarding.start(UtilCommon.toCamelCase('store-' + this.tab), isPopup);
 	};
 
 	componentWillUnmount () {
@@ -304,8 +301,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onKeyDown (e: any) {
 		const cmd = keyboard.cmdKey();
 
-		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(I.StoreTab.Type, true); });
-		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(I.StoreTab.Relation, true); });
+		keyboard.shortcut(`${cmd}+t`, e, () => this.onTab(I.StoreTab.Type, true));
+		keyboard.shortcut(`${cmd}+alt+t`, e, () => this.onTab(I.StoreTab.Relation, true));
 	};
 
 	getRowHeight (item: any) {
@@ -386,7 +383,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const filter = node.find('#store-filter');
 
 		const menuParam: any = {
-			element: filter,
+			element: '#store-filter',
 			commonFilter: true,
 			horizontal: I.MenuDirection.Center,
 			width: filter.outerWidth(),
@@ -617,8 +614,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.top = scrollTop;
 		};
 
+		if (this.refFilter) {
+			this.refFilter.forceUpdate();
+		};
+
 		for (let menu of menus) {
-			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
+			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${menu.id}`));
 		};
 	};
 
@@ -656,7 +657,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				this.refFilter.focus();
 			};
 
-			menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
+			menuStore.update(this.getMenuId(), { width: filter.outerWidth() });
 		};
 	};
 

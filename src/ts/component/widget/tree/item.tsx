@@ -127,6 +127,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const more = node.find('.icon.more');
 		const { x, y } = keyboard.mouse.page;
 		const menuParam: any = {
+			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			onOpen: () => { node.addClass('active'); },
 			onClose: () => { node.removeClass('active'); },

@@ -12,18 +12,19 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	cache: any = {};
 	cellPositioner: any = null;
-	ref = null;
+	refList = null;
+	refLoader = null;
 	width = 0;
 	columnCount = 0;
+	length = 0;
 
 	constructor (props: I.ViewComponent) {
 		super(props);
 
-		const { width, height } = Constant.size.dataview.gallery;
+		const { height } = Constant.size.dataview.gallery;
 
 		this.cache = new CellMeasurerCache({
 			defaultHeight: height,
-			defaultWidth: width,
 			fixedWidth: true,
 		});
 
@@ -99,7 +100,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 				>
 					{({ measure }) => (
 						<div key={'gallery-card-' + view.id + param.index} className="row" style={style}>
-							{item.children.map((id: string) => row(id))}
+							{item.children.map(id => row(id))}
 						</div>
 					)}
 				</CellMeasurer>
@@ -112,47 +113,31 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			const records = this.getRecords();
 			content = (
 				<React.Fragment>
-					{records.map((id: string) => row(id))}
+					{records.map(id => row(id))}
 				</React.Fragment>
 			);
 		} else {
 			content = (
-				<InfiniteLoader
-					loadMoreRows={() => {}}
-					isRowLoaded={({ index }) => !!records[index]}
-					rowCount={total}
-					threshold={10}
-				>
-					{({ onRowsRendered }) => (
-						<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
-							{({ height, isScrolling, registerChild, scrollTop }) => {
-								return (
-									<AutoSizer disableHeight={true} onResize={this.onResize}>
-										{({ width }) => {
-											return (
-												<div ref={registerChild}>
-													<List
-														autoHeight={true}
-														ref={ref => this.ref = ref}
-														width={width}
-														height={height}
-														deferredMeasurmentCache={this.cache}
-														rowCount={items.length}
-														rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
-														rowRenderer={rowRenderer}
-														onRowsRendered={onRowsRendered}
-														overscanRowCount={20}
-														scrollToAlignment="start"
-													/>
-												</div>
-											);
-										}}
-									</AutoSizer>
-								);
-							}}
-						</WindowScroller>
+				<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+					{({ height }) => (
+						<AutoSizer disableHeight={true} onResize={this.onResize}>
+							{({ width }) => (
+								<List
+									autoHeight={true}
+									ref={ref => this.refList = ref}
+									width={width}
+									height={height}
+									deferredMeasurmentCache={this.cache}
+									rowCount={items.length}
+									rowHeight={param => Math.max(this.cache.rowHeight(param), cardHeight)}
+									rowRenderer={rowRenderer}
+									overscanRowCount={20}
+									scrollToAlignment="start"
+								/>
+							)}
+						</AutoSizer>
 					)}
-				</InfiniteLoader>
+				</WindowScroller>
 			);
 		};
 
@@ -181,16 +166,19 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 
 	reset () {
 		const { isInline } = this.props;
-		if (isInline || !this.ref) {
+		if (isInline) {
 			return;
 		};
 
-		this.setDimensions();
+		this.setColumnCount();
 		this.cache.clearAll();
-		this.ref.recomputeRowHeights(0);
+
+		if (this.refList) {
+			this.refList.recomputeRowHeights(0);
+		};
 	};
 
-	setDimensions () {
+	setColumnCount () {
 		const { getView } = this.props;
 		const view = getView();
 		const { margin } = Constant.size.dataview.gallery;
@@ -233,7 +221,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	getItems () {
-		this.setDimensions();
+		this.setColumnCount();
 
 		const records = this.getRecords();
 		const ret: any[] = [];

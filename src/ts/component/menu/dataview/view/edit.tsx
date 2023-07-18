@@ -501,7 +501,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	};
 
 	getViewName (name?: string) {
-		return name || this.param.name || this.defaultName(this.param.type);
+		return (name || this.param.name || this.defaultName(this.param.type)).trim();
 	};
 
 	defaultName (type: I.ViewType): string {

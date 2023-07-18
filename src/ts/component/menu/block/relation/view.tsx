@@ -27,7 +27,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, readonly } = data;
+		const { rootId } = data;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -35,8 +35,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 
 		const sections = this.getSections();
-		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const isLocked = root.isLocked();
+		const readonly = data.readonly || isLocked;
 
 		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
@@ -81,7 +81,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			</div>
 		);
 
-		const ItemAdd = (item: any) => (
+		const ItemAdd = () => (
 			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
 				<div className="line" />
 				<div className="info">
@@ -97,9 +97,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				className="sections"
 			>
 				<div id="scrollWrap" className="scrollWrap">
-					{sections.map((item: any, i: number) => {
-						return <Section key={i} {...item} index={i} />;
-					})}
+					{sections.map((item: any, i: number) => (
+						<Section key={i} {...item} index={i} />
+					))}
 				</div>
 				{!readonly ? <ItemAdd /> : ''}
 			</div>

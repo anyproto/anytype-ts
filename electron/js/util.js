@@ -47,7 +47,8 @@ class Util {
 	};
 
 	getTheme () {
-		const theme = (undefined !== ConfigManager.config.theme) ? ConfigManager.config.theme : 'system';
+		const theme = ConfigManager.config.theme;
+
 		switch (theme) {
 			default:
 				return theme;

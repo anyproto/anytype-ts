@@ -130,6 +130,10 @@ class WindowManager {
 		} else {
 			win.loadURL('file://' + path.join(Util.appPath, 'dist', 'index.html'));
 		};
+
+		win.on('enter-full-screen', () => MenuManager.initMenu());
+		win.on('leave-full-screen', () => MenuManager.initMenu());
+
 		return win;
 	};
 

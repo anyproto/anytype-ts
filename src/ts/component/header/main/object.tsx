@@ -131,8 +131,6 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	onRelation () {
 		const { isPopup, rootId, menuOpen } = this.props;
 		const cnw = [ 'fixed' ];
-		const root = blockStore.getLeaf(rootId, rootId);
-		const isLocked = root ? root.isLocked() : false;
 
 		if (!isPopup) {
 			cnw.push('fromHeader');
@@ -147,7 +145,6 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			data: {
 				isPopup,
 				rootId,
-				readonly: isLocked,
 			},
 		});
 	};

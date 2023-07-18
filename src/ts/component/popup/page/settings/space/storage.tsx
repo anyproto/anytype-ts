@@ -64,26 +64,26 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
         analytics.event('ShowDeletionWarning', { route: 'Settings' });
 
-        popupStore.open('confirm', {
-            data: {
-                title: UtilCommon.sprintf(
-                    translate(`popupSettingsSpaceStorageManagerDeletionWarningTitle`),
-                    count,
-                    UtilCommon.cntWord(count, translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObject`), translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObjects`))
-                ),
-                text: translate(`popupSettingsSpaceStorageManagerDeletionWarningText`),
-                textConfirm: translate(`popupSettingsSpaceStorageManagerDeletionWarningConfirm`),
-                onConfirm: () => {
+		popupStore.open('confirm', {
+			data: {
+				title: UtilCommon.sprintf(
+					translate(`popupSettingsSpaceStorageManagerDeletionWarningTitle`),
+					count,
+					UtilCommon.cntWord(count, translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObject`), translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObjects`))
+				),
+				text: translate(`popupSettingsSpaceStorageManagerDeletionWarningText`),
+				textConfirm: translate(`popupSettingsSpaceStorageManagerDeletionWarningConfirm`),
+				onConfirm: () => {
 					C.ObjectListSetIsArchived(this.refManager?.selected, true, () => {
 						C.ObjectListDelete(this.refManager?.selected);
 
 						this.refManager.selectionClear();
 						analytics.event('RemoveCompletely', { count, route: 'Settings' });
 					});
-                },
-                onCancel: () => this.refManager.selectionClear()
-            },
-        });
+				},
+				onCancel: () => this.refManager.selectionClear()
+			},
+		});
     };
 
     onBack = () => {

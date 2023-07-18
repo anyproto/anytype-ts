@@ -242,6 +242,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
+		if ([ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(home.id)) {
+			return;
+		};
+
 		Onboarding.start('dashboard', false, false);
 	};
 

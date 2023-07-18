@@ -110,7 +110,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	onMouseDown (e: any) {
 		const isPopup = keyboard.isPopup();
 
-		if (e.button || !this._isMounted || menuStore.isOpen() || popupStore.isOpen('', [ 'page' ])) {
+		if (e.button || !this._isMounted || menuStore.isOpen('', '', [ 'onboarding' ]) || popupStore.isOpen('', [ 'page' ])) {
 			return;
 		};
 		

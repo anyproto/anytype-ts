@@ -391,8 +391,9 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const editorWrapper = sideLeft.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
 		const container = UtilCommon.getPageContainer(isPopup);
+		const sc = UtilCommon.getScrollContainer(isPopup);
 		const header = container.find('#header');
-		const height = container.height();
+		const height = sc.height();
 		const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
 		const cssl: any = { height };
 

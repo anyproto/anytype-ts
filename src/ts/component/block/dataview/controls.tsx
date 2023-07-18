@@ -134,7 +134,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 								className="addRecord c28" 
 								tooltip="Create new object" 
 								text="New" 
-								onClick={(e: any) => onRecordAdd(e, -1)} 
+								onClick={e => onRecordAdd(e, -1)} 
 							/>
  						) : ''}
 					</div>
@@ -336,23 +336,27 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const container = UtilCommon.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
 		const sidebar = $('#sidebar');
+		const sw = sidebar.outerWidth();
 
-		sideLeft.removeClass('small');
-
-		let width = sideLeft.outerWidth() + sideRight.outerWidth();
-		let offset = 0;
-		let sw = sidebar.outerWidth();
-
-		if (isPopup) {
-			offset = container.offset().left;
+		if (sideLeft.hasClass('small')) {
+			sideLeft.removeClass('small');
+			menuStore.closeAll([ 'dataviewViewEdit', 'dataviewViewList' ]);
 		};
 
+		const width = sideLeft.outerWidth() + sideRight.outerWidth();
+		const offset = isPopup ? container.offset().left : 0;
+
+		let add = false;
 		if (left + width - offset - sw + 50 >= container.width()) {
-			sideLeft.addClass('small');
+			add = true;
+		};
+		if (isInline && (width >= node.outerWidth())) {
+			add = true;
 		};
 
-		if (isInline && (width >= node.outerWidth())) {
+		if (add) {
 			sideLeft.addClass('small');
+			menuStore.closeAll([ 'dataviewViewEdit', 'dataviewViewList' ]);
 		};
 	};
 

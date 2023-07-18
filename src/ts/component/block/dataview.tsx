@@ -326,7 +326,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (!sources.length && !isCollection) {
 			console.log('[BlockDataview.loadData] No sources');
 			return;
-		}
+		};
 
 		if (clear) {
 			dbStore.recordsSet(subId, '', []);
@@ -607,7 +607,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 
 				analytics.event('CreateObject', {
-					route: 'Set',
+					route: (isCollection ? 'Collection' : 'Set'),
 					objectType: object.type,
 					layout: object.layout,
 					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
@@ -1040,9 +1040,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	applyObjectOrder (groupId: string, records: any[]): string[] {
 		const { rootId, block } = this.props;
-		const view = this.getView();
+		if (!block) {
+			return [];
+		};
 
-		return view ? Dataview.applyObjectOrder(rootId, block.id, view.id, groupId, records) : [];
+		const view = this.getView();
+		if (!view) {
+			return [];
+		};
+
+		return Dataview.applyObjectOrder(rootId, block.id, view.id, groupId, records);
 	};
 
 	onSelectToggle (e: React.MouseEvent, id: string) {

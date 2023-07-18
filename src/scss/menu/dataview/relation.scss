@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuDataviewRelationList { width: 360px; }
 	.menu.menuDataviewRelationList {
-		.content { overflow: visible; padding: 0px; }
+		.content { overflow: visible !important; padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; padding: 0px 0px 8px 0px; }
 
 		.items { flex-grow: 1; }
@@ -34,9 +34,7 @@
 		.item.disabled:hover::before { opacity: 0; }
 
 		.item.withCaption {
-			.caption { 
-				@include text-common; line-height: 20px; width: 40px; padding-right: 16px; overflow: visible;
-			}
+			.caption { @include text-common; line-height: 20px; width: 40px; padding-right: 16px; overflow: visible; }
 		}
 
 		.icon.lock { margin-right: 6px; }

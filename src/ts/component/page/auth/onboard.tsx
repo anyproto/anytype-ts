@@ -297,7 +297,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			// Move animation forward, wait for delay, move onboarding forward
 			if (stage == Stage.Void) {
 				this.accountCreate(() => {
-					incrementAnimation(delay(incrementOnboarding(), 2000))();
+					incrementAnimation(delay(incrementOnboarding(), 100))();
 				});
 				return;
 			};

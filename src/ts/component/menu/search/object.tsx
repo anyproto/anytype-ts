@@ -303,6 +303,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo ].includes(type)) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
+		if ([ I.NavigationType.Link ].includes(type)) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.relation ] });
+		};
 
 		if (clear) {
 			this.setState({ isLoading: true });

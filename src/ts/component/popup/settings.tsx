@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon } from 'Component';
-import { I, C, UtilObject, UtilCommon, analytics, Action, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, analytics, Action, keyboard, translate } from 'Lib';
 import { popupStore } from 'Store';
 
 import PageAccount from './page/settings/account';

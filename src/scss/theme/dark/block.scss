@@ -219,8 +219,8 @@
 		lnk:hover, obj:hover { border-color: $colorPrimary; }
     }
 
-    .block.blockText.textCallout > .wrapContent { background: $colorHoverMedium; }
-    .block.blockText.textCode > .wrapContent > .selectable { background: $colorHoverMedium; }
+    .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25) !important; }
+    .block.blockText.textCode > .wrapContent { background: rgba(140, 158, 165, 0.25) !important; }
 
     /* BlockLink */
 
