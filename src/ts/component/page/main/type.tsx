@@ -65,9 +65,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const subIdTemplate = this.getSubIdTemplate();
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
-		const { defaultTemplateId } = detailStore.get(rootId, rootId, [ 'defaultTemplateId' ]);
-		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
-		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
+		const { defaultTemplateId } = object;
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
@@ -78,6 +76,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 		const allowedLayout = rootId != Constant.typeId.bookmark;
+
+		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
+		let totalTemplate = Number(dbStore.getMeta(subIdTemplate, '').total);
+
+		if (allowedTemplate) {
+			totalTemplate += 1;
+		};
 
 		if (!recommendedRelations.includes('rel-description')) {
 			recommendedRelations.push('rel-description');
