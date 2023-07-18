@@ -57,7 +57,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 				return null;
 			};
 
-			const type = dbStore.getType(item.type);
+			const type = dbStore.getTypeById(item.type);
 			const name = <ObjectName object={item} />;
 
 			let content = null;

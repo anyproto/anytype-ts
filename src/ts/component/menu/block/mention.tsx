@@ -48,7 +48,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 				return null;
 			};			
 
-			const type = dbStore.getType(item.type);
+			const type = dbStore.getTypeById(item.type);
 			const cn = [];
 
 			let content = null;
@@ -299,7 +299,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		};
 
 		if (item.id == 'add') {
-			const type = dbStore.getType(commonStore.type);
+			const type = dbStore.getTypeById(commonStore.type);
 			const name = this.getFilter();
 
 			UtilObject.create('', '', { name }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {

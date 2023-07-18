@@ -478,7 +478,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		const { rootId, isPopup } = this.props;
 		const object = detailStore.get(rootId, rootId, [ 'setOf', 'collectionOf' ]);
-		const type = dbStore.getType(object.type);
+		const type = dbStore.getTypeById(object.type);
 
 		this.menuContext.close();
 

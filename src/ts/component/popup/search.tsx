@@ -387,7 +387,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		};
 
 		items = items.map(it => {
-			const type = dbStore.getType(it.type);
+			const type = dbStore.getTypeById(it.type);
 
 			return { 
 				...it,

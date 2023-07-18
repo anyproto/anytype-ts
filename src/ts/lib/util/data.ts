@@ -276,26 +276,29 @@ class UtilData {
 				subId: Constant.subId.type,
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ commonStore.space, Constant.storeSpaceId ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.type, Constant.storeTypeId.type ] },
-				],
-				noDeps: true,
-				ignoreWorkspace: true,
-				ignoreDeleted: true,
-			},
-			{
-				subId: Constant.subId.relation,
-				keys: Constant.relationRelationKeys,
-				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ commonStore.space, Constant.storeSpaceId ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.typeId.relation, Constant.storeTypeId.relation ] },
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.type, Constant.typeId.type ] },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				onSubscribe: () => {
-					dbStore.getRelations().forEach(it => dbStore.relationKeyMap[it.relationKey] = it.id);
+					dbStore.getTypes().forEach(it => dbStore.typeKeyMapSet(it.typeKey, it.id));
 				}
+			},
+			{
+				subId: Constant.subId.relation,
+				keys: Constant.relationRelationKeys,
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeId.relation, Constant.typeId.relation ] },
+				],
+				noDeps: true,
+				ignoreWorkspace: true,
+				ignoreDeleted: true,
+				onSubscribe: () => {
+					dbStore.getRelations().forEach(it => dbStore.relationKeyMapSet(it.relationKey, it.id));
+				},
 			},
 			{
 				subId: Constant.subId.option,
@@ -381,12 +384,12 @@ class UtilData {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
-		const page = dbStore.getType(Constant.typeId.page);
-		const note = dbStore.getType(Constant.typeId.note);
-		const set = dbStore.getType(Constant.typeId.set);
-		const task = dbStore.getType(Constant.typeId.task);
-		const bookmark = dbStore.getType(Constant.typeId.bookmark);
-		const collection = dbStore.getType(Constant.typeId.collection);
+		const page = dbStore.getTypeById(Constant.typeId.page);
+		const note = dbStore.getTypeById(Constant.typeId.note);
+		const set = dbStore.getTypeById(Constant.typeId.set);
+		const task = dbStore.getTypeById(Constant.typeId.task);
+		const bookmark = dbStore.getTypeById(Constant.typeId.bookmark);
+		const collection = dbStore.getTypeById(Constant.typeId.collection);
 
 		const skip = [ 
 			Constant.typeId.note, 

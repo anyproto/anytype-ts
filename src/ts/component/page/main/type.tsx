@@ -337,7 +337,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onCreate () {
 		const rootId = this.getRootId();
-		const type = dbStore.getType(rootId);
+		const type = dbStore.getTypeById(rootId);
 
 		if (!type) {
 			return;

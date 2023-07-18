@@ -15,7 +15,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	render () {
 		const { config } = commonStore;
-		const type = dbStore.getType(commonStore.type);
+		const type = dbStore.getTypeById(commonStore.type);
 		const languages = this.getLanguages();
 
 		return (

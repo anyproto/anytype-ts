@@ -412,7 +412,7 @@ class Analytics {
 	};
 
 	typeMapper (id: string) {
-		const type = dbStore.getType(id);
+		const type = dbStore.getTypeById(id);
 		return type ? (type.sourceObject ? type.sourceObject : 'custom') : '';
 	};
 

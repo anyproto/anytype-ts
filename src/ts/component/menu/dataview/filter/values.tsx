@@ -116,7 +116,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 			
 			case I.RelationType.Object:
 				Item = (element: any) => {	
-					const type = dbStore.getType(element.type);
+					const type = dbStore.getTypeById(element.type);
 
 					return (
 						<div 

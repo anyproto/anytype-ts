@@ -94,7 +94,12 @@ class DetailStore {
 
 		// Update relationKeyMap in dbStore to keep consistency
 		if (item.details && (item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
-			dbStore.relationKeyMap[item.details.relationKey] = item.details.id;
+			if ((item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
+				dbStore.relationKeyMapSet(item.details.relationKey, item.details.id);
+			};
+			if ((item.details.type == Constant.typeId.type) && item.details.typeKey && item.details.id) {
+				dbStore.typeKeyMapSet(item.details.typeKey, item.details.id);
+			};
 		};
 
 		if (createMap) {
@@ -228,6 +233,7 @@ class DetailStore {
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
+		object.typeKey = Relation.getStringValue(object.typeKey);
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');

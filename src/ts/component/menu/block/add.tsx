@@ -271,7 +271,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ 'targetObjectType' ]);
 		const isTemplate = UtilObject.isTemplate(object.type);
-		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
+		const type = dbStore.getTypeById(isTemplate ? object.targetObjectType : object.type);
 
 		const relations = dbStore.getObjectRelations(rootId, rootId);
 		const relationKeys = relations.map(it => it.relationKey);

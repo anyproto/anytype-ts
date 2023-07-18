@@ -45,7 +45,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (isObject && !isReadonly && (!relation || !relation.isReadonlyValue)) {
 			const length = this.objectTypes.length;
 			const typeId = length ? this.objectTypes[0] : '';
-			const type = dbStore.getType(typeId);
+			const type = dbStore.getTypeById(typeId);
 			const typeProps: any = { 
 				name: 'Select object type',
 				caption: (length > 1 ? '+' + (length - 1) : ''),
@@ -445,7 +445,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 				],
 				relation: observable.box(relation),
-				valueMapper: it => dbStore.getType(it.id),
+				valueMapper: it => dbStore.getTypeById(it.id),
 				onChange: (value: any, callBack?: () => void) => {
 					this.objectTypes = value;
 					this.forceUpdate();

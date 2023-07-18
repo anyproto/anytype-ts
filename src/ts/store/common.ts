@@ -142,7 +142,7 @@ class CommonStore {
 			return Constant.typeId.note;
 		};
 
-		const type = dbStore.getType(typeId);
+		const type = dbStore.getTypeById(typeId);
 
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
 			return Constant.typeId.note;

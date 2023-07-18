@@ -28,7 +28,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		let center = null;
 
 		if (UtilObject.isTemplate(object.type)) {
-			const type = dbStore.getType(object.targetObjectType);
+			const type = dbStore.getTypeById(object.targetObjectType);
 			center = (
 				<div className="templateBanner">
 					<Label text="You are editing a template" />

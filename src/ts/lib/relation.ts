@@ -420,7 +420,7 @@ class Relation {
 
 			switch (type) {
 				case Constant.typeId.type:
-					el = dbStore.getType(id);
+					el = dbStore.getTypeById(id);
 					break;
 
 				case Constant.typeId.relation:

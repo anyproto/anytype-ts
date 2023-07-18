@@ -8,6 +8,7 @@ class DbStore {
 
     public relationMap: Map<string, any[]> = observable(new Map());
 	public relationKeyMap: any = {};
+	public typeKeyMap: any = {};
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public recordMap: Map<string, string[]> = observable.map(new Map());
     public metaMap: Map<string, any> = observable.map(new Map());
@@ -41,6 +42,26 @@ class DbStore {
     	this.viewMap.clear();
     	this.recordMap.clear();
     	this.metaMap.clear();
+	};
+
+	relationKeyMapSet (key: string, id: string) {
+		if (key && id) {
+			this.relationKeyMap[key] = id;
+		};
+	};
+
+	relationKeyMapGet (key: string): string {
+		return key ? this.relationKeyMap[key] : '';
+	};
+
+	typeKeyMapSet (key: string, id: string) {
+		if (key && id) {
+			this.typeKeyMap[key] = id;
+		};
+	};
+
+	typeKeyMapGet (key: string): string {
+		return key ? this.typeKeyMap[key] : '';
 	};
 
     relationsSet (rootId: string, blockId: string, list: any[]) {
@@ -205,13 +226,18 @@ class DbStore {
 		this.groupsRemove(rootId, blockId, this.getGroups(rootId, blockId).map(it => it.id));
 	};
 
-	getType (id: string) {
+	getTypeById (id: string) {
 		const object = detailStore.get(Constant.subId.type, id, Constant.typeRelationKeys);
 		return object._empty_ ? null : object;
 	};
 
+	getTypeByKey (typeKey: string): any {
+		const id = this.typeKeyMapGet(typeKey);
+		return id ? this.getTypeById(id) : null;
+	};
+
 	getTypes () {
-		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getType(id)).
+		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
 	};
 
@@ -229,7 +255,7 @@ class DbStore {
 	};
 
     getRelationByKey (relationKey: string): any {
-		const id = relationKey ? this.relationKeyMap[relationKey] : '';
+		const id = this.relationKeyMapGet(relationKey);
 		return id ? this.getRelationById(id) : null;
 	};
 

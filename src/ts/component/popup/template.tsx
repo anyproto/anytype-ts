@@ -33,7 +33,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
-		const type = dbStore.getType(typeId);
+		const type = dbStore.getTypeById(typeId);
 		const length = items.length;
 
 		if (loading) {

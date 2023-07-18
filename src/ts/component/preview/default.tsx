@@ -35,7 +35,7 @@ const PreviewDefault = observer(class PreviewDefault extends React.Component<Pro
 		const { loading } = this.state;
 		const cn = [ 'previewDefault', className ];
 		const object = this.props.object || this.state.object || {};
-		const type = dbStore.getType(object.type);
+		const type = dbStore.getTypeById(object.type);
 
 		return (
 			<div className={cn.join(' ')}>

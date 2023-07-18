@@ -57,7 +57,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 				return null;
 			};
 
-			const type = dbStore.getType(item.type);
+			const type = dbStore.getTypeById(item.type);
 			const cn = [];
 
 			let object = { ...item, id: item.itemId };
@@ -354,7 +354,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 			onChange(I.MarkType.Link, filter);
 		} else
 		if (item.itemId == 'add') {
-			const type = dbStore.getType(commonStore.type);
+			const type = dbStore.getTypeById(commonStore.type);
 
 			UtilObject.create('', '', { name: filter }, I.BlockPosition.Bottom, '', {}, [ I.ObjectFlag.SelectType ], (message: any) => {
 				if (message.error.code) {
