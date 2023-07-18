@@ -52,7 +52,7 @@ class UtilObject {
 	};
 
 	getProfile () {
-		return detailStore.get(Constant.subId.profile, blockStore.profile)
+		return detailStore.get(Constant.subId.profile, blockStore.profile);
 	};
 
 	getGraph () {

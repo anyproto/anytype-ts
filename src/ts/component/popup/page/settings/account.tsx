@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Button, Icon } from 'Component';
-import { I, C, translate, UtilCommon, Action, UtilObject, UtilRouter } from 'Lib';
+import { I, C, translate, UtilCommon, UtilData, Action, UtilObject, UtilRouter } from 'Lib';
 import { authStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
@@ -42,6 +42,11 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		const { error, loading } = this.state;
 		const { account } = authStore;
 		const profile = UtilObject.getProfile();
+	
+		let name = profile.name;
+		if (name == UtilObject.defaultName('Page')) {
+			name = '';
+		};
 
 		return (
 			<div className="sections">
@@ -64,7 +69,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 
 					<Input
 						ref={ref => this.refName = ref}
-						value={profile.name}
+						value={name}
 						onKeyUp={this.onName}
 						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
 					/>
