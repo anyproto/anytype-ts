@@ -52,6 +52,10 @@ class DetailStore {
 
 	/** Idempotent. updates details in the detail store. if clear is set, map wil delete details by item id. */
     public update (rootId: string, item: Item, clear: boolean): void {
+		if (!item.details) {
+			return;
+		};
+
 		let map = this.map.get(rootId);
 		let createMap = false;
 		let createList = false;
@@ -92,14 +96,12 @@ class DetailStore {
 			map.set(item.id, list);
 		};
 
-		// Update relationKeyMap in dbStore to keep consistency
-		if (item.details && (item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
-			if ((item.details.type == Constant.typeId.relation) && item.details.relationKey && item.details.id) {
-				dbStore.relationKeyMapSet(item.details.relationKey, item.details.id);
-			};
-			if ((item.details.type == Constant.typeId.type) && item.details.typeKey && item.details.id) {
-				dbStore.typeKeyMapSet(item.details.typeKey, item.details.id);
-			};
+		// Update relationKeyMap and typeKeyMap in dbStore to keep consistency
+		if (item.details.type == Constant.typeId.relation) {
+			dbStore.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
+		};
+		if (item.details.type == Constant.typeId.type) {
+			dbStore.typeKeyMapSet(item.details.spaceId, item.details.typeKey, item.details.id);
 		};
 
 		if (createMap) {

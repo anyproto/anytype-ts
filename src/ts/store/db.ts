@@ -1,14 +1,18 @@
 import { observable, action, set, intercept, makeObservable } from 'mobx';
 import { I, M, UtilCommon, Dataview } from 'ts/lib';
-import { detailStore } from 'ts/store';
-
+import { detailStore, commonStore } from 'ts/store';
 import Constant from 'json/constant.json';
+
+enum KeyMapType {
+	Relation = 'relation',
+	Type = 'type',
+};
 
 class DbStore {
 
     public relationMap: Map<string, any[]> = observable(new Map());
-	public relationKeyMap: any = {};
-	public typeKeyMap: any = {};
+	public relationKeyMap: Map<string, Map<string, string>> = new Map();
+	public typeKeyMap: Map<string, Map<string, string>> = new Map();
     public viewMap: Map<string, I.View[]> = observable.map(new Map());
     public recordMap: Map<string, string[]> = observable.map(new Map());
     public metaMap: Map<string, any> = observable.map(new Map());
@@ -44,24 +48,52 @@ class DbStore {
     	this.metaMap.clear();
 	};
 
-	relationKeyMapSet (key: string, id: string) {
-		if (key && id) {
-			this.relationKeyMap[key] = id;
+	keyMapGet (type: string, spaceId: string) {
+		const key = `${type}KeyMap`;
+
+		let map = this[key].get(spaceId);
+		if (!map) {
+			map = new Map();
+			this[key].set(spaceId, map);
+		};
+
+		return map;
+	}; 
+
+	relationKeyMapSet (spaceId: string, key: string, id: string) {
+		if (spaceId && key && id) {
+			this.keyMapGet(KeyMapType.Relation, spaceId).set(key, id);
 		};
 	};
 
 	relationKeyMapGet (key: string): string {
-		return key ? this.relationKeyMap[key] : '';
+		let map = this.keyMapGet(KeyMapType.Relation, commonStore.space);
+		let ret = map.get(key);
+
+		if (!ret) {
+			map = this.keyMapGet(KeyMapType.Relation, Constant.storeSpaceId);
+			ret = map.get(key);
+		};
+
+		return ret;
 	};
 
-	typeKeyMapSet (key: string, id: string) {
-		if (key && id) {
-			this.typeKeyMap[key] = id;
+	typeKeyMapSet (spaceId: string, key: string, id: string) {
+		if (spaceId && key && id) {
+			this.keyMapGet(KeyMapType.Type, spaceId).set(key, id);
 		};
 	};
 
 	typeKeyMapGet (key: string): string {
-		return key ? this.typeKeyMap[key] : '';
+		let map = this.keyMapGet(KeyMapType.Type, commonStore.space);
+		let ret = map.get(key);
+
+		if (!ret) {
+			map = this.keyMapGet(KeyMapType.Type, Constant.storeSpaceId);
+			ret = map.get(key);
+		};
+
+		return ret;
 	};
 
     relationsSet (rootId: string, blockId: string, list: any[]) {

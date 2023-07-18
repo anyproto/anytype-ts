@@ -283,7 +283,7 @@ class UtilData {
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				onSubscribe: () => {
-					dbStore.getTypes().forEach(it => dbStore.typeKeyMapSet(it.typeKey, it.id));
+					dbStore.getTypes().forEach(it => dbStore.typeKeyMapSet(it.spaceId, it.typeKey, it.id));
 				}
 			},
 			{
@@ -297,7 +297,7 @@ class UtilData {
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				onSubscribe: () => {
-					dbStore.getRelations().forEach(it => dbStore.relationKeyMapSet(it.relationKey, it.id));
+					dbStore.getRelations().forEach(it => dbStore.relationKeyMapSet(it.spaceId, it.relationKey, it.id));
 				},
 			},
 			{
