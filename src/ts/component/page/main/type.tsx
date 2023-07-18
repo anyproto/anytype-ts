@@ -65,7 +65,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const subIdTemplate = this.getSubIdTemplate();
 
 		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
-		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
+		const totalTemplate = Number(dbStore.getMeta(subIdTemplate, '').total) + 1;
 		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !NO_TEMPLATES.includes(rootId);
