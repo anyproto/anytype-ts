@@ -74,8 +74,6 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 	};
 
 	componentWillUnmount () {
-		const { items } = this.state;
-
 		this._isMounted = false;
 		this.unbind();
 	};

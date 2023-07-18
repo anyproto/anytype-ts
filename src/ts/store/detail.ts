@@ -228,6 +228,7 @@ class DetailStore {
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		object.isInstalled = object.workspaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
+		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');
