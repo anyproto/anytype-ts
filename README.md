@@ -12,7 +12,7 @@ npm install -D
 
 Also, [install `gitleaks`](https://github.com/zricethezav/gitleaks#installing) to ensure proper work of pre-commit hooks.
 
-### Install node addon library and protobuf bindings
+### Install middleware library and protobuf bindings
 Fetch the latest binary from the [github releases](https://github.com/anytypeio/go-anytype-middleware/releases/latest)
 
 ```shell
