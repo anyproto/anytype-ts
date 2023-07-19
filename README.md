@@ -19,7 +19,7 @@ Fetch the latest binary from the [github releases](https://github.com/anytypeio/
 ./update.sh <GITHUB_USER> <GITHUB_TOKEN> <macos-latest|ubuntu-latest|windows-latest>
 ```
 	
-Or compile from the source code. Follow instructions at [`go-anytype-middleware`.](https://github.com/anytypeio/go-anytype-middleware#how-to-build)
+Or compile from the source code. Follow instructions at [`anytype-heart`](https://github.com/anyproto/anytype-heart#how-to-build).
 
 ### Building
 
