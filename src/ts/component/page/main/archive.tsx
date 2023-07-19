@@ -77,12 +77,14 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			return;
 		};
 
-		const count = this.refManager.selected.length;
+		const selected = this.refManager.selected || [];
+		const count = selected.length;
 
-		C.ObjectListSetIsArchived(this.refManager.selected, false, () => {
+		C.ObjectListSetIsArchived(selected, false, () => {
 			analytics.event('RestoreFromBin', { count });
 		});
-		this.refManager.selectionClear();
+
+		this.selectionClear();
 	};
 
 	onRemove () {
@@ -90,7 +92,8 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			return;
 		};
 
-		const count = this.refManager.selected.length;
+		const selected = this.refManager.selected || [];
+		const count = selected.length;
 
 		analytics.event('ShowDeletionWarning', { route: 'Bin' });
 
@@ -100,14 +103,18 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 				text: 'These objects will be deleted irrevocably. You can\'t undo this action.',
 				textConfirm: 'Delete',
 				onConfirm: () => { 
-					C.ObjectListDelete(this.refManager.selected);
-					this.refManager.selectionClear();
+					C.ObjectListDelete(selected);
+					this.selectionClear();
 
 					analytics.event('RemoveCompletely', { count, route: 'Bin' });
 				},
-				onCancel: () => { this.refManager.selectionClear(); }
+				onCancel: () => this.selectionClear(),
 			},
 		});
+	};
+
+	selectionClear () {
+		this.refManager?.selectionClear();
 	};
 
 	getRowLength () {
