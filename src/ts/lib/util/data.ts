@@ -401,10 +401,6 @@ class UtilData {
 		const pageLayouts = UtilObject.getPageLayouts();
 		const page = dbStore.getTypeByKey(Constant.typeKey.page);
 		const note = dbStore.getTypeByKey(Constant.typeKey.note);
-		const set = dbStore.getTypeByKey(Constant.typeKey.set);
-		const task = dbStore.getTypeByKey(Constant.typeKey.task);
-		const bookmark = dbStore.getTypeByKey(Constant.typeKey.bookmark);
-		const collection = dbStore.getTypeByKey(Constant.typeKey.collection);
 
 		const skip = [ 
 			Constant.typeKey.note, 
@@ -419,30 +415,24 @@ class UtilData {
 
 		if (!withDefault) {
 			items = items.concat(dbStore.getTypes().filter(it => {
-				if (!pageLayouts.includes(it.recommendedLayout) || skip.includes(it.typeKey) || (it.spaceId != space)) {
-					return false;
-				};
-				return config.debug.ho ? true : !it.isHidden;
+				return pageLayouts.includes(it.recommendedLayout) && !skip.includes(it.typeKey) && (it.spaceId == space);
 			}));
+			items.sort(this.sortByName);
 		};
 
-		if (withBookmark && bookmark) {
-			items.unshift(bookmark);
+		if (withBookmark) {
+			items.unshift(dbStore.getTypeByKey(Constant.typeKey.bookmark));
 		};
 
-		items.sort(this.sortByName);
-
-		if (withCollection && collection) {
-			items.unshift(collection);
+		if (withCollection) {
+			items.unshift(dbStore.getTypeByKey(Constant.typeKey.collection));
 		};
 
-		if (withSet && set) {
-			items.unshift(set);
+		if (withSet) {
+			items.unshift(dbStore.getTypeByKey(Constant.typeKey.set));
 		};
 
-		if (task) {
-			items.unshift(task);
-		};
+		items.unshift(dbStore.getTypeByKey(Constant.typeKey.task));
 
 		if (page && note) {
 			if (commonStore.type == Constant.typeKey.note) {
@@ -451,6 +441,13 @@ class UtilData {
 				items = [ note, page ].concat(items);
 			};
 		};
+
+		items = items.filter(it => it);
+
+		if (!config.debug.ho) {
+			items = items.filter(it => !it.isHidden);
+		};
+
 		return items;
 	};
 

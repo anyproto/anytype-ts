@@ -59,7 +59,7 @@ export const Mapper = {
 				accountSpaceId: obj.getAccountspaceid(),
 				widgetsId: obj.getWidgetsid(),
 				analyticsId: obj.getAnalyticsid(),
-				networkId: obj.getNetworkid(),
+				networkId: '',//obj.getNetworkid(),
 			};
 		},
 

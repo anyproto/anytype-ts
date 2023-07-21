@@ -53,12 +53,12 @@ class UtilMenu {
 	};
 
 	getBlockObject () {
-		let ret: any[] = [
+		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
-		let i = 0;
-		let items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 
+		let i = 0;
 		for (let type of items) {
 			ret.push({ 
 				id: 'object' + i++, 
@@ -87,14 +87,8 @@ class UtilMenu {
 	};
 
 	getTurnPage () {
-		const { config } = commonStore;
 		const ret = [];
-	
-		let types = UtilData.getObjectTypesForNewObject(); 
-		if (!config.debug.ho) {
-			types = types.filter(it => !it.isHidden);
-		};
-		types.sort(UtilData.sortByName);
+		const types = UtilData.getObjectTypesForNewObject(); 
 
 		let i = 0;
 		for (let type of types) {
