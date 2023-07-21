@@ -84,7 +84,7 @@ html.platformWindows, html.platformLinux {
 .isReadonly { -webkit-user-modify: unset !important; cursor: default !important; }
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
-.over, .overMenu, .overPopup { overflow: hidden !important; }
+.over, .overMenu { overflow: hidden !important; }
 .empty, .emptyText { color: $colorSecondary; }
 .isDone { color: $colorDarkGrey; }
 .placeholder { 
