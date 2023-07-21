@@ -21,8 +21,6 @@ html.printMedia {
 	.focusable.isFocused { background: none !important; }
 	.focusable.isFocused::before { display: none; }
 
-	.overMenu { overflow: visible !important; }
-
 	.popups {
 		.popup { position: relative; }
 		.dimmer { display: none !important; }
