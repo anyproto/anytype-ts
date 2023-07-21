@@ -20,6 +20,7 @@
 	"commonArchived": { "en": "Object is in the bin" },
 	"commonEmpty": { "en": "Empty" },
 	"commonBack": { "en": "Back" },
+	"commonNew": { "en": "New" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -72,6 +73,7 @@
 	"progress3": { "en": "Download in progress" },
 	"progress4": { "en": "Recovering account" },
 	"progress5": { "en": "Migration in progress" },
+	"progressUpdateCheck": { "en": "Checking for update..." },
 
 	"headerHistoryCurrent": { "en": "Current version" },
 	"headerHistoryRestore": { "en": "Restore version" },
@@ -261,6 +263,7 @@
 	"blockLinkArchived": { "en": "Deleted" },
 
 	"blockDataviewNew": { "en": "New object" },
+	"blockDataviewCreateNew": { "en": "Create new object" },
 
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },

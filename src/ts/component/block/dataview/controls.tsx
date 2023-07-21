@@ -132,8 +132,8 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 							<Button 
 								id={`button-${block.id}-add-record`}
 								className="addRecord c28" 
-								tooltip="Create new object" 
-								text="New" 
+								tooltip={translate('blockDataviewCreateNew')} 
+								text={translate('commonNew')} 
 								onClick={e => onRecordAdd(e, -1)} 
 							/>
  						) : ''}

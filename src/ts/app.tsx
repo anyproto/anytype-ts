@@ -528,16 +528,9 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateCheck (e: any, auto: boolean) {
-		if (auto) {
-			return;
+		if (!auto) {
+			commonStore.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
 		};
-
-		commonStore.progressSet({
-			status: 'Checking for update...',
-			current: 0,
-			total: 1,
-			isUnlocked: true
-		});
 	};
 
 	onUpdateConfirm (e: any, auto: boolean) {
