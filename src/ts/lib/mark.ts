@@ -501,6 +501,7 @@ class Mark {
 		html.replace(reg, (s: string, p: string, o: number) => {
 			let check = true;
 			for (const mark of checked) {
+				console.log(o, mark.range.from, mark.range.to);
 				if ((mark.range.from <= o) && (mark.range.to >= o)) {
 					check = false;
 					break;
@@ -519,6 +520,7 @@ class Mark {
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]) {
 		let text = html;
 		let test = /[`\*_~\[]{1}/.test(text);
+		let checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 
 		if (!test) {
 			return { marks, text };
@@ -542,9 +544,19 @@ class Mark {
 				let to = from + p3.length;
 				let replace = String((p1 + p3 + ' ') || '').replace(new RegExp('\\$', 'g'), '$$$');
 
-				this.adjust(marks, from, -p2.length * 2);
-				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
-				text = text.replace(s, replace);
+				let check = true;
+				for (const mark of checked) {
+					if ((mark.range.from <= from) && (mark.range.to >= to)) {
+						check = false;
+						break;
+					};
+				};
+
+				if (check) {
+					this.adjust(marks, from, -p2.length * 2);
+					marks.push({ type: item.type, range: { from, to }, param: '' });
+					text = text.replace(s, replace);
+				};
 				return s;
 			});
 		};
