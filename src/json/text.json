@@ -348,6 +348,7 @@
 	"popupSettingsSpaceIndexExportDataTitle": { "en": "Export data" },
 	"popupSettingsSpaceIndexSpaceInfoTitle": { "en": "Space information" },
 	"popupSettingsSpaceIndexSpaceIdTitle": { "en": "Space ID" },
+	"popupSettingsSpaceIndexNetworkIdTitle": { "en": "Network ID" },
 	"popupSettingsSpaceIndexCreatedByTitle": { "en": "Created by" },
 	"popupSettingsSpaceIndexCreationDateTitle": { "en": "Creation date" },
 
