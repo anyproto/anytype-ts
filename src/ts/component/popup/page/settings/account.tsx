@@ -85,11 +85,11 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				<div className="section">
 					<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
 
-					<div className="inputWrapper accountId">
+					<div className="inputWrapper withIcon">
 						<Input
 							value={account.id}
 							readonly={true}
-							onFocus={() => UtilCommon.clipboardCopyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
+							onClick={() => UtilCommon.clipboardCopyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
 						/>
 						<Icon className="copy" />
 					</div>

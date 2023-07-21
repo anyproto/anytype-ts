@@ -171,9 +171,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					<div className="section sectionInfo">
 						<Title text={translate(`popupSettingsSpaceIndexSpaceInfoTitle`)} />
+
 						<div className="sectionContent">
 
-							<div onClick={() => UtilCommon.clipboardCopyToast('Space ID', space.id)} className="item">
+							<div
+								className="item"
+								onClick={() => UtilCommon.clipboardCopyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.id)}
+							>
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexSpaceIdTitle`)} />
@@ -185,11 +189,29 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								</div>
 							</div>
 
-							<div onClick={() => UtilCommon.clipboardCopyToast('Account ID', account.id)} className="item">
+							<div 
+								className="item" 
+								onClick={() => UtilCommon.clipboardCopyToast('Account ID', account.id)}
+							>
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexCreatedByTitle`)} />
 										<Label text={account.id} />
+									</div>
+									<div className="side right">
+										<Icon className="copy" />
+									</div>
+								</div>
+							</div>
+
+							<div
+								className="item"
+								onClick={() => UtilCommon.clipboardCopyToast(translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId)}
+							>
+								<div className="sides">
+									<div className="side left">
+										<Title text={translate(`popupSettingsSpaceIndexNetworkIdTitle`)} />
+										<Label text={account.info.networkId} />
 									</div>
 									<div className="side right">
 										<Icon className="copy" />

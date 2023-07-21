@@ -21,6 +21,7 @@ export interface AccountInfo {
 	accountSpaceId: string;
 	widgetsId: string;
 	analyticsId: string;
+	networkId: string;
 };
 
 export interface AccountConfig {

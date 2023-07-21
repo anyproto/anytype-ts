@@ -635,13 +635,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			keyboard.shortcut(`${cmd}+/, ctrl+shift+/`, e, () => {
 				menuStore.closeAll([ 'blockContext', 'blockAdd' ], () => {
 					menuStore.open('blockAction', { 
-						element: '#block-' + ids[0],
+						element: `#block-${ids[0]}`,
 						offsetX: Constant.size.blockMenu,
 						data: {
 							blockId: ids[0],
 							blockIds: ids,
-							rootId: rootId,
-							dataset: dataset,
+							rootId,
+							dataset,
+							onCopy: this.onCopy,
 						},
 						onClose: () => {
 							selection.clear();
@@ -797,8 +798,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 					data: {
 						blockId: block.id,
 						blockIds: UtilData.selectionGet(block.id, true, true, this.props),
-						rootId: rootId,
-						dataset: dataset,
+						rootId,
+						dataset,
+						onCopy: this.onCopy,
 					},
 					onClose: () => {
 						selection.clear();

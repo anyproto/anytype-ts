@@ -181,7 +181,6 @@ class Cell extends React.Component<Props> {
 
 			if (menuId) {
 				keyboard.disableBlur(true);
-				$(bodyContainer).addClass('overMenu');
 			};
 
 			if (this.ref) {
@@ -211,10 +210,6 @@ class Cell extends React.Component<Props> {
 
 			$(`#${cellId}`).removeClass('isEditing');
 			commonStore.cellId = '';
-
-			if (menuId) {
-				window.setTimeout(() => { $(bodyContainer).removeClass('overMenu'); }, Constant.delay.menu);
-			};
 		};
 
 		let ret = false;
