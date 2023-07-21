@@ -550,10 +550,10 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Update available',
-				text: 'Do you want to update on a new version?',
-				textConfirm: 'Restart and update',
-				textCancel: 'Later',
+				title: translate('popupConfirmUpdatePromptTitle'),
+				text: translate('popupConfirmUpdatePromptText'),
+				textConfirm: translate('popupConfirmUpdatePromptOk'),
+				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateConfirm');
 				},

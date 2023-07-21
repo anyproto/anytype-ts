@@ -419,6 +419,11 @@
 	"popupSearchEmpty": { "en": "No objects found" },
 	"popupSearchEmptyFilter": { "en": "<b>There are no objects named <span>\"%s\"</span></b>Try creating a new one or search for something else" },
 
+	"popupConfirmUpdatePromptTitle": { "en": "Update available" },
+	"popupConfirmUpdatePromptText": { "en": "Do you want to update on a new version?" },
+	"popupConfirmUpdatePromptOk": { "en": "Restart and update" },
+	"popupConfirmUpdatePromptCancel": { "en": "Later" },
+
 	"popupConfirmUpdateErrorTitle": { "en": "Oops!" },
 	"popupConfirmUpdateErrorText": { "en": "Can't check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
 
