@@ -70,7 +70,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 			};
 
 			case I.RelationType.Checkbox: {
-				v = translate(`relationCheckboxLabelShort${Number(value}`);
+				v = translate(`relationCheckboxLabelShort${Number(value)}`);
 				break;
 			};
 

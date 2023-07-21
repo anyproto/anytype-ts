@@ -456,7 +456,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		popupStore.open('confirm', {
 			data: {
 				text: translate('authOnboardPhraseMoreInfoPopupContent'),
-				textConfirm: 'Okay',
+				textConfirm: translate('commonOkay'),
 				canConfirm: true,
 				canCancel: false,
 				onConfirm: () => {

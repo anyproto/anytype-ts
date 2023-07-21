@@ -3,6 +3,7 @@
 	"commonOr": { "en": "or" },
 	"commonTo": { "en": "to" },
 	"commonOk": { "en": "Ok" },
+	"commonOkay": { "en": "Okay" },
 	"commonCreate": { "en": "Create" },
 	"commonSave": { "en": "Save" },
 	"commonCancel": { "en": "Cancel" },
@@ -166,6 +167,7 @@
 	"authUsecaseCase3Label": { "en": "Keep your daily notes and self-reflections secure and private" },
 	"authUsecaseSkip": { "en":  "Skip" },
 
+	"pageAuthLoginInvalidPhrase": { "en": "Invalid recovery phrase" },
 	"pageMainArchiveEmpty": { "en": "Your bin is empty" },
 
 	"editorControlIcon": { "en": "Icon" },
@@ -273,6 +275,9 @@
 
 	"blockDataviewNew": { "en": "New object" },
 	"blockDataviewCreateNew": { "en": "Create new object" },
+	"blockDataviewSelectionMoveToBin": { "en": "Move to bin" },
+	"blockDataviewSelectionDeselect": { "en": "Deselect all" },
+	"blockDataviewSelectionUnlink": { "en": "Unlink" },
 
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
@@ -479,6 +484,8 @@
 	"menuDataviewUrlActionGo7": { "en": "Open link" },
 	"menuDataviewUrlActionGo8": { "en": "Mail to" },
 	"menuDataviewUrlActionGo9": { "en": "Call to" },
+	"menuDataviewUrlActionGoCopy": { "en": "Copy link" },
+	"menuDataviewUrlActionGoReload": { "en": "Reload from source" },
 
 	"previewCopy": { "en": "Copy link" },
 	"previewEdit": { "en": "Edit link" },

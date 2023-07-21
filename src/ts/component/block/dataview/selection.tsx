@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard } from 'Lib';
+import { I, keyboard, translate } from 'Lib';
 
 interface Props extends I.ViewComponent {
 	multiSelectAction?: (id: string) => void;
@@ -24,12 +24,12 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		};
 
 		const buttons: any[] = [
-			{ id: 'archive', text: 'Move to bin', className: [ 'black' ] },
-			{ id: 'done', text: 'Deselect all', className: [ 'black' ] },
+			{ id: 'archive', text: translate('blockDataviewSelectionMoveToBin'), className: [ 'black' ] },
+			{ id: 'done', text: translate('blockDataviewSelectionDeselect'), className: [ 'black' ] },
 		];
 
 		if (isCollection) {
-			buttons.unshift({ id: 'unlink', text: 'Unlink', className: [ 'black' ] });
+			buttons.unshift({ id: 'unlink', text: translate('blockDataviewSelectionUnlink'), className: [ 'black' ] });
 		};
 
 		return (
