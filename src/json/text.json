@@ -21,6 +21,8 @@
 	"commonEmpty": { "en": "Empty" },
 	"commonBack": { "en": "Back" },
 	"commonNew": { "en": "New" },
+	"commonLater": { "en": "Later" },
+	"commonRetry": { "en": "Retry"},
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -62,6 +64,11 @@
 	"relationName100": { "en": "Object" },
 	"relationName101": { "en": "Relations" },
 
+	"relationCheckboxLabel0": { "en": "%s is checked" },
+	"relationCheckboxLabel1": { "en": "%s is unchecked" },
+	"relationCheckboxLabelShort0": { "en": "checked" },
+	"relationCheckboxLabelShort1": { "en": "unchecked" },
+
 	"viewName0": { "en": "Grid" },
 	"viewName1": { "en": "List" },
 	"viewName2": { "en": "Gallery" },
@@ -74,6 +81,8 @@
 	"progress4": { "en": "Recovering account" },
 	"progress5": { "en": "Migration in progress" },
 	"progressUpdateCheck": { "en": "Checking for update..." },
+
+	"spellcheckAdd": { "en": "Add to dictionary" },
 
 	"headerHistoryCurrent": { "en": "Current version" },
 	"headerHistoryRestore": { "en": "Restore version" },
@@ -424,8 +433,13 @@
 
 	"popupConfirmUpdatePromptTitle": { "en": "Update available" },
 	"popupConfirmUpdatePromptText": { "en": "Do you want to update on a new version?" },
-	"popupConfirmUpdatePromptOk": { "en": "Restart and update" },
+	"popupConfirmUpdatePromptRestartOk": { "en": "Restart and update" },
+	"popupConfirmUpdatePromptOk": { "en": "Update" },
 	"popupConfirmUpdatePromptCancel": { "en": "Later" },
+
+	"popupConfirmUpdateDoneTitle": { "en": "You are up-to-date" },
+	"popupConfirmUpdateDoneText": { "en": "You are on the latest version: %s" },
+	"popupConfirmUpdateDoneOk": { "en": "'Great!" },
 
 	"popupConfirmUpdateErrorTitle": { "en": "Oops!" },
 	"popupConfirmUpdateErrorText": { "en": "Can't check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
