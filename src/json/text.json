@@ -581,6 +581,7 @@
 	"defaultNameView": { "en": "New view" },
 
 	"placeholderBlock": { "en": "Type text or / for commands" },
+	"placeholderBlockDescription": { "en": "Add a description" },
 	"placeholderFilter": { "en": "Type to filter" },
 	"placeholderCellCommon": { "en": "No value" },
 	"placeholderCell0": { "en": "Enter text" },

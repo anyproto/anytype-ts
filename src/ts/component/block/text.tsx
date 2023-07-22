@@ -105,7 +105,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			case I.TextStyle.Description: {
-				placeholder = 'Add a description';
+				placeholder = translate('placeholderBlockDescription');
 				break;
 			};
 
