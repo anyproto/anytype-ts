@@ -138,8 +138,8 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
         };
 
         const options = [
-            { id: 'upload', name: 'Change' },
-            { id: 'remove', name: 'Remove' }
+            { id: 'upload', name: translate('commonChange') },
+            { id: 'remove', name: translate('commonRemove') },
         ];
 
         menuStore.open('select', {

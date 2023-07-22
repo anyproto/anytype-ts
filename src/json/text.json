@@ -1,6 +1,7 @@
 {
 	"commonError": { "en": "Error" },
 	"commonOr": { "en": "or" },
+	"commonOf": { "en": "of" },
 	"commonTo": { "en": "to" },
 	"commonOk": { "en": "Ok" },
 	"commonOkay": { "en": "Okay" },
@@ -33,6 +34,10 @@
 	"commonCopy": { "en": "Copy" },
 	"commonOpenObject": { "en": "Open as object" },
 	"commonClose": { "en": "Close" },
+	"commonRemove": { "en": "Remove" },
+	"commonChange": { "en": "Change" },
+	"commonName": { "en": "Name" },
+	"commonNoObjects": { "en": "No objects" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -96,6 +101,7 @@
 
 	"headerHistoryCurrent": { "en": "Current version" },
 	"headerHistoryRestore": { "en": "Restore version" },
+	"headerTooltipPath": { "en": "Click to search" },
 
 	"confirmUpdateTitle": { "en": "It's time to update" },
 	"confirmUpdateText": { "en": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features." },
@@ -307,6 +313,9 @@
 	"blockTextWrap": { "en": "Wrap" },
 	"blockTextUnwrap": { "en": "Unwrap" },
 
+	"blockLatexPlaceholder": { "en": "Enter text in format LaTeX" },
+	"blockLatexTemplate": { "en": "Template formula" },
+
 	"popupSettingsTitle": { "en": "Settings" },
 
 	"popupSettingsAccountPersonalInformationTitle": { "en": "Personal information" },
@@ -474,7 +483,6 @@
 
 	"menuSmileRandom": { "en": "Random emoji" },
 	"menuSmileUpload": { "en": "Upload image" },
-	"menuSmileRemove": { "en": "Remove" },
 	"menuSmileEmpty": { "en": "<b>There are no emojis named <span>\"%s\"</span></b>Try to find a new one or upload your image" },
 
 	"menuCalendarToday": { "en": "Today" },
@@ -482,7 +490,6 @@
 
 	"menuBlockCoverUpload": { "en": "Upload image" },
 	"menuBlockCoverEdit": { "en": "Reposition" },
-	"menuBlockCoverRemove": { "en": "Remove" },
 	"menuBlockCoverEmpty": { "en": "There are no covers found" },
 	"menuBlockCoverEmptyFilter": { "en": "<b>There are no covers named <span>\"%s\"</span></b>Try to find a new one or upload your image" },
 
@@ -670,6 +677,8 @@
 
 	"sidebarToggle": { "en": "Toggle sidebar fixed mode" },
 
-	"unsplashString": { "en": "Photo by %s on %s" }
+	"unsplashString": { "en": "Photo by %s on %s" },
+
+	"templateBannner": { "en": "You are editing a template" }
 
 }

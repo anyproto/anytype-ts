@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData, translate } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -291,7 +291,7 @@ class Action {
 			data: {
 				title,
 				text,
-				textConfirm: 'Remove',
+				textConfirm: translate('commonRemove'),
 				colorConfirm: 'red',
 				onConfirm: () => {
 					C.WorkspaceObjectListRemove([ object.id ], (message: any) => {

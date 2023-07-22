@@ -31,10 +31,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			const type = dbStore.getType(object.targetObjectType);
 			center = (
 				<div className="templateBanner">
-					<Label text="You are editing a template" />
+					<Label text={translate('templateBannner')} />
 					{type ? (
 						<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
-							of
+							{translate('commonOf')}
 							<IconObject size={18} object={type} />
 							<ObjectName object={type} />
 						</div>
@@ -47,7 +47,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 					id="path"
 					className="path"
 					onClick={onSearch}
-					onMouseOver={e => onTooltipShow(e, 'Click to search')}
+					onMouseOver={e => onTooltipShow(e, translate('headerTooltipPath'))}
 					onMouseOut={onTooltipHide}
 				>
 					<div className="inner">
