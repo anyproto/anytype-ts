@@ -15,6 +15,7 @@
 	"commonSearchButton": { "en": "Search" },
 	"commonFilterClick": { "en": "Click to filter..." },
 	"commonFilterEmpty": { "en": "No items match filter" },
+	"commonFilterObjects": { "en": "Filter objects..." },
 	"commonHome": { "en": "Home" },
 	"commonSubmit": { "en": "Submit" },
 	"commonValue": { "en": "Value" },
@@ -39,6 +40,8 @@
 	"commonName": { "en": "Name" },
 	"commonNoObjects": { "en": "No objects" },
 	"commonHelp": { "en": "Help" },
+	"commonSelectAll": { "en": "Select all" },
+	"commonDeselectAll": { "en": "Deselect all" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -185,6 +188,7 @@
 
 	"pageAuthLoginInvalidPhrase": { "en": "Invalid recovery phrase" },
 	"pageMainArchiveEmpty": { "en": "Your bin is empty" },
+	"pageMainBlockEmpty": { "en": "Block not found" },
 
 	"editorControlIcon": { "en": "Icon" },
 	"editorControlCover": { "en": "Cover" },
@@ -325,6 +329,8 @@
 
 	"blockLatexPlaceholder": { "en": "Enter text in format LaTeX" },
 	"blockLatexTemplate": { "en": "Template formula" },
+
+	"blockTableOfContentsAdd": { "en": "Add headings to create a table of contents" },
 
 	"popupSettingsTitle": { "en": "Settings" },
 
@@ -695,6 +701,12 @@
 
 	"unsplashString": { "en": "Photo by %s on %s" },
 
-	"templateBannner": { "en": "You are editing a template" }
+	"templateBannner": { "en": "You are editing a template" },
+
+	"dispatcherImportSuccessTitle": { "en": "The import process is complete!" },
+	"dispatcherImportSuccessText": { "en": "Now the data is yours. You will find the imported objects in your favorite collection." },
+	"dispatcherExportSuccessTitle": { "en": "The export process is complete!" },
+	"dispatcherExportSuccessText": { "en": "You can find the exported objects in the folder you selected." },
+	"dispatcherImportConfirm": { "en": "Ok! I got it!" }
 
 }

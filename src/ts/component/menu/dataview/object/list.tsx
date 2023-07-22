@@ -49,7 +49,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { filter, noFilter } = data;
 		const items = this.getItems();
-		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
+		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
