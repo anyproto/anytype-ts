@@ -879,6 +879,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			parsed = this.getMarksFromHtml();
 			//marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
 			this.marks = parsed.marks;
+
+			console.log(JSON.stringify(this.marks, null, 3));
 		};
 
 		if (menuOpenAdd || menuOpenMention) {
