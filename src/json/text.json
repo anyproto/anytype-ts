@@ -24,6 +24,7 @@
 	"commonNew": { "en": "New" },
 	"commonLater": { "en": "Later" },
 	"commonRetry": { "en": "Retry"},
+	"commonUncategorized": { "en": "Uncategorized" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -275,9 +276,17 @@
 
 	"blockDataviewNew": { "en": "New object" },
 	"blockDataviewCreateNew": { "en": "Create new object" },
+	"blockDataviewControlsFilters": { "en": "Filters" },
+	"blockDataviewControlsSorts": { "en": "Sorts" },
+	"blockDataviewControlsSettings": { "en": "Sorts" },
 	"blockDataviewSelectionMoveToBin": { "en": "Move to bin" },
 	"blockDataviewSelectionDeselect": { "en": "Deselect all" },
 	"blockDataviewSelectionUnlink": { "en": "Unlink" },
+	"blockDataviewSelectionSelected": { "en": "%s selected" },
+	"blockDataviewHeadMenuEdit": { "en": "Edit title" },
+	"blockDataviewHeadMenuChange": { "en": "Change source %s" },
+	"blockDataviewHeadMenuOpen": { "en": "Open source %s" },
+	"blockDataviewBoardculmnSettings": { "en": "Column settings" },
 
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
@@ -625,6 +634,8 @@
 
 	"spaceType0": { "en": "Personal space" },
 
-	"phrasePlaceholder": { "en": "Please enter your Recovery phrase here" }
+	"phrasePlaceholder": { "en": "Please enter your Recovery phrase here" },
+
+	"navigationCreateNew": { "en": "Create new object" }
 
 }

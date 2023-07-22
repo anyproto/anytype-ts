@@ -2,7 +2,7 @@ import * as React from 'react';
 import raf from 'raf';
 import { Icon, IconObject } from 'Component';
 import { commonStore, detailStore, blockStore, popupStore } from 'Store';
-import { I, UtilObject, keyboard, Storage, UtilCommon, Preview } from 'Lib';
+import { I, UtilObject, keyboard, Storage, UtilCommon, Preview, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 class Navigation extends React.Component {
@@ -39,7 +39,7 @@ class Navigation extends React.Component {
 		const buttons: any[] = [
 			{ id: 'back', tooltip: 'Back', caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: 'Forward', caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
-			{ id: 'plus', tooltip: 'Create new object', caption: `${cmd} + N`, onClick: this.onAdd },
+			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N`, onClick: this.onAdd },
 			{ id: 'graph', tooltip: 'Graph', caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: 'Search', caption: `${cmd} + S`, onClick: this.onSearch },
 		];

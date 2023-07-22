@@ -45,9 +45,9 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		};
 
 		const buttons = [
-			{ id: 'filter', text: 'Filters', menu: 'dataviewFilterList', on: filterCnt > 0 },
-			{ id: 'sort', text: 'Sorts', menu: 'dataviewSort', on: sortCnt > 0 },
-			{ id: 'settings', text: 'Settings', menu: 'dataviewRelationList' },
+			{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: filterCnt > 0 },
+			{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
+			{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewRelationList' },
 		];
 
 		const ButtonItem = (item: any) => {
@@ -193,20 +193,24 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			let tabs: any[] = [];
 
 			switch (component) {
-				case 'dataviewViewList':
+				case 'dataviewViewList': {
 					break;
+				};
 
-				case 'dataviewFilterList':
-					tabs = [ { id: 'filter', name: 'Filters', component } ];
+				case 'dataviewFilterList': {
+					tabs = [ { id: 'filter', name: translate('blockDataviewControlsFilters'), component } ];
 					break;
+				};
 
-				case 'dataviewSort':
-					tabs = [ { id: 'sort', name: 'Sorts', component } ];
+				case 'dataviewSort': {
+					tabs = [ { id: 'sort', name: translate('blockDataviewControlsSorts'), component } ];
 					break;
+				};
 
-				default:
+				default: {
 					tabs = Dataview.getMenuTabs(rootId, block.id, view.id);
 					break;
+				};
 			};
 
 			return tabs;
