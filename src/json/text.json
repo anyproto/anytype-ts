@@ -26,6 +26,9 @@
 	"commonRetry": { "en": "Retry"},
 	"commonUncategorized": { "en": "Uncategorized" },
 	"commonGraph": { "en": "Graph" },
+	"commonToday": { "en": "Today" },
+	"commonTomorrow": { "en": "Tomorrow" },
+	"commonYesterday": { "en": "Yesterday" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -538,7 +541,8 @@
 	"threadStatus5Tooltip": { "en": "We have updated the protocol version. Click to update and sync the objects." },
 
 	"toastRecoveryCopiedClipboard": { "en": "Recovery phrase copied to clipboard"  },
-	"toastTemplateCreate": { "en": "is saved as a template!"  },
+	"toastTemplateCreate": { "en": "is saved as a template!" },
+	"toastCopy": { "en": "%s has been copied to clipboard" },
 
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },
@@ -654,6 +658,8 @@
 	"quickOption8": { "en": "Current month" },
 	"quickOption9": { "en": "Next month" },
 	"quickOption10": { "en": "Number of days ago" },
-	"quickOption11": { "en": "Number of days from now" }
+	"quickOption11": { "en": "Number of days from now" },
+
+	"sidebarToggle": { "en": "Toggle sidebar fixed mode" }
 
 }

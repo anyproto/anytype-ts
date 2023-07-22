@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
-import { I, UtilData, UtilObject, keyboard, sidebar } from 'Lib';
-import { blockStore, detailStore, popupStore, menuStore, dbStore } from 'Store';
+import { I, UtilData, UtilObject, keyboard, sidebar, translate } from 'Lib';
+import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
@@ -64,7 +64,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				<div className="side left">
 					<Icon
 						className="toggle big"
-						tooltip="Toggle sidebar fixed mode"
+						tooltip={translate('sidebarToggle')}
 						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggleExpandCollapse()}
