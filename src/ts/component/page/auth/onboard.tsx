@@ -431,8 +431,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy = () => {
-		UtilCommon.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
+		UtilCommon.copyToast(translate('commonPhrase'), authStore.phrase);
+		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */

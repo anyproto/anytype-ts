@@ -29,6 +29,10 @@
 	"commonToday": { "en": "Today" },
 	"commonTomorrow": { "en": "Tomorrow" },
 	"commonYesterday": { "en": "Yesterday" },
+	"commonPhrase": { "en": "Recovery phrase" },
+	"commonCopy": { "en": "Copy" },
+	"commonOpenObject": { "en": "Open as object" },
+	"commonClose": { "en": "Close" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -283,6 +287,7 @@
 	"blockDataviewControlsFilters": { "en": "Filters" },
 	"blockDataviewControlsSorts": { "en": "Sorts" },
 	"blockDataviewControlsSettings": { "en": "Sorts" },
+	"blockDataviewControlsViewAdd": { "en": "Create new view" },
 	"blockDataviewSelectionMoveToBin": { "en": "Move to bin" },
 	"blockDataviewSelectionDeselect": { "en": "Deselect all" },
 	"blockDataviewSelectionUnlink": { "en": "Unlink" },
@@ -298,6 +303,9 @@
 	"blockFileError": { "en": "There was an error uploading the file" },
 
 	"blockBookmarkError": { "en": "There was an error fetching the url" },
+
+	"blockTextWrap": { "en": "Wrap" },
+	"blockTextUnwrap": { "en": "Unwrap" },
 
 	"popupSettingsTitle": { "en": "Settings" },
 
@@ -540,9 +548,9 @@
 	"threadStatus4Tooltip": { "en": "Failed to sync, trying again..." },
 	"threadStatus5Tooltip": { "en": "We have updated the protocol version. Click to update and sync the objects." },
 
-	"toastRecoveryCopiedClipboard": { "en": "Recovery phrase copied to clipboard"  },
 	"toastTemplateCreate": { "en": "is saved as a template!" },
 	"toastCopy": { "en": "%s has been copied to clipboard" },
+	"toastCopyBlock": { "en": "Block has been copied to clipboard"},
 
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },
@@ -660,6 +668,8 @@
 	"quickOption10": { "en": "Number of days ago" },
 	"quickOption11": { "en": "Number of days from now" },
 
-	"sidebarToggle": { "en": "Toggle sidebar fixed mode" }
+	"sidebarToggle": { "en": "Toggle sidebar fixed mode" },
+
+	"unsplashString": { "en": "Photo by %s on %s" }
 
 }

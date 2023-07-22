@@ -148,13 +148,13 @@ class UtilMenu {
 		
 		if (hasFile) {
 			items.push({ id: 'download', icon: 'download', name: 'Download' });
-			items.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
+			items.push({ id: 'openFileAsObject', icon: 'expand', name: translate('commonOpenObject') });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
 		};
 
 		if (hasBookmark) {
-			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
+			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: translate('commonOpenObject') });
 		};
 
 		return items.map(it => ({ ...it, isAction: true }));

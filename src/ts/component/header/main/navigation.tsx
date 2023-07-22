@@ -25,7 +25,7 @@ const HeaderMainNavigation = observer(class HeaderMainNavigation extends React.C
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggleExpandCollapse()}
 					/>
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 				</div>
 
 				<div className="side center">

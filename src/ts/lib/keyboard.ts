@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, UtilCommon, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, Preview, Action } from 'Lib';
+import { I, C, UtilCommon, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, Preview, Action, translate } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -261,14 +261,11 @@ class Keyboard {
 					className: 'isWide isLeft',
 					data: {
 						text: `ID: ${this.getRootId()}`,
-						textConfirm: 'Copy',
-						textCancel: 'Close',
+						textConfirm: translate('commonCopy'),
+						textCancel: translate('commonClose'),
 						canConfirm: true,
 						canCancel: true,
-						onConfirm: () => {
-							UtilCommon.clipboardCopy({ text: this.getRootId() });
-							Preview.toastShow({ text: 'ID copied to clipboard' });
-						},
+						onConfirm: () => UtilCommon.copyToast('ID', this.getRootId()),
 					}
 				});
 			});
@@ -615,13 +612,12 @@ class Keyboard {
 				className: 'isWide isLeft',
 				data: {
 					text: data.map(it => `<b>${it[0]}</b>: ${it[1]}`).join('<br/>'),
-					textConfirm: 'Copy',
-					textCancel: 'Close',
+					textConfirm: translate('commonCopy'),
+					textCancel: translate('commonClose'),
 					canConfirm: true,
 					canCancel: true,
 					onConfirm: () => {
-						UtilCommon.clipboardCopy({ text: data.map(it => `${it[0]}: ${it[1]}`).join('\n') });
-						Preview.toastShow({ text: 'Tech information copied to clipboard' });
+						UtilCommon.copyToast('Tech information', data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
 					},
 				}
 			});

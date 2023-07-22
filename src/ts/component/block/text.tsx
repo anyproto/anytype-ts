@@ -145,12 +145,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						<div className="buttons">
 							<div className="btn" onClick={this.onToggleWrap}>
 								<Icon className="codeWrap" />
-								<div className="txt">{fields.isUnwrapped ? 'Wrap' : 'Unwrap'}</div>
+								<div className="txt">{fields.isUnwrapped ? translate('blockTextWrap') : translate('blockTextUnwrap')}</div>
 							</div>
 
 							<div className="btn" onClick={this.onCopy}>
 								<Icon className="copy" />
-								<div className="txt">Copy</div>
+								<div className="txt">{translate('commonCopy')}</div>
 							</div>
 						</div>
 					</React.Fragment>
@@ -1261,7 +1261,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				},
 			});
 
-			Preview.toastShow({ text: `Block has been copied to clipboard` });
+			Preview.toastShow({ text: translate('toastCopyBlock') });
 		});
 	};
 	

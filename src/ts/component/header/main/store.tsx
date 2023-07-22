@@ -25,7 +25,7 @@ const HeaderMainStore = observer(class HeaderMainStore extends React.Component<I
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggleExpandCollapse()}
 					/>
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 				</div>
 
 				<div className="side center">

@@ -87,7 +87,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				{views.map((item: I.View, i: number) => (
 					<ViewItem key={i} {...item} index={i} />
 				))}
-				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip={translate('blockDataviewControlsViewAdd')} onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
