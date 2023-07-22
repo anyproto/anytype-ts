@@ -149,7 +149,14 @@ class UtilFile {
 	};
 
 	name (object: any) {
-		return object.name + (object.fileExt ? `.${object.fileExt}` : '');
+		const { name, fileExt } = object;
+		const ret = [ name ];
+
+		if (fileExt) {
+			ret.push(fileExt);
+		};
+
+		return ret.join('.');
 	};
 
 };

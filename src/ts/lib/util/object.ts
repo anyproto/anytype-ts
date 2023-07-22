@@ -51,7 +51,7 @@ class UtilObject {
 	graph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
-			name: 'Graph', 
+			name: translate('commonGraph'), 
 			iconEmoji: ':earth_americas:',
 			layout: I.ObjectLayout.Graph,
 		};
@@ -60,7 +60,7 @@ class UtilObject {
 	lastOpened () {
 		return { 
 			id: I.HomePredefinedId.Last,
-			name: 'Last opened object', 
+			name: translate('spaceLast'), 
 		};
 	};
 

@@ -40,7 +40,7 @@ class Navigation extends React.Component {
 			{ id: 'back', tooltip: 'Back', caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
 			{ id: 'forward', tooltip: 'Forward', caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
 			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N`, onClick: this.onAdd },
-			{ id: 'graph', tooltip: 'Graph', caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
+			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
 			{ id: 'search', tooltip: 'Search', caption: `${cmd} + S`, onClick: this.onSearch },
 		];
 

@@ -25,6 +25,7 @@
 	"commonLater": { "en": "Later" },
 	"commonRetry": { "en": "Retry"},
 	"commonUncategorized": { "en": "Uncategorized" },
+	"commonGraph": { "en": "Graph" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -637,6 +638,22 @@
 
 	"phrasePlaceholder": { "en": "Please enter your Recovery phrase here" },
 
-	"navigationCreateNew": { "en": "Create new object" }
+	"navigationCreateNew": { "en": "Create new object" },
+
+	"spaceLast": { "en": "Last opened object" },
+	"spaceExisting": { "en": "Existing object" },
+
+	"quickOption0": { "en": "Exact date" },
+	"quickOption1": { "en": "Yesterday" },
+	"quickOption2": { "en": "Today" },
+	"quickOption3": { "en": "Tomorrow" },
+	"quickOption4": { "en": "Last week" },
+	"quickOption5": { "en": "Current week" },
+	"quickOption6": { "en": "Next week" },
+	"quickOption7": { "en": "Last month" },
+	"quickOption8": { "en": "Current month" },
+	"quickOption9": { "en": "Next month" },
+	"quickOption10": { "en": "Number of days ago" },
+	"quickOption11": { "en": "Number of days from now" }
 
 }
