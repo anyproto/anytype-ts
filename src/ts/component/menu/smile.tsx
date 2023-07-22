@@ -266,7 +266,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				};
 			});
 
-			sections.unshift({ id: ID_RECENT, name: 'Recently used', children: recent });
+			sections.unshift({ id: ID_RECENT, name: translate('menuSmileRecent'), children: recent });
 		};
 
 		return sections;
@@ -327,7 +327,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		if (length && (length <= LIMIT_SEARCH)) {
 			sections = [
 				{ 
-					id: 'search', name: 'Search results', isSection: true,
+					id: 'search', name: translate('menuSmileSearch'), isSection: true,
 					children: sections.reduce((res: any[], section: any) => {
 						return (section.id == ID_RECENT) ? res : res.concat(section.children); 
 					}, [])

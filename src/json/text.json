@@ -38,6 +38,7 @@
 	"commonChange": { "en": "Change" },
 	"commonName": { "en": "Name" },
 	"commonNoObjects": { "en": "No objects" },
+	"commonHelp": { "en": "Help" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -306,7 +307,16 @@
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
 
+	"blockFileUpload": { "en": "Upload a file" },
 	"blockFileError": { "en": "There was an error uploading the file" },
+
+	"blockAudioUpload": { "en": "Upload an audio" },
+
+	"blockImageUpload": { "en": "Upload a picture" },
+
+	"blockPdfUpload": { "en": "Upload a PDF" },
+
+	"blockVideoUpload": { "en": "Upload a video" },
 
 	"blockBookmarkError": { "en": "There was an error fetching the url" },
 
@@ -484,6 +494,8 @@
 	"menuSmileRandom": { "en": "Random emoji" },
 	"menuSmileUpload": { "en": "Upload image" },
 	"menuSmileEmpty": { "en": "<b>There are no emojis named <span>\"%s\"</span></b>Try to find a new one or upload your image" },
+	"menuSmileRecent": { "en": "Recently used" },
+	"menuSmileSearch": { "en": "Search results" },
 
 	"menuCalendarToday": { "en": "Today" },
 	"menuCalendarTomorrow": { "en": "Tomorrow" },
@@ -514,6 +526,10 @@
 	"menuDataviewUrlActionGo9": { "en": "Call to" },
 	"menuDataviewUrlActionGoCopy": { "en": "Copy link" },
 	"menuDataviewUrlActionGoReload": { "en": "Reload from source" },
+
+	"menuPreviewLatexExample": { "en": "Example: %s" },
+
+	"menuSelectEmpty": { "en": "No options found" },
 
 	"previewCopy": { "en": "Copy link" },
 	"previewEdit": { "en": "Edit link" },
