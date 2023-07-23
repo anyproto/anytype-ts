@@ -527,6 +527,8 @@
 
 	"menuDataviewViewEditName": { "en": "View name" },
 
+	"menuDataviewFilterListEmpty": { "en": "No filters applied to this view" },
+
 	"menuDataviewUrlActionGo7": { "en": "Open link" },
 	"menuDataviewUrlActionGo8": { "en": "Mail to" },
 	"menuDataviewUrlActionGo9": { "en": "Call to" },
