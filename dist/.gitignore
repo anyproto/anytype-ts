@@ -1,39 +1,19 @@
 Anytype-*
 Anytype Setup*
-builder-effective-config.yaml
+anytypeHelper*
 mac/*
-mac-arm64/*
-__snap-arm64
 .icon-ico/*
 main.js
 main.js.map
 commands.js
 bundle-back.js
-anytypeHelper*
+*-arm64/
+*-unpacked/
 *.snap
 *.snap
 *.deb
 *.rpm
 *.pacman
 *.node
-
-# unpacked
-mac-unpacked
-win-unpacked
-linux-unpacked
-linux-arm64-unpacked
-
-# yml
-alpha-linux.yml
-alpha-linux-arm64.yml
-alpha-mac.yml
-alpha.yml
-beta-linux.yml
-beta-linux-arm64.yml
-beta-mac.yml
-beta.yml
-builder-debug.yml
-latest-linux.yml
-latest-linux-arm64.yml
-latest-mac.yml
-latest.yml
+*.yml
+*.yaml
