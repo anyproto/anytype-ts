@@ -21,6 +21,8 @@ Fetch the latest binary from the [github releases](https://github.com/anytypeio/
 	
 Or compile from the source code. Follow instructions at [`anytype-heart`](https://github.com/anyproto/anytype-heart#how-to-build).
 
+After `./update.sh` downloaded the binary or after compiling it from source, you need to move `anytypeHelper` (`anytypeHelper.exe` for Windows) into the `dist` Folder.
+
 ### Building
 
 Build [`anytype-heart`](https://github.com/anyproto/anytype-heart) first.
