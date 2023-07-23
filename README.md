@@ -16,12 +16,18 @@ Also, [install `gitleaks`](https://github.com/zricethezav/gitleaks#installing) t
 Fetch the latest binary from the [github releases](https://github.com/anytypeio/go-anytype-middleware/releases/latest)
 
 ```shell
-./update.sh <macos-latest|ubuntu-latest|windows-latest>
+./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd> # arm/amd only for macos/ubuntu
 ```
 	
 Or compile from the source code. Follow instructions at [`anytype-heart`](https://github.com/anyproto/anytype-heart#how-to-build).
 
-After `./update.sh` downloaded the binary or after compiling it from source, you need to move `anytypeHelper` (`anytypeHelper.exe` for Windows) into the `dist` Folder.
+After `./update.sh` downloaded the binary or after compiling it from source, you need to move `anytypeHelper` into the `dist` Folder.
+
+| OS CPU Type        | move command                        |
+|--------------------|-------------------------------------|
+| Windows            | *already copied to the dist folder* |
+| MacOS <arm \| amd> | `mv darwin-*/anytypeHelper dist/`   |
+| Linux <arm \| amd> | `mv linux-*/anytypeHelper dist/`    |
 
 ### Building
 
