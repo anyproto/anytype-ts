@@ -4,10 +4,8 @@ REPO="anyproto/anytype-heart"
 FILE="addon.tar.gz"
 GITHUB="api.github.com"
 
-user=$1
-token=$2;
-platform=$3;
-arch=$4;
+platform=${1:-ubuntu-latest};
+arch=$2;
 folder="build";
 
 if [ "$platform" = "ubuntu-latest" ]; then
@@ -26,11 +24,6 @@ echo "Arch: $arch"
 echo "Folder: $folder"
 echo ""
 
-if [ "$token" = "" ]; then
-  echo "ERROR: token is empty"
-  exit 1
-fi;
-
 if [ "$arch" = "" ]; then
   echo "ERROR: arch not found"
   exit 1
@@ -38,7 +31,7 @@ fi;
 
 mwv=`cat middleware.version`
 
-version=`curl -u "$user:$token" -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases/tags/v$mwv | jq .`
+version=`curl -H "Accept: application/vnd.github.v3+json" -sL https://$GITHUB/repos/$REPO/releases/tags/v$mwv | jq .`
 
 tag=`echo $version | jq ".tag_name"`
 asset_id=`echo $version | jq ".assets | map(select(.name | match(\"js_v[0-9]+.[0-9]+.[0-9]+(-rc[0-9]+)?_$arch\";\"i\")))[0].id"`
@@ -51,7 +44,7 @@ fi;
 printf "Version: $tag\n"
 printf "Found asset: $asset_id\n"
 echo -n "Downloading file..."
-curl -sL -H "Authorization: token $token" -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/releases/assets/$asset_id" > $FILE
+curl -sL -H 'Accept: application/octet-stream' "https://$GITHUB/repos/$REPO/releases/assets/$asset_id" > $FILE
 printf "Done\n"
 
 if [ "$platform" = "windows-latest" ]; then
