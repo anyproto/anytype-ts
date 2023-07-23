@@ -25,6 +25,12 @@
     {
       "files": "*.{svg,html}",
       "options": { "parser": "html" }
+    },
+    {
+      "files": ["*.code-workspace"],
+      "options": {
+        "parser": "json"
+      }
     }
   ]
 }
