@@ -1,0 +1,61 @@
+name: Bug report
+description: File a bug
+labels: ["bug", "triage"]
+body:
+- type: checkboxes
+  attributes:
+    label: Have you read a contributing guide?
+    description: Please read [CONTRINUTING.md](../../docs/CONTRIBUTING.md) before proceeding. Check if there are existing [bug reports](https://community.anytype.io/c/bug-reports/l/latest?board=default) and upvote them instead. Follow [this article](https://doc.anytype.io/d/community/community-forum) if you don't know how to join the community.
+    options:
+    - label: I have read CONTRIBUTING.md
+      required: true
+    - label: I have searched the existing issues and didn't find any that were similar
+      required: true
+    - label: I have considered creating a pull request with fixes instead of a bug report and want to proceed
+      required: true
+- type: textarea
+  attributes:
+    label: Current Behavior
+    description: A concise description of what you're experiencing.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Expected Behavior
+    description: A concise description of what you expected to happen.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Steps To Reproduce
+    description: Steps to reproduce the behavior.
+    placeholder: |
+      1. In this environment...
+      2. With this config...
+      3. Run '...'
+      4. See error...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Environment
+    description: |
+      For example,
+        - **OS**: macOS 14
+        - **Version**: 0.35.4
+    value: |
+        - OS:
+        - Version:
+    render: markdown
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Anything else?
+    description: |
+      Screenshots? Videos? Links? References? Anything that will give us more context about the issue you are encountering!
+
+      Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+  validations:
+    required: false
+
