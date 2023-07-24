@@ -41,14 +41,14 @@ jobs:
       - name: Update Addon Windows
         if: matrix.os == 'windows-latest'
         shell: bash  
-        run: ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}}
+        run: ./update.sh ${{matrix.os}}
 
       - name: Update Addon
         if: matrix.os != 'windows-latest'
         shell: bash  
         run: |
-          ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
-          ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
+          ./update.sh ${{matrix.os}} arm
+          ./update.sh ${{matrix.os}} amd
 
       - name: Build Front Mac OS
         if: matrix.os == 'macos-latest'

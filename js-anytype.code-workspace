@@ -23,6 +23,6 @@
 		},
 		"prettier.documentSelectors": ["**/*.svg"],
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"debug.inlineValues": "on",  
+		"debug.inlineValues": "on"
 	}
 }

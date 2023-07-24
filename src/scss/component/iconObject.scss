@@ -60,7 +60,7 @@
 
 .iconObject.withImage { border-radius: 4px !important; background-color: unset !important; }
 .iconObject.withImage.c96 { border-radius: 6px !important; }
-.iconObject.withImage.c112, .iconObject.withImage.c128 { border-radius: 8px !important; }
+.iconObject.withImage.c112:not(.isHuman), .iconObject.withImage.c128:not(.isHuman) { border-radius: 8px !important; }
 
 .iconObject.isHuman { border-radius: 100% !important; }
 

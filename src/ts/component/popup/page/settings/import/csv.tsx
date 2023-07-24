@@ -127,6 +127,10 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 		const { storageGet } = this.props;
 		const options = storageGet().csv || {};
 
+		if (undefined === options.firstRow) {
+			options.firstRow = true;
+		};
+
 		this.data = {
 			mode: Number(options.mode) || I.CsvImportMode.Collection,
 			firstRow: Boolean(options.firstRow),
