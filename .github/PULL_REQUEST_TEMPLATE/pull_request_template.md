@@ -1,5 +1,13 @@
 <!-- This template inspired by https://github.com/open-sauced/.github/blob/main/.github/PULL_REQUEST_TEMPLATE.md?plain=1 -->
 
+---
+
+- [ ] I understand that contributing to this repository will require me to agree with the [CLA](https://github.com/anyproto/open/blob/main/templates/CLA.md)
+
+<!-- The bot will prompt you to accept the CLA by replying with a pre-composed message in the comments. If you have already accepted the CLA, you won't need to do it again. -->
+
+---
+
 ### Description
 
 <!-- 
@@ -47,9 +55,3 @@ Please provide links to issues, community forum posts, or other sources
   For Work In Progress Pull Requests, please use the Draft PR feature,
   see https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests#draft-pull-requests for further details.
 -->
-
-----
-
-- [ ] I understand that contributing to this repository will require me to agree with the [CLA](https://github.com/anyproto/open/blob/main/templates/CLA.md)
-
-<!-- The bot will prompt you to accept the CLA by replying with a pre-composed message in the comments. If you have already accepted the CLA, you won't need to do it again. -->
