@@ -6,6 +6,3 @@ contact_links:
   - name: Anytype Community
     url: https://community.anytype.io
     about: Existing feature requests and bug reports from Anytype users.
-  - name: Security Issue
-    url: mailto:security@anytype.io
-    about: Please report security vulnerabilities here.
