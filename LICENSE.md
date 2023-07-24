@@ -20,7 +20,7 @@ rights to anyone else. These terms do not imply any other licenses not
 expressly granted in this license.
 
 If Licensee violates any of these terms, or uses the Software in a way not 
-uthorized under this license, the license granted to Licensee ends 
+authorized under this license, the license granted to Licensee ends 
 immediately. 
 If Licensee makes, or authorizes any other person to make, any written claim 
 that the Software, or any other Any Association Product, infringes or 
