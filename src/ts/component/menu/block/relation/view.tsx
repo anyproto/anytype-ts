@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, DataUtil, Util, Relation, analytics, keyboard } from 'Lib';
+import { I, C, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Item from 'Component/menu/item/relationView';
@@ -27,7 +27,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 	render () {
 		const { param } = this.props;
 		const { data, classNameWrap } = param;
-		const { rootId, readonly } = data;
+		const { rootId } = data;
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (!root) {
@@ -35,8 +35,8 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		};
 
 		const sections = this.getSections();
-		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const isLocked = root.isLocked();
+		const readonly = data.readonly || isLocked;
 
 		let allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		let allowedRelation = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
@@ -81,7 +81,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 			</div>
 		);
 
-		const ItemAdd = (item: any) => (
+		const ItemAdd = () => (
 			<div id="item-add" className="item add" onClick={(e: any) => { this.onAdd(e); }}>
 				<div className="line" />
 				<div className="info">
@@ -97,9 +97,9 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				className="sections"
 			>
 				<div id="scrollWrap" className="scrollWrap">
-					{sections.map((item: any, i: number) => {
-						return <Section key={i} {...item} index={i} />;
-					})}
+					{sections.map((item: any, i: number) => (
+						<Section key={i} {...item} index={i} />
+					))}
 				</div>
 				{!readonly ? <ItemAdd /> : ''}
 			</div>
@@ -143,7 +143,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
 
 		for (let menu of menus) {
-			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
 		};
 	};
 
@@ -153,7 +153,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ 'targetObjectType', 'featuredRelations' ]);
-		const isTemplate = object.type == Constant.typeId.template;
+		const isTemplate = UtilObject.isTemplate(object.type);
 		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
 		const featured = Relation.getArrayValue(object.featuredRelations);
 		const relations = dbStore.getObjectRelations(rootId, rootId);
@@ -164,7 +164,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		let items = relations.map(it => ({ ...it, scope: I.RelationScope.Object }));
 		items = items.concat(typeRelations);
-		items = items.sort(DataUtil.sortByHidden).filter((it: any) => {
+		items = items.sort(UtilData.sortByHidden).filter((it: any) => {
 			return it ? (!config.debug.ho ? !it.isHidden : true) : false;
 		});
 
@@ -209,7 +209,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { rootId } = data;
 		const items = this.getItems();
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ], true);
-		const featured = Util.objectCopy(object.featuredRelations || []);
+		const featured = UtilCommon.objectCopy(object.featuredRelations || []);
 		const idx = featured.findIndex(it => it == relationKey);
 
 		if (idx < 0) {
@@ -331,12 +331,12 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const { data } = param;
 		const { isPopup } = data;
 		const obj = $(`#${getId()} .content`);
-		const container = Util.getScrollContainer(isPopup);
+		const container = UtilCommon.getScrollContainer(isPopup);
 		const offset = isPopup ? 16 : 120;
 		const min = isPopup ? 480 : 640;
 
 		obj.css({ 
-			height: container.height() - Util.sizeHeader() - 16,
+			height: container.height() - UtilCommon.sizeHeader() - 16,
 			width: Math.max(min, container.width() / 2 - offset),
 		});
 

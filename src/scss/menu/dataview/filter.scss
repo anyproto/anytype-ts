@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuDataviewFilterList { width: 360px; }
 	.menu.menuDataviewFilterList {
-		.content { overflow: visible; padding: 0px; }
+		.content { overflow: visible !important; padding: 0px; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		.items { flex-grow: 1; }
 
@@ -64,6 +64,10 @@
 		.select:hover, .select.active { background: none; }
 		.select {
 			.icon.arrow { background-image: url('~img/arrow/filter.svg') !important; }
+		}
+		.select.checkboxValue {
+			.item { @include text-common; }
+			.icon.arrow { right: -8px !important; }
 		}
 
 		.item { display: flex; }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Drag } from 'Component';
-import { Util } from 'Lib';
+import { UtilCommon } from 'Lib';
 
 interface PlaylistItem {
 	name: string; 
@@ -40,7 +40,7 @@ class MediaAudio extends React.Component<Props> {
                 <audio id="audio" preload="auto" src={this.current.src} />
 
                 <div className="controls">
-                    <Icon className="play" onMouseDown={this.onPlayClick} />
+                    <Icon className="play" onClick={this.onPlayClick} />
 
                     <div className="name">
                         <span>{this.current.name}</span>
@@ -60,7 +60,7 @@ class MediaAudio extends React.Component<Props> {
                         <span id="timeTotal" className="total">0:00</span>
                     </div>
 
-                    <Icon className="volume" onMouseDown={this.onMute} />
+                    <Icon className="volume" onClick={this.onMute} />
                     <Drag
                         id="volume"
                         ref={ref => this.refVolume = ref}
@@ -132,7 +132,7 @@ class MediaAudio extends React.Component<Props> {
         const el = this.audioNode;
         const paused = el.paused;
 
-        Util.pauseMedia();
+        UtilCommon.pauseMedia();
         paused ? this.play() : this.pause();
     };
 
@@ -219,10 +219,10 @@ class MediaAudio extends React.Component<Props> {
         const total = node.find('#timeTotal');
 
         let t = this.getTime(el.currentTime);
-        current.text(`${Util.sprintf('%02d', t.m)}:${Util.sprintf('%02d', t.s)}`);
+        current.text(`${UtilCommon.sprintf('%02d', t.m)}:${UtilCommon.sprintf('%02d', t.s)}`);
 
         t = this.getTime(el.duration);
-        total.text(`${Util.sprintf('%02d', t.m)}:${Util.sprintf('%02d', t.s)}`);
+        total.text(`${UtilCommon.sprintf('%02d', t.m)}:${UtilCommon.sprintf('%02d', t.s)}`);
 
         this.refTime.setValue(el.currentTime / el.duration);
     };

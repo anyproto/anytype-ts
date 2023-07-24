@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, Util, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, ObjectUtil, Preview } from 'Lib';
+import { I, C, UtilCommon, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, Preview, Action } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -39,6 +39,8 @@ class Keyboard {
 		this.unbind();
 		
 		const win = $(window);
+		const doc = $(document);
+
 		win.on('keydown.common', e => this.onKeyDown(e));
 		win.on('keyup.common', e => this.onKeyUp(e));
 		win.on('mousedown.common', e => this.onMouseDown(e));
@@ -56,6 +58,18 @@ class Keyboard {
 			Preview.previewHide(true);
 
 			this.pressed = [];
+
+			if (!commonStore.isSidebarFixed) {
+				sidebar.hide();
+			};
+
+			menuStore.closeAll([ 'blockContext' ]);
+		});
+
+		doc.off('mouseleave.common').on('mouseleave.common', () => {
+			if (!commonStore.isSidebarFixed) {
+				sidebar.hide();
+			};
 		});
 
 		Renderer.remove('commandGlobal');
@@ -104,8 +118,7 @@ class Keyboard {
 	};
 	
 	onKeyDown (e: any) {
-		const platform = Util.getPlatform();
-		const isMac = platform == I.Platform.Mac;
+		const isMac = UtilCommon.isPlatformMac();
 		const key = e.key.toLowerCase();
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
@@ -122,7 +135,7 @@ class Keyboard {
 			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
 
-			if (!Util.selectionRange() && isMac) {
+			if (!UtilCommon.getSelectionRange() && isMac) {
 				keyboard.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
 				keyboard.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
 			};
@@ -137,7 +150,7 @@ class Keyboard {
 			if (popupStore.isOpen()) {
 				let canClose = true;
 
-				if (Util.selectionRange()) {
+				if (UtilCommon.getSelectionRange()) {
 					$(document.activeElement).blur();
 					window.getSelection().removeAllRanges();
 					canClose = false;
@@ -157,17 +170,18 @@ class Keyboard {
 			Preview.previewHide(false);
 		});
 
-		// Shortcuts
-		this.shortcut('ctrl+space', e, () => {
-			popupStore.open('shortcut', {});
-		});
-
-		// Lock/Unlock
-		keyboard.shortcut(`ctrl+shift+l`, e, () => {
-			keyboard.onToggleLock();
-		});
-
 		if (isMain) {
+
+			// Shortcuts
+			this.shortcut('ctrl+space', e, () => {
+				popupStore.open('shortcut', { preventResize: true });
+			});
+
+			// Lock/Unlock
+			keyboard.shortcut(`ctrl+shift+l`, e, () => {
+				keyboard.onToggleLock();
+			});
+
 			// Print
 			keyboard.shortcut(`${cmd}+p`, e, () => {
 				e.preventDefault();
@@ -176,29 +190,19 @@ class Keyboard {
 
 			// Navigation search
 			this.shortcut(`${cmd}+s, ${cmd}+k`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked) {
-					return;
-				};
-
-				// Check if smth is selected to prevent search from opening
-				if ((pressed == `${cmd}+k`) && (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length))) {
+				if (popupStore.isOpen('search') || !this.isPinChecked || ((pressed == `${cmd}+k`) && this.checkSelection())) {
 					return;
 				};
 
 				this.onSearchPopup();
 			});
 
-			this.shortcut(`${cmd}+l`, e, (pressed: string) => {
-				if (popupStore.isOpen('search') || !this.isPinChecked) {
+			this.shortcut(`${cmd}+l`, e, () => {
+				if (popupStore.isOpen('search') || !this.isPinChecked || this.checkSelection()) {
 					return;
 				};
 
-				// Check if smth is selected to prevent search from opening
-				if (Util.selectionRange() || (this.selection && this.selection.get(I.SelectType.Block).length)) {
-					return;
-				};
-
-				ObjectUtil.openAuto({ layout: I.ObjectLayout.Store });
+				UtilObject.openAuto({ layout: I.ObjectLayout.Store });
 			});
 
 			// Text search
@@ -211,19 +215,19 @@ class Keyboard {
 			// Navigation links
 			this.shortcut(`${cmd}+o`, e, () => {
 				e.preventDefault();
-				ObjectUtil.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
+				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Navigation });
 			});
 
 			// Graph
 			this.shortcut(`${cmd}+alt+o`, e, () => {
 				e.preventDefault();
-				ObjectUtil.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
+				UtilObject.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
 			// Go to dashboard
 			this.shortcut('alt+h', e, () => {
 				if (authStore.account && !popupStore.isOpen('search')) {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 			});
 
@@ -248,15 +252,43 @@ class Keyboard {
 
 			// Store
 			this.shortcut(`${cmd}+alt+l`, e, () => {
-				ObjectUtil.openRoute({ layout: I.ObjectLayout.Store });
+				UtilObject.openRoute({ layout: I.ObjectLayout.Store });
+			});
+
+			// Object id
+			this.shortcut(`${cmd}+shift+\\`, e, () => {
+				popupStore.open('confirm', {
+					className: 'isWide isLeft',
+					data: {
+						text: `ID: ${this.getRootId()}`,
+						textConfirm: 'Copy',
+						textCancel: 'Close',
+						canConfirm: true,
+						canCancel: true,
+						onConfirm: () => {
+							UtilCommon.clipboardCopy({ text: this.getRootId() });
+							Preview.toastShow({ text: 'ID copied to clipboard' });
+						},
+					}
+				});
 			});
 		};
 
 		this.initPinCheck();
 	};
 
+	// Check if smth is selected
+	checkSelection () {
+		const range = UtilCommon.getSelectionRange();
+
+		if ((range && !range.collapsed) || (this.selection && this.selection.get(I.SelectType.Block).length)) {
+			return true;
+		};
+
+		return false;
+	};
+
 	pageCreate () {
-		const { focused } = focus.state;
 		const isMain = this.isMain();
 
 		if (!isMain) {
@@ -266,43 +298,20 @@ class Keyboard {
 		let targetId = '';
 		let position = I.BlockPosition.Bottom;
 		let rootId = '';
-		let root: any = null;
 		let details: any = {};
 		let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
 		
-		/*
-		if (this.isMainEditor()) {
-			rootId = this.getRootId();
-			root = blockStore.getLeaf(rootId, rootId);
-
-			if (!root || root.isLocked()) {
-				return;
-			};
-
-			details = {};
-
-			const fb = blockStore.getLeaf(rootId, focused);
-			if (fb) {
-				if (fb.isTextTitle()) {
-					const first = blockStore.getFirstBlock(rootId, 1, it => it.isFocusable() && !it.isTextTitle());
-					if (first) {
-						targetId = first.id;
-						position = I.BlockPosition.Top;
-					};
-				} else 
-				if (fb.isFocusable()) {
-					targetId = fb.id;
-				};
-			};
-		};
-		*/
-
 		if (!rootId) {
 			flags = flags.concat([ I.ObjectFlag.DeleteEmpty ]);
 		};
 		
-		ObjectUtil.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
-			ObjectUtil.openPopup({ id: message.targetId });
+		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
+			UtilObject.openPopup({ id: message.targetId });
+
+			analytics.event('CreateObject', {
+				route: 'Navigation',
+				objectType: commonStore.type,
+			});
 		});
 	};
 
@@ -313,8 +322,7 @@ class Keyboard {
 	getRootId (): string {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
-
-		return isPopup ? popupMatch.params.id : (this.match?.params?.id || blockStore.root);
+		return isPopup ? popupMatch.params.id : (this.match?.params?.id);
 	};
 
 	onKeyUp (e: any) {
@@ -325,7 +333,7 @@ class Keyboard {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 
-		if (authStore.accountIsDeleted() || authStore.accountIsPending()) {
+		if (authStore.accountIsDeleted() || authStore.accountIsPending() || !this.checkBack()) {
 			return;
 		};
 
@@ -338,33 +346,27 @@ class Keyboard {
 				});
 			};
 		} else {
-			let prev = Util.history.entries[Util.history.index - 1];
+			const history = UtilCommon.history;
+
+			let prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
-				ObjectUtil.openHome('route');
+				UtilObject.openHome('route');
 				return;
 			};
 
 			if (prev) {
-				const route = Util.getRoute(prev.pathname);
-
-				if ([ 'index', 'auth' ].includes(route.page) && account) {
-					return;
-				};
-
-				if ((route.page == 'main') && !account) {
-					return;
-				};
+				const route = UtilCommon.getRoute(prev.pathname);
 
 				if ((route.page == 'main') && (route.action == 'history')) {
-					prev = Util.history.entries[Util.history.index - 3];
+					prev = history.entries[history.index - 3];
 					if (prev) {
-						Util.route(prev.pathname);
+						UtilCommon.route(prev.pathname, {});
 					};
 					return;
 				};
 
-				Util.history.goBack();
+				history.goBack();
 			};
 		};
 
@@ -376,12 +378,16 @@ class Keyboard {
 	onForward () {
 		const isPopup = this.isPopup();
 
+		if (!this.checkForward()) {
+			return;
+		};
+
 		if (isPopup) {
 			historyPopup.goForward((match: any) => { 
 				popupStore.updateData('page', { matchPopup: match }); 
 			});
 		} else {
-			Util.history.goForward();
+			UtilCommon.history.goForward();
 		};
 
 		menuStore.closeAll();
@@ -389,34 +395,44 @@ class Keyboard {
 	};
 
 	checkBack (): boolean {
+		const { account } = authStore;
 		const isPopup = this.isPopup();
-		const history = Util.history;
+		const history = UtilCommon.history;
 
 		if (!history) {
 			return;
 		};
 
-		let ret = true;
 		if (!isPopup) {
-			ret = history.index - 1 >= 0;
+			let prev = history.entries[history.index - 1];
 
-			if (history.index === 0) {
-				const entry = history.entries[history.index];
-				const route = Util.getRoute(entry.pathname);
-				const home = ObjectUtil.getSpaceDashboard();
+			if (account && !prev) {
+				return false;
+			};
 
-				if (home && (route.id != home.id)) {
-					ret = true;
+			if (prev) {
+				const route = UtilCommon.getRoute(prev.pathname);
+
+				if ([ 'index', 'auth' ].includes(route.page) && account) {
+					return false;
+				};
+
+				if ((route.page == 'main') && !account) {
+					return false;
+				};
+
+				if ((route.page == 'main') && (route.action == 'usecase')) {
+					return false;
 				};
 			};
 		};
 
-		return ret;
+		return true;
 	};
 
 	checkForward (): boolean {
 		const isPopup = this.isPopup();
-		const history = Util.history;
+		const history = UtilCommon.history;
 
 		if (!history) {
 			return;
@@ -435,6 +451,10 @@ class Keyboard {
 		if (!this.isMain() && [ 'search', 'print' ].includes(cmd)) {
 			return;
 		};
+
+		const rootId = keyboard.getRootId();
+		const logPath = window.Electron.logPath;
+		const tmpPath = window.Electron.tmpPath;
 
 		switch (cmd) {
 			case 'search': {
@@ -465,8 +485,86 @@ class Keyboard {
 				break;
 			};
 
-			case 'tech': {
-				this.onTechInfo();
+			case 'undo': {
+				if (!this.isFocused) {
+					this.onUndo(rootId, 'MenuSystem');
+				};
+				break;
+			};
+
+			case 'redo': {
+				if (!this.isFocused) {
+					this.onRedo(rootId, 'MenuSystem');
+				};
+				break;
+			};
+
+			case 'create': {
+				this.pageCreate();
+				break;
+			};
+
+			case 'saveAsHTML': {
+				this.onSaveAsHTML();
+				break;
+			};
+
+			case 'saveAsHTMLSuccess': {
+				this.printRemove();
+				break;
+			};
+
+			case 'save': {
+				Action.export([ rootId ], I.ExportType.Protobuf, true, true, true, true);
+				break;
+			};
+
+			case 'exportTemplates': {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.TemplateExportAll(paths[0], (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						Renderer.send('pathOpen', paths[0]);
+					});
+				});
+				break;
+			};
+
+			case 'exportLocalstore': {
+				Action.openDir({ buttonLabel: 'Export' }, paths => {
+					C.DebugExportLocalstore(paths[0], [], (message: any) => {
+						if (!message.error.code) {
+							Renderer.send('pathOpen', paths[0]);
+						};
+					});
+				});
+				break;
+			};
+
+			case 'debugSpace': {
+				C.DebugSpaceSummary((message: any) => {
+					if (!message.error.code) {
+						window.Electron.fileWrite('debug-space-summary.json', JSON.stringify(message, null, 5), 'utf8');
+
+						Renderer.send('pathOpen', tmpPath);
+					};
+				});
+				break;
+			};
+
+			case 'debugTree': {
+				C.DebugTree(rootId, logPath, (message: any) => {
+					if (!message.error.code) {
+						Renderer.send('pathOpen', logPath);
+					};
+				});
+				break;
+			};
+
+			case 'resetOnboarding': {
+				Storage.delete('onboarding');
 				break;
 			};
 
@@ -489,6 +587,7 @@ class Keyboard {
 			url = url.replace(/\%25middleware\%25/g, message.version);
 			url = url.replace(/\%25accountId\%25/g, account.id);
 			url = url.replace(/\%25analyticsId\%25/g, account.info.analyticsId);
+			url = url.replace(/\%25deviceId\%25/g, account.info.deviceId);
 
 			Renderer.send('urlOpen', url);
 		});
@@ -509,6 +608,7 @@ class Keyboard {
 				[ 'Library version', message.version ],
 				[ 'Account ID', account.id ],
 				[ 'Analytics ID', account.info.analyticsId ],
+				[ 'Device ID', account.info.deviceId ],
 			];
 
 			popupStore.open('confirm', {
@@ -520,7 +620,7 @@ class Keyboard {
 					canConfirm: true,
 					canCancel: true,
 					onConfirm: () => {
-						Util.clipboardCopy({ text: data.map(it => `${it[0]}: ${it[1]}`).join('\n') });
+						UtilCommon.clipboardCopy({ text: data.map(it => `${it[0]}: ${it[1]}`).join('\n') });
 						Preview.toastShow({ text: 'Tech information copied to clipboard' });
 					},
 				}
@@ -555,7 +655,7 @@ class Keyboard {
 		};
 
 		if (clearTheme) {
-			Util.addBodyClass('theme', '');
+			UtilCommon.addBodyClass('theme', '');
 		};
 		focus.clearRange(true);
 	};
@@ -662,12 +762,7 @@ class Keyboard {
 	};
 
 	ctrlByPlatform (e: any) {
-		const platform = Util.getPlatform();
-		if (platform == I.Platform.Mac) {
-			return e.metaKey;
-		} else {
-			return e.ctrlKey;
-		};
+		return UtilCommon.isPlatformMac() ? e.metaKey : e.ctrlKey;
 	};
 
 	isMain () {
@@ -720,7 +815,7 @@ class Keyboard {
 	};
 
 	setSource (source: any) {
-		this.source = Util.objectCopy(source);
+		this.source = UtilCommon.objectCopy(source);
 	};
 
 	setSelection (v: any) {
@@ -761,7 +856,7 @@ class Keyboard {
 			};
 
 			this.setPinChecked(false);
-			Util.route('/auth/pin-check');
+			UtilCommon.route('/auth/pin-check', { replace: true, animate: true });
 		}, pinTime);
 	};
 
@@ -890,15 +985,15 @@ class Keyboard {
 	};
 
 	cmdSymbol () {
-		return Util.getPlatform() == I.Platform.Mac ? '&#8984;' : 'Ctrl';
+		return UtilCommon.isPlatformMac() ? '&#8984;' : 'Ctrl';
 	};
 
 	altSymbol () {
-		return Util.getPlatform() == I.Platform.Mac ? '&#8997;' : 'Alt';
+		return UtilCommon.isPlatformMac() ? '&#8997;' : 'Alt';
 	};
 
 	cmdKey () {
-		return Util.getPlatform() == I.Platform.Mac ? 'cmd' : 'ctrl';
+		return UtilCommon.isPlatformMac() ? 'cmd' : 'ctrl';
 	};
 
 	checkPressed (key: string) {

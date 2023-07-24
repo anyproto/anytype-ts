@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, keyboard, Storage, Util } from 'Lib';
+import { I, keyboard, Storage, UtilCommon } from 'Lib';
 import { commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -44,7 +44,7 @@ class Sidebar {
 		if (stored) {
 			this.set(stored);
 		} else {
-			const { wh } = Util.getWindowDimensions();
+			const { wh } = UtilCommon.getWindowDimensions();
 			const height = this.getMaxHeight();
 			const y = wh / 2 - height / 2;
 
@@ -96,7 +96,7 @@ class Sidebar {
 
 		const { x } = keyboard.mouse.page;
 		const { width, snap } = this.data;
-		const { ww } = Util.getWindowDimensions();
+		const { ww } = UtilCommon.getWindowDimensions();
 		const menuOpen = menuStore.isOpenList([ 'dataviewContext', 'preview', 'widget' ]);
 		const popupOpen = popupStore.isOpen();
 
@@ -308,7 +308,7 @@ class Sidebar {
 	resize (): void {
 		const { isSidebarFixed } = commonStore;
 		const { snap, width } = this.data;
-		const { ww } = Util.getWindowDimensions();
+		const { ww } = UtilCommon.getWindowDimensions();
 		const set: Partial<SidebarData> = {};
 
 		if (!isSidebarFixed) {
@@ -321,7 +321,7 @@ class Sidebar {
 			set.x = ww - width;
 		};
 
-		if (Util.objectLength(set)) {
+		if (UtilCommon.objectLength(set)) {
 			this.set(set, true);
 		};
 	};
@@ -341,7 +341,7 @@ class Sidebar {
 			};
 		};
 
-		const { ww } = Util.getWindowDimensions();
+		const { ww } = UtilCommon.getWindowDimensions();
 		const pageWidth = ww - width;
 		const css: any = { width: '' };
 		const cssLoader: any = { width: pageWidth, left: '', right: '' };
@@ -424,10 +424,6 @@ class Sidebar {
 		this.set({ width }, force);
 	};
 
-	setHeight (height: number, force?: boolean): void {
-		this.set({ height }, force);
-	};
-
 	public setAnimating (v: boolean) {
 		this.isAnimating = v;
 	};
@@ -480,7 +476,7 @@ class Sidebar {
 	 * Get the side to snap the sidebar to
 	 */
 	private getSnap (x: number, width: number): I.MenuDirection.Left | I.MenuDirection.Right | null {
-		const { ww } = Util.getWindowDimensions();
+		const { ww } = UtilCommon.getWindowDimensions();
 
 		if (x <= SNAP_THRESHOLD) {
 			return I.MenuDirection.Left;
@@ -501,16 +497,16 @@ class Sidebar {
 	 * Get max height allowed
 	 */
 	private getMaxHeight (): number {
-		const { wh } = Util.getWindowDimensions();
-		return wh - Util.sizeHeader() - 52 - 10;
+		const { wh } = UtilCommon.getWindowDimensions();
+		return wh - UtilCommon.sizeHeader() - 52 - 10;
 	};
 
 	/**
 	 * Limit the sidebar coordinates to the max and min bounds
 	 */
 	private limitCoords (x: number, y: number, width: number, height: number ): { x: number; y: number } {
-		const { ww, wh } = Util.getWindowDimensions();
-		const hh = Util.sizeHeader();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
+		const hh = UtilCommon.sizeHeader();
 
 		x = Number(x);
 		x = Math.max(0, x);

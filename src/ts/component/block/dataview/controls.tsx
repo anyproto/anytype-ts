@@ -3,9 +3,10 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Button } from 'Component';
-import { C, I, Util, analytics, Relation, Dataview, keyboard, translate } from 'Lib';
+import { C, I, UtilCommon, analytics, Relation, Dataview, keyboard, translate, UtilObject } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import Head from './head';
 import arrayMove from 'array-move';
 
 const Controls = observer(class Controls extends React.Component<I.ViewComponent> {
@@ -37,8 +38,10 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			cn.push(className);
 		};
 
+		let head = null;
 		if (isInline) {
 			cn.push('isInline');
+			head = <Head {...this.props} />;
 		};
 
 		const buttons = [
@@ -60,7 +63,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 					id={elementId} 
 					className={cn.join(' ')}
 					tooltip={item.text}
-					onClick={e => this.onButton(e, '#' + elementId, item.menu)}
+					onClick={e => this.onButton(e, `#${elementId}`, item.menu)}
 				/>
 			);
 		};
@@ -71,10 +74,10 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				<div 
 					id={elementId} 
 					className={'viewItem ' + (item.id == view.id ? 'active' : '')} 
-					onClick={(e: any) => { this.onViewSet(item); }} 
-					onContextMenu={(e: any) => { this.onViewEdit(e, '#views #' + elementId, item); }}
+					onClick={() => this.onViewSet(item)} 
+					onContextMenu={e => this.onViewEdit(e, `#views #${elementId}`, item)}
 				>
-					{item.name}
+					{item.name || UtilObject.defaultName('Page')}
 				</div>
 			);
 		});
@@ -96,6 +99,8 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			>
 				<div className="sides">
 					<div id="sideLeft" className="side left">
+						{head}
+
 						<div 
 							id="view-selector"
 							className="viewSelect viewItem select"
@@ -129,7 +134,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 								className="addRecord c28" 
 								tooltip="Create new object" 
 								text="New" 
-								onClick={(e: any) => onRecordAdd(e, -1)} 
+								onClick={e => onRecordAdd(e, -1)} 
 							/>
  						) : ''}
 					</div>
@@ -328,26 +333,30 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const node = $(this.node);
 		const sideLeft = node.find('#sideLeft');
 		const sideRight = node.find('#sideRight');
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const { left } = sideLeft.offset();
 		const sidebar = $('#sidebar');
+		const sw = sidebar.outerWidth();
 
-		sideLeft.removeClass('small');
-
-		let width = sideLeft.outerWidth() + sideRight.outerWidth();
-		let offset = 0;
-		let sw = sidebar.outerWidth();
-
-		if (isPopup) {
-			offset = container.offset().left;
+		if (sideLeft.hasClass('small')) {
+			sideLeft.removeClass('small');
+			menuStore.closeAll([ 'dataviewViewEdit', 'dataviewViewList' ]);
 		};
 
+		const width = sideLeft.outerWidth() + sideRight.outerWidth();
+		const offset = isPopup ? container.offset().left : 0;
+
+		let add = false;
 		if (left + width - offset - sw + 50 >= container.width()) {
-			sideLeft.addClass('small');
+			add = true;
+		};
+		if (isInline && (width >= node.outerWidth())) {
+			add = true;
 		};
 
-		if (isInline && (width >= node.outerWidth())) {
+		if (add) {
 			sideLeft.addClass('small');
+			menuStore.closeAll([ 'dataviewViewEdit', 'dataviewViewList' ]);
 		};
 	};
 

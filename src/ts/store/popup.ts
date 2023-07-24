@@ -1,11 +1,17 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, focus } from 'Lib';
+import { I, UtilCommon, focus, Preview } from 'Lib';
 import { menuStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const AUTH_IDS = [ 'settings' ];
+const SHOW_DIMMER = [
+	'settings',
+	'confirm',
+	'migration',
+	'pin',
+];
 
 class PopupStore {
 
@@ -51,6 +57,12 @@ class PopupStore {
 		} else {
 			this.popupList.push({ id, param });
 		};
+
+		Preview.previewHide(true);
+
+		if (this.checkShowDimmer(this.popupList)) {
+			$('#navigationPanel').hide();
+		};
 	};
 
     get (id: string): I.Popup {
@@ -75,9 +87,15 @@ class PopupStore {
 		};
 	};
 
-    isOpen (id?: string): boolean {
+    isOpen (id?: string, filter?: string[]): boolean {
 		if (!id) {
-			return this.popupList.length > 0;
+			let length = 0;
+			if (filter) {
+				length = this.popupList.filter(it => filter ? !filter.includes(it.id) : true).length;
+			} else {
+				length = this.popupList.length;
+			};
+			return length > 0;
 		};
 		return this.get(id) ? true : false;
 	};
@@ -108,15 +126,19 @@ class PopupStore {
 			item.param.onClose();
 		};
 		
-		const el = $(`#${Util.toCamelCase(`popup-${id}`)}`);
+		const el = $(`#${UtilCommon.toCamelCase(`popup-${id}`)}`);
+		const filtered = this.popupList.filter(it => it.id != id);
+
 		if (el.length) {
-			raf(() => {
-				el.css({ transform: '' }).removeClass('show');
-			});
+			raf(() => { el.css({ transform: '' }).removeClass('show'); });
+		};
+
+		if (!this.checkShowDimmer(filtered)) {
+			$('#navigationPanel').show();
 		};
 		
 		window.setTimeout(() => {
-			this.popupList = this.popupList.filter(it => it.id != id);
+			this.popupList = filtered;
 			
 			if (callBack) {
 				callBack();
@@ -127,19 +149,23 @@ class PopupStore {
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {
-		const items = ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
+		const items = this.getItems(ids);
+		const timeout = this.getTimeout(items);
 
 		items.forEach(it => this.close(it.id));
 
 		this.clearTimeout();
-
 		if (callBack) {
-			this.timeout = window.setTimeout(() => {
-				if (callBack) {
-					callBack();
-				};
-			}, Constant.delay.popup);
+			this.timeout = window.setTimeout(() => callBack(), timeout);
 		};
+	};
+
+	getItems (ids?: string[]) {
+		return ids && ids.length ? this.popupList.filter(it => ids.includes(it.id)) : this.popupList;
+	};
+
+	getTimeout (items: I.Popup[]) {
+		return items.length ? Constant.delay.popup : 0;
 	};
 
 	closeLast () {
@@ -150,6 +176,21 @@ class PopupStore {
 
     clearTimeout () {
 		window.clearTimeout(this.timeout);
+	};
+
+	showDimmerIds () {
+		return SHOW_DIMMER;
+	};
+
+	checkShowDimmer (list: I.Popup[]) {
+		let ret = false;
+		for (const item of list) {
+			if (SHOW_DIMMER.includes(item.id)) {
+				ret = true;
+				break;
+			};
+		};
+		return ret;
 	};
 
 };

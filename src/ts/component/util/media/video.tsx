@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import { Util } from 'Lib';
+import { UtilCommon } from 'Lib';
 import { Icon } from 'Component';
 
 interface Props {
@@ -30,7 +30,7 @@ class MediaVideo extends React.Component<Props> {
                 <video className="media" controls={false} preload="auto" src={src} />
 
                 <div className="controls">
-                    <Icon className="play" onMouseDown={this.onPlayClick} />
+                    <Icon className="play" onClick={this.onPlayClick} />
                 </div>
             </div>
         );
@@ -96,7 +96,7 @@ class MediaVideo extends React.Component<Props> {
 		const node = $(this.node);
 		const video = node.find('video');
 
-        Util.pauseMedia();
+        UtilCommon.pauseMedia();
 		video.get(0).play();
     };
 

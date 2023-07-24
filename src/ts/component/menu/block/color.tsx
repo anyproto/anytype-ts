@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, MenuUtil } from 'Lib';
+import { I, keyboard, UtilMenu } from 'Lib';
 
 class MenuBlockColor extends React.Component<I.Menu> {
 	
@@ -16,14 +16,14 @@ class MenuBlockColor extends React.Component<I.Menu> {
 	render () {
 		const { param } = this.props;
 		const { data } = param;
-		const { value } = data;
+		const value = String(data.value || '');
 		const items = this.getItems();
-		
+
 		let id = 0;
 		return (
 			<div>
 				{items.map((action: any, i: number) => {
-					let inner = <div className={'inner textColor textColor-' + action.className} />;
+					const inner = <div className={'inner textColor textColor-' + action.className} />;
 					return (
 						<MenuItemVertical 
 							id={id++} 
@@ -56,7 +56,7 @@ class MenuBlockColor extends React.Component<I.Menu> {
 	};
 
 	getItems () {
-		return MenuUtil.getTextColors();
+		return UtilMenu.getTextColors();
 	};
 	
 	onOver (e: any, item: any) {

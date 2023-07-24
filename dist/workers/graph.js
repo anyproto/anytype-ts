@@ -70,7 +70,7 @@ let time = 0;
 let isHovering = false;
 let edgeMap = new Map();
 let hoverAlpha = 0.2;
-let fontFamily = 'Helvetica';
+let fontFamily = 'Helvetica, san-serif';
 let timeoutHover = 0;
 let root = null;
 
@@ -658,10 +658,6 @@ onAddNode = ({ target, sourceId }) => {
 	};
 
 	data.nodes.push(target);
-
-	if (sourceId) {
-		data.edges.push({ type: EdgeType.Link, source: source.id, target: target.id });
-	};
 
 	updateForces();
 };

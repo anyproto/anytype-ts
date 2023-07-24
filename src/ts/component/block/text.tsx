@@ -5,7 +5,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer, } from 'mobx-react';
 import { Select, Marker, Loader, IconObject, Icon, Editable } from 'Component';
-import { I, C, keyboard, Key, Util, DataUtil, ObjectUtil, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
+import { I, C, keyboard, Key, UtilCommon, UtilData, UtilObject, Preview, Mark, focus, Storage, translate, analytics, Renderer } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -96,7 +96,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		switch (style) {
 			case I.TextStyle.Title: {
-				placeholder = ObjectUtil.defaultName('Page');
+				placeholder = UtilObject.defaultName('Page');
 
 				if (root && root.isObjectTask()) {
 					marker = { type: 'checkboxTask', className: 'check', active: checked, onClick: this.onCheckbox };
@@ -136,7 +136,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 							id={'lang-' + id} 
 							arrowClassName="light" 
 							value={fields.lang} 
-							ref={ref => { this.refLang = ref; }} 
+							ref={ref => this.refLang = ref} 
 							options={options} 
 							onChange={this.onLang}
 							noFilter={false} 
@@ -147,6 +147,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 								<Icon className="codeWrap" />
 								<div className="txt">{fields.isUnwrapped ? 'Wrap' : 'Unwrap'}</div>
 							</div>
+
 							<div className="btn" onClick={this.onCopy}>
 								<Icon className="copy" />
 								<div className="txt">Copy</div>
@@ -221,7 +222,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { content } = block;
 		const { marks, text } = content;
 
-		this.marks = Util.objectCopy(marks || []);
+		this.marks = UtilCommon.objectCopy(marks || []);
 		this.setValue(text);
 	};
 	
@@ -231,7 +232,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const { marks, text } = content;
 		const { focused } = focus.state;
 
-		this.marks = Util.objectCopy(marks || []);
+		this.marks = UtilCommon.objectCopy(marks || []);
 		this.setValue(text);
 
 		if (text) {
@@ -280,7 +281,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				html = Prism.highlight(html, grammar, lang);
 			};
 		} else {
-			html = Mark.fromUnicode(html);
+			html = Mark.fromUnicode(html, this.marks);
 			html = Mark.toHtml(html, this.marks);
 		};
 
@@ -327,10 +328,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		items.off('mouseenter.link');
 		items.on('mouseenter.link', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const url = String(element.attr('href') || '');
-			const scheme = Util.getScheme(url);
+			const scheme = UtilCommon.getScheme(url);
 			const isInside = scheme == Constant.protocol;
 
 			let route = '';
@@ -340,12 +346,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			if (isInside) {
 				route = '/' + url.split('://')[1];
 
-				const routeParam = Util.getRoute(route);
+				const routeParam = UtilCommon.getRoute(route);
 				const object = detailStore.get(rootId, routeParam.id, []);
 
 				target = object.id;
 			} else {
-				target = Util.urlFix(url);
+				target = UtilCommon.urlFix(url);
 				type = I.PreviewType.Link;
 			};
 
@@ -364,7 +370,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			element.off('click.link').on('click.link', e => {
 				e.preventDefault();
 				if (isInside) {
-					Util.route(route);
+					UtilCommon.route(route, {});
 				} else {
 					Renderer.send('urlOpen', target);
 				};
@@ -404,8 +410,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		items.off('mouseenter.object mouseleave.object');
-		items.on('mouseleave.object', () => { Preview.tooltipHide(false); });
+		items.on('mouseleave.object', () => Preview.tooltipHide(false));
 		items.on('mouseenter.object', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const param = String(element.attr('data-param') || '');
@@ -430,7 +441,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			element.off('click.object').on('click.object', e => {
 				e.preventDefault();
-				ObjectUtil.openEvent(e, object);
+				UtilObject.openEvent(e, object);
 			});
 
 			Preview.previewShow({
@@ -502,8 +513,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 		
 		items.off('mouseenter.mention');
-
 		items.on('mouseenter.mention', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const param = String(element.attr('data-param') || '');
@@ -516,7 +531,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			element.off('click.mention').on('click.mention', e => {
 				e.preventDefault();
-				ObjectUtil.openEvent(e, object);
+				UtilObject.openEvent(e, object);
 			});
 
 			Preview.previewShow({
@@ -557,16 +572,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const smile = item.find('smile');
-			if (!smile.length) {
-				return;
+			if (smile.length) {
+				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
-
-			ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 		});
 	};
 
 	textStyle (obj: any) {
-		Util.textStyle(obj, { textOpacity: 0.65, borderOpacity: 0.35 });
+		UtilCommon.textStyle(obj, { border: 0.4 });
 	};
 
 	emojiParam (style: I.TextStyle) {
@@ -621,7 +634,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		const { onKeyDown, rootId, block } = this.props;
 		const { id } = block;
-		
+
 		if (menuStore.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'blockMore' ])) {
 			e.preventDefault();
 			return;
@@ -630,11 +643,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		let value = this.getValue();
 		let ret = false;
 
+		const key = e.key.toLowerCase();
 		const range = this.getRange();
 		const symbolBefore = range ? value[range.from - 1] : '';
 		const cmd = keyboard.cmdKey();
-		
-		const menuOpen = menuStore.isOpen();
+
+		const menuOpen = menuStore.isOpen('', '', [ 'onboarding' ]);
 		const menuOpenAdd = menuStore.isOpen('blockAdd');
 		const menuOpenMention = menuStore.isOpen('blockMention');
 		const menuOpenSmile = menuStore.isOpen('smile');
@@ -654,6 +668,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			{ key: `shift+space`, preventDefault: false },
 			{ key: `ctrl+shift+l`, preventDefault: false },
 		];
+		const twineOpen = [ '[', '{', '\'', '\"', '(' ];
+		const twineClose = {
+			'[': ']',
+			'{': '}',
+			'(': ')'
+		};
 
 		for (let i = 0; i < 9; ++i) {
 			saveKeys.push({ key: `${cmd}+${i}`, preventDefault: false });
@@ -676,31 +696,31 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				e.preventDefault();
 			};
 			
-			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
+			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				onKeyDown(e, value, this.marks, range, this.props);
 			});
 
 			ret = true;
 		});
 
-		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, (pressed: string) => {
+		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, () => {
 			keyboard.disableContextClose(false);
 		});
 
 		saveKeys.forEach((item: any) => {
-			keyboard.shortcut(item.key, e, (pressed: string) => {
+			keyboard.shortcut(item.key, e, () => {
 				if (item.preventDefault) {
 					e.preventDefault();
 				};
 
-				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => { 
+				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => { 
 					onKeyDown(e, value, this.marks, range, this.props);
 				});
 				ret = true;
 			});
 		});
 
-		keyboard.shortcut('tab', e, (pressed: string) => {
+		keyboard.shortcut('tab', e, () => {
 			e.preventDefault();
 
 			if (!range) {
@@ -708,9 +728,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 			
 			if (block.isTextCode()) {
-				value = Util.stringInsert(value, '\t', range.from, range.from);
+				value = UtilCommon.stringInsert(value, '\t', range.from, range.from);
 
-				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
+				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 					focus.apply();
 				});
@@ -738,7 +758,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				const parsed = this.getMarksFromHtml();
 
 				this.marks = Mark.checkRanges(value, parsed.marks);
-				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
+				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range, this.props);
 				});
 				ret = true;
@@ -759,14 +779,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			if (range.to && ((range.from != range.to) || (range.to == value.length))) {
-				DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
+				UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 					onKeyDown(e, value, this.marks, range, this.props);
 				});
 				ret = true;
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+e, ${cmd}+dot`, e, (pressed: string) => {
+		keyboard.shortcut(`${cmd}+e, ${cmd}+dot`, e, () => {
 			if (menuOpenSmile || !block.canHaveMarks()) {
 				return;
 			};
@@ -775,10 +795,27 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.onSmile();
 		});
 
+		if (range && (range.from != range.to) && twineOpen.includes(key)) {
+			e.preventDefault();
+
+			const l = e.key.length;
+			const cut = value.slice(range.from, range.to);
+			const closingSymbol = twineClose[key] || key;
+
+			value = UtilCommon.stringInsert(value, `${key}${cut}${closingSymbol}`, range.from, range.to);
+			this.marks = Mark.adjust(this.marks, range.from, l);
+
+			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+				focus.set(block.id, { from: range.from + l, to: range.to + l });
+				focus.apply();
+			});
+
+			ret = true;
+		};
 		if (ret) {
 			return;
 		};
-		
+
 		focus.set(id, range);
 
 		if (!keyboard.isSpecial(e)) {
@@ -828,15 +865,23 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			content: {},
 		};
 
-		const symbolBefore = range ? value[range.from - 1] : '';
-		const isSpaceBefore = range ? (!range.from || (value[range.from - 2] == ' ') || (value[range.from - 2] == '\n')) : false;
-		const canOpenMenuAdd = (symbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const canOpenMentionMenu = (symbolBefore == '@') && !this.preventMenu && (isSpaceBefore || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const parsed = this.getMarksFromHtml();
-		const marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
-
+		const oneSymbolBefore = range ? value[range.from - 1] : '';
+		const twoSymbolBefore = range ? value[range.from - 2] : '';
+		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
+		const canOpenMenuAdd = (oneSymbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const canOpenMentionMenu = (oneSymbolBefore == '@') && !this.preventMenu && (isAllowedMention || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		
 		this.preventMenu = false;
-		this.marks = parsed.marks;
+
+		let parsed: any = {};
+		let marksChanged = false;
+		if (block.canHaveMarks()) {
+			parsed = this.getMarksFromHtml();
+			//marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
+			this.marks = parsed.marks;
+
+			console.log(JSON.stringify(this.marks, null, 3));
+		};
 
 		if (menuOpenAdd || menuOpenMention) {
 			window.clearTimeout(this.timeoutFilter);
@@ -857,7 +902,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				if (!ret && range) {
 					const d = range.from - filter.from;
 					if (d >= 0) {
-						const part = value.substr(filter.from, d).replace(/^\//, '');
+						const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
 						commonStore.filterSetText(part);
 					};
 				};
@@ -867,15 +912,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Open add menu
 		if (canOpenMenuAdd && !isInsideTable) { 
-			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
-				onMenuAdd(id, Util.stringCut(value, range.from - 1, range.from), range, this.marks);
+			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
+				onMenuAdd(id, UtilCommon.stringCut(value, range.from - 1, range.from), range, this.marks);
 			});
 			return;
 		};
 
 		// Open mention menu
 		if (canOpenMentionMenu) {
-			DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
+			UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 				this.onMention();
 			});
 			return;
@@ -921,7 +966,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				this.marks = newStyle == I.TextStyle.Code ? [] : Mark.adjust(this.marks, 0, -(Length[newStyle] + offset));
 				this.setValue(value);
 
-				DataUtil.blockSetText(rootId, id, value, this.marks, true, () => {
+				UtilData.blockSetText(rootId, id, value, this.marks, true, () => {
 					C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
 						focus.set(block.id, { from: 0, to: 0 });
 						focus.apply();
@@ -943,25 +988,26 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		let ret = false;
+		let diff = 0;
 
 		keyboard.shortcut('backspace, delete', e, () => { 
 			menuStore.close('blockContext'); 
 			ret = true;
 		});
 
+		keyboard.shortcut('alt+backspace', e, () => { 
+			diff += this.text.length - value.length;
+		});
+
 		this.placeholderCheck();
 
-		let text = block.canHaveMarks() ? parsed.text : value;
-		
-		if (!block.isTextCode()) {
-			text = Mark.fromUnicode(text);
-		};
+		const text = block.canHaveMarks() ? parsed.text : value;
 
 		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);
-
-			const diff = value.length - text.length;
 			const { focused, range } = focus.state;
+
+			diff += marksChanged ? (value.length - text.length) : 0;
 
 			focus.set(focused, { from: range.from - diff, to: range.to - diff });
 			focus.apply();
@@ -978,7 +1024,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const el = $(`#block-${block.id}`);
 
 		let value = this.getValue();
-		value = Util.stringCut(value, range.from - 1, range.from);
+		value = UtilCommon.stringCut(value, range.from - 1, range.from);
 
 		this.preventSaveOnBlur = true;
 		commonStore.filterSet(range.from - 1, '');
@@ -987,11 +1033,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			menuStore.open('blockMention', {
 				element: el,
 				recalcRect: () => {
-					const rect = Util.selectionRect();
+					const rect = UtilCommon.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 				},
 				offsetX: () => {
-					const rect = Util.selectionRect();
+					const rect = UtilCommon.getSelectionRect();
 					return rect ? 0 : Constant.size.blockMenu;
 				},
 				noFlipX: false,
@@ -1005,16 +1051,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					marks: this.marks,
 					skipIds: [ rootId ],
 					onChange: (text: string, marks: I.Mark[], from: number, to: number) => {
-						value = Util.stringInsert(value, text, from, from);
+						value = UtilCommon.stringInsert(value, text, from, from);
 						this.marks = Mark.checkRanges(value, marks);
 
-						DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
+						UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 							focus.set(block.id, { from: to, to: to });
 							focus.apply();
 
 							// Try to fix async detailsUpdate event
 							window.setTimeout(() => {
-								focus.set(block.id, { from: to, to: to });
+								focus.set(block.id, { from: to, to });
 								focus.apply();
 							}, 50);
 						});
@@ -1033,11 +1079,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		menuStore.open('smile', {
 			element: `#block-${block.id}`,
 			recalcRect: () => {
-				const rect = Util.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = Util.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? 0 : Constant.size.blockMenu;
 			},
 			data: {
@@ -1051,9 +1097,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						param: icon, 
 						range: { from: range.from, to: range.from + 1 },
 					});
-					value = Util.stringInsert(value, ' ', range.from, range.from);
+					value = UtilCommon.stringInsert(value, ' ', range.from, range.from);
 
-					DataUtil.blockSetText(rootId, block.id, value, this.marks, true, () => {
+					UtilData.blockSetText(rootId, block.id, value, this.marks, true, () => {
 						focus.set(block.id, { from: range.from + 1, to: range.from + 1 });
 						focus.apply();
 					});
@@ -1080,11 +1126,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.text = value;
 
-		if (menuStore.isOpen()) {
+		if (menuStore.isOpen('', '', [ 'onboarding' ])) {
 			return;
 		};
 
-		DataUtil.blockSetText(rootId, block.id, value, marks, update, () => {
+		UtilData.blockSetText(rootId, block.id, value, marks, update, () => {
 			if (callBack) {
 				callBack();
 			};
@@ -1099,7 +1145,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			marks = [];
 		};
 
-		DataUtil.blockSetText(rootId, block.id, value, marks, true);
+		UtilData.blockSetText(rootId, block.id, value, marks, true);
 	};
 	
 	onFocus (e: any) {
@@ -1159,7 +1205,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		this.props.onToggle(e);
 	};
 	
-	onCheckbox (e: any) {
+	onCheckbox () {
 		const { rootId, block, readonly } = this.props;
 		const { id, content } = block;
 		const { checked } = content;
@@ -1169,7 +1215,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 		
 		focus.clear(true);
-		DataUtil.blockSetText(rootId, block.id, this.getValue(), this.marks, true, () => {
+		UtilData.blockSetText(rootId, block.id, this.getValue(), this.marks, true, () => {
 			C.BlockTextSetChecked(rootId, id, !checked);
 		});
 	};
@@ -1193,7 +1239,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 	};
 
-	onToggleWrap (e: any) {
+	onToggleWrap () {
 		const { rootId, block } = this.props;
 		const { id, fields } = block;
 
@@ -1202,11 +1248,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		]);
 	};
 
-	onCopy (e: any) {
+	onCopy () {
 		const { rootId, block } = this.props;
 
 		C.BlockCopy(rootId, [ block ], { from: 0, to: 0 }, (message: any) => {
-			Util.clipboardCopy({
+			UtilCommon.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
 				anytype: {
@@ -1214,12 +1260,14 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 					blocks: [ block ],
 				},
 			});
+
+			Preview.toastShow({ text: `Block has been copied to clipboard` });
 		});
 	};
 	
-	onSelect (e: any) {
+	onSelect () {
 		const { rootId, dataset, block, isPopup, isInsideTable } = this.props;
-		const ids = DataUtil.selectionGet('', false, true, this.props);
+		const ids = UtilData.selectionGet('', false, true, this.props);
 
 		focus.set(block.id, this.getRange());
 		keyboard.setFocus(true);
@@ -1265,18 +1313,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			const pageContainer = Util.getPageContainer(isPopup);
-
-			pageContainer.off('click.context').on('click.context', () => { 
-				pageContainer.off('click.context');
-				menuStore.close('blockContext'); 
-			});
-
 			this.setText(this.marks, true, () => {
 				menuStore.open('blockContext', {
 					element: el,
 					recalcRect: () => { 
-						const rect = Util.selectionRect();
+						const rect = UtilCommon.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
 					type: I.MenuType.Horizontal,
@@ -1298,6 +1339,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						onChange,
 					},
 				});
+
+				window.setTimeout(() => {
+					const pageContainer = UtilCommon.getPageContainer(isPopup);
+
+					pageContainer.off('click.context').on('click.context', () => { 
+						pageContainer.off('click.context');
+						menuStore.close('blockContext'); 
+					});
+				}, Constant.delay.menu);
 			});
 		}, 150);
 	};
@@ -1312,15 +1362,19 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (selection && (this.clicks == 3)) {
 			e.preventDefault();
 			e.stopPropagation();
-			
-			this.clicks = 0;
 
-			focus.set(block.id, { from: 0, to: block.getLength() });
-			focus.apply();
+			menuStore.closeAll([ 'blockContext' ], () => {
+				this.clicks = 0;
+
+				focus.set(block.id, { from: 0, to: block.getLength() });
+				focus.apply();
+
+				this.onSelect();
+			});
 		};
 	};
 	
-	onMouseUp (e: any) {
+	onMouseUp () {
 		window.clearTimeout(this.timeoutClick);
 		this.timeoutClick = window.setTimeout(() => { this.clicks = 0; }, 300);
 	};

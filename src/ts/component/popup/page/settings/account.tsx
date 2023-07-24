@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Label, IconObject, Input, Loader } from 'Component';
-import { I, C, translate, Util, analytics, Action, DataUtil, ObjectUtil } from 'Lib';
-import { authStore, commonStore, popupStore, detailStore, blockStore, menuStore } from 'Store';
+import { IconObject, Input, Title, Loader, Button, Icon } from 'Component';
+import { I, C, translate, UtilCommon, Action, UtilObject } from 'Lib';
+import { authStore, detailStore, blockStore, menuStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
@@ -18,6 +18,7 @@ interface State {
 const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends React.Component<Props, State> {
 
 	refName: any = null;
+	refDescription: any = null;
 	pinConfirmed = false;
 	format = '';
 	refCheckbox: any = null;
@@ -32,68 +33,67 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		this.onMenu = this.onMenu.bind(this);
 		this.onUpload = this.onUpload.bind(this);
 		this.onName = this.onName.bind(this);
+		this.onDescription = this.onDescription.bind(this);
 		this.onLogout = this.onLogout.bind(this);
 		this.onLocationMove = this.onLocationMove.bind(this);
 	};
 
 	render () {
-		const { onPage } = this.props;
 		const { error, loading } = this.state;
-		const { account, walletPath, accountPath } = authStore;
-		const { config } = commonStore;
+		const { account } = authStore;
 		const profile = detailStore.get(Constant.subId.profile, blockStore.profile);
-		const canMove = config.experimental;
 
 		return (
-			<React.Fragment>
-				{error ? <div className="message">{error}</div> : ''}
+			<div className="sections">
+				<div className="section top">
+					{error ? <div className="message">{error}</div> : ''}
 
-				<div className="iconWrapper">
-					{loading ? <Loader /> : ''}
-					<IconObject 
-						id="userpic" 
-						object={profile} 
-						size={112} 
-						onClick={this.onMenu} 
+					<div className="iconWrapper">
+						{loading ? <Loader /> : ''}
+						<IconObject
+							id="userpic"
+							object={profile}
+							size={108}
+							onClick={this.onMenu}
+						/>
+					</div>
+				</div>
+
+				<div className="section">
+					<Title text={translate('popupSettingsAccountPersonalInformationTitle')} />
+
+					<Input
+						ref={ref => this.refName = ref}
+						value={profile.name}
+						onKeyUp={this.onName}
+						placeholder={translate('popupSettingsAccountPersonalInformationNamePlaceholder')}
+					/>
+
+					<Input
+						ref={ref => this.refDescription = ref}
+						value={profile.description}
+						onKeyUp={this.onDescription}
+						placeholder={translate('popupSettingsAccountPersonalInformationDescriptionPlaceholder')}
 					/>
 				</div>
 
-				<div className="rows">
+				<div className="section">
+					<Title text={translate('popupSettingsAccountAnytypeIdentityTitle')} />
 
-					<div className="row">
-						<div className="name">
-							<Label className="small" text="Name" />
-							<Input 
-								ref={ref => this.refName = ref} 
-								value={profile.name} 
-								onKeyUp={this.onName} 
-								placeholder={ObjectUtil.defaultName('Page')} 
-							/>
-						</div>
-					</div>
-
-					<Label className="section" text="Account" />
-
-					{canMove ? (
-						<div id="row-location" className="row cp" onClick={this.onLocationMove}>
-							<Label text={translate('popupSettingsAccountMoveTitle')} />
-							<div className="select">
-								<div className="item">
-									<div className="name">{walletPath == accountPath ? 'Default' : 'Custom'}</div>
-								</div>
-							</div>
-						</div>
-					) : ''}
-
-					<div className="row cp" onClick={() => { onPage('delete'); }}>
-						<Label text={translate('popupSettingsAccountDeleteTitle')} />
-					</div>
-
-					<div className="row red cp" onClick={this.onLogout}>
-						<Label text={translate('popupSettingsLogout')} />
+					<div className="inputWrapper withIcon">
+						<Input
+							value={account.id}
+							readonly={true}
+							onClick={() => UtilCommon.clipboardCopyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
+						/>
+						<Icon className="copy" />
 					</div>
 				</div>
-			</React.Fragment>
+
+				<div className="section bottom">
+					<Button color="red" text={translate('popupSettingsLogout')} onClick={this.onLogout} />
+				</div>
+			</div>
 		);
 	};
 
@@ -121,7 +121,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 				if (message.error.code) {
 					this.setState({ error: message.error.description });
 				} else {
-					Util.route('/auth/setup/init'); 
+					UtilCommon.route('/auth/setup/init', {}); 
 				};
 				setLoading(false);
 			});
@@ -156,7 +156,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						};
 
 						case 'remove': {
-							ObjectUtil.setIcon(blockStore.profile, '', '');
+							UtilObject.setIcon(blockStore.profile, '', '');
 							break;
 						};
 					};
@@ -174,7 +174,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
                     return;
                 };
 
-                ObjectUtil.setIcon(blockStore.profile, '', message.hash, () => {
+                UtilObject.setIcon(blockStore.profile, '', message.hash, () => {
                     this.setState({ loading: false });
                 });
             });
@@ -182,8 +182,12 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
     };
 
     onName () {
-        ObjectUtil.setName(blockStore.profile, this.refName.getValue());
+        UtilObject.setName(blockStore.profile, this.refName.getValue());
     };
+
+	onDescription (e) {
+		UtilObject.setDescription(blockStore.profile, this.refDescription.getValue());
+	};
 
 	getObject () {
 		return detailStore.get(Constant.subId.profile, blockStore.profile);

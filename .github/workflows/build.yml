@@ -12,13 +12,17 @@ jobs:
     strategy:
       matrix:
         go-version: [ 1.16.x ]
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        os: [ macos-latest, ubuntu-latest, windows-latest ] 
 
     steps:
       - name: Setup
         run: | 
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
           git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@api.github.com/".insteadOf "https://api.github.com/"
+
+      - name: Install AzureSignTool
+        if: matrix.os == 'windows-latest'
+        run: dotnet tool install --global AzureSignTool
 
       - name: Check out Git repository
         uses: actions/checkout@v1
@@ -37,14 +41,14 @@ jobs:
       - name: Update Addon Windows
         if: matrix.os == 'windows-latest'
         shell: bash  
-        run: ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}}
+        run: ./update.sh ${{matrix.os}}
 
       - name: Update Addon
         if: matrix.os != 'windows-latest'
         shell: bash  
         run: |
-          ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} arm
-          ./update.sh ${{secrets.USER}} ${{secrets.TOKEN}} ${{matrix.os}} amd
+          ./update.sh ${{matrix.os}} arm
+          ./update.sh ${{matrix.os}} amd
 
       - name: Build Front Mac OS
         if: matrix.os == 'macos-latest'
@@ -75,6 +79,11 @@ jobs:
           DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
           DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
           USE_HARD_LINKS: false
+          AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
       - name: Make artifacts dir
         run: | 

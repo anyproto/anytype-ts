@@ -1,6 +1,8 @@
 @import "~scss/_vars";
 
-.progressBar { position: relative; overflow: hidden; height: 6px; border-radius: 8px;  margin-bottom: 54px; background-color: $colorVeryLightGrey;}
 .progressBar {
-    .progressBarFill { height: 6px; background-color: $colorBlack; }
+    .bar { position: relative; overflow: hidden; height: 6px; border-radius: 8px; background-color: $colorVeryLightGrey; }
+    .bar .fill { height: 6px; background-color: $colorBlack; }
+    .labels { display: flex; justify-content: space-between; }
+    .labels .label { @include text-small; padding-top: 8px; color: $colorDarkGrey; }
 }

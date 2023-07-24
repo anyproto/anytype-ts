@@ -1,7 +1,7 @@
 @import "~scss/_vars";
 
 .blocks {
-	.block.blockDataview { @include text-common; padding: 6px 0px; }
+	.block.blockDataview { @include text-common; padding: 8px 0px 6px 0px; }
 	.block.blockDataview {
 		.wrapContent { z-index: 1; }
 
@@ -39,36 +39,13 @@
 			.button { color: $colorBlack; }
 		}
 
-		.dataviewHead, .dataviewControls {
-			.sides, .side { display: flex; flex-direction: row; align-items: center; }
-			.sides { justify-content: stretch; width: 100%; }
-			.side.left { flex-grow: 1; }
-			.side.right { flex-shrink: 0; gap: 0px 12px; justify-content: flex-end; }
-		}
-
-		.dataviewHead { display: flex; flex-direction: row; align-items: center; padding: 10px 14px; border-bottom: 1px solid $colorBorderDark; gap: 0px 6px; }
+		.dataviewHead { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; width: 100%; color: $colorBlack; }
 		.dataviewHead {
-			.side.left { gap: 0px 6px; width: 100%; }
-			.side.right { opacity: 0; transition: $transitionAllCommon; }
+			.icon.source { width: 28px; height: 28px; background-size: 24px; background-image: url('~img/icon/dataview/button/source0.svg'); opacity: 0; }
+			.icon.source.active { opacity: 1; }
 
-			.iconWrap { 
-				padding: 4px; border-radius: 4px; transition: $transitionAllCommon; display: flex; align-items: center;
-				line-height: 20px; @include text-small; color: $colorMediumGrey;
-			}
-			.iconWrap:hover { background-color: $colorHoverMedium; }
-			.iconWrap.icon { flex-shrink: 0; }
-			.iconWrap {
-				.icon { width: 20px; height: 20px; }
-				.icon.set { background-image: url('~img/icon/dataview/head/set.svg'); }
-			}
-
-			.editableWrap { @include text-header3; height: 26px; max-width: calc(100% - 60px); @include text-overflow-nw; }
-			.editableWrap.isEmpty { min-width: 70px; }
-
-			.icon.expand { width: 20px; height: 20px; background-image: url('~img/icon/menu/action/expand0.svg'); }
-
-			#head-source-select { opacity: 0; }
-			#head-source-select.active { opacity: 1; }
+			.editableWrap { @include text-header2; height: 28px; max-width: calc(100% - 26px); @include text-overflow-nw; }
+			.editableWrap.isEmpty { min-width: 90px; }
 		}
 		.dataviewHead.isEditing {
 			.editableWrap { cursor: text; }
@@ -78,7 +55,7 @@
 			#head-source-select { display: none; }
 		}
 		.dataviewHead.isCollection {
-			.editableWrap.isEmpty { min-width: 130px; }
+			.editableWrap.isEmpty { min-width: 160px; }
 		}
 
 		.dataviewControls { font-weight: 500; color: $colorMediumGrey; position: relative; }
@@ -87,9 +64,15 @@
 		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
 
 		.dataviewControls {
-			.sides { gap: 0px 16px; }
-			.side { padding: 15px 0px; white-space: nowrap; line-height: 28px; }
-			.side.left { padding-left: 14px; }
+			> .sides { gap: 0px 16px; display: flex; flex-direction: row; align-items: center; justify-content: stretch; width: 100%; }
+			> .sides {
+				> .side { padding: 15px 0px; white-space: nowrap; line-height: 28px; display: flex; flex-direction: row; align-items: center; }
+				> .side.left { flex-grow: 1; padding-left: 14px; }
+				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; }
+				> .side.right {
+					.button { margin-left: 6px; }
+				}
+			}
 
 			.icon { position: relative; width: 28px; height: 28px; background-size: 20px; border-radius: 6px; transition: $transitionAllCommon; }
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
@@ -153,8 +136,8 @@
 		}
 
 		.content {
-			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
-			.scrollWrap { background: #fff; padding-bottom: 14px; }
+			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); padding-bottom: 14px; }
+			.scrollWrap { background: #fff; }
 		}
 
 		.viewContent {
@@ -164,35 +147,51 @@
 			}
 		}
 
+		.hoverArea.active,
 		.hoverArea:hover {
 			.dataviewControls {
-				.side.right { opacity: 1; }
+				> .sides {
+					> .side.right { opacity: 1; }
+				}
+
 				.views {
 					.icon.plus { opacity: 1; }
 				}
 			}
 			.dataviewHead {
-				.side.right { opacity: 1; }
+				> .sides {
+					> .side.right { opacity: 1; }
+				}
+
 				#head-source-select { opacity: 1; }
 			}
 		}
 	}
 
 	.block.blockDataview.isInline {
-		.wrapMenu > .icon.dnd { height: 88px; }
+		.wrapMenu > .icon.dnd { height: 60px; }
 
-		.dataviewEmpty { height: auto; padding: 48px 0px; }
-		.dataviewHead { padding-left: 0px; padding-right: 0px; }
+		.dataviewEmpty { height: auto; padding: 48px 0px; border-top: 1px solid $colorBorderLight; border-bottom: 1px solid $colorBorderLight; }
 
 		.dataviewControls {
-			.side { padding: 9px 0px; }
-			.side.left { padding-left: 0px; }
-			.side.right { transition: opacity $transitionCommon; opacity: 0; }
-			.line { display: none; }
-			.viewItem { @include text-paragraph; }
+			> .sides {
+				> .side { padding: 0px 0px 8px 0px; }
+				> .side.left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px 0px; }
+				> .side.right { transition: opacity $transitionCommon; opacity: 0; }
+			}
+
+			.views { gap: 0px 12px; }
+			.viewItem { @include text-common; font-weight: 500; }
+			.button { margin-left: 6px; }
+
+			.icon.plus { width: 20px; height: 20px; }
+			.icon.plus:hover { background-color: transparent; }
 		}
+		.dataviewControls::after { display: none !important; }
 		.dataviewControls.active {
-			.side.right { opacity: 1; }
+			> .sides {
+				> .side.right { opacity: 1; }
+			}
 		}
 
 		.dataviewSelection {
@@ -206,28 +205,18 @@
 
 	.block.blockDataview.showMenu {
 		.dataviewHead {
-			.side.right { opacity: 1; }
-			#head-source-select { opacity: 1; }
+			.icon.source { opacity: 1; }
 		}
 		.dataviewControls {
-			.side.right { opacity: 1; }
+			> .sides {
+				> .side.right { opacity: 1; }
+			}
 			.views {
 				.icon.plus { opacity: 1; }
 			}
 		}
 	}
 	
-}
-
-html.platformMac {
-	.blocks {
-		.block.blockDataview {
-			.content {
-				.scrollWrap { padding: 0px; }
-				.scroll::-webkit-scrollbar { display: none; }
-			}
-		}
-	}
 }
 
 html.platformWindows {

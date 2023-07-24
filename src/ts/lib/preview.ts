@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, keyboard } from 'Lib';
+import { I, UtilCommon, keyboard } from 'Lib';
 import { commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -14,6 +14,8 @@ interface TooltipParam {
 	typeX: I.MenuDirection.Left | I.MenuDirection.Center | I.MenuDirection.Right;
 	typeY: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	delay: number;
+	className?: string;
+	title?: string;
 };
 
 /**
@@ -36,6 +38,8 @@ class Preview {
    * @param element - The element relative to which the tooltip should be positioned.
    * @param typeX - The horizontal direction in which the tooltip should be positioned.
    * @param typeY - The vertical direction in which the tooltip should be positioned.
+   * @param delay - The length of time to wait before showing the tooltip.
+   * @param className - custom class name to be added to tooltip element.
    */
 	tooltipShow (param: Partial<TooltipParam>) {
 		const { element } = param;
@@ -53,15 +57,24 @@ class Preview {
 		window.clearTimeout(this.timeout.tooltip);
 		this.timeout.tooltip = window.setTimeout(() => {
 			const win = $(window);
-			const obj = $('#tooltip');
+			const obj = $('#tooltipContainer');
 			const { left, top } = element.offset();
 			const st = win.scrollTop(); 
 			const ew = element.outerWidth();
 			const eh = element.outerHeight();
-			const { ww } = Util.getWindowDimensions();
+			const { ww } = UtilCommon.getWindowDimensions();
 			const node = $('<div class="tooltip anim"><div class="txt"></div></div>');
 
-			node.find('.txt').html(Util.lbBr(text));
+			if (param.className) {
+				node.addClass(param.className);
+			};
+
+			if (param.title) {
+				node.prepend('<div class="title"></div>');
+				node.find('.title').html(param.title);
+			};
+
+			node.find('.txt').html(UtilCommon.lbBr(text));
 			obj.html('').append(node);
 			
 			const ow = node.outerWidth();
@@ -115,7 +128,7 @@ class Preview {
 	 * Hides the tooltip, if any is being shown.
 	 * @param force - hides the tooltip immediately by also removing the animation class.
 	 */
-	tooltipHide (force: boolean) {
+	tooltipHide (force?: boolean) {
 		const obj = $('.tooltip');
 
 		if (force) {
@@ -148,6 +161,7 @@ class Preview {
 		};
 
 		param.type = param.type || I.PreviewType.Default;
+		param.delay = (undefined === param.delay) ? DELAY_PREVIEW : param.delay;
 		
 		const { element, rect, passThrough } = param;
 		const obj = $('#preview');
@@ -166,24 +180,28 @@ class Preview {
 		};
 
 		passThrough ? obj.addClass('passThrough') : obj.removeClass('passThrough');
-
 		obj.off('mouseleave.preview').on('mouseleave.preview', () => this.previewHide(true));
 
 		this.previewHide(true);
-		window.clearTimeout(this.timeout.preview);
-		this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), DELAY_PREVIEW);
+
+		if (param.delay) {
+			window.clearTimeout(this.timeout.preview);
+			this.timeout.preview = window.setTimeout(() => commonStore.previewSet(param), param.delay);
+		} else {
+			commonStore.previewSet(param);
+		};
 	};
 
 	/**
 	 * Hides preview, if any is being shown.
 	 * @param force - hide the preview immediately, without 250ms delay
 	 */
-	previewHide (force: boolean) {
+	previewHide (force?: boolean) {
 		const obj = $('#preview');
 
 		const cb = () => {
 			obj.hide();
-			obj.removeClass('top bottom withImage').css({ transform: '' });
+			obj.removeClass('anim top bottom withImage').css({ transform: '' });
 
 			commonStore.previewClear();
 			$('#graphPreview').remove();
@@ -223,7 +241,7 @@ class Preview {
 	 * show hide any toast being shown
 	 * @param force - hide the preview immediately, without 250ms delay
 	 */
-	toastHide (force: boolean) {
+	toastHide (force?: boolean) {
 		const obj = $('#toast');
 
 		obj.css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
@@ -242,7 +260,7 @@ class Preview {
 		const obj = $('#toast');
 		const sidebar = $('#sidebar');
 		const isRight = sidebar.hasClass('right');
-		const { ww, wh } = Util.getWindowDimensions();
+		const { ww, wh } = UtilCommon.getWindowDimensions();
 		const y = wh - obj.outerHeight() - BORDER * 2;
 
 		let sw = 0;

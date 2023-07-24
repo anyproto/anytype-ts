@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, DataUtil, Action, Util } from 'Lib';
+import { I, C, analytics, keyboard, UtilData, Action, UtilCommon } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -107,7 +107,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			<div className="wrap">
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholderFocus="Filter types..." 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -127,7 +127,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 							<AutoSizer className="scrollArea">
 								{({ width, height }) => (
 									<List
-										ref={ref => { this.refList = ref; }}
+										ref={ref => this.refList = ref}
 										width={width}
 										height={height}
 										deferredMeasurmentCache={this.cache}
@@ -246,7 +246,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 			this.setState({ loading: true });
 		};
 
-		DataUtil.search({
+		UtilData.search({
 			filters,
 			sorts,
 			keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
@@ -259,6 +259,11 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				return;
 			};
 
+			if (message.error.code) {
+				this.setState({ loading: false });
+				return;
+			};
+
 			if (callBack) {
 				callBack(message);
 			};
@@ -267,7 +272,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				this.items = [];
 			};
 
-			this.items = this.items.concat(message.records.map(it => detailStore.mapper(it)));
+			this.items = this.items.concat((message.records || []).map(it => detailStore.mapper(it)));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -282,7 +287,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { param } = this.props;
 		const { data } = param;
 		const { filter } = data;
-		const items = Util.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
+		const items = UtilCommon.objectCopy(this.items || []).map(it => ({ ...it, object: it }));
 		const library = items.filter(it => (it.workspaceId == workspace));
 		const librarySources = library.map(it => it.sourceObject);
 

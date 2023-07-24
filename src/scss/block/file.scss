@@ -4,8 +4,6 @@
 	.block.blockFile { padding: 6px 0px; white-space: nowrap; }
 	.block.blockFile.withContent { padding: 0px; }
 	.block.blockFile {
-		.flex { }
-
 		.loaderWrapper { border-radius: 4px; border: solid 1px $colorBorderDark; height: 48px; width: 100%; }
 		.error { margin: 0px; font-size: 12px; line-height: 24px; height: 24px; }
 		
@@ -28,5 +26,5 @@
 	.block.blockFile > .wrapContent > .selectable.isSelectionSelected .download { display: none; }
 	.block.blockFile.withContent > .wrapContent > .selectable > .dropTarget { padding: 3px 0px; }
 
-	.block.blockFile > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
+	.block.blockFile:not(.withContent) > .wrapContent > .selectable.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 4px; }
 }

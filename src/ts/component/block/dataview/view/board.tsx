@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, Util, DataUtil, Dataview, analytics, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, Dataview, analytics, keyboard, Relation } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
@@ -59,7 +59,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			<div 
 				ref={node => this.node = node} 
 				id="scrollWrap"
-				className="wrap"
+				className="scrollWrap"
 			>
 				<div id="scroll" className="scroll">
 					<div className={cn.join(' ')}>
@@ -70,7 +70,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 									ref={ref => this.columnRefs[group.id] = ref}
 									{...this.props} 
 									{...group}
-									onRecordAdd={this.onRecordAdd}
+									onColumnRecordAdd={this.onRecordAdd}
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
 									getSubId={() => dbStore.getGroupSubId(rootId, block.id, group.id)}
@@ -90,7 +90,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	componentDidUpdate () {
 		this.resize();
-		Util.triggerResizeEditor(this.props.isPopup);
+		UtilCommon.triggerResizeEditor(this.props.isPopup);
 	};
 
 	componentWillUnmount () {
@@ -180,12 +180,16 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		});
 	};
 
-	onRecordAdd (groupId: string, dir: number) {
+	onRecordAdd (e: any, groupId: string, dir: number) {
+		if (e.persist) {
+			e.persist();
+		};
+
 		if (this.creating) {
 			return;
 		};
 
-		const { rootId, block, getView, isInline, isCollection, objectOrderUpdate } = this.props;
+		const { rootId, block, getView, getIdPrefix, isInline, isCollection, objectOrderUpdate, refCells } = this.props;
 		const view = getView();
 		const group = dbStore.getGroup(rootId, block.id, groupId);
 		const objectId = isInline ? block.content.targetObjectId : rootId;
@@ -219,7 +223,11 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		if (relations.length) {
 			relations.forEach((it: any) => {
 				if (it.objectTypes.length && !details.type) {
-					details.type = it.objectTypes[0];
+					const first = it.objectTypes[0];
+
+					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
+						details.type = first;
+					};
 				};
 
 				details[it.relationKey] = Relation.formatValue(it, null, true);
@@ -258,21 +266,29 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
 				const oldIndex = records.indexOf(message.objectId);
-				const newIndex = dir > 0 ? records.length : 0;
-				const update = arrayMove(records, oldIndex, newIndex);
+
+				if (oldIndex < 0) {
+					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+				};
 
 				if (isCollection) {
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
 
 				detailStore.update(subId, { id: object.id, details: object }, true);
-
-				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
-					dbStore.recordsSet(subId, '', update);
+				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
+					dbStore.recordsSet(subId, '', records);
 				});
 
+				const id = Relation.cellId(getIdPrefix(), 'name', object.id);
+				const ref = refCells.get(id);
+
+				if (ref && (object.type != Constant.typeId.note)) {
+					window.setTimeout(() => ref.onClick(e), 15);
+				};
+
 				analytics.event('CreateObject', {
-					route: isCollection ? 'Collection' : 'Set',
+					route: (isCollection ? 'Collection' : 'Set'),
 					objectType: object.type,
 					layout: object.layout,
 					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
@@ -296,7 +312,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return;
 		};
 
-		DataUtil.checkTemplateCnt(setOf, (message: any) => {
+		UtilData.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length > 1) {
 				popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
 			} else {
@@ -307,7 +323,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 
 	getGroups (withHidden: boolean) {
 		let { rootId, block } = this.props;
-		let groups = this.applyGroupOrder(Util.objectCopy(dbStore.getGroups(rootId, block.id)));
+		let groups = this.applyGroupOrder(UtilCommon.objectCopy(dbStore.getGroups(rootId, block.id)));
 
 		if (!withHidden) {
 			groups = groups.filter(it => !it.isHidden);
@@ -461,7 +477,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				continue;
 			};
 
-			if (rect && this.cache[groupId] && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && this.cache[groupId] && UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				isLeft = e.pageX <= rect.x + rect.width / 2;
 				hoverId = group.id;
 
@@ -542,7 +558,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				continue;
 			};
 
-			if (Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
+			if (UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height + 8 }, rect)) {
 				isTop = rect.isAdd || (e.pageY <= rect.y + rect.height / 2);
 				hoverId = rect.id;
 
@@ -722,7 +738,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const node = $(this.node);
 		const scroll = node.find('#scroll');
 		const view = node.find('.viewContent');
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const cw = container.width();
 		const size = Constant.size.dataview.board;
 		const groups = this.getGroups(false);
@@ -733,7 +749,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
 
 			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 });
-			view.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 });
+			view.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 + 4 });
 		} else {
 			if (parent.isPage() || parent.isLayoutDiv()) {
 				const wrapper = $('#editorWrapper');
@@ -741,7 +757,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const margin = (cw - ww) / 2;
 
 				scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin });
-				view.css({ width: width + margin });
+				view.css({ width: width + margin + 2 });
 			};
 		};
 	};

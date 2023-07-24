@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, Util, translate } from 'Lib';
+import { I, UtilCommon, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore } from 'Store';
+
+import Head from '../head';
 
 interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any) => void;
@@ -11,6 +13,7 @@ interface Props extends I.PopupSettings {
 const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex extends React.Component<Props> {
 
 	render () {
+		const { onPage } = this.props;
 		const items = this.getItems();
 
 		const Item = (item: any) => {
@@ -24,6 +27,7 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 		return (
 			<React.Fragment>
+				<Head onPage={() => onPage('spaceIndex')} name={translate('commonBack')} />
 				<Title text={translate('popupSettingsImportTitle')} />
 				<Label className="description" text={translate('popupSettingsImportText')} />
 
@@ -40,12 +44,12 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const { onPage } = this.props;
 		const items = this.getItems();
 		const item = items.find(it => it.id == id);
-		const fn = Util.toCamelCase('onImport-' + item.id);
+		const fn = UtilCommon.toCamelCase('onImport-' + item.id);
 
 		if (item.skipPage && this[fn]) {
 			this[fn]();
 		} else {
-			onPage(Util.toCamelCase('import-' + item.id));
+			onPage(UtilCommon.toCamelCase('import-' + item.id));
 		};
 	};
 
@@ -68,15 +72,16 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 
 	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
 		const { close, onImport } = this.props;
-		const platform = Util.getPlatform();
 		const fileOptions: any = { 
 			properties: [ 'openFile' ],
 			filters: [ { name: '', extensions } ]
 		};
 
-		if (platform == I.Platform.Mac) {
+		if (UtilCommon.isPlatformMac()) {
 			fileOptions.properties.push('openDirectory');
 		};
+
+		analytics.event('ClickImport', { type });
 
 		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
 			const paths = result.filePaths;

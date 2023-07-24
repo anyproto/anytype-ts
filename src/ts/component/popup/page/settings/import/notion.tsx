@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Button, Input, Label, Icon, Error } from 'Component';
-import { I, C, translate } from 'Lib';
+import { I, C, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import Head from '../head';
 
@@ -10,7 +10,7 @@ interface State {
 
 class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, State> {
 
-	ref: any = null;
+	ref = null;
 	state: State = {
 		error: '',
 	};
@@ -36,7 +36,8 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 				<div className="inputWrapper flex">
 					<div className="errorWrapper">
 						<Input 
-							ref={ref => this.ref = ref} 
+							focusOnMount
+							ref={(ref: any) => { this.ref = ref; }} 
 							type="password"
 							placeholder="Paste your integration token"
 						/>
@@ -67,15 +68,13 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 			</React.Fragment>
 		);
 	};
-
-	componentDidMount(): void {
-		this.ref.focus();
-	};
-
+	
 	onImport (): void {
 		const token = this.ref.getValue();
 
 		commonStore.notionTokenSet(token);
+
+		analytics.event('ClickImport', { type: I.ImportType.Notion });
 
 		C.ObjectImportNotionValidateToken(token, (message: any) => {
 			if (message.error.code) {

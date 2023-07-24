@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Tag, Filter } from 'Component';
-import { I, C, Util, MenuUtil, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilMenu, keyboard, Relation } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -86,7 +86,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			<div className={[ 'wrap', (noFilter ? 'noFilter' : '') ].join(' ')}>
 				{!noFilter ? (
 					<Filter 
-						ref={ref => { this.refFilter = ref; }} 
+						ref={ref => this.refFilter = ref} 
 						placeholderFocus={placeholder} 
 						value={filter}
 						onChange={this.onFilterChange} 
@@ -101,11 +101,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -236,7 +236,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		let value = Relation.getArrayValue(data.value);
 		value.push(id);
-		value = Util.arrayUnique(value);
+		value = UtilCommon.arrayUnique(value);
 
 		if (maxCount) {
 			value = value.slice(value.length - maxCount, value.length);
@@ -255,8 +255,8 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const { data } = param;
 		const { filter } = data;
 		const relation = data.relation.get();
-		const colors = MenuUtil.getBgColors();
-		const option = { name: filter, color: colors[Util.rand(1, colors.length - 1)].value };
+		const colors = UtilMenu.getBgColors();
+		const option = { name: filter, color: colors[UtilCommon.rand(1, colors.length - 1)].value };
 
 		if (!option.name) {
 			return;
@@ -332,7 +332,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		};
 
 		if (data.filter) {
-			const filter = new RegExp(Util.filterFix(data.filter), 'gi');
+			const filter = new RegExp(UtilCommon.filterFix(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
 			items = items.filter(it => it.name.match(filter));

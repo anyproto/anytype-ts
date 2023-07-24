@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Title, Label, Select, Button } from 'Component';
-import { I, Util, Storage, translate, analytics } from 'Lib';
+import { Title, Label, Select, Button, Icon } from 'Component';
+import { I, UtilCommon, Storage, translate, analytics } from 'Lib';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -9,7 +9,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 	render () {
 		const pin = Storage.get('pin');
 		const pinTime = commonStore.pinTime / 1000;
-		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: Util.duration(time) }));
+		const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: UtilCommon.duration(time) }));
 
 		return (
 			<React.Fragment>
@@ -17,32 +17,31 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 				<Label className="description" text={translate('popupSettingsPinText')} />
 				
 				{pin ? (
-					<div className="rows">
-						<div className="row">
-							<div className="side left">
-								<Label text="PIN code check time-out" />
-							</div>
-							<div className="side right">
-								<Select 
-									id="pinTime" 
-									arrowClassName="light" 
-									options={times}
-									value={String(pinTime || '')} 
-									onChange={v => commonStore.pinTimeSet(v)}
-									menuParam={{ horizontal: I.MenuDirection.Right }}
-								/>
-							</div>
+					<div className="actionItems">
+						<div className="item">
+							<Label text="PIN code check time-out" />
+
+							<Select
+								id="pinTime"
+								arrowClassName="light"
+								options={times}
+								value={String(pinTime || '')}
+								onChange={v => commonStore.pinTimeSet(v)}
+								menuParam={{ horizontal: I.MenuDirection.Right }}
+							/>
 						</div>
 
-						<div className="row cp" onClick={this.onChangePin}>
+						<div className="item" onClick={this.onChangePin}>
 							<Label text={translate('popupSettingsPinChange')} />
+							<Icon className="arrow" />
 						</div>
 
-						<div className="row red cp" onClick={this.onTurnOffPin}>
+						<div className="item red" onClick={this.onTurnOffPin}>
 							<Label text={translate('popupSettingsPinOff')} />
+							<Icon className="arrow" />
 						</div>
 					</div>
-				): (
+				) : (
 					<div className="buttons">
 						<Button className="c36" text={translate('popupSettingsPinOn')} onClick={this.onTurnOnPin} />
 					</div>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, Action, DataUtil, ObjectUtil, focus, keyboard, Relation } from 'Lib';
+import { I, M, Action, UtilData, UtilObject, focus, keyboard, Relation } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -34,12 +34,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	render (): any {
 		const { rootId, type, onCreate } = this.props;
-		const check = DataUtil.checkDetails(rootId);
+		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'featuredRelations' ]);
 		const featuredRelations = Relation.getArrayValue(object.featuredRelations);
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const placeholder = {
-			title: ObjectUtil.defaultName(type),
+			title: UtilObject.defaultName(type),
 			description: 'Add a description',
 		};
 
@@ -83,7 +83,17 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			if (featuredRelations.includes('description')) {
 				descr = <Editor className="descr" id="description" />;
 			};
-			featured = <Block {...this.props} key={blockFeatured.id} rootId={rootId} iconSize={20} block={blockFeatured} className="small" />;
+			featured = (
+				<Block 
+					{...this.props} 
+					key={blockFeatured.id} 
+					rootId={rootId} 
+					iconSize={20} 
+					block={blockFeatured} 
+					className="small" 
+					isSelectionDisabled={true}
+				/>
+			);
 		};
 
 		if ([ Constant.typeId.type, Constant.typeId.relation ].includes(object.type)) {
@@ -99,7 +109,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
-		if (ObjectUtil.isStoreType(object.type)) {
+		if (UtilObject.isStoreType(object.type)) {
 			const cn = [ 'c36' ];
 			const isInstalled = this.isInstalled();
 
@@ -158,7 +168,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			this.placeholderCheck(item.blockId);
 		};
 
-		if (!focused && !object._empty_ && (object.name == ObjectUtil.defaultName('Page'))) {
+		if (!focused && !object._empty_ && (object.name == UtilObject.defaultName('Page'))) {
 			focus.set('title', { from: 0, to: 0 });
 		};
 
@@ -185,12 +195,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 	onSelect (icon: string) {
 		const { rootId } = this.props;
-		ObjectUtil.setIcon(rootId, icon, '');
+		UtilObject.setIcon(rootId, icon, '');
 	};
 
 	onUpload (hash: string) {
 		const { rootId } = this.props;
-		ObjectUtil.setIcon(rootId, '', hash);
+		UtilObject.setIcon(rootId, '', hash);
 	};
 
 	onKeyDown (e: any, item: any) {
@@ -218,7 +228,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const { rootId } = this.props;
 
 		for (const item of EDITORS) {
-			DataUtil.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
+			UtilData.blockSetText(rootId, item.blockId, this.getValue(item.blockId), [], true);
 		};
 	};
 
@@ -240,7 +250,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			};
 
 			let text = String(object[item.relationKey] || '');
-			if (text == ObjectUtil.defaultName('Page')) {
+			if (text == UtilObject.defaultName('Page')) {
 				text = '';
 			};
 
@@ -271,7 +281,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const object = detailStore.get(rootId, rootId);
 
 		Action.install(object, false, (message: any) => {
-			ObjectUtil.openAuto(message.details);
+			UtilObject.openAuto(message.details);
 		});
 	};
 

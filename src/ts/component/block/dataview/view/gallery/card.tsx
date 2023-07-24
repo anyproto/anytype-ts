@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Cell, Cover, Icon, MediaAudio, MediaVideo, DropTarget } from 'Component';
-import { I, Util, DataUtil, ObjectUtil, Relation, keyboard } from 'Lib';
+import { I, UtilCommon, UtilData, UtilObject, Relation, keyboard } from 'Lib';
 import { commonStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -30,7 +30,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const relations = getVisibleRelations();
 		const idPrefix = getIdPrefix();
 		const record = getRecord(recordId);
-		const cn = [ 'card', DataUtil.layoutClass(record.id, record.layout), DataUtil.cardSizeClass(cardSize) ];
+		const cn = [ 'card', UtilData.layoutClass(record.id, record.layout), UtilData.cardSizeClass(cardSize) ];
 		const subId = dbStore.getSubId(rootId, block.id);
 		const cover = this.getCover();
 
@@ -77,7 +77,7 @@ const Card = observer(class Card extends React.Component<Props> {
 				<div
 					id={'selectable-' + record.id}
 					className={[ 'selectable', 'type-' + I.SelectType.Record ].join(' ')}
-					{...Util.dataProps({ id: record.id, type: I.SelectType.Record })}
+					{...UtilCommon.dataProps({ id: record.id, type: I.SelectType.Record })}
 				>
 					{content}
 				</div>
@@ -151,7 +151,7 @@ const Card = observer(class Card extends React.Component<Props> {
 		const record = getRecord(recordId);
 		const cb = {
 			0: () => { 
-				keyboard.withCommand(e) ? ObjectUtil.openWindow(record) : ObjectUtil.openPopup(record); 
+				keyboard.withCommand(e) ? UtilObject.openWindow(record) : UtilObject.openPopup(record); 
 			},
 			2: () => { onContext(e, record.id); }
 		};
@@ -166,12 +166,16 @@ const Card = observer(class Card extends React.Component<Props> {
 		};
 	};
 
-	onCellClick (e: React.MouseEvent, relation) {
+	onCellClick (e: React.MouseEvent, vr: I.ViewRelation) {
 		const { onCellClick, recordId } = this.props;
+		const relation = dbStore.getRelationByKey(vr.relationKey);
 
-		if (![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
+		if (!relation || ![ I.RelationType.Url, I.RelationType.Phone, I.RelationType.Email, I.RelationType.Checkbox ].includes(relation.format)) {
 			return;
 		};
+
+		e.preventDefault();
+		e.stopPropagation();
 
 		onCellClick(e, relation.relationKey, recordId);
 	};

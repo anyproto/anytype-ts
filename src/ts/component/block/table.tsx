@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, keyboard, focus, Util, Mark, Action } from 'Lib';
+import { I, C, keyboard, focus, UtilCommon, Mark, Action } from 'Lib';
 import { menuStore, blockStore } from 'Store';
 import Row from './table/row';
 import Constant from 'json/constant.json';
@@ -156,24 +156,15 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	rebind () {
 		const { block } = this.props;
 		const win = $(window);
-		const node = $(this.node);
 
 		this.unbind();
 
-		win.on('resize.' + block.id, () => this.resize());
-		node.on('resizeInit', () => this.resize());
+		win.on(`resize.${block.id} resizeInit`, () => this.resize());
 	};
 
 	getData () {
 		const { rootId, block } = this.props;
-		const childrenIds = blockStore.getChildrenIds(rootId, block.id);
-		const children = blockStore.getChildren(rootId, block.id);
-		const rowContainer = children.find(it => it.isLayoutTableRows());
-		const columnContainer = children.find(it => it.isLayoutTableColumns());
-		const columns = columnContainer ? blockStore.getChildren(rootId, columnContainer.id, it => it.isTableColumn()) : [];
-		const rows = rowContainer ? blockStore.unwrapTree([ blockStore.wrapTree(rootId, rowContainer.id) ]).filter(it => it.isTableRow()) : [];
-
-		return { columnContainer, columns, rowContainer, rows };
+		return blockStore.getTableData(rootId, block.id);
 	};
 
 	onHandleColumn (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) {
@@ -343,6 +334,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 					};
 				},
 				onOver: (e: any, item: any) => {
+					if (!menuContext) {
+						return;
+					};
+
 					if (!item.arrow) {
 						menuStore.closeAll(subIds);
 						return;
@@ -938,7 +933,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
+			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: 0, width: current.width, height: current.height }, rect)) {
 				this.hoverId = column.id;
 				this.position = (i < current.index) ? I.BlockPosition.Left : I.BlockPosition.Right;
 				break;
@@ -1030,7 +1025,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				continue;
 			};
 
-			if (rect && Util.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
+			if (rect && UtilCommon.rectsCollide({ x: e.pageX, y: e.pageY, width: current.width, height: current.height }, rect)) {
 				this.hoverId = row.id;
 				this.position = (i < current.index) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
 
@@ -1099,10 +1094,14 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			case I.BlockType.TableColumn: {
 				columns.forEach((column: I.Block, i: number) => {
 					const cell = node.find(`.cell.column${column.id}`).first();
-					const p = cell.offset();
+					if (!cell.length) {
+						return;
+					};
+
+					const { left } = cell.offset();
 
 					this.cache[column.id] = {
-						x: p.left,
+						x: left,
 						y: 0,
 						height: 1,
 						width: cell.outerWidth(),
@@ -1117,11 +1116,15 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 				rows.forEach((row: I.Block, i: number) => {
 					const el = node.find(`#row-${row.id}`).first();
-					const p = el.offset();
+					if (!el.length) {
+						return;
+					};
+
+					const { left, top } = el.offset();
 
 					this.cache[row.id] = {
-						x: p.left,
-						y: p.top,
+						x: left,
+						y: top,
 						height: el.height(),
 						width: width,
 						index: i,
@@ -1527,7 +1530,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		if (parent.isPage() || parent.isLayoutDiv()) {
 			const obj = $(`#block-${block.id}`);
-			const container = Util.getPageContainer(isPopup);
+			const container = UtilCommon.getPageContainer(isPopup);
 
 			maxWidth = container.width() - PADDING;
 			wrapperWidth = getWrapperWidth() + Constant.size.blockMenu;

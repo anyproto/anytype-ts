@@ -25,5 +25,7 @@ export interface Preview {
 	marks?: I.Mark[];
 	noUnlink?: boolean;
 	passThrough?: boolean;
+	noAnimation?: boolean;
+	delay?: number;
 	onChange?(marks: I.Mark[]): void;
 };

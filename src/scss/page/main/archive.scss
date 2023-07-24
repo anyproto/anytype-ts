@@ -17,13 +17,19 @@
 				.icon.restore { background-image: url('~img/icon/menu/action/restore0.svg'); }
 			}
 
+			.ReactVirtualized__List { padding: 12px 0px 80px 0px; }
+			
 			.items { height: 100%; }
 			.items {
 				.row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
+				@media (max-width: 940px) {
+					.row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+				}
+
 				.item { gap: 0px 12px; }
 				.item {
-					.iconObject { flex-shrink: 0; flex-basis: 48px; }
+					.iconObject { flex-shrink: 0; flex-basis: 48px; border-radius: 10px; background-color: $colorVeryLightGrey; }
 
 					.name { @include text-overflow-nw; width: 100%; }
 					.descr { @include text-overflow-nw; @include text-small; width: 100%; color: $colorDarkGrey; }

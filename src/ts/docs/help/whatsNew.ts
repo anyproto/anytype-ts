@@ -1,16 +1,17 @@
 import { I, keyboard } from 'Lib';
 
 const cmd = keyboard.cmdSymbol();
+const alt = keyboard.altSymbol();
 const hl = (t: string) => `<span class="highlight">${t}</span>`;
 const block = (style: I.TextStyle, text: string) => ({ style, text });
 const title = (t: string) => block(I.TextStyle.Title, t);
 const h1 = (t: string) => block(I.TextStyle.Header1, t);
-const h2 = (t: string) => block(I.TextStyle.Header1, t);
-const h3 = (t: string) => block(I.TextStyle.Header1, t);
+const h2 = (t: string) => block(I.TextStyle.Header2, t);
+const h3 = (t: string) => block(I.TextStyle.Header3, t);
 const text = (t: string) => block(I.TextStyle.Paragraph, t);
 const bullet = (t: string) => block(I.TextStyle.Bulleted, t);
 const div = () => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
-const video = (src: string) => text(`<video src="${src}" controls autoplay loop class="full" />`);
+const video = (src: string) => text(`<video src="${src}" controls class="full" />`);
 const img = (src: string, c: string) => text(`<img src="${src}" class="${c}" />`);
 const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
 
@@ -18,9 +19,85 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Inline Sets are Here 😍`),
+	title(`Enter the Void 😶‍🌫️`),
+
+	text(`After an enormous pre-beta launch, we're following up this month with an update to inject some magic into our onboarding experience.`),
+	text(`Before we get to the good stuff: this is our last release before we officially launch our public beta(!). On July 19, we'll be opening our repositories and celebrating this occasion with a 24-hour AMA on <a href="https://www.producthunt.com/products/anytype">Product Hunt</a>.`),
+	text(`We'd absolutely love for you to join our launch by following us on <a href="https://www.producthunt.com/products/anytype">Product Hunt</a>, bringing us your juicy questions and comments with you on launch day, and maybe even telling a friend.`),
+	text(`And now, without further ado:`),
+
+	h2(`💎 Highlights of this Release:`),
+
+	bullet(`<b>Redesigned onboarding &amp; login experience</b>`),
+
+	video(`./img/help/33/onboarding.mp4`),
+	text(`We're calling this one feature, but it's really a whole series of features and designs wrapped into one experience that comprises everything from installation to login.`),
+	text(`During the onboarding experience, new users are situated within the "Void" to understand where their space will be created.`),
+	text(`From there, users receive supplemental education on the importance of protecting and backing up their recovery phrases. Finally, users are able to visualize their identity and personal space as two distinct entities.`),
+	text(`Although this flow is primarily designed for new users, existing account holders will also get to join in on some of the fun. You'll notice when logging in or out of your account, that your recovery phrase window got a colorful new design and that the void concept has been introduced uniformly in all accounts.`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+
+	bullet(`<b>Account & Space Settings Menu Updates</b>`),
+	text(`We've re-arranged some of the elements in your account and space settings menu to work more intuitively - namely, import and export menus have moved from your account to your space settings.`),
+	text(`We've also added a description field to your account settings, which is reflected in your profile object as Relation: Description.`),
+
+	bullet(`<b>Views in Set widgets are now correctly updated when something is changed in source set</b>`),
+	text(`No need to re-create your widgets - any changes you make to your sets will be instantly reflected in the corresponding set widget.`),
+
+	h2(`🛠️ Tech & Performance:`),
+
+	bullet(`<b>Windows build now signed with certificate</b>`),
+	text(`Say goodbye to Windows Defender alerts - our security certificate has now been signed`),
+
+	h2(`🐛 Bug Fixes:`),
+
+	bullet(`<b>Fixed: "Last opened" homepage setting now working correctly</b>`),
+	bullet(`<b>Fixed: Image popups no longer flickering when resizing windows.</b> Thanks, <a href="https://community.anytype.io/t/image-popup-flickering-around-when-resizing-window/9580">jannis</a>!`),
+	bullet(`<b>Fixed: Right-clicking on file no longer opens object.</b> Thanks, <a href="https://community.anytype.io/t/right-click-on-file-opens-its-object-page/9496">person</a>!`),
+	bullet(`<b>Fixed: Right-clicking on object from sidebar no longer opens object.</b> Thanks, <a href="https://community.anytype.io/t/sidebar-right-click-bug/9605">isle9</a>!`),
+	bullet(`<b>Fixed: It's now possible to copy text from block when block menu is open.</b> Thanks, <a href="https://community.anytype.io/t/use-blocks-tab-to-copy-and-paste/9003">sooyoung</a>!`),
+	bullet(`<b>Fixed: Caret position no longer jumps on alt + delete</b>`),
+
+	div(),
+
+	h1(`Release 0.32.0: Welcome to the Space Jam 🌌`),
+	text(`Well folks, this is the release. THE release which integrates our Anysync protocol, introduces spaces to the anyverse, and opens the path towards multiplayer mode and the browser-like experience we wish to introduce. We are incredibly thankful to all @nightlytypes and new beta users who bravely tested multiple migrations and pre-release versions to help us roll out a polished product to the rest of our community.`),
+	text(`More than 300 bugs, polishes, and features were merged into this one update, so we won't detail each and every one of them. Instead, in this month's What's New edition, we'll be focusing on the main changes you'll notice once you've installed the new app, and describing each in greater detail.`),
+
+	h2(`Introduction of Private Spaces`),
+	video(`./img/help/32/1-spaces.mp4`),
+	text(`Upon opening this version you'll notice a new addition to your account: that of ${hl(`Space`)}. Your space can be customized in terms of name, icon, and homepage, which you'll find by clicking on the settings wheel on the ${hl(`Space`)} button.`),
+	text(`Your space homepage is the main page you'll see, each time you open Anytype. You can select any object or your graph as your space homepage. Clicking on the space widget in the top position of your sidebar will open your space settings. To return to your home page from anywhere in the app, you can use shortcut: ${hl(`${alt} + H`)}`),
+
+	h2(`Integration of Anysync protocol`),
+	text(`While it won't be visible from the interface, this release brings the integration of our new Anysync protocol, a work which has been years in the making. For us, arriving here means showing the world that a local-first, p2p synced protocol with an E2E encrypted product built on top, is possible. We hope you'll find the syncing of your accounts between devices a smoother experience than before, and rest easy knowing that your data is absolutely yours.`),
+
+	h2(`Introduction of Widgets`),
+	video(`./img/help/32/2-widgets.mp4`),
+	text(`Over the past months, we've thought long and hard about how to improve the navigation experience towards a more flexible approach. Enter: widgets, modular units which can be added or removed from your sidebar. Widgets allow you to quickly navigate to your objects and visualize the other objects they are linked to.`),
+	text(`When creating widgets, keep in mind that a widget "source" can be any object which you've previously added to your graph, or a dynamic list of your "recent", "favorite", or "sets" objects - tabs which were available in the previous tab of your homescreen.`),
+	text(`Widgets of any kind can be displayed as a link; meanwhile, widgets pointing to singular objects created with the editor can be displayed with "tree" appearance. Widgets pointing to sets, collections, recents, or favorites, can be displayed as a simple or compact list with all target objects inside.`),
+
+	h2(`New navigation bar`),
+	video(`./img/help/32/3-navbar.mp4`),
+	text(`Many commands which were previously dispersed throughout the interface have now been condensed into one navigation bar, which is your home base for managing and moving about your anytype. The navigation bar will remain visible no matter where you are in the app, putting your graph, global search, and profile settings within easier reach.`),
+
+	h2(`Collections`),
+	video(`./img/help/32/4-collections.mp4`),
+	text(`With this update you'll also discover Collections, which work less like a filter (Sets) and more like a folder. Any object in your graph can be manually added to a collection, either by using the + New buttons in the collection itself, or by selection ‘Link to' from the target object's 3-dots menu.`),
+	text(`Similarly with sets, you can visualize your collections based on four different views, and you can also sort & filter your collections based on object relations. Unlike sets however, adding an object to a given collection creates a new link in your graph.`),
+	text(`To get you started on your Collections journey, you'll now see the option to turn any set into a collection of objects, as well as the menu option to create a collection when you hit the ‘plus' button. `),
+
+	h2(`Protobuf Export & Import`),
+	img(`./img/help/32/export.png`, 'full screen'),
+	text(`In case you would like to transfer objects between anytype accounts, protobuf export is now available on the object and account level. When sharing the object with another anytype user, simply share the exported file - which the other user can import directly as an object in their account. Separately, if for any reason you need to create a new account and wish to preserve all objects in your account, you can also make an export of all your objects by navigating to your Profile settings > Export. `),
+
+	div(),
+
+	h1(`Release 0.31.0: Inline Sets are Here 😍`),
 	text(`Throughout the past months, our team has been researching &amp; designing solutions to our community's needs to manage several objects at once.`),
-	text(`As the first in a series of projects addressing this topic, we're happy to bring you inline sets, which will allow more flexible interaction between sets & objects, allowing you to freely embed the former within the latter. If February is about surprising your loved ones, consider this feature our early Valentine’s gift to you 💖`),
+	text(`As the first in a series of projects addressing this topic, we're happy to bring you inline sets, which will allow more flexible interaction between sets & objects, allowing you to freely embed the former within the latter. If February is about surprising your loved ones, consider this feature our early Valentine's gift to you 💖`),
 
 	h2(`💎 Highlights of this Release`),
 

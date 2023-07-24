@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.31.54",
+	"version": "0.33.3",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -37,6 +37,7 @@
 		"name": "Any Association",
 		"email": "info@anytype.io"
 	},
+	"license": "SEE LICENSE IN LICENSE.md",
 	"bugs": {
 		"url": "https://github.com/anyproto/anytype-ts/issues"
 	},
@@ -142,7 +143,7 @@
 		"buildDependenciesFromSource": true,
 		"generateUpdatesFilesForAllChannels": true,
 		"beforeBuild": "./electron/hook/beforebuild.js",
-		"afterSign": "./electron/hook/notarize.js",
+		"afterSign": "./electron/hook/aftersign.js",
 		"appId": "com.anytype.anytype",
 		"compression": "normal",
 		"productName": "Anytype",
@@ -157,11 +158,13 @@
 		],
 		"asarUnpack": [
 			"dist/main.js",
+			"dist/main.js.map",
 			"dist/index.html",
 			"dist/run.js",
 			"dist/lib",
 			"dist/anytypeHelper",
 			"dist/anytypeHelper.exe",
+			"dist/font/**/*",
 			"dist/workers/**/*",
 			"dist/*.node",
 			"dist/img/**/*",
@@ -191,6 +194,7 @@
 			"!dist/*",
 			"dist/index.html",
 			"dist/main.js",
+			"dist/main.js.map",
 			"dist/run.js",
 			"dist/lib/**/*",
 			"dist/img/**/*",
@@ -199,6 +203,7 @@
 			"dist/anytypeHelper.exe",
 			"dist/anytypeHelper",
 			"dist/*.node",
+			"dist/font/**/*",
 			"dist/workers/**/*",
 			"!node_modules/**/*",
 			{
@@ -511,6 +516,7 @@
 			]
 		},
 		"win": {
+			"sign": "./electron/hook/sign.js",
 			"target": "nsis",
 			"icon": "electron/img/icon256x256.png",
 			"publish": [

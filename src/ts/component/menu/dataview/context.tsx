@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, DataUtil, ObjectUtil, focus } from 'Lib';
+import { I, C, keyboard, analytics, UtilData, UtilObject, focus } from 'Lib';
 import { detailStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -184,7 +184,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
-		const { data, classNameWrap } = param;
+		const { data, className, classNameWrap } = param;
 		const { objectIds, onLinkTo } = data;
 
 		if (!keyboard.isMouseDisabled) {
@@ -204,6 +204,7 @@ class MenuContext extends React.Component<I.Menu> {
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			isSub: true,
+			className,
 			classNameWrap,
 			data: {
 				rebind: this.rebind,
@@ -215,8 +216,8 @@ class MenuContext extends React.Component<I.Menu> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					rootId: itemId,
@@ -265,7 +266,7 @@ class MenuContext extends React.Component<I.Menu> {
 		switch (item.id) {
 
 			case 'open':
-				ObjectUtil.openPopup(detailStore.get(subId, objectIds[0], []));
+				UtilObject.openPopup(detailStore.get(subId, objectIds[0], []));
 				break;
 
 			case 'copy':
@@ -275,7 +276,7 @@ class MenuContext extends React.Component<I.Menu> {
 					};
 
 					if (count == 1) {
-						ObjectUtil.openPopup(detailStore.get(subId, message.ids[0], []));
+						UtilObject.openPopup(detailStore.get(subId, message.ids[0], []));
 					};
 
 					analytics.event('DuplicateObject', { count });

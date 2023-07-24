@@ -1,4 +1,4 @@
-import { I, M, Util, DataUtil } from 'Lib';
+import { I, M, UtilCommon, UtilData } from 'Lib';
 import { dbStore } from 'Store';
 import { observable, intercept, makeObservable } from 'mobx';
 
@@ -50,7 +50,7 @@ class View implements I.View {
 			relations: observable,
 		});
 
-		intercept(this as any, change => Util.intercept(this, change));
+		intercept(this as any, change => UtilCommon.intercept(this, change));
 	};
 
 	isGrid () {
@@ -74,7 +74,7 @@ class View implements I.View {
 	};
 
 	getRelation (relationKey: string) {
-		return this.relations.find(it => it.relationKey == relationKey);
+		return this.relations.find(it => it && (it.relationKey == relationKey));
 	};
 
 	getFilter (id: string) {

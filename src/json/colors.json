@@ -1,7 +1,7 @@
 {
     "gradientIcons": {
         "common": {
-            "steps": { "from": "22.92%", "to": "100%" }
+            "steps": { "from": 0.2292, "to": 1 }
         },
         "options": [
             { "colors": { "from": "#f6eb7d", "to":  "#cbd2fa" } },

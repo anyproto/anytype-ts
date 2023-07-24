@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, Util, analytics, Storage, Preview } from 'Lib';
+import { I, UtilCommon, analytics, Storage, Preview } from 'Lib';
 import { Dimmer } from 'Component';
 import { menuStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -17,6 +17,7 @@ import PopupPage from './page';
 import PopupTemplate from './template';
 import PopupExport from './export';
 import PopupMigration from './migration';
+import PopupPin from './pin';
 
 class Popup extends React.Component<I.Popup> {
 
@@ -50,6 +51,7 @@ class Popup extends React.Component<I.Popup> {
 			template:	 PopupTemplate,
 			export:		 PopupExport,
 			migration:	 PopupMigration,
+			pin:		 PopupPin,
 		};
 		
 		const popupId = this.getId();
@@ -58,6 +60,10 @@ class Popup extends React.Component<I.Popup> {
 
 		if (className) {
 			cn.push(className);
+		};
+
+		if (popupStore.showDimmerIds().includes(id)) {
+			cn.push('showDimmer');
 		};
 		
 		if (!Component) {
@@ -70,7 +76,7 @@ class Popup extends React.Component<I.Popup> {
 				id={popupId} 
 				className={cn.join(' ')}
 			>
-				<div id={popupId + '-innerWrap'} className="innerWrap">
+				<div id={`${popupId}-innerWrap`} className="innerWrap">
 					<div className="content">
 						<Component 
 							{...this.props} 
@@ -88,15 +94,18 @@ class Popup extends React.Component<I.Popup> {
 	};
 	
 	componentDidMount () {
-		const { id } = this.props;
+		const { id, param } = this.props;
 
 		this._isMounted = true;
-		this.position();
-		this.unbind();
+
+		if (!param.preventResize) {
+			this.position();
+		};
+
+		this.rebind();
 		this.animate();
-		
+
 		analytics.event('popup', { params: { id } });
-		$(window).on('resize.popup', () => { this.position(); });
 	};
 	
 	componentWillUnmount () {
@@ -104,8 +113,20 @@ class Popup extends React.Component<I.Popup> {
 		this.unbind();
 	};
 	
+	rebind () {
+		const { id, param } = this.props;
+
+		this.unbind();
+
+		if (!param.preventResize) {
+			$(window).on(`resize.popup${id}`, () => this.position());
+		};
+	};
+
 	unbind () {
-		$(window).off('resize.popup');
+		const { id } = this.props;
+
+		$(window).off(`resize.popup${id}`);
 	};
 	
 	animate () {
@@ -131,12 +152,8 @@ class Popup extends React.Component<I.Popup> {
 	};
 	
 	position () {
-		const { param } = this.props;
+		const { id } = this.props;
 
-		if (param.preventResize) {
-			return;
-		};
-		
 		raf(() => {
 			if (!this._isMounted) {
 				return;
@@ -144,7 +161,7 @@ class Popup extends React.Component<I.Popup> {
 					
 			const node = $(this.node);
 			const inner = node.find('.innerWrap');
-			const { ww } = Util.getWindowDimensions();
+			const { ww } = UtilCommon.getWindowDimensions();
 
 			const sidebar = $('#sidebar');
 			const isRight = sidebar.hasClass('right');
@@ -152,7 +169,7 @@ class Popup extends React.Component<I.Popup> {
 			const height = inner.outerHeight();
 
 			let sw = 0;
-			if (commonStore.isSidebarFixed && sidebar.hasClass('active')) {
+			if (commonStore.isSidebarFixed && sidebar.hasClass('active') && !popupStore.showDimmerIds().includes(id)) {
 				sw = sidebar.outerWidth();
 			};
 
@@ -164,10 +181,7 @@ class Popup extends React.Component<I.Popup> {
 				x -= sw / 2;
 			};
 
-			inner.css({ 
-				left: x, 
-				marginTop: -height / 2,
-			});
+			inner.css({ left: x, marginTop: -height / 2, });
 		});
 	};
 
@@ -193,7 +207,7 @@ class Popup extends React.Component<I.Popup> {
 	};
 
 	getId (): string {
-		return Util.toCamelCase('popup-' + this.props.id);
+		return UtilCommon.toCamelCase('popup-' + this.props.id);
 	};
 
 };

@@ -1,17 +1,17 @@
 {
- 	"register": {
-		"url": "https://anytype.typeform.com/to/GlS8NAKb"
+ 	"0": {
+		"url": "https://community.anytype.io/survey0"
 	},
 
-	"pmf": {
-		"url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s"
+	"1": {
+		"url": "https://community.anytype.io/survey1"
 	},
 
-	"delete": {
-		"url": "https://anytype.typeform.com/to/lSyoRr8U"
+	"2": {
+		"url": "https://community.anytype.io/survey2#anytypeid=%s"
 	},
 
-	"object": {
-		"url": "https://anytype.typeform.com/to/edqF9PKQ"
+	"3": {
+		"url": "https://community.anytype.io/survey3"
 	}
 }

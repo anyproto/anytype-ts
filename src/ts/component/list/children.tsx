@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Block } from 'Component';
 import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
+import { DropTarget } from 'Component';
 import { I, C, focus, translate } from 'Lib';
 
 interface Props extends I.BlockComponent {
@@ -29,9 +30,20 @@ const ListChildren = observer(class ListChildren extends React.Component<Props> 
 		if (!length) {
 			if (block.isTextToggle() && !readonly) {
 				return (
-					<div className="emptyToggle" onClick={this.onEmptyToggle}>
+					<DropTarget 
+						{...this.props}
+						className="emptyToggle"
+						isTargetColumn={true} 
+						rootId={rootId} 
+						id={block.id} 
+						style={block.content.style} 
+						type={block.type} 
+						dropType={I.DropType.Block} 
+						canDropMiddle={true} 
+						onClick={this.onEmptyToggle} 
+					>
 						{translate('blockTextToggleEmpty')}
-					</div>
+					</DropTarget>
 				);
 			} else {
 				return null;

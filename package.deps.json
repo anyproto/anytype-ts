@@ -8,6 +8,7 @@
 	"!dist/*",
 	"dist/index.html",
 	"dist/main.js",
+	"dist/main.js.map",
 	"dist/run.js",
 	"dist/lib/**/*",
 	"dist/img/**/*",
@@ -16,6 +17,7 @@
 	"dist/anytypeHelper.exe",
 	"dist/anytypeHelper",
 	"dist/*.node",
+	"dist/font/**/*",
 	"dist/workers/**/*",
 	"!node_modules/**/*",
 	{

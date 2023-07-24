@@ -1,12 +1,13 @@
 import * as amplitude from 'amplitude-js';
-import { I, C, Util, Storage } from 'Lib';
+import { I, C, UtilCommon, Storage } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
+import { OnboardStage } from 'Component/page/auth/animation/constants';
 
 const KEYS = [ 
-	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color',
+	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
 	'type', 'objectType', 'linkType', 'embedType', 'relationKey', 'layout', 'align', 'template', 'index', 'condition',
-	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view',
+	'tab', 'document', 'page', 'count', 'context', 'originalId', 'length', 'group', 'view', 'limit',
 ];
 const KEY_CONTEXT = 'analyticsContext';
 const KEY_ORIGINAL_ID = 'analyticsOriginalId';
@@ -14,7 +15,6 @@ const URL = 'amplitude.anytype.io';
 
 class Analytics {
 	
-	isInit = false;
 	instance: any = null;
 
 	debug () {
@@ -28,13 +28,25 @@ class Analytics {
 	};
 	
 	init () {
-		if (this.isInit) {
+		if (this.instance) {
 			return;
 		};
 
-		const platform = Util.getPlatform();
+		const { config } = commonStore;
+		const platform = UtilCommon.getPlatform();
 
-		C.MetricsSetParameters(platform);
+		let version = String(window.Electron.version.app || '').split('-');
+		if (version.length) {
+			version = [ version[0] ];
+		};
+		if (config.sudo || !window.Electron.isPackaged || [ 'alpha' ].includes(config.channel)) {
+			version.push('dev');
+		} else
+		if ([ 'beta' ].includes(config.channel)) {
+			version.push(config.channel);
+		};
+
+		C.MetricsSetParameters(platform, version.join('-'));
 
 		this.instance = amplitude.getInstance();
 		this.instance.init(Constant.amplitude, null, {
@@ -53,8 +65,8 @@ class Analytics {
 			osVersion: window.Electron.version.os,
 		});
 
+		this.removeContext();
 		this.log('[Analytics].init');
-		this.isInit = true;
 	};
 
 	profile (id: string) {
@@ -135,6 +147,12 @@ class Analytics {
 				break;
 			};
 
+			case 'SelectGraphNode':
+			case 'CreateObject': {
+				data.layout = I.ObjectLayout[data.layout];
+				break;
+			};
+
 			case 'CreateBlock':
 			case 'ChangeBlockStyle': {
 				data.style = Number(data.style) || 0;
@@ -211,12 +229,14 @@ class Analytics {
 				break;
 			};
 
+			case 'ClickExport':
 			case 'Export': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ExportType[data.type];
 				break;
 			};
 
+			case 'ClickImport':
 			case 'Import': {
 				data.type = Number(data.type) || 0;
 				data.type = I.ImportType[data.type];
@@ -250,16 +270,22 @@ class Analytics {
 				break;
 			};
 
+			case 'SelectUsecase': {
+				data.type = I.Usecase[data.type];
+				break;
+			};
+
 			case 'ChangeWidgetSource':
 			case 'ChangeWidgetLayout':
+			case 'ChangeWidgetLimit':
 			case 'ReorderWidget':
 			case 'DeleteWidget': {
-				if (!data.target) {
-					break;
+				if (data.target) {
+					data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
+					delete data.target;
 				};
 
-				data.type = Constant.widgetId[data.target.id] ? data.target.name : this.typeMapper(data.target.type);
-				delete data.target;
+				data.layout = I.WidgetLayout[data.layout];
 				break;
 			};
 
@@ -279,6 +305,25 @@ class Analytics {
 				data.view = types[data.view];
 				break;
 			};
+
+			case 'ThemeSet': {
+				data.id = String(data.id || 'light');
+				break;
+			};
+
+			case 'OnboardingTooltip':
+			case 'ClickOnboardingTooltip': {
+				data.id = data.id ? UtilCommon.toUpperCamelCase(`-${data.id}`) : '';
+				data.type = data.type ? UtilCommon.toUpperCamelCase(`-${data.type}`) : '';
+				break;
+			};
+
+			case 'ClickOnboarding':
+			case 'ScreenOnboarding': {
+				data.step = OnboardStage[data.step];
+				break;
+			};
+
 		};
 
 		param.middleTime = Number(data.middleTime) || 0;
@@ -299,10 +344,6 @@ class Analytics {
 			converted.relationKey = this.relationMapper(converted.relationKey);
 		};
 
-		if (undefined !== converted.layout) {
-			converted.layout = I.ObjectLayout[converted.layout];
-		};
-
 		if (undefined !== converted.align) {
 			converted.align = I.BlockHAlign[converted.align];
 		};
@@ -317,11 +358,7 @@ class Analytics {
 		const { page, action } = params;
 		const key = [ page, action ].join('/');
 		const map = {
-			'index/index':		 'ScreenIndex',
-
 			'auth/login':		 'ScreenLogin',
-			'auth/register':	 'ScreenAuthRegistration',
-			'auth/invite':		 'ScreenAuthInvitation',
 
 			'main/graph':		 'ScreenGraph',
 			'main/navigation':	 'ScreenNavigation',
@@ -331,6 +368,7 @@ class Analytics {
 			'main/space':		 'ScreenSpace',
 			'main/media':		 'ScreenMedia',
 			'main/history':		 'ScreenHistory',
+			'main/usecase':		 'ScreenUsecase',
 		};
 
 		return map[key] || '';
@@ -370,7 +408,7 @@ class Analytics {
 		};
 
 		const code = (undefined !== map[id]) ? map[id] : id;
-		return code ? Util.toUpperCamelCase([ prefix, code ].join('-')) : '';
+		return code ? UtilCommon.toUpperCamelCase([ prefix, code ].join('-')) : '';
 	};
 
 	typeMapper (id: string) {

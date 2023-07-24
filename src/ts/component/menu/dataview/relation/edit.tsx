@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, ObjectUtil, MenuUtil, Relation, translate, Dataview, keyboard, analytics, Preview, DataUtil } from 'Lib';
+import { I, C, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilData } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -12,7 +12,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 	node: any = null;
 	format: I.RelationType = null;
 	objectTypes: string[] = [];
-	ref: any = null;
+	ref = null;
 	
 	constructor (props: I.Menu) {
 		super(props);
@@ -282,7 +282,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 		switch (item.id) {
 			case 'open': {
-				ObjectUtil.openPopup(relation);
+				UtilObject.openPopup(relation);
 				break;
 			};
 
@@ -400,7 +400,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				...data,
 				filter: '',
 				value: this.format,
-				options: MenuUtil.getRelationTypes(),
+				options: UtilMenu.getRelationTypes(),
 				noFilter: true,
 				onSelect: (e: any, item: any) => {
 					this.format = item.id;
@@ -442,7 +442,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				types: [ Constant.typeId.type ],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: Constant.typeId.type },
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => dbStore.getType(it.id),
@@ -598,7 +598,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { rootId, blockId, addCommand, onChange, ref } = data;
 		const object = detailStore.get(rootId, rootId);
 
-		C.ObjectCreateRelation(item, [], (message: any) => {
+		C.ObjectCreateRelation(item, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

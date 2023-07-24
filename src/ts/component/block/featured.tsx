@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Cell } from 'Component';
-import { I, C, DataUtil, Util, ObjectUtil, Preview, focus, analytics, Relation, translate, Onboarding, history as historyPopup, keyboard } from 'Lib';
+import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, translate, Onboarding, history as historyPopup, keyboard } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -47,16 +47,47 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const storeId = this.getStoreId();
 		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
 		const featuredRelations = Relation.getArrayValue(short.featuredRelations);
-
-		if (!featuredRelations.length) {
-			return null;
-		};
-
 		const object = detailStore.get(rootId, storeId, featuredRelations);
 		const type = detailStore.get(rootId, object.type, [ 'name', 'isDeleted' ]);
 		const allowedValue = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const items = this.getItems();
 		const bullet = <div className="bullet" />;
+		const typeName = (
+			<div className="name">
+				{type && !type.isDeleted && !type._empty_ ? UtilCommon.shorten(type.name, 32) : (
+					<span className="textColor-red">
+						{translate('commonDeletedType')}
+					</span>
+				)}
+			</div>
+		);
+
+		let typeRelation = null;
+
+		if (UtilObject.isTemplate(object.type)) {
+			typeRelation = (
+				<span className="cell">
+					<div className="cellContent type disabled">
+						{typeName}
+					</div>
+				</span>
+			);
+		} else
+		if (featuredRelations.includes('type')) {
+			typeRelation = (
+				<span className="cell canEdit">
+					<div
+						id={Relation.cellId(PREFIX, 'type', object.id)}
+						className="cellContent type"
+						onClick={this.onType}
+						onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
+						onMouseLeave={this.onMouseLeave}
+					>
+						{typeName}
+					</div>
+				</span>
+			);
+		};
 
 		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.type).map(it => it.name);
 		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.relation).map(it => it.name);
@@ -66,7 +97,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		if (tl) {
 			types = types.slice(0, SOURCE_LIMIT);
-			setOfString.push(`Object ${Util.cntWord(tl, 'type', 'types')}: ${types.join(', ')}`);
+			setOfString.push(`Object ${UtilCommon.cntWord(tl, 'type', 'types')}: ${types.join(', ')}`);
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
@@ -74,7 +105,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 		if (rl) {
 			relations = relations.slice(0, SOURCE_LIMIT);
-			setOfString.push(`${Util.cntWord(rl, 'Relation', 'Relations')}: ${relations.join(', ')}`);
+			setOfString.push(`${UtilCommon.cntWord(rl, 'Relation', 'Relations')}: ${relations.join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
@@ -90,25 +121,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				onKeyUp={this.onKeyUp}
 			>
 				<span id="onboardingAnchor" />
-				{featuredRelations.includes('type') ? (
-					<span className="cell canEdit">
-						<div
-							id={Relation.cellId(PREFIX, 'type', object.id)}
-							className="cellContent type"
-							onClick={this.onType}
-							onMouseEnter={(e: any) => { this.onMouseEnter(e, 'type'); }}
-							onMouseLeave={this.onMouseLeave}
-						>
-							<div className="name">
-								{type && !type.isDeleted && !type._empty_ ? Util.shorten(type.name, 32) : (
-									<span className="textColor-red">
-										{translate('commonDeletedType')}
-									</span>
-								)}
-							</div>
-						</div>
-					</span>
-				) : ''}
+
+				{typeRelation}
 
 				{featuredRelations.includes('setOf') ? (
 					<span className={[ 'cell', (!readonly ? 'canEdit' : '') ].join(' ')}>
@@ -168,8 +182,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								getRecord={() => object}
 								recordId={object.id}
 								viewType={I.ViewType.Grid}
-								bodyContainer={Util.getBodyContainer(isPopup ? 'popup' : 'page')}
-								pageContainer={Util.getCellContainer(isPopup ? 'popup' : 'page')}
+								bodyContainer={UtilCommon.getBodyContainer(isPopup ? 'popup' : 'page')}
+								pageContainer={UtilCommon.getCellContainer(isPopup ? 'popup' : 'page')}
 								iconSize={iconSize}
 								readonly={!canEdit}
 								isInline={true}
@@ -180,7 +194,6 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 								arrayLimit={2}
 								textLimit={150}
 								onMouseLeave={this.onMouseLeave}
-								placeholder={translate('placeholderCellCommon')}
 							/>
 						</span>
 					);
@@ -208,10 +221,19 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	init () {
+		const { rootId, block } = this.props;
+		const storeId = this.getStoreId();
+		const short = detailStore.get(rootId, storeId, [ 'featuredRelations' ], true);
+		const featuredRelations = Relation.getArrayValue(short.featuredRelations).filter(it => it != 'description');
 		const node = $(this.node);
+		const obj = $(`#block-${block.id}`);
 
-		node.find('.cell.first').removeClass('first');
-		node.find('.cell').first().addClass('first');
+		featuredRelations.length ? obj.removeClass('isHidden') : obj.addClass('isHidden');
+
+		if (node) {
+			node.find('.cell.first').removeClass('first');
+			node.find('.cell').first().addClass('first');
+		};
 	};
 
 	componentWillUnmount () {
@@ -365,7 +387,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		if (typeIsDeleted) {
 			showMenu();
 		} else {
-			DataUtil.checkSetCnt([ object.type ], (message: any) => {
+			UtilData.checkSetCnt([ object.type ], (message: any) => {
 				if (message.records.length == 1) {
 					this.setId = message.records[0].id;
 					options.push({ id: 'setOpen', name: `Open set of ${type.name}` });
@@ -414,12 +436,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						detailStore.update(rootId, { id: item.id, details: item }, false);
 						C.ObjectSetObjectType(rootId, item.id, () => {
-							ObjectUtil.openAuto({ ...object, layout: item.recommendedLayout });
+							UtilObject.openAuto({ ...object, layout: item.recommendedLayout });
 						});
 
 						this.menuContext.close();
@@ -436,7 +458,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.In, value: [ object.type ] }
 					],
 					onSelect: (item: any) => {
-						ObjectUtil.openPopup({ id: item.id, layout: I.ObjectLayout.Set });
+						UtilObject.openPopup({ id: item.id, layout: I.ObjectLayout.Set });
 						this.menuContext.close();
 					}
 				});
@@ -466,11 +488,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		switch (item.id) {
 			case 'open':
-				ObjectUtil.openPopup(type);
+				UtilObject.openPopup(type);
 				break;
 
 			case 'setOpen':
-				ObjectUtil.openPopup({ id: this.setId, layout: I.ObjectLayout.Set });
+				UtilObject.openPopup({ id: this.setId, layout: I.ObjectLayout.Set });
 				break;
 
 			case 'setCreate':
@@ -483,7 +505,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 				C.ObjectCreateSet([ object.type ], details, '', (message: any) => {
 					if (!message.error.code) {
-						ObjectUtil.openPopup(message.details);
+						UtilObject.openPopup(message.details);
 					};
 				});
 				break;
@@ -499,7 +521,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					};
 
 					keyboard.disableClose(true);
-					ObjectUtil.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
+					UtilObject.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
 					window.setTimeout(() => { Preview.toastShow({ text: `${object.name} is collection now!`}); }, 200);
 
 					analytics.event('SetTurnIntoCollection');
@@ -570,13 +592,12 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			},
 			data: {
 				relationKey: '',
-				readonly: false,
-				rootId: rootId,
+				rootId,
 			},
 		};
 
 		if (!isPopup) {
-			param.fixedY = Util.sizeHeader();
+			param.fixedY = UtilCommon.sizeHeader();
 			param.classNameWrap = 'fixed fromHeader';
 		};
 
@@ -584,17 +605,17 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	elementMapper (relation: any, item: any) {
-		item = Util.objectCopy(item);
+		item = UtilCommon.objectCopy(item);
 
 		switch (relation.format) {
 			case I.RelationType.File:
 			case I.RelationType.Object:
-				item.name = Util.shorten(item.name);
+				item.name = UtilCommon.shorten(item.name);
 				break;
 
 			case I.RelationType.Tag:
 			case I.RelationType.Status:
-				item.text = Util.shorten(item.text);
+				item.text = UtilCommon.shorten(item.text);
 				break;
 		};
 

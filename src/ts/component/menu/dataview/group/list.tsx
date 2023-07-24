@@ -78,7 +78,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 							readonly={true} 
 							arrayLimit={4}
 							withLabel={true}
-							placeholder={translate('placeholderCellCommon')}
+							placeholder="Uncategorized"
 						/>
 					</span>
 					{canHide ? (
@@ -115,11 +115,11 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 					isRowLoaded={() => true}
 					threshold={LIMIT}
 				>
-					{({ onRowsRendered, registerChild }) => (
+					{({ onRowsRendered }) => (
 						<AutoSizer className="scrollArea">
 							{({ width, height }) => (
 								<VList
-									ref={ref => { this.refList = ref; }}
+									ref={ref => this.refList = ref}
 									width={width}
 									height={height}
 									deferredMeasurmentCache={this.cache}

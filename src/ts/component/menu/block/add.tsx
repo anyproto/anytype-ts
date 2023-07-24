@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
-import { I, Mark, keyboard, C, focus, Action, Util, DataUtil, MenuUtil, ObjectUtil, Storage, translate, analytics, Relation } from 'Lib';
+import { I, Mark, keyboard, C, focus, Action, UtilCommon, UtilData, UtilMenu, UtilObject, Storage, translate, analytics, Relation } from 'Lib';
 import { blockStore, commonStore, dbStore, menuStore, detailStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -88,8 +88,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								viewType={I.ViewType.Grid}
 								idPrefix={idPrefix}
 								menuClassName="fromBlock"
-								bodyContainer={Util.getBodyContainer('menuBlockAdd')}
-								pageContainer={Util.getCellContainer('menuBlockAdd')}
+								bodyContainer={UtilCommon.getBodyContainer('menuBlockAdd')}
+								pageContainer={UtilCommon.getCellContainer('menuBlockAdd')}
 								readonly={true}
 								canOpen={false}
 								placeholder={translate('placeholderCellCommon')}
@@ -167,11 +167,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							isRowLoaded={() => true}
 							threshold={LIMIT}
 						>
-							{({ onRowsRendered, registerChild }) => (
+							{({ onRowsRendered }) => (
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
-											ref={ref => { this.refList = ref; }}
+											ref={ref => this.refList = ref}
 											width={width}
 											height={height}
 											deferredMeasurmentCache={this.cache}
@@ -270,7 +270,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { rootId } = data;
 		const { config } = commonStore;
 		const object = detailStore.get(rootId, rootId, [ 'targetObjectType' ]);
-		const isTemplate = object.type == Constant.typeId.template;
+		const isTemplate = UtilObject.isTemplate(object.type);
 		const type = dbStore.getType(isTemplate ? object.targetObjectType : object.type);
 
 		const relations = dbStore.getObjectRelations(rootId, rootId);
@@ -279,7 +279,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			map(it => dbStore.getRelationById(it)).
 			filter(it => it && it.relationKey && !relationKeys.includes(it.relationKey));
 
-		const ret = relations.concat(typeRelations).filter(it => !config.debug.ho && it.isHidden ? false : it.isInstalled).sort(DataUtil.sortByName);
+		const ret = relations.concat(typeRelations).filter(it => !config.debug.ho && it.isHidden ? false : it.isInstalled).sort(UtilData.sortByName);
 
 		ret.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
 
@@ -298,11 +298,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		let sections: any[] = [
-			{ id: 'text', name: 'Text', children: MenuUtil.getBlockText() },
-			{ id: 'list', name: 'List', children: MenuUtil.getBlockList() },
-			{ id: 'media', name: 'Media', children: MenuUtil.getBlockMedia() },
-			{ id: 'other', name: 'Other', children: MenuUtil.getBlockOther() },
-			{ id: 'object', name: 'Objects', children: MenuUtil.getBlockObject() },
+			{ id: 'text', name: 'Text', children: UtilMenu.getBlockText() },
+			{ id: 'list', name: 'List', children: UtilMenu.getBlockList() },
+			{ id: 'media', name: 'Media', children: UtilMenu.getBlockMedia() },
+			{ id: 'other', name: 'Other', children: UtilMenu.getBlockOther() },
+			{ id: 'object', name: 'Objects', children: UtilMenu.getBlockObject() },
 		].map(s => ({ ...s, children: s.children.map(c => ({ ...c, isBig: true })) }));
 
 		sections = sections.concat([
@@ -310,7 +310,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		]);
 		
 		if (filter && filter.text) {
-			const actions = MenuUtil.getActions({ hasFile: false, hasLink: false });
+			const actions = UtilMenu.getActions({ hasFile: false, hasLink: false });
 
 			if (block.canTurnPage()) {
 				actions.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
@@ -321,19 +321,19 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			]);
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: MenuUtil.getAlign(block.isTextQuote()) });
+				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: UtilMenu.getAlign(block.isTextQuote()) });
 			};
 			if (block.canHaveColor()) {
-				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: MenuUtil.getTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: UtilMenu.getTextColors() });
 			};
 			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: MenuUtil.getBgColors() });
+				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: UtilMenu.getBgColors() });
 			};
 			
-			sections = MenuUtil.sectionsFilter(sections, filter.text);
+			sections = UtilMenu.sectionsFilter(sections, filter.text);
 		};
 		
-		return MenuUtil.sectionsMap(sections);
+		return UtilMenu.sectionsMap(sections);
 	};
 	
 	getItems (withSections: boolean) {
@@ -367,7 +367,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const { rootId, blockId } = data;
 		const { filter } = commonStore;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const text = Util.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
+		const text = UtilCommon.stringCut(data.text, filter.from - 1, filter.from + filter.text.length);
 		const length = text.length;
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
@@ -389,7 +389,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				onSelect: () => {
 					$(`#block-${blockId} .value`).text(text);
 
-					DataUtil.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
+					UtilData.blockSetText(rootId, block.id, text, block.content.marks, true, () => {
 						focus.set(blockId, { from: length, to: length });
 						focus.apply();
 					});
@@ -407,8 +407,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.Move, 
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 				});
 				break;
@@ -425,7 +425,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						menuParam.data.onSelect();
@@ -534,6 +534,10 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 							lang: (Storage.get('codeLang') || Constant.default.codeLang),
 						};
 					};
+
+					if ([ I.TextStyle.Code, I.TextStyle.Callout ].includes(param.content.style)) {
+						param.bgColor = 'grey';
+					};
 				};
 
 				if (item.type == I.BlockType.File) {
@@ -558,13 +562,29 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 				if (item.type == I.BlockType.Table) {
 					C.BlockTableCreate(rootId, blockId, position, Number(item.rowCnt) || 3, Number(item.columnCnt) || 3, false, (message: any) => {
+						if (message.error.code) {
+							return;
+						};
+
+						const { rows, columns } = blockStore.getTableData(rootId, message.blockId);
+						if (!rows.length || !columns.length) {
+							return;
+						};
+
+						C.BlockTableRowListFill(rootId, [ rows[0].id ], () => {
+							const cellId = [ rows[0].id, columns[0].id ].join('-');
+
+							focus.set(cellId, { from: 0, to: 0 });
+							focus.apply();
+						});
+
 						analytics.event('CreateBlock', { 
 							middleTime: message.middleTime, 
 							type: param.type, 
 						});
 					});
 				} else
-				if ((item.type == I.BlockType.Text) && (item.itemId != I.TextStyle.Code)) {
+				if ((item.type == I.BlockType.Text) && ![ I.TextStyle.Code, I.TextStyle.Callout ].includes(item.itemId)) {
 					C.BlockListTurnInto(rootId, [ blockId ], item.itemId, (message: any) => {
 						onCommand(message.blockId || blockId);
 
@@ -587,12 +607,12 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					};
 
 					const create = (template: any) => {
-						ObjectUtil.create(rootId, blockId, details, position, template?.id, DataUtil.defaultLinkSettings(), [], (message: any) => {
+						UtilObject.create(rootId, blockId, details, position, template?.id, UtilData.defaultLinkSettings(), [], (message: any) => {
 							if (message.error.code) {
 								return;
 							};
 
-							ObjectUtil.openPopup({ ...details, id: message.targetId });
+							UtilObject.openPopup({ ...details, id: message.targetId });
 
 							analytics.event('CreateObject', {
 								route: 'Powertool',
@@ -603,7 +623,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 						});
 					};
 
-					DataUtil.checkTemplateCnt([ item.objectTypeId ], (message: any) => {
+					UtilData.checkTemplateCnt([ item.objectTypeId ], (message: any) => {
 						if (message.records.length > 1) {
 							popupStore.open('template', {
 								data: { 
@@ -647,7 +667,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		// Hack to prevent onBlur save
 		$(`#block-${blockId} #value`).first().text(text);
-		DataUtil.blockSetText(rootId, block.id, text, marks, true, cb);
+		UtilData.blockSetText(rootId, block.id, text, marks, true, cb);
 	};
 
 	moveToPage (type: string) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { C, Util, ObjectUtil, I, translate, analytics } from 'Lib';
+import { C, UtilCommon, UtilObject, I, translate, analytics } from 'Lib';
 import { detailStore } from 'Store';
 
 interface State {
@@ -34,7 +34,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 
 				<div className="side center">
 					<div className="txt">
-						{version ? Util.date('d F Y H:i:s', version.time) : ''}
+						{version ? UtilCommon.date('d F Y H:i:s', version.time) : ''}
 					</div>
 				</div>
 
@@ -49,7 +49,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		const { rootId } = this.props;
 		const object = detailStore.get(rootId, rootId, []);
 
-		ObjectUtil.openEvent(e, object);
+		UtilObject.openEvent(e, object);
 	};
 
 	onRestore (e: any) {
@@ -64,7 +64,7 @@ const HeaderMainHistory = observer(class HeaderMainHistory extends React.Compone
 		};
 
 		C.HistorySetVersion(rootId, version.id, (message: any) => {
-			ObjectUtil.openEvent(e, object);
+			UtilObject.openEvent(e, object);
 
 			analytics.event('RestoreFromHistory');
 		});

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contributors Community
+    url: https://github.com/orgs/anyproto/discussions
+    about: A better place for contributing discussions.
+  - name: Anytype Community
+    url: https://community.anytype.io
+    about: Existing feature requests and bug reports from Anytype users.

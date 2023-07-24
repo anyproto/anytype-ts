@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, analytics, keyboard, Key, translate, Dataview, MenuUtil, Relation, Util } from 'Lib';
+import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
 import { Input, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu> {
 	
 	n = -1;
-	ref: any = null;
+	ref = null;
 	isFocused = false;
 	preventSaveOnClose = false;
 	param: any = {};
@@ -81,7 +81,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		const { param } = this.props;
 		const { data } = param;
 
-		this.param = Util.objectCopy(data.view.get());
+		this.param = UtilCommon.objectCopy(data.view.get());
 		this.forceUpdate();
 		this.rebind();
 
@@ -252,7 +252,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		const { rootId, blockId, readonly, isInline } = data;
 		const { id, type, coverRelationKey, cardSize, coverFit, groupRelationKey, groupBackgroundColors, hideIcon, pageLimit } = this.param;
 		const views = dbStore.getViews(rootId, blockId);
-		const types = MenuUtil.getViews().map((it: any) => {
+		const types = UtilMenu.getViews().map((it: any) => {
 			it.sectionId = 'type';
 			it.icon = 'view c' + it.id;
 			return it;
@@ -501,7 +501,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 	};
 
 	getViewName (name?: string) {
-		return name || this.param.name || this.defaultName(this.param.type);
+		return (name || this.param.name || this.defaultName(this.param.type)).trim();
 	};
 
 	defaultName (type: I.ViewType): string {

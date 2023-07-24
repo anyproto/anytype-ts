@@ -1,6 +1,5 @@
 import { Rpc } from 'protobuf/pb/protos/commands_pb';
-import { Decode } from './struct';
-import { Mapper } from './mapper';
+import { Decode, Mapper } from 'Lib';
 
 export const AppGetVersion = (response: Rpc.App.GetVersion.Response) => {
 	return {
@@ -221,6 +220,12 @@ export const ObjectImportList = (response: Rpc.Object.ImportList.Response) => {
 };
 
 export const BlockCreate = (response: Rpc.Block.Create.Response) => {
+	return {
+		blockId: response.getBlockid(),
+	};
+};
+
+export const BlockTableCreate = (response: Rpc.BlockTable.Create.Response) => {
 	return {
 		blockId: response.getBlockid(),
 	};

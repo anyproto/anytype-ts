@@ -50,7 +50,7 @@
 .header.authIndex { height: 38px; }
 .header.authIndex {
 	.logo {
-		width: 90px; height: 13px; background: url('~img/logo/white.svg') no-repeat; display: inline-block; vertical-align: middle;
+		width: 90px; height: 13px; background: url('~img/logo/capital.svg') no-repeat; display: inline-block; vertical-align: middle;
 		background-position: center center; background-size: 100% 100%; transition: none;
 	}
 }
@@ -91,6 +91,16 @@
 		.iconObject { flex-shrink: 0; }
 	}
 	.path:hover { border-color: $colorBorderLight; }
+
+	.templateBanner {
+		display: flex; align-items: center; gap: 0px 4px; height: 32px; padding: 6px 8px; @include text-small; border-radius: 6px; background: $colorVeryLightGrey;
+	}
+	.templateBanner {
+		.typeName { display: flex; gap: 0px 4px; }
+		.typeName {
+			.name { font-weight: 600; }
+		}
+	}
 }
 
 .header.mainGraph {

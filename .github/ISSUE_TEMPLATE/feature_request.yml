@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest an idea
+labels: ["enhancement", "triage"]
+body:
+- type: checkboxes
+  attributes:
+    label: Have you read a contributing guide?
+    description: Please read [CONTRINUTING.md](../../docs/CONTRIBUTING.md) before proceeding. Check if there are existing [feature requests](https://community.anytype.io/c/feature-requests/l/latest?board=default) and upvote them instead. Follow [this article](https://doc.anytype.io/d/community/community-forum) if you don't know how to join the community.
+    options:
+    - label: I have read CONTRIBUTING.md
+      required: true
+    - label: I have searched the existing requests and didn't find any that were similar
+      required: true
+    - label: I have considered creating a pull request instead and want to proceed
+      required: true
+- type: textarea
+  id: feature-description
+  attributes:
+    label: Clear and concise description of the problem
+  validations:
+    required: true
+- type: textarea
+  id: suggested-solution
+  attributes:
+    label: Suggested solution
+  validations:
+    required: true
+- type: textarea
+  id: alternative
+  attributes:
+    label: Alternative
+    description: Clear and concise description of any alternative solutions or features you've considered.
+- type: textarea
+  id: additional-context
+  attributes:
+    label: Additional context
+    description: Any other context or screenshots about the feature request here.
+

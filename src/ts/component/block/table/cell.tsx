@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, keyboard, Util } from 'Lib';
+import { I, keyboard, UtilCommon } from 'Lib';
 import { Icon, Block } from 'Component';
 import Constant from 'json/constant.json';
 
@@ -123,7 +123,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 				onMouseEnter={(e: any) => { onCellEnter(e, row.id, column.id, cellId); }}
 				onMouseLeave={(e: any) => { onCellLeave(e, row.id, column.id, cellId); }}
 				onMouseDown={this.onMouseDown}
-				{...Util.dataProps({ 'column-id': column.id })}
+				{...UtilCommon.dataProps({ 'column-id': column.id })}
 			>
 				{!rowIdx ? <Handle key={'handle-column-' + cellId} type={I.BlockType.TableColumn} {...column} /> : ''}
 				{!columnIdx ? <Handle key={'handle-row-' + cellId} type={I.BlockType.TableRow} {...row} /> : ''}
@@ -147,7 +147,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 					<EmptyBlock />
 				)}
 
-				<div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} />
+				{!readonly ? <div className="resize" onMouseDown={(e: any) => { onResizeStart(e, column.id); }} /> : ''}
 				<Icon className="menu" inner={inner} onClick={(e: any) => { onOptions(e, I.BlockType.Text, row.id, column.id, cellId); }} />
 			</div>
 		);

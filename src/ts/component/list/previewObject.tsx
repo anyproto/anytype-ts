@@ -36,13 +36,13 @@ class ListObjectPreview extends React.Component<Props> {
 				<div 
 					id={'item-' + item.id} 
 					className="item" 
-					onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }} 
-					onMouseLeave={(e: any) => { this.onMouseLeave(e, item); }}
+					onMouseEnter={e => this.onMouseEnter(e, item)} 
+					onMouseLeave={e => this.onMouseLeave(e, item)}
 				>
 					<PreviewObject 
-						ref={ref => { this.refObj[item.id] = ref; }} 
+						ref={ref => this.refObj[item.id] = ref} 
 						rootId={item.id} 
-						onClick={(e: any) => { this.onClick(e, item); }} 
+						onClick={e => this.onClick(e, item)} 
 					/>
 				</div>
 			);

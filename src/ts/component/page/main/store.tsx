@@ -1,19 +1,14 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, DataUtil, ObjectUtil, Util, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
 	loading: boolean;
-};
-
-enum Tab {
-	Type = 'type',
-	Relation = 'relation',
 };
 
 enum View {
@@ -24,8 +19,8 @@ enum View {
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const Tabs = [
-	{ id: Tab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
-	{ id: Tab.Relation, name: 'Relations', tooltipCaption: `${cmd} + ${alt} + T` },
+	{ id: I.StoreTab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
+	{ id: I.StoreTab.Relation, name: 'Relations', tooltipCaption: `${cmd} + ${alt} + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
@@ -41,7 +36,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	cache: any = null;
 	refList: any = null;
 	refFilter: any = null;
-	tab: Tab = Tab.Type;
+	tab: I.StoreTab = I.StoreTab.Type;
 	view: View = View.Marketplace;
 	frame = 0;
 	limit = 0;
@@ -66,10 +61,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return null;
 		};
 
+		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
 		const sources = this.getSources();
 		const limit = this.getLimit();
+		const length = items.length;
 
 		let title = '';
 		let placeholder = '';
@@ -80,7 +77,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let iconSize = 0;
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
 				placeholder = 'Search or create a new type...';
 				textService = 'Service type';
@@ -90,7 +87,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				iconSize = 18;
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				title = 'All objects are connected.<br />Use relations to build connections between objects.';
 				placeholder = 'Search or create a new relation...';
 				textService = 'Service relation';
@@ -105,7 +102,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			<div className="mid">
 				<Title text={title} />
 				<Filter 
-					ref={ref => { this.refFilter = ref; }}
+					ref={ref => this.refFilter = ref}
 					id="store-filter"
 					icon="search"
 					placeholder={placeholder}
@@ -220,28 +217,37 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				<div className="body">
 					<div className="items">
 						<InfiniteLoader
-							rowCount={items.length}
 							loadMoreRows={() => {}}
-							isRowLoaded={() => true}
+							isRowLoaded={({ index }) => !!items[index]}
+							rowCount={length}
+							threshold={10}
 						>
-							{({ onRowsRendered, registerChild }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => { this.refList = ref; }}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											onScroll={this.onScroll}
-											scrollToAlignment="start"
-										/>
+							{({ onRowsRendered }) => (
+								<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+									{({ height, isScrolling, registerChild, scrollTop }) => (
+										<AutoSizer disableHeight={true}>
+											{({ width }) => {
+												return (
+													<div ref={registerChild}>
+														<List
+															autoHeight={true}
+															height={Number(height) || 0}
+															width={Number(width) || 0}
+															isScrolling={isScrolling}
+															rowCount={length}
+															rowHeight={({ index }) => this.getRowHeight(items[index])}
+															onRowsRendered={onRowsRendered}
+															rowRenderer={rowRenderer}
+															onScroll={this.onScroll}
+															scrollTop={scrollTop}
+															scrollToAlignment="start"
+														/>
+													</div>
+												);
+											}}
+										</AutoSizer>
 									)}
-								</AutoSizer>
+								</WindowScroller>
 							)}
 						</InfiniteLoader>
 					</div>
@@ -265,18 +271,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		this.resize();
 		this.rebind();
-		this.onTab(Storage.get('tabStore') || Tab.Type, false);
+		this.onTab(Storage.get('tabStore') || I.StoreTab.Type, false);
 	};
 
 	componentDidUpdate () {
-		const { isPopup } = this.props;
-
 		this.resize();
+
 		if (this.refList) {
 			this.refList.recomputeRowHeights();
 		};
-
-		Onboarding.start(Util.toCamelCase('store-' + this.tab), isPopup);
 	};
 
 	componentWillUnmount () {
@@ -298,8 +301,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onKeyDown (e: any) {
 		const cmd = keyboard.cmdKey();
 
-		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(Tab.Type, true); });
-		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(Tab.Relation, true); });
+		keyboard.shortcut(`${cmd}+t`, e, () => this.onTab(I.StoreTab.Type, true));
+		keyboard.shortcut(`${cmd}+alt+t`, e, () => this.onTab(I.StoreTab.Relation, true));
 	};
 
 	getRowHeight (item: any) {
@@ -314,10 +317,24 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onTab (id: any, isInner: boolean) {
+		const { isPopup } = this.props;
+
 		this.tab = id;
 		this.onView(Storage.get('viewStore') || View.Library, isInner);
 
 		Storage.set('tabStore', id);
+
+		if (!isPopup) {
+			let key = '';
+			switch (id) {
+				case I.StoreTab.Type: key = 'storeType'; break;
+				case I.StoreTab.Relation: key = 'storeRelation'; break;
+			};
+
+			if (key) {
+				Onboarding.start(key, false);
+			};
+		};
 	};
 
 	onView (id: View, isInner: boolean) {
@@ -331,7 +348,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onClick (e: any, item: any) {
-		ObjectUtil.openAuto(item);
+		UtilObject.openAuto(item);
 	};
 
 	onCreateType (e: any) {
@@ -366,7 +383,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const filter = node.find('#store-filter');
 
 		const menuParam: any = {
-			element: filter,
+			element: '#store-filter',
 			commonFilter: true,
 			horizontal: I.MenuDirection.Center,
 			width: filter.outerWidth(),
@@ -379,7 +396,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				menuParam.data = Object.assign(menuParam.data, {
 					onClick: (item: any) => {
 						this.onClick(e, item);
@@ -387,7 +404,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				});
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				menuParam.data = Object.assign(menuParam.data, {
 					menuIdEdit: 'blockRelationEdit',
 					addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
@@ -411,11 +428,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getMenuId () {
 		let menuId = '';
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				menuId = 'typeSuggest';
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				menuId = 'relationSuggest';
 				break;
 		};
@@ -428,7 +445,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
 		];
 		const sorts: I.Sort[] = [
-			{ type: I.SortType.Desc, relationKey: 'createdDate' },
+			{ type: I.SortType.Desc, relationKey: 'createdDate', includeTime: true },
 		];
 
 		let keys: string[] = Constant.defaultRelationKeys;
@@ -444,11 +461,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		};
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				keys = keys.concat(Constant.typeRelationKeys);
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				keys = keys.concat(Constant.relationRelationKeys);
 				break;
 		};
@@ -458,7 +475,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			dbStore.recordsSet(Constant.subId.store, '', []);
 		};
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			subId: Constant.subId.store,
 			filters,
 			sorts,
@@ -480,15 +497,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		switch (this.view) {
 			case View.Marketplace:
 				switch (this.tab) {
-					case Tab.Type:		 type = Constant.storeTypeId.type; break;
-					case Tab.Relation:	 type = Constant.storeTypeId.relation; break;
+					case I.StoreTab.Type:		 type = Constant.storeTypeId.type; break;
+					case I.StoreTab.Relation:	 type = Constant.storeTypeId.relation; break;
 				};
 				break;
 
 			case View.Library:
 				switch (this.tab) {
-					case Tab.Type:		 type = Constant.typeId.type; break;
-					case Tab.Relation:	 type = Constant.typeId.relation; break;
+					case I.StoreTab.Type:		 type = Constant.typeId.type; break;
+					case I.StoreTab.Relation:	 type = Constant.typeId.relation; break;
 				};
 				break;
 		};
@@ -544,11 +561,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const views: any[] = [];
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				views.push({ id: View.Library, name: 'My types' });
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				views.push({ id: View.Library, name: 'My relations' });
 				break;
 		};
@@ -561,11 +578,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		let sources: any[] = []
 
 		switch (this.tab) {
-			case Tab.Type:
+			case I.StoreTab.Type:
 				sources = dbStore.getTypes();
 				break;
 
-			case Tab.Relation:
+			case I.StoreTab.Relation:
 				sources = dbStore.getRelations();
 				break;
 		};
@@ -597,13 +614,17 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.top = scrollTop;
 		};
 
+		if (this.refFilter) {
+			this.refFilter.forceUpdate();
+		};
+
 		for (let menu of menus) {
-			win.trigger('resize.' + Util.toCamelCase('menu-' + menu.id));
+			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${menu.id}`));
 		};
 	};
 
 	getLimit () {
-		const container = Util.getPageContainer(this.props.isPopup);
+		const container = UtilCommon.getPageContainer(this.props.isPopup);
 		const size = Constant.size.store;
 		const maxWidth = container.width() - size.border * 2;
 		const limit = Math.floor(maxWidth / (size.width + size.margin));
@@ -612,52 +633,32 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	resize () {
-		const container = Util.getPageContainer(this.props.isPopup);
-		const win = $(window);
 		const node = $(this.node);
-		const content = $('#popupPage .content');
-		const body = node.find('.body');
-		const hh = Util.sizeHeader();
-		const isPopup = this.isPopup();
 		const limit = this.getLimit();
-		const wh = isPopup ? container.height() : win.height();
 		const midHeight = node.find('.mid').outerHeight();
 		const filter = node.find('#store-filter');
+		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
+		const items = this.getItems();
+		const height = items.reduce((res, current) => res += this.getRowHeight(current), 0);
 
-		node.css({ height: wh });
-		
-		if (isPopup) {
-			body.css({ height: wh - hh });
-			content.css({ minHeight: 'unset', height: '100%' });
-		} else {
-			body.css({ height: '' });
-			content.css({ minHeight: '', height: '' });
-		};
+		grid.css({ height });
 
 		if ((limit != this.limit) || (midHeight != this.midHeight)) {
 			this.limit = limit;
 			this.midHeight = midHeight;
 
 			raf.cancel(this.frame);
-			this.frame = raf(() => { this.forceUpdate(); });
+			this.frame = raf(() => this.forceUpdate());
 		};
 
-		if (!menuStore.get(this.getMenuId())) {
-			return;
-		}
+		if (menuStore.isOpen(this.getMenuId())) {
+			if (this.refFilter && this.filter.length) {
+				this.refFilter.setValue(this.filter);
+				this.refFilter.focus();
+			};
 
-		if (this.refFilter && this.filter.length) {
-			this.refFilter.setValue(this.filter);
-			this.refFilter.focus();
+			menuStore.update(this.getMenuId(), { width: filter.outerWidth() });
 		};
-		menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
-	};
-
-	isPopup () {
-		const { isPopup } = this.props;
-		const container = Util.getPageContainer(isPopup);
-
-		return isPopup && !container.hasClass('full');
 	};
 
 });

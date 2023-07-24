@@ -92,13 +92,13 @@
 			.button { color: $colorPrimary; }
 		}
 
-		.dataviewHead { border-color: $colorLineSecondary; }
+		.dataviewHead { border-color: $colorLineSecondary; color: $colorPrimary; }
 		.dataviewHead {
-			.iconWrap:hover { background-color: $colorHoverMedium; }
+			.icon:hover { background-color: $colorHoverMedium; }
+			.icon.source { background-image: url('#{$themePath}/icon/dataview/button/source0.svg'); opacity: 0; }
 		}
 
         .dataviewControls {
-            .line { background: $colorLineSecondary; }
             .viewItem { color: $colorSecondary; }
             .viewItem {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }
@@ -108,9 +108,9 @@
 
 			.icon:hover, .icon.active { background-color: $colorHoverMedium; }
 			.icon.btn-filter.on { background-image: url('#{$themePath}/icon/dataview/button/filter1.svg'); }
-			.icon.sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
+			.icon.btn-sort.on { background-image: url('#{$themePath}/icon/dataview/button/sort1.svg'); }
         }
-		.dataviewControls::after { background-color: $colorLinePrimary; }
+		.dataviewControls::after { background-color: $colorLineSecondary; }
 
 		.dataviewSelection {
 			.side.left { color: $colorPrimary; }
@@ -170,6 +170,8 @@
             .card {
                 .cover { border-color: $colorLinePrimary; background-color: $colorBgIcon; }
             }
+
+			.card.isEditing { border: 2px solid $colorOrange; }
         }
 
         .viewContent.viewBoard {
@@ -191,6 +193,10 @@
 			.card.add:hover {
                 .icon { background-image: url('#{$themePath}/icon/plus/column1.svg'); }
             }
+
+			.card.isEditing {
+				.cardContent { border: 2px solid $colorOrange; }
+			}
         }
 
 		.content {
@@ -213,33 +219,36 @@
 		lnk:hover, obj:hover { border-color: $colorPrimary; }
     }
 
-    .block.blockText.textCallout > .wrapContent { background: $colorHoverMedium; }
-    .block.blockText.textCode > .wrapContent > .selectable { background: $colorHoverMedium; }
-	.block.blockText.textQuote > .wrapContent > .additional > .line { border-color: $colorPrimary; }
+    .block.blockText.textCallout > .wrapContent { background: rgba(140, 158, 165, 0.25); }
+    .block.blockText.textCode > .wrapContent { background: rgba(140, 158, 165, 0.25); }
 
     /* BlockLink */
 
     .block.blockLink {
         .loading, .deleted { color: $colorSecondary; }
 
-		.linkCard.text {
-			.cardName .name { border-color: $colorLineTertiary; }
-		}
-
 		.linkCard.c48.withIcon {
-			.iconObject { background-color: $colorBgIcon; }
-		}
-
-		.linkCard.card {
-			.side.left, .side.right { border-color: $colorLineTertiary; }
+			.iconObject { background-color: $colorLineTertiary; }
 		}
     }
+	.block.blockLink.text {
+		.linkCard {
+			.cardName .name { border-color: $colorLineTertiary; }
+		}
+	}
+	.block.blockLink.card {
+		.linkCard {
+			.side.left, .side.right { border-color: $colorLineTertiary; }
+		}
+	}
 
-	.block.blockLink:hover {
-		.linkCard.text {
+	.block.blockLink.text:hover {
+		.linkCard {
 			.cardName .name { border-color: $colorPrimary; }
 		}
-		.linkCard.card {
+	}
+	.block.blockLink.card:hover {
+		.linkCard {
 			.side.left, .side.right { border-color: $colorLinePrimary; }
 		}
 	}
@@ -247,8 +256,8 @@
     /* BlockDiv */
 
     .block.blockDiv {
-        .line { border-color: $colorSecondary; }
-        .dot { background: $colorSecondary !important; }
+        .line { border-color: $colorLinePrimary; }
+        .dot { background: $colorLinePrimary !important; }
     }
 
     /* BlockLatex */

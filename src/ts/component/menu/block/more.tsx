@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, DataUtil, ObjectUtil, Util, Preview, focus, Action } from 'Lib';
+import { I, C, keyboard, analytics, UtilData, UtilObject, UtilCommon, Preview, focus, Action, translate } from 'Lib';
 import { blockStore, detailStore, commonStore, dbStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -93,9 +93,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const { param } = this.props;
 		const { data } = param;
 		const { blockId, rootId } = data;
-		const { profile } = blockStore;
 		const block = blockStore.getLeaf(rootId, blockId);
-		const platform = Util.getPlatform();
 		const { config } = commonStore;
 
 		if (!block) {
@@ -104,24 +102,31 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		
 		const object = detailStore.get(rootId, blockId);
 		const cmd = keyboard.cmdSymbol();
+		const isTemplate = UtilObject.isTemplate(object.type);
 
 		let archive = null;
 		let fav = null;
 		let pageLock = null;
 		let pageInstall = null;
+		let template = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let print = { id: 'print', name: 'Print', caption: `${cmd} + P` };
 		let search = { id: 'search', name: 'Search on page', caption: `${cmd} + F` };
 		let move = { id: 'move', name: 'Move to', arrow: true };
 		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
-		let align = { id: 'align', name: 'Align', icon: [ 'align', DataUtil.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let history = { id: 'history', name: 'Version history', caption: (platform == I.Platform.Mac ? `${cmd} + Y` : `Ctrl + H`) };
+		let history = { id: 'history', name: 'Version history', caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
 		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: 'Reload from source' };
 		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
+
+		if (isTemplate) {	
+			template = { id: 'pageCreate', icon: 'template', name: 'Create object' };
+		} else {
+			template = { id: 'templateCreate', icon: 'template', name: 'Use as a template' };
+		};
 
 		if (object.isFavorite) {
 			fav = { id: 'unfav', name: 'Remove from Favorites' };
@@ -150,19 +155,17 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		// Restrictions
 
-		const allowedBlock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedDelete = object.isInstalled && allowedArchive && object.isArchived;
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
-		const allowedTemplate = (object.type != Constant.typeId.note) && (object.id != profile) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
-		const allowedFav = !object.isArchived && !ObjectUtil.getSystemTypes().includes(object.type) && !ObjectUtil.getFileTypes().includes(object.type);
+		const allowedFav = !object.isArchived && !UtilObject.getSystemTypes().includes(object.type) && !UtilObject.getFileTypes().includes(object.type);
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;
 		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = object.source && block.isObjectBookmark();
 		const allowedInstall = !object.isInstalled && [ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type);
 		const allowedUninstall = object.isInstalled && [ Constant.typeId.type, Constant.typeId.relation ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+		const allowedTemplate = object.type != Constant.typeId.note;
 		const hasShortMenu = block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectCollection() || block.isObjectSpace();
 
 		if (!allowedArchive)	 archive = null;
@@ -174,6 +177,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!allowedHistory)	 history = null;
 		if (!allowedFav)		 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
+		if (!allowedTemplate)	 template = null;
 		if (allowedUninstall)	 archive = null;
 
 		let sections = [];
@@ -192,12 +196,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (block.isPage()) {
 			sections = [
 				{ children: [ fav, archive, history ] },
-				{ children: [ pageCopy, linkTo, pageLink, pageLock ] },
+				{ children: [ pageCopy, linkTo, pageLink, pageLock, template ] },
 				{ children: [ search ] },
 				{ children: [ print, pageExport, pageReload ] },
 			];
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		} else {
+			const align = { id: 'align', name: 'Align', icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };
+
 			sections.push({ children: [
 				turn,
 				move,
@@ -270,7 +276,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
 					],
 					onClick: (item: any) => {
 						C.BlockListConvertToObjects(rootId, [ blockId ], item.id);
@@ -288,8 +294,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],
@@ -308,7 +314,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'align': {
 				menuId = 'blockAlign';
 				menuParam.data = Object.assign(menuParam.data, {
-					value: block.align,
+					value: block.hAlign,
 					onSelect: (align: I.BlockHAlign) => {
 						C.BlockListSetAlign(rootId, [ blockId ], align, () => {
 							analytics.event('ChangeBlockAlign', { align, count: 1 });
@@ -329,8 +335,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					type: I.NavigationType.LinkTo,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: ObjectUtil.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: ObjectUtil.getSystemTypes() },
+						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: close,
@@ -371,9 +377,9 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				return;
 			};
 
-			const home = ObjectUtil.getSpaceDashboard();
+			const home = UtilObject.getSpaceDashboard();
 			if (home && (object.id == home.id)) {
-				ObjectUtil.openRoute({ layout: I.ObjectLayout.Empty });
+				UtilObject.openRoute({ layout: I.ObjectLayout.Empty });
 			} else {
 				keyboard.onBack();
 			};
@@ -383,65 +389,70 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		
 		switch (item.id) {
 				
-			case 'print':
+			case 'print': {
 				keyboard.onPrint(route);
 				break;
+			};
 
-			case 'history':
+			case 'history': {
 				keyboard.disableClose(true);
-				ObjectUtil.openAuto({ layout: I.ObjectLayout.History, id: object.id });
+				UtilObject.openAuto({ layout: I.ObjectLayout.History, id: object.id });
 				break;
+			};
 			
-			case 'search':
+			case 'search': {
 				keyboard.onSearchMenu('', route);
 				break;
+			};
 
-			case 'pageCopy':
+			case 'pageCopy': {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
-						ObjectUtil.openPopup({ id: message.ids[0], layout: object.layout });
+						UtilObject.openPopup({ id: message.ids[0], layout: object.layout });
 
 						analytics.event('DuplicateObject', { count: 1, route });
 					};
 				});
 				break;
+			};
 
-			case 'pageExport':
+			case 'pageExport': {
 				popupStore.open('export', { data: { rootId } });
 				break;
+			};
 				
-			case 'pageArchive':
+			case 'pageArchive': {
 				C.ObjectSetIsArchived(object.id, true, (message: any) => {
-					if (message.error.code) {
-						return;
+					if (!message.error.code) {
+						onBack();
+						analytics.event('MoveToBin', { count: 1, route });
 					};
-
-					onBack();
-					analytics.event('MoveToBin', { count: 1, route });
 				});
 				break;
+			};
 
-			case 'pageUnarchive':
+			case 'pageUnarchive': {
 				C.ObjectSetIsArchived(object.id, false, (message: any) => {
-					if (message.error.code) {
-						return;
+					if (!message.error.code) {
+						analytics.event('RestoreFromBin', { count: 1, route });
 					};
-
-					analytics.event('RestoreFromBin', { count: 1, route });
 				});
 				break;
+			};
 
-			case 'pageLock':
+			case 'pageLock': {
 				keyboard.onLock(rootId, true, route);
 				break;
+			};
 
-			case 'pageUnlock':
+			case 'pageUnlock': {
 				keyboard.onLock(rootId, false, route);
 				break;
+			};
 
-			case 'pageCreate':
-				ObjectUtil.create('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					ObjectUtil.openRoute({ id: message.targetId });
+			case 'pageCreate': {
+				UtilObject.create('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
+					UtilObject.openRoute({ id: message.targetId });
 
 					analytics.event('CreateObject', {
 						route,
@@ -451,45 +462,64 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					});
 				});
 				break;
+			};
 
-			case 'pageLink':
-				Util.clipboardCopy({ text: Url.protocol + ObjectUtil.route(object) });
+			case 'pageLink': {
+				UtilCommon.clipboardCopy({ text: Url.protocol + UtilObject.route(object) });
 				analytics.event('CopyLink', { route });
 				break;
+			};
 
-			case 'pageReload':
+			case 'pageReload': {
 				C.ObjectBookmarkFetch(rootId, object.source, () => {
 					analytics.event('ReloadSourceData', { route });
 				});
 				break;
+			};
 
-			case 'pageInstall':
+			case 'pageInstall': {
 				Action.install(object, false, (message: any) => {
-					ObjectUtil.openAuto(message.details);
+					UtilObject.openAuto(message.details);
 				});
 				break;
+			};
 
-			case 'pageUninstall':
+			case 'pageUninstall': {
 				Action.uninstall(object, false, () => { onBack(); });
 				break;
+			};
 
-			case 'fav':
+			case 'fav': {
 				C.ObjectSetIsFavorite(rootId, true, () => {
 					analytics.event('AddToFavorites', { count: 1, route });
 				});
 				break;
+			};
 
-			case 'unfav':
+			case 'unfav': {
 				C.ObjectSetIsFavorite(rootId, false, () => {
 					analytics.event('RemoveFromFavorites', { count: 1, route });
 				});
 				break;
+			};
 
-			case 'blockRemove':
+			case 'blockRemove': {
 				C.BlockListDelete(rootId, [ blockId ], () => {
 					isPopup ? popupStore.close('page') : onBack();
 				});
 				break;
+			};
+
+			case 'templateCreate': {
+				C.TemplateCreateFromObject(rootId, (message: any) => {
+					UtilObject.openPopup({ id: message.id, layout: object.layout });
+					Preview.toastShow({ text: translate('toastTemplateCreate') });
+					Preview.toastShow({ action: I.ToastAction.TemplateCreate, objectId: rootId });
+
+					analytics.event('CreateTemplate', { objectType: object.type, route });
+				});
+				break;
+			};
 		};
 		
 		if (close) {

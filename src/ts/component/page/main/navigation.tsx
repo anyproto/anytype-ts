@@ -4,7 +4,7 @@ import raf from 'raf';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, ObjectUtil, Util, keyboard, Key, focus, translate } from 'Lib';
+import { I, C, UtilObject, UtilCommon, keyboard, Key, focus, translate } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
 
 interface State {
@@ -60,9 +60,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	render () {
 		const { isPopup } = this.props;
 		const { info, pagesIn, pagesOut, loading } = this.state;
-		const { root } = blockStore;
 		const rootId = this.getRootId();
-		const isRoot = rootId == root;
 
 		const iconHome = (
 			<div className="iconObject isRelation c48">
@@ -122,38 +120,20 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		};
 
 		const Selected = (item: any) => {
-			let { name, description, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
-			let icon = null;
-			let withScale = true;
-			let withButtons = true;
-
-			if (item.isRoot) {
-				icon = iconHome;
-				withScale = false;
-				
-				if (!coverId && !coverType) {
-					const cover = commonStore.coverGetDefault();
-					coverId = cover.id;
-					coverType = cover.type;
-				};
-			} else {
-				icon = <IconObject object={item} forceLetter={true} size={48} />;
-			};
+			const { name, description, layout, snippet, coverType, coverId, coverX, coverY, coverScale } = item;
 
 			return (
 				<div id={'item-' + item.id} className="selected">
-					{icon}
+					<IconObject object={item} forceLetter={true} size={48} />
 					<ObjectName object={item} />
 					<ObjectDescription object={item} />
 					
-					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={withScale} /> : ''}
+					{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 				
-					{withButtons ? (
-						<div className="buttons">
-							<Button text={translate('popupNavigationOpen')} className="c36" onClick={(e: any) => { this.onConfirm(e, item); }} />
-							{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={(e: any) => { popupStore.close('page'); }} /> : ''}
-						</div>
-					) : ''}
+					<div className="buttons">
+						<Button text={translate('popupNavigationOpen')} className="c36" onClick={(e: any) => { this.onConfirm(e, item); }} />
+						{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => { popupStore.close('page'); }} /> : ''}
+					</div>
 				</div>
 			);
 		};
@@ -168,42 +148,38 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				{loading ? <Loader id="loader" /> : ''}
 				<div key="sides" className="sides">
 					<div id={'panel-' + Panel.Left} className="items left">
-						{!isRoot ? (
-							<React.Fragment>
-								<div className="sideName">{translate('popupNavigationLinkTo')}</div>
-								{!pagesIn.length ? (
-									<ItemEmpty name={translate('popupNavigationEmptyTo')} />
-								) : (
-									<InfiniteLoader
-										rowCount={pagesIn.length}
-										loadMoreRows={() => {}}
-										isRowLoaded={({ index }) => !!pagesIn[index]}
-									>
-										{({ onRowsRendered, registerChild }) => (
-											<AutoSizer className="scrollArea">
-												{({ width, height }) => (
-													<List
-														ref={registerChild}
-														width={width + 20}
-														height={height - 35}
-														deferredMeasurmentCache={this.cacheIn}
-														rowCount={pagesIn.length}
-														rowHeight={HEIGHT}
-														rowRenderer={(param: any) => { 
-															param.panel = Panel.Left;
-															return rowRenderer(pagesIn, this.cacheIn, param); 
-														}}
-														onRowsRendered={onRowsRendered}
-														overscanRowCount={10}
-														scrollToAlignment="start"
-													/>
-												)}
-											</AutoSizer>
+						<div className="sideName">{translate('popupNavigationLinkTo')}</div>
+						{!pagesIn.length ? (
+							<ItemEmpty name={translate('popupNavigationEmptyTo')} />
+						) : (
+							<InfiniteLoader
+								rowCount={pagesIn.length}
+								loadMoreRows={() => {}}
+								isRowLoaded={({ index }) => !!pagesIn[index]}
+							>
+								{({ onRowsRendered, registerChild }) => (
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												ref={registerChild}
+												width={width + 20}
+												height={height - 35}
+												deferredMeasurmentCache={this.cacheIn}
+												rowCount={pagesIn.length}
+												rowHeight={HEIGHT}
+												rowRenderer={(param: any) => { 
+													param.panel = Panel.Left;
+													return rowRenderer(pagesIn, this.cacheIn, param); 
+												}}
+												onRowsRendered={onRowsRendered}
+												overscanRowCount={10}
+												scrollToAlignment="start"
+											/>
 										)}
-									</InfiniteLoader>
+									</AutoSizer>
 								)}
-							</React.Fragment>
-						) : ''}
+							</InfiniteLoader>
+						)}
 					</div>
 
 					<div id={'panel-' + Panel.Center} className="items center">
@@ -307,12 +283,11 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			return;
 		};
 
+		const { isPopup } = this.props;
 		const node = $(this.node);
-		const obj = Util.getPageContainer(this.props.isPopup);
-		const isPopup = this.props.isPopup && !obj.hasClass('full');
 
 		raf(() => {
-			const container = Util.getScrollContainer(isPopup);
+			const container = UtilCommon.getScrollContainer(isPopup);
 			const header = node.find('#header');
 			const items = node.find('.items');
 			const sides = node.find('.sides');
@@ -485,15 +460,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	getPage (item: any) {
-		const { root } = blockStore;
-
-		item = { ...item.details };
-		item.isRoot = item.id == root;
-
-		if (item.isRoot) {
-			item.name = 'Home';
-		};
-		return item;
+		return { ...item.details };
 	};
 
 	onClick (e: any, item: I.PageInfo) {
@@ -502,7 +469,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		const { isPopup } = this.props;
 		const obj = { id: item.id, layout: I.ObjectLayout.Navigation };
 
-		isPopup ? ObjectUtil.openPopup(obj) : ObjectUtil.openRoute(obj);
+		isPopup ? UtilObject.openPopup(obj) : UtilObject.openRoute(obj);
 	};
 
 	onConfirm (e: any, item: I.PageInfo) {
@@ -510,19 +477,24 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			e.persist();
 		};
 
-		ObjectUtil.openEvent(e, item);
+		UtilObject.openEvent(e, item);
 	};
 
 	getRootId () {
 		const { rootId, match } = this.props;
-		return rootId ? rootId : match.params.id;
+
+		let root = rootId ? rootId : match.params.id;
+		if (root == I.HomePredefinedId.Graph) {
+			root = UtilObject.lastOpened()?.id;
+		};
+		return root;
 	};
 
 	onTab (id: string) {
 		const tab = Tabs.find(it => it.id == id);
 
 		if (tab) {
-			ObjectUtil.openAuto({ id: this.getRootId(), layout: tab.layout });
+			UtilObject.openAuto({ id: this.getRootId(), layout: tab.layout });
 		};
 	};
 	

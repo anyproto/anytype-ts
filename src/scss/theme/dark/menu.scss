@@ -65,7 +65,7 @@
 
     .menu.menuBlockAdd {
         .item.isBig {
-            .iconObject { background: $colorBgIcon; }
+            .iconObject { background: $colorLineTertiary; }
 
             .icon.textParagraph { background-image: url('#{$themePath}/icon/menu/action/block/paragraph1.svg'); }
             
@@ -92,8 +92,10 @@
             .btn:hover, .btn.active { color: $colorPrimary; }
         }
 
+		.item.active { background: $colorHoverMedium; }
+
 		.foot {
-			.icon:hover { background-color: $colorBgIcon; }
+			.icon:hover { background-color: $colorHoverMedium; }
 			.icon.recent.active { background-image: url('#{$themePath}/icon/emoji/recent1.svg'); }
 			.icon.people.active { background-image: url('#{$themePath}/icon/emoji/people1.svg'); }
 			.icon.nature.active { background-image: url('#{$themePath}/icon/emoji/nature1.svg'); }
@@ -104,6 +106,12 @@
 			.icon.symbols.active { background-image: url('#{$themePath}/icon/emoji/symbols1.svg'); }
 			.icon.flags.active { background-image: url('#{$themePath}/icon/emoji/flags1.svg'); }
 		}
+    }
+
+	/* MenuSmileSkin */
+
+	.menu.menuSmileSkin {
+		.item.active { background: $colorHoverMedium; }
     }
 
     /* MenuBlockCover */
@@ -191,7 +199,7 @@
 
     .menu.menuSearchObject.big {
         .item {
-            .iconObject { background: $colorBgIcon; }
+            .iconObject { background: $colorLineTertiary; }
         }
     }
 
@@ -258,7 +266,7 @@
 
 	.menu.menuBlockLink {
 		.item {
-			.iconObject { background-color: $colorBgIcon; }
+			.iconObject { background-color: $colorLineTertiary; }
 		}
 
 		.item.add { color: $colorPrimary; }
@@ -299,7 +307,6 @@
 	.menu.menuOnboarding {
 		a { color: $colorWhite; }
 		.highlight { background: $colorLineSecondary; color: $colorOrange; }
-        .icon.close { background-color: $colorHoverMedium; }
 
         .bottom {
             .round {
@@ -310,7 +317,7 @@
                 .step:not(.active) { background: $colorLineSecondary; }
                 .step:not(.active):hover { background: $colorLinePrimary; }
             }
-            .category { color: #5c5A54; }
+            .category { color: #5c5a54; }
         }
 	}
 
@@ -318,8 +325,7 @@
 
 	.menu.menuSearchText {
 		.buttons {
-			.btn { color: $colorSecondary; }
-			.btn:hover { color: $colorPrimary; }
+			.line { background: $colorLineSecondary; }
 		}
 	}
 

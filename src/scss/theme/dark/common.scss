@@ -11,6 +11,7 @@ html.themeDark {
     a:hover { color: $colorOrange; }
 
     #root-loader { background: $colorBlack; }
+	#globalFade { background: $colorBlack; }
 
     .cover::after {
         content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.2);
@@ -40,7 +41,7 @@ html.themeDark {
 
 	.isTag.archive { background-color: $colorHoverMedium; color: $colorSecondary; }
     .isTag.tagColor-default { color: $colorPrimary !important; background: $colorBlack !important; box-shadow: 0px 0px 0px 1px $colorLinePrimary inset; }
-    .isTag.tagColor-grey { color: #8C9EA5 !important; background: rgba(140, 158, 165, 0.25) !important; }
+    .isTag.tagColor-grey { color: #8c9ea5 !important; background: rgba(140, 158, 165, 0.25) !important; }
     .isTag.tagColor-yellow { color: $colorYellow !important; background: rgba(236, 217, 27, 0.25) !important; }
     .isTag.tagColor-orange { color: $colorOrange !important; background: rgba(255, 181, 34, 0.25) !important; }
     .isTag.tagColor-red { color: $colorRed !important; background: rgba(245, 85, 34, 0.25) !important; }
@@ -63,17 +64,22 @@ html.themeDark {
 	}
 
 	.objectManagerWrapper {
-		.controls, .managerEmpty { border-color: $colorLinePrimary; }
+        .controls .side.left .element:hover { background-color: $colorHoverMedium; }
+        .icon.checkbox { background-image: url('#{$themePath}/icon/archive/checkbox0.svg') !important; }
+        .icon.checkbox.active { background-image: url('#{$themePath}/icon/archive/checkbox1.svg') !important; }
+        .icon.remove { background-image: url('#{$themePath}/icon/menu/action/remove0.svg'); }
+        .icon.search { background-image: url('#{$themePath}/icon/menu/action/search0.svg'); }
+		.controls, .emptySearch { border-color: $colorLinePrimary; }
 	}
 
-	.progressBar { background: $colorBgLight; }
 	.progressBar {
-		.progressBarFill { background: $colorOrange; }
+        .bar { background: $colorBgLight; }
+        .fill { background: $colorOrange; }
 	}
 
     /* Components */
 
-	@keyframes fill {
+	@keyframes dots {
 		0% { background-color: $colorPrimary; }
 		32% { background-color: $colorPrimary; }
 		100% { background-color: rgba(0,0,0,0); }
@@ -81,7 +87,7 @@ html.themeDark {
 
     .loaderWrapper {
         .loader { border-color: $colorLinePrimary; border-left-color: $colorOrange; }
-		.dot { animation-name: fill; }
+		.dot { animation-name: dots; }
     }
 
     .mediaAudio {
@@ -108,15 +114,17 @@ html.themeDark {
 	}
 
     .button.blank { color: $colorPrimary; border-color: $colorLineSecondary; }
-    .button.blank:hover { border-color: #525148; background: $colorHoverMedium; }
+    .button.blank:not(.disabled):hover { border-color: #525148; background: $colorHoverMedium; }
 
-	.button.red { border-color: $colorLineSecondary; }
-    .button.red:hover { border-color: #581f0c; background: #311107; }
+	.button.red,
+    .button.red.blank { border-color: $colorLineSecondary; background: none; color: $colorRed; }
+    .button.red:hover,
+    .button.red.blank:hover { border-color: #581f0c; background: #311107; }
 
     .filter {
         .line { background: $colorLineSecondary; }
-		.icon.clear { background-image: url('#{$themePath}/icon/clearFilter0.svg') !important; }
-		.icon.clear:hover { background-image: url('#{$themePath}/icon/clearFilter1.svg') !important; }
+		.icon.clear { background-image: url('#{$themePath}/icon/clear0.svg') !important; }
+		.icon.clear:hover { background-image: url('#{$themePath}/icon/clear1.svg') !important; }
     }
 
 	.emptySearch {
@@ -168,7 +176,7 @@ html.themeDark {
         .loaderWrapper { border-color: $colorLinePrimary; }
         .icon.logo { background-image: url('#{$themePath}/icon/type/logo.svg'); }
         .heading {
-            .iconObject { background-color: $colorBgIcon; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
+            .iconObject { background-color: $colorLineTertiary; box-shadow: 0px 0px 0px 1px $colorBlack inset; }
 			.iconObject.isTask, .iconObject.isBookmark { background-color: unset; }
             .featured { color: $colorSecondary; }
             .bullet { background: $colorSecondary; }
@@ -236,6 +244,7 @@ html.themeDark {
     }
 
     .tooltip { background: $colorBgIcon; color: $colorPrimary; }
+    .tooltip.big { background: $colorBgLight; border: 1px solid rgba(229, 229, 229, 0.1); }
 
     /* Icon */
 
@@ -252,9 +261,7 @@ html.themeDark {
     .iconObject.c112,
     .iconObject.c128,
     .iconObject.withLetter
-    { background-color: $colorBgIcon; }
-
-	.iconObject.withOption.isSpace { background: $colorHoverMedium; }
+    { background-color: $colorLineTertiary; }
 
     /* EditorControls */
 
@@ -289,6 +296,8 @@ html.themeDark {
         .tabs {
             .tab.active, .tab:hover { color: $colorPrimary; border-color: $colorLinePrimary; }
         }
+
+		.templateBanner { background: $colorLineTertiary; color: $colorPrimary; }
     }
 	.header.isCommon.active {
 		.path { background-color: $colorHoverMedium; color: $colorPrimary; }
@@ -330,7 +339,7 @@ html.themeDark {
 
 	/* Navigation */
 
-	.navigationPanel { background: rgba(255,255,255,0.15); }
+	.navigationPanel { background: rgba(141, 141, 141, 0.4); }
 	.navigationPanel {
 		.iconWrap:hover { background-color: $colorHoverMedium; }
 	}

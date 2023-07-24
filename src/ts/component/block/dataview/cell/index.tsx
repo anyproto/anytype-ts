@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
-import { I, C, analytics, Util, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
+import { I, C, analytics, UtilCommon, keyboard, Relation, Renderer, Preview, translate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -28,7 +28,7 @@ class Cell extends React.Component<Props> {
 		canOpen: true,
 	};
 
-	ref: any = null;
+	ref = null;
 	timeout = 0;
 	
 	constructor (props: Props) {
@@ -110,7 +110,7 @@ class Cell extends React.Component<Props> {
 				onMouseLeave={this.onMouseLeave}
 			>
 				<CellComponent 
-					ref={ref => { this.ref = ref; }} 
+					ref={ref => this.ref = ref} 
 					{...this.props} 
 					id={id} 
 					key={id}
@@ -146,6 +146,11 @@ class Cell extends React.Component<Props> {
 		const { rootId, subId, block, recordId, getRecord, maxWidth, menuClassName, menuClassNameWrap, idPrefix, pageContainer, bodyContainer, cellPosition, placeholder } = this.props;
 		const relation = this.getRelation();
 		const record = getRecord(recordId);
+
+		if (!relation || !record) {
+			return;
+		};
+
 		const { config } = commonStore;
 		const cellId = Relation.cellId(idPrefix, relation.relationKey, recordId);
 		const value = record[relation.relationKey] || '';
@@ -176,7 +181,6 @@ class Cell extends React.Component<Props> {
 
 			if (menuId) {
 				keyboard.disableBlur(true);
-				$(bodyContainer).addClass('overMenu');
 			};
 
 			if (this.ref) {
@@ -206,10 +210,6 @@ class Cell extends React.Component<Props> {
 
 			$(`#${cellId}`).removeClass('isEditing');
 			commonStore.cellId = '';
-
-			if (menuId) {
-				window.setTimeout(() => { $(bodyContainer).removeClass('overMenu'); }, Constant.delay.menu);
-			};
 		};
 
 		let ret = false;
@@ -246,7 +246,7 @@ class Cell extends React.Component<Props> {
 
 			case I.RelationType.Date: {
 				param.data = Object.assign(param.data, {
-					value: param.data.value || Util.time(),
+					value: param.data.value || UtilCommon.time(),
 				});
 					
 				menuId = 'dataviewCalendar';
@@ -308,7 +308,7 @@ class Cell extends React.Component<Props> {
 
 			case I.RelationType.LongText: {
 				const wh = win.height();
-				const hh = Util.sizeHeader();
+				const hh = UtilCommon.sizeHeader();
 				const height = Math.min(wh - hh - 20, cell.outerHeight());
 
 				param = Object.assign(param, {
@@ -368,12 +368,12 @@ class Cell extends React.Component<Props> {
 						};
 
 						if (item.id == 'copy') {
-							Util.clipboardCopy({ text: value, html: value });
+							UtilCommon.clipboardCopy({ text: value, html: value });
 							analytics.event('RelationUrlCopy');
 						};
 
 						if (item.id == 'reload') {
-							Util.clipboardCopy({ text: value, html: value });
+							UtilCommon.clipboardCopy({ text: value, html: value });
 							C.ObjectBookmarkFetch(rootId, value, () => {
 								analytics.event('ReloadSourceData');
 							});
@@ -483,13 +483,10 @@ class Cell extends React.Component<Props> {
 		if (!relation || !record || readonly || relation.isReadonlyValue || record.isReadonly) {
 			return false;
 		};
-		if (relation.format == I.RelationType.Checkbox) {
-			return true;
-		};
 		if ((record.layout == I.ObjectLayout.Note) && (relation.relationKey == 'name')) {
 			return false;
 		};
-		return viewType == I.ViewType.Grid;
+		return true;
 	};
 	
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch } from 'Component';
-import { I, Util, translate, keyboard } from 'Lib';
+import { I, UtilCommon, translate, keyboard, analytics } from 'Lib';
 import { menuStore } from 'Store';
 import Head from '../head';
 
@@ -36,6 +36,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 		].map(it => ({ ...it, id: String(it.id) }));
 		const { delimiter, delimiters } = this.delimiterOptions();
 
+		this.init();
+
 		return (
 			<div>
 				<Head {...this.props} returnTo="importIndex" name={translate('popupSettingsImportTitle')} />
@@ -44,8 +46,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 				<Title text={translate('popupSettingsImportCsvTitle')} />
 				<Label text={translate('popupSettingsImportCsvText')} />
 
-				<div className="rows">
-					<div className="row">
+				<div className="actionItems">
+					<div className="item">
 						<Label text="Mode" />
 						<Select 
 							ref={ref => this.refMode = ref}
@@ -61,7 +63,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 						/>
 					</div>
 
-					<div className="row">
+					<div className="item">
 						<Label text="Use the first row as column names" />
 						<Switch 
 							value={this.data.firstRow} 
@@ -73,7 +75,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 						/>
 					</div>
 
-					<div className="row">
+					<div className="item">
 						<Label text="Transpose rows and columns" />
 						<Switch 
 							value={this.data.transpose} 
@@ -85,7 +87,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 						/>
 					</div>
 
-					<div className="row">
+					<div className="item">
 						<Label text="Columns are divided by" />
 						<Select 
 							ref={ref => this.refDelimiter = ref}
@@ -116,8 +118,18 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 	};
 
 	componentDidMount(): void {
+		this.init();
+		this.refMode.setValue(String(this.data.mode));
+		this.refDelimiter.setValue(this.data.delimiter);
+	};
+
+	init () {
 		const { storageGet } = this.props;
 		const options = storageGet().csv || {};
+
+		if (undefined === options.firstRow) {
+			options.firstRow = true;
+		};
 
 		this.data = {
 			mode: Number(options.mode) || I.CsvImportMode.Collection,
@@ -125,9 +137,6 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			transpose: Boolean(options.transpose),
 			delimiter: String(options.delimiter || ','),
 		};
-
-		this.refMode.setValue(String(this.data.mode));
-		this.refDelimiter.setValue(this.data.delimiter);
 	};
 
 	onFilterKeyUp (e: React.KeyboardEvent, v: string) {
@@ -168,7 +177,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 	};
 
 	delimiterOptions () {
-		const delimiters = Util.objectCopy(Delimiters);
+		const delimiters = UtilCommon.objectCopy(Delimiters);
 
 		let delimiter = delimiters.find(it => (it.value == this.data.delimiter) || (it.caption == this.data.delimiter));
 		if (!delimiter) {
@@ -181,7 +190,6 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 
 	onImport () {
 		const { close, onImport } = this.props;
-		const platform = Util.getPlatform();
 		const options: any = { 
 			properties: [ 'openFile' ],
 			filters: [
@@ -189,9 +197,11 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			]
 		};
 
-		if (platform == I.Platform.Mac) {
+		if (UtilCommon.isPlatformMac()) {
 			options.properties.push('openDirectory');
 		};
+
+		analytics.event('ClickImport', { type: I.ImportType.Csv });
 
 		window.Electron.showOpenDialog(options).then((result: any) => {
 			const paths = result.filePaths;
@@ -200,10 +210,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 			};
 
 			close();
-			onImport(I.ImportType.Csv, { 
-				paths,
-				...this.data,
-			});
+			onImport(I.ImportType.Csv, { paths, ...this.data });
 		});
 	};
 

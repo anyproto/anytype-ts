@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, Relation, DataUtil, Util } from 'Lib';
+import { I, Relation, UtilData, UtilCommon } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -10,7 +10,7 @@ import Cell from 'Component/block/dataview/cell';
 interface Props extends I.ViewComponent {
 	id: string;
 	value: any;
-	onRecordAdd (groupId: string, dir: number): void;
+	onColumnRecordAdd (e: any, groupId: string, dir: number): void;
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
@@ -34,7 +34,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, getLimit, onRecordAdd, value, onDragStartColumn } = this.props;
+		const { rootId, block, id, getSubId, getView, getLimit, onColumnRecordAdd, value, onDragStartColumn } = this.props;
 		const view = getView();
 		const subId = getSubId();
 		const items = this.getItems();
@@ -65,7 +65,7 @@ const Column = observer(class Column extends React.Component<Props> {
 				ref={node => this.node = node} 
 				id={'column-' + id} 
 				className={cn.join(' ')}
-				{...Util.dataProps({ id })}
+				{...UtilCommon.dataProps({ id })}
 			>
 				<div id={`column-${id}-head`} className="head">
 					<div className="sides">
@@ -115,7 +115,7 @@ const Column = observer(class Column extends React.Component<Props> {
 						{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
 						{isAllowedObject ? (
-							<div id={`card-${id}-add`} className="card add" onClick={() => { onRecordAdd(id, 1); }}>
+							<div id={`record-${id}-add`} className="card add" onClick={(e) => { onColumnRecordAdd(e, id, 1); }}>
 								<Icon className="plus" />
 							</div>
 						) : ''}
@@ -184,7 +184,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			this.setState({ loading: true });
 		};
 
-		DataUtil.searchSubscribe({
+		UtilData.searchSubscribe({
 			subId,
 			filters,
 			sorts,
@@ -195,7 +195,7 @@ const Column = observer(class Column extends React.Component<Props> {
 			ignoreDeleted: true,
 			collectionId: (isCollection ? object.id : ''),
 		}, () => {
-			dbStore.recordsSet(subId, '', applyObjectOrder(dbStore.getRecords(subId, ''), id));
+			dbStore.recordsSet(subId, '', applyObjectOrder(id, dbStore.getRecords(subId, '')));
 
 			if (clear) {
 				this.setState({ loading: false });
@@ -210,7 +210,8 @@ const Column = observer(class Column extends React.Component<Props> {
 
 	getItems () {
 		const { id, getSubId, applyObjectOrder } = this.props;
-		return applyObjectOrder(Util.objectCopy(dbStore.getRecords(getSubId(), '')), id).map(id => ({ id }));
+
+		return applyObjectOrder(id, UtilCommon.objectCopy(dbStore.getRecords(getSubId(), ''))).map(id => ({ id }));
 	};
 
 	onLoadMore () {
@@ -224,9 +225,9 @@ const Column = observer(class Column extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, onRecordAdd } = this.props;
+		const { id, onColumnRecordAdd } = this.props;
 
-		onRecordAdd(id, -1);
+		onColumnRecordAdd(e, id, -1);
 	};
 
 	onMore (e: any) {

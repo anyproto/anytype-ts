@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Header, Footer, Block, Loader, Icon, Deleted } from 'Component';
 import { blockStore, detailStore } from 'Store';
-import { I, M, C, Util, DataUtil, ObjectUtil } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject } from 'Lib';
 import { observer } from 'mobx-react';
 import Errors from 'json/error.json';
 
@@ -53,7 +53,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 		const childrenIds = blockStore.getChildrenIds(rootId, rootId);
 		const children = blockStore.getChildren(rootId, rootId);
-		const check = DataUtil.checkDetails(rootId);
+		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		const cover = new M.Block({ id: rootId + '-cover', type: I.BlockType.Cover, hAlign: object.layoutAlign, childrenIds: [], fields: {}, content: {} });
 		const cn = [ 'editorWrapper', check.className ];
@@ -87,7 +87,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 						onClick={e => this.loadVersion(item.id)}
 					>
 						{withChildren ? <Icon className="arrow" onClick={e => this.toggleChildren(e, item.id)} /> : ''}
-						<div className="date">{Util.date('d F, H:i', item.time)}</div>
+						<div className="date">{UtilCommon.date('d F, H:i', item.time)}</div>
 						{item.authorName ? <div className="name">{item.authorName}</div> : ''}
 					</div>
 
@@ -294,7 +294,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			this.setState({ loading: false });
 
 			if (message.error.code) {
-				ObjectUtil.openRoute({ id: rootId, layout: object.layout });
+				UtilObject.openRoute({ id: rootId, layout: object.layout });
 				return;
 			};
 
@@ -315,7 +315,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 				return;
 			};
@@ -379,7 +379,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 
 	monthId (time: number) {
-		return Util.date('F Y', time);
+		return UtilCommon.date('F Y', time);
 	};
 
 	resize () {
@@ -390,10 +390,11 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		const sideRight = node.find('#body > #sideRight');
 		const editorWrapper = sideLeft.find('#editorWrapper');
 		const cover = node.find('.block.blockCover');
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
+		const sc = UtilCommon.getScrollContainer(isPopup);
 		const header = container.find('#header');
-		const height = container.height();
-		const hh = isPopup ? header.height() : Util.sizeHeader();
+		const height = sc.height();
+		const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
 		const cssl: any = { height };
 
 		sideRight.css({ height });
@@ -423,7 +424,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 		w = Number(w) || 0;
 
 		const { isPopup, rootId } = this.props;
-		const container = Util.getPageContainer(isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const sideLeft = container.find('#body > #sideLeft');
 		const root = blockStore.getLeaf(rootId, rootId);
 

@@ -8,12 +8,15 @@
 
 		    .row { height: 100%; width: 100%; display: block; white-space: nowrap; position: relative; }
 			.row.isDone * { color: $colorDarkGrey; }
+			.row.isEditing {
+				.cellContent:not(.isName) { display: none; }
+			}
 
 			.dropTarget { height: 100%; padding: 0px 0px 10px 0px; }
 
 			.cellContent { 
 				display: inline-block; vertical-align: top; @include text-small; line-height: 24px; height: 24px;
-				cursor: pointer !important; color: $colorDarkGrey;
+				cursor: default !important; color: $colorDarkGrey;
 			}
 			.cellContent:last-child { margin: 0px; }
 			.cellContent:empty::before, .cellContent.isEmpty::before { display: none; }
@@ -31,6 +34,7 @@
             .cellContent.isName { @include text-paragraph; display: inline-flex; flex-direction: row; align-items: center; color: $colorBlack; }
 			.cellContent.isName {
 				.name { display: inline-block; line-height: 24px; vertical-align: top; font-weight: 500; max-width: 500px; }
+				.input.name { padding: 0; @include text-paragraph; }
 			}
 
 			.cellContent.c-select, 
@@ -56,7 +60,7 @@
 
 			.cellContent.c-url, 
 			.cellContent.c-email, 
-			.cellContent.c-phone { color: $colorDarkGrey; cursor: pointer !important; }
+			.cellContent.c-phone { color: $colorDarkGrey; cursor: default !important; }
 
 			.cellContent.c-url, 
 			.cellContent.c-email, 
@@ -73,7 +77,7 @@
 			.cellContent.c-checkbox {
 				.icon.checkbox { width: 20px; height: 20px; vertical-align: top; margin-top: 2px; }
 			}
-			.cellContent.c-checkbox.canEdit { cursor: pointer !important; }
+			.cellContent.c-checkbox.canEdit { cursor: default !important; }
 
 			.loadMore { margin-top: 2px; }
         }

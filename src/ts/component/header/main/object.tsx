@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, Sync, ObjectName } from 'Component';
-import { I, DataUtil, ObjectUtil, keyboard, sidebar } from 'Lib';
-import { blockStore, detailStore, popupStore, menuStore } from 'Store';
+import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
+import { I, UtilData, UtilObject, keyboard, sidebar } from 'Lib';
+import { blockStore, detailStore, popupStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
@@ -19,11 +19,45 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	render () {
 		const { rootId, onSearch, onTooltipShow, onTooltipHide } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
-		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled' ]);
+		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType' ]);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = !ObjectUtil.isStoreType(object.type);
+		const showMenu = !UtilObject.isStoreType(object.type);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
+
+		let center = null;
+
+		if (UtilObject.isTemplate(object.type)) {
+			const type = dbStore.getType(object.targetObjectType);
+			center = (
+				<div className="templateBanner">
+					<Label text="You are editing a template" />
+					{type ? (
+						<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
+							of
+							<IconObject size={18} object={type} />
+							<ObjectName object={type} />
+						</div>
+					) : ''}
+				</div>
+			);
+		} else {
+			center = (
+				<div
+					id="path"
+					className="path"
+					onClick={onSearch}
+					onMouseOver={e => onTooltipShow(e, 'Click to search')}
+					onMouseOut={onTooltipHide}
+				>
+					<div className="inner">
+						<IconObject object={object} size={18} />
+						<ObjectName object={object} />
+						{isLocked ? <Icon className="lock" /> : ''}
+					</div>
+				</div>
+			);
+		};
 
 		return (
 			<React.Fragment>
@@ -40,19 +74,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				</div>
 
 				<div className="side center">
-					<div 
-						id="path" 
-						className="path" 
-						onClick={onSearch} 
-						onMouseOver={e => onTooltipShow(e, 'Click to search')} 
-						onMouseOut={onTooltipHide}
-					>	
-						<div className="inner">
-							<IconObject object={object} size={18} />
-							<ObjectName object={object} />
-							{isLocked ? <Icon className="lock" /> : ''}
-						</div>
-					</div>
+					{center}
 				</div>
 
 				<div className="side right">
@@ -76,7 +98,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const object = detailStore.get(rootId, rootId, []);
 
 		keyboard.disableClose(true);
-		popupStore.closeAll(null, () => { ObjectUtil.openRoute(object); });
+		popupStore.closeAll(null, () => { UtilObject.openRoute(object); });
 	};
 	
 	onMore () {
@@ -107,17 +129,14 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	onRelation () {
-		const { isPopup, rootId } = this.props;
+		const { isPopup, rootId, menuOpen } = this.props;
 		const cnw = [ 'fixed' ];
-		const root = blockStore.getLeaf(rootId, rootId);
-		const isLocked = root ? root.isLocked() : false;
 
 		if (!isPopup) {
 			cnw.push('fromHeader');
 		};
 
-		const param: any = {
-			element: '#button-header-relation',
+		menuOpen('blockRelationView', '#button-header-relation', {
 			noFlipX: true,
 			noFlipY: true,
 			horizontal: I.MenuDirection.Right,
@@ -126,18 +145,15 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			data: {
 				isPopup,
 				rootId,
-				readonly: isLocked,
 			},
-		};
-
-		menuStore.closeAll(null, () => { menuStore.open('blockRelationView', param); });
+		});
 	};
 
 	setTitle () {
 		const { rootId, isPopup } = this.props;
 
 		if (!isPopup) {
-			DataUtil.setWindowTitle(rootId, rootId);
+			UtilData.setWindowTitle(rootId, rootId);
 		};
 	};
 	

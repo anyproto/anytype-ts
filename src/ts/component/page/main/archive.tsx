@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Header, Footer, ObjectDescription, Icon, ListObjectManager } from 'Component';
-import { C, I, Util, analytics, translate } from 'Lib';
+import { C, I, UtilCommon, analytics, translate } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -13,6 +14,7 @@ interface Props extends I.PageComponent {
 const PageMainArchive = observer(class PageMainArchive extends React.Component<Props, {}> {
 
 	refManager: any = null;
+	rowLength = 0;
 
 	constructor (props: Props) {
 		super(props);
@@ -20,6 +22,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 		this.onRestore = this.onRestore.bind(this);
 		this.onRemove = this.onRemove.bind(this);
 		this.resize = this.resize.bind(this);
+		this.getRowLength = this.getRowLength.bind(this);
 	};
 	
 	render () {
@@ -54,13 +57,13 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 						subId={Constant.subId.archive}
 						filters={filters}
 						sorts={sorts}
-						rowLength={3}
+						rowLength={this.getRowLength()}
 						withArchived={true}
 						buttons={buttons}
 						Info={Info}
 						iconSize={48}
 						resize={this.resize}
-						textEmpty={translate('archiveEmptyLabel')}
+						textEmpty={translate('pageMainArchiveEmpty')}
 					/>
 				</div>
 
@@ -74,12 +77,14 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			return;
 		};
 
-		const count = this.refManager.selected.length;
+		const selected = this.refManager.selected || [];
+		const count = selected.length;
 
-		C.ObjectListSetIsArchived(this.refManager.selected, false, () => {
+		C.ObjectListSetIsArchived(selected, false, () => {
 			analytics.event('RestoreFromBin', { count });
 		});
-		this.refManager.selectionClear();
+
+		this.selectionClear();
 	};
 
 	onRemove () {
@@ -87,35 +92,46 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			return;
 		};
 
-		const count = this.refManager.selected.length;
+		const selected = this.refManager.selected || [];
+		const count = selected.length;
 
 		analytics.event('ShowDeletionWarning', { route: 'Bin' });
 
 		popupStore.open('confirm', {
 			data: {
-				title: `Are you sure you want to delete ${count} ${Util.cntWord(count, 'object', 'objects')}?`,
+				title: `Are you sure you want to delete ${count} ${UtilCommon.cntWord(count, 'object', 'objects')}?`,
 				text: 'These objects will be deleted irrevocably. You can\'t undo this action.',
 				textConfirm: 'Delete',
 				onConfirm: () => { 
-					C.ObjectListDelete(this.refManager.selected);
-					this.refManager.selectionClear();
+					C.ObjectListDelete(selected);
+					this.selectionClear();
 
 					analytics.event('RemoveCompletely', { count, route: 'Bin' });
 				},
-				onCancel: () => { this.refManager.selectionClear(); }
+				onCancel: () => this.selectionClear(),
 			},
 		});
 	};
 
+	selectionClear () {
+		this.refManager?.selectionClear();
+	};
+
+	getRowLength () {
+		const { ww } = UtilCommon.getWindowDimensions();
+		return ww <= 940 ? 2 : 3;
+	};
+
 	resize () {
+		const { isPopup } = this.props;
 		const win = $(window);
-		const container = Util.getPageContainer(this.props.isPopup);
+		const container = UtilCommon.getPageContainer(isPopup);
 		const node = $(ReactDOM.findDOMNode(this));
 		const content = $('#popupPage .content');
 		const body = node.find('.body');
-		const hh = Util.sizeHeader();
-		const isPopup = this.props.isPopup && !container.hasClass('full');
+		const hh = UtilCommon.sizeHeader();
 		const wh = isPopup ? container.height() : win.height();
+		const rowLength = this.getRowLength();
 
 		node.css({ height: wh });
 		
@@ -126,6 +142,11 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 			body.css({ height: '' });
 			content.css({ minHeight: '', height: '' });
 		};
+
+		if (this.rowLength != rowLength) {
+			this.rowLength = rowLength;
+			this.forceUpdate();
+		};	
 	};
 
 });

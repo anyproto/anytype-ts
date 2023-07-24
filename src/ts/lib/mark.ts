@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, Util, analytics } from 'Lib';
+import { I, UtilCommon, analytics } from 'Lib';
 import Constant from 'json/constant.json';
 
 const Tags = [ 
@@ -79,8 +79,8 @@ class Mark {
 		];
 
 		for (let item of Markdown) {
-			const non = Util.filterFix(item.key.substr(0, 1));
-			const k = Util.filterFix(item.key);
+			const non = UtilCommon.filterFix(item.key.substring(0, 1));
+			const k = UtilCommon.filterFix(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,
 				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
@@ -93,7 +93,7 @@ class Mark {
 			return marks;	
 		};
 
-		let map = Util.mapToArray(marks, 'type');
+		let map = UtilCommon.mapToArray(marks, 'type');
 		let type = mark.type;
 		let add = true;
 
@@ -179,7 +179,7 @@ class Mark {
 		};
 
 		analytics.event('ChangeTextStyle', { type, count: 1 });
-		return Util.unmap(map).sort(this.sort);
+		return UtilCommon.unmap(map).sort(this.sort);
 	};
 	
 	sort (c1: I.Mark, c2: I.Mark) {
@@ -247,7 +247,7 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
-		let map = Util.mapToArray(marks, 'type');
+		let map = UtilCommon.mapToArray(marks, 'type');
 		if (!map[type] || !map[type].length) {
 			return null;
 		};
@@ -357,18 +357,18 @@ class Mark {
 			};
 		};
 
-		for (let mark of parts) {
+		// Render mentions
+		for (let mark of marks) {
 			if (mark.type == I.MarkType.Mention) {
-				continue;
+				render(mark);
 			};
-			render(mark);
 		};
 
-		for (let mark of marks) {
+		// Render everything except mentions
+		for (let mark of parts) {
 			if (mark.type != I.MarkType.Mention) {
-				continue;
+				render(mark);
 			};
-			render(mark);
 		};
 
 		// Replace tags in text
@@ -449,9 +449,7 @@ class Mark {
 			return '';
 		});
 
-		text = this.fromUnicode(text);
 		html = text;
-
 		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();
@@ -474,7 +472,7 @@ class Mark {
 				let param = pm ? pm[1]: '';
 				
 				marks.push({
-					type: type,
+					type,
 					range: { from: offset, to: 0 },
 					param: param,
 				});
@@ -484,13 +482,15 @@ class Mark {
 			return '';
 		});
 
+		text = this.fromUnicode(text, marks);
 		return this.fromMarkdown(text, marks, restricted);
 	};
 
 	// Unicode symbols
-	fromUnicode (html: string): string {
+	fromUnicode (html: string, marks: I.Mark[]): string {
+		let checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
 		let text = html;
-		let keys = Object.keys(Patterns).map(it => Util.filterFix(it));
+		let keys = Object.keys(Patterns).map(it => UtilCommon.filterFix(it));
 		let reg = new RegExp('(' + keys.join('|') + ')', 'g');
 		let test = reg.test(text);
 
@@ -498,8 +498,17 @@ class Mark {
 			return text;
 		};
 
-		html.replace(reg, (s: string, p: string) => {
-			if (Patterns[p]) {
+		html.replace(reg, (s: string, p: string, o: number) => {
+			let check = true;
+			for (const mark of checked) {
+				console.log(o, mark.range.from, mark.range.to);
+				if ((mark.range.from <= o) && (mark.range.to >= o)) {
+					check = false;
+					break;
+				};
+			};
+
+			if (check && Patterns[p]) {
 				text = text.replace(s, Patterns[p]);
 			};
 			return '';
@@ -511,6 +520,7 @@ class Mark {
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]) {
 		let text = html;
 		let test = /[`\*_~\[]{1}/.test(text);
+		let checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 
 		if (!test) {
 			return { marks, text };
@@ -534,9 +544,19 @@ class Mark {
 				let to = from + p3.length;
 				let replace = String((p1 + p3 + ' ') || '').replace(new RegExp('\\$', 'g'), '$$$');
 
-				this.adjust(marks, from, -p2.length * 2);
-				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
-				text = text.replace(s, replace);
+				let check = true;
+				for (const mark of checked) {
+					if ((mark.range.from <= from) && (mark.range.to >= to)) {
+						check = false;
+						break;
+					};
+				};
+
+				if (check) {
+					this.adjust(marks, from, -p2.length * 2);
+					marks.push({ type: item.type, range: { from, to }, param: '' });
+					text = text.replace(s, replace);
+				};
 				return s;
 			});
 		};

@@ -1,10 +1,8 @@
 import * as React from 'react';
-import $ from 'jquery';
-import { Frame, Cover, Title, Label, Error, Button, Header, Footer, Icon } from 'Component';
-import { I, Storage, translate, C, DataUtil, Util, analytics, Renderer, ObjectUtil, Action } from 'Lib';
-import { commonStore, authStore } from 'Store';
+import { Frame, Title, Label, Error, Button, Header, Footer, Icon, Loader } from 'Component';
+import { I, Storage, translate, C, UtilData, UtilCommon, Action, Animation, analytics } from 'Lib';
+import { authStore } from 'Store';
 import { observer } from 'mobx-react';
-import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
 
 interface State {
@@ -31,17 +29,10 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	render () {
-		const { cover } = commonStore;
-		const { match } = this.props;
 		const error = this.state.error || {};
-		
+		const back = <Icon className="arrow back" onClick={this.onCancel} />;
+
 		let content = null;
-		let back = (
-			<div className="authBackWrap" onClick={this.onCancel}>
-				<Icon className="back" />
-				<div className="name">{translate('commonBack')}</div>
-			</div>
-		);
 
 		if (error.code) {
 			if (error.code == Errors.Code.FAILED_TO_FIND_ACCOUNT_INFO) {
@@ -49,11 +40,13 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					<div className="importBackupWrap">
 						{back}
 
-						<Title className="withError" text="⚡️ Congratulations!" />
-						<Label text="You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported." />
+						<Title className="animation" text="⚡️ Congratulations!" />
+						<Label className="animation" text="You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported." />
 
 						<div className="buttons">
-							<Button text="Import backup" onClick={this.onBackup} />
+							<div className="animation">
+								<Button text="Import backup" onClick={this.onBackup} />
+							</div>
 						</div>
 					</div>
 				);
@@ -62,45 +55,31 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					<React.Fragment>
 						{back}
 
-						<Title className="withError" text="Error" />
-						<Error text={error.description} />
+						<Title className="animation" text="Error" />
+						<Error className="animation" text={error.description} />
+
 						<div className="buttons">
-							<Button text={translate('commonBack')} onClick={() => Util.route('/')} />
+							<div className="animation">
+								<Button text={translate('commonBack')} onClick={() => UtilCommon.route('/', {})} />
+							</div>
 						</div>
 					</React.Fragment>
 				);
 			};
 		} else {
-			let title = '';
-
-			switch (match.params.id) {
-				case 'init': {
-					title = translate('authSetupLogin'); 
-					break;
-				};
-
-				case 'register': {
-					title = translate('authSetupRegister');
-					break;
-				};
-
-				case 'select': {
-					title = translate('authSetupSelect');
-					break;
-				};
-
-				case 'share': {
-					title = translate('authSetupShare');
-					break;
-				};
-			};
-
-			content = <Title text={title} />;
+			content = (
+				<React.Fragment>
+					<Title className="animation" text="Entering the void..." />
+					<Loader className="animation" />
+				</React.Fragment>
+			);
 		};
 		
 		return (
-			<div ref={node => this.node = node}>
-				<Cover {...cover} className="main" />
+			<div 
+				ref={node => this.node = node} 
+				className="wrapper"
+			>
 				<Header {...this.props} component="authIndex" />
 				<Footer {...this.props} component="authIndex" />
 				
@@ -113,25 +92,28 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 
 	componentDidMount () {
 		const { match } = this.props;
+		const { account, walletPath } = authStore;
 
 		switch (match.params.id) {
-			case 'init': 
+			case 'init': {
 				this.init(); 
 				break;
+			};
 
-			case 'register':
-				this.add();
+			case 'select': {
+				this.select(account.id, walletPath, true);
 				break;
-
-			case 'select': 
-				this.select();
-				break;
+			};
 
 		};
+
+		Animation.to();
 	};
 
 	componentDidUpdate (): void {
 		this.refFrame.resize();
+
+		Animation.to();
 	};
 	
 	init () {
@@ -147,81 +129,29 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 				return;
 			};
 
-			DataUtil.createSession((message: any) => {
+			UtilData.createSession((message: any) => {
 				if (this.setError(message.error)) {
 					return;
 				};
 
 				if (accountId) {
 					authStore.phraseSet(phrase);
-					
-					C.AccountSelect(accountId, walletPath, (message: any) => {
-						if (this.setError(message.error) || !message.account) {
-							return;
-						};
-
-						DataUtil.onAuth(message.account);
-					});
+					this.select(accountId, walletPath, false);
 				} else {
-					Util.route('/auth/account-select');
+					UtilCommon.route('/auth/account-select', { replace: true });
 				};
 			});
 		});
 	};
-	
-	add () {
-		const { match } = this.props;
-		const { walletPath, accountPath, name, icon, code } = authStore;
 
-		commonStore.defaultTypeSet(Constant.typeId.note);
-
-		C.WalletCreate(walletPath, (message: any) => {
-			if (this.setError(message.error)) {
+	select (accountId: string, walletPath: string, animate: boolean) {
+		C.AccountSelect(accountId, walletPath, (message: any) => {
+			if (this.setError(message.error) || !message.account) {
 				return;
 			};
 
-			authStore.phraseSet(message.mnemonic);
-
-			DataUtil.createSession(() => {
-				C.AccountCreate(name, icon, accountPath, code, Util.rand(1, Constant.iconCnt), (message: any) => {
-					const description = Errors.AccountCreate[message.error.code] || message.error.description;
-
-					if (this.setError({ ...message.error, description }) || !message.account) {
-						return;
-					};
-
-					if (message.config) {
-						commonStore.configSet(message.config, false);
-					};
-
-					authStore.accountSet(message.account);
-					authStore.previewSet('');
-					analytics.profile(message.account.info.analyticsId);
-
-					Storage.set('timeRegister', Util.time());
-
-					Renderer.send('keytarSet', message.account.id, authStore.phrase);
-					analytics.event('CreateAccount');
-					
-					if (match.params.id == 'register') {
-						Util.route('/auth/success');
-					};
-				});
-			});
-		});
-	};
-	
-	select () {
-		const { account, walletPath } = authStore;
-		
-		C.AccountSelect(account.id, walletPath, (message: any) => {
-			if (this.setError(message.error)) {
-				return;
-			};
-
-			if (message.account) {
-				DataUtil.onAuth(message.account);
-			};
+			UtilData.onAuth(message.account, { routeParam: { animate } });
+			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
 	};
 
@@ -231,7 +161,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		};
 
 		this.setState({ error });
-		Util.checkError(error.code);
+		UtilCommon.checkError(error.code);
 		return true;
 	};
 
@@ -240,7 +170,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 	};
 
 	onCancel () {
-		Util.route('/auth/select');
+		UtilCommon.route('/auth/select', {});
 	};
 	
 });

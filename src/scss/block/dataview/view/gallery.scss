@@ -79,8 +79,17 @@
 				.itemContent > .inner { padding-top: 12px; }
 			}
 
+			.card.isEditing { border: 2px solid $colorOrange; }
+			.card.isEditing {
+				.inner { padding: 15px; }
+			}
+
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
+			}
+
+			.cellContent.isName {
+				.input.name { padding: 0; height: unset; }
 			}
 		}
 

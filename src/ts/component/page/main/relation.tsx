@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, Action, Util, ObjectUtil, DataUtil } from 'Lib';
+import { I, C, Action, UtilCommon, UtilObject, UtilData } from 'Lib';
 import { detailStore, dbStore } from 'Store';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
@@ -43,7 +43,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: 'Updated',  
-				mapper: (v: any) => Util.date(DataUtil.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
+				mapper: (v: any) => UtilCommon.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
 			},
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
 		];
@@ -53,11 +53,11 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
-					<HeadSimple ref={ref => { this.refHead = ref;}} type="Relation" rootId={rootId} onCreate={this.onCreate} />
+					<HeadSimple ref={ref => this.refHead = ref} type="Relation" rootId={rootId} onCreate={this.onCreate} />
 
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{total} {Util.cntWord(total, 'object', 'objects')}</div>
+							<div className="title">{total} {UtilCommon.cntWord(total, 'object', 'objects')}</div>
 							<div className="content">
 								<ListObject rootId={rootId} columns={columns} />
 							</div>
@@ -98,7 +98,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true });
 				} else {
-					ObjectUtil.openHome('route');
+					UtilObject.openHome('route');
 				};
 				return;
 			};
@@ -145,7 +145,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', (message: any) => {
 			if (!message.error.code) {
-				ObjectUtil.openPopup(message.details);
+				UtilObject.openPopup(message.details);
 			};
 		});
 	};
