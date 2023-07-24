@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Loader } from 'Component';
 import { C, I, translate, analytics, UtilRouter, Storage } from 'Lib';
-import { blockStore } from 'Store';
+import { blockStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -84,7 +84,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 
         this.setState({ isLoading: true });
 
-        C.ObjectImportUseCase(id, () => {
+        C.ObjectImportUseCase(commonStore.space, id, () => {
 			analytics.event('SelectUsecase', { type: id });
 
 			const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));

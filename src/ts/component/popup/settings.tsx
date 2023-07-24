@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Icon } from 'Component';
 import { I, C, UtilCommon, UtilObject, analytics, Action, keyboard, translate } from 'Lib';
-import { popupStore } from 'Store';
+import { popupStore, commonStore } from 'Store';
 
 import PageAccount from './page/settings/account';
 import PageDataManagement from './page/settings/data';
@@ -314,7 +314,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 	};
 
 	onImport (type: I.ImportType, param: any, callBack?: (message: any) => void) {
-		C.ObjectImport(param, [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
+		C.ObjectImport(commonStore.space, param, [], true, type, I.ImportMode.IgnoreErrors, false, false, (message: any) => {
 			if (callBack) {
 				callBack(message);
 			};

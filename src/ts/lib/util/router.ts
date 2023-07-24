@@ -99,20 +99,18 @@ class UtilRouter {
 			return;
 		};
 
-		C.WalletSetSessionSpaceID(id, () => {
-			C.WorkspaceInfo((message: any) => {
-				this.go('/main/blank', { 
-					replace: true, 
-					animate: true,
-					onFadeOut: () => {
-						if (route) {
-							commonStore.redirectSet(route);
-						};
+		C.WorkspaceInfo(id, (message: any) => {
+			this.go('/main/blank', { 
+				replace: true, 
+				animate: true,
+				onFadeOut: () => {
+					if (route) {
+						commonStore.redirectSet(route);
+					};
 
-						blockStore.clear(blockStore.widgets);
-						UtilData.onAuth(authStore.account, message.info, callBack);
-					}
-				});
+					blockStore.clear(blockStore.widgets);
+					UtilData.onAuth(authStore.account, message.info, callBack);
+				}
 			});
 		});
 	};

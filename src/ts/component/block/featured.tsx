@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectType, Cell } from 'Component';
 import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard } from 'Lib';
-import { blockStore, detailStore, dbStore, menuStore } from 'Store';
+import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface Props extends I.BlockComponent {
@@ -499,7 +499,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 					details.iconEmoji = type.iconEmoji;
 				};
 
-				C.ObjectCreateSet([ object.type ], details, '', (message: any) => {
+				C.ObjectCreateSet([ object.type ], details, '', commonStore.space, (message: any) => {
 					if (!message.error.code) {
 						UtilObject.openPopup(message.details);
 					};

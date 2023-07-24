@@ -275,7 +275,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -304,7 +304,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				onUploadStart();
 			};
 
-			C.UnsplashDownload(item.id, (message: any) => {
+			C.UnsplashDownload(commonStore.space, item.id, (message: any) => {
 				if (!message.error.code) {
 					onUpload(item.type, message.hash);
 				};
@@ -386,7 +386,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		preventCommonDrop(true);
 		this.setState({ loading: true });
 		
-		C.FileUpload('', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
 			this.setState({ loading: false });
 			preventCommonDrop(false);
 			
@@ -416,7 +416,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 				return;
 			};
 
-			C.FileUpload('', data.files[0].path, I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', data.files[0].path, I.FileType.Image, (message: any) => {
 				if (!message.error.code) {
 					UtilObject.setCover(rootId, I.CoverType.Upload, message.hash);
 				};

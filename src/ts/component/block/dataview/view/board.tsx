@@ -256,7 +256,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		this.creating = true;
 
 		const create = (template: any) => {
-			C.ObjectCreate(details, flags, template?.id, (message: any) => {
+			C.ObjectCreate(details, flags, template?.id, commonStore.space, (message: any) => {
 				this.creating = false;
 
 				if (message.error.code) {

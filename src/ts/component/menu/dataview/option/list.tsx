@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Tag, Filter } from 'Component';
 import { I, C, UtilCommon, UtilMenu, keyboard, Relation } from 'Lib';
-import { menuStore, dbStore } from 'Store';
+import { menuStore, dbStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HEIGHT = 28;
@@ -274,7 +274,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			relationKey: relation.relationKey,
 			name: option.name,
 			relationOptionColor: option.color,
-		}, (message: any) => {
+		}, commonStore.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import { I, C, keyboard, UtilObject, analytics } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -160,7 +160,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		if (isCollection) {
 			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', (message: any) => { 
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', commonStore.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, onCreate);
 					analytics.event('InlineSetSetSource', { type: 'newObject' });
 				});
@@ -172,7 +172,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		} else {
 			addParam.name = 'Create new set';
 			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', (message: any) => {
+				C.ObjectCreateSet([], {}, '', commonStore.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
 						$(this.node).find('#head-source-select').trigger('click');
 						onCreate(message);

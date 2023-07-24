@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject, Input, Title, Loader, Button, Icon } from 'Component';
-import { I, C, translate, UtilCommon, UtilData, Action, UtilObject, UtilRouter } from 'Lib';
-import { authStore, detailStore, blockStore, menuStore } from 'Store';
+import { I, C, translate, UtilCommon, Action, UtilObject, UtilRouter } from 'Lib';
+import { authStore, detailStore, blockStore, menuStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
@@ -174,13 +174,13 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 		Action.openFile(Constant.extension.cover, paths => {
 			this.setState({ loading: true });
 
-            C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+            C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
                 if (message.error.code) {
                     return;
                 };
 
                 UtilObject.setIcon(blockStore.profile, '', message.hash, () => {
-                    //this.setState({ loading: false });
+                    this.setState({ loading: false });
                 });
             });
 		});

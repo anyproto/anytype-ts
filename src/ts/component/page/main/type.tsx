@@ -317,7 +317,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			layout: object.recommendedLayout,
 		};
 
-		C.ObjectCreate(details, [], '', (message) => {
+		C.ObjectCreate(details, [], '', commonStore.space, (message) => {
 			if (message.error.code) {
 				return;
 			};
@@ -438,7 +438,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			iconEmoji: object.iconEmoji,
 		};
 
-		C.ObjectCreateSet([ rootId ], details, '', (message: any) => {
+		C.ObjectCreateSet([ rootId ], details, '', commonStore.space, (message: any) => {
 			if (!message.error.code) {
 				focus.clear(true);
 				UtilObject.openPopup(message.details);

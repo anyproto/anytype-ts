@@ -2,9 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { I, C, analytics, UtilMenu, UtilObject, UtilData, Preview, translate, keyboard, Relation } from 'Lib';
+import { I, C, analytics, UtilMenu, UtilObject, Preview, translate, keyboard, Relation } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
-import { dbStore, menuStore, blockStore, detailStore } from 'Store';
+import { dbStore, menuStore, blockStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React.Component<I.Menu> {
@@ -441,7 +441,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { rootId, blockId, addCommand, onChange, ref } = data;
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
 
-		C.ObjectCreateRelation(item, (message: any) => {
+		C.ObjectCreateRelation(item, commonStore.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

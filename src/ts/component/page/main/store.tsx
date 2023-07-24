@@ -352,7 +352,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	onCreateType (e: any) {
-		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], (message: any) => {
+		C.ObjectCreateObjectType({}, [ I.ObjectFlag.DeleteEmpty ], commonStore.space, (message: any) => {
 			if (!message.error.code) {
 				this.onClick(e, message.details);
 				analytics.event('CreateType');

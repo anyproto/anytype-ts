@@ -218,7 +218,7 @@ class Action {
 				onSelectPath();
 			};
 
-			C.ObjectListExport(paths[0], ids, format, zip, nested, files, archived, (message: any) => {
+			C.ObjectListExport(commonStore.space, paths[0], ids, format, zip, nested, files, archived, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
@@ -234,7 +234,7 @@ class Action {
 	};
 
 	install (object: any, showToast: boolean, callBack?: (message: any) => void) {
-		C.WorkspaceObjectAdd(object.id, (message: any) => {
+		C.WorkspaceObjectAdd(commonStore.space, object.id, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -344,7 +344,7 @@ class Action {
 
 				const { accountId } = message;
 
-				C.ObjectImport({ paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, (message: any) => {
+				C.ObjectImport(commonStore.space, { paths, noCollection: true }, [], false, I.ImportType.Protobuf, I.ImportMode.AllOrNothing, false, true, (message: any) => {
 					if (onError(message.error)) {
 						return;
 					};

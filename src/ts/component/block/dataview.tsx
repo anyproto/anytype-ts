@@ -572,7 +572,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.creating = true;
 
 		const create = (template: any) => {
-			C.ObjectCreate(details, flags, template?.id, (message: any) => {
+			C.ObjectCreate(details, flags, template?.id, commonStore.space, (message: any) => {
 				this.creating = false;
 
 				if (message.error.code) {
@@ -777,7 +777,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isCollection) {
 			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', (message: any) => { 
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', commonStore.space, (message: any) => { 
 					onSelect(message.details, true); 
 				});
 			};
@@ -788,7 +788,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		} else {
 			addParam.name = 'Create new set';
 			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', (message: any) => { onSelect(message.details, true); });
+				C.ObjectCreateSet([], {}, '', commonStore.space, (message: any) => { onSelect(message.details, true); });
 			};
 
 			filters = filters.concat([

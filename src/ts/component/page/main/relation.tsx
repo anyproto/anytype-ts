@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
 import { I, C, Action, UtilCommon, UtilObject, UtilData } from 'Lib';
-import { detailStore, dbStore } from 'Store';
+import { detailStore, dbStore, commonStore } from 'Store';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
 
@@ -143,7 +143,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 
-		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', (message: any) => {
+		C.ObjectCreateSet([ rootId ], { name: object.name + ' set' }, '', commonStore.space, (message: any) => {
 			if (!message.error.code) {
 				UtilObject.openPopup(message.details);
 			};

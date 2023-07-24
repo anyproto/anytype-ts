@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { detailStore, blockStore, menuStore } from 'Store';
+import { detailStore, blockStore, menuStore, commonStore } from 'Store';
 import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview } from 'Lib';
 import Constant from 'json/constant.json';
 
@@ -600,7 +600,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				};
 				if (isCollection) {
 					addParam.onClick = () => {
-						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', () => onCreate());
+						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', commonStore.space, () => onCreate());
 					};
 
 					filters = filters.concat([
@@ -608,7 +608,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					]);
 				} else {
 					addParam.onClick = () => {
-						C.ObjectCreateSet([], {}, '', () => onCreate());
+						C.ObjectCreateSet([], {}, '', commonStore.space, () => onCreate());
 					};
 
 					filters = filters.concat([

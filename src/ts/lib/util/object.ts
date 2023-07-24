@@ -194,7 +194,7 @@ class UtilObject {
 			details.type = details.type || commonStore.type;
 		};
 		
-		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, (message: any) => {
+		C.BlockLinkCreateWithObject(rootId, targetId, details, position, templateId, fields, flags, commonStore.space, (message: any) => {
 			if (message.error.code) {
 				return;
 			};

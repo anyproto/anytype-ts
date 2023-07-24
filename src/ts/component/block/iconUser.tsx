@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconObject, Loader } from 'Component';
 import { I, C, UtilObject, Action } from 'Lib';
-import { menuStore, detailStore } from 'Store';
+import { menuStore, detailStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
 import Constant from 'json/constant.json';
 
@@ -78,7 +78,7 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 		Action.openFile(Constant.extension.cover, paths => {
 			this.setState({ loading: true });
 
-			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code) {
 					UtilObject.setIcon(rootId, '', message.hash, () => {
 						this.setState({ loading: false });

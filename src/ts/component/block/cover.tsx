@@ -220,7 +220,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 
 		Action.openFile(Constant.extension.cover, paths => {
-			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
+			C.FileUpload(commonStore.space, '', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code) {
 					UtilObject.setIcon(rootId, '', message.hash);
 				};
@@ -513,7 +513,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		preventCommonDrop(true);
 		this.setLoading(true);
 		
-		C.FileUpload('', file, I.FileType.Image, (message: any) => {
+		C.FileUpload(commonStore.space, '', file, I.FileType.Image, (message: any) => {
 			this.setLoading(false);
 			preventCommonDrop(false);
 			
