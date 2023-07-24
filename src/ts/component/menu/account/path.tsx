@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Action } from 'Lib';
+import { I, Action, translate } from 'Lib';
 import { Label } from 'Component';
 import { authStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -17,7 +17,7 @@ const MenuAccountPath = observer(class MenuAccountPath extends React.Component<I
 
         return (
             <React.Fragment>
-                <Label className="small" text="Your key files will be stored here. Click to change the path" />
+                <Label className="small" text={translate('menuAccountPathText')} />
                 <Label className="path" text={accountPath} onClick={this.onClick} />
             </React.Fragment>
         );

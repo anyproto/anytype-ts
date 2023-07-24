@@ -642,7 +642,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 				data: {
-					label: 'Choose a template',
+					label: translate('blockDataviewSelectTemplate'),
 					noFilter: true,
 					noIcon: true,
 					filters: [

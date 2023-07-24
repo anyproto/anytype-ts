@@ -42,6 +42,8 @@
 	"commonHelp": { "en": "Help" },
 	"commonSelectAll": { "en": "Select all" },
 	"commonDeselectAll": { "en": "Deselect all" },
+	"commonAdd": { "en": "Add" },
+	"commonDone": { "en": "Done" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -194,6 +196,10 @@
 	"editorControlCover": { "en": "Cover" },
 	"editorControlLayout": { "en": "Layout" },
 	"editorControlRelation": { "en": "Relations" },
+	"editorPageCreateBookmarkObject": { "en": "Create bookmark object" },
+	"editorPageCreateBookmark": { "en": "Create bookmark" },
+	"editorPagePasteText": { "en": "Paste as text"},
+	"editorPagePasteEmbed": { "en": "Paste as embed"},
 
 	"setTitle": { "en": "New set" },
 	"setText": { "en": "Choose an object type for this set" },
@@ -307,6 +313,7 @@
 	"blockDataviewHeadMenuChange": { "en": "Change source %s" },
 	"blockDataviewHeadMenuOpen": { "en": "Open source %s" },
 	"blockDataviewBoardculmnSettings": { "en": "Column settings" },
+	"blockDataviewSelectTemplate": { "en": "Choose a template" },
 
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
@@ -469,6 +476,8 @@
 
 	"popupHelpLabel": { "en": "Stay tuned for Anytype's news" },
 
+	"popupTemplateTitle": { "en": "Choose a template" },
+
 	"popupNavigationOpen": { "en": "Open" },
 	"popupNavigationMove": { "en": "Move to" },
 	"popupNavigationLink": { "en": "Link" },
@@ -496,6 +505,8 @@
 	"popupConfirmUpdateErrorText": { "en": "Can't check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
 
 	"menuAccountPeer": { "en": "%d/%d peers" },
+
+	"menuAccountPathText": { "en": "Your key files will be stored here. Click to change the path" },
 
 	"menuSmileRandom": { "en": "Random emoji" },
 	"menuSmileUpload": { "en": "Upload image" },
