@@ -1,8 +1,8 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { InfiniteLoader, AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { I, Relation, UtilData, UtilCommon } from 'Lib';
+import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
+import { I, Relation, UtilData, UtilCommon, UtilObject } from 'Lib';
 import { dbStore, detailStore } from 'Store';
 import { LoadMore } from 'Component';
 import Card from './gallery/card';
@@ -317,7 +317,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 			return null;
 		};
 
-		if (!object.coverId && !object.coverType && ![ Constant.typeKey.image, Constant.typeKey.audio, Constant.typeKey.video ].includes(object.type)) {
+		if (!object.coverId && !object.coverType && !UtilObject.getFileLayouts().includes(object.layout)) {
 			return null;
 		};
 

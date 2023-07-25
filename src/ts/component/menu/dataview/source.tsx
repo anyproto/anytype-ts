@@ -196,7 +196,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			});
 		} else {
 			value.forEach(it => {
-				if (it.type == Constant.typeKey.type) {
+				if (it.layout == I.ObjectLayout.Type) {
 					items.push({
 						...it,
 						itemId: 'type',

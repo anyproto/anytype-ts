@@ -421,12 +421,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.LinkTo:
+					const isCollection = target.layout == I.ObjectLayout.Collection;
 					const cb = (message: any) => {
 						if (message.error.code) {
 							return;
 						};
 
-						const isCollection = target.type == Constant.typeKey.collection;
 						const action = isCollection ? I.ToastAction.Collection : I.ToastAction.Link;
 						const linkType = isCollection ? 'Collection' : 'Object';
 
@@ -434,10 +434,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						analytics.event('LinkToObject', { objectType: target.type, linkType });
 					};
 
-					if (target.type == Constant.typeKey.collection) {
+					if (isCollection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
-						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.type), cb);
+						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.layout), cb);
 					};
 					break;
 			};
@@ -458,11 +458,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 	};
 
-	getBlockParam (id: string, type: string) {
+	getBlockParam (id: string, layout: I.ObjectLayout) {
 		const param: Partial<I.Block> = {};
 
-		switch (type) {
-			case Constant.typeKey.bookmark: {
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: {
 				param.type = I.BlockType.Bookmark;
 				param.content = {
 					state: I.BookmarkState.Done,

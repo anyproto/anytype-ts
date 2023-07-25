@@ -44,17 +44,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const isTypeOrRelation = [ 
-			Constant.typeKey.type, 
-			Constant.storeTypeKey.type, 
-			Constant.typeKey.relation, 
-			Constant.storeTypeKey.relation,
-		].includes(object.type);
-
-		let canEditIcon = allowDetails;
-		if (object.type == Constant.typeKey.relation) {
-			canEditIcon = false;
-		};
+		const isTypeOrRelation = [ I.ObjectLayout.Type, I.ObjectLayout.Relation ].includes(object.layout);
+		const canEditIcon = allowDetails && (object.layout != I.ObjectLayout.Relation);
 
 		const Editor = (item: any) => (
 			<Editable
@@ -96,11 +87,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			);
 		};
 
-		if ([ Constant.typeKey.type, Constant.typeKey.relation ].includes(object.type)) {
+		if (object.isInstalled && isTypeOrRelation) {
 			let text = 'Create';
 			let arrow = false;
 
-			if (object.type == Constant.typeKey.relation) {
+			if (object.layout == I.ObjectLayout.Relation) {
 				text = 'Create set';
 			} else {
 				arrow = true;

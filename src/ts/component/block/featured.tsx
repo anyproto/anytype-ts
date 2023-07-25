@@ -357,7 +357,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			options.push({ id: 'change', name: 'Change type', arrow: true });
 		};
 
-		if (!typeIsDeleted && (object.type === Constant.typeKey.set)) {
+		if (!typeIsDeleted && (object.layout == I.ObjectLayout.Set)) {
 			options.push({ id: 'turnCollection', name: 'Turn set into collection' });
 		};
 
