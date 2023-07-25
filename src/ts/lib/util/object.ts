@@ -300,6 +300,14 @@ class UtilObject {
 		return this.getSystemTypes().includes(type);
 	};
 
+	isFileLayout (layout: I.ObjectLayout) {
+		return this.getFileLayouts().includes(layout);
+	};
+
+	isSystemLayout (layout: I.ObjectLayout) {
+		return this.getSystemLayouts().includes(layout);
+	};
+
 	isSetLayout (layout: I.ObjectLayout) {
 		return this.getSetLayouts().includes(layout);
 	};
