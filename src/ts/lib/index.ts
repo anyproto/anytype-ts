@@ -41,8 +41,10 @@ import Constant from 'json/constant.json';
 const translate = (key: string): string => {
 	const lang = Storage.get('lang') || Constant.default.lang;
 
-	let data = {};
-	try { data = require(`json/lang/${lang}.json`); } catch(e) {};
+	//let data = {};
+	//try { data = require(`json/lang/${lang}.json`); } catch(e) {};
+
+	let data = require(`json/text.json`);
 
 	return data[key] || `⚠️No key: ${key}⚠️`;
 };
