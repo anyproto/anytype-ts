@@ -165,7 +165,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedReload = object.source && block.isObjectBookmark();
 		const allowedInstall = !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
 		const allowedUninstall = object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedTemplate = object.type != Constant.typeKey.note;
+		const allowedTemplate = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const hasShortMenu = block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectCollection() || block.isObjectSpace();
 
 		if (!allowedArchive)	 archive = null;

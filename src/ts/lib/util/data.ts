@@ -239,8 +239,6 @@ class UtilData {
 
 			C.ObjectOpen(widgets, '', () => {
 				this.createsSubscriptions(() => {
-					commonStore.typeSet(commonStore.type);
-
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
@@ -433,15 +431,9 @@ class UtilData {
 		};
 
 		items.unshift(dbStore.getTypeByKey(Constant.typeKey.task));
-
-		if (page && note) {
-			if (commonStore.type == Constant.typeKey.note) {
-				items = [ page, note ].concat(items);
-			} else {
-				items = [ note, page ].concat(items);
-			};
-		};
-
+		items.unshift(dbStore.getTypeByKey(Constant.typeKey.page));
+		items.unshift(dbStore.getTypeByKey(Constant.typeKey.note));
+		
 		items = items.filter(it => it);
 
 		if (!config.debug.ho) {

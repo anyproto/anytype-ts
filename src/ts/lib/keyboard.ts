@@ -304,11 +304,7 @@ class Keyboard {
 		
 		UtilObject.create(rootId, targetId, details, position, '', {}, flags, (message: any) => {
 			UtilObject.openPopup({ id: message.targetId });
-
-			analytics.event('CreateObject', {
-				route: 'Navigation',
-				objectType: commonStore.type,
-			});
+			analytics.event('CreateObject', { route: 'Navigation', objectType: commonStore.type });
 		});
 	};
 

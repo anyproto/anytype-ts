@@ -352,10 +352,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 									}
 								});
 
-								analytics.event('CreateObject', { 
-									objectType: commonStore.type, 
-									route: 'Graph',
-								});
+								analytics.event('CreateObject', { objectType: commonStore.type, route: 'Graph' });
 							});
 							break;
 						};

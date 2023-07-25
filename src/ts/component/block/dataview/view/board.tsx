@@ -296,7 +296,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			});
 		};
 
-		if (details.type == Constant.typeKey.bookmark) {
+		const type = dbStore.getTypeById(details.type);
+
+		if (type && (type.recommendedLayout == I.ObjectLayout.Bookmark)) {
 			menuStore.open('dataviewCreateBookmark', {
 				type: I.MenuType.Horizontal,
 				element,

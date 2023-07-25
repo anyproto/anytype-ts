@@ -253,10 +253,10 @@ class UtilObject {
 	};
 
 	name (object: any) {
-		const { isDeleted, type, layout, snippet } = object;
+		const { isDeleted, layout, snippet } = object;
 
 		let name = '';
-		if (!isDeleted && this.isFileType(type)) {
+		if (!isDeleted && this.isFileLayout(layout)) {
 			name = UtilFile.name(object);
 		} else
 		if (layout == I.ObjectLayout.Note) {
@@ -292,10 +292,6 @@ class UtilObject {
 		});
 	};
 
-	isFileType (type: string) {
-		return this.getFileTypes().includes(type);
-	};
-
 	isFileLayout (layout: I.ObjectLayout) {
 		return this.getFileLayouts().includes(layout);
 	};
@@ -322,15 +318,6 @@ class UtilObject {
 
 	isRelationLayout (layout: I.ObjectLayout) {
 		return layout == I.ObjectLayout.Relation;
-	};
-
-	getFileTypes () {
-		return [
-			Constant.typeKey.file, 
-			Constant.typeKey.image, 
-			Constant.typeKey.audio, 
-			Constant.typeKey.video,
-		];
 	};
 
 	getPageLayouts () {

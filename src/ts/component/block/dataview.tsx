@@ -615,7 +615,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		if (details.type == Constant.typeKey.bookmark) {
+		const type = dbStore.getTypeById(details.type);
+
+		if (type && (type.recommendedLayout == I.ObjectLayout.Bookmark)) {
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,

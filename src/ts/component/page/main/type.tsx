@@ -76,7 +76,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
-		const allowedLayout = rootId != Constant.typeKey.bookmark;
+		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
 
 		if (!recommendedRelations.includes('rel-description')) {
 			recommendedRelations.push('rel-description');
@@ -95,7 +95,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return config.debug.ho ? true : !it.isHidden;
 		});
 
-		const isFileType = UtilObject.isFileType(rootId);
+		const isFileType = UtilObject.isFileLayout(object.recommendedLayout);
 		const columns: any[] = [
 			{ 
 				relationKey: 'lastModifiedDate', name: 'Updated',  
@@ -362,7 +362,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {
 						case 'object':
-							if (rootId == Constant.typeKey.bookmark) {
+							if (type.recommendedLayout == I.ObjectLayout.Bookmark) {
 								this.onBookmarkAdd();
 							} else {
 								this.onObjectAdd();
@@ -380,15 +380,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onObjectAdd () {
 		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
 		const details: any = {
 			type: rootId,
 		};
 
-		if (rootId == Constant.typeKey.set) {
-			details.layout = I.ObjectLayout.Set;
-		} else
-		if (rootId == Constant.typeKey.collection) {
-			details.layout = I.ObjectLayout.Collection;
+		if (UtilObject.isSetLayout(object.recommendedLayout)) {
+			details.layout = object.recommendedLayout;
 		};
 
 		const create = (template: any) => {
