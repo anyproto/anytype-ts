@@ -247,16 +247,18 @@ class Action {
 			let toast = '';
 			let subId = '';
 
-			switch (object.type) {
-				case Constant.storeTypeKey.type:
+			switch (object.layout) {
+				case I.ObjectLayout.Type: {
 					toast = `Object type <b>${object.name}</b> has been added to your library`;
 					subId = Constant.subId.type;
 					break;
+				};
 
-				case Constant.storeTypeKey.relation:
+				case I.ObjectLayout.Relation: {
 					toast = `Relation <b>${object.name}</b> has been added to your library`;
 					subId = Constant.subId.relation;
 					break;
+				};
 			};
 
 			if (showToast) {

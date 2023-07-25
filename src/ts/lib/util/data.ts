@@ -292,7 +292,7 @@ class UtilData {
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeKey.type, Constant.typeKey.type ] },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -306,7 +306,7 @@ class UtilData {
 				keys: Constant.relationRelationKeys,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeKey.relation, Constant.typeKey.relation ] },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -319,7 +319,7 @@ class UtilData {
 				subId: Constant.subId.option,
 				keys: Constant.optionRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.option },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -328,7 +328,7 @@ class UtilData {
 				subId: Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.space },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Space },
 				],
 				ignoreWorkspace: true,
 			}

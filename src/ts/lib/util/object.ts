@@ -304,12 +304,20 @@ class UtilObject {
 		return this.getSetTypes().includes(type);
 	};
 
-	isStoreType (type: string) {
-		return this.getStoreTypes().includes(type);
-	};
-
 	isTemplate (type: string) {
 		return type == Constant.typeKey.template;
+	};
+
+	isTypeOrRelation (layout: I.ObjectLayout) {
+		return this.isType(layout) || this.isRelation(layout);
+	};
+
+	isType (layout: I.ObjectLayout) {
+		return layout == I.ObjectLayout.Type;
+	};
+
+	isRelation (layout: I.ObjectLayout) {
+		return layout == I.ObjectLayout.Relation;
 	};
 
 	getFileTypes () {
@@ -329,13 +337,6 @@ class UtilObject {
 			Constant.typeKey.option,
 			Constant.typeKey.dashboard,
 			Constant.typeKey.date,
-		].concat(this.getStoreTypes());
-	};
-
-	getStoreTypes () {
-		return [
-			Constant.storeTypeKey.type,
-			Constant.storeTypeKey.relation,
 		];
 	};
 

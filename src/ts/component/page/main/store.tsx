@@ -442,7 +442,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getData (clear: boolean, callBack?: (message: any) => void) {
 		const { space } = commonStore;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
 		];
 		const sorts: I.Sort[] = [
 			{ type: I.SortType.Desc, relationKey: 'createdDate', includeTime: true },
@@ -492,24 +492,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		});
 	};
 
-	getTabType () {
-		let type = '';
-		switch (this.view) {
-			case View.Marketplace:
-				switch (this.tab) {
-					case I.StoreTab.Type:		 type = Constant.storeTypeKey.type; break;
-					case I.StoreTab.Relation:	 type = Constant.storeTypeKey.relation; break;
-				};
-				break;
+	getTabType (): I.ObjectLayout {
+		let layout = null;
 
-			case View.Library:
-				switch (this.tab) {
-					case I.StoreTab.Type:		 type = Constant.typeKey.type; break;
-					case I.StoreTab.Relation:	 type = Constant.typeKey.relation; break;
-				};
-				break;
+		switch (this.tab) {
+			case I.StoreTab.Type:		 layout = I.ObjectLayout.Type; break;
+			case I.StoreTab.Relation:	 layout = I.ObjectLayout.Relation; break;
 		};
-		return type;
+
+		return layout;
 	};
 
 	getItems () {

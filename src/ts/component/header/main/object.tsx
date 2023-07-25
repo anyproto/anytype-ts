@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
 import { I, UtilData, UtilObject, keyboard, sidebar } from 'Lib';
-import { blockStore, detailStore, popupStore, menuStore, dbStore } from 'Store';
+import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
@@ -21,7 +21,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType' ]);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = !UtilObject.isStoreType(object.type);
+		const showMenu = !UtilObject.isTypeOrRelation(object.layout);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
 

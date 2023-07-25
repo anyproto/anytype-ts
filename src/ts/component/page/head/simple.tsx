@@ -44,8 +44,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const isTypeOrRelation = [ I.ObjectLayout.Type, I.ObjectLayout.Relation ].includes(object.layout);
-		const canEditIcon = allowDetails && (object.layout != I.ObjectLayout.Relation);
+		const isTypeOrRelation = UtilObject.isTypeOrRelation(object.layout);
+		const canEditIcon = allowDetails && !UtilObject.isRelation(object.layout);
 
 		const Editor = (item: any) => (
 			<Editable
@@ -100,7 +100,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
-		if (UtilObject.isStoreType(object.type)) {
+		if (UtilObject.isTypeOrRelation(object.layout)) {
 			const cn = [ 'c36' ];
 			const isInstalled = this.isInstalled();
 
@@ -282,12 +282,12 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		let sources: string[] = [];
 
-		switch (object.type) {
-			case Constant.storeTypeKey.type:
+		switch (object.layout) {
+			case I.ObjectLayout.Type:
 				sources = dbStore.getTypes().map(it => it.sourceObject);
 				break;
 
-			case Constant.storeTypeKey.relation:
+			case I.ObjectLayout.Relation:
 				sources = dbStore.getRelations().map(it => it.sourceObject);
 				break;
 		};
