@@ -517,7 +517,6 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 					skipIds,
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 					canAdd: true,
 					onSelect: () => { close(); }

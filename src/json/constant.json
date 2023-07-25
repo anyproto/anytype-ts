@@ -129,8 +129,6 @@
 	},
 
 	"storeTypeKey": {
-		"relation": "_otrelation",
-		"type": "_otobjectType",
 		"template": "_ottemplate"
 	},
 

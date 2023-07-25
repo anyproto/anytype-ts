@@ -260,7 +260,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		if (types && types.length) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: types });
 		} else {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() });
 		};
 
 		if (clear) {

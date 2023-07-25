@@ -492,7 +492,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		});
 	};
 
-	getTabType (): I.ObjectLayout {
+	getTabLayout (): I.ObjectLayout {
 		let layout = null;
 
 		switch (this.tab) {

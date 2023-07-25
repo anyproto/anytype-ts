@@ -289,7 +289,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 				value: this.objectTypes, 
 				types: [ Constant.typeKey.type ],
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: Constant.typeKey.type },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 				],
 				relation: observable.box(relation),

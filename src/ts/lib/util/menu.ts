@@ -362,7 +362,6 @@ class UtilMenu {
 
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = commonStore;
-		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const onSelect = (object: any, update: boolean) => {
 			C.ObjectWorkspaceSetDashboard(space, object.id, (message: any) => {
 				if (message.error.code) {
@@ -417,7 +416,7 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 									],
 									canAdd: true,
 									onSelect: (el: any) => onSelect(el, true),

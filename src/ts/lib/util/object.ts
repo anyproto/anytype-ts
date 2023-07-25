@@ -364,6 +364,10 @@ class UtilObject {
 		];
 	};
 
+	getFileAndSystemLayouts () {
+		return this.getFileLayouts().concat(this.getSystemLayouts());
+	};
+
 	getSystemLayouts () {
 		return [
 			I.ObjectLayout.Type,
