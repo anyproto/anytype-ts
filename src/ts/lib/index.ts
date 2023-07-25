@@ -46,7 +46,7 @@ const translate = (key: string): string => {
 
 	console.log(data);
 
-	return data[key] || `⚠️No key: ${key}⚠️`;
+	return data[key] || `⚠️${key}⚠️`;
 };
 
 export {
