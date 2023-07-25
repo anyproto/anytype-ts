@@ -14,18 +14,18 @@ class Dataview {
 
 		const order: any = {};
 
-		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId));
+		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => it);
 		let o = 0;
 
 		if (!config.debug.ho) {
-			relations = relations.filter(it => it && ((it.relationKey == 'name') || !it.isHidden));
+			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
 		};
 
-		(view.relations || []).forEach((it: any) => {
+		(view.relations || []).filter(it => it).forEach(it => {
 			order[it.relationKey] = o++;
 		});
 
-		relations.forEach((it: any) => {
+		relations.forEach(it => {
 			if (it && (undefined === order[it.relationKey])) {
 				order[it.relationKey] = o++;
 			};

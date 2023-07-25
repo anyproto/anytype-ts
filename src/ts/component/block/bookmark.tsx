@@ -53,7 +53,7 @@ const BlockBookmark = observer(class BlockBookmark extends React.Component<I.Blo
 							<InputWithFile 
 								block={block} 	
 								icon="bookmark" 
-								textFile="Paste a link" 
+								textFile={translate('inputWithFileTextUrl')} 
 								withFile={false} 
 								onChangeUrl={this.onChangeUrl} 
 								readonly={readonly} 

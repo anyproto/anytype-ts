@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon, Loader } from 'Component';
-import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile } from 'Lib';
+import { I, UtilCommon, Relation, keyboard, UtilData, UtilObject, UtilFile, translate } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -94,7 +94,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 			<div className="wrap">
 				<Filter 
 					ref={ref => this.refFilter = ref} 
-					placeholderFocus="Filter objects..." 
+					placeholderFocus={translate('commonFilterObjects')}
 					value={filter}
 					onChange={this.onFilterChange} 
 				/>

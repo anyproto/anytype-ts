@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, keyboard, UtilObject, analytics } from 'Lib';
+import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
 import { menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -121,9 +121,9 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		let options: any[] = [
-			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
-			{ id: 'sourceChange', icon: 'source', name: `Change source ${sourceName}`, arrow: true },
-			{ id: 'sourceOpen', icon: 'expand', name: `Open source ${sourceName}` },
+			{ id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') },
+			{ id: 'sourceChange', icon: 'source', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true },
+			{ id: 'sourceOpen', icon: 'expand', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		];
 
 		if (object.isArchived || object.isDeleted) {

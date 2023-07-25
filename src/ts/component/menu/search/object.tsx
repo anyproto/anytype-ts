@@ -49,7 +49,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, value, placeholder, label, isBig, noFilter, noIcon } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
-		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
+		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
 
 		if (label) {
 			cn.push('withLabel');

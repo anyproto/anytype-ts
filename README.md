@@ -13,7 +13,7 @@ npm install -D
 Also, [install `gitleaks`](https://github.com/zricethezav/gitleaks#installing) to ensure proper work of pre-commit hooks.
 
 ### Install middleware library and protobuf bindings
-Fetch the latest binary from the [github releases](https://github.com/anytypeio/go-anytype-middleware/releases/latest)
+Fetch the latest binary from the [github releases](https://github.com/anyproto/anytype-heart/releases)
 
 ```shell
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd> # arm/amd only for macos/ubuntu

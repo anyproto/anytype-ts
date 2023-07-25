@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, UtilData, UtilObject, focus } from 'Lib';
+import { I, C, keyboard, analytics, translate, UtilObject, focus } from 'Lib';
 import { detailStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -86,7 +86,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const length = objectIds.length;
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
-		let open = { id: 'open', icon: 'expand', name: 'Open as object' };
+		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
 		let div = null;
 		let unlink = null;

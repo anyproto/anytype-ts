@@ -80,8 +80,7 @@ const PopupSettingsPagePhrase = observer(class PopupSettingsPagePhrase extends R
 
 	onToggle (isHidden: boolean): void {
 		if (!isHidden) {
-			UtilCommon.clipboardCopy({ text: authStore.phrase });
-			Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
+			UtilCommon.copyToast(translate('commonPhrase'), authStore.phrase);
 			analytics.event('KeychainCopy', { type: 'ScreenSettings' });
 		};
 	};

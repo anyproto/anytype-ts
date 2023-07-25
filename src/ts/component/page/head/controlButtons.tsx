@@ -141,7 +141,7 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 			options.push({ id: 'position', icon: 'coverPosition', name: 'Reposition' });
 		};
 		if (hasCover) {
-			options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
+			options.push({ id: 'remove', icon: 'remove', name: translate('commonRemove') });
 		};
 
 		menuStore.open('select', {

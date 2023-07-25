@@ -68,8 +68,15 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Space debug', click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
-					{ label: 'Current object debug', click: () => { Util.send(this.win, 'commandGlobal', 'debugTree'); } },
+					{ label: 'Space debug', click: () => { Util.send(this.win, 'command', 'debugSpace'); } },
+					{ label: 'Current object debug', click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
+					{ 
+						label: 'Process debug', 
+						click: () => {
+							Api.exit(this.win, 'SIGUSR1', true);
+							shell.openPath(path.join(Util.dataPath(), Api.account.id, 'logs'));
+						}
+					},
 
 					Separator,
 
@@ -303,7 +310,7 @@ class MenuManager {
 
 			Separator,
 
-			{ label: 'Quit', click: () => { hide(); Api.exit(this.win, false); } },
+			{ label: 'Quit', click: () => { hide(); Api.exit(this.win, '', false); } },
 		]));
 	};
 

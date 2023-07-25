@@ -74,7 +74,7 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 						<InputWithFile 
 							block={block} 
 							icon="pdf" 
-							textFile="Upload a PDF file" 
+							textFile={translate('blockPdfUpload')}
 							accept={Constant.extension.pdf} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 

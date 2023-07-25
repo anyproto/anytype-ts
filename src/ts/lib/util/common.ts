@@ -296,9 +296,9 @@ class UtilCommon {
 		document.execCommand('copy');
 	};
 
-	clipboardCopyToast (label: string, text: string) {
+	copyToast (label: string, text: string) {
 		this.clipboardCopy({ text });
-		Preview.toastShow({ text: `${label} has been copied to clipboard` });
+		Preview.toastShow({ text: this.sprintf(translate('toastCopy'), label) });
 	};
 	
 	cacheImages (images: string[], callBack?: () => void) {
@@ -482,18 +482,20 @@ class UtilCommon {
 		});
 	};
 
-	day (t: any): string {
+	dayString (t: any): string {
 		t = Number(t) || 0;
 
 		const ct = this.date('d.m.Y', t);
-		if (ct == this.date('d.m.Y', this.time())) {
-			return 'Today';
+		const time = this.time();
+
+		if (ct == this.date('d.m.Y', time)) {
+			return translate('commonToday');
 		};
-		if (ct == this.date('d.m.Y', this.time() + 86400)) {
-			return 'Tomorrow';
+		if (ct == this.date('d.m.Y', time + 86400)) {
+			return translate('commonTomorrow');
 		};
-		if (ct == this.date('d.m.Y', this.time() - 86400)) {
-			return 'Yesterday';
+		if (ct == this.date('d.m.Y', time - 86400)) {
+			return translate('commonYesterday');
 		};
 		return '';
 	};

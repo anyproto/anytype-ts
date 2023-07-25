@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { IconObject, Loader } from 'Component';
-import { I, C, UtilObject, Action } from 'Lib';
-import { menuStore, detailStore, commonStore } from 'Store';
 import { observer } from 'mobx-react';
+import { IconObject, Loader } from 'Component';
+import { I, C, UtilObject, Action, translate } from 'Lib';
+import { menuStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -47,11 +47,11 @@ const BlockIconUser = observer(class BlockIconUser extends React.Component<I.Blo
 
 		const object = detailStore.get(rootId, rootId, []);
 		const options = [
-			{ id: 'upload', name: 'Change' },
+			{ id: 'upload', name: translate('commonChange') },
 		];
 
 		if (object.iconImage) {
-			options.push({ id: 'remove', name: 'Remove' });
+			options.push({ id: 'remove', name: translate('commonRemove') });
 		};
 		
 		menuStore.open('select', { 

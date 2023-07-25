@@ -968,14 +968,14 @@ class Dispatcher {
 
 							switch (type) {
 								case I.ProgressType.Import: { 
-									title = 'The import process is complete!';
-									text = 'Now the data is yours. You will find the imported objects in your favorite collection.'; 
+									title = translate('dispatcherImportSuccessTitle');
+									text = translate('dispatcherImportSuccessText'); 
 									break; 
 								};
 
 								case I.ProgressType.Export: { 
-									title = 'The export process is complete!';
-									text = 'You can find the exported objects in the folder you selected.';
+									title = translate('dispatcherExportSuccessTitle');
+									text = translate('dispatcherExportSuccessText');
 									break; 
 								};
 							};
@@ -986,7 +986,7 @@ class Dispatcher {
 										data: { 
 											title, 
 											text,
-											textConfirm: 'Ok! I got it!',
+											textConfirm: translate('dispatcherImportConfirm'),
 											canCancel: false,
 										} 
 									}); 

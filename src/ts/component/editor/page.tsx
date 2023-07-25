@@ -1762,10 +1762,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const options: any[] = [
 			{ id: 'link', name: 'Paste as link' },
-			isEmpty && !isInsideTable ? { id: 'object', name: 'Create bookmark object' } : null,
-			!isInsideTable ? { id: 'block', name: 'Create bookmark' } : null,
-			{ id: 'cancel', name: 'Paste as text' },
-			//{ id: 'embed', name: 'Paste as embed' },
+			isEmpty && !isInsideTable ? { id: 'object', name: translate('editorPageCreateBookmarkObject') } : null,
+			!isInsideTable ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
+			{ id: 'cancel', name: translate('editorPagePasteText') },
+			//{ id: 'embed', name: translate('editorPagePasteEmbed') },
 		].filter(it => it);
 
 		menuStore.open('select', { 
