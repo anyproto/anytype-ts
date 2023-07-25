@@ -39,14 +39,6 @@
             }
         },
         {
-            "files": "*.css",
-            "options": { "parser": "css" }
-        },
-        {
-            "files": "*.scss",
-            "options": { "parser": "scss" }
-        },
-        {
             "files": "*.{svg,html}",
             "options": { "parser": "html" }
         },
