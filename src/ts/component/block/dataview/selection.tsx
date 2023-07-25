@@ -29,7 +29,7 @@ const Selection = observer(class Selection extends React.Component<Props> {
 		];
 
 		if (isCollection) {
-			buttons.unshift({ id: 'unlink', text: translate('blockDataviewSelectionUnlink'), className: [ 'black' ] });
+			buttons.unshift({ id: 'unlink', text: translate('commonUnlink'), className: [ 'black' ] });
 		};
 
 		return (

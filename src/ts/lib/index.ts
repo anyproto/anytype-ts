@@ -30,10 +30,7 @@ import Survey from './survey';
 import Preview from './preview';
 import Highlight from './highlight';
 import Animation from './animation';
-
 import Constant from 'json/constant.json';
-import Text from 'json/text.json';
-
 
 /**
  * 
@@ -41,17 +38,13 @@ import Text from 'json/text.json';
  * @returns a piece of display text in the language of the user
  * Defaults to the default lang set in constant.json (english)
  */
-const translate = (key: keyof typeof Text | Omit<string, keyof typeof Text>): string => {
+const translate = (key: string): string => {
 	const lang = Storage.get('lang') || Constant.default.lang;
 
-	if (undefined === Text[key as string]) {
-		return `*No key: ${key}*`;
-	};
+	let data = {};
+	try { data = require(`json/lang/${lang}.json`); } catch(e) {};
 
-	if (undefined === Text[key as string][lang]) {
-		return `*No ${lang}: ${key}*`;
-	};
-	return Text[key as string][lang];
+	return data[key] || `⚠️No key: ${key}⚠️`;
 };
 
 export {
