@@ -21,7 +21,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType' ]);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = !UtilObject.isTypeOrRelation(object.layout);
+		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
 

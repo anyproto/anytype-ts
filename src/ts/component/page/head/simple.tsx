@@ -44,8 +44,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });
-		const isTypeOrRelation = UtilObject.isTypeOrRelation(object.layout);
-		const canEditIcon = allowDetails && !UtilObject.isRelation(object.layout);
+		const isTypeOrRelation = UtilObject.isTypeOrRelationLayout(object.layout);
+		const canEditIcon = allowDetails && !UtilObject.isRelationLayout(object.layout);
 
 		const Editor = (item: any) => (
 			<Editable
@@ -100,7 +100,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			button = <Button id="button-create" className="c36" text={text} arrow={arrow} onClick={onCreate} />;
 		};
 
-		if (UtilObject.isTypeOrRelation(object.layout)) {
+		if (UtilObject.isTypeOrRelationLayout(object.layout)) {
 			const cn = [ 'c36' ];
 			const isInstalled = this.isInstalled();
 

@@ -300,23 +300,23 @@ class UtilObject {
 		return this.getSystemTypes().includes(type);
 	};
 
-	isSetType (type: string) {
-		return this.getSetTypes().includes(type);
+	isSetLayout (layout: I.ObjectLayout) {
+		return this.getSetLayouts().includes(layout);
 	};
 
 	isTemplate (type: string) {
 		return type == Constant.typeKey.template;
 	};
 
-	isTypeOrRelation (layout: I.ObjectLayout) {
-		return this.isType(layout) || this.isRelation(layout);
+	isTypeOrRelationLayout (layout: I.ObjectLayout) {
+		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
-	isType (layout: I.ObjectLayout) {
+	isTypeLayout (layout: I.ObjectLayout) {
 		return layout == I.ObjectLayout.Type;
 	};
 
-	isRelation (layout: I.ObjectLayout) {
+	isRelationLayout (layout: I.ObjectLayout) {
 		return layout == I.ObjectLayout.Relation;
 	};
 
@@ -337,13 +337,6 @@ class UtilObject {
 			Constant.typeKey.option,
 			Constant.typeKey.dashboard,
 			Constant.typeKey.date,
-		];
-	};
-
-	getSetTypes () {
-		return [ 
-			Constant.typeKey.set, 
-			Constant.typeKey.collection,
 		];
 	};
 

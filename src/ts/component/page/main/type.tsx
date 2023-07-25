@@ -343,8 +343,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			return;
 		};
 
-		const isSetType = UtilObject.isSetType(rootId);
-		const allowedObject = UtilObject.getPageLayouts().includes(type.recommendedLayout) || isSetType;
+		const isSetLayout = UtilObject.isSetLayout(type.recommendedLayout);
+		const allowedObject = UtilObject.getPageLayouts().includes(type.recommendedLayout) || isSetLayout;
 		const options = [];
 
 		if (allowedObject) {
