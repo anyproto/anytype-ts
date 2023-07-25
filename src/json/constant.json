@@ -22,14 +22,14 @@
 	},
 
 	"default": {
-		"lang": "en",
+		"lang": "en-US",
 		"cover": "sky",
 		"codeLang": "javascript",
 		"pinTime": 600
 	},
 	
 	"langs": [
-		{ "id": "en", "name": "English" }
+		{ "id": "en-US", "name": "English" }
 	],
 	
 	"delay": {
