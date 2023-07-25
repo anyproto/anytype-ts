@@ -212,8 +212,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (UtilObject.getSetLayouts().includes(item.layout)) {
-			this.onObjectTo(item.layout);
+		if (UtilObject.getSetLayouts().includes(item.recommendedLayout)) {
+			this.onObjectTo(item.recommendedLayout);
 		} else {
 			UtilData.checkTemplateCnt([ item.id ], (message: any) => {
 				if (message.records.length > 1) {

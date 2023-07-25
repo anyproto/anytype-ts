@@ -397,8 +397,6 @@ class UtilData {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
-		const page = dbStore.getTypeByKey(Constant.typeKey.page);
-		const note = dbStore.getTypeByKey(Constant.typeKey.note);
 
 		let items: any[] = [];
 
@@ -549,12 +547,14 @@ class UtilData {
 
 	// Check if there are at least 2 templates for object types
 	checkTemplateCnt (ids: string[], callBack?: (message: any) => void) {
-		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeKey.template, ids, 2, callBack);
+		const templateType = dbStore.getTemplateType();
+		this.checkObjectWithRelationCnt('targetObjectType', templateType?.id, ids, 2, callBack);
 	};
 
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		this.checkObjectWithRelationCnt('setOf', Constant.typeKey.set, ids, 2, callBack);
+		const setType = dbStore.getTypeByKey(Constant.typeKey.set);
+		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
 	};
 
 	defaultLinkSettings () {

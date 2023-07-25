@@ -200,13 +200,6 @@ class DetailStore {
 			};
 		};
 
-		switch (object.type) {
-			case Constant.typeKey.template: {
-				object = this.mapTemplate(object);
-				break;
-			};
-		};
-
 		return object;
 	};
 
@@ -284,13 +277,6 @@ class DetailStore {
 		object.spaceId = Relation.getStringValue(object.spaceId);
 
 		delete(object.spaceAccessibility);
-
-		return object;
-	};
-
-	private mapTemplate (object: any) {
-		object.targetObjectType = Relation.getStringValue(object.targetObjectType);
-		object.templateIsBundled = Boolean(object.templateIsBundled);
 
 		return object;
 	};

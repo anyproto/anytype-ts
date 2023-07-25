@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
-import { detailStore, blockStore, menuStore, commonStore } from 'Store';
+import { detailStore, blockStore, menuStore, commonStore, dbStore } from 'Store';
 import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview } from 'Lib';
 import Constant from 'json/constant.json';
 
@@ -593,13 +593,14 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 				const isCollection = Dataview.isCollection(rootId, blockId);
 				const name = isCollection ? 'collection' : 'set';
+				const collectionType = dbStore.getCollectionType();
 
 				let addParam: any = {
 					name: `Create new ${name}`,
 				};
 				if (isCollection) {
 					addParam.onClick = () => {
-						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', commonStore.space, () => onCreate());
+						C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: collectionType?.id }, [], '', commonStore.space, () => onCreate());
 					};
 
 					filters = filters.concat([

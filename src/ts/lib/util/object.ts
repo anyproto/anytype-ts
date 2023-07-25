@@ -305,7 +305,8 @@ class UtilObject {
 	};
 
 	isTemplate (type: string) {
-		return type == Constant.typeKey.template;
+		const templateType = dbStore.getTemplateType();
+		return type == templateType?.id;
 	};
 
 	isTypeOrRelationLayout (layout: I.ObjectLayout) {
@@ -348,7 +349,6 @@ class UtilObject {
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Date,
-			//Constant.typeKey.template,
 		];
 	};
 

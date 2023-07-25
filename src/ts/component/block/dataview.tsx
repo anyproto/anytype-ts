@@ -635,6 +635,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const showMenu = () => {
+			const templateType = dbStore.getTemplateType();
+
 			hoverArea.addClass('active');
 
 			menuStore.open('searchObject', {
@@ -648,7 +650,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					noFilter: true,
 					noIcon: true,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.template },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType.id },
 						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
 					],
 					sorts: [
@@ -772,6 +774,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { targetObjectId } = block.content;
 		const isCollection = this.isCollection();
+		const collectionType = dbStore.getCollectionType();
 
 		let filters: I.Filter[] = [];
 		let addParam: any = {};
@@ -779,7 +782,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isCollection) {
 			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', commonStore.space, (message: any) => { 
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: collectionType?.id }, [], '', commonStore.space, (message: any) => { 
 					onSelect(message.details, true); 
 				});
 			};
