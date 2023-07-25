@@ -1,36 +1,58 @@
 {
-  "parser": "typescript",
-  "trailingComma": "es5",
-  "tabWidth": 4,
-  "useTabs": true,
-  "semi": true,
-  "singleQuote": true,
-  "overrides": [
-    {
-      "files": "*.json",
-      "options": { "parser": "json" }
-    },
-    {
-      "files": "*.{ts,tsx}",
-      "options": { "parser": "typescript" }
-    },
-    {
-      "files": "*.scss",
-      "options": { "parser": "scss" }
-    },
-    {
-      "files": "*.md",
-      "options": { "parser": "markdown" }
-    },
-    {
-      "files": "*.{svg,html}",
-      "options": { "parser": "html" }
-    },
-    {
-      "files": ["*.code-workspace"],
-      "options": {
-        "parser": "json"
-      }
-    }
-  ]
+    "parser": "typescript",
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "useTabs": false,
+    "arrowParens": "avoid",
+    "semi": true,
+    "singleQuote": false,
+
+    "plugins": ["@trivago/prettier-plugin-sort-imports"],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true,
+
+    "overrides": [
+        {
+            "files": "*.{yml,yaml}",
+            "options": {
+                "semi": false,
+                "tabWidth": 2,
+                "parser": "yaml"
+            }
+        },
+        {
+            "files": "*.md",
+            "options": {
+                "tabWidth": 2,
+                "parser": "markdown"
+            }
+        },
+        {
+            "files": "*.json",
+            "options": { "parser": "json" }
+        },
+        {
+            "files": "*.{ts,tsx}",
+            "options": {
+                "singleQuote": false,
+                "parser": "typescript"
+            }
+        },
+        {
+            "files": "*.css",
+            "options": { "parser": "css" }
+        },
+        {
+            "files": "*.scss",
+            "options": { "parser": "scss" }
+        },
+        {
+            "files": "*.{svg,html}",
+            "options": { "parser": "html" }
+        },
+        {
+            "files": ["*.code-workspace"],
+            "options": { "parser": "json" }
+        }
+    ]
 }

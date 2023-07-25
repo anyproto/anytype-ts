@@ -5,6 +5,8 @@
 	"main": "electron.js",
 	"scripts": {
 		"precommit": "npx lint-staged",
+        "lint": "eslint .",
+        "format": "prettier . --write",
 		"electron": "npx electron .",
 		"electron-win": "npx electron.cmd .",
 		"start:watch": "cross-env-shell webpack-dev-server --progress --mode=development --node-env=development  --env SERVER_PORT=$SERVER_PORT --env DATA_PATH=$DATA_PATH --history-api-fallback --cache",

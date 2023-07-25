@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 var param = getParam();
 var year = document.getElementById('year');
 var closeButton = document.getElementById('close');
