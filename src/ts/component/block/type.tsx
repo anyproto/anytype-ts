@@ -212,8 +212,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			return;
 		};
 
-		if (UtilObject.getSetTypes().includes(item.id)) {
-			this.onObjectTo(item.id);
+		if (UtilObject.getSetLayouts().includes(item.layout)) {
+			this.onObjectTo(item.layout);
 		} else {
 			UtilData.checkTemplateCnt([ item.id ], (message: any) => {
 				if (message.records.length > 1) {
@@ -232,10 +232,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		};
 	};
 
-	onObjectTo (type: string) {
+	onObjectTo (layout: I.ObjectLayout) {
 		const { rootId, isPopup, setLoading } = this.props;
-
-		let layout: I.ObjectLayout = null;
 
 		const cb = () => {
 			if (isPopup) {
@@ -248,15 +246,13 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 
 		setLoading(true);
 
-		switch (type) {
-			case Constant.typeKey.set: {
-				layout = I.ObjectLayout.Set;
+		switch (layout) {
+			case I.ObjectLayout.Set: {
 				C.ObjectToSet(rootId, [], cb);
 				break;
 			};
 
-			case Constant.typeKey.collection: {
-				layout = I.ObjectLayout.Collection;
+			case I.ObjectLayout.Collection: {
 				C.ObjectToCollection(rootId, cb);
 				break;
 			};

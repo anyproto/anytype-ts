@@ -169,7 +169,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
 	checkState () {
-		const setTypes = UtilObject.getSetTypes();
+		const setLayouts = UtilObject.getSetLayouts();
 		const layoutOptions = this.getLayoutOptions().map(it => it.id);
 
 		if (this.isCollection()) {
@@ -178,10 +178,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 		} else 
 		if (this.target) {
-			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !setTypes.includes(this.target.type)) {
+			if ([ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(this.layout) && !setLayouts.includes(this.target.layout)) {
 				this.layout = I.WidgetLayout.Tree;
 			};
-			if ((this.layout == I.WidgetLayout.Tree) && setTypes.includes(this.target.type)) {
+			if ((this.layout == I.WidgetLayout.Tree) && setLayouts.includes(this.target.layout)) {
 				this.layout = I.WidgetLayout.Compact;
 			};
 		};
@@ -211,14 +211,14 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		if (this.target) {
 			if (!isCollection) {
-				const setTypes = UtilObject.getSetTypes();
-				const treeSkipTypes = setTypes.concat(UtilObject.getSystemTypes()).concat(UtilObject.getFileTypes());
+				const setLayouts = UtilObject.getSetLayouts();
+				const treeSkipLayouts = setLayouts.concat(UtilObject.getSystemLayouts()).concat(UtilObject.getFileLayouts());
 
 				// Sets can only become Link and List layouts, non-sets can't become List
-				if (treeSkipTypes.includes(this.target.type)) {
+				if (treeSkipLayouts.includes(this.target.layout)) {
 					options = options.filter(it => it != I.WidgetLayout.Tree);
 				};
-				if (!setTypes.includes(this.target.type)) {
+				if (!setLayouts.includes(this.target.layout)) {
 					options = options.filter(it => ![ I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(it) );
 				};
 			};

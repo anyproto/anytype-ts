@@ -356,6 +356,33 @@ class UtilObject {
 		];
 	};
 
+	getSetLayouts () {
+		return [ 
+			I.ObjectLayout.Set,
+			I.ObjectLayout.Collection,
+		];
+	};
+
+	getSystemLayouts () {
+		return [
+			I.ObjectLayout.Type,
+			I.ObjectLayout.Relation,
+			I.ObjectLayout.Option,
+			I.ObjectLayout.Dashboard,
+			//Constant.typeKey.template,
+			//Constant.typeKey.date,
+		];
+	};
+
+	getFileLayouts () {
+		return [
+			I.ObjectLayout.File,
+			I.ObjectLayout.Image,
+			I.ObjectLayout.Audio,
+			I.ObjectLayout.Video,
+		];
+	};
+
 };
 
 export default new UtilObject();
