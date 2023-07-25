@@ -166,8 +166,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					) : ''}
 
 					<div className="section note dn">
-						<div className="title">Notes</div>
-						<div className="content">People often distinguish between an acquaintance and a friend, holding that the former should be used primarily to refer to someone with whom one is not especially close. Many of the earliest uses of acquaintance were in fact in reference to a person with whom one was very close, but the word is now generally reserved for those who are known only slightly.</div>
+						<div className="title"></div>
+						<div className="content"></div>
 					</div>
 
 					{allowedObject ? (

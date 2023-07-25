@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I } from 'Lib';
+import { I, UtilCommon, translate } from 'Lib';
 import katex from 'katex';
 
 class MenuPreviewLatex extends React.Component<I.Menu> {
@@ -19,7 +19,7 @@ class MenuPreviewLatex extends React.Component<I.Menu> {
 		return (
 			<div>
 				<div className="math" dangerouslySetInnerHTML={{ __html: math }} />
-				{example ? <div className="example">Example: {text}</div> : ''}
+				{example ? <div className="example">{UtilCommon.sprintf(translate('menuPreviewLatexExample'), text)}</div> : ''}
 			</div>
 		);
 	};

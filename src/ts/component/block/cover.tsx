@@ -80,7 +80,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 			image = detailStore.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
 			author = (
 				<div className="author">
-					Photo by <a href={image.mediaArtistURL + Url.unsplash.utm}>{image.mediaArtistName}</a> on <a href={Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>
+					{UtilCommon.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>`)}
 				</div>
 			);
 		};

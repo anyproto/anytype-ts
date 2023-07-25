@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { I, C, UtilData, Relation, UtilObject } from 'Lib';
+import { I, C, UtilData, Relation, UtilObject, translate } from 'Lib';
 import { IconObject, Pager, ObjectName, Cell } from 'Component';
 import { detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -136,7 +136,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					<thead>
 						<tr className="row">
 							<th className="cellHead">
-								<div className="name">Name</div>
+								<div className="name">{translate('commonName')}</div>
 							</th>
 							{columns.map(column => (
 								<th key={`head-${column.relationKey}`} className="cellHead">
@@ -148,7 +148,7 @@ const ListObject = observer(class ListObject extends React.Component<Props> {
 					<tbody>
 						{!items.length ? (
 							<tr>
-								<td className="cell empty" colSpan={3}>No objects yet</td>
+								<td className="cell empty" colSpan={3}>{translate('commonNoObjects')}</td>
 							</tr>
 						) : (
 							<React.Fragment>

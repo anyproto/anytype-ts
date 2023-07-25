@@ -4,7 +4,7 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -642,7 +642,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 				data: {
-					label: 'Choose a template',
+					label: translate('blockDataviewSelectTemplate'),
 					noFilter: true,
 					noIcon: true,
 					filters: [
@@ -970,7 +970,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			case 'view': {
 				cn.push('withHead');
 
-				emptyProps.title = 'No objects';
+				emptyProps.title = translate('commonNoObjects');
 
 				if (this.isAllowedObject()) {
 					emptyProps.description = 'Create your first one to begin';

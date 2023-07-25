@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable } from 'Component';
-import { I, M, Action, UtilData, UtilObject, focus, keyboard, Relation } from 'Lib';
+import { I, M, Action, UtilData, UtilObject, focus, keyboard, Relation, translate } from 'Lib';
 import { blockStore, detailStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -40,7 +40,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		const allowDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const placeholder = {
 			title: UtilObject.defaultName(type),
-			description: 'Add a description',
+			description: translate('placeholderBlockDescription'),
 		};
 
 		const blockFeatured: any = new M.Block({ id: 'featuredRelations', type: I.BlockType.Featured, childrenIds: [], fields: {}, content: {} });

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, Preview } from 'Lib';
+import { I, Preview, translate } from 'Lib';
 
 const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComponent> {
 	
@@ -13,7 +13,7 @@ const FooterMainEdit = class FooterMainEdit extends React.Component<I.FooterComp
 					id="button-help" 
 					className="iconWrap" 
 					onClick={onHelp}
-					onMouseEnter={e => this.onTooltipShow(e, 'Help')}
+					onMouseEnter={e => this.onTooltipShow(e, translate('commonHelp'))}
 					onMouseLeave={e => Preview.tooltipHide(false)}
 				>
 					<Icon />

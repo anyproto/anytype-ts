@@ -163,7 +163,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 
 				{relation && (canDuplicate || canDelete) ? (
 					<div className="section">
-						<MenuItemVertical icon="expand" name="Open as object" onClick={this.onOpen} onMouseEnter={this.menuClose} />
+						<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={this.onOpen} onMouseEnter={this.menuClose} />
 						{canDuplicate ? <MenuItemVertical icon="copy" name="Duplicate" onClick={this.onCopy} onMouseEnter={this.menuClose} /> : ''}
 						{canDelete ? <MenuItemVertical icon={deleteIcon} name={deleteText} onClick={this.onRemove} onMouseEnter={this.menuClose} /> : ''}
 					</div>

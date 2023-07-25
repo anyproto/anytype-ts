@@ -84,7 +84,7 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
 						<Input
 							value={account.id}
 							readonly={true}
-							onClick={() => UtilCommon.clipboardCopyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
+							onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
 						/>
 						<Icon className="copy" />
 					</div>
@@ -138,8 +138,8 @@ const PopupSettingsPageAccount = observer(class PopupSettingsPageAccount extends
         };
 
         const options = [
-            { id: 'upload', name: 'Change' },
-            { id: 'remove', name: 'Remove' }
+            { id: 'upload', name: translate('commonChange') },
+            { id: 'remove', name: translate('commonRemove') },
         ];
 
         menuStore.open('select', {

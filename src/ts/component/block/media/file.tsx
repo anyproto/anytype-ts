@@ -43,7 +43,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 						<InputWithFile 
 							block={block} 
 							icon="file" 
-							textFile="Upload a file" 
+							textFile={translate('blockFileUpload')} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 
 							readonly={readonly} 

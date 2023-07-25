@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Loader, Block, Deleted } from 'Component';
-import { I, C, UtilCommon, Action, UtilObject } from 'Lib';
+import { I, C, UtilCommon, Action, UtilObject, translate } from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
@@ -52,14 +52,16 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 				<Header component="mainObject" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} />
 
 				<div className="blocks wrapper">
-					{block ? <Block 
-						{...this.props} 
-						key={block.id} 
-						rootId={rootId} 
-						iconSize={20} 
-						block={block} 
-						className="noPlus" 
-					/> : 'Block not found'}
+					{block ? (
+						<Block 
+							{...this.props} 
+							key={block.id} 
+							rootId={rootId} 
+							iconSize={20} 
+							block={block} 
+							className="noPlus" 
+						/>
+ 					) : translate('pageMainBlockEmpty')}
 				</div>
 			</div>
 		);

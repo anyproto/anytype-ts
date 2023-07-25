@@ -1,8 +1,10 @@
 {
 	"commonError": { "en": "Error" },
 	"commonOr": { "en": "or" },
+	"commonOf": { "en": "of" },
 	"commonTo": { "en": "to" },
 	"commonOk": { "en": "Ok" },
+	"commonOkay": { "en": "Okay" },
 	"commonCreate": { "en": "Create" },
 	"commonSave": { "en": "Save" },
 	"commonCancel": { "en": "Cancel" },
@@ -13,6 +15,7 @@
 	"commonSearchButton": { "en": "Search" },
 	"commonFilterClick": { "en": "Click to filter..." },
 	"commonFilterEmpty": { "en": "No items match filter" },
+	"commonFilterObjects": { "en": "Filter objects..." },
 	"commonHome": { "en": "Home" },
 	"commonSubmit": { "en": "Submit" },
 	"commonValue": { "en": "Value" },
@@ -20,6 +23,27 @@
 	"commonArchived": { "en": "Object is in the bin" },
 	"commonEmpty": { "en": "Empty" },
 	"commonBack": { "en": "Back" },
+	"commonNew": { "en": "New" },
+	"commonLater": { "en": "Later" },
+	"commonRetry": { "en": "Retry"},
+	"commonUncategorized": { "en": "Uncategorized" },
+	"commonGraph": { "en": "Graph" },
+	"commonToday": { "en": "Today" },
+	"commonTomorrow": { "en": "Tomorrow" },
+	"commonYesterday": { "en": "Yesterday" },
+	"commonPhrase": { "en": "Recovery phrase" },
+	"commonCopy": { "en": "Copy" },
+	"commonOpenObject": { "en": "Open as object" },
+	"commonClose": { "en": "Close" },
+	"commonRemove": { "en": "Remove" },
+	"commonChange": { "en": "Change" },
+	"commonName": { "en": "Name" },
+	"commonNoObjects": { "en": "No objects" },
+	"commonHelp": { "en": "Help" },
+	"commonSelectAll": { "en": "Select all" },
+	"commonDeselectAll": { "en": "Deselect all" },
+	"commonAdd": { "en": "Add" },
+	"commonDone": { "en": "Done" },
 
 	"commonDeletedObject": { "en": "Non-existent object" },
 	"commonDeletedType": { "en": "Deleted type" },
@@ -61,6 +85,11 @@
 	"relationName100": { "en": "Object" },
 	"relationName101": { "en": "Relations" },
 
+	"relationCheckboxLabel0": { "en": "%s is checked" },
+	"relationCheckboxLabel1": { "en": "%s is unchecked" },
+	"relationCheckboxLabelShort0": { "en": "checked" },
+	"relationCheckboxLabelShort1": { "en": "unchecked" },
+
 	"viewName0": { "en": "Grid" },
 	"viewName1": { "en": "List" },
 	"viewName2": { "en": "Gallery" },
@@ -72,9 +101,13 @@
 	"progress3": { "en": "Download in progress" },
 	"progress4": { "en": "Recovering account" },
 	"progress5": { "en": "Migration in progress" },
+	"progressUpdateCheck": { "en": "Checking for update..." },
+
+	"spellcheckAdd": { "en": "Add to dictionary" },
 
 	"headerHistoryCurrent": { "en": "Current version" },
 	"headerHistoryRestore": { "en": "Restore version" },
+	"headerTooltipPath": { "en": "Click to search" },
 
 	"confirmUpdateTitle": { "en": "It's time to update" },
 	"confirmUpdateText": { "en": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features." },
@@ -155,12 +188,18 @@
 	"authUsecaseCase3Label": { "en": "Keep your daily notes and self-reflections secure and private" },
 	"authUsecaseSkip": { "en":  "Skip" },
 
+	"pageAuthLoginInvalidPhrase": { "en": "Invalid recovery phrase" },
 	"pageMainArchiveEmpty": { "en": "Your bin is empty" },
+	"pageMainBlockEmpty": { "en": "Block not found" },
 
 	"editorControlIcon": { "en": "Icon" },
 	"editorControlCover": { "en": "Cover" },
 	"editorControlLayout": { "en": "Layout" },
 	"editorControlRelation": { "en": "Relations" },
+	"editorPageCreateBookmarkObject": { "en": "Create bookmark object" },
+	"editorPageCreateBookmark": { "en": "Create bookmark" },
+	"editorPagePasteText": { "en": "Paste as text"},
+	"editorPagePasteEmbed": { "en": "Paste as embed"},
 
 	"setTitle": { "en": "New set" },
 	"setText": { "en": "Choose an object type for this set" },
@@ -261,13 +300,44 @@
 	"blockLinkArchived": { "en": "Deleted" },
 
 	"blockDataviewNew": { "en": "New object" },
+	"blockDataviewCreateNew": { "en": "Create new object" },
+	"blockDataviewControlsFilters": { "en": "Filters" },
+	"blockDataviewControlsSorts": { "en": "Sorts" },
+	"blockDataviewControlsSettings": { "en": "Sorts" },
+	"blockDataviewControlsViewAdd": { "en": "Create new view" },
+	"blockDataviewSelectionMoveToBin": { "en": "Move to bin" },
+	"blockDataviewSelectionDeselect": { "en": "Deselect all" },
+	"blockDataviewSelectionUnlink": { "en": "Unlink" },
+	"blockDataviewSelectionSelected": { "en": "%s selected" },
+	"blockDataviewHeadMenuEdit": { "en": "Edit title" },
+	"blockDataviewHeadMenuChange": { "en": "Change source %s" },
+	"blockDataviewHeadMenuOpen": { "en": "Open source %s" },
+	"blockDataviewBoardculmnSettings": { "en": "Column settings" },
+	"blockDataviewSelectTemplate": { "en": "Choose a template" },
 
 	"blockCoverDrag": { "en": "Drag image to reposition" },
 	"blockCoverSave": { "en": "Save changes" },
 
+	"blockFileUpload": { "en": "Upload a file" },
 	"blockFileError": { "en": "There was an error uploading the file" },
 
+	"blockAudioUpload": { "en": "Upload an audio" },
+
+	"blockImageUpload": { "en": "Upload a picture" },
+
+	"blockPdfUpload": { "en": "Upload a PDF" },
+
+	"blockVideoUpload": { "en": "Upload a video" },
+
 	"blockBookmarkError": { "en": "There was an error fetching the url" },
+
+	"blockTextWrap": { "en": "Wrap" },
+	"blockTextUnwrap": { "en": "Unwrap" },
+
+	"blockLatexPlaceholder": { "en": "Enter text in format LaTeX" },
+	"blockLatexTemplate": { "en": "Template formula" },
+
+	"blockTableOfContentsAdd": { "en": "Add headings to create a table of contents" },
 
 	"popupSettingsTitle": { "en": "Settings" },
 
@@ -406,6 +476,8 @@
 
 	"popupHelpLabel": { "en": "Stay tuned for Anytype's news" },
 
+	"popupTemplateTitle": { "en": "Choose a template" },
+
 	"popupNavigationOpen": { "en": "Open" },
 	"popupNavigationMove": { "en": "Move to" },
 	"popupNavigationLink": { "en": "Link" },
@@ -419,22 +491,34 @@
 	"popupSearchEmpty": { "en": "No objects found" },
 	"popupSearchEmptyFilter": { "en": "<b>There are no objects named <span>\"%s\"</span></b>Try creating a new one or search for something else" },
 
+	"popupConfirmUpdatePromptTitle": { "en": "Update available" },
+	"popupConfirmUpdatePromptText": { "en": "Do you want to update on a new version?" },
+	"popupConfirmUpdatePromptRestartOk": { "en": "Restart and update" },
+	"popupConfirmUpdatePromptOk": { "en": "Update" },
+	"popupConfirmUpdatePromptCancel": { "en": "Later" },
+
+	"popupConfirmUpdateDoneTitle": { "en": "You are up-to-date" },
+	"popupConfirmUpdateDoneText": { "en": "You are on the latest version: %s" },
+	"popupConfirmUpdateDoneOk": { "en": "'Great!" },
+
 	"popupConfirmUpdateErrorTitle": { "en": "Oops!" },
 	"popupConfirmUpdateErrorText": { "en": "Can't check available updates, please try again later.<br/><span class=\"error\">%s</span>" },
 
 	"menuAccountPeer": { "en": "%d/%d peers" },
 
+	"menuAccountPathText": { "en": "Your key files will be stored here. Click to change the path" },
+
 	"menuSmileRandom": { "en": "Random emoji" },
 	"menuSmileUpload": { "en": "Upload image" },
-	"menuSmileRemove": { "en": "Remove" },
 	"menuSmileEmpty": { "en": "<b>There are no emojis named <span>\"%s\"</span></b>Try to find a new one or upload your image" },
+	"menuSmileRecent": { "en": "Recently used" },
+	"menuSmileSearch": { "en": "Search results" },
 
 	"menuCalendarToday": { "en": "Today" },
 	"menuCalendarTomorrow": { "en": "Tomorrow" },
 
 	"menuBlockCoverUpload": { "en": "Upload image" },
 	"menuBlockCoverEdit": { "en": "Reposition" },
-	"menuBlockCoverRemove": { "en": "Remove" },
 	"menuBlockCoverEmpty": { "en": "There are no covers found" },
 	"menuBlockCoverEmptyFilter": { "en": "<b>There are no covers named <span>\"%s\"</span></b>Try to find a new one or upload your image" },
 
@@ -454,9 +538,17 @@
 
 	"menuDataviewViewEditName": { "en": "View name" },
 
+	"menuDataviewFilterListEmpty": { "en": "No filters applied to this view" },
+
 	"menuDataviewUrlActionGo7": { "en": "Open link" },
 	"menuDataviewUrlActionGo8": { "en": "Mail to" },
 	"menuDataviewUrlActionGo9": { "en": "Call to" },
+	"menuDataviewUrlActionGoCopy": { "en": "Copy link" },
+	"menuDataviewUrlActionGoReload": { "en": "Reload from source" },
+
+	"menuPreviewLatexExample": { "en": "Example: %s" },
+
+	"menuSelectEmpty": { "en": "No options found" },
 
 	"previewCopy": { "en": "Copy link" },
 	"previewEdit": { "en": "Edit link" },
@@ -498,8 +590,9 @@
 	"threadStatus4Tooltip": { "en": "Failed to sync, trying again..." },
 	"threadStatus5Tooltip": { "en": "We have updated the protocol version. Click to update and sync the objects." },
 
-	"toastRecoveryCopiedClipboard": { "en": "Recovery phrase copied to clipboard"  },
-	"toastTemplateCreate": { "en": "is saved as a template!"  },
+	"toastTemplateCreate": { "en": "is saved as a template!" },
+	"toastCopy": { "en": "%s has been copied to clipboard" },
+	"toastCopyBlock": { "en": "Block has been copied to clipboard"},
 
 	"textColor-grey": { "en": "Grey" },
 	"textColor-yellow": { "en": "Yellow" },
@@ -543,6 +636,7 @@
 	"defaultNameView": { "en": "New view" },
 
 	"placeholderBlock": { "en": "Type text or / for commands" },
+	"placeholderBlockDescription": { "en": "Add a description" },
 	"placeholderFilter": { "en": "Type to filter" },
 	"placeholderCellCommon": { "en": "No value" },
 	"placeholderCell0": { "en": "Enter text" },
@@ -596,6 +690,36 @@
 
 	"spaceType0": { "en": "Personal space" },
 
-	"phrasePlaceholder": { "en": "Please enter your Recovery phrase here" }
+	"phrasePlaceholder": { "en": "Please enter your Recovery phrase here" },
+
+	"navigationCreateNew": { "en": "Create new object" },
+
+	"spaceLast": { "en": "Last opened object" },
+	"spaceExisting": { "en": "Existing object" },
+
+	"quickOption0": { "en": "Exact date" },
+	"quickOption1": { "en": "Yesterday" },
+	"quickOption2": { "en": "Today" },
+	"quickOption3": { "en": "Tomorrow" },
+	"quickOption4": { "en": "Last week" },
+	"quickOption5": { "en": "Current week" },
+	"quickOption6": { "en": "Next week" },
+	"quickOption7": { "en": "Last month" },
+	"quickOption8": { "en": "Current month" },
+	"quickOption9": { "en": "Next month" },
+	"quickOption10": { "en": "Number of days ago" },
+	"quickOption11": { "en": "Number of days from now" },
+
+	"sidebarToggle": { "en": "Toggle sidebar fixed mode" },
+
+	"unsplashString": { "en": "Photo by %s on %s" },
+
+	"templateBannner": { "en": "You are editing a template" },
+
+	"dispatcherImportSuccessTitle": { "en": "The import process is complete!" },
+	"dispatcherImportSuccessText": { "en": "Now the data is yours. You will find the imported objects in your favorite collection." },
+	"dispatcherExportSuccessTitle": { "en": "The export process is complete!" },
+	"dispatcherExportSuccessText": { "en": "You can find the exported objects in the folder you selected." },
+	"dispatcherImportConfirm": { "en": "Ok! I got it!" }
 
 }

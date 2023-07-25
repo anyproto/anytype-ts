@@ -528,16 +528,9 @@ class App extends React.Component<object, State> {
 	};
 
 	onUpdateCheck (e: any, auto: boolean) {
-		if (auto) {
-			return;
+		if (!auto) {
+			commonStore.progressSet({ status: translate('progressUpdateCheck'), current: 0, total: 1, isUnlocked: true });
 		};
-
-		commonStore.progressSet({
-			status: 'Checking for update...',
-			current: 0,
-			total: 1,
-			isUnlocked: true
-		});
 	};
 
 	onUpdateConfirm (e: any, auto: boolean) {
@@ -550,10 +543,10 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Update available',
-				text: 'Do you want to update on a new version?',
-				textConfirm: 'Restart and update',
-				textCancel: 'Later',
+				title: translate('popupConfirmUpdatePromptTitle'),
+				text: translate('popupConfirmUpdatePromptText'),
+				textConfirm: translate('popupConfirmUpdatePromptRestartOk'),
+				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateConfirm');
 				},
@@ -573,10 +566,10 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Update available',
-				text: 'Do you want to update on a new version?',
-				textConfirm: 'Update',
-				textCancel: 'Later',
+				title: translate('popupConfirmUpdatePromptTitle'),
+				text: translate('popupConfirmUpdatePromptText'),
+				textConfirm: translate('popupConfirmUpdatePromptOk'),
+				textCancel: translate('popupConfirmUpdatePromptCancel'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');
 				},
@@ -596,9 +589,9 @@ class App extends React.Component<object, State> {
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'You are up-to-date',
-				text: UtilCommon.sprintf('You are on the latest version: %s', window.Electron.version.app),
-				textConfirm: 'Great!',
+				title: translate('popupConfirmUpdateDoneTitle'),
+				text: UtilCommon.sprintf(translate('popupConfirmUpdateDoneText'), window.Electron.version.app),
+				textConfirm: translate('popupConfirmUpdateDoneOk'),
 				canCancel: false,
 			},
 		});
@@ -616,8 +609,8 @@ class App extends React.Component<object, State> {
 			data: {
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: UtilCommon.sprintf(translate('popupConfirmUpdateErrorText'), Errors[err] || err),
-				textConfirm: 'Retry',
-				textCancel: 'Later',
+				textConfirm: translate('commonRetry'),
+				textCancel: translate('commonLater'),
 				onConfirm: () => {
 					Renderer.send('updateDownload');
 				},
@@ -651,7 +644,7 @@ class App extends React.Component<object, State> {
 		const obj = Mark.cleanHtml($(`#block-${focused} #value`).html());
 		const value = String(obj.get(0).innerText || '');
 
-		options.push({ id: 'add-to-dictionary', name: 'Add to dictionary' });
+		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 
 		menuStore.open('select', {
 			recalcRect: () => { 

@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -138,7 +138,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			switch (this.view) {
 				case View.Library:
 					if (allowedDelete) {
-						buttons.push({ text: 'Remove', onClick: (e: any) => { this.onRemove(e, item); } });
+						buttons.push({ text: translate('commonRemove'), onClick: e => this.onRemove(e, item) });
 					} else {
 						icons.push({ className: 'lock', tooltip: textService });
 					};

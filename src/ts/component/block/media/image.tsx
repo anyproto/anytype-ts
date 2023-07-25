@@ -49,7 +49,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 						<InputWithFile 
 							block={block} 
 							icon="image" 
-							textFile="Upload a picture" 
+							textFile={translate('blockImageUpload')} 
 							accept={Constant.extension.image} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 

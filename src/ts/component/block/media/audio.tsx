@@ -41,7 +41,7 @@ const BlockAudio = observer(class BlockAudio extends React.Component<I.BlockComp
 						<InputWithFile 
 							block={block} 
 							icon="audio" 
-							textFile="Upload an audio" 
+							textFile={translate('blockAudioUpload')} 
 							accept={Constant.extension.audio} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 

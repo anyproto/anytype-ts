@@ -25,7 +25,7 @@ enum Panel {
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltipCaption: `${cmd} + ${alt} + O` },
+	{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${cmd} + ${alt} + O` },
 	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltipCaption: `${cmd} + O` },
 ];
 

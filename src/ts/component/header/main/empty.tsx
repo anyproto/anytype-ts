@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, UtilObject, keyboard, sidebar } from 'Lib';
+import { I, UtilObject, keyboard, sidebar, translate } from 'Lib';
 import { popupStore } from 'Store';
 
 interface Props extends I.HeaderComponent {
@@ -25,12 +25,12 @@ const HeaderMainEmpty = observer(class HeaderMainEmpty extends React.Component<P
 				<div className="side left">
 					<Icon
 						className="toggle big"
-						tooltip="Toggle sidebar fixed mode"
+						tooltip={translate('sidebarToggle')}
 						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggleExpandCollapse()}
 					/>
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 				</div>
 
 				<div className="side center" />

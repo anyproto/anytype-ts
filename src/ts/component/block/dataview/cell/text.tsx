@@ -150,7 +150,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				if (value !== null) {
 					value = Number(value) || 0;
 
-					const day = UtilCommon.day(value);
+					const day = UtilCommon.dayString(value);
 					const date = day ? day : UtilCommon.date(UtilData.dateFormat(viewRelation.dateFormat), value);
 					const time = UtilCommon.date(UtilData.timeFormat(viewRelation.timeFormat), value);
 					
