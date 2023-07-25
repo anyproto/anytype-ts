@@ -223,9 +223,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		if (relations.length) {
 			relations.forEach((it: any) => {
 				if (it.objectTypes.length && !details.type) {
-					const first = it.objectTypes[0];
+					const first = dbStore.getTypeById(it.objectTypes[0]);
 
-					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
+					if (!UtilObject.isFileLayout(first.recommendedLayout) && !UtilObject.isSystemLayout(first.recommendedLayout)) {
 						details.type = first;
 					};
 				};

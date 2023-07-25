@@ -296,10 +296,6 @@ class UtilObject {
 		return this.getFileTypes().includes(type);
 	};
 
-	isSystemType (type: string) {
-		return this.getSystemTypes().includes(type);
-	};
-
 	isFileLayout (layout: I.ObjectLayout) {
 		return this.getFileLayouts().includes(layout);
 	};
@@ -337,17 +333,6 @@ class UtilObject {
 		];
 	};
 
-	getSystemTypes () {
-		return [
-			Constant.typeKey.type,
-			Constant.typeKey.template,
-			Constant.typeKey.relation,
-			Constant.typeKey.option,
-			Constant.typeKey.dashboard,
-			Constant.typeKey.date,
-		];
-	};
-
 	getPageLayouts () {
 		return [ 
 			I.ObjectLayout.Page, 
@@ -375,8 +360,8 @@ class UtilObject {
 			I.ObjectLayout.Relation,
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
+			I.ObjectLayout.Date,
 			//Constant.typeKey.template,
-			//Constant.typeKey.date,
 		];
 	};
 

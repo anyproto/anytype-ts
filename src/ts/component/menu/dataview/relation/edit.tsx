@@ -442,7 +442,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				types: [ Constant.typeKey.type ],
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
-					{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
+					{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemLayouts() },
 				],
 				relation: observable.box(relation),
 				valueMapper: it => dbStore.getTypeById(it.id),

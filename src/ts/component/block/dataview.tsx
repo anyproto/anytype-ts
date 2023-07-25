@@ -539,9 +539,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (relations.length) {
 			relations.forEach((it: any) => {
 				if (it.objectTypes.length && !details.type) {
-					const first = it.objectTypes[0];
+					const first = dbStore.getTypeById(it.objectTypes[0]);
 
-					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
+					if (!UtilObject.isFileLayout(first.recommendedLayout) && !UtilObject.isSystemLayout(first.recommendedLayout)) {
 						details.type = first;
 					};
 				};
@@ -994,12 +994,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	isAllowedObject () {
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
-		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type).map(it => it.id);
-		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
+		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
+		const skipLayouts = UtilObject.getFileAndSystemLayouts();
 
 		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		for (const type of types) {
-			if (skipTypes.includes(type)) {
+			if (skipLayouts.includes(type.recommendedLayout)) {
 				allowed = false;
 				break;
 			};
