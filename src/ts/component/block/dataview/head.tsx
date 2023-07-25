@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, keyboard, UtilObject, analytics } from 'Lib';
-import { menuStore, detailStore, commonStore } from 'Store';
-import Constant from 'json/constant.json';
+import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
+import { menuStore, detailStore, commonStore, dbStore } from 'Store';
 
 interface State {
 	isEditing: boolean;
@@ -121,9 +120,9 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		let options: any[] = [
-			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
-			{ id: 'sourceChange', icon: 'source', name: `Change source ${sourceName}`, arrow: true },
-			{ id: 'sourceOpen', icon: 'expand', name: `Open source ${sourceName}` },
+			{ id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') },
+			{ id: 'sourceChange', icon: 'source', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true },
+			{ id: 'sourceOpen', icon: 'expand', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		];
 
 		if (object.isArchived || object.isDeleted) {
@@ -148,6 +147,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 	onTitleOver (e: any, item: any) {
 		const { rootId, block, loadData, isCollection } = this.props;
 		const { targetObjectId } = block.content;
+		const collectionType = dbStore.getCollectionType();
 
 		if (!item.arrow) {
 			menuStore.closeAll([ 'searchObject' ]);
@@ -160,14 +160,16 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		if (isCollection) {
 			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', commonStore.space, (message: any) => { 
+
+
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: collectionType?.id }, [], '', commonStore.space, (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, onCreate);
 					analytics.event('InlineSetSetSource', { type: 'newObject' });
 				});
 			};
 
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.collection },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 		} else {
 			addParam.name = 'Create new set';
@@ -183,7 +185,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			};
 
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.set },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 		};

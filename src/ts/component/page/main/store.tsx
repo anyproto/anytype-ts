@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -138,7 +138,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			switch (this.view) {
 				case View.Library:
 					if (allowedDelete) {
-						buttons.push({ text: 'Remove', onClick: (e: any) => { this.onRemove(e, item); } });
+						buttons.push({ text: translate('commonRemove'), onClick: e => this.onRemove(e, item) });
 					} else {
 						icons.push({ className: 'lock', tooltip: textService });
 					};
@@ -442,7 +442,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	getData (clear: boolean, callBack?: (message: any) => void) {
 		const { space } = commonStore;
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: this.getTabType() },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: this.getTabLayout() },
 		];
 		const sorts: I.Sort[] = [
 			{ type: I.SortType.Desc, relationKey: 'createdDate', includeTime: true },
@@ -492,24 +492,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		});
 	};
 
-	getTabType () {
-		let type = '';
-		switch (this.view) {
-			case View.Marketplace:
-				switch (this.tab) {
-					case I.StoreTab.Type:		 type = Constant.storeTypeKey.type; break;
-					case I.StoreTab.Relation:	 type = Constant.storeTypeKey.relation; break;
-				};
-				break;
+	getTabLayout (): I.ObjectLayout {
+		let layout = null;
 
-			case View.Library:
-				switch (this.tab) {
-					case I.StoreTab.Type:		 type = Constant.typeKey.type; break;
-					case I.StoreTab.Relation:	 type = Constant.typeKey.relation; break;
-				};
-				break;
+		switch (this.tab) {
+			case I.StoreTab.Type:		 layout = I.ObjectLayout.Type; break;
+			case I.StoreTab.Relation:	 layout = I.ObjectLayout.Relation; break;
 		};
-		return type;
+
+		return layout;
 	};
 
 	getItems () {

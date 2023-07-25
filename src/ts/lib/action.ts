@@ -1,4 +1,4 @@
-import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData } from 'Lib';
+import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilData, translate } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -247,16 +247,18 @@ class Action {
 			let toast = '';
 			let subId = '';
 
-			switch (object.type) {
-				case Constant.storeTypeKey.type:
+			switch (object.layout) {
+				case I.ObjectLayout.Type: {
 					toast = `Object type <b>${object.name}</b> has been added to your library`;
 					subId = Constant.subId.type;
 					break;
+				};
 
-				case Constant.storeTypeKey.relation:
+				case I.ObjectLayout.Relation: {
 					toast = `Relation <b>${object.name}</b> has been added to your library`;
 					subId = Constant.subId.relation;
 					break;
+				};
 			};
 
 			if (showToast) {
@@ -273,25 +275,27 @@ class Action {
 		let text = '';
 		let toast = '';
 		
-		switch (object.type) {
-			case Constant.typeKey.type:
+		switch (object.layout) {
+			case I.ObjectLayout.Type: {
 				title = 'Are you sure you want to remove this Type?';
 				text = 'This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.';
 				toast = `Object type <b>${object.name}</b> has been removed from your library`;
 				break;
+			};
 
-			case Constant.typeKey.relation:
+			case I.ObjectLayout.Relation: {
 				title = 'Are you sure you want to remove this Relation?';
 				text = 'This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.';
 				toast = `Relation <b>${object.name}</b> has been removed from your library`;
 				break;
+			};
 		};
 
 		popupStore.open('confirm', {
 			data: {
 				title,
 				text,
-				textConfirm: 'Remove',
+				textConfirm: translate('commonRemove'),
 				colorConfirm: 'red',
 				onConfirm: () => {
 					C.WorkspaceObjectListRemove([ object.id ], (message: any) => {

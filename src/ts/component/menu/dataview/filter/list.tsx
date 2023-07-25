@@ -6,7 +6,7 @@ import { SortableContainer } from 'react-sortable-hoc';
 import $ from 'jquery';
 import { Icon } from 'Component';
 import { dbStore, menuStore, blockStore } from 'Store';
-import { I, C, UtilCommon, keyboard, analytics, Relation } from 'Lib';
+import { I, C, UtilCommon, keyboard, analytics, Relation, translate } from 'Lib';
 import Item from 'Component/menu/item/filter';
 import Constant from 'json/constant.json';
 
@@ -81,7 +81,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 				<div className="items">
 					{!items.length ? (
 						<div className="item empty">
-							<div className="inner">No filters applied to this view</div>
+							<div className="inner">{translate('menuDataviewFilterListEmpty')}</div>
 						</div>
 					) : (
 						<InfiniteLoader

@@ -14,18 +14,18 @@ class Dataview {
 
 		const order: any = {};
 
-		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId));
+		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => it);
 		let o = 0;
 
 		if (!config.debug.ho) {
-			relations = relations.filter(it => it && ((it.relationKey == 'name') || !it.isHidden));
+			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
 		};
 
-		(view.relations || []).forEach((it: any) => {
+		(view.relations || []).filter(it => it).forEach(it => {
 			order[it.relationKey] = o++;
 		});
 
-		relations.forEach((it: any) => {
+		relations.forEach(it => {
 			if (it && (undefined === order[it.relationKey])) {
 				order[it.relationKey] = o++;
 			};
@@ -200,11 +200,10 @@ class Dataview {
 
 	isCollection (rootId: string, blockId: string): boolean {
 		const object = detailStore.get(rootId, rootId, [ 'type' ], true);
-		const { type } = object;
-		const isInline = !UtilObject.getSetTypes().includes(type);
+		const isInline = !UtilObject.getSystemLayouts().includes(object.layout);
 
 		if (!isInline) {
-			return type == Constant.typeKey.collection;
+			return object.layout == I.ObjectLayout.Collection;
 		};
 
 		const block = blockStore.getLeaf(rootId, blockId);
@@ -215,7 +214,7 @@ class Dataview {
 		const { targetObjectId, isCollection } = block.content;
 		const target = targetObjectId ? detailStore.get(rootId, targetObjectId, [ 'type' ], true) : null;
 
-		return targetObjectId ? target.type == Constant.typeKey.collection : isCollection;
+		return target ? target.layout == I.ObjectLayout.Collection : isCollection;
 	};
 
 	groupUpdate (rootId: string, blockId: string, viewId: string, groups: any[]) {

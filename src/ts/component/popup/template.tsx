@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader, Title, Label, ListObjectPreview } from 'Component';
-import { I, focus, UtilCommon, UtilData } from 'Lib';
+import { I, focus, UtilCommon, UtilData, translate } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -43,7 +43,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		return (
 			<div className="wrapper">
 				<div className="head">
-					<Title text="Choose a template" />
+					<Title text={translate('popupTemplateTitle')} />
 					<Label text={`Type “${UtilCommon.shorten(type.name, 32)}” has ${length} ${UtilCommon.cntWord(length, 'template', 'templates')}, use ←→ to switch and ENTER to choose`} />
 				</div>
 
@@ -91,8 +91,10 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		const { param } = this.props;
 		const { data } = param;
 		const { typeId } = data;
+		const templateType = dbStore.getTemplateType();
+
 		const filters: I.Filter[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.template },
+			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType?.id },
 			{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.Equal, value: typeId },
 		];
 		const sorts = [

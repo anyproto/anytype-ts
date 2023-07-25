@@ -2,9 +2,8 @@ import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Button, Widget } from 'Component';
-import { C, I, M, keyboard, UtilObject, analytics } from 'Lib';
+import { C, I, M, keyboard, UtilObject, analytics, translate } from 'Lib';
 import { blockStore, menuStore, detailStore } from 'Store';
-import arrayMove from 'array-move';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -102,10 +101,10 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 			if (isEditing) {
 				if (blocks.length <= Constant.limit.widgets) {
-					buttons.push({ id: 'widget-list-add', text: 'Add', onClick: this.addWidget });
+					buttons.push({ id: 'widget-list-add', text: translate('commonAdd'), onClick: this.addWidget });
 				};
 
-				buttons.push({ id: 'widget-list-done', text: 'Done', onClick: this.onEdit });
+				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onClick: this.onEdit });
 			} else {
 				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: 'Edit widgets', onClick: this.onEdit });
 			};

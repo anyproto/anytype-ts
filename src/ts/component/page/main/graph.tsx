@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, analytics, UtilData, UtilObject, keyboard } from 'Lib';
+import { I, C, UtilCommon, analytics, UtilData, UtilObject, keyboard, translate } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
 import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 const ctrl = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltipCaption: `${ctrl} + ${alt} + O` },
+	{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${ctrl} + ${alt} + O` },
 	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltipCaption: `${ctrl} + O` },
 ];
 
@@ -352,10 +352,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 									}
 								});
 
-								analytics.event('CreateObject', { 
-									objectType: commonStore.type, 
-									route: 'Graph',
-								});
+								analytics.event('CreateObject', { objectType: commonStore.type, route: 'Graph' });
 							});
 							break;
 						};

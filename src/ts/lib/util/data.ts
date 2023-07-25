@@ -239,8 +239,6 @@ class UtilData {
 
 			C.ObjectOpen(widgets, '', () => {
 				this.createsSubscriptions(() => {
-					commonStore.typeSet(commonStore.type);
-
 					if (pin && !keyboard.isPinChecked) {
 						UtilRouter.go('/auth/pin-check', routeParam);
 					} else {
@@ -292,7 +290,7 @@ class UtilData {
 				keys: Constant.defaultRelationKeys.concat(Constant.typeRelationKeys),
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeKey.type, Constant.typeKey.type ] },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Type },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -306,7 +304,7 @@ class UtilData {
 				keys: Constant.relationRelationKeys,
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.In, value: [ Constant.storeSpaceId, commonStore.space ] },
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.In, value: [ Constant.storeTypeKey.relation, Constant.typeKey.relation ] },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: I.ObjectLayout.Relation },
 				],
 				noDeps: true,
 				ignoreWorkspace: true,
@@ -319,7 +317,7 @@ class UtilData {
 				subId: Constant.subId.option,
 				keys: Constant.optionRelationKeys,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.option },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Option },
 				],
 				noDeps: true,
 				ignoreDeleted: true,
@@ -328,7 +326,7 @@ class UtilData {
 				subId: Constant.subId.space,
 				keys: this.spaceRelationKeys(),
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.space },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Space },
 				],
 				ignoreWorkspace: true,
 			}
@@ -399,23 +397,21 @@ class UtilData {
 		const { withSet, withBookmark, withCollection, withDefault } = param || {};
 		const { space, config } = commonStore;
 		const pageLayouts = UtilObject.getPageLayouts();
-		const page = dbStore.getTypeByKey(Constant.typeKey.page);
-		const note = dbStore.getTypeByKey(Constant.typeKey.note);
 
-		const skip = [ 
-			Constant.typeKey.note, 
-			Constant.typeKey.page, 
-			Constant.typeKey.set, 
-			Constant.typeKey.collection,
-			Constant.typeKey.task,
-			Constant.typeKey.bookmark,
-		];
-	
 		let items: any[] = [];
 
 		if (!withDefault) {
+			const skipLayouts = [ 
+				I.ObjectLayout.Note,
+				I.ObjectLayout.Page,
+				I.ObjectLayout.Set,
+				I.ObjectLayout.Collection,
+				I.ObjectLayout.Task,
+				I.ObjectLayout.Bookmark,
+			];
+
 			items = items.concat(dbStore.getTypes().filter(it => {
-				return pageLayouts.includes(it.recommendedLayout) && !skip.includes(it.typeKey) && (it.spaceId == space);
+				return pageLayouts.includes(it.recommendedLayout) && !skipLayouts.includes(it.recommendedLayout) && (it.spaceId == space);
 			}));
 			items.sort(this.sortByName);
 		};
@@ -433,15 +429,9 @@ class UtilData {
 		};
 
 		items.unshift(dbStore.getTypeByKey(Constant.typeKey.task));
-
-		if (page && note) {
-			if (commonStore.type == Constant.typeKey.note) {
-				items = [ page, note ].concat(items);
-			} else {
-				items = [ note, page ].concat(items);
-			};
-		};
-
+		items.unshift(dbStore.getTypeByKey(Constant.typeKey.page));
+		items.unshift(dbStore.getTypeByKey(Constant.typeKey.note));
+		
 		items = items.filter(it => it);
 
 		if (!config.debug.ho) {
@@ -557,12 +547,14 @@ class UtilData {
 
 	// Check if there are at least 2 templates for object types
 	checkTemplateCnt (ids: string[], callBack?: (message: any) => void) {
-		this.checkObjectWithRelationCnt('targetObjectType', Constant.typeKey.template, ids, 2, callBack);
+		const templateType = dbStore.getTemplateType();
+		this.checkObjectWithRelationCnt('targetObjectType', templateType?.id, ids, 2, callBack);
 	};
 
 	// Check if there is at least 1 set for object types
 	checkSetCnt (ids: string[], callBack?: (message: any) => void) {
-		this.checkObjectWithRelationCnt('setOf', Constant.typeKey.set, ids, 2, callBack);
+		const setType = dbStore.getTypeByKey(Constant.typeKey.set);
+		this.checkObjectWithRelationCnt('setOf', setType?.id, ids, 2, callBack);
 	};
 
 	defaultLinkSettings () {
@@ -779,17 +771,13 @@ class UtilData {
 	};
 
 	graphFilters () {
-		const { space } = commonStore;
-		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
-		const skipIds = [ '_anytype_profile' ];
-
 		return [
 			{ operator: I.FilterOperator.And, relationKey: 'isHidden', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true },
 			{ operator: I.FilterOperator.And, relationKey: 'isDeleted', condition: I.FilterCondition.NotEqual, value: true },
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
-			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds },
-			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: space },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
+			{ operator: I.FilterOperator.And, relationKey: 'id', condition: I.FilterCondition.NotIn, value: [ '_anytype_profile' ] },
+			{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: commonStore.space },
 		];
 	};
 

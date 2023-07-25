@@ -23,7 +23,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { data } = param;
 		const { rootId, objectId } = data;
 		const items = this.getItems();
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.type);
+		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		
 		const Item = (item: any) => {
 			const canDelete = item.id != 'type';
@@ -108,7 +108,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			data: {
 				skipIds: value,
 				filters: [
-					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.relation },
+					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Relation },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc }
@@ -177,8 +177,8 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { rootId, objectId } = data;
 
 		return [].
-			concat(Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.type)).
-			concat(Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.relation));
+			concat(Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type)).
+			concat(Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation));
 	};
 
 	getItems () {
@@ -196,7 +196,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			});
 		} else {
 			value.forEach(it => {
-				if (it.type == Constant.typeKey.type) {
+				if (it.layout == I.ObjectLayout.Type) {
 					items.push({
 						...it,
 						itemId: 'type',

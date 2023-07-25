@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, UtilRouter, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject } from 'Lib';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject, translate, UtilRouter } from 'Lib';
 import { Sidebar } from 'Component';
 import { authStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -61,7 +61,7 @@ const Components = {
 
 const Titles = {
 	index: 'Dashboard',
-	graph: 'Graph',
+	graph: translate('commonGraph'),
 	navigation: 'Flow',
 	store: 'Library',
 	archive: 'Bin',

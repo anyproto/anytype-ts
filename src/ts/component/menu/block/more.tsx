@@ -158,14 +158,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
-		const allowedFav = !object.isArchived && !UtilObject.getSystemTypes().includes(object.type) && !UtilObject.getFileTypes().includes(object.type);
+		const allowedFav = !object.isArchived && !UtilObject.getFileAndSystemLayouts().includes(object.layout);
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;
 		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);
 		const allowedReload = object.source && block.isObjectBookmark();
-		const allowedInstall = !object.isInstalled && [ Constant.storeTypeKey.type, Constant.storeTypeKey.relation ].includes(object.type);
-		const allowedUninstall = object.isInstalled && [ Constant.typeKey.type, Constant.typeKey.relation ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedTemplate = object.type != Constant.typeKey.note;
+		const allowedInstall = !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
+		const allowedUninstall = object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
+		const allowedTemplate = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const hasShortMenu = block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectCollection() || block.isObjectSpace();
 
 		if (!allowedArchive)	 archive = null;
@@ -295,7 +295,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 					type: I.NavigationType.Move, 
 					skipIds: [ rootId ],
@@ -336,7 +335,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					type: I.NavigationType.LinkTo,
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Collection ]) },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 						{ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
 					],
 					onSelect: close,

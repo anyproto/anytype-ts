@@ -58,7 +58,7 @@ class UtilObject {
 	getGraph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
-			name: 'Graph', 
+			name: translate('commonGraph'), 
 			iconEmoji: ':earth_americas:',
 			layout: I.ObjectLayout.Graph,
 		};
@@ -67,7 +67,7 @@ class UtilObject {
 	getLastOpened () {
 		return { 
 			id: I.HomePredefinedId.Last,
-			name: 'Last opened object', 
+			name: translate('spaceLast'), 
 		};
 	};
 
@@ -253,10 +253,10 @@ class UtilObject {
 	};
 
 	name (object: any) {
-		const { isDeleted, type, layout, snippet } = object;
+		const { isDeleted, layout, snippet } = object;
 
 		let name = '';
-		if (!isDeleted && this.isFileType(type)) {
+		if (!isDeleted && this.isFileLayout(layout)) {
 			name = UtilFile.name(object);
 		} else
 		if (layout == I.ObjectLayout.Note) {
@@ -292,58 +292,33 @@ class UtilObject {
 		});
 	};
 
-	isFileType (type: string) {
-		return this.getFileTypes().includes(type);
+	isFileLayout (layout: I.ObjectLayout) {
+		return this.getFileLayouts().includes(layout);
 	};
 
-	isSystemType (type: string) {
-		return this.getSystemTypes().includes(type);
+	isSystemLayout (layout: I.ObjectLayout) {
+		return this.getSystemLayouts().includes(layout);
 	};
 
-	isSetType (type: string) {
-		return this.getSetTypes().includes(type);
-	};
-
-	isStoreType (type: string) {
-		return this.getStoreTypes().includes(type);
+	isSetLayout (layout: I.ObjectLayout) {
+		return this.getSetLayouts().includes(layout);
 	};
 
 	isTemplate (type: string) {
-		return type == Constant.typeKey.template;
+		const templateType = dbStore.getTemplateType();
+		return type == templateType?.id;
 	};
 
-	getFileTypes () {
-		return [
-			Constant.typeKey.file, 
-			Constant.typeKey.image, 
-			Constant.typeKey.audio, 
-			Constant.typeKey.video,
-		];
+	isTypeOrRelationLayout (layout: I.ObjectLayout) {
+		return this.isTypeLayout(layout) || this.isRelationLayout(layout);
 	};
 
-	getSystemTypes () {
-		return [
-			Constant.typeKey.type,
-			Constant.typeKey.template,
-			Constant.typeKey.relation,
-			Constant.typeKey.option,
-			Constant.typeKey.dashboard,
-			Constant.typeKey.date,
-		].concat(this.getStoreTypes());
+	isTypeLayout (layout: I.ObjectLayout) {
+		return layout == I.ObjectLayout.Type;
 	};
 
-	getStoreTypes () {
-		return [
-			Constant.storeTypeKey.type,
-			Constant.storeTypeKey.relation,
-		];
-	};
-
-	getSetTypes () {
-		return [ 
-			Constant.typeKey.set, 
-			Constant.typeKey.collection,
-		];
+	isRelationLayout (layout: I.ObjectLayout) {
+		return layout == I.ObjectLayout.Relation;
 	};
 
 	getPageLayouts () {
@@ -353,6 +328,36 @@ class UtilObject {
 			I.ObjectLayout.Task, 
 			I.ObjectLayout.Note, 
 			I.ObjectLayout.Bookmark, 
+		];
+	};
+
+	getSetLayouts () {
+		return [ 
+			I.ObjectLayout.Set,
+			I.ObjectLayout.Collection,
+		];
+	};
+
+	getFileAndSystemLayouts () {
+		return this.getFileLayouts().concat(this.getSystemLayouts());
+	};
+
+	getSystemLayouts () {
+		return [
+			I.ObjectLayout.Type,
+			I.ObjectLayout.Relation,
+			I.ObjectLayout.Option,
+			I.ObjectLayout.Dashboard,
+			I.ObjectLayout.Date,
+		];
+	};
+
+	getFileLayouts () {
+		return [
+			I.ObjectLayout.File,
+			I.ObjectLayout.Image,
+			I.ObjectLayout.Audio,
+			I.ObjectLayout.Video,
 		];
 	};
 

@@ -4,7 +4,7 @@ import raf from 'raf';
 import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate } from 'Lib';
 import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -457,8 +457,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { rootId } = this.props;
 		const target = this.getTarget();
-		const types = Relation.getSetOfObjects(rootId, target.id, Constant.typeKey.type).map(it => it.id);
-		const relations = Relation.getSetOfObjects(rootId, target.id, Constant.typeKey.relation).map(it => it.id);
+		const types = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Type).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Relation).map(it => it.id);
 
 		return [].concat(types).concat(relations);
 	};
@@ -504,8 +504,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.AllIn,
 		]; 
 
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const details: any = {};
 		const flags: I.ObjectFlag[] = [];
 		const node = $(this.node);
@@ -539,9 +539,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (relations.length) {
 			relations.forEach((it: any) => {
 				if (it.objectTypes.length && !details.type) {
-					const first = it.objectTypes[0];
+					const first = dbStore.getTypeById(it.objectTypes[0]);
 
-					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
+					if (!UtilObject.isFileLayout(first.recommendedLayout) && !UtilObject.isSystemLayout(first.recommendedLayout)) {
 						details.type = first;
 					};
 				};
@@ -599,7 +599,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
 				const ref = this.refCells.get(id);
 
-				if (object.type == Constant.typeKey.note) {
+				if (object.layout == I.ObjectLayout.Note) {
 					this.onCellClick(e, 'name', object.id);
 				} else
 				if (ref) {
@@ -615,7 +615,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		if (details.type == Constant.typeKey.bookmark) {
+		const type = dbStore.getTypeById(details.type);
+
+		if (type && (type.recommendedLayout == I.ObjectLayout.Bookmark)) {
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,
@@ -633,6 +635,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const showMenu = () => {
+			const templateType = dbStore.getTemplateType();
+
 			hoverArea.addClass('active');
 
 			menuStore.open('searchObject', {
@@ -642,11 +646,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
 				data: {
-					label: 'Choose a template',
+					label: translate('blockDataviewSelectTemplate'),
 					noFilter: true,
 					noIcon: true,
 					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.template },
+						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: templateType.id },
 						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
 					],
 					sorts: [
@@ -770,6 +774,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { targetObjectId } = block.content;
 		const isCollection = this.isCollection();
+		const collectionType = dbStore.getCollectionType();
 
 		let filters: I.Filter[] = [];
 		let addParam: any = {};
@@ -777,13 +782,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (isCollection) {
 			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeKey.collection }, [], '', commonStore.space, (message: any) => { 
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: collectionType?.id }, [], '', commonStore.space, (message: any) => { 
 					onSelect(message.details, true); 
 				});
 			};
 
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.collection },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 		} else {
 			addParam.name = 'Create new set';
@@ -792,7 +797,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeKey.set },
+				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
 		};
@@ -970,7 +975,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			case 'view': {
 				cn.push('withHead');
 
-				emptyProps.title = 'No objects';
+				emptyProps.title = translate('commonNoObjects');
 
 				if (this.isAllowedObject()) {
 					emptyProps.description = 'Create your first one to begin';
@@ -994,12 +999,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	isAllowedObject () {
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
-		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeKey.type).map(it => it.id);
-		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
+		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
+		const skipLayouts = UtilObject.getFileAndSystemLayouts();
 
 		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		for (const type of types) {
-			if (skipTypes.includes(type)) {
+			if (skipLayouts.includes(type.recommendedLayout)) {
 				allowed = false;
 				break;
 			};

@@ -49,7 +49,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, value, placeholder, label, isBig, noFilter, noIcon } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
-		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
+		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
 
 		if (label) {
 			cn.push('withLabel');
@@ -288,7 +288,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const filter = String(data.filter || '');
 		
 		const filters: any[] = [
-			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeKey.option ] },
+			{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Option ] },
 		].concat(data.filters || []);
 
 		const sorts = [].concat(data.sorts || []);
@@ -304,7 +304,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
 		};
 		if ([ I.NavigationType.Link ].includes(type)) {
-			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeKey.relation ] });
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Relation ] });
 		};
 
 		if (clear) {
@@ -421,12 +421,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					break;
 
 				case I.NavigationType.LinkTo:
+					const isCollection = target.layout == I.ObjectLayout.Collection;
 					const cb = (message: any) => {
 						if (message.error.code) {
 							return;
 						};
 
-						const isCollection = target.type == Constant.typeKey.collection;
 						const action = isCollection ? I.ToastAction.Collection : I.ToastAction.Link;
 						const linkType = isCollection ? 'Collection' : 'Object';
 
@@ -434,10 +434,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 						analytics.event('LinkToObject', { objectType: target.type, linkType });
 					};
 
-					if (target.type == Constant.typeKey.collection) {
+					if (isCollection) {
 						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
 					} else {
-						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.type), cb);
+						C.BlockCreate(target.id, '', position, this.getBlockParam(blockId, object.layout), cb);
 					};
 					break;
 			};
@@ -458,11 +458,11 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 	};
 
-	getBlockParam (id: string, type: string) {
+	getBlockParam (id: string, layout: I.ObjectLayout) {
 		const param: Partial<I.Block> = {};
 
-		switch (type) {
-			case Constant.typeKey.bookmark: {
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: {
 				param.type = I.BlockType.Bookmark;
 				param.content = {
 					state: I.BookmarkState.Done,

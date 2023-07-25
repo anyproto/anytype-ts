@@ -88,7 +88,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 				<div className="items">
 					{!items.length ? (
 						<div className="item empty">
-							<div className="inner">No filters applied to this view</div>
+							<div className="inner">No views found</div>
 						</div>
 					) : (
 						<InfiniteLoader

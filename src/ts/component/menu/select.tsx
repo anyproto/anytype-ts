@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical } from 'Component';
-import { I, UtilCommon, Relation, keyboard } from 'Lib';
+import { I, UtilCommon, Relation, keyboard, translate } from 'Lib';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 28;
@@ -105,7 +105,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 				) : ''}
 				
 				{!items.length ? (
-					<div className="item empty">No options found</div>
+					<div className="item empty">{translate('menuSelectEmpty')}</div>
 				) : ''}
 
 				<div className="items">

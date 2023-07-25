@@ -104,34 +104,34 @@ class Relation {
 			return [];
 		};
 
-		let ret: { id: I.FilterQuickOption, name: string }[] = [];
+		let ret = [];
 
 		switch (type) {
 			case I.RelationType.Date: {
-				const defaultOptions: I.Option[] = [
-					{ id: I.FilterQuickOption.NumberOfDaysAgo, name: 'Number of days ago' },
-					{ id: I.FilterQuickOption.NumberOfDaysNow, name: 'Number of days from now' },
-					{ id: I.FilterQuickOption.ExactDate, name: 'Exact date' },
+				const defaultOptions = [
+					I.FilterQuickOption.NumberOfDaysAgo,
+					I.FilterQuickOption.NumberOfDaysNow,
+					I.FilterQuickOption.ExactDate,
 				];
 
-				const extendedOptions: I.Option[] = [
-					{ id: I.FilterQuickOption.Today,		 name: 'Today' },
-					{ id: I.FilterQuickOption.Tomorrow,		 name: 'Tomorrow' },
-					{ id: I.FilterQuickOption.Yesterday,	 name: 'Yesterday' },
-					{ id: I.FilterQuickOption.LastWeek,		 name: 'Last week' },
-					{ id: I.FilterQuickOption.CurrentWeek,	 name: 'Current week' },
-					{ id: I.FilterQuickOption.NextWeek,		 name: 'Next week' },
-					{ id: I.FilterQuickOption.LastMonth,	 name: 'Last month' },
-					{ id: I.FilterQuickOption.CurrentMonth,	 name: 'Current month' },
-					{ id: I.FilterQuickOption.NextMonth,	 name: 'Next month' },
+				const extendedOptions = [
+					I.FilterQuickOption.Today,
+					I.FilterQuickOption.Tomorrow,
+					I.FilterQuickOption.Yesterday,
+					I.FilterQuickOption.LastWeek,
+					I.FilterQuickOption.CurrentWeek,
+					I.FilterQuickOption.NextWeek,
+					I.FilterQuickOption.LastMonth,
+					I.FilterQuickOption.CurrentMonth,
+					I.FilterQuickOption.NextMonth,
 				];
 
 				switch (condition) {
 					case I.FilterCondition.Equal: {
 						ret = ret.concat([
-							{ id: I.FilterQuickOption.Today, name: 'Today' },
-							{ id: I.FilterQuickOption.Tomorrow, name: 'Tomorrow' },
-							{ id: I.FilterQuickOption.Yesterday, name: 'Yesterday' },
+							I.FilterQuickOption.Today,
+							I.FilterQuickOption.Tomorrow,
+							I.FilterQuickOption.Yesterday,
 						]);
 						ret = ret.concat(defaultOptions);
 						break;
@@ -163,7 +163,7 @@ class Relation {
 			};
 		};
 
-		return ret;
+		return ret.map(id => ({ id, name: translate(`quickOption${id}`) }));
 	};
 
 	public formatValue (relation: any, value: any, maxCount: boolean) {
@@ -410,7 +410,7 @@ class Relation {
 		return ret;
 	};
 
-	public getSetOfObjects (rootId: string, objectId: string, type: string) {
+	public getSetOfObjects (rootId: string, objectId: string, layout: I.ObjectLayout): any[] {
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
 		const setOf = this.getArrayValue(object.setOf);
 		const ret = [];
@@ -418,13 +418,13 @@ class Relation {
 		setOf.forEach((id: string) => {
 			let el = null;
 
-			switch (type) {
-				case Constant.typeKey.type: {
+			switch (layout) {
+				case I.ObjectLayout.Type: {
 					el = dbStore.getTypeById(id);
 					break;
 				};
 
-				case Constant.typeKey.relation: {
+				case I.ObjectLayout.Relation: {
 					el = dbStore.getRelationById(id);
 					break;
 				};

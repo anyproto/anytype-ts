@@ -45,9 +45,9 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		};
 
 		const buttons = [
-			{ id: 'filter', text: 'Filters', menu: 'dataviewFilterList', on: filterCnt > 0 },
-			{ id: 'sort', text: 'Sorts', menu: 'dataviewSort', on: sortCnt > 0 },
-			{ id: 'settings', text: 'Settings', menu: 'dataviewRelationList' },
+			{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: filterCnt > 0 },
+			{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
+			{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewRelationList' },
 		];
 
 		const ButtonItem = (item: any) => {
@@ -87,7 +87,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				{views.map((item: I.View, i: number) => (
 					<ViewItem key={i} {...item} index={i} />
 				))}
-				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip="Create new view" onClick={this.onViewAdd} /> : ''}
+				{allowedView ? <Icon id={`button-${block.id}-view-add`} className="plus" tooltip={translate('blockDataviewControlsViewAdd')} onClick={this.onViewAdd} /> : ''}
 			</div>
 		));
 		
@@ -132,8 +132,8 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 							<Button 
 								id={`button-${block.id}-add-record`}
 								className="addRecord c28" 
-								tooltip="Create new object" 
-								text="New" 
+								tooltip={translate('blockDataviewCreateNew')} 
+								text={translate('commonNew')} 
 								onClick={e => onRecordAdd(e, -1)} 
 							/>
  						) : ''}
@@ -193,20 +193,24 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 			let tabs: any[] = [];
 
 			switch (component) {
-				case 'dataviewViewList':
+				case 'dataviewViewList': {
 					break;
+				};
 
-				case 'dataviewFilterList':
-					tabs = [ { id: 'filter', name: 'Filters', component } ];
+				case 'dataviewFilterList': {
+					tabs = [ { id: 'filter', name: translate('blockDataviewControlsFilters'), component } ];
 					break;
+				};
 
-				case 'dataviewSort':
-					tabs = [ { id: 'sort', name: 'Sorts', component } ];
+				case 'dataviewSort': {
+					tabs = [ { id: 'sort', name: translate('blockDataviewControlsSorts'), component } ];
 					break;
+				};
 
-				default:
+				default: {
 					tabs = Dataview.getMenuTabs(rootId, block.id, view.id);
 					break;
+				};
 			};
 
 			return tabs;

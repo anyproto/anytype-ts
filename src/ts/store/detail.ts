@@ -97,10 +97,10 @@ class DetailStore {
 		};
 
 		// Update relationKeyMap and typeKeyMap in dbStore to keep consistency
-		if (item.details.type == Constant.typeKey.relation) {
+		if (item.details.layout == I.ObjectLayout.Relation) {
 			dbStore.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
 		};
-		if (item.details.type == Constant.typeKey.type) {
+		if (item.details.layout == I.ObjectLayout.Type) {
 			dbStore.typeKeyMapSet(item.details.spaceId, item.details.typeKey, item.details.id);
 		};
 
@@ -173,36 +173,29 @@ class DetailStore {
 			object.name = translate('commonDeletedObject');
 		};
 
-		switch (object.type) {
-			case Constant.typeKey.type:
-			case Constant.storeTypeKey.type: {
-				object = this.mapObjectType(object);
+		switch (object.layout) {
+			case I.ObjectLayout.Type: {
+				object = this.mapType(object);
 				break;
 			};
 
-			case Constant.typeKey.relation:
-			case Constant.storeTypeKey.relation: {
+			case I.ObjectLayout.Relation: {
 				object = this.mapRelation(object);
 				break;
 			};
 
-			case Constant.typeKey.option: {
+			case I.ObjectLayout.Option: {
 				object = this.mapOption(object);
 				break;
 			};
 
-			case Constant.typeKey.set: {
+			case I.ObjectLayout.Set: {
 				object = this.mapSet(object);
 				break;
 			};
 
-			case Constant.typeKey.space: {
+			case I.ObjectLayout.Space: {
 				object = this.mapSpace(object);
-				break;
-			};
-
-			case Constant.typeKey.template: {
-				object = this.mapTemplate(object);
 				break;
 			};
 		};
@@ -230,7 +223,7 @@ class DetailStore {
 		return object;
 	};
 
-	private mapObjectType (object: any) {
+	private mapType (object: any) {
 		object.recommendedLayout = Number(object.recommendedLayout) || I.ObjectLayout.Page;
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		object.isInstalled = object.spaceId != Constant.storeSpaceId;
@@ -284,13 +277,6 @@ class DetailStore {
 		object.spaceId = Relation.getStringValue(object.spaceId);
 
 		delete(object.spaceAccessibility);
-
-		return object;
-	};
-
-	private mapTemplate (object: any) {
-		object.targetObjectType = Relation.getStringValue(object.targetObjectType);
-		object.templateIsBundled = Boolean(object.templateIsBundled);
 
 		return object;
 	};

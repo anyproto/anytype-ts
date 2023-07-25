@@ -4,7 +4,7 @@ import raf from 'raf';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, Preview, sidebar } from 'Lib';
+import { I, keyboard, Preview, sidebar, translate } from 'Lib';
 import { commonStore } from 'Store';
 import ListWidget from 'Component/list/widget';
 import Constant from 'json/constant.json';
@@ -53,7 +53,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					<div className="head" draggable={true} onDragStart={this.onDragStart}>
 						<Icon
 							className="toggle"
-							tooltip="Toggle sidebar fixed mode"
+							tooltip={translate('sidebarToggle')}
 							tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 							tooltipY={I.MenuDirection.Bottom}
 							onClick={() => sidebar.toggleExpandCollapse()}

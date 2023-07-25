@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
-import { I, UtilData, UtilObject, keyboard, sidebar } from 'Lib';
-import { blockStore, detailStore, popupStore, menuStore, dbStore } from 'Store';
+import { I, UtilData, UtilObject, keyboard, sidebar, translate } from 'Lib';
+import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
@@ -21,7 +21,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const root = blockStore.getLeaf(rootId, rootId);
 		const object = detailStore.get(rootId, rootId, [ 'templateIsBundled', 'type', 'targetObjectType' ]);
 		const isLocked = root ? root.isLocked() : false;
-		const showMenu = !UtilObject.isStoreType(object.type);
+		const showMenu = !UtilObject.isTypeOrRelationLayout(object.layout);
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
 
@@ -31,10 +31,10 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			const type = dbStore.getTypeById(object.targetObjectType);
 			center = (
 				<div className="templateBanner">
-					<Label text="You are editing a template" />
+					<Label text={translate('templateBannner')} />
 					{type ? (
 						<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
-							of
+							{translate('commonOf')}
 							<IconObject size={18} object={type} />
 							<ObjectName object={type} />
 						</div>
@@ -47,7 +47,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 					id="path"
 					className="path"
 					onClick={onSearch}
-					onMouseOver={e => onTooltipShow(e, 'Click to search')}
+					onMouseOver={e => onTooltipShow(e, translate('headerTooltipPath'))}
 					onMouseOut={onTooltipHide}
 				>
 					<div className="inner">
@@ -64,12 +64,12 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 				<div className="side left">
 					<Icon
 						className="toggle big"
-						tooltip="Toggle sidebar fixed mode"
+						tooltip={translate('sidebarToggle')}
 						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggleExpandCollapse()}
 					/>
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 					{canSync ? <Sync id="button-header-sync" rootId={rootId} onClick={this.onSync} /> : ''}
 				</div>
 

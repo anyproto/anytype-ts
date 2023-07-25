@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Relation, UtilCommon } from 'Lib';
+import { I, Relation, UtilCommon, translate } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
 import { detailStore } from 'Store';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
@@ -70,7 +70,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 			};
 
 			case I.RelationType.Checkbox: {
-				v = value ? 'checked' : 'unchecked';
+				v = translate(`relationCheckboxLabelShort${Number(value)}`);
 				break;
 			};
 

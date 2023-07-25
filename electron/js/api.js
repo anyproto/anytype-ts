@@ -140,7 +140,7 @@ class Api {
 		};
 	};
 
-	exit (win, relaunch) {
+	exit (win, signal, relaunch) {
 		if (app.isQuiting) {
 			return;
 		};
@@ -152,7 +152,7 @@ class Api {
 		Util.log('info', '[Api].exit, relaunch: ' + relaunch);
 		Util.send(win, 'shutdownStart');
 
-		Server.stop().then(() => { this.shutdown(win, relaunch); });
+		Server.stop(signal).then(() => { this.shutdown(win, relaunch); });
 	};
 
 };

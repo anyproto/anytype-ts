@@ -6,6 +6,7 @@ const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const { app, dialog, shell } = require('electron');
 
 const Util = require('./util.js');
+const { sign } = require('crypto');
 
 let maxStdErrChunksBuffer = 10;
 
@@ -100,7 +101,9 @@ class Server {
 		});
 	};
 	
-	stop () {
+	stop (signal) {
+		signal = String(signal || 'SIGTERM');
+
 		return new Promise((resolve, reject) => {
 			if (this.cp && this.isRunning) {
 				this.cp.on('exit', () => {
@@ -111,13 +114,13 @@ class Server {
 				});
 				
 				this.stopTriggered = true;
-				this.cp.kill('SIGTERM');
+				this.cp.kill(signal);
 			} else {
 				resolve();
 			};
 		});
 	};
-	
+
 	getAddress () {
 		return this.address;
 	};

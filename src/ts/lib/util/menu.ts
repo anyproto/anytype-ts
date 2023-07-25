@@ -142,13 +142,13 @@ class UtilMenu {
 		
 		if (hasFile) {
 			items.push({ id: 'download', icon: 'download', name: 'Download' });
-			items.push({ id: 'openFileAsObject', icon: 'expand', name: 'Open as object' });
+			items.push({ id: 'openFileAsObject', icon: 'expand', name: translate('commonOpenObject') });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
 		};
 
 		if (hasBookmark) {
-			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: 'Open as object' });
+			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: translate('commonOpenObject') });
 		};
 
 		return items.map(it => ({ ...it, isAction: true }));
@@ -362,7 +362,6 @@ class UtilMenu {
 
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = commonStore;
-		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 		const onSelect = (object: any, update: boolean) => {
 			C.ObjectWorkspaceSetDashboard(space, object.id, (message: any) => {
 				if (message.error.code) {
@@ -394,9 +393,9 @@ class UtilMenu {
 			},
 			data: {
 				options: [
-					{ id: I.HomePredefinedId.Graph, name: 'Graph' },
-					{ id: I.HomePredefinedId.Last, name: 'Last opened object' },
-					{ id: I.HomePredefinedId.Existing, name: 'Existing object', arrow: true },
+					{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
+					{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
+					{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
 				],
 				onOver: (e: any, item: any) => {
 					if (!menuContext) {
@@ -417,7 +416,7 @@ class UtilMenu {
 								isSub: true,
 								data: {
 									filters: [
-										{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: skipTypes },
+										{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 									],
 									canAdd: true,
 									onSelect: (el: any) => onSelect(el, true),

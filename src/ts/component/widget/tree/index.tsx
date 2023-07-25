@@ -275,18 +275,11 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 	getChildNodesDetails (nodeId: string): I.WidgetTreeDetails[] {
 		const subId = this.getSubId(nodeId);
 
-		return dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, [ 'id', 'type', 'links' ], true)));
+		return dbStore.getRecords(subId, '').map(id => this.mapper(detailStore.get(subId, id, [ 'id', 'layout', 'links' ], true)));
 	};
 
 	mapper (item) {
-		let links = [];
-
-		if (item.type != Constant.typeKey.set) {
-			links = this.filterDeletedLinks(Relation.getArrayValue(item.links));
-		};
-
-		item.links = links;
-
+		item.links = (item.layout != I.ObjectLayout.Set) ? this.filterDeletedLinks(Relation.getArrayValue(item.links)) : [];
 		return item;
 	};
 

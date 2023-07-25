@@ -27,6 +27,8 @@ export enum ObjectLayout {
 
 	Video		 = 1000,
 	Audio		 = 1001,
+
+	Date		 = 2000,
 };
 
 export enum RelationType { 

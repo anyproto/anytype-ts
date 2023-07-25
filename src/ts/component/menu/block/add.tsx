@@ -408,7 +408,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					type: I.NavigationType.Move, 
 					filters: [
 						{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts() },
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 					],
 				});
 				break;
@@ -596,14 +595,11 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					});
 				} else 
 				if (item.isObject) {
+					const type = dbStore.getTypeById(item.objectTypeId);
 					const details: any = { type: item.objectTypeId };
 
-					if (item.objectTypeId == Constant.typeKey.set) {
-						details.layout = I.ObjectLayout.Set;
-					};
-
-					if (item.objectTypeId == Constant.typeKey.collection) {
-						details.layout = I.ObjectLayout.Collection;
+					if (UtilObject.isSetLayout(type.recommendedLayout)) {
+						details.layout = type.recommendedLayout;
 					};
 
 					const create = (template: any) => {

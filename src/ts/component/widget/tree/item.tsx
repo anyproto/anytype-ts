@@ -36,7 +36,7 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		const subId = dbStore.getSubId(subKey, parentId);
 		const isOpen = Storage.checkToggle(subKey, treeKey);
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
-		const { isReadonly, isArchived, type, restrictions, done } = object;
+		const { isReadonly, isArchived, type, restrictions, done, layout } = object;
 		const cn = [ 'item', 'c' + id, (isOpen ? 'isOpen' : '') ];
 		const rootId = keyboard.getRootId();
 		const canDrop = !isEditing && blockStore.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
@@ -45,10 +45,10 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 		let arrow = null;
 		let onArrowClick = null;
 
-		if (type == Constant.typeKey.collection) {
+		if (layout == I.ObjectLayout.Collection) {
 			arrow = <Icon className="collection" />;
 		} else
-		if (type == Constant.typeKey.set) {
+		if (layout == I.ObjectLayout.Set) {
 			arrow = <Icon className="set" />;
 		} else
 		if (numChildren > 0) {
