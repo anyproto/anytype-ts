@@ -155,6 +155,10 @@ class Api {
 		Server.stop(signal).then(() => { this.shutdown(win, relaunch); });
 	};
 
+	reloadAllWindows () {
+		BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
+	};
+
 };
 
 module.exports = new Api();

@@ -39,10 +39,12 @@ import Constant from 'json/constant.json';
  * Defaults to the default lang set in constant.json (english)
  */
 const translate = (key: string): string => {
-	const lang = Storage.get('lang') || Constant.default.lang;
+	const lang = Storage.get('interfaceLang') || Constant.default.interfaceLang;
 
 	let data = {};
-	try { data = require(`json/lang/${lang}.json`); } catch(e) {};
+	try { data = require(`lib/json/lang/${lang}.json`); } catch(e) {};
+
+	console.log(data);
 
 	return data[key] || `⚠️No key: ${key}⚠️`;
 };

@@ -27,7 +27,8 @@
 		"postinstall": "npx patch-package && electron-builder install-app-deps",
 		"prepare": "husky install",
 		"sentry:source-map": "npx sentry-cli --url \"https://sentry.anytype.io\" releases files \"0.31.54\" upload-sourcemaps ./dist/main.js.map --org \"anytype\" --log-level=debug",
-		"sentry": "npm run build && npm run sentry:source-map"
+		"sentry": "npm run build && npm run sentry:source-map",
+		"update:locale": "node ./electron/hook/locale.js"
 	},
 	"repository": {
 		"type": "git",
