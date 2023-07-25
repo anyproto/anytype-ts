@@ -23,7 +23,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { data } = param;
 		const { rootId, objectId } = data;
 		const items = this.getItems();
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.type);
+		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
 		
 		const Item = (item: any) => {
 			const canDelete = item.id != 'type';
@@ -177,8 +177,8 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 		const { rootId, objectId } = data;
 
 		return [].
-			concat(Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.type)).
-			concat(Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.relation));
+			concat(Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type)).
+			concat(Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation));
 	};
 
 	getItems () {

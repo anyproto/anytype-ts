@@ -85,8 +85,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			);
 		};
 
-		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeKey.type).map(it => it.name);
-		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeKey.relation).map(it => it.name);
+		let types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
+		let relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
 		let setOfString = [];
 		let tl = types.length;
 		let rl = relations.length;
@@ -257,8 +257,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 
 		const setOf = Relation.getArrayValue(object.setOf);
-		const types = Relation.getSetOfObjects(rootId, rootId, Constant.typeKey.type);
-		const relations = Relation.getSetOfObjects(rootId, rootId, Constant.typeKey.relation);
+		const types = Relation.getSetOfObjects(rootId, rootId, I.ObjectLayout.Type);
+		const relations = Relation.getSetOfObjects(rootId, rootId, I.ObjectLayout.Relation);
 
 		if (!setOf.length) {
 			this.onSource();

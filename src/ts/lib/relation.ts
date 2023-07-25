@@ -410,7 +410,7 @@ class Relation {
 		return ret;
 	};
 
-	public getSetOfObjects (rootId: string, objectId: string, type: string) {
+	public getSetOfObjects (rootId: string, objectId: string, layout: I.ObjectLayout): any[] {
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ]);
 		const setOf = this.getArrayValue(object.setOf);
 		const ret = [];
@@ -418,13 +418,13 @@ class Relation {
 		setOf.forEach((id: string) => {
 			let el = null;
 
-			switch (type) {
-				case Constant.typeKey.type: {
+			switch (layout) {
+				case I.ObjectLayout.Type: {
 					el = dbStore.getTypeById(id);
 					break;
 				};
 
-				case Constant.typeKey.relation: {
+				case I.ObjectLayout.Relation: {
 					el = dbStore.getRelationById(id);
 					break;
 				};

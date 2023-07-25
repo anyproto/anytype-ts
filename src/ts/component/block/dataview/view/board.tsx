@@ -198,8 +198,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
 		const node = $(this.node);
 		const element = node.find(`#record-${groupId}-add`);
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const details: any = {};
 		const conditions = [
 			I.FilterCondition.Equal,
@@ -283,7 +283,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const id = Relation.cellId(getIdPrefix(), 'name', object.id);
 				const ref = refCells.get(id);
 
-				if (ref && (object.type != Constant.typeKey.note)) {
+				if (ref && (object.layout != I.ObjectLayout.Note)) {
 					window.setTimeout(() => ref.onClick(e), 15);
 				};
 

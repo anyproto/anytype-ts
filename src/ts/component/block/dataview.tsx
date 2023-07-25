@@ -457,8 +457,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		const { rootId } = this.props;
 		const target = this.getTarget();
-		const types = Relation.getSetOfObjects(rootId, target.id, Constant.typeKey.type).map(it => it.id);
-		const relations = Relation.getSetOfObjects(rootId, target.id, Constant.typeKey.relation).map(it => it.id);
+		const types = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Type).map(it => it.id);
+		const relations = Relation.getSetOfObjects(rootId, target.id, I.ObjectLayout.Relation).map(it => it.id);
 
 		return [].concat(types).concat(relations);
 	};
@@ -504,8 +504,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.AllIn,
 		]; 
 
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeKey.relation);
+		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 		const details: any = {};
 		const flags: I.ObjectFlag[] = [];
 		const node = $(this.node);
@@ -599,7 +599,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
 				const ref = this.refCells.get(id);
 
-				if (object.type == Constant.typeKey.note) {
+				if (object.layout == I.ObjectLayout.Note) {
 					this.onCellClick(e, 'name', object.id);
 				} else
 				if (ref) {
@@ -994,7 +994,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	isAllowedObject () {
 		const { rootId, block, readonly } = this.props;
 		const targetId = this.getObjectId();
-		const types = Relation.getSetOfObjects(rootId, targetId, Constant.typeKey.type).map(it => it.id);
+		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type).map(it => it.id);
 		const skipTypes = UtilObject.getFileTypes().concat(UtilObject.getSystemTypes());
 
 		let allowed = !readonly && blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
