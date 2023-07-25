@@ -276,6 +276,10 @@ class DbStore {
 		return this.getTypeByKey(Constant.typeKey.collection);
 	};
 
+	getTypeType () {
+		return this.getTypeByKey(Constant.typeKey.type);
+	};
+
 	getTypes () {
 		return dbStore.getRecords(Constant.subId.type, '').map(id => this.getTypeById(id)).
 			filter(it => it && !it.isArchived && !it.isDeleted);
