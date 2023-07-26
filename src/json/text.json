@@ -377,6 +377,8 @@
     "blockTableOptionsSortAscending": "Ascending",
     "blockTableOptionsSortDescending": "Descending",
 
+    "blockTypeMyTypes": "My types",
+
     "popupSettingsTitle": "Settings",
     "popupSettingsAccountPersonalInformationTitle": "Personal information",
     "popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
