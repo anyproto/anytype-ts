@@ -109,6 +109,10 @@
     "headerHistoryRestore": "Restore version",
     "headerTooltipPath": "Click to search",
 
+    "headerGraphTooltipSearch": "Search",
+    "headerGraphTooltipFilters": "Filters",
+    "headerGraphTooltipSettings": "Settings",
+
     "confirmUpdateTitle": "It's time to update",
     "confirmUpdateText": "Some of your data was managed in a newer version of Anytype. Please update the app to work with all your docs and the latest features.",
     "confirmUpdateConfirm": "Update",
