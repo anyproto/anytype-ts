@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import { MenuItemVertical, Loader, ObjectName } from 'Component';
-import { I, keyboard, UtilCommon, UtilData, UtilObject, UtilMenu, Mark, analytics } from 'Lib';
+import { I, keyboard, UtilCommon, UtilData, UtilObject, UtilMenu, Mark, analytics, translate } from 'Lib';
 import { commonStore, dbStore } from 'Store';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import Constant from 'json/constant.json';
@@ -179,13 +179,13 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const sections: any[] = [];
 
 		if (this.items.length) {
-			sections.push({ id: I.MarkType.Object, name: 'Objects', children: this.items.concat({ isDiv: true }) });
+			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: this.items.concat({ isDiv: true }) });
 		};
 
 		if (filter) {
 			sections.push({ 
 				children: [
-					{ id: 'add', icon: 'plus', name: `Create object "${filter}"` }
+					{ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter) }
 				]
 			});
 		};

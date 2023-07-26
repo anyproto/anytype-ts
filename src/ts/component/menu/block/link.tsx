@@ -237,7 +237,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 
 		const regProtocol = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
 		const buttons: any[] = [
-			{ id: 'add', name: UtilCommon.sprintf(translate('menuBlockLinkSectionsCreateObject'), filter), icon: 'plus' }
+			{ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), icon: 'plus' }
 		];
 		const items = [].concat(this.items).map(it => ({ ...it, isBig: true }));
 
@@ -252,7 +252,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const sections: any[] = [];
 
 		if (items.length) {
-			sections.push({ id: I.MarkType.Object, name: translate('menuBlockLinkSectionsObjects'), children: items });
+			sections.push({ id: I.MarkType.Object, name: translate('commonObjects'), children: items });
 		};
 
 		sections.push({ id: I.MarkType.Link, name: '', children: buttons });
