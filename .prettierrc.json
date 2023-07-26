@@ -2,7 +2,7 @@
     "parser": "typescript",
     "trailingComma": "es5",
     "tabWidth": 4,
-    "useTabs": true,
+    "useTabs": false,
     "arrowParens": "avoid",
     "semi": true,
     "singleQuote": false,
