@@ -20,6 +20,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
   - [Requesting Features](#requesting-features)
   - [Reporting Security Issues](#reporting-security-issues)
   - [Contributing Code](#contributing-code)
+    - [Setting up IDE](#setting-up-ide)
 - [Contributors Recognition](#contributors-recognition)
 
 ## Code of Conduct
@@ -108,6 +109,18 @@ Basic rules for pull requests:
 - When neccesary, changes are documented in [`README.md`](../README.md) or suggestions are also made to [`tech-docs`](https://github.com/anyproto/tech-docs)
 
 All pull requests will be reviewed by the team.
+
+#### Setting up IDE
+
+- vscode
+   1. Open cloned repository.
+   2. Install recommended extensions.
+
+- IntelliJ (Ultimate) / WebStorm
+
+   1. Install the [Prettier](https://plugins.jetbrains.com/plugin/10456-prettier) plugin
+   2. Enable `Settings > Language & Frameworks > Javascript > Code Quality Tools > ESLint > Automatic ESLint configuration`.
+   3. Enable `Settings > Language & Frameworks > Javascript > Prettier > On save`.
 
 ## Contributors Recognition
 
