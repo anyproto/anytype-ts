@@ -54,6 +54,7 @@
     "commonPreview": "Preview",
     "commonColor": "Color",
     "commonBackground": "Background",
+    "commonAll": "All",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -596,6 +597,16 @@
     "menuBlockActionsSectionsDataview": "Dataview",
     "menuBlockActionsSectionsComment": "Comment",
     "menuBlockActionsCreateNew": "Create new %s",
+
+    "menuBlockAddNewRelation": "New relation",
+    "menuBlockAddSectionsText": "Text",
+    "menuBlockAddSectionsList": "List",
+    "menuBlockAddSectionsMedia": "Media",
+    "menuBlockAddSectionsOther": "Other",
+    "menuBlockAddSectionsObjects": "Objects",
+    "menuBlockAddSectionsRelations": "Relations",
+    "menuBlockAddSectionsTextColor": "Text color",
+    "menuBlockAddSectionsBackgroundColor": "Background color",
 
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",
