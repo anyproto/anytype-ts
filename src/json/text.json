@@ -321,6 +321,21 @@
 
     "blockTableOfContentsAdd": "Add headings to create a table of contents",
 
+
+    "blockFeaturedType": "type",
+    "blockFeaturedTypes": "types",
+    "blockFeaturedRelation": "Relation",
+    "blockFeaturedRelations": "Relations",
+    "blockFeaturedTypesList": "Object %s: %s",
+    "blockFeaturedQuery": "Query",
+
+    "blockFeaturedTypeMenuOpenType": "Open type",
+    "blockFeaturedTypeMenuChangeType": "Change type",
+    "blockFeaturedTypeMenuTurnSetIntoCollection": "Turn set into collection",
+    "blockFeaturedTypeMenuOpenSet": "Open set",
+    "blockFeaturedTypeMenuOpenSetOf": "Open set of %s",
+    "blockFeaturedTypeMenuCreateSetOf": "Create set of %s",
+
     "popupSettingsTitle": "Settings",
     "popupSettingsAccountPersonalInformationTitle": "Personal information",
     "popupSettingsAccountPersonalInformationNamePlaceholder": "Your name",
@@ -574,6 +589,7 @@
     "toastTemplateCreate": "is saved as a template!",
     "toastCopy": "%s has been copied to clipboard",
     "toastCopyBlock": "Block has been copied to clipboard",
+    "toastTurnIntoCollection": "%s  is collection now!",
 
     "textColor-grey": "Grey",
     "textColor-yellow": "Yellow",
