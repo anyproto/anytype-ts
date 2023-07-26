@@ -62,6 +62,7 @@
     "commonLink": "Link",
     "commonCode": "Code",
     "commonComment": "Comment",
+    "commonIcon": "Icon",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -580,7 +581,6 @@
     "menuCalendarToday": "Today",
     "menuCalendarTomorrow": "Tomorrow",
 
-    "menuBlockCoverUpload": "Upload image",
     "menuBlockCoverEdit": "Reposition",
     "menuBlockCoverEmpty": "There are no covers found",
     "menuBlockCoverEmptyFilter": "<b>There are no covers named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
@@ -622,9 +622,22 @@
 
     "menuBlockLayoutSetLayoutWidth": "Set layout width",
     "menuBlockLayoutChooseLayoutType": "Choose layout type",
-    "menuBlockLayout": "",
-    "menuBlockLayout": "",
-    "menuBlockLayout": "",
+
+    "menuBlockLinkSettingsStyleText": "Text",
+    "menuBlockLinkSettingsStyleCard": "Card",
+    "menuBlockLinkSettingsSizeNone": "None",
+    "menuBlockLinkSettingsSizeSmall": "Small",
+    "menuBlockLinkSettingsSizeMedium": "Medium",
+    "menuBlockLinkSettingsDescriptionNone": "None",
+    "menuBlockLinkSettingsDescriptionRelationDescription": "Relation description",
+    "menuBlockLinkSettingsDescriptionContentPreview": "Content preview",
+    "menuBlockLinkSettingsPreviewLayout": "Preview layout",
+    "menuBlockLinkSettingsCover": "Cover",
+    "menuBlockLinkSettingsName": "Name",
+    "menuBlockLinkSettingsDescription": "Description",
+    "menuBlockLinkSettingsTags": "Tags",
+    "menuBlockLinkSettingsObjectType": "Object type",
+    "menuBlockLinkSettingsAttributes": "Attributes",
 
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",
