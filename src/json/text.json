@@ -620,6 +620,12 @@
     "menuBlockCoverGradients": "Gradients",
     "menuBlockCoverSolidColors": "Solid colors",
 
+    "menuBlockLayoutSetLayoutWidth": "Set layout width",
+    "menuBlockLayoutChooseLayoutType": "Choose layout type",
+    "menuBlockLayout": "",
+    "menuBlockLayout": "",
+    "menuBlockLayout": "",
+
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",
     "menuDataviewOptionEditDelete": "Delete option",
