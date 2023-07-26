@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
 import { UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview, analytics } from 'Lib';
 import { observer } from 'mobx-react';
-import { detailStore, menuStore, commonStore, authStore } from 'Store';
+import { detailStore, menuStore, commonStore, authStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
@@ -257,21 +257,15 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 	};
 
 	onName (e: any, v: string) {
-		const space = UtilObject.getWorkspace();
-
-		UtilObject.setName(space.id, this.checkName(v));
+		UtilObject.setName(blockStore.workspace, this.checkName(v));
 	};
 
 	onSelect (icon: string) {
-		const space = UtilObject.getWorkspace();
-
-		UtilObject.setIcon(space.id, icon, '');
+		UtilObject.setIcon(blockStore.workspace, icon, '');
 	};
 
 	onUpload (hash: string) {
-		const space = UtilObject.getWorkspace();
-
-		UtilObject.setIcon(space.id, '', hash);
+		UtilObject.setIcon(blockStore.workspace, '', hash);
 	};
 
 	onSpaceTypeTooltip (e) {
