@@ -172,6 +172,8 @@
     "pageMainUsecaseLabel": "We'll load some templates to get you started",
 	"pageMainUsecaseSkip": "Skip",
 
+	"usecase0Title": "Empty",
+    "usecase0Label": "Just a blank canvas",
     "usecase1Title": "Personal projects",
     "usecase1Label": "Manage your personal projects and tasks with complete privacy",
     "usecase2Title": "Bookshelf",
