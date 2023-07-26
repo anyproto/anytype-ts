@@ -727,6 +727,10 @@
     "widgetRecent": "Recent",
     "widgetSet": "Sets",
     "widgetCollection": "Collections",
+    "widgetEdit": "Edit widgets",
+    "widgetAdd": "Add widget",
+    "widgetLibrary": "Library",
+    "widgetBin": "Bin",
 
     "spaceType0": "Personal space",
     "phrasePlaceholder": "Please enter your Recovery phrase here",
