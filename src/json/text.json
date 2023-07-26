@@ -317,7 +317,8 @@
     "popupSettingsPersonalTitle": "Preferences",
     "popupSettingsPersonalDefaultObjectType": "Default object type",
     "popupSettingsPersonalDefaultObjectTypeSelect": "Select",
-    "popupSettingsPersonalSpellcheckLanguages": "Spellcheck languages",
+    "popupSettingsPersonalSpellcheckLanguage": "Spellcheck languages",
+	"popupSettingsPersonalInterfaceLanguage": "Interface language",
 
     "popupSettingsAppearanceTitle": "Appearance",
     "popupSettingsAppearanceColorMode": "Color mode",

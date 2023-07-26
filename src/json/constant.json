@@ -22,15 +22,11 @@
 	},
 
 	"default": {
-		"lang": "en",
+		"interfaceLang": "en-US",
 		"cover": "sky",
 		"codeLang": "javascript",
 		"pinTime": 600
 	},
-	
-	"langs": [
-		{ "id": "en", "name": "English" }
-	],
 	
 	"delay": {
 		"menu": 160,
@@ -316,6 +312,17 @@
 		"wolfram":		 "Wolfram",
 		"xml":			 "XML",
 		"yaml":			 "YAML"
+	},
+
+	"interfaceLang": {
+		"en-US": "English (United States)",
+		"de-DE": "Deutsch (Deutschland)",
+		"es-ES": "Spanish",
+		"fr-FR": "French",
+		"it-IT": "Italian",
+		"pt-BR": "Portugese (Brazil)",
+		"pt-PT": "Portugese (Portugal)",
+		"zh-CN": "Chinese"
 	},
 
 	"spellingLang": {
