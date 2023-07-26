@@ -1329,10 +1329,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 		const current = blockStore.getLeaf(rootId, cellId);
 		const ret: any[] = [
-			{ id: I.MarkType.Bold, icon: 'bold', name: translate('blockTableOptionsStyleBold') },
-			{ id: I.MarkType.Italic, icon: 'italic', name: translate('blockTableOptionsStyleItalic') },
-			{ id: I.MarkType.Strike, icon: 'strike', name: translate('blockTableOptionsStyleStrikethrough') },
-			{ id: I.MarkType.Underline, icon: 'underline', name: translate('blockTableOptionsStyleUnderline') },
+			{ id: I.MarkType.Bold, icon: 'bold', name: translate('commonBold') },
+			{ id: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic') },
+			{ id: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough') },
+			{ id: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline') },
 		];
 
 		let length = 0;

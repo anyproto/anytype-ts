@@ -55,6 +55,13 @@
     "commonColor": "Color",
     "commonBackground": "Background",
     "commonAll": "All",
+    "commonBold": "Bold",
+    "commonItalic": "Italic",
+    "commonStrikethrough": "Strikethrough",
+    "commonUnderline": "Underline",
+    "commonLink": "Link",
+    "commonCode": "Code",
+    "commonComment": "Comment",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -382,11 +389,6 @@
     "blockTableOptionsAlignVerticalMiddle": "Middle",
     "blockTableOptionsAlignVerticalBottom": "Bottom",
 
-    "blockTableOptionsStyleBold": "Bold",
-    "blockTableOptionsStyleItalic": "Italic",
-    "blockTableOptionsStyleStrikethrough": "Strikethrough",
-    "blockTableOptionsStyleUnderline": "Underline",
-
     "blockTableOptionsSortAscending": "Ascending",
     "blockTableOptionsSortDescending": "Descending",
 
@@ -595,7 +597,6 @@
     "menuBlockActionsSectionsBackground": "Background",
     "menuBlockActionsSectionsColor": "Color",
     "menuBlockActionsSectionsDataview": "Dataview",
-    "menuBlockActionsSectionsComment": "Comment",
     "menuBlockActionsCreateNew": "Create new %s",
 
     "menuBlockAddNewRelation": "New relation",
@@ -607,6 +608,9 @@
     "menuBlockAddSectionsRelations": "Relations",
     "menuBlockAddSectionsTextColor": "Text color",
     "menuBlockAddSectionsBackgroundColor": "Background color",
+
+    "menuBlockContextSwitchStyle": "Switch style",
+    "menuBlockContextMoreOptions": "More options",
 
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",

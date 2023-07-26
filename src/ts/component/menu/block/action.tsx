@@ -336,7 +336,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 			const section2: any = { 
 				children: [
-					// { id: 'comment', icon: 'comment', name: translate('menuBlockActionsSectionsComment') },
+					// { id: 'comment', icon: 'comment', name: translate('commonComment') },
 				]
 			};
 
