@@ -639,6 +639,11 @@
     "menuBlockLinkSettingsObjectType": "Object type",
     "menuBlockLinkSettingsAttributes": "Attributes",
 
+    "menuBlockLinkFilterPlaceholder": "Paste link or search objects",
+    "menuBlockLinkSectionsCreateObject": "Create object %s",
+    "menuBlockLinkSectionsLinkToWebsite": "Link to website",
+    "menuBlockLinkSectionsObjects": "Objects",
+
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",
     "menuDataviewOptionEditDelete": "Delete option",
