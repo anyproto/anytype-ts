@@ -49,6 +49,14 @@
     "commonDeletedType": "Deleted type",
     "commonDeletedRelation": "Deleted relation",
     "commonSort": "Sort",
+    "commonAlign": "Align",
+    "commonAppearance": "Appearance",
+    "commonPreview": "Preview",
+    "commonColor": "Color",
+    "commonBackground": "Background",
+
+    "commonLCCollection": "collection",
+    "commonLCSet": "set",
 
     "month1": "January",
     "month2": "February",
@@ -575,6 +583,19 @@
     "menuBlockCoverEmptyFilter": "<b>There are no covers named <span>\"%s\"<\/span><\/b>Try to find a new one or upload your image",
 
     "menuBlockLinkPlaceholder": "Enter link URL",
+
+    "menuBlockActionsFilterActions": "Filter actions...",
+    "menuBlockActionsSectionsTextStyle": "Text style",
+    "menuBlockActionsSectionsListStyle": "List style",
+    "menuBlockActionsSectionsTurnIntoObject": "Turn into object",
+    "menuBlockActionsSectionsDividerStyle": "Divider style",
+    "menuBlockActionsSectionsFileStyle": "File style",
+    "menuBlockActionsSectionsActions": "Actions",
+    "menuBlockActionsSectionsBackground": "Background",
+    "menuBlockActionsSectionsColor": "Color",
+    "menuBlockActionsSectionsDataview": "Dataview",
+    "menuBlockActionsSectionsComment": "Comment",
+    "menuBlockActionsCreateNew": "Create new %s",
 
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",
