@@ -612,6 +612,14 @@
     "menuBlockContextSwitchStyle": "Switch style",
     "menuBlockContextMoreOptions": "More options",
 
+    "menuBlockCoverGallery": "Gallery",
+    "menuBlockCoverUnsplash": "Unsplash",
+    "menuBlockCoverLibrary": "Library",
+    "menuBlockCoverUpload": "Upload",
+    "menuBlockCoverChoose": "Choose Image or <span>Drag it here</span>",
+    "menuBlockCoverGradients": "Gradients",
+    "menuBlockCoverSolidColors": "Solid colors",
+
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",
     "menuDataviewOptionEditDelete": "Delete option",
