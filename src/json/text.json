@@ -48,6 +48,7 @@
     "commonDeletedObject": "Non-existent object",
     "commonDeletedType": "Deleted type",
     "commonDeletedRelation": "Deleted relation",
+    "commonSort": "Sort",
 
     "month1": "January",
     "month2": "February",
@@ -335,6 +336,46 @@
     "blockFeaturedTypeMenuOpenSet": "Open set",
     "blockFeaturedTypeMenuOpenSetOf": "Open set of %s",
     "blockFeaturedTypeMenuCreateSetOf": "Create set of %s",
+
+    "blockTableRow": "Row",
+    "blockTableColumn": "Column",
+    "blockTableOptionsClearContent": "Clear content",
+    "blockTableOptionsDuplicate": "Duplicate",
+    "blockTableOptionsRowHeaderRow": "Header row",
+    "blockTableOptionsRowRowBefore": "Insert above",
+    "blockTableOptionsRowRowAfter": "Insert below",
+    "blockTableOptionsRowRowMoveTop": "Move up",
+    "blockTableOptionsRowRowMoveBottom": "Move down",
+    "blockTableOptionsRowRowRemove": "Delete row",
+
+    "blockTableOptionsColumnColumnBefore": "Insert left",
+    "blockTableOptionsColumnColumnAfter": "Insert right",
+    "blockTableOptionsColumnColumnMoveLeft": "Move left",
+    "blockTableOptionsColumnColumnMoveRight": "Move right",
+    "blockTableOptionsColumnColumnRemove": "Delete column",
+
+    "blockTableOptionsColorColor": "Color",
+    "blockTableOptionsColorBackground": "Background",
+    "blockTableOptionsColorStyle": "Style",
+    "blockTableOptionsColorClearStyle": "Clear style",
+
+    "blockTableOptionsAlignText": "Text align",
+    "blockTableOptionsAlignTextLeft": "Left",
+    "blockTableOptionsAlignTextCenter": "Center",
+    "blockTableOptionsAlignTextRight": "Right",
+
+    "blockTableOptionsAlignVertical": "Vertical align",
+    "blockTableOptionsAlignVerticalTop": "Top",
+    "blockTableOptionsAlignVerticalMiddle": "Middle",
+    "blockTableOptionsAlignVerticalBottom": "Bottom",
+
+    "blockTableOptionsStyleBold": "Bold",
+    "blockTableOptionsStyleItalic": "Italic",
+    "blockTableOptionsStyleStrikethrough": "Strikethrough",
+    "blockTableOptionsStyleUnderline": "Underline",
+
+    "blockTableOptionsSortAscending": "Ascending",
+    "blockTableOptionsSortDescending": "Descending",
 
     "popupSettingsTitle": "Settings",
     "popupSettingsAccountPersonalInformationTitle": "Personal information",
