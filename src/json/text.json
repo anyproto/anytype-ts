@@ -263,6 +263,8 @@
 
     "blockDataviewNew": "New object",
     "blockDataviewCreateNew": "Create new object",
+    "blockDataviewCreateNewCollection": "Create new collection",
+    "blockDataviewCreateNewSet": "Create new set",
 
     "blockDataviewControlsFilters": "Filters",
     "blockDataviewControlsSorts": "Sorts",
