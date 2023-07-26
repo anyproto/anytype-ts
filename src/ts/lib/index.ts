@@ -44,8 +44,6 @@ const translate = (key: string): string => {
 	let data = {};
 	try { data = require(`lib/json/lang/${lang}.json`); } catch(e) {};
 
-	console.log(data);
-
 	return data[key] || `⚠️${key}⚠️`;
 };
 

@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.33.3",
+	"version": "0.33.4-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -59,7 +59,7 @@
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
 		"electron": "^22.0.0",
-		"electron-builder": "^23.6.0",
+		"electron-builder": "^24.6.3",
 		"electron-notarize": "^0.2.1",
 		"eslint": "^8.29.0",
 		"eslint-config-prettier": "^8.5.0",
@@ -68,7 +68,7 @@
 		"license-checker": "^25.0.1",
 		"lint-staged": "^13.0.3",
 		"node-loader": "^1.0.2",
-		"npm": "^8.13.2",
+		"npm": "^9.8.1",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
 		"prettier": "^2.7.1",
@@ -537,7 +537,8 @@
 			"target": [
 				"snap",
 				"AppImage",
-				"deb"
+				"deb",
+				"rpm"
 			],
 			"description": "Anytype",
 			"publish": [

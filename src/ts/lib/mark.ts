@@ -79,8 +79,8 @@ class Mark {
 		];
 
 		for (let item of Markdown) {
-			const non = UtilCommon.filterFix(item.key.substring(0, 1));
-			const k = UtilCommon.filterFix(item.key);
+			const non = UtilCommon.regexEscape(item.key.substring(0, 1));
+			const k = UtilCommon.regexEscape(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,
 				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
@@ -490,7 +490,7 @@ class Mark {
 	fromUnicode (html: string, marks: I.Mark[]): string {
 		let checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
 		let text = html;
-		let keys = Object.keys(Patterns).map(it => UtilCommon.filterFix(it));
+		let keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
 		let reg = new RegExp('(' + keys.join('|') + ')', 'g');
 		let test = reg.test(text);
 

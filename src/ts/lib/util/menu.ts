@@ -277,7 +277,7 @@ class UtilMenu {
 	};
 	
 	sectionsFilter (sections: any[], filter: string) {
-		const f = UtilCommon.filterFix(filter);
+		const f = UtilCommon.regexEscape(filter);
 		const regS = new RegExp('^' + f, 'gi');
 		const regC = new RegExp(f, 'gi');
 		const getWeight = (s: string) => {
