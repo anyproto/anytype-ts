@@ -78,8 +78,4 @@ class Util {
 		this.ctx.restore();
 	};
 
-	filterFix (v) {
-		return String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	};
-
 };

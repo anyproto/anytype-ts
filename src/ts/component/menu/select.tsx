@@ -255,7 +255,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		};
 
 		if (data.filter && !preventFilter) {
-			const filter = new RegExp(UtilCommon.filterFix(data.filter), 'gi');
+			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
 
 			items = items.filter(it => String(it.name || '').match(filter));
 		};
