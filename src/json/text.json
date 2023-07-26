@@ -279,7 +279,11 @@
     "blockDataviewHeadMenuChange": "Change source %s",
     "blockDataviewHeadMenuOpen": "Open source %s",
 
-    "blockDataviewBoardculmnSettings": "Column settings",
+    "blockDataviewBoardRelationDeletedTitle": "Relation has been deleted",
+    "blockDataviewBoardRelationDeletedDescription": "Choose another relation to group your Kanban",
+    "blockDataviewBoardOpenViewMenu": "Open view menu",
+
+    "blockDataviewBoardColumnSettings": "Column settings",
     "blockDataviewSelectTemplate": "Choose a template",
 
     "blockCoverDrag": "Drag image to reposition",
