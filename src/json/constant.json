@@ -128,10 +128,6 @@
 		"date": "ot-date"
 	},
 
-	"storeTypeKey": {
-		"template": "_ottemplate"
-	},
-
 	"storeSpaceId": "_anytype_marketplace",
 
 	"blockId": {
