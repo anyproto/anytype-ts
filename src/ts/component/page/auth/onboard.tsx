@@ -222,15 +222,20 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	rebind () {
 		const node = $(this.node);
-		const question = node.find('.questionMark');
+		const questionPhrase = node.find('#questionMarkPhrase');
+		const questionAccount = node.find('#questionMarkAccount');
 
 		this.unbind();
 
 		$(window).on('keydown.onboarding', (e) => this.onKeyDown(e));
 
-		question.off('mouseenter mouseleave');
-		question.on('mouseenter', () => this.onPhraseTooltip());
-		question.on('mouseleave', () => Preview.tooltipHide());
+		questionPhrase.off('mouseenter mouseleave');
+		questionPhrase.on('mouseenter', () => this.onPhraseTooltip());
+		questionPhrase.on('mouseleave', () => Preview.tooltipHide());
+
+		questionAccount.off('mouseenter mouseleave');
+		questionAccount.on('mouseenter', () => this.onAccountTooltip());
+		questionAccount.on('mouseleave', () => Preview.tooltipHide());
 	};
 
 	getText = (name: string) => {
@@ -437,13 +442,26 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip = () => {
 		const node = $(this.node);
-		const label = node.find('#label');
+		const element = node.find('#questionMarkPhrase');
 
 		Preview.tooltipShow({
 			delay: 150,
 			text: translate('authOnboardPhraseTooltip'),
-			element: label,
+			element,
 			typeY: I.MenuDirection.Bottom,
+			typeX: I.MenuDirection.Center,
+		});
+	};
+
+	onAccountTooltip = () => {
+		const node = $(this.node);
+		const element = node.find('#questionMarkAccount');
+
+		Preview.tooltipShow({
+			delay: 150,
+			text: translate('authOnboardAccountTooltip'),
+			element,
+			typeY: I.MenuDirection.Top,
 			typeX: I.MenuDirection.Center,
 		});
 	};
