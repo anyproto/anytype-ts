@@ -266,6 +266,19 @@
     "blockDataviewCreateNewCollection": "Create new collection",
     "blockDataviewCreateNewSet": "Create new set",
 
+    "blockDataviewEmptyTargetSets": "sets",
+    "blockDataviewEmptyTargetCollections": "collections",
+    "blockDataviewEmptyTargetTitle": "No data source",
+    "blockDataviewEmptyTargetDescription": "Connect one of your %s or create a new<br/>one to continue",
+    "blockDataviewEmptyTargetButton": "Select source",
+
+    "blockDataviewEmptySourceTitle": "No query selected",
+    "blockDataviewEmptySourceDescription": "Add search query to aggregate objects with equal<br/>types and relations in a live mode",
+    "blockDataviewEmptySourceButton": "Select query",
+
+    "blockDataviewEmptyViewDescription": "Create your first one to begin",
+    "blockDataviewEmptyViewButton": "Create object",
+
     "blockDataviewControlsFilters": "Filters",
     "blockDataviewControlsSorts": "Sorts",
     "blockDataviewControlsSettings": "Sorts",
