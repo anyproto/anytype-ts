@@ -789,7 +789,10 @@
     "menuHelpTermsOfUse": "Terms of Use",
     "menuHelpPrivacyPolicy": "Privacy Policy",
 
-    "menuHelp": "",
+    "menuItemRelationViewFeaturedAdd": "Add to featured relations",
+    "menuItemRelationViewFeaturedRemove": "Remove from featured relations",
+
+    "menuItemRelationView": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
