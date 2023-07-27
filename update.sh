@@ -60,9 +60,7 @@ else
   printf "Done\n"
 
   echo "Moving... "
-  rm -rf "$folder"
-  mkdir -p "$folder"
-  mv -fv grpc-server "$folder/anytypeHelper"
+  mv -fv grpc-server "dist/anytypeHelper"
 fi;
 
 rm -rf dist/lib/pb
