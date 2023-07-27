@@ -12,20 +12,21 @@ module.exports = {
     overrides: [],
     parser: "@typescript-eslint/parser",
     parserOptions: {
+		project: true,
         ecmaVersion: "latest",
         sourceType: "module",
     },
     plugins: ["react", "@typescript-eslint"],
     rules: {
-        "member-access": 0,
         "prefer-const": "warn",
+        "semi": ["warn", "always"],
+		"quotes": "off",
+		"no-mixed-spaces-and-tabs": "warn",
         "no-useless-escape": "warn",
-        "ordered-imports": 0,
         "no-empty": "off",
-        quotemark: 0,
         "no-fallthrough": "off",
-        "no-console": 0,
-        semicolon: 0,
+		"no-case-declarations": "off",
+        "no-console": "off",
 
         // unused vars
         "no-unused-vars": "off",
@@ -38,6 +39,8 @@ module.exports = {
             },
         ],
 
+		"@typescript-eslint/no-unsafe-member-access": "off",
+		"@typescript-eslint/no-extra-semi": "warn",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-inferrable-types": "off",
         "@typescript-eslint/no-var-requires": "off",
@@ -54,14 +57,12 @@ module.exports = {
         ],
 
         // react, JSX related
+		"jsx-quotes": ["warn", "prefer-double"],
         "react/jsx-key": "off",
         "react/no-find-dom-node": "off",
-        "no-case-declarations": "off",
         "react/no-unescaped-entities": "off",
         "react/no-direct-mutation-state": "off",
         "react/display-name": "off",
-        "jsx-no-lambda": 0,
-        "jsx-no-multiline-js": 0,
     },
     settings: {
         react: {
