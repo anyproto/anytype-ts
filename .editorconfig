@@ -1,0 +1,11 @@
+# https://EditorConfig.org
+
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[*.{js,ts,jsx,tsx}]
+indent_style = tab
+indent_size = 4
