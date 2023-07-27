@@ -766,10 +766,11 @@
     "menuDataviewViewEditViewAs": "View as",
     "menuDataviewViewEditDuplicateView": "Duplicate view",
     "menuDataviewViewEditRemoveView": "Remove view",
-    "menuDataviewViewEdit": "",
-    "menuDataviewViewEdit": "",
-    "menuDataviewViewEdit": "",
-    "menuDataviewViewEdit": "",
+
+    "menuDataviewViewListNoViewsFound": "No views found",
+    "menuDataviewViewListAddView": "Add a view",
+    "menuDataviewViewListViews": "Views",
+    "menuDataviewViewList": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
