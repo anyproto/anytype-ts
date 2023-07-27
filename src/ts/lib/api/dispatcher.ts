@@ -954,6 +954,11 @@ class Dispatcher {
 							break;
 						};
 
+						case I.ProgressState.Error: {
+							commonStore.progressClear();
+							break;
+						};
+
 						case I.ProgressState.Done:
 						case I.ProgressState.Canceled: {
 							commonStore.progressClear();
