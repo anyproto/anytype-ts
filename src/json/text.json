@@ -219,6 +219,12 @@
     "authUsecaseSkip": "Skip",
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
+
+    "pageAuthDeletedDay": "day",
+    "pageAuthDeletedDays": "days",
+    "pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in ",
+    "pageAuthDeleted": "",
+
     "pageMainArchiveEmpty": "Your bin is empty",
     "pageMainBlockEmpty": "Block not found",
 
@@ -833,8 +839,6 @@
     "menuWidgetSets": "Sets",
     "menuWidgetCollections": "Collections",
     "menuWidgetRecent": "Recent",
-
-    "menuWidget": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
