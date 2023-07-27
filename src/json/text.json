@@ -822,7 +822,19 @@
     "menuTypeSuggestMyTypes": "My types",
     "menuTypeSuggestCreateType ": "Create type %s",
 
-    "menuTypeSuggest": "",
+    "menuWidgetAddWidget": "Add widget",
+    "menuWidgetChooseSource": "Choose a source",
+    "menuWidgetWidgetType": "Widget type",
+    "menuWidgetWidgetSource": "Widget Source",
+    "menuWidgetNumberOfObjects": "Number of objects",
+    "menuWidgetRemoveWidget": "Remove widget",
+    "menuWidgetEditWidgets": "Edit widgets",
+    "menuWidgetFavorites": "Favorites",
+    "menuWidgetSets": "Sets",
+    "menuWidgetCollections": "Collections",
+    "menuWidgetRecent": "Recent",
+
+    "menuWidget": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
