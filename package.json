@@ -5,8 +5,7 @@
 	"main": "electron.js",
 	"scripts": {
 		"precommit": "npx lint-staged",
-        "lint": "eslint .",
-        "format": "prettier . --write",
+		"lint": "eslint .",
 		"electron": "npx electron .",
 		"electron-win": "npx electron.cmd .",
 		"start:watch": "cross-env-shell webpack-dev-server --progress --mode=development --node-env=development  --env SERVER_PORT=$SERVER_PORT --env DATA_PATH=$DATA_PATH --history-api-fallback --cache",
@@ -64,7 +63,6 @@
 		"electron-builder": "^24.6.3",
 		"electron-notarize": "^0.2.1",
 		"eslint": "^8.29.0",
-		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-react": "^7.31.11",
 		"husky": "^8.0.3",
 		"license-checker": "^25.0.1",
@@ -73,7 +71,6 @@
 		"npm": "^9.8.1",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
-		"prettier": "^2.7.1",
 		"sass": "^1.62.0",
 		"sass-loader": "^8.0.2",
 		"source-map-loader": "^0.2.4",
@@ -154,9 +151,7 @@
 			{
 				"name": "Anytype",
 				"role": "Editor",
-				"schemes": [
-					"anytype"
-				]
+				"schemes": ["anytype"]
 			}
 		],
 		"asarUnpack": [
@@ -494,10 +489,7 @@
 			"entitlementsInherit": "electron/entitlements.mac.plist",
 			"target": {
 				"target": "default",
-				"arch": [
-					"x64",
-					"arm64"
-				]
+				"arch": ["x64", "arm64"]
 			},
 			"identity": "J3NXTX3T5S",
 			"category": "public.app-category.productivity",
@@ -536,12 +528,7 @@
 		"linux": {
 			"icon": "electron/img/icon512x512.png",
 			"category": "Utility",
-			"target": [
-				"snap",
-				"AppImage",
-				"deb",
-				"rpm"
-			],
+			"target": ["snap", "AppImage", "deb", "rpm"],
 			"description": "Anytype",
 			"publish": [
 				{
@@ -554,8 +541,7 @@
 	},
 	"lint-staged": {
 		"{src,electron}/*.{ts,tsx}": "npx tsc --noEmit -p tsconfig.json",
-		"{src,electron}/*.{js,jsx,ts,tsx}": "npx eslint --fix",
-		"{src,electron}/*.{js,jsx,ts,tsx,html,css,scss,json}": "npx prettier --fix"
+		"{src,electron}/*.{js,jsx,ts,tsx}": "npx eslint --fix"
 	},
 	"husky": {
 		"hooks": {

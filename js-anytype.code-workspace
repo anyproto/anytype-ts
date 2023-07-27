@@ -6,7 +6,6 @@
     ],
     "extensions": {
         "recommendations": [
-            "esbenp.prettier-vscode",
             "aaron-bond.better-comments",
             "github.copilot",
             "eamodio.gitlens",
@@ -15,7 +14,7 @@
         ]
     },
     "settings": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": false,
         "debug.inlineValues": "on"
     }
 }

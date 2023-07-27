@@ -113,14 +113,13 @@ All pull requests will be reviewed by the team.
 #### Setting up IDE
 
 - vscode
-   1. Open cloned repository.
+   1. Open cloned repository as vscode workspace using [js-anytype.code-workspace](../js-anytype.code-workspace).
    2. Install recommended extensions.
 
 - IntelliJ (Ultimate) / WebStorm
 
-   1. Install the [Prettier](https://plugins.jetbrains.com/plugin/10456-prettier) plugin
-   2. Enable `Settings > Language & Frameworks > Javascript > Code Quality Tools > ESLint > Automatic ESLint configuration`.
-   3. Enable `Settings > Language & Frameworks > Javascript > Prettier > On save`.
+   1. Enable `Settings > Language & Frameworks > Javascript > Code Quality Tools > ESLint > Automatic ESLint configuration`.
+   2. Install the [EditorConfig](https://plugins.jetbrains.com/plugin/7294-editorconfig) plugin
 
 ## Contributors Recognition
 
