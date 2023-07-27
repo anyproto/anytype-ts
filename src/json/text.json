@@ -717,6 +717,9 @@
 
     "menuDataviewFileValuesFindAFile": "Find a file...",
 
+    "menuDataviewFilterValuesChecked": "Checked",
+    "menuDataviewFilterValuesUnchecked": "Unchecked",
+
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
 
