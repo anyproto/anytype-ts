@@ -72,6 +72,8 @@
     "commonRestoreFromBin": "Restore from bin",
     "commonMoveToBin": "Move to bin",
     "commonLinkTo": "Link to",
+    "commonUpload": "Upload",
+    "commonDownload": "Download",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -713,7 +715,7 @@
     "menuDataviewDate12Hour": "12 hour",
     "menuDataviewDate24Hour": "24 hour",
 
-    "menuDataviewDate": "",
+    "menuDataviewFileValuesFindAFile": "Find a file...",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
