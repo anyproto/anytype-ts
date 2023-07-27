@@ -1348,8 +1348,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsSort () {
 		return [
-			{ id: I.SortType.Asc, name: translate('blockTableOptionsSortAscending') },
-			{ id: I.SortType.Desc, name: translate('blockTableOptionsSortDescending') },
+			{ id: I.SortType.Asc, name: translate('commonAscending') },
+			{ id: I.SortType.Desc, name: translate('commonDescending') },
 		];
 	};
 

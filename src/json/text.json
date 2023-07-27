@@ -74,6 +74,8 @@
     "commonLinkTo": "Link to",
     "commonUpload": "Upload",
     "commonDownload": "Download",
+    "commonAscending": "Ascending",
+    "commonDescending": "Descending",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -399,9 +401,6 @@
     "blockTableOptionsAlignVerticalTop": "Top",
     "blockTableOptionsAlignVerticalMiddle": "Middle",
     "blockTableOptionsAlignVerticalBottom": "Bottom",
-
-    "blockTableOptionsSortAscending": "Ascending",
-    "blockTableOptionsSortDescending": "Descending",
 
     "blockTypeMyTypes": "My types",
 
@@ -749,6 +748,9 @@
     "menuDataviewRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your library",
 
     "menuDataviewRelationListAddRelation": "Add relation",
+
+    "menuDataviewSortNoSortsApplied": "No sorts applied to this view",
+    "menuDataviewSortNewSort": "New sort",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
