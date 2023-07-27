@@ -801,9 +801,24 @@
 
     "menuThreadListLastSync": "Last sync",
     "menuThreadListBackupNode": "Backup node",
-    "menuThreadList": "",
-    "menuThreadList": "",
-    "menuThreadList": "",
+
+    "menuThreadStatusObjectBackedUp": "This object is backed up",
+    "menuThreadStatusUpdatesRequested": "Updates requested",
+    "menuThreadStatusNoInteraction": "No interaction",
+    "menuThreadStatusSomeChangesNotBackedUp": "Some changes are not backed up",
+    "menuThreadStatusUploading": "Uploading",
+    "menuThreadStatusWaitingForUpload": "Waiting for upload",
+    "menuThreadStatusStored": "Stored",
+    "menuThreadStatusStatus": "Status",
+    "menuThreadStatusFiles": "Files",
+    "menuThreadStatusDirectInteractionTitle": "Direct interaction with my devices",
+    "menuThreadStatusDirectInteractionStatus": "Direct interaction status",
+    "menuThreadStatusOnline": "Online",
+    "menuThreadStatusOffline": "Offline",
+    "menuThreadStatusLastEditsReceived": "Last edits received",
+    "menuThreadStatusNoChanges": "No changes",
+
+    "menuThreadStatus": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
