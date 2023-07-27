@@ -223,7 +223,13 @@
     "pageAuthDeletedDay": "day",
     "pageAuthDeletedDays": "days",
     "pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in ",
-    "pageAuthDeleted": "",
+
+    "pageAuthOnboardAccountDataLocation": "Account data location",
+    "pageAuthOnboardEnterYourName": "Enter your name",
+    "pageAuthOnboardPersonalSpace": "Personal Space",
+    "pageAuthOnboardMoreInfo": "More info",
+    "pageAuthOnboard": "",
+    "pageAuthOnboard": "",
 
     "pageMainArchiveEmpty": "Your bin is empty",
     "pageMainBlockEmpty": "Block not found",

@@ -53,7 +53,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			footer = (
 				<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
 					<Icon className="gear" />
-					Account data location
+					{translate('pageAuthOnboardAccountDataLocation')}
 				</div>
 			);
 		};
@@ -109,7 +109,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<Input
 						focusOnMount
 						type="text"
-						placeholder="Enter your name"
+						placeholder={translate('pageAuthOnboardEnterYourName')}
 						value={authStore.name}
 						onKeyUp={(e, v) => authStore.nameSet(v)}
 						maxLength={255}
@@ -147,7 +147,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					<div className="space">
 						<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={64} />
-						<span className="spaceName">Personal Space</span>
+						<span className="spaceName">{translate('pageAuthOnboardPersonalSpace')}</span>
 					</div>
 				</section>
 			);
@@ -176,7 +176,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (stage == Stage.Phrase) {
-			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>More info</div>;
+			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>{translate('pageAuthOnboardMoreInfo')}</div>;
 		};
 
 		if (!this.canMoveForward()) {
