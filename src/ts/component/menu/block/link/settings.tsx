@@ -227,7 +227,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			caption: description.name, arrow: true
 		} : null;
 		const itemTags = { id: 'tag', name: translate('menuBlockLinkSettingsTags'), icon: 'relation ' + Relation.className(I.RelationType.Tag), withSwitch: true, switchValue: this.hasRelationKey('tag') };
-		const itemType = { id: 'type', name: translate('menuBlockLinkSettingsObjectType'), icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
+		const itemType = { id: 'type', name: translate('commonObjectType'), icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
 
 		let sections: any[] = [
 			{ children: [ itemStyle, itemIconSize, itemIconSwitch, itemCover ] },

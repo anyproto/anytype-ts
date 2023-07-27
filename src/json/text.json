@@ -76,6 +76,7 @@
     "commonDownload": "Download",
     "commonAscending": "Ascending",
     "commonDescending": "Descending",
+    "commonObjectType": "Object type",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -645,7 +646,6 @@
     "menuBlockLinkSettingsName": "Name",
     "menuBlockLinkSettingsDescription": "Description",
     "menuBlockLinkSettingsTags": "Tags",
-    "menuBlockLinkSettingsObjectType": "Object type",
     "menuBlockLinkSettingsAttributes": "Attributes",
 
     "menuBlockLinkFilterPlaceholder": "Paste link or search objects",
@@ -751,6 +751,16 @@
 
     "menuDataviewSortNoSortsApplied": "No sorts applied to this view",
     "menuDataviewSortNewSort": "New sort",
+
+    "menuDataviewSourceSelectOneOrMoreSources": "Select one or more sources",
+    "menuDataviewSourceAddRelation": "Add a relation",
+    "menuDataviewSource": "",
+    "menuDataviewSource": "",
+    "menuDataviewSource": "",
+    "menuDataviewSource": "",
+    "menuDataviewSource": "",
+    "menuDataviewSource": "",
+    "menuDataviewSource": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
