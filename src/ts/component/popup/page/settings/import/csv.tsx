@@ -1,11 +1,15 @@
 import * as React from 'react';
-import { Title, Label, Button, Icon, Select, Switch } from 'Component';
+import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
 import { I, UtilCommon, translate, keyboard, analytics } from 'Lib';
 import { menuStore } from 'Store';
 import Head from '../head';
 
 interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
+};
+
+interface State {
+	error: string;
 };
 
 const Delimiters: any[] = [
@@ -16,11 +20,14 @@ const Delimiters: any[] = [
 	{ id: 'pipe', name: 'Pipe', caption: '|' },
 ];
 
-class PopupSettingsPageImportCsv extends React.Component<Props> {
+class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 	refMode = null;
 	refDelimiter = null;
 	data: any = {};
+	state: State = { 
+		error: '',
+	};
 
 	constructor (props: Props) {
 		super(props);
@@ -30,6 +37,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 	};
 
 	render () {
+		const { error } = this.state;
 		const modeOptions = [ 
 			{ id: I.CsvImportMode.Table, name: 'Table' },
 			{ id: I.CsvImportMode.Collection, name: 'Collection' },
@@ -113,6 +121,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 				<div className="buttons">
 					<Button className="c36" text={translate('popupSettingsImportOk')} onClick={this.onImport} />
 				</div>
+
+				<Error text={error} />
 			</div>
 		);
 	};
@@ -209,8 +219,14 @@ class PopupSettingsPageImportCsv extends React.Component<Props> {
 				return;
 			};
 
-			close();
-			onImport(I.ImportType.Csv, { paths, ...this.data });
+			onImport(I.ImportType.Csv, { paths, ...this.data }, (message: any) => {
+				if (message.error.code) {
+					this.setState({ error: message.error.description });
+					return;
+				};
+
+				close();
+			});
 		});
 	};
 
