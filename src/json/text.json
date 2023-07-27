@@ -770,7 +770,16 @@
     "menuDataviewViewListNoViewsFound": "No views found",
     "menuDataviewViewListAddView": "Add a view",
     "menuDataviewViewListViews": "Views",
-    "menuDataviewViewList": "",
+
+    "menuGraphSettingsTitles": "Titles",
+    "menuGraphSettingsArrows": "Arrows",
+    "menuGraphSettingsIcons": "Icons",
+    "menuGraphSettingsShowOnGraph": "Show on graph",
+    "menuGraphSettingsLinks": "Links",
+    "menuGraphSettingsRelations": "Relations",
+    "menuGraphSettingsUnlinkedObjects": "Unlinked objects",
+    
+    "menuGraphSettings": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
