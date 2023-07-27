@@ -681,6 +681,11 @@
     "menuBlockRelationViewInThisObject": "In this object",
     "menuBlockRelationViewFromType": "From type %s",
 
+    "menuBlockStyleTurnText": "Turn into text",
+    "menuBlockStyleTurnList": "Turn into list",
+    "menuBlockStyleTurnDiv": "Turn into divider",
+    "menuBlockStyleTurnFile": "Turn into file",
+
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",
     "menuDataviewOptionEditDelete": "Delete option",
