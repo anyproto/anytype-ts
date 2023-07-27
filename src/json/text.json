@@ -794,7 +794,15 @@
     "menuItemRelationViewFeaturedAdd": "Add to featured relations",
     "menuItemRelationViewFeaturedRemove": "Remove from featured relations",
 
-    "menuItemRelationView": "",
+    "menuRelationSuggestFilterOrCreateRelation": "Filter or create a relation...",
+    "menuRelationSuggestMyRelations": "My relations",
+    "menuRelationSuggestAnytypeLibrary": "Anytype library",
+    "menuRelationSuggestCreateRelation": "Create relation %s",
+    "menuRelationSuggest": "",
+    "menuRelationSuggest": "",
+    "menuRelationSuggest": "",
+    "menuRelationSuggest": "",
+    "menuRelationSuggest": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
