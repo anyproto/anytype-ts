@@ -708,7 +708,12 @@
     "menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
     "menuDataviewContextTryAgain": "Please try again",
 
-    "menuDataviewContext": "",
+    "menuDataviewDateDateFormat": "Date format",
+    "menuDataviewDateTimeFormat": "Time format",
+    "menuDataviewDate12Hour": "12 hour",
+    "menuDataviewDate24Hour": "24 hour",
+
+    "menuDataviewDate": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",

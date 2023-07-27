@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, UtilCommon, UtilMenu } from 'Lib';
+import { I, C, keyboard, UtilCommon, UtilMenu, translate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 
 const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component<I.Menu> {
@@ -102,12 +102,12 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 
 		let sections = [
 			{ 
-				id: 'date', name: 'Date format', children: [
+				id: 'date', name: translate('menuDataviewDateDateFormat'), children: [
 					{ id: 'dateFormat', name: dateFormat?.name, arrow: true }
 				] 
 			},
 			{ 
-				id: 'time', name: 'Time format', children: [
+				id: 'time', name: translate('menuDataviewDateTimeFormat'), children: [
 					{ id: 'timeFormat', name: timeFormat?.name, arrow: true }
 				] 
 			},
@@ -143,8 +143,8 @@ const MenuDataviewDate = observer(class MenuDataviewDate extends React.Component
 
 			case 'timeFormat':
 				options = [
-					{ id: I.TimeFormat.H12, name: '12 hour' },
-					{ id: I.TimeFormat.H24, name: '24 hour' },
+					{ id: I.TimeFormat.H12, name: translate('menuDataviewDate12Hour') },
+					{ id: I.TimeFormat.H24, name: translate('menuDataviewDate24Hour') },
 				];
 				break;
 		};
