@@ -704,9 +704,10 @@
 
     "menuDataviewContextNoAvailableActions": "No available actions",
     "menuDataviewContextUnlinkFromCollection": "Unlink from collection",
-    "menuDataviewContext": "",
-    "menuDataviewContext": "",
-    "menuDataviewContext": "",
+
+    "menuDataviewCreateSomethingWentWrong": "Oops - something went wrong!",
+    "menuDataviewContextTryAgain": "Please try again",
+
     "menuDataviewContext": "",
 
     "menuPreviewLatexExample": "Example: %s",
