@@ -677,6 +677,10 @@
     "menuBlockRelationEditFilterObjectTypes": "Filter object types...",
     "menuBlockRelationEditToastOnCreate": "Relation <b>%s</b> has been created and added to your library",
 
+    "menuBlockRelationViewFeaturedRelations": "Featured relations",
+    "menuBlockRelationViewInThisObject": "In this object",
+    "menuBlockRelationViewFromType": "From type %s",
+
     "menuDataviewOptionListCreate": "Create or select an option",
     "menuDataviewOptionEditPlaceholder": "Option name",
     "menuDataviewOptionEditDelete": "Delete option",
