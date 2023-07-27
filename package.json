@@ -151,7 +151,9 @@
 			{
 				"name": "Anytype",
 				"role": "Editor",
-				"schemes": ["anytype"]
+				"schemes": [
+					"anytype"
+				]
 			}
 		],
 		"asarUnpack": [
@@ -489,7 +491,10 @@
 			"entitlementsInherit": "electron/entitlements.mac.plist",
 			"target": {
 				"target": "default",
-				"arch": ["x64", "arm64"]
+				"arch": [
+					"x64",
+					"arm64"
+				]
 			},
 			"identity": "J3NXTX3T5S",
 			"category": "public.app-category.productivity",
@@ -528,7 +533,12 @@
 		"linux": {
 			"icon": "electron/img/icon512x512.png",
 			"category": "Utility",
-			"target": ["snap", "AppImage", "deb", "rpm"],
+			"target": [
+				"snap",
+				"AppImage",
+				"deb",
+				"rpm"
+			],
 			"description": "Anytype",
 			"publish": [
 				{

@@ -22,6 +22,7 @@ module.exports = {
         "semi": ["warn", "always"],
 		"quotes": "off",
 		"no-mixed-spaces-and-tabs": "warn",
+		"no-unsafe-optional-chaining": "warn",
         "no-useless-escape": "warn",
         "no-empty": "off",
         "no-fallthrough": "off",

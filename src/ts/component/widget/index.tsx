@@ -331,7 +331,6 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	getData (subId: string, callBack?: () => void) {
 		const { block, isPreview } = this.props;
 		const child = this.getTargetBlock();
-		// eslint-disable-next-line no-unsafe-optional-chaining
 		const { targetBlockId } = child?.content;
 		const sorts = [];
 		const filters: I.Filter[] = [
