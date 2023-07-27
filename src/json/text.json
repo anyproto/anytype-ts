@@ -80,6 +80,7 @@
     "commonSelect": "Select",
     "commonNext": "commonNext",
     "commonFinish": "commonFinish",
+    "commonAnytypeLibrary": "Anytype library",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -796,7 +797,6 @@
 
     "menuRelationSuggestFilterOrCreateRelation": "Filter or create a relation...",
     "menuRelationSuggestMyRelations": "My relations",
-    "menuRelationSuggestAnytypeLibrary": "Anytype library",
     "menuRelationSuggestCreateRelation": "Create relation %s",
 
     "menuThreadListLastSync": "Last sync",
@@ -818,7 +818,11 @@
     "menuThreadStatusLastEditsReceived": "Last edits received",
     "menuThreadStatusNoChanges": "No changes",
 
-    "menuThreadStatus": "",
+    "menuTypeSuggestFilterTypes": "Filter types...",
+    "menuTypeSuggestMyTypes": "My types",
+    "menuTypeSuggestCreateType ": "Create type %s",
+
+    "menuTypeSuggest": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",

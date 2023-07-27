@@ -289,14 +289,14 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		if (filter) {
 			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 			sections = sections.concat([
-				{ id: 'store', name: translate('menuRelationSuggestAnytypeLibrary'), children: store },
+				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
 				{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
 			]);
 		} else {
 			sections = sections.concat([
 				{ 
 					children: [
-						{ id: 'store', icon: 'store', name: translate('menuRelationSuggestAnytypeLibrary'), arrow: true }
+						{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
 					] 
 				},
 			]);
