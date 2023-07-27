@@ -110,7 +110,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let pageInstall = null;
 		let template = null;
 
-		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('menuBlockMoreLinkTo'), arrow: true };
+		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
 		let search = { id: 'search', name: translate('menuBlockMoreSearchOnPage'), caption: `${cmd} + F` };
 		let move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
@@ -129,16 +129,16 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		};
 
 		if (object.isFavorite) {
-			fav = { id: 'unfav', name: translate('menuBlockMoreRemoveFromFavorites') };
+			fav = { id: 'unfav', name: translate('commonRemoveFromFavorites') };
 		} else {
-			fav = { id: 'fav', name: translate('menuBlockMoreAddToFavorites') };
+			fav = { id: 'fav', name: translate('commonAddToFavorites') };
 		};
 
 		if (object.isArchived) {
 			linkTo = null;
-			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('menuBlockMoreRestoreFromBin') };
+			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
-			archive = { id: 'pageArchive', icon: 'remove', name: translate('menuBlockMoreMoveToBin') };
+			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin') };
 		};
 
 		if (block.isLocked()) {
