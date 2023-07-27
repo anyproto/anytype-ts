@@ -78,6 +78,8 @@
     "commonDescending": "Descending",
     "commonObjectType": "Object type",
     "commonSelect": "Select",
+    "commonNext": "commonNext",
+    "commonFinish": "commonFinish",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
