@@ -723,6 +723,8 @@
     "menuDataviewGroupEditShowColumn": "Show column",
     "menuDataviewGroupEditHideColumn": "Hide Column",
 
+    "menuDataviewObjectValuesAddObject": "Add object",
+
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
 
