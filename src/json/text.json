@@ -720,6 +720,9 @@
     "menuDataviewFilterValuesChecked": "Checked",
     "menuDataviewFilterValuesUnchecked": "Unchecked",
 
+    "menuDataviewGroupEditShowColumn": "Show column",
+    "menuDataviewGroupEditHideColumn": "Hide Column",
+
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
 
