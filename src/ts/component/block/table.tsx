@@ -1246,7 +1246,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 				{ id: 'rowAfter', icon: 'table-insert-bottom', name: translate('blockTableOptionsRowRowAfter') },
 				(idx > 0) ? { id: 'rowMoveTop', icon: 'table-move-top', name: translate('blockTableOptionsRowRowMoveTop') } : null,
 				(idx < length - 1) ? { id: 'rowMoveBottom', icon: 'table-move-bottom', name: translate('blockTableOptionsRowRowMoveBottom') } : null,
-				{ id: 'rowCopy', icon: 'copy', name: translate('blockTableOptionsDuplicate') },
+				{ id: 'rowCopy', icon: 'copy', name: translate('commonDuplicate') },
 				{ isDiv: true },
 			]);
 		};
@@ -1269,7 +1269,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			{ id: 'columnAfter', icon: 'table-insert-right', name: translate('blockTableOptionsColumnColumnAfter') },
 			(idx > 0) ? { id: 'columnMoveLeft', icon: 'table-move-left', name: translate('blockTableOptionsColumnColumnMoveLeft') } : null,
 			(idx < length - 1) ? { id: 'columnMoveRight', icon: 'table-move-right', name: translate('blockTableOptionsColumnColumnMoveRight') } : null,
-			{ id: 'columnCopy', icon: 'copy', name: translate('blockTableOptionsDuplicate') },
+			{ id: 'columnCopy', icon: 'copy', name: translate('commonDuplicate') },
 			{ isDiv: true },
 			{ id: 'clearContent', icon: 'clear', name: translate('blockTableOptionsClearContent') },
 			(length > 1) ? { id: 'columnRemove', icon: 'remove', name: translate('blockTableOptionsColumnColumnRemove') } : null,
