@@ -38,7 +38,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 				<div className="info">
 					<div className="name">{item.name}</div>
 					<div className="description">
-						<div className="side left">Last sync</div>
+						<div className="side left">{translate('menuThreadListLastSync')}</div>
 						<div className="side right">
 							{UtilCommon.timeAgo(Math.max(item.lastPulled, item.lastEdited))}
 						</div>
@@ -59,7 +59,7 @@ const MenuThreadList = observer(class MenuThreadList extends React.Component<I.M
 				>
 					<Icon className="cafe" />
 					<div className="info">
-						<div className="name">Backup node</div>
+						<div className="name">{translate('menuThreadListBackupNode')}</div>
 						<div className={[ 'description', UtilData.threadColor(status) ].join(' ')}>
 							{translate(`threadStatus${status}`)}
 						</div>

@@ -799,7 +799,11 @@
     "menuRelationSuggestAnytypeLibrary": "Anytype library",
     "menuRelationSuggestCreateRelation": "Create relation %s",
 
-    "menuRelationSuggest": "",
+    "menuThreadListLastSync": "Last sync",
+    "menuThreadListBackupNode": "Backup node",
+    "menuThreadList": "",
+    "menuThreadList": "",
+    "menuThreadList": "",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
