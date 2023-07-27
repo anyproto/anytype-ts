@@ -228,8 +228,14 @@
     "pageAuthOnboardEnterYourName": "Enter your name",
     "pageAuthOnboardPersonalSpace": "Personal Space",
     "pageAuthOnboardMoreInfo": "More info",
-    "pageAuthOnboard": "",
-    "pageAuthOnboard": "",
+
+    "pageAuthSetupCongratulations": "⚡️ Congratulations!",
+    "pageAuthSetupLongread": "You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported.",
+    "pageAuthSetupImportBackup": "Import backup",
+    "pageAuthSetupEnteringVoid": "Entering the void...",
+    "pageAuthSetup": "",
+    "pageAuthSetup": "",
+    "pageAuthSetup": "",
 
     "pageMainArchiveEmpty": "Your bin is empty",
     "pageMainBlockEmpty": "Block not found",
