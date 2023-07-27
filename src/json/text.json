@@ -236,8 +236,11 @@
 
     "pageHeadControlButtonsChangeCover": "Change cover",
     "pageHeadControlButtonsReposition": "Reposition",
-    "pageHeadControlButtons": "",
-    "pageHeadControlButtons": "",
+
+    "pageHeadSimpleCreateSet": "Create set",
+    "pageHeadSimpleInstall": "Install",
+    "pageHeadSimple": "",
+    "pageHeadSimple": "",
 
     "pageMainArchiveEmpty": "Your bin is empty",
     "pageMainBlockEmpty": "Block not found",
