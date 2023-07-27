@@ -5,6 +5,7 @@ mac/*
 .icon-ico/*
 main.js
 main.js.map
+lib/
 commands.js
 bundle-back.js
 *-arm64/
