@@ -27,7 +27,11 @@
     "commonLater": "Later",
     "commonRetry": "Retry",
     "commonUncategorized": "Uncategorized",
+    "commonDashboard": "Dashboard",
     "commonGraph": "Graph",
+    "commonFlow": "Flow",
+    "commonLibrary": "Library",
+    "commonBin": "Bin",
     "commonToday": "Today",
     "commonTomorrow": "Tomorrow",
     "commonYesterday": "Yesterday",
@@ -239,8 +243,8 @@
 
     "pageHeadSimpleCreateSet": "Create set",
     "pageHeadSimpleInstall": "Install",
-    "pageHeadSimple": "",
-    "pageHeadSimple": "",
+
+    "pageMainIndexComponentNotFound": "Page component &quot;%s&quot; not found",
 
     "pageMainArchiveEmpty": "Your bin is empty",
     "pageMainBlockEmpty": "Block not found",
