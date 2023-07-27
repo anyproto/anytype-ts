@@ -725,6 +725,15 @@
 
     "menuDataviewObjectValuesAddObject": "Add object",
 
+    "menuDataviewOptionListFilterOrCreateOptions": "Filter or create options...",
+    "menuDataviewOptionListFilterOptions": "Filter options...",
+    "menuDataviewOptionListTypeToCreate": "Type to create a new option",
+    "menuDataviewOptionListTypeToSearch": "Type to search options",
+    "menuDataviewOptionListSetStatus": "Set status %s",
+    "menuDataviewOptionListCreateOption": "Create option %s",
+
+    "menuDataviewOptionList": "",
+
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
 
