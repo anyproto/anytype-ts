@@ -89,6 +89,9 @@
     "commonLCCollection": "collection",
     "commonLCSet": "set",
 
+	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
+	"electronAboutCopyright": "Made by Any — a Swiss association 🇨🇭",
+
     "month1": "January",
     "month2": "February",
     "month3": "March",
