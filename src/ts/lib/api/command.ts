@@ -200,7 +200,7 @@ const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition
 const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
-	};
+	}
 
 	const request = new Rpc.File.Upload.Request();
 
@@ -1080,11 +1080,11 @@ const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (mes
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, '', message.objectView);
-		};
+		}
 
 		if (callBack) {
 			callBack(message);
-		};
+		}
 	});
 };
 
@@ -1217,17 +1217,17 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
-		};
+		}
 
 		// Save last opened object
 		const object = detailStore.get(objectId, objectId, []);
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
 			Storage.set('lastOpened', { id: object.id, layout: object.layout });
-		};
+		}
 
 		if (callBack) {
 			callBack(message);
-		};
+		}
 	});
 };
 
@@ -1240,11 +1240,11 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
-		};
+		}
 
 		if (callBack) {
 			callBack(message);
-		};
+		}
 	});
 };
 
@@ -1332,7 +1332,7 @@ const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing:
 			request.setPbparams(params);
 			break;
 
-	};
+	}
 
 	request.setSpaceid(spaceId);
 	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
@@ -1654,6 +1654,17 @@ const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
 };
 
+const ObjectListSetObjectType = (ids: string[], typeId: string, callBack?: (message: any) => void) => {
+	/*
+	const request = new Rpc.Object.ListSetObjectType.Request();
+
+	request.setObjectidsList(ids);
+	request.setObjecttypeid(typeId);
+
+	dispatcher.request(ObjectListSetObjectType.name, request, callBack);
+	*/
+};
+
 const ObjectListExport = (spaceId: string, path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListExport.Request();
 
@@ -1946,6 +1957,7 @@ export {
 	ObjectListDelete,
 	ObjectListSetIsArchived,
 	ObjectListSetIsFavorite,
+	ObjectListSetObjectType,
 	ObjectListExport,
 
 	TemplateCreateFromObject,

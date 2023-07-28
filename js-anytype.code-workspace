@@ -1,28 +1,20 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"extensions": {
-		"recommendations": [
-			"esbenp.prettier-vscode",
-			"aaron-bond.better-comments",
-			"github.copilot",
-			"eamodio.gitlens",
-			"timonwong.shellcheck",
-			"dbaeumer.vscode-eslint"
-		]
-	},
-	"settings": {
-		"prettier.enable": true,
-		"editor.formatOnSave": false,
-		"editor.codeActionsOnSave": {
-			"source.fixAll": false,
-			"source.organizeImports": false
-		},
-		"prettier.documentSelectors": ["**/*.svg"],
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"debug.inlineValues": "on"
-	}
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "extensions": {
+        "recommendations": [
+            "aaron-bond.better-comments",
+            "github.copilot",
+            "eamodio.gitlens",
+            "timonwong.shellcheck",
+            "dbaeumer.vscode-eslint"
+        ]
+    },
+    "settings": {
+        "editor.formatOnSave": false,
+        "debug.inlineValues": "on"
+    }
 }

@@ -14,6 +14,9 @@ export enum ObjectLayout {
 	OptionList	 = 12,
 	Option		 = 13,
 	Collection   = 14,
+	Audio		 = 15,
+	Video		 = 16, 
+	Date		 = 17,
 	
 	Database	 = 20,
 
@@ -24,12 +27,7 @@ export enum ObjectLayout {
 	History		 = 104,
 	Archive		 = 105,
 	Block		 = 106,
-
-	Video		 = 1000,
-	Audio		 = 1001,
-
-	Date		 = 2000,
-};
+}
 
 export enum RelationType { 
 	LongText	 = 0, 
@@ -46,7 +44,7 @@ export enum RelationType {
 	Tag			 = 11,
 	Object		 = 100,
 	Relations	 = 101,
-};
+}
 
 export enum RelationScope {
 	Object				 = 0,
@@ -54,15 +52,15 @@ export enum RelationScope {
 	SetOfTheSameType	 = 2,
 	ObjectsOfTheSameType = 3,
 	Library				 = 4,
-};
+}
 
 export enum OptionScope {
     Local	 = 0,
 	Relation = 1,
-};
+}
 
 export enum ObjectFlag {
 	DeleteEmpty		 = 0,
 	SelectType		 = 1,
     SelectTemplate	 = 2,
-};
+}
