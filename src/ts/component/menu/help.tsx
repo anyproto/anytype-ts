@@ -79,7 +79,7 @@ class MenuHelp extends React.Component<I.Menu> {
 			{ isDiv: true },
 			{ id: 'terms' },
 			{ id: 'privacy' },
-		].map(it => ({ ...it, name: UtilCommon.toCamelCase(`menuHelp-${it.id}`) }));
+		].map(it => ({ ...it, name: translate(UtilCommon.toCamelCase(`menuHelp-${it.id}`)) }));
 	};
 
 	onMouseEnter (e: any, item: any) {
