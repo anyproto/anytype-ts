@@ -1,10 +1,11 @@
 {
 	"name": "anytype",
-	"version": "0.33.3",
+	"version": "0.33.4-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
 		"precommit": "npx lint-staged",
+		"lint": "eslint .",
 		"electron": "npx electron .",
 		"electron-win": "npx electron.cmd .",
 		"start:watch": "cross-env-shell webpack-dev-server --progress --mode=development --node-env=development  --env SERVER_PORT=$SERVER_PORT --env DATA_PATH=$DATA_PATH --history-api-fallback --cache",
@@ -59,19 +60,17 @@
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
 		"electron": "^22.0.0",
-		"electron-builder": "^23.6.0",
+		"electron-builder": "^24.6.3",
 		"electron-notarize": "^0.2.1",
 		"eslint": "^8.29.0",
-		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-react": "^7.31.11",
 		"husky": "^8.0.3",
 		"license-checker": "^25.0.1",
 		"lint-staged": "^13.0.3",
 		"node-loader": "^1.0.2",
-		"npm": "^8.13.2",
+		"npm": "^9.8.1",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
-		"prettier": "^2.7.1",
 		"sass": "^1.62.0",
 		"sass-loader": "^8.0.2",
 		"source-map-loader": "^0.2.4",
@@ -537,7 +536,8 @@
 			"target": [
 				"snap",
 				"AppImage",
-				"deb"
+				"deb",
+				"rpm"
 			],
 			"description": "Anytype",
 			"publish": [
@@ -550,9 +550,7 @@
 		}
 	},
 	"lint-staged": {
-		"{src,electron}/*.{ts,tsx}": "npx tsc --noEmit -p tsconfig.json",
-		"{src,electron}/*.{js,jsx,ts,tsx}": "npx eslint --fix",
-		"{src,electron}/*.{js,jsx,ts,tsx,html,css,scss,json}": "npx prettier --fix"
+		"./{src,electron}/**/*.{js,jsx,ts,tsx}": "eslint --fix"
 	},
 	"husky": {
 		"hooks": {

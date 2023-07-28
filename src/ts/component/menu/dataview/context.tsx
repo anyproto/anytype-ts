@@ -14,7 +14,7 @@ class MenuContext extends React.Component<I.Menu> {
 		
 		this.rebind = this.rebind.bind(this);
 		this.onClick = this.onClick.bind(this);
-	};
+	}
 
 	render () {
 		const sections = this.getSections();
@@ -30,7 +30,7 @@ class MenuContext extends React.Component<I.Menu> {
 									<div className="inner" />
 								</div>
 							);
-						};
+						}
 
 						return (
 							<MenuItemVertical
@@ -59,25 +59,25 @@ class MenuContext extends React.Component<I.Menu> {
 				)}
 			</div>
 		);
-	};
+	}
 	
 	componentDidMount () {
 		this.rebind();
-	};
+	}
 	
 	componentWillUnmount () {
 		menuStore.closeAll(Constant.menuIds.more);
-	};
+	}
 
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
-	};
+	}
 	
 	unbind () {
 		$(window).off('keydown.menu');
-	};
+	}
 	
 	getSections () {
 		const { param } = this.props;
@@ -88,6 +88,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
+		const changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -102,7 +103,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (isCollection) {
 			div = { isDiv: true };
 			unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
-		};
+		}
 
 		objectIds.forEach((it: string) => {
 			let object = null; 
@@ -111,36 +112,36 @@ class MenuContext extends React.Component<I.Menu> {
 			} else
 			if (subId) {
 				object = detailStore.get(subId, it);
-			};
+			}
 
 			if (!object || object._empty_) {
 				return;
-			};
+			}
 
 			if (object.isFavorite) favCnt++;
 			if (object.isArchived) archiveCnt++;
 
 			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
 				allowedArchive = false;
-			};
+			}
 			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]) || object.isArchived) {
 				allowedFav = false;
-			};
+			}
 			if (!blockStore.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
 				allowedCopy = false;
-			};
+			}
 		});
 
 		if (favCnt == length) {
 			fav = { id: 'unfav', name: translate('commonRemoveFromFavorites') };
 		} else {
 			fav = { id: 'fav', name: translate('commonAddToFavorites') };
-		};
+		}
 
 		if (length > 1) {
 			open = null;
 			linkTo = null;
-		};
+		}
 
 		if (archiveCnt == length) {
 			open = null;
@@ -149,14 +150,14 @@ class MenuContext extends React.Component<I.Menu> {
 			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
-		};
+		}
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedFav)		 fav = null;
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, linkTo, div, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, changeType, linkTo, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -165,22 +166,22 @@ class MenuContext extends React.Component<I.Menu> {
 		});
 
 		return sections;
-	};
+	}
 	
 	getItems () {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
-		};
+		}
 		
 		return items;
-	};
+	}
 
 	onMouseEnter (e: any, item: any) {
 		this.onOver(e, item);
-	};
+	}
 
 	onOver (e: any, item: any) {
 		const { param, getId, getSize, close } = this.props;
@@ -189,16 +190,16 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
-		};
+		}
 
 		if (!item.arrow || !objectIds.length) {
-			menuStore.closeAll(Constant.menuIds.more)
+			menuStore.closeAll(Constant.menuIds.more);
 			return;
-		};
+		}
 
-		let itemId = objectIds[0];
+		const itemId = objectIds[0];
 		let menuId = '';
-		let menuParam = {
+		const menuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
@@ -212,7 +213,21 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		switch (item.id) {
-			case 'linkTo':
+			case 'changeType':
+				menuId = 'typeSuggest';
+				menuParam.data = Object.assign(menuParam.data, {
+					filter: '',
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
+					],
+					onClick: (item: any) => {
+						C.ObjectListSetObjectType(objectIds, item.id);
+						close();
+					}
+				});
+				break;
+
+			case 'linkTo': {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
@@ -230,25 +245,26 @@ class MenuContext extends React.Component<I.Menu> {
 					onSelect: (el: any) => {
 						if (onLinkTo) {
 							onLinkTo(itemId, el.id);
-						};
+						}
 
 						close();
 					}
 				});
 				break;
-		};
+			}
+		}
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
 			menuStore.closeAll(Constant.menuIds.more, () => {
 				menuStore.open(menuId, menuParam);
 			});
-		};
-	};
+		}
+	}
 
 	onClick (e: any, item: any) {
 		if (item.arrow) {
 			return;
-		};
+		}
 
 		const { param, close } = this.props;
 		const { data } = param;
@@ -258,7 +274,7 @@ class MenuContext extends React.Component<I.Menu> {
 		const cb = () => {
 			if (onSelect) {
 				onSelect(item.id);
-			};
+			}
 		};
 
 		focus.clear(false);
@@ -273,11 +289,11 @@ class MenuContext extends React.Component<I.Menu> {
 				C.ObjectListDuplicate(objectIds, (message: any) => {
 					if (message.error.code || !message.ids.length) {
 						return;
-					};
+					}
 
 					if (count == 1) {
 						UtilObject.openPopup(detailStore.get(subId, message.ids[0], []));
-					};
+					}
 
 					analytics.event('DuplicateObject', { count });
 
@@ -289,7 +305,7 @@ class MenuContext extends React.Component<I.Menu> {
 						});
 					} else {
 						cb();
-					};
+					}
 				});
 				break;
 
@@ -330,11 +346,11 @@ class MenuContext extends React.Component<I.Menu> {
 				});
 				break;
 
-		};
+		}
 		
 		close();
-	};
+	}
 
-};
+}
 
 export default MenuContext;

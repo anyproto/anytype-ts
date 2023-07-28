@@ -68,7 +68,7 @@ fi;
 rm -rf dist/lib/pb
 rm -rf dist/lib/pkg
 rm -rf dist/lib/protos
-rm -rf dist/lib/json
+rm -rf dist/lib/json/*.json
 
 mv -fv protobuf/* "dist/lib/"
 mkdir -p dist/lib/json

@@ -25,7 +25,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		super(props);
 		
 		this.rebind = this.rebind.bind(this);
-	};
+	}
 	
 	render () {
 		const { param } = this.props;
@@ -36,7 +36,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 		if (!this.cache) {
 			return null;
-		};
+		}
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -71,7 +71,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 						)}
 					</div>
 				);
-			};
+			}
 
 			return (
 				<CellMeasurer
@@ -121,7 +121,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 				)}
 			</div>
 		);
-	};
+	}
 	
 	componentDidMount () {
 		const { param } = this.props;
@@ -140,7 +140,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		});
 
 		this.forceUpdate();
-	};
+	}
 
 	componentDidUpdate () {
 		const { filter } = commonStore;
@@ -149,16 +149,16 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		if (filter.text != this.filter) {
 			this.n = 0;
 			this.filter = filter.text;
-		};
+		}
 
 		if (!items.length && !this.emptyLength) {
 			this.emptyLength = filter.text.length;
-		};
+		}
 
 		if ((filter.text.length - this.emptyLength > 3) && !items.length) {
 			this.props.close();
 			return;
-		};
+		}
 
 		this.resize();
 		this.rebind();
@@ -167,26 +167,26 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		this.onOver(null, items[this.n]);
 
 		menuStore.close('previewLatex');
-	};
+	}
 
 	componentWillUnmount () {
 		this._isMounted = false;
-	};
+	}
 
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
 		window.setTimeout(() => { this.props.setActive(); }, 15);
-	};
+	}
 
 	unbind () {
 		$(window).off('keydown.menu');
-	};
+	}
 
 	onOver (e: any, item: any) {
 		if (!item) {
 			return;
-		};
+		}
 
 		const { param, getId, getSize } = this.props;
 		const { data } = param;
@@ -194,7 +194,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 		if (isTemplate) {
 			return;
-		};
+		}
 
 		menuStore.open('previewLatex', {
 			element: `#${getId()} #item-${item.id}`,
@@ -206,14 +206,14 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 				example: item.comment == "" ? false : true
 			}
 		});
-	};
+	}
 
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item);
 			this.onOver(e, item);
-		};
-	};
+		}
+	}
 
 	onClick (e: any, item: any) {
 		e.stopPropagation();
@@ -229,17 +229,17 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		if (!isTemplate) {
 			from--;
 			to += filter.text.length;
-		};
+		}
 
 		onSelect(from, to, item);
 		close();
-	};
+	}
 
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
-		const filter = UtilCommon.filterFix(commonStore.filter.text);
+		const filter = UtilCommon.regexEscape(commonStore.filter.text);
 
 		let sections = UtilMenu.sectionsMap(Sections);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);
@@ -268,7 +268,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					} else 
 					if (n.match(regS)) {
 						w = 1000;
-					};
+					}
 					c._sortWeight_ = w;
 					s._sortWeight_ += w;
 					return c;
@@ -277,24 +277,24 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 				return s;
 			});
 			sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
-		};
+		}
 
 		return sections;
-	};
+	}
 
 	getItems (withSections: boolean) {
 		const sections = this.getSections();
 
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			if (withSections) {
 				items.push({ id: section.id, name: section.name, isSection: true });
-			};
+			}
 			items = items.concat(section.children);
-		};
+		}
 
 		return items;
-	};
+	}
 
 	getRowHeight (item: any) {
 		const { param } = this.props;
@@ -303,9 +303,9 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 		if (item.isSection) {
 			return HEIGHT_SECTION;
-		};
+		}
 		return isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
-	};
+	}
 
 	recalcIndex () {
 		const itemsWithSection = this.getItems(true);
@@ -313,7 +313,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const active: any = itemsWithoutSection[this.n] || {};
 
 		return itemsWithSection.findIndex(it => it.id == active.id);
-	};
+	}
 
 	resize () {
 		const { param, getId, position } = this.props;
@@ -326,19 +326,19 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 		let height = offset;
 
-		for (let item of items) {
+		for (const item of items) {
 			height += this.getRowHeight(item);
-		};
+		}
 		
 		height = Math.max(ih + offset, Math.min(ih * 10, height));
 
 		if (!items.length) {
 			height = 44;
-		};
+		}
 
 		obj.css({ height: height });
 		position();
-	};
+	}
 	
 });
 

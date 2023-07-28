@@ -24,7 +24,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		this.onKeyUp = this.onKeyUp.bind(this);
 		this.onKeyDown = this.onKeyDown.bind(this);
 		this.onSearch = this.onSearch.bind(this);
-	};
+	}
 
 	render () {
 		const { param, storageGet } = this.props;
@@ -59,7 +59,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 				</div>
 			</div>
 		);
-	};
+	}
 	
 	componentDidMount () {
 		this.search();
@@ -67,20 +67,20 @@ class MenuSearchText extends React.Component<I.Menu> {
 		window.setTimeout(() => { 
 			if (this.ref) {
 				this.ref.focus(); 
-			};
+			}
 		}, 100);
-	};
+	}
 
 	componentWillUnmount () {
 		this.clear();
 		keyboard.setFocus(false);
-	};
+	}
 
 	onKeyDown (e: any) {
 		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, (pressed: string) => {
 			e.preventDefault();
 		});
-	};
+	}
 	
 	onKeyUp (e: any) {
 		e.preventDefault();
@@ -93,10 +93,10 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		if (ret) {
 			return;
-		};
+		}
 
 		this.search();
-	};
+	}
 
 	onArrow (dir: number) {
 		const items = this.getItems();
@@ -106,39 +106,39 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		if (this.n < 0) {
 			this.n = max;
-		};
+		}
 		if (this.n > max) {
 			this.n = 0;
-		};
+		}
 
 		this.search();
-	};
+	}
 
 	onSearch (e: any) {
 		this.focus();
 		this.onArrow(1);
-	};
+	}
 
 	search () {
 		const { storageSet, param } = this.props;
 		const { data } = param;
 		const { route } = data;
 		const searchContainer = this.getSearchContainer();
-		const value = UtilCommon.filterFix(this.ref.getValue());
+		const value = UtilCommon.regexEscape(this.ref.getValue());
 		const node = $(this.node);
 		const switcher = node.find('#switcher').removeClass('active');
 
 		if (this.last != value) {
 			this.n = 0;
 			this.clear();
-		};
+		}
 		this.last = value;
 		
 		storageSet({ search: value });
 
 		if (!value) {
 			return;
-		};
+		}
 
 		analytics.event('SearchWords', { length: value.length, route });
 
@@ -151,12 +151,12 @@ class MenuSearchText extends React.Component<I.Menu> {
 				const tag = el.nodeName.toLowerCase();
 				if (SKIP.indexOf(tag) < 0) {
 					return false;
-				};
+				}
 
 				const style = window.getComputedStyle(el);
 				if ((style.display == 'none') || (style.opacity == '0') || (style.visibility == 'hidden')) {
 					return false;
-				};
+				}
 				return true;
 			},
 		});
@@ -165,7 +165,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 
 		items.length ? switcher.addClass('active') : switcher.removeClass('active');
 		this.focus();
-	};
+	}
 
 	setCnt () {
 		const node = $(this.node);
@@ -173,13 +173,13 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const items = this.getItems();
 
 		cnt.text(`${this.n + 1}/${items.length}`);
-	};
+	}
 
 	onClear () {
 		this.ref.setValue('');
 		this.clear();
 		this.props.storageSet({ search: '' });
-	};
+	}
 
 	clear () {
 		const node = $(this.node);
@@ -192,7 +192,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		});
 
 		switcher.removeClass('active');
-	};
+	}
 
 	getScrollContainer () {
 		const { param } = this.props;
@@ -206,8 +206,8 @@ class MenuSearchText extends React.Component<I.Menu> {
 			const scrollable = container.find('.scrollable');
 
 			return scrollable.length ? scrollable : container;
-		};
-	};
+		}
+	}
 
 	getSearchContainer () {
 		const { param } = this.props;
@@ -218,12 +218,12 @@ class MenuSearchText extends React.Component<I.Menu> {
 			return $('#page.isFull');
 		} else {
 			return $('.popup').last().find('.innerWrap');
-		};
-	};
+		}
+	}
 
 	getItems () {
 		return this.getSearchContainer().find('search');
-	};
+	}
 
 	focus () {
 		const { param } = this.props;
@@ -255,12 +255,12 @@ class MenuSearchText extends React.Component<I.Menu> {
 			} else {
 				y = no;
 				wh = $(window).height();
-			};
+			}
 
 			scrollContainer.scrollTop(y - wh + offset);
-		};
-	};
+		}
+	}
 	
-};
+}
 
 export default MenuSearchText;

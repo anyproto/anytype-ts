@@ -62,7 +62,7 @@ enum Overlap {
 	Right		 = 6,		 // b-a
 	Before		 = 7,		 // a ... b
 	After		 = 8,		 // b ... a
-};
+}
 
 class Mark {
 
@@ -78,23 +78,23 @@ class Mark {
 			{ key: '~~', type: I.MarkType.Strike },
 		];
 
-		for (let item of Markdown) {
-			const non = UtilCommon.filterFix(item.key.substring(0, 1));
-			const k = UtilCommon.filterFix(item.key);
+		for (const item of Markdown) {
+			const non = UtilCommon.regexEscape(item.key.substring(0, 1));
+			const k = UtilCommon.regexEscape(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,
 				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
 			});
-		};
-	};
+		}
+	}
 	
 	toggle (marks: I.Mark[], mark: I.Mark): I.Mark[] {
 		if (mark.range.from == mark.range.to) {
 			return marks;	
-		};
+		}
 
-		let map = UtilCommon.mapToArray(marks, 'type');
-		let type = mark.type;
+		const map = UtilCommon.mapToArray(marks, 'type');
+		const type = mark.type;
 		let add = true;
 
 		map[type] = map[type] || [];
@@ -102,8 +102,8 @@ class Mark {
 		
 		for (let i = 0; i < map[type].length; ++i) {
 			let del = false;
-			let el = map[type][i];
-			let overlap = this.overlap(mark.range, el.range);
+			const el = map[type][i];
+			const overlap = this.overlap(mark.range, el.range);
 			
 			switch (overlap) {
 				case Overlap.Equal:
@@ -111,7 +111,7 @@ class Mark {
 						del = true;
 					} else {
 						el.param = mark.param;
-					};
+					}
 					add = false;
 					break;
 					
@@ -123,14 +123,14 @@ class Mark {
 					el.range.from = mark.range.to;
 					if (!mark.param) {
 						add = false;
-					};
+					}
 					break;
 					
 				case Overlap.InnerRight:
 					el.range.to = mark.range.from;
 					if (!mark.param) {
 						add = false;
-					};
+					}
 					break;
 					
 				case Overlap.Inner:
@@ -139,7 +139,7 @@ class Mark {
 					
 					if (!mark.param) {
 						add = false;
-					};
+					}
 					i = map[type].length;
 					break;
 					
@@ -149,7 +149,7 @@ class Mark {
 						add = false;
 					} else {
 						el.range.from = mark.range.to;
-					};
+					}
 					break;
 					
 				case Overlap.Right:
@@ -160,27 +160,27 @@ class Mark {
 					} else {
 						el.range.to = mark.range.from;
 						add = true;
-					};
+					}
 					break;
 					
 				case Overlap.Before:
 					i = map[type].length;
 					break;
-			};
+			}
 			
 			if (del) {
 				map[type].splice(i, 1);
 				i = -1;
-			};
-		};
+			}
+		}
 		
 		if (add) {
 			map[type].push(mark);
-		};
+		}
 
 		analytics.event('ChangeTextStyle', { type, count: 1 });
 		return UtilCommon.unmap(map).sort(this.sort);
-	};
+	}
 	
 	sort (c1: I.Mark, c2: I.Mark) {
 		const o1 = Order[c1.type];
@@ -192,27 +192,27 @@ class Mark {
 		if (c1.range.to > c2.range.to) return 1;
 		if (c1.range.to < c2.range.to) return -1;
 		return 0;
-	};
+	}
 	
 	checkRanges (text: string, marks: I.Mark[]) {
 		marks = (marks || []).slice().sort(this.sort);
 		
 		for (let i = 0; i < marks.length; ++i) {
-			let mark = marks[i];
-			let prev = marks[(i - 1)];
+			const mark = marks[i];
+			const prev = marks[(i - 1)];
 			let del = false;
 			
 			if (mark.range.from >= text.length) {
 				del = true;
-			};
+			}
 			
 			if (mark.range.from == mark.range.to) {
 				del = true;
-			};
+			}
 			
 			if ((mark.range.from < 0) || (mark.range.to < 0)) {
 				del = true;
-			};
+			}
 			
 			// Combine two marks into one
 			if (prev && 
@@ -222,7 +222,7 @@ class Mark {
 				(prev.param == mark.param)) {
 				prev.range.to = mark.range.to;
 				del = true;
-			};
+			}
 			
 			if (del) {
 				marks.splice(i, 1);
@@ -230,62 +230,62 @@ class Mark {
 			} else {
 				if (mark.range.from < 0) {
 					mark.range.from = 0;
-				};
+				}
 				
 				if (mark.range.to > text.length) {
 					mark.range.to = text.length;
-				};
+				}
 				
 				if (mark.range.from > mark.range.to) {
-					let t = mark.range.to;
+					const t = mark.range.to;
 					mark.range.to = mark.range.from;
 					mark.range.from = t;
-				};
-			};
-		};
+				}
+			}
+		}
 		return marks;
-	};
+	}
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
-		let map = UtilCommon.mapToArray(marks, 'type');
+		const map = UtilCommon.mapToArray(marks, 'type');
 		if (!map[type] || !map[type].length) {
 			return null;
-		};
+		}
 		
-		for (let mark of map[type]) {
-			let overlap = this.overlap(range, mark.range);
+		for (const mark of map[type]) {
+			const overlap = this.overlap(range, mark.range);
 			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight, Overlap.Equal ].indexOf(overlap) >= 0) {
 				return mark;
-			};
-		};
+			}
+		}
 		return null;
-	};
+	}
 
 	adjust (marks: I.Mark[], from: number, length: number) {
 		marks = marks || [];
 
-		for (let mark of marks) {
+		for (const mark of marks) {
 			if ((mark.range.from <= from) && (mark.range.to > from)) {
 				mark.range.to += length;
 			} else
 			if (mark.range.from >= from) {
 				mark.range.from += length;
 				mark.range.to += length;
-			};
+			}
 			mark.range.from = Math.max(0, mark.range.from);
-		};
+		}
 		return marks;
-	};
+	}
 	
 	toHtml (text: string, marks: I.Mark[]) {
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
 
-		let r = text.split('');
-		let parts: I.Mark[] = [];
+		const r = text.split('');
+		const parts: I.Mark[] = [];
 		let borders: any[] = [];
-		let ranges: any[] = [];
-		let hasParam = [ 
+		const ranges: any[] = [];
+		const hasParam = [ 
 			I.MarkType.Link, 
 			I.MarkType.Object, 
 			I.MarkType.Color, 
@@ -294,10 +294,10 @@ class Mark {
 			I.MarkType.Emoji,
 		];
 		
-		for (let mark of marks) {
+		for (const mark of marks) {
 			borders.push(Number(mark.range.from));
 			borders.push(Number(mark.range.to));
-		};
+		}
 
 		borders.sort(function (c1, c2) {
 			if (c1 > c2) return 1;
@@ -309,27 +309,27 @@ class Mark {
 		for (let i = 0; i < borders.length; ++i) {
 			if (!borders[i + 1]) {
 				break;
-			};
+			}
 			ranges.push({ from: borders[i], to: borders[i + 1] });
-		};
+		}
 
-		for (let range of ranges) {
-			for (let mark of marks) {
+		for (const range of ranges) {
+			for (const mark of marks) {
 				if ((mark.range.from <= range.from) && (mark.range.to >= range.to)) {
 					parts.push({
 						type: mark.type,
 						param: mark.param,
 						range: { from: range.from, to: range.to }
 					});
-				};
-			};
-		};
+				}
+			}
+		}
 
 		const render = (mark: I.Mark) => {
 			const param = String(mark.param || '');
 			if (!param && hasParam.includes(mark.type)) {
 				return;
-			};
+			}
 
 			const attr = this.paramToAttr(mark.type, param);
 			const tag = Tags[mark.type];
@@ -337,7 +337,7 @@ class Mark {
 			
 			if (param) {
 				data.push(`data-param="${param}"`);
-			};
+			}
 
 			let prefix = '';
 			let suffix = '';
@@ -345,46 +345,46 @@ class Mark {
 			if (mark.type == I.MarkType.Mention) {
 				prefix = '<smile></smile><img src="./img/space.svg" class="space" /><name>';
 				suffix = '</name>';
-			};
+			}
 
 			if (mark.type == I.MarkType.Emoji) {
 				prefix = '<smile></smile>';
-			};
+			}
 
 			if (r[mark.range.from] && r[mark.range.to - 1]) {
 				r[mark.range.from] = `<${tag} ${attr} ${data.join(' ')}>${prefix}${r[mark.range.from]}`;
 				r[mark.range.to - 1] += `${suffix}</${tag}>`;
-			};
+			}
 		};
 
 		// Render mentions
-		for (let mark of marks) {
+		for (const mark of marks) {
 			if (mark.type == I.MarkType.Mention) {
 				render(mark);
-			};
-		};
+			}
+		}
 
 		// Render everything except mentions
-		for (let mark of parts) {
+		for (const mark of parts) {
 			if (mark.type != I.MarkType.Mention) {
 				render(mark);
-			};
-		};
+			}
+		}
 
 		// Replace tags in text
 		for (let i = 0; i < r.length; ++i) {
 			r[i] = r[i].replace(/<$/, '&lt;');
 			r[i] = r[i].replace(/^>/, '&gt;');
-		};
+		}
 		return r.join('');
-	};
+	}
 
 	cleanHtml (html: string) {
 		html = html.replace(/&nbsp;/g, ' ');
 		html = html.replace(/<br\/?>/g, '\n');
 
 		// Remove inner tags from mentions and emoji
-		let obj = $(`<div>${html}</div>`);
+		const obj = $(`<div>${html}</div>`);
 		
 		obj.find('mention').removeAttr('class').each((i: number, item: any) => {
 			item = $(item);
@@ -401,12 +401,12 @@ class Mark {
 				item.replaceWith(`<kbd>${html}</kbd>`);
 			} else {
 				item.html(html);
-			};
+			}
 		});
 
 		obj.find('emoji').removeAttr('class').html(' ');
 		return obj;
-	};
+	}
 	
 	fromHtml (html: string, restricted: I.MarkType[]): { marks: I.Mark[], text: string } {
 		const rh = new RegExp('<(\/)?(' + Tags.join('|') + ')(?:([^>]*)>|>)', 'ig');
@@ -418,7 +418,7 @@ class Mark {
 		html = html.replace(/contenteditable="[^"]+"/g, '');
 
 		let text = html;
-		let marks: any[] = [];
+		const marks: any[] = [];
 
 		// TODO: find classes by color or background
 		html.replace(/<font([^>]*?)>([^<]*)<\/font>/g, (s: string, p1: string, p2: string) => {
@@ -455,28 +455,28 @@ class Mark {
 			p2 = String(p2 || '').trim();
 			p3 = String(p3 || '').trim();
 
-			let end = p1 == '/';
-			let offset = Number(text.indexOf(s)) || 0;
-			let type = Tags.indexOf(p2);
+			const end = p1 == '/';
+			const offset = Number(text.indexOf(s)) || 0;
+			const type = Tags.indexOf(p2);
 
 			if (end) {
 				for (let i = 0; i < marks.length; ++i) {
-					let m = marks[i];
+					const m = marks[i];
 					if ((m.type == type) && !m.range.to) {
 						marks[i].range.to = offset;
 						break;
-					};
-				};
+					}
+				}
 			} else {
-				let pm = p3.match(rp);
-				let param = pm ? pm[1]: '';
+				const pm = p3.match(rp);
+				const param = pm ? pm[1]: '';
 				
 				marks.push({
 					type,
 					range: { from: offset, to: 0 },
 					param: param,
 				});
-			};
+			}
 
 			text = text.replace(s, '');
 			return '';
@@ -484,19 +484,19 @@ class Mark {
 
 		text = this.fromUnicode(text, marks);
 		return this.fromMarkdown(text, marks, restricted);
-	};
+	}
 
 	// Unicode symbols
 	fromUnicode (html: string, marks: I.Mark[]): string {
-		let checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
+		const checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
 		let text = html;
-		let keys = Object.keys(Patterns).map(it => UtilCommon.filterFix(it));
-		let reg = new RegExp('(' + keys.join('|') + ')', 'g');
-		let test = reg.test(text);
+		const keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
+		const reg = new RegExp('(' + keys.join('|') + ')', 'g');
+		const test = reg.test(text);
 
 		if (!test) {
 			return text;
-		};
+		}
 
 		html.replace(reg, (s: string, p: string, o: number) => {
 			let check = true;
@@ -505,32 +505,32 @@ class Mark {
 				if ((mark.range.from <= o) && (mark.range.to >= o)) {
 					check = false;
 					break;
-				};
-			};
+				}
+			}
 
 			if (check && Patterns[p]) {
 				text = text.replace(s, Patterns[p]);
-			};
+			}
 			return '';
 		});
 
 		return text;
-	};
+	}
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]) {
 		let text = html;
-		let test = /[`\*_~\[]{1}/.test(text);
-		let checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
+		const test = /[`\*_~\[]{1}/.test(text);
+		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 
 		if (!test) {
 			return { marks, text };
-		};
+		}
 
 		// Markdown
-		for (let item of this.regexpMarkdown) {
+		for (const item of this.regexpMarkdown) {
 			if (restricted.includes(item.type)) {
 				continue;
-			};
+			}
 
 			html = text;
 			html.replace(item.reg, (s: string, p1: string, p2: string, p3: string, p4: string, p5: string) => {
@@ -540,26 +540,26 @@ class Mark {
 				p4 = String(p4 || '');
 				p5 = String(p5 || '');
 
-				let from = (Number(text.indexOf(s)) || 0) + p1.length;
-				let to = from + p3.length;
-				let replace = String((p1 + p3 + ' ') || '').replace(new RegExp('\\$', 'g'), '$$$');
+				const from = (Number(text.indexOf(s)) || 0) + p1.length;
+				const to = from + p3.length;
+				const replace = String((p1 + p3 + ' ') || '').replace(new RegExp('\\$', 'g'), '$$$');
 
 				let check = true;
 				for (const mark of checked) {
 					if ((mark.range.from <= from) && (mark.range.to >= to)) {
 						check = false;
 						break;
-					};
-				};
+					}
+				}
 
 				if (check) {
 					this.adjust(marks, from, -p2.length * 2);
 					marks.push({ type: item.type, range: { from, to }, param: '' });
 					text = text.replace(s, replace);
-				};
+				}
 				return s;
 			});
-		};
+		}
 
 		// Links
 		html = text;
@@ -568,29 +568,29 @@ class Mark {
 			p2 = String(p2 || '');
 			p3 = String(p3 || '');
 
-			let from = (Number(text.indexOf(s)) || 0);
-			let to = from + p1.length;
-			let innerIdx = [];
+			const from = (Number(text.indexOf(s)) || 0);
+			const to = from + p1.length;
+			const innerIdx = [];
 
 			// Remove inner links and adjust other marks to new range
 			for (let i = 0; i < marks.length; ++i) {
-				let mark = marks[i];
+				const mark = marks[i];
 				if ((mark.range.from >= from) && (mark.range.to <= from + p1.length + p2.length + 4)) {
 					if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type)) {
 						marks.splice(i, 1);
 						i--;
 					} else {
 						innerIdx.push(i);
-					};
-				};
-			};
+					}
+				}
+			}
 
 			this.adjust(marks, from, -(p2.length + 4));
 
-			for (let i of innerIdx) {
+			for (const i of innerIdx) {
 				marks[i].range.from = from;
 				marks[i].range.to = to;
-			};
+			}
 
 			marks.push({ type: I.MarkType.Link, range: { from: from, to: to }, param: p2 });
 			text = text.replace(s, p1 + ' ');
@@ -599,14 +599,14 @@ class Mark {
 
 		marks = this.checkRanges(text, marks);
 		return { marks, text };
-	};
+	}
 	
 	paramToAttr (type: I.MarkType, param: string): string {
 		let attr = '';
 		
 		if (!param) {
 			return attr;
-		};
+		}
 		
 		switch (type) {
 			case I.MarkType.Link:
@@ -625,25 +625,25 @@ class Mark {
 			case I.MarkType.BgColor:
 				attr = `class="bgColor bgColor-${param}"`;
 				break;
-		};
+		}
 		
 		return attr;
-	};
+	}
 
 	toggleLink (newMark: I.Mark, marks: I.Mark[]) {
 		for (let i = 0; i < marks.length; ++i) {
-			let mark = marks[i];
+			const mark = marks[i];
 			if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type) && 
 				(mark.range.from >= newMark.range.from) && 
 				(mark.range.to <= newMark.range.to)
 			) {
 				marks.splice(i, 1);
 				i--;
-			};
-		};
+			}
+		}
 
 		return this.toggle(marks, newMark);
-	};
+	}
 	
 	overlap (a: I.TextRange, b: I.TextRange): Overlap {
 		if (a.from == b.from && a.to == b.to) {
@@ -671,9 +671,9 @@ class Mark {
 			return Overlap.Left;
 		} else {
 			return Overlap.Right;
-		};
-	};
+		}
+	}
 	
-};
+}
 
 export default new Mark();

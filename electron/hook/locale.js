@@ -3,10 +3,11 @@ const https = require('https');
 const path = require('path');
 const fs = require('fs');
 
+const Constant = require('../../src/json/constant.json');
 const OWNER = 'anyproto';
 const REPO = 'l10n-anytype-ts';
 const PATH = '/locales';
-const LANGS = [ 'en', 'de-DE', 'es-ES' ];
+const LANGS = Object.keys(Constant.interfaceLang);
 
 const run = async () => {
 	for (const lang of LANGS) {
@@ -15,7 +16,7 @@ const run = async () => {
 
 		fs.writeFileSync(fp, content);
 		console.log('Saved lang file:', fp);
-	};
+	}
 };
 
 const request = async (lang) => {

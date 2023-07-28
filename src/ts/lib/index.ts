@@ -42,9 +42,15 @@ const translate = (key: string): string => {
 	const lang = Storage.get('interfaceLang') || Constant.default.interfaceLang;
 
 	let data = {};
-	try { data = require(`lib/json/lang/${lang}.json`); } catch(e) {};
-
-	console.log(data);
+	if (lang == Constant.default.interfaceLang) {
+		data = require(`json/text.json`); 
+	} else {
+		try { 
+			data = require(`lib/json/lang/${lang}.json`); 
+		} catch(e) {
+			data = require(`json/text.json`); 
+		}
+	}
 
 	return data[key] || `⚠️${key}⚠️`;
 };
