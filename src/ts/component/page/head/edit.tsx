@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, M, C, UtilData, UtilObject, UtilCommon, analytics, keyboard } from 'Lib';
+import { I, M, C, UtilData, UtilObject, UtilCommon, analytics, keyboard, translate } from 'Lib';
 import { Block, Drag } from 'Component';
 import { blockStore, detailStore } from 'Store';
 
@@ -54,7 +54,7 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 								If you want to edit, create a Duplicate of this template.
 							</div>
 							<div className="side right">
-								<Button color="dark" text="Duplicate" onClick={this.onClone} />
+								<Button color="dark" text={translate('commonDuplicate')} onClick={this.onClone} />
 							</div>
 						</div>
 					</div>

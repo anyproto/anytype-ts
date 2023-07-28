@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, IconObject } from 'Component';
-import { I, C, Relation, analytics, keyboard } from 'Lib';
+import { I, C, Relation, analytics, keyboard, translate } from 'Lib';
 import { menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -50,7 +50,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 
 					{!items.length ? (
 						<div className="item empty">
-							<div className="inner">Select one or more sources</div>
+							<div className="inner">{translate('menuDataviewSourceSelectOneOrMoreSources')}</div>
 						</div>
 					) : ''}
 				</div>
@@ -66,7 +66,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">Add a relation</div>
+							<div className="name">{translate('menuDataviewSourceAddRelation')}</div>
 						</div>
 					</div>
 				) : ''}
@@ -189,7 +189,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 			items.push({
 				id: 'type',
 				itemId: 'type',
-				name: 'Object type',
+				name: translate('commonObjectType'),
 				relationFormat: I.RelationType.Object,
 				layout: I.ObjectLayout.Relation,
 				value: 'All',
@@ -200,7 +200,7 @@ const MenuSource = observer(class MenuSource extends React.Component<I.Menu> {
 					items.push({
 						...it,
 						itemId: 'type',
-						name: 'Object type',
+						name: translate('commonObjectType'),
 						value: it.name,
 					});
 				} else {

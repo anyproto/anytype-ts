@@ -55,7 +55,7 @@ class MenuContext extends React.Component<I.Menu> {
 						))}
 					</React.Fragment>
 				) : (
-					<div className="item empty">No available actions</div>
+					<div className="item empty">{translate('menuDataviewContextNoAvailableActions')}</div>
 				)}
 			</div>
 		);
@@ -85,10 +85,10 @@ class MenuContext extends React.Component<I.Menu> {
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
 
-		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
+		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
-		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
-		const changeType = { id: 'changeType', icon: 'pencil', name: 'Change type', arrow: true };
+		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
+		let changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -102,8 +102,8 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (isCollection) {
 			div = { isDiv: true };
-			unlink = { id: 'unlink', icon: 'unlink', name: 'Unlink from collection' };
-		}
+			unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
+		};
 
 		objectIds.forEach((it: string) => {
 			let object = null; 
@@ -133,10 +133,10 @@ class MenuContext extends React.Component<I.Menu> {
 		});
 
 		if (favCnt == length) {
-			fav = { id: 'unfav', name: 'Remove from Favorites' };
+			fav = { id: 'unfav', name: translate('commonRemoveFromFavorites') };
 		} else {
-			fav = { id: 'fav', name: 'Add to Favorites' };
-		}
+			fav = { id: 'fav', name: translate('commonAddToFavorites') };
+		};
 
 		if (length > 1) {
 			open = null;
@@ -147,17 +147,17 @@ class MenuContext extends React.Component<I.Menu> {
 			open = null;
 			linkTo = null;
 			unlink = null;
-			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
+			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
-			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
-		}
+			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
+		};
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedFav)		 fav = null;
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, changeType, linkTo, div, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, linkTo, changeType, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -213,7 +213,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		switch (item.id) {
-			case 'changeType':
+			case 'changeType': {
 				menuId = 'typeSuggest';
 				menuParam.data = Object.assign(menuParam.data, {
 					filter: '',
@@ -226,6 +226,7 @@ class MenuContext extends React.Component<I.Menu> {
 					}
 				});
 				break;
+			};
 
 			case 'linkTo': {
 				menuId = 'searchObject';
@@ -247,7 +248,7 @@ class MenuContext extends React.Component<I.Menu> {
 						}
 
 						close();
-					}
+					},
 				});
 				break;
 			}
@@ -280,11 +281,12 @@ class MenuContext extends React.Component<I.Menu> {
 		
 		switch (item.id) {
 
-			case 'open':
+			case 'open': {
 				UtilObject.openPopup(detailStore.get(subId, objectIds[0], []));
 				break;
+			};
 
-			case 'copy':
+			case 'copy': {
 				C.ObjectListDuplicate(objectIds, (message: any) => {
 					if (message.error.code || !message.ids.length) {
 						return;
@@ -307,8 +309,9 @@ class MenuContext extends React.Component<I.Menu> {
 					}
 				});
 				break;
+			};
 
-			case 'archive':
+			case 'archive': {
 				C.ObjectListSetIsArchived(objectIds, true, (message: any) => {
 					cb();
 					analytics.event('MoveToBin', { count });
@@ -316,34 +319,39 @@ class MenuContext extends React.Component<I.Menu> {
 
 				win.trigger('removeGraphNode', { ids: objectIds });
 				break;
+			};
 
-			case 'unarchive':
+			case 'unarchive': {
 				C.ObjectListSetIsArchived(objectIds, false, (message: any) => {
 					cb();
 					analytics.event('RestoreFromBin', { count });
 				});
 				break;
+			};
 
-			case 'fav':
+			case 'fav': {
 				C.ObjectListSetIsFavorite(objectIds, true, () => {
 					cb();
 					analytics.event('AddToFavorites', { count });
 				});
 				break;
+			};
 
-			case 'unfav':
+			case 'unfav': {
 				C.ObjectListSetIsFavorite(objectIds, false, () => {
 					cb();
 					analytics.event('RemoveFromFavorites', { count });
 				});
 				break;
+			};
 
-			case 'unlink':
+			case 'unlink': {
 				C.ObjectCollectionRemove(targetId, objectIds, () => {
 					cb();
 					analytics.event('UnlinkFromCollection', { count });
 				});
 				break;
+			};
 
 		}
 		

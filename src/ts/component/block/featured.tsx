@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectType, Cell } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard } from 'Lib';
+import { I, C, UtilData, UtilCommon, UtilObject, Preview, focus, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
 import { blockStore, detailStore, dbStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -92,8 +92,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		let rl = relations.length;
 
 		if (tl) {
+			const pluralType = UtilCommon.cntWord(tl, translate('blockFeaturedType'), translate('blockFeaturedTypes'));
 			types = types.slice(0, SOURCE_LIMIT);
-			setOfString.push(`Object ${UtilCommon.cntWord(tl, 'type', 'types')}: ${types.join(', ')}`);
+			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), pluralType, types.join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
@@ -101,7 +102,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 		if (rl) {
 			relations = relations.slice(0, SOURCE_LIMIT);
-			setOfString.push(`${UtilCommon.cntWord(rl, 'Relation', 'Relations')}: ${relations.join(', ')}`);
+			setOfString.push(`${UtilCommon.cntWord(rl, translate('blockFeaturedRelation'), translate('blockFeaturedRelations'))}: ${relations.join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
@@ -137,7 +138,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									))}
 								</div>
 							) : (
-								<div className="empty">Query</div>
+								<div className="empty">{translate('blockFeaturedQuery')}</div>
 							)}
 						</div>
 					</span>
@@ -350,15 +351,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const options: any[] = [];
 
 		if (!type.isArchived && !typeIsDeleted) {
-			options.push({ id: 'open', name: 'Open type' });
+			options.push({ id: 'open', name: translate('blockFeaturedTypeMenuOpenType') });
 		};
 
 		if (!readonly && allowed) {
-			options.push({ id: 'change', name: 'Change type', arrow: true });
+			options.push({ id: 'change', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true });
 		};
 
 		if (!typeIsDeleted && (object.layout == I.ObjectLayout.Set)) {
-			options.push({ id: 'turnCollection', name: 'Turn set into collection' });
+			options.push({ id: 'turnCollection', name: translate('blockFeaturedTypeMenuTurnSetIntoCollection') });
 		};
 
 		const showMenu = () => {
@@ -386,13 +387,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			UtilData.checkSetCnt([ object.type ], (message: any) => {
 				if (message.records.length == 1) {
 					this.setId = message.records[0].id;
-					options.push({ id: 'setOpen', name: `Open set of ${type.name}` });
+					options.push({ id: 'setOpen', name: UtilCommon.sprintf(translate('blockFeaturedTypeMenuOpenSetOf'), type.name) });
 				} else
 				if (message.records.length == 2) {
-					options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
+					options.push({ id: 'setOpenMenu', name: translate('blockFeaturedTypeMenuOpenSet'), arrow: true });
 				} else
 				if (type && !type.isDeleted) {
-					options.push({ id: 'setCreate', name: `Create set of ${type.name}` });
+					options.push({ id: 'setCreate', name: UtilCommon.sprintf(translate('blockFeaturedTypeMenuCreateSetOf'), type.name) });
 				};
 
 				showMenu();
@@ -518,7 +519,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 					keyboard.disableClose(true);
 					UtilObject.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
-					window.setTimeout(() => { Preview.toastShow({ text: `${object.name} is collection now!` }); }, 200);
+					window.setTimeout(() => { Preview.toastShow({ text: UtilCommon.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
 
 					analytics.event('SetTurnIntoCollection');
 				});

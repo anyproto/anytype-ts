@@ -48,10 +48,10 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 	render () {
 		const { filter, loading } = this.state;
 		const tabs: any[] = [
-			{ id: Tab.Gallery, name: 'Gallery' },
-			{ id: Tab.Unsplash, name: 'Unsplash' },
-			{ id: Tab.Library, name: 'Library' },
-			{ id: Tab.Upload, name: 'Upload' },
+			{ id: Tab.Gallery, name: translate('menuBlockCoverGallery') },
+			{ id: Tab.Unsplash, name: translate('menuBlockCoverUnsplash') },
+			{ id: Tab.Library, name: translate('menuBlockCoverLibrary') },
+			{ id: Tab.Upload, name: translate('menuBlockCoverUpload') },
 		].filter(it => it);
 		const sections = this.getSections();
 
@@ -114,7 +114,7 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 						onClick={this.onUpload}
 					>
 						<Icon className="coverUpload" />
-						<Label text="Choose Image or <span>Drag it here</span>" />
+						<Label text={translate('menuBlockCoverChoose')} />
 					</div>
 				);
 				break;
@@ -329,8 +329,8 @@ const MenuBlockCover = observer(class MenuBlockCover extends React.Component<I.M
 		switch (this.tab) {
 			case Tab.Gallery: {
 				sections = sections.concat([
-					{ name: 'Gradients', children: UtilData.coverGradients() },
-					{ name: 'Solid colors', children: UtilData.coverColors() },
+					{ name: translate('menuBlockCoverGradients'), children: UtilData.coverGradients() },
+					{ name: translate('menuBlockCoverSolidColors'), children: UtilData.coverColors() },
 				]);
 				break;
 			};

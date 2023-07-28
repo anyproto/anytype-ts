@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Cell, Icon } from 'Component';
-import { I, UtilCommon, Relation, keyboard } from 'Lib';
+import { I, UtilCommon, Relation, keyboard, translate } from 'Lib';
 import { detailStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -48,7 +48,7 @@ const MenuItemRelationView = observer(class MenuItemRelationView extends React.C
 
 	render () {
 		const { rootId, block, id, relationKey, canEdit, canDrag, canFav, readonly, format, name, isHidden, isFeatured, classNameWrap, onEdit, onRef, onFav, onCellClick, onCellChange } = this.props;
-		const tooltip = isFeatured ? 'Remove from featured relations' : 'Add to featured relations';
+		const tooltip = translate(isFeatured ? 'menuItemRelationViewFeaturedRemove' : 'menuItemRelationViewFeaturedAdd');
 		const object = detailStore.get(rootId, rootId, [ relationKey ]);
 		const cellId = Relation.cellId(PREFIX, relationKey, '');
 		const value = object[relationKey];

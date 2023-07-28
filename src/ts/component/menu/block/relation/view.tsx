@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard } from 'Lib';
+import { I, C, UtilData, UtilCommon, UtilObject, Relation, analytics, keyboard, translate } from 'Lib';
 import { commonStore, blockStore, detailStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Item from 'Component/menu/item/relationView';
@@ -86,7 +86,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				<div className="line" />
 				<div className="info">
 					<Icon className="plus" />
-					<div className="name">New</div>
+					<div className="name">{translate('commonNew')}</div>
 				</div>
 			</div>
 		);
@@ -170,18 +170,18 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 
 		let sections = [ 
 			{ 
-				id: 'featured', name: 'Featured relations', 
+				id: 'featured', name: translate('menuBlockRelationViewFeaturedRelations'),
 				children: items.filter(it => featured.includes(it.relationKey)),
 			},
 			{ 
-				id: 'object', name: 'In this object', 
+				id: 'object', name: translate('menuBlockRelationViewInThisObject'),
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Object)),
 			},
 		];
 
 		if (type) {
 			sections.push({ 
-				id: 'type', name: `From type ${type.name}`,
+				id: 'type', name: UtilCommon.sprintf(translate('menuBlockRelationViewFromType'), type.name),
 				children: items.filter(it => !featured.includes(it.relationKey) && (it.scope == I.RelationScope.Type)),
 			});
 		};

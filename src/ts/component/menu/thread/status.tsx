@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { authStore } from 'Store';
-import { I, UtilCommon } from 'Lib';
+import { I, translate, UtilCommon } from 'Lib';
 
 class MenuThreadStatus extends React.Component<I.Menu> {
 
@@ -39,45 +39,45 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 		let cafeStatus = [];
 		if (cafe.lastPushSucceed) {
 			cafeStatus = [
-				{ key: 'This object is backed up', collapse: true },
-				{ key: 'Updates requested', value: cafe.lastPulled ? UtilCommon.timeAgo(cafe.lastPulled) : 'No interaction' }
+				{ key: translate('menuThreadStatusObjectBackedUp'), collapse: true },
+				{ key: translate('menuThreadStatusUpdatesRequested'), value: cafe.lastPulled ? UtilCommon.timeAgo(cafe.lastPulled) : translate('menuThreadStatusNoInteraction') }
 			];
 		} else {
 			cafeStatus = [
-				{ key: 'Some changes are not backed up', collapse: true },
-				{ key: 'Updates requested', value: cafe.lastPulled ?  UtilCommon.timeAgo(cafe.lastPulled) : 'No interaction' }
+				{ key: translate('menuThreadStatusSomeChangesNotBackedUp'), collapse: true },
+				{ key: translate('menuThreadStatusUpdatesRequested'), value: cafe.lastPulled ?  UtilCommon.timeAgo(cafe.lastPulled) : translate('menuThreadStatusNoInteraction') }
 			];
 		};
 
 		const fileStatus = [
-			{ key: 'Uploading', value: files.pinning },
-			{ key: 'Waiting for upload', value: files.failed },
-			{ key: 'Stored', value: files.pinned },
+			{ key: translate('menuThreadStatusUploading'), value: files.pinning },
+			{ key: translate('menuThreadStatusWaitingForUpload'), value: files.failed },
+			{ key: translate('menuThreadStatusStored'), value: files.pinned },
 		];
 
 		return isCafe ? (
 			<div className="items">
-				<Item name="Status" fields={cafeStatus} />
-				<Item name="Files" fields={fileStatus} />
+				<Item name={translate('menuThreadStatusStatus')} fields={cafeStatus} />
+				<Item name={translate('menuThreadStatusFiles')} fields={fileStatus} />
 			</div>
 		) : (
 			<React.Fragment>
 				<div className="section">
-					<div className="name">Direct interaction with my devices</div>
+					<div className="name">{translate('menuThreadStatusDirectInteractionTitle')}</div>
 					<div className="items">
 						{account.devices.map((item: any, i: number) => {
 							const fields = [
 								// {
-								// 	key: 'Direct interation status:',
-								// 	value: (item.online ? 'Online' : 'Offline'),
+								// 	key: translate('menuThreadStatusDirectInteractionStatus'),
+								// 	value: translate(item.online ? 'menuThreadStatusOnline' : 'menuThreadStatusOffline'),
 								// },
 								{
-									key: 'Updates requested',
-									value: (item.lastPulled ? UtilCommon.timeAgo(item.lastPulled) : 'No interaction'),
+									key: translate('menuThreadStatusUpdatesRequested'),
+									value: (item.lastPulled ? UtilCommon.timeAgo(item.lastPulled) : translate('menuThreadStatusNoInteraction')),
 								},
 								{
-									key: 'Last edits received',
-									value: (item.lastEdited ? UtilCommon.timeAgo(item.lastEdited) : 'No changes'),
+									key: translate('menuThreadStatusLastEditsReceived'),
+									value: (item.lastEdited ? UtilCommon.timeAgo(item.lastEdited) : translate('menuThreadStatusNoChanges')),
 								},
 							];
 							return <Item key={i} {...item} fields={fields} />;

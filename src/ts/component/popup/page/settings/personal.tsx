@@ -54,7 +54,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 						<Label text={translate('popupSettingsPersonalInterfaceLanguage')} />
 
 						<Select
-							id="spellcheck"
+							id="interfaceLang"
 							value={Storage.get('interfaceLang')}
 							options={interfaceLanguages}
 							onChange={v => {

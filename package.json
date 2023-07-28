@@ -550,7 +550,7 @@
 		}
 	},
 	"lint-staged": {
-		"./{src,electron}/**/*.{js,jsx,ts,tsx}": "eslint --fix"
+		"{src,electron}/*.{ts,tsx}": "npx tsc --noEmit -p tsconfig.json"
 	},
 	"husky": {
 		"hooks": {

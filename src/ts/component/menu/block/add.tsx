@@ -281,7 +281,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		const ret = relations.concat(typeRelations).filter(it => !config.debug.ho && it.isHidden ? false : it.isInstalled).sort(UtilData.sortByName);
 
-		ret.unshift({ id: 'add', name: 'New relation', isRelationAdd: true });
+		ret.unshift({ id: 'add', name: translate('menuBlockAddNewRelation'), isRelationAdd: true });
 
 		return ret.map(it => ({ ...it, type: I.BlockType.Relation, isRelation: true, isBlock: true }));
 	};
@@ -298,36 +298,36 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		};
 
 		let sections: any[] = [
-			{ id: 'text', name: 'Text', children: UtilMenu.getBlockText() },
-			{ id: 'list', name: 'List', children: UtilMenu.getBlockList() },
-			{ id: 'media', name: 'Media', children: UtilMenu.getBlockMedia() },
-			{ id: 'other', name: 'Other', children: UtilMenu.getBlockOther() },
-			{ id: 'object', name: 'Objects', children: UtilMenu.getBlockObject() },
+			{ id: 'text', name: translate('menuBlockAddSectionsText'), children: UtilMenu.getBlockText() },
+			{ id: 'list', name: translate('menuBlockAddSectionsList'), children: UtilMenu.getBlockList() },
+			{ id: 'media', name: translate('menuBlockAddSectionsMedia'), children: UtilMenu.getBlockMedia() },
+			{ id: 'other', name: translate('menuBlockAddSectionsOther'), children: UtilMenu.getBlockOther() },
+			{ id: 'object', name: translate('menuBlockAddSectionsObjects'), children: UtilMenu.getBlockObject() },
 		].map(s => ({ ...s, children: s.children.map(c => ({ ...c, isBig: true })) }));
 
 		sections = sections.concat([
-			{ id: 'relation', name: 'Relations', children: this.getRelations() },
+			{ id: 'relation', name: translate('menuBlockAddSectionsRelations'), children: this.getRelations() },
 		]);
 		
 		if (filter && filter.text) {
 			const actions = UtilMenu.getActions({ hasFile: false, hasLink: false });
 
 			if (block.canTurnPage()) {
-				actions.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+				actions.push({ id: 'turnObject', icon: 'object', name: translate('menuBlockActionsSectionsTurnIntoObject'), arrow: true });
 			};
 
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: 'Actions', color: '', children: actions },
+				{ id: 'action', icon: 'action', name: translate('menuBlockActionsSectionsActions'), color: '', children: actions },
 			]);
 
 			if (block.canHaveAlign()) {
-				sections.push({ id: 'align', icon: 'align', name: 'Align', color: '', children: UtilMenu.getAlign(block.isTextQuote()) });
+				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: UtilMenu.getAlign(block.isTextQuote()) });
 			};
 			if (block.canHaveColor()) {
-				sections.push({ id: 'color', icon: 'color', name: 'Text color', color: '', children: UtilMenu.getTextColors() });
+				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionsTextColor'), color: '', children: UtilMenu.getTextColors() });
 			};
 			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: 'bgColor', name: 'Background color', color: '', children: UtilMenu.getBgColors() });
+				sections.push({ id: 'bgColor', icon: 'bgColor', name: translate('menuBlockAddSectionsBackgroundColor'), color: '', children: UtilMenu.getBgColors() });
 			};
 			
 			sections = UtilMenu.sectionsFilter(sections, filter.text);
@@ -555,7 +555,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 				if (item.type == I.BlockType.Dataview) {
 					param.content.isCollection = item.itemId == 'collection';
 					param.content.views = [ 
-						{ type: I.ViewType.Grid, name: 'All' } 
+						{ type: I.ViewType.Grid, name: translate('commonAll') }
 					];
 				};
 

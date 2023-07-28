@@ -158,7 +158,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		let addParam: any = {};
 
 		if (isCollection) {
-			addParam.name = 'Create new collection';
+			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.onClick = () => {
 
 
@@ -172,7 +172,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
 		} else {
-			addParam.name = 'Create new set';
+			addParam.name = translate('blockDataviewCreateNewSet');
 			addParam.onClick = () => {
 				C.ObjectCreateSet([], {}, '', commonStore.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
