@@ -97,11 +97,11 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		};
 
 		if ([ Constant.typeId.type, Constant.typeId.relation ].includes(object.type)) {
-			let text = 'Create';
+			let text = translate('commonCreate');
 			let arrow = false;
 
 			if (object.type == Constant.typeId.relation) {
-				text = 'Create set';
+				text = translate('pageHeadSimpleCreateSet');
 			} else {
 				arrow = true;
 			};
@@ -120,7 +120,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 				cn.push('disabled');
 			};
 
-			button = <Button id="button-install" text="Install" color={color} className={cn.join(' ')} onClick={onClick} />;
+			button = <Button id="button-install" text={translate('pageHeadSimpleInstall')} color={color} className={cn.join(' ')} onClick={onClick} />;
 		};
 
 		return (

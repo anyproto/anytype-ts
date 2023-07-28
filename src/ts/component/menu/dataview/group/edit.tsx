@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, Dataview, UtilMenu, keyboard, Relation } from 'Lib';
+import { I, C, Dataview, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { MenuItemVertical } from 'Component';
 import { dbStore } from 'Store';
 
@@ -87,7 +87,7 @@ const MenuGroupEdit = observer(class MenuGroupEdit extends React.Component<I.Men
 		return [
 			{ 
 				children: [ 
-					{ id: 'hide', icon: 'hide', name: (this.isHidden ? 'Show column' : 'Hide column') } 
+					{ id: 'hide', icon: 'hide', name: translate(this.isHidden ? 'menuDataviewGroupEditShowColumn' : 'menuDataviewGroupEditHideColumn') }
 				]
 			},
 			{ children: colors },

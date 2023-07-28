@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilObject } from 'Lib';
+import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilObject, translate } from 'Lib';
 import { popupStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 
@@ -68,17 +68,17 @@ class MenuHelp extends React.Component<I.Menu> {
 		const btn = <Button className="c16" text={window.Electron.version.app} />;
 
 		return [
-			{ id: 'whatsNew', name: 'What\'s New', document: 'whatsNew', caption: btn },
-			{ id: 'shortcut', name: 'Keyboard Shortcuts', caption: 'Ctrl+Space' },
-			{ id: 'hints', name: 'Show Hints' },
+			{ id: 'whatsNew', name: translate('menuHelpWhatsNew'), document: 'whatsNew', caption: btn },
+			{ id: 'shortcut', name: translate('menuHelpKeyboardShortcuts'), caption: 'Ctrl+Space' },
+			{ id: 'hints', name: translate('menuHelpShowHints') },
 			{ isDiv: true },
-			{ id: 'community', name: 'Anytype Community' },
-			{ id: 'tutorial', name: 'Help and Tutorials' },
-			{ id: 'contact', name: 'Contact Us' },
-			{ id: 'tech', name: 'Technical Information' },
+			{ id: 'community', name: translate('menuHelpAnytypeCommunity') },
+			{ id: 'tutorial', name: translate('menuHelpHelpAndTutorials') },
+			{ id: 'contact', name: translate('menuHelpContactUs') },
+			{ id: 'tech', name: translate('menuHelpTechnicalInformation') },
 			{ isDiv: true },
-			{ id: 'terms', name: 'Terms of Use' },
-			{ id: 'privacy', name: 'Privacy Policy' },
+			{ id: 'terms', name: translate('menuHelpTermsOfUse') },
+			{ id: 'privacy', name: translate('menuHelpPrivacyPolicy') },
 		];
 	};
 
