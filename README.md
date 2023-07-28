@@ -2,6 +2,13 @@
 Official Anytype client for MacOS, Linux, and Windows.
 
 ## Building the source
+
+### Dependencies
+
+```shell
+apt-get install libsecret-1-dev
+```
+
 ### Installation
 
 ```shell
