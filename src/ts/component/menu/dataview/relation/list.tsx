@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, Switch } from 'Component';
-import { I, C, Relation, keyboard, Dataview } from 'Lib';
+import { I, C, Relation, keyboard, Dataview, translate } from 'Lib';
 import { menuStore, dbStore, blockStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -156,7 +156,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">Add relation</div>
+							<div className="name">{translate('menuDataviewRelationListAddRelation')}</div>
 						</div>
 					</div>
 				) : ''}

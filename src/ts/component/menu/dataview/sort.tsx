@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, Select } from 'Component';
-import { I, C, Relation, UtilCommon, keyboard, analytics } from 'Lib';
+import { I, C, Relation, UtilCommon, keyboard, analytics, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -45,8 +45,8 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 		const allowedView = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		
 		const typeOptions = [
-			{ id: String(I.SortType.Asc), name: 'Ascending' },
-			{ id: String(I.SortType.Desc), name: 'Descending' },
+			{ id: String(I.SortType.Asc), name: translate('commonAscending') },
+			{ id: String(I.SortType.Desc), name: translate('commonDescending') },
 		];
 		
 		const relationOptions = this.getRelationOptions();
@@ -113,7 +113,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 				<div className="items">
 					{!items.length ? (
 						<div className="item empty">
-							<div className="inner">No sorts applied to this view</div>
+							<div className="inner">{translate('menuDataviewSortNoSortsApplied')}</div>
 						</div>
 					) : (
 						<InfiniteLoader
@@ -175,7 +175,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">New sort</div>
+							<div className="name">{translate('menuDataviewSortNewSort')}</div>
 						</div> 
 					</div>
 				) : ''}

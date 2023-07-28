@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { blockStore } from 'Store';
-import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon } from 'Lib';
+import { I, keyboard, analytics, UtilData, UtilObject, UtilMenu, UtilCommon, translate } from 'Lib';
 import { detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -77,8 +77,8 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const allowedDetails = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const object = detailStore.get(rootId, rootId, [ 'layoutAlign' ]);
 		
-		let align = { id: 'align', name: 'Align', icon: [ 'align', UtilData.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
-		let resize = { id: 'resize', icon: 'resize', name: 'Set layout width' };
+		let align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(object.layoutAlign) ].join(' '), arrow: true };
+		let resize = { id: 'resize', icon: 'resize', name: translate('menuBlockLayoutSetLayoutWidth') };
 
 		if (!allowedDetails || (object.layout == I.ObjectLayout.Task)) {
 			align = null;
@@ -89,7 +89,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 
 		let sections = [];
 		if (allowedLayout) {
-			sections.push({ name: 'Choose layout type', children: UtilMenu.turnLayouts() });
+			sections.push({ name: translate('menuBlockLayoutChooseLayoutType'), children: UtilMenu.turnLayouts() });
 		};
 
 		sections.push({ 

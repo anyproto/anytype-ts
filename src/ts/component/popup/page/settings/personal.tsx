@@ -11,7 +11,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		super(props);
 
 		this.onType = this.onType.bind(this);
-	};
+	}
 
 	render () {
 		const { config } = commonStore;
@@ -69,7 +69,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 			</React.Fragment>
 		);
-	};
+	}
 
 	onType (e: any) {
 		const { getId } = this.props;
@@ -87,23 +87,23 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 				},
 			}
 		});
-	};
+	}
 
 	onTypeChange (id: string) {
 		commonStore.defaultTypeSet(id);
 
 		analytics.event('DefaultTypeChange', { objectType: id });
-	};
+	}
 
 	getInterfaceLanguages () {
 		const ret: any[] = [];
 
-		for (let id in Constant.interfaceLang) {
-			ret.push({ id, name: Constant.interfaceLang[id] })
-		};
+		for (const id in Constant.interfaceLang) {
+			ret.push({ id, name: Constant.interfaceLang[id] });
+		}
 
 		return ret;
-	};
+	}
 
 	getSpellinngLanguages () {
 		let ret: any[] = [];
@@ -113,7 +113,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		ret.unshift({ id: '', name: 'Disabled' });
 
 		return ret;
-	};
+	}
 
 });
 

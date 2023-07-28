@@ -265,10 +265,10 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			const sizeOption = Relation.getSizeOptions().find(it => it.id == cardSize);
 
 			settings = settings.concat([
-				{ id: 'coverRelationKey', name: 'Cover', caption: (coverOption ? coverOption.name : 'Select'), arrow: true },
-				{ id: 'cardSize', name: 'Card size', caption: (sizeOption ? sizeOption.name : 'Select'), arrow: true },
+				{ id: 'coverRelationKey', name: translate('menuDataviewViewEditCover'), caption: (coverOption ? coverOption.name : translate('commonSelect')), arrow: true },
+				{ id: 'cardSize', name: translate('menuDataviewViewEditCardSize'), caption: (sizeOption ? sizeOption.name : translate('commonSelect')), arrow: true },
 				{ 
-					id: 'coverFit', name: 'Fit media', withSwitch: true, switchValue: coverFit, 
+					id: 'coverFit', name: translate('menuDataviewViewEditFitMedia'), withSwitch: true, switchValue: coverFit,
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'coverFit', v); }
 				}
 			]);
@@ -278,34 +278,34 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			const groupOption = Relation.getGroupOption(rootId, blockId, groupRelationKey);
 
 			settings = settings.concat([
-				{ id: 'groupRelationKey', name: 'Group by', caption: (groupOption ? groupOption.name : 'Select'), arrow: true },
+				{ id: 'groupRelationKey', name: translate('menuDataviewViewEditGroupBy'), caption: (groupOption ? groupOption.name : translate('commonSelect')), arrow: true },
 				{ 
-					id: 'groupBackgroundColors', name: 'Color columns', withSwitch: true, switchValue: groupBackgroundColors, 
+					id: 'groupBackgroundColors', name: translate('menuDataviewViewEditColorColumns'), withSwitch: true, switchValue: groupBackgroundColors,
 					onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'groupBackgroundColors', v); }
 				},
 			]);
 		};
 
 		settings.push({
-			id: 'hideIcon', name: 'Show icon', withSwitch: true, switchValue: !hideIcon,
+			id: 'hideIcon', name: translate('menuDataviewViewEditShowIcon'), withSwitch: true, switchValue: !hideIcon,
 			onSwitch: (e: any, v: boolean) => { this.onSwitch(e, 'hideIcon', !v); }
 		});
 
 		if (isInline || (type == I.ViewType.Board)) {
 			const options = Relation.getPageLimitOptions(type);
-			settings.push({ id: 'pageLimit', name: 'Page limit', caption: (pageLimit || options[0].id), arrow: true });
+			settings.push({ id: 'pageLimit', name: translate('menuDataviewViewEditPageLimit'), caption: (pageLimit || options[0].id), arrow: true });
 		};
 
 		let sections: any[] = [
 			{ id: 'settings', name: '', children: settings },
-			{ id: 'type', name: 'View as', children: types }
+			{ id: 'type', name: translate('menuDataviewViewEditViewAs'), children: types }
 		];
 
 		if (id && !readonly) {
 			sections.push({
 				id: 'actions', children: [
-					{ id: 'copy', icon: 'copy', name: 'Duplicate view' },
-					(views.length > 1 ? { id: 'remove', icon: 'remove', name: 'Remove view' } : null),
+					{ id: 'copy', icon: 'copy', name: translate('menuDataviewViewEditDuplicateView') },
+					(views.length > 1 ? { id: 'remove', icon: 'remove', name: translate('menuDataviewViewEditRemoveView') } : null),
 				]
 			});
 		};

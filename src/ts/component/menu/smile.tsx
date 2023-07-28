@@ -10,7 +10,7 @@ import EmojiData from 'json/emoji.json';
 interface State {
 	filter: string;
 	page: number;
-};
+}
 
 const LIMIT_RECENT = 18;
 const LIMIT_ROW = 9;
@@ -52,7 +52,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.onScroll = this.onScroll.bind(this);
 		this.unbind = this.unbind.bind(this);
 		this.rebind = this.rebind.bind(this);
-	};
+	}
 	
 	render () {
 		const { filter } = this.state;
@@ -65,7 +65,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		if (!this.cache) {
 			return null;
-		};
+		}
 
 		const Item = (item: any) => {
 			const str = `:${item.itemId}::skin-${item.skin}:`;
@@ -186,7 +186,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				) : ''}
 			</div>
 		);
-	};
+	}
 	
 	componentDidMount () {
 		const { storageGet } = this.props;
@@ -194,9 +194,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.skin = Number(storageGet().skin) || 1;
 		this.aliases = {};
 
-		for (let k in EmojiData.aliases) {
+		for (const k in EmojiData.aliases) {
 			this.aliases[EmojiData.aliases[k]] = k;
-		};
+		}
 
 		if (!this.cache) {
 			const items = this.getItems();
@@ -206,16 +206,16 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				keyMapper: i => (items[i] || {}).id,
 			});
 			this.forceUpdate();
-		};
+		}
 
 		window.setTimeout(() => {
 			if (this.refFilter) {
 				this.refFilter.focus();
-			};
+			}
 		}, 15);
 
 		this.rebind();
-	};
+	}
 	
 	componentDidUpdate () {
 		const node = $(this.node);
@@ -223,10 +223,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		if (this.id) {
 			node.find(`#item-${this.id}`).addClass('active');
 			this.id = '';
-		};
+		}
 
 		this.groupCache = [];
-	};
+	}
 	
 	componentWillUnmount () {
 		const { param } = this.props;
@@ -243,17 +243,17 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		if (rebind) {
 			rebind();
-		};
-	};
+		}
+	}
 
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.onKeyDown(e));
-	};
+	}
 
 	unbind () {
 		$(window).off('keydown.menu');
-	};
+	}
 
 	checkRecent (sections: any[]) {
 		const { storageGet } = this.props;
@@ -263,18 +263,18 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			recent.forEach((el: any) => {
 				if (el.smile) {
 					el.id = el.smile;
-				};
+				}
 			});
 
 			sections.unshift({ id: ID_RECENT, name: translate('menuSmileRecent'), children: recent });
-		};
+		}
 
 		return sections;
-	};
+	}
 
 	getGroups () {
 		return this.checkRecent(EmojiData.categories.map(it => ({ id: it.id, name: it.name })));
-	};
+	}
 	
 	getSections () {
 		const { filter } = this.state;
@@ -298,29 +298,29 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				s.children = (s.children || []).filter(c => {
 					if (c.id.match(reg)) {
 						return true;
-					};
-					for (let w of c.keywords) {
+					}
+					for (const w of c.keywords) {
 						if (w.match(reg)) {
 							return true;
-						};
-					};
+						}
+					}
 					return false;
 				});
 				return s.children.length > 0;
 			});
-		};
+		}
 
 		sections = this.checkRecent(sections);
 		sections = UtilMenu.sectionsMap(sections);
 		
 		return sections;
-	};
+	}
 
 	getItems () {
 		let sections = this.getSections();
 		let items: any[] = [];
-		let ret: any[] = [];
-		let length = sections.reduce((res: number, section: any) => { 
+		const ret: any[] = [];
+		const length = sections.reduce((res: number, section: any) => { 
 			return (section.id == ID_RECENT) ? res : res + section.children.length; 
 		}, 0);
 
@@ -333,12 +333,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 					}, [])
 				}
 			];
-		};
+		}
 
-		for (let section of sections) {
+		for (const section of sections) {
 			items.push({ id: section.id, name: section.name, isSection: true });
 			items = items.concat(section.children);
-		};
+		}
 
 		let n = 0;
 		let row = { children: [] };
@@ -351,7 +351,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				ret.push(item);
 				n = 0;
 				continue;
-			};
+			}
 
 			row.children.push(item);
 
@@ -360,31 +360,31 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				ret.push(row);
 				row = { children: [] };
 				n = 0;
-			};
-		};
+			}
+		}
 
 		if (row.children.length < LIMIT_ROW) {
 			ret.push(row);
-		};
+		}
 
 		return ret;
-	};
+	}
 	
 	getRowHeight (item: any) {
 		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
-	};
+	}
 
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
 			this.setState({ page: 0, filter: UtilCommon.regexEscape(this.refFilter.getValue()) });
 		}, force ? 0 : 50);
-	};
+	}
 
 	onKeyDown (e: any) {
 		if (menuStore.isOpen('smileSkin')) {
 			return;
-		};
+		}
 
 		const { close } = this.props;
 
@@ -401,7 +401,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			if (this.refFilter.isFocused && this.refFilter.getValue().length) {
 				return;
-			};
+			}
 
 			e.preventDefault();
 			this.refFilter.blur();
@@ -414,13 +414,13 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			if (this.active) {
 				this.onSelect(this.active.itemId, this.skin);
 				close();
-			};
+			}
 		});
 
 		keyboard.shortcut('tab, space', e, () => {
 			if (this.refFilter.isFocused || !this.active) {
 				return;
-			};
+			}
 
 			e.preventDefault();
 
@@ -431,18 +431,18 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				close();
 			} else {
 				this.onSkin(e, this.active.id, this.active.itemId);
-			};
+			}
 
 			Preview.tooltipHide(true);
 		});
-	};
+	}
 
 	setActive (item?: any, row?: number) {
 		const node = $(this.node);
 
 		if (row) {
 			this.refList.scrollToRow(Math.max(0, row));
-		};
+		}
 
 		Preview.tooltipHide(false);
 		node.find('.active').removeClass('active');
@@ -458,8 +458,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				text: this.aliases[this.active.itemId] || this.active.itemId,
 				element: item,
 			});
-		};
-	};
+		}
+	}
 
 	onArrowVertical (dir: number) {
 		const rows = this.getItems();
@@ -469,31 +469,31 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		// Arrow up
 		if (this.row < 0) {
 			this.row = rows.length - 1;
-		};
+		}
 
 		// Arrow down
 		if (this.row > rows.length - 1) {
 			this.row = 0;
-		};
+		}
 
 		const current = rows[this.row];
 
 		if (!current.children) {
 			this.onArrowVertical(dir);
 			return;
-		};
+		}
 
 		if (this.n > current.children.length) {
 			this.n = 0;
-		};
+		}
 
 		this.setActive(current.children[this.n], this.row);
-	};
+	}
 
 	onArrowHorizontal (dir: number) {
 		if (this.row == -1) {
 			return;
-		};
+		}
 
 		this.n += dir;
 
@@ -505,24 +505,24 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			this.n = LIMIT_ROW - 1;
 			this.onArrowVertical(dir);
 			return;
-		};
+		}
 
 		// Arrow right
 		if (this.n > current.children.length - 1) {
 			this.n = 0;
 			this.onArrowVertical(dir);
 			return;
-		};
+		}
 
 		this.setActive(current.children[this.n], this.row);
-	};
+	}
 
 	onRandom () {
 		const param = UtilSmile.randomParam();
 
 		this.onSelect(param.id, param.skin);
 		this.forceUpdate();
-	};
+	}
 
 	onUpload () {
 		const { param, close } = this.props;
@@ -535,10 +535,10 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			C.FileUpload('', paths[0], I.FileType.Image, (message: any) => {
 				if (!message.error.code && onUpload) {
 					onUpload(message.hash);
-				};
+				}
 			});
 		});
-	};
+	}
 	
 	onSelect (id: string, skin: number) {
 		const { param, storageSet } = this.props;
@@ -552,25 +552,25 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		if (onSelect) {
 			onSelect(UtilSmile.nativeById(id, this.skin));
-		};
+		}
 
 		analytics.event(id ? 'SetIcon' : 'RemoveIcon');
-	};
+	}
 
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.row = item.position.row;
 			this.n = item.position.n;
 			this.setActive(item);
-		};
-	};
+		}
+	}
 
 	onMouseLeave () {
 		if (!keyboard.isMouseDisabled) {
 			this.setActive(null);
 			this.n = 0;
-		};
-	};
+		}
+	}
 	
 	onMouseDown (e: any, n: string, id: string, skin: number) {
 		const { close } = this.props;
@@ -582,27 +582,27 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		if (e.button) {
 			return;
-		};
+		}
 
 		if (item && item.skin_variations) {
 			this.timeoutMenu = window.setTimeout(() => {
 				win.off('mouseup.smile');
 				this.onSkin(e, n, id);
 			}, 200);
-		};
+		}
 		
 		win.off('mouseup.smile').on('mouseup.smile', () => {
 			if (menuStore.isOpen('smileSkin')) {
 				return;
-			};
+			}
 			if (this.id) {
 				this.onSelect(id, skin);
 				close();
-			};
+			}
 			window.clearTimeout(this.timeoutMenu);
-			win.off('mouseup.smile')
+			win.off('mouseup.smile');
 		});
-	};
+	}
 
 	onSkin (e: any, n: string, id: string) {
 		const { getId, close } = this.props;
@@ -610,7 +610,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		if (!item || !item.skin_variations) {
 			return;
-		};
+		}
 
 		menuStore.open('smileSkin', {
 			type: I.MenuType.Horizontal,
@@ -630,12 +630,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				this.id = '';
 			}
 		});
-	};
+	}
 	
 	setLastIds (id: string, skin: number) {
 		if (!id) {
 			return;
-		};
+		}
 
 		const { storageGet, storageSet } = this.props;
 		
@@ -660,12 +660,12 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		});
 
 		storageSet({ recent: ids });
-	};
+	}
 	
 	onRemove () {
 		this.onSelect('', 1);
 		this.props.close();
-	};
+	}
 
 	onGroup (id: string) {
 		const items = this.getItems();
@@ -674,14 +674,14 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.refList.scrollToRow(Math.max(0, idx));
 		this.row = Math.max(0, idx);
 		this.n = -1;
-	};
+	}
 
 	getGroupCache () {
 		if (this.groupCache.length) {
 			return this.groupCache;
-		};
+		}
 
-		let items = this.getItems();
+		const items = this.getItems();
 		let t = 0;
 		let last = null;
 
@@ -692,30 +692,30 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				last = this.groupCache[this.groupCache.length - 1];
 				if (last) {
 					last.end = t;
-				};
+				}
 
 				this.groupCache.push({ id: item.id, start: t, end: 0 });
-			};
+			}
 
 			t += this.getRowHeight(item);
-		};
+		}
 
 		last = this.groupCache[this.groupCache.length - 1];
 		if (last) {
 			last.end = t;
-		};
+		}
 		return this.groupCache;
-	};
+	}
 
 	onScroll ({ scrollTop }) {
 		const cache = this.getGroupCache();
-		for (let item of cache) {
+		for (const item of cache) {
 			if ((scrollTop >= item.start) && (scrollTop < item.end)) {
 				this.setActiveGroup(item.id);
 				break;
-			};
-		};
-	};
+			}
+		}
+	}
 
 	setActiveGroup (id: string) {
 		const node = $(this.node);
@@ -723,8 +723,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 		foot.find('.active').removeClass('active');
 		foot.find(`#item-${id}`).addClass('active');
-	};
+	}
 	
-};
+}
 
 export default MenuSmile;

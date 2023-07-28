@@ -9,7 +9,7 @@ class UtilMenu {
 		it.name = it.lang ? translate('blockName' + it.lang) : it.name;
 		it.description = it.lang ? translate('blockText' + it.lang) : it.description;
 		return it;
-	};
+	}
 	
 	getBlockText () {
 		return [
@@ -24,7 +24,7 @@ class UtilMenu {
 			it.icon = UtilData.blockTextClass(it.id);
 			return this.mapperBlock(it);
 		});
-	};
+	}
 	
 	getBlockList () {
 		return [
@@ -37,7 +37,7 @@ class UtilMenu {
 			it.icon = UtilData.blockTextClass(it.id);
 			return this.mapperBlock(it);
 		});
-	};
+	}
 
 	getBlockMedia () {
 		return [
@@ -50,16 +50,16 @@ class UtilMenu {
 			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code' },
 			{ type: I.BlockType.Latex, id: I.BlockType.Latex, icon: 'latex', lang: 'Latex' },
 		].map(this.mapperBlock);
-	};
+	}
 
 	getBlockObject () {
-		let ret: any[] = [
+		const ret: any[] = [
 			{ type: I.BlockType.Page, id: 'existing', icon: 'existing', lang: 'Existing', arrow: true },
 		];
 		let i = 0;
-		let items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
+		const items = UtilData.getObjectTypesForNewObject({ withSet: true, withCollection: true });
 
-		for (let type of items) {
+		for (const type of items) {
 			ret.push({ 
 				id: 'object' + i++, 
 				type: I.BlockType.Page, 
@@ -70,10 +70,10 @@ class UtilMenu {
 				isObject: true,
 				isHidden: type.isHidden,
 			});
-		};
+		}
 
 		return ret.map(this.mapperBlock);
-	};
+	}
 
 	getBlockOther () {
 		return [
@@ -84,7 +84,7 @@ class UtilMenu {
 			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
 			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: [ 'grid', 'table', 'gallery', 'list', 'board', 'kanban' ] },
 		].map(this.mapperBlock);
-	};
+	}
 
 	getTurnPage () {
 		const { config } = commonStore;
@@ -93,11 +93,11 @@ class UtilMenu {
 		let types = UtilData.getObjectTypesForNewObject(); 
 		if (!config.debug.ho) {
 			types = types.filter(it => !it.isHidden);
-		};
+		}
 		types.sort(UtilData.sortByName);
 
 		let i = 0;
-		for (let type of types) {
+		for (const type of types) {
 			ret.push({ 
 				type: I.BlockType.Page, 
 				id: 'object' + i++, 
@@ -108,24 +108,24 @@ class UtilMenu {
 				isObject: true,
 				isHidden: type.isHidden,
 			});
-		};
+		}
 
 		return ret;
-	};
+	}
 	
 	getTurnDiv () {
 		return [
 			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'div-line', lang: 'Line' },
 			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'dot', lang: 'Dot' },
 		].map(this.mapperBlock);
-	};
+	}
 
 	getTurnFile () {
 		return [
 			{ type: I.BlockType.File, id: I.FileStyle.Link, lang: 'Link' },
 			{ type: I.BlockType.File, id: I.FileStyle.Embed, lang: 'Embed' },
 		].map(this.mapperBlock);
-	};
+	}
 
 	// Action menu
 	getActions (param: any) {
@@ -140,25 +140,25 @@ class UtilMenu {
 
 		if (hasTurnObject) {
 			items.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
-		};
+		}
 		
 		if (hasText) {
 			items.push({ id: 'clear', icon: 'clear', name: 'Clear style' });
-		};
+		}
 		
 		if (hasFile) {
 			items.push({ id: 'download', icon: 'download', name: 'Download' });
 			items.push({ id: 'openFileAsObject', icon: 'expand', name: translate('commonOpenObject') });
 			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
 			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
-		};
+		}
 
 		if (hasBookmark) {
 			items.push({ id: 'openBookmarkAsObject', icon: 'expand', name: translate('commonOpenObject') });
-		};
+		}
 
 		return items.map(it => ({ ...it, isAction: true }));
-	};
+	}
 
 	getDataviewActions (rootId: string, blockId: string) {
 		const isCollection = Dataview.isCollection(rootId, blockId);
@@ -169,7 +169,7 @@ class UtilMenu {
 			{ id: 'openDataviewObject', icon: 'expand', name: `Open source ${sourceName}` },
 			//{ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' }
 		].map(it => ({ ...it, isAction: true }));
-	};
+	}
 	
 	getTextColors () {
 		const items: any[] = [
@@ -177,19 +177,19 @@ class UtilMenu {
 		];
 		for (const color of Constant.textColor) {
 			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
-		};
+		}
 		return items;
-	};
+	}
 	
 	getBgColors () {
-		let items: any[] = [
+		const items: any[] = [
 			{ id: 'bgColor-default', name: 'Default', value: '', className: 'default', isBgColor: true }
 		];
-		for (let color of Constant.textColor) {
+		for (const color of Constant.textColor) {
 			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
-		};
+		}
 		return items;
-	};
+	}
 	
 	getAlign (hasQuote: boolean) {
 		let ret = [
@@ -200,10 +200,10 @@ class UtilMenu {
 
 		if (hasQuote) {
 			ret = ret.filter(it => it.id != I.BlockHAlign.Center);
-		};
+		}
 
 		return ret;
-	};
+	}
 
 	getLayouts () {
 		return [
@@ -221,12 +221,12 @@ class UtilMenu {
 			icon: 'layout c-' + I.ObjectLayout[it.id].toLowerCase(),
 			name: translate('layout' + it.id),
 		}));
-	};
+	}
 
 	turnLayouts () {
 		const allowed = [ I.ObjectLayout.Page, I.ObjectLayout.Human, I.ObjectLayout.Task, I.ObjectLayout.Note ];
 		return this.getLayouts().filter(it => allowed.includes(it.id));
-	};
+	}
 
 	getViews () {
 		return [
@@ -238,7 +238,7 @@ class UtilMenu {
 			it.name = translate('viewName' + it.id);
 			return it;
 		});
-	};
+	}
 
 	getRelationTypes () {
 		return [
@@ -258,7 +258,7 @@ class UtilMenu {
 			it.icon = 'relation ' + Relation.className(it.id);
 			return it;
 		});
-	};
+	}
 
 	getWidgetLimits (layout: I.WidgetLayout) {
 		let options = [];
@@ -266,15 +266,15 @@ class UtilMenu {
 			default: {
 				options = [ 6, 10, 14 ];
 				break;
-			};
+			}
 
 			case I.WidgetLayout.List: {
 				options = [ 4, 6, 8 ];
 				break;
-			};
-		};
+			}
+		}
 		return options.map(id => ({ id: String(id), name: id }));
-	};
+	}
 	
 	sectionsFilter (sections: any[], filter: string) {
 		const f = UtilCommon.regexEscape(filter);
@@ -290,14 +290,14 @@ class UtilMenu {
 			} else 
 			if (s.match(regC)) {
 				w = 100;
-			};
+			}
 			return w;
 		};
 		
 		sections = sections.filter((s: any) => {
 			if (s.name.match(regC)) {
 				return true;
-			};
+			}
 			s._sortWeight_ = 0;
 			s.children = (s.children || []).filter((c: any) => { 
 
@@ -311,8 +311,8 @@ class UtilMenu {
 						c.name = `Table ${c.rowCnt}x${c.columnCnt}`;
 
 						ret = true;
-					};
-				};
+					}
+				}
 
 				c._sortWeight_ = 0;
 				if (c.skipFilter) {
@@ -327,13 +327,13 @@ class UtilMenu {
 					c._sortWeight_ = getWeight(c.description);
 				} else
 				if (c.aliases && c.aliases.length) {
-					for (let alias of c.aliases) {
+					for (const alias of c.aliases) {
 						if (alias.match(regC)) {
 							ret = true;
 							break;
-						};
-					};
-				};
+						}
+					}
+				}
 				s._sortWeight_ += c._sortWeight_;
 				return ret; 
 			});
@@ -343,7 +343,7 @@ class UtilMenu {
 
 		sections = sections.sort((c1: any, c2: any) => UtilData.sortByWeight(c1, c2));
 		return sections;
-	};
+	}
 	
 	sectionsMap (sections: any[]) {
 		sections = UtilCommon.objectCopy(sections);
@@ -364,7 +364,7 @@ class UtilMenu {
 		});
 
 		return UtilCommon.arrayUniqueObjects(sections, 'id');
-	};
+	}
 
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { workspace } = commonStore;
@@ -373,19 +373,19 @@ class UtilMenu {
 			C.ObjectWorkspaceSetDashboard(workspace, object.id, (message: any) => {
 				if (message.error.code) {
 					return;
-				};
+				}
 
 				detailStore.update(Constant.subId.space, { id: workspace, details: { spaceDashboardId: object.id } }, false);
 
 				if (update) {
 					detailStore.update(Constant.subId.space, { id: object.id, details: object }, false);
-				};
+				}
 
 				menuStore.closeAll();
 
 				if (openRoute) {
 					UtilObject.openHome('route');
-				};
+				}
 			});
 		};
 
@@ -407,12 +407,12 @@ class UtilMenu {
 				onOver: (e: any, item: any) => {
 					if (!menuContext) {
 						return;
-					};
+					}
 
 					if (!item.arrow) {
 						menuStore.closeAll([ 'searchObject' ]);
 						return;
-					};
+					}
 
 					switch (item.id) {
 						case I.HomePredefinedId.Existing: {
@@ -430,26 +430,26 @@ class UtilMenu {
 								}
 							});
 							break;
-						};
-					};
+						}
+					}
 				},
 				onSelect: (e, item: any) => {
 					if (item.arrow) {
 						return;
-					};
+					}
 
 					switch (item.id) {
 						case I.HomePredefinedId.Graph:
 						case I.HomePredefinedId.Last: {
 							onSelect({ id: item.id }, false);
 							break;
-						};
-					};
+						}
+					}
 				},
 			}
 		});
-	};
+	}
 
-};
+}
 
 export default new UtilMenu();

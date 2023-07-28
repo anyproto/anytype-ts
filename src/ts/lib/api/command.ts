@@ -182,7 +182,7 @@ const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition
 const FileUpload = (url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
-	};
+	}
 
 	const request = new Rpc.File.Upload.Request();
 
@@ -1057,11 +1057,11 @@ const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (mes
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, '', message.objectView);
-		};
+		}
 
 		if (callBack) {
 			callBack(message);
-		};
+		}
 	});
 };
 
@@ -1188,17 +1188,17 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
-		};
+		}
 
 		// Save last opened object
 		const object = detailStore.get(objectId, objectId, []);
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
 			Storage.set('lastOpened', { id: object.id, layout: object.layout });
-		};
+		}
 
 		if (callBack) {
 			callBack(message);
-		};
+		}
 	});
 };
 
@@ -1211,11 +1211,11 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
-		};
+		}
 
 		if (callBack) {
 			callBack(message);
-		};
+		}
 	});
 };
 
@@ -1303,7 +1303,7 @@ const ObjectImport = (options: any, snapshots: any[], existing: boolean, type: I
 			request.setPbparams(params);
 			break;
 
-	};
+	}
 
 	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));
 	request.setUpdateexistingobjects(existing);
