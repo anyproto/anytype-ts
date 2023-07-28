@@ -29,7 +29,7 @@ class MenuManager {
 			{
 				label: 'Anytype',
 				submenu: [
-					{ label: translate('electronMenuAbout'), click: () => WindowManager.createAbout() },
+					{ label: Util.translate('electronMenuAbout'), click: () => WindowManager.createAbout() },
 
 					Separator,
 
