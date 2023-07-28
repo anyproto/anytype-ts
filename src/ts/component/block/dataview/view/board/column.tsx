@@ -92,7 +92,7 @@ const Column = observer(class Column extends React.Component<Props> {
 						</div>
 
 						<div className="side right">
-							<Icon id={`button-${id}-more`} className="more" tooltip={translate('blockDataviewBoardculmnSettings')} onClick={this.onMore} />
+							<Icon id={`button-${id}-more`} className="more" tooltip={translate('blockDataviewBoardColumnSettings')} onClick={this.onMore} />
 							<Icon className="add" tooltip={translate('blockDataviewCreateNew')} onClick={this.onAdd} />
 						</div>
 					</div>

@@ -53,7 +53,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			footer = (
 				<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
 					<Icon className="gear" />
-					Account data location
+					{translate('pageAuthOnboardAccountDataLocation')}
 				</div>
 			);
 		};
@@ -109,7 +109,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<Input
 						focusOnMount
 						type="text"
-						placeholder="Enter your name"
+						placeholder={translate('pageAuthOnboardEnterYourName')}
 						value={authStore.name}
 						onKeyUp={(e, v) => authStore.nameSet(v)}
 						maxLength={255}
@@ -147,7 +147,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					<div className="space">
 						<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={64} />
-						<span className="spaceName">Personal Space</span>
+						<span className="spaceName">{translate('pageAuthOnboardPersonalSpace')}</span>
 					</div>
 				</section>
 			);
@@ -176,7 +176,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (stage == Stage.Phrase) {
-			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>More info</div>;
+			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>{translate('pageAuthOnboardMoreInfo')}</div>;
 		};
 
 		if (!this.canMoveForward()) {
@@ -222,20 +222,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	rebind () {
 		const node = $(this.node);
-		const questionPhrase = node.find('#questionMarkPhrase');
-		const questionAccount = node.find('#questionMarkAccount');
+		const question = node.find('.questionMark');
 
 		this.unbind();
 
 		$(window).on('keydown.onboarding', (e) => this.onKeyDown(e));
 
-		questionPhrase.off('mouseenter mouseleave');
-		questionPhrase.on('mouseenter', () => this.onPhraseTooltip());
-		questionPhrase.on('mouseleave', () => Preview.tooltipHide());
-
-		questionAccount.off('mouseenter mouseleave');
-		questionAccount.on('mouseenter', () => this.onAccountTooltip());
-		questionAccount.on('mouseleave', () => Preview.tooltipHide());
+		question.off('mouseenter mouseleave');
+		question.on('mouseenter', () => this.onPhraseTooltip());
+		question.on('mouseleave', () => Preview.tooltipHide());
 	};
 
 	getText = (name: string) => {
@@ -443,26 +438,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip = () => {
 		const node = $(this.node);
-		const element = node.find('#questionMarkPhrase');
+		const label = node.find('#label');
 
 		Preview.tooltipShow({
 			delay: 150,
 			text: translate('authOnboardPhraseTooltip'),
-			element,
+			element: label,
 			typeY: I.MenuDirection.Bottom,
-			typeX: I.MenuDirection.Center,
-		});
-	};
-
-	onAccountTooltip = () => {
-		const node = $(this.node);
-		const element = node.find('#questionMarkAccount');
-
-		Preview.tooltipShow({
-			delay: 150,
-			text: translate('authOnboardAccountTooltip'),
-			element,
-			typeY: I.MenuDirection.Top,
 			typeX: I.MenuDirection.Center,
 		});
 	};

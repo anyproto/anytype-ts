@@ -49,10 +49,7 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		}
 	}
 
-	.tooltip { 
-		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: $colorSecondary; box-shadow: $shadow !important; @include text-common; 
-		white-space: normal;
-	}
+	.tooltip { padding: 12px 16px; background: $colorPopUp !important; color: $colorSecondary; box-shadow: $shadow !important; @include text-common; }
 	.tooltip {
 		.txt { line-height: 22px; }
 		b { display: block; font-weight: 500; color: $colorPrimary; }

@@ -47,8 +47,8 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const relationOptions = this.getRelationOptions();
 		const conditionOptions = Relation.filterConditionsByType(relation.format);
 		const checkboxOptions: I.Option[] = [
-			{ id: '1', name: 'Checked' },
-			{ id: '0', name: 'Unchecked' },
+			{ id: '1', name: translate('menuDataviewFilterValuesChecked') },
+			{ id: '0', name: translate('menuDataviewFilterValuesUnchecked') },
 		];
 		const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 		const conditionOption: any = conditionOptions.find(it => it.id == item.condition) || {};
@@ -70,7 +70,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 				}}
 			>
 				<Icon className="plus" />
-				<div className="name">Add</div>
+				<div className="name">{translate('commonAdd')}</div>
 			</div>
 		);
 

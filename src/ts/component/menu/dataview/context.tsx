@@ -55,7 +55,7 @@ class MenuContext extends React.Component<I.Menu> {
 						))}
 					</React.Fragment>
 				) : (
-					<div className="item empty">No available actions</div>
+					<div className="item empty">{translate('menuDataviewContextNoAvailableActions')}</div>
 				)}
 			</div>
 		);
@@ -85,10 +85,9 @@ class MenuContext extends React.Component<I.Menu> {
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
 
-		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
+		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
-		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
-		let changeType = { id: 'changeType', icon: 'pencil', name: 'Change type', arrow: true };
+		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -102,7 +101,7 @@ class MenuContext extends React.Component<I.Menu> {
 
 		if (isCollection) {
 			div = { isDiv: true };
-			unlink = { id: 'unlink', icon: 'unlink', name: 'Unlink from collection' };
+			unlink = { id: 'unlink', icon: 'unlink', name: translate('menuDataviewContextUnlinkFromCollection') };
 		};
 
 		objectIds.forEach((it: string) => {
@@ -133,9 +132,9 @@ class MenuContext extends React.Component<I.Menu> {
 		});
 
 		if (favCnt == length) {
-			fav = { id: 'unfav', name: 'Remove from Favorites' };
+			fav = { id: 'unfav', name: translate('commonRemoveFromFavorites') };
 		} else {
-			fav = { id: 'fav', name: 'Add to Favorites' };
+			fav = { id: 'fav', name: translate('commonAddToFavorites') };
 		};
 
 		if (length > 1) {
@@ -147,9 +146,9 @@ class MenuContext extends React.Component<I.Menu> {
 			open = null;
 			linkTo = null;
 			unlink = null;
-			archive = { id: 'unarchive', icon: 'restore', name: 'Restore from bin' };
+			archive = { id: 'unarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
-			archive = { id: 'archive', icon: 'remove', name: 'Move to bin' };
+			archive = { id: 'archive', icon: 'remove', name: translate('commonMoveToBin') };
 		};
 
 		if (!allowedArchive)	 archive = null;
@@ -157,7 +156,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, changeType, linkTo, div, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, linkTo, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -213,21 +212,7 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		switch (item.id) {
-			case 'changeType':
-				menuId = 'typeSuggest';
-				menuParam.data = Object.assign(menuParam.data, {
-					filter: '',
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
-					],
-					onClick: (item: any) => {
-						C.ObjectListSetObjectType(objectIds, item.id);
-						close();
-					}
-				});
-				break;
-
-			case 'linkTo': {
+			case 'linkTo':
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
@@ -251,7 +236,6 @@ class MenuContext extends React.Component<I.Menu> {
 					}
 				});
 				break;
-			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {

@@ -645,7 +645,7 @@ class UtilCommon {
 		return ret;
 	};
 	
-	regexEscape (v: string) {
+	filterFix (v: string) {
 		return String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	};
 

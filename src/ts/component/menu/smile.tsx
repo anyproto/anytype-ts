@@ -377,7 +377,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ page: 0, filter: UtilCommon.regexEscape(this.refFilter.getValue()) });
+			this.setState({ page: 0, filter: UtilCommon.filterFix(this.refFilter.getValue()) });
 		}, force ? 0 : 50);
 	};
 

@@ -316,13 +316,7 @@
 
 	"interfaceLang": {
 		"en-US": "English (United States)",
-		"de-DE": "Deutsch (Deutschland)",
-		"es-ES": "Spanish",
-		"fr-FR": "French",
-		"it-IT": "Italian",
-		"pt-BR": "Portugese (Brazil)",
-		"pt-PT": "Portugese (Portugal)",
-		"zh-CN": "Chinese"
+		"de-DE": "Deutsch (Deutschland)"
 	},
 
 	"spellingLang": {
