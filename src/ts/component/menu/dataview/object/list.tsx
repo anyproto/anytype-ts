@@ -242,7 +242,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (ret.length) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
+			ret.push({ id: 'add', name: `Create object "${data.filter}"` });
 		};
 
 		return ret;

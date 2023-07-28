@@ -3,7 +3,7 @@ import $ from 'jquery';
 import * as Docs from 'Docs';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
+import { I, Onboarding, UtilCommon, analytics, keyboard, UtilObject } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -39,10 +39,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		let buttons = [];
 
 		if (!item.noButton) {
-			let buttonText = translate('commonNext');
+			let buttonText = 'Next';
 
 			if (current == l - 1) {
-				buttonText = translate('commonFinish');
+				buttonText = 'Finish';
 			};
 
 			if (item.buttonText) {
@@ -325,9 +325,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		popupStore.open('confirm', {
 			data: {
-				title: translate('commonError'),
+				title: 'Error',
 				text: error.description,
-				textConfirm: translate('commonOk'),
+				textConfirm: 'Ok',
 				canCancel: false,
 			},
 		});

@@ -9,7 +9,7 @@ import Constant from 'json/constant.json';
 
 interface State {
 	loading: boolean;
-}
+};
 
 const HEIGHT_SECTION = 26;
 const HEIGHT_ITEM = 48;
@@ -42,7 +42,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.onFilterClear = this.onFilterClear.bind(this);
 		this.filterMapper = this.filterMapper.bind(this);
 		this.loadMoreRows = this.loadMoreRows.bind(this);
-	}
+	};
 	
 	render () {
 		const { loading } = this.state;
@@ -63,7 +63,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				let caption = '';
 				if (item.shortcut) {
 					caption = item.shortcut.map(it => <div className="key">{it}</div>).join('');
-				}
+				};
 
 				content = (
 					<React.Fragment>
@@ -76,7 +76,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						</div>
 					</React.Fragment>
 				);
-			}
+			};
 
 			return (
 				<div 
@@ -102,7 +102,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 						<Item {...item} index={index} />
 					</div>
 				);
-			}
+			};
 
 			return (
 				<CellMeasurer
@@ -171,7 +171,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				) : ''}
 			</div>
 		);
-	}
+	};
 	
 	componentDidMount () {
 		this._isMounted = true;
@@ -182,7 +182,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.resize();
 
 		focus.clear(true);
-	}
+	};
 	
 	componentDidUpdate () {
 		const items = this.getItems();
@@ -195,7 +195,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.filter = filter;
 			this.load(true);
 			return;
-		}
+		};
 
 		this.resize();
 		this.setActive(items[this.n]);
@@ -209,40 +209,40 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		if (this.refFilter && (this.n == -1)) {
 			this.refFilter.focus();
-		}
+		};
 		if (this.refList && this.top) {
 			this.refList.scrollToPosition(this.top);
-		}
-	}
+		};
+	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
 
 		window.clearTimeout(this.timeout);
-	}
+	};
 
 	rebind () {
 		if (!this._isMounted) {
 			return;
-		}
+		};
 		
 		this.unbind();
 		
 		const win = $(window);
 		win.on('keydown.search', (e: any) => { this.onKeyDown(e); });
 		win.on('resize.search', (e: any) => { this.resize(); });
-	}
+	};
 
 	unbind () {
 		$(window).off('keydown.search resize.search');
-	}
+	};
 	
 	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
-		}
-	}
+		};
+	};
 
 	onKeyDown (e: any) {
 		const items = this.getItems();
@@ -251,7 +251,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		if ((k != Key.down) && (this.n == -1)) {
 			return;
-		}
+		};
 
 		keyboard.disableMouse(true);
 
@@ -263,21 +263,21 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			const item = items[this.n];
 			if (item) {
 				this.onClick(e, item);
-			}
+			};
 		});
-	}
+	};
 
 	onArrow (dir: number) {
 		if (!this.refList) {
 			return;
-		}
+		};
 
 		const items = this.getItems();
 		const l = items.length;
 
 		if ((dir > 0) && (this.n == -1)) {
 			this.refFilter.blur();
-		}
+		};
 
 		this.n += dir;
 
@@ -287,50 +287,50 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			this.refList.scrollToRow(0);
 			this.unsetActive();
 			return;
-		}
+		};
 
 		const item = items[this.n];
 		if (item.isSection) {
 			this.onArrow(dir);
 			return;
-		}
+		};
 
 		this.refList.scrollToRow(Math.max(0, this.n));
 		this.setActive(item);
-	}
+	};
 
 	setActive (item: any) {
 		if (!item) {
 			return;
-		}
+		};
 
 		this.n = this.getItems().findIndex(it => it.id == item.id);
 		this.unsetActive();
 
 		const node = $(this.node);
 		node.find(`#item-${item.id}`).addClass('active');
-	}
+	};
 
 	unsetActive () {
 		const node = $(this.node);
 		node.find('.item.active').removeClass('active');
-	}
+	};
 
 	onFilterChange () {
 		window.clearTimeout(this.timeout);
 		this.timeout = window.setTimeout(() => this.forceUpdate(), 500);
-	}
+	};
 
 	onFilterClear () {
 		this.forceUpdate();
-	}
+	};
 
 	loadMoreRows ({ startIndex, stopIndex }) {
         return new Promise((resolve, reject) => {
 			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
-	}
+	};
 
 	load (clear: boolean, callBack?: (value: any) => void) {
 		const filter = this.getFilter();
@@ -345,7 +345,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		if (clear) {
 			this.setState({ loading: true });
-		}
+		};
 
 		UtilData.search({
 			filters,
@@ -357,15 +357,15 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			if (message.error.code) {
 				this.setState({ loading: false });
 				return;
-			}
+			};
 
 			if (callBack) {
 				callBack(null);
-			}
+			};
 
 			if (clear) {
 				this.items = [];
-			}
+			};
 
 			this.items = this.items.concat(message.records || []);
 
@@ -373,9 +373,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				this.setState({ loading: false });
 			} else {
 				this.forceUpdate();
-			}
+			};
 		});
-	}
+	};
 
 	getItems () {
 		const cmd = keyboard.cmdSymbol();
@@ -384,7 +384,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		let items = this.items.filter(this.filterMapper);
 		if (items.length) {
 			items.unshift({ name: 'Recent objects', isSection: true });
-		}
+		};
 
 		items = items.map(it => {
 			const type = dbStore.getType(it.type);
@@ -393,43 +393,43 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				...it,
 				caption: !type || type.isDeleted ? translate('commonDeletedType') : type.name,
 				isObject: true,
-			};
+			}
 		});
 
 		items.push({ id: 'add', name: 'Create object', icon: 'plus', shortcut: [ cmd, 'N' ] });
 		if (hasRelations) {
 			items.push({ id: 'relation', name: 'Add relation', icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
-		}
+		};
 		return items;
-	}
+	};
 
 	filterMapper (it: any) {
 		if (it.isSection) {
 			return true;
-		}
+		};
 
 		const { config } = commonStore;
 		if (!config.debug.ho && it.isHidden) {
 			return false;
-		}
+		};
 		return true;
-	}
+	};
 
 	onOver (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.n = item.index;
 			this.setActive(item);
-		}
-	}
+		};
+	};
 
 	onClick (e: any, item: any) {
 		if (!item) {
 			return;
-		}
+		};
 
 		if (e.persist) {
 			e.persist();
-		}
+		};
 
 		e.stopPropagation();
 		this.props.close();
@@ -444,29 +444,29 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				case 'add': {
 					keyboard.pageCreate();
 					break;
-				}
+				};
 
 				case 'relation': {
 					$('#button-header-relation').trigger('click');
 					window.setTimeout(() => { $('#menuBlockRelationView #item-add').trigger('click'); }, Constant.delay.menu * 2);
 					break;
-				}
-			}
-		}
-	}
+				};
+			};
+		};
+	};
 
 	getRowHeight (item: any) {
 		return item.isSection ? HEIGHT_SECTION : HEIGHT_ITEM;
-	}
+	};
 
 	getFilter () {
 		return this.refFilter ? this.refFilter.getValue() : '';
-	}
+	};
 
 	resize () {
 		if (!this._isMounted) {
 			return;
-		}
+		};
 
 		const { getId, position } = this.props;
 		const obj = $(`#${getId()}-innerWrap`);
@@ -476,7 +476,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		content.css({ height });
 		position();
-	}
+	};
 
 });
 

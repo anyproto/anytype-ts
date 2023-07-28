@@ -4,7 +4,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon } from 'Component';
-import { I, C, keyboard, focus, UtilCommon, Mark, Action, translate } from 'Lib';
+import { I, C, keyboard, focus, UtilCommon, Mark, Action } from 'Lib';
 import { menuStore, blockStore } from 'Store';
 import Row from './table/row';
 import Constant from 'json/constant.json';
@@ -212,7 +212,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 			case I.BlockType.TableColumn: {
 				options = options.concat([
-					{ id: 'sort', icon: 'sort', name: translate('commonSort'), arrow: true },
+					{ id: 'sort', icon: 'sort', name: 'Sort', arrow: true },
 					{ isDiv: true },
 				]);
 				options = options.concat(this.optionsColumn(columnId));
@@ -223,8 +223,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 			default: {
 				options = options.concat([
-					{ id: 'row', name: translate('blockTableRow'), arrow: true },
-					{ id: 'column', name: translate('blockTableColumn'), arrow: true },
+					{ id: 'row', name: 'Row', arrow: true },
+					{ id: 'column', name: 'Column', arrow: true },
 					{ isDiv: true },
 				]);
 				options = options.concat(this.optionsColor(cellId));
@@ -1224,7 +1224,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let options: any[] = [
 			{ 
-				id: 'rowHeader', icon: 'table-header-row', name: translate('blockTableHeaderRow'), withSwitch: true, switchValue: isHeader,
+				id: 'rowHeader', icon: 'table-header-row', name: 'Header row', withSwitch: true, switchValue: isHeader,
 				onSwitch: (e: any, v: boolean, callBack?: () => void) => { 
 					C.BlockTableRowSetHeader(rootId, id, v, (message: any) => {
 						this.frames.forEach((it: any) => {
@@ -1242,18 +1242,18 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		if (!isHeader) {
 			options = options.concat([
-				{ id: 'rowBefore', icon: 'table-insert-top', name: translate('blockTableOptionsRowRowBefore') },
-				{ id: 'rowAfter', icon: 'table-insert-bottom', name: translate('blockTableOptionsRowRowAfter') },
-				(idx > 0) ? { id: 'rowMoveTop', icon: 'table-move-top', name: translate('blockTableOptionsRowRowMoveTop') } : null,
-				(idx < length - 1) ? { id: 'rowMoveBottom', icon: 'table-move-bottom', name: translate('blockTableOptionsRowRowMoveBottom') } : null,
-				{ id: 'rowCopy', icon: 'copy', name: translate('commonDuplicate') },
+				{ id: 'rowBefore', icon: 'table-insert-top', name: 'Insert above' },
+				{ id: 'rowAfter', icon: 'table-insert-bottom', name: 'Insert below' },
+				(idx > 0) ? { id: 'rowMoveTop', icon: 'table-move-top', name: 'Move up' } : null,
+				(idx < length - 1) ? { id: 'rowMoveBottom', icon: 'table-move-bottom', name: 'Move down' } : null,
+				{ id: 'rowCopy', icon: 'copy', name: 'Duplicate' },
 				{ isDiv: true },
 			]);
 		};
 
 		options = options.concat([
-			{ id: 'clearContent', icon: 'clear', name: translate('blockTableOptionsClearContent') },
-			(length > 1) ? { id: 'rowRemove', icon: 'remove', name: translate('blockTableOptionsRowRowRemove') } : null,
+			{ id: 'clearContent', icon: 'clear', name: 'Clear content' },
+			(length > 1) ? { id: 'rowRemove', icon: 'remove', name: 'Delete row' } : null,
 			!isInner ? { isDiv: true } : null,
 		]);
 
@@ -1265,14 +1265,14 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const idx = columns.findIndex(it => it.id == id);
 		const length = columns.length;
 		const options: any[] = [
-			{ id: 'columnBefore', icon: 'table-insert-left', name: translate('blockTableOptionsColumnColumnBefore') },
-			{ id: 'columnAfter', icon: 'table-insert-right', name: translate('blockTableOptionsColumnColumnAfter') },
-			(idx > 0) ? { id: 'columnMoveLeft', icon: 'table-move-left', name: translate('blockTableOptionsColumnColumnMoveLeft') } : null,
-			(idx < length - 1) ? { id: 'columnMoveRight', icon: 'table-move-right', name: translate('blockTableOptionsColumnColumnMoveRight') } : null,
-			{ id: 'columnCopy', icon: 'copy', name: translate('commonDuplicate') },
+			{ id: 'columnBefore', icon: 'table-insert-left', name: 'Insert left' },
+			{ id: 'columnAfter', icon: 'table-insert-right', name: 'Insert right' },
+			(idx > 0) ? { id: 'columnMoveLeft', icon: 'table-move-left', name: 'Move left' } : null,
+			(idx < length - 1) ? { id: 'columnMoveRight', icon: 'table-move-right', name: 'Move right' } : null,
+			{ id: 'columnCopy', icon: 'copy', name: 'Duplicate' },
 			{ isDiv: true },
-			{ id: 'clearContent', icon: 'clear', name: translate('blockTableOptionsClearContent') },
-			(length > 1) ? { id: 'columnRemove', icon: 'remove', name: translate('blockTableOptionsColumnColumnRemove') } : null,
+			{ id: 'clearContent', icon: 'clear', name: 'Clear content' },
+			(length > 1) ? { id: 'columnRemove', icon: 'remove', name: 'Delete column' } : null,
 			!isInner ? { isDiv: true } : null,
 		];
 		return options;
@@ -1285,10 +1285,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const innerBackground = <div className={[ 'inner', 'bgColor bgColor-' + (current?.bgColor || 'default') ].join(' ')} />;
 
 		return [
-			{ id: 'color', icon: 'color', name: translate('blockTableOptionsColorColor'), inner: innerColor, arrow: true },
-			{ id: 'background', icon: 'color', name: translate('blockTableOptionsColorBackground'), inner: innerBackground, arrow: true },
-			{ id: 'style', icon: 'paragraph', name: translate('blockTableOptionsColorStyle'), arrow: true },
-			{ id: 'clearStyle', icon: 'clear', name: translate('blockTableOptionsColorClearStyle') },
+			{ id: 'color', icon: 'color', name: 'Color', inner: innerColor, arrow: true },
+			{ id: 'background', icon: 'color', name: 'Background', inner: innerBackground, arrow: true },
+			{ id: 'style', icon: 'paragraph', name: 'Style', arrow: true },
+			{ id: 'clearStyle', icon: 'clear', name: 'Clear style' },
 			{ isDiv: true },
 		];
 	};
@@ -1298,16 +1298,16 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const current = blockStore.getLeaf(rootId, cellId);
 
 		return [
-			{ id: 'horizontal', icon: this.alignHIcon(current?.hAlign), name: translate('blockTableOptionsAlignText'), arrow: true },
-			{ id: 'vertical', icon: this.alignVIcon(current?.vAlign), name: translate('blockTableOptionsAlignVertical'), arrow: true },
+			{ id: 'horizontal', icon: this.alignHIcon(current?.hAlign), name: 'Text align', arrow: true },
+			{ id: 'vertical', icon: this.alignVIcon(current?.vAlign), name: 'Vertical align', arrow: true },
 		];
 	};
 
 	optionsHAlign () {
 		return [
-			{ id: I.BlockHAlign.Left, name: translate('blockTableOptionsAlignTextLeft') },
-			{ id: I.BlockHAlign.Center, name: translate('blockTableOptionsAlignTextCenter') },
-			{ id: I.BlockHAlign.Right, name: translate('blockTableOptionsAlignTextRight') },
+			{ id: I.BlockHAlign.Left, name: 'Left' },
+			{ id: I.BlockHAlign.Center, name: 'Center' },
+			{ id: I.BlockHAlign.Right, name: 'Right' },
 		].map((it: any) => {
 			it.icon = this.alignHIcon(it.id);
 			return it;
@@ -1316,9 +1316,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsVAlign () {
 		return [
-			{ id: I.BlockVAlign.Top, name: translate('blockTableOptionsAlignVerticalTop') },
-			{ id: I.BlockVAlign.Middle, name: translate('blockTableOptionsAlignVerticalMiddle') },
-			{ id: I.BlockVAlign.Bottom, name: translate('blockTableOptionsAlignVerticalBottom') },
+			{ id: I.BlockVAlign.Top, name: 'Top' },
+			{ id: I.BlockVAlign.Middle, name: 'Middle' },
+			{ id: I.BlockVAlign.Bottom, name: 'Bottom' },
 		].map((it: any) => {
 			it.icon = this.alignVIcon(it.id);
 			return it;
@@ -1329,10 +1329,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const { rootId } = this.props;
 		const current = blockStore.getLeaf(rootId, cellId);
 		const ret: any[] = [
-			{ id: I.MarkType.Bold, icon: 'bold', name: translate('commonBold') },
-			{ id: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic') },
-			{ id: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough') },
-			{ id: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline') },
+			{ id: I.MarkType.Bold, icon: 'bold', name: 'Bold' },
+			{ id: I.MarkType.Italic, icon: 'italic', name: 'Italic' },
+			{ id: I.MarkType.Strike, icon: 'strike', name: 'Strikethrough' },
+			{ id: I.MarkType.Underline, icon: 'underline', name: 'Underline' },
 		];
 
 		let length = 0;
@@ -1348,8 +1348,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	optionsSort () {
 		return [
-			{ id: I.SortType.Asc, name: translate('commonAscending') },
-			{ id: I.SortType.Desc, name: translate('commonDescending') },
+			{ id: I.SortType.Asc, name: 'Ascending' },
+			{ id: I.SortType.Desc, name: 'Descending' },
 		];
 	};
 

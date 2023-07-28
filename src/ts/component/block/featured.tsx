@@ -96,9 +96,8 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		let rl = relations.length;
 
 		if (tl) {
-			const pluralType = UtilCommon.cntWord(tl, translate('blockFeaturedType'), translate('blockFeaturedTypes'));
 			types = types.slice(0, SOURCE_LIMIT);
-			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), pluralType, types.join(', ')));
+			setOfString.push(`Object ${UtilCommon.cntWord(tl, 'type', 'types')}: ${types.join(', ')}`);
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
@@ -106,7 +105,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 		if (rl) {
 			relations = relations.slice(0, SOURCE_LIMIT);
-			setOfString.push(`${UtilCommon.cntWord(rl, translate('blockFeaturedRelation'), translate('blockFeaturedRelations'))}: ${relations.join(', ')}`);
+			setOfString.push(`${UtilCommon.cntWord(rl, 'Relation', 'Relations')}: ${relations.join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);
@@ -142,7 +141,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 									))}
 								</div>
 							) : (
-								<div className="empty">{translate('blockFeaturedQuery')}</div>
+								<div className="empty">Query</div>
 							)}
 						</div>
 					</span>
@@ -355,15 +354,15 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const options: any[] = [];
 
 		if (!type.isArchived && !typeIsDeleted) {
-			options.push({ id: 'open', name: translate('blockFeaturedTypeMenuOpenType') });
+			options.push({ id: 'open', name: 'Open type' });
 		};
 
 		if (!readonly && allowed) {
-			options.push({ id: 'change', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true });
+			options.push({ id: 'change', name: 'Change type', arrow: true });
 		};
 
 		if (!typeIsDeleted && (object.type === Constant.typeId.set)) {
-			options.push({ id: 'turnCollection', name: translate('blockFeaturedTypeMenuTurnSetIntoCollection') });
+			options.push({ id: 'turnCollection', name: 'Turn set into collection' });
 		};
 
 		const showMenu = () => {
@@ -391,13 +390,13 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			UtilData.checkSetCnt([ object.type ], (message: any) => {
 				if (message.records.length == 1) {
 					this.setId = message.records[0].id;
-					options.push({ id: 'setOpen', name: UtilCommon.sprintf(translate('blockFeaturedTypeMenuOpenSetOf'), type.name) });
+					options.push({ id: 'setOpen', name: `Open set of ${type.name}` });
 				} else
 				if (message.records.length == 2) {
-					options.push({ id: 'setOpenMenu', name: translate('blockFeaturedTypeMenuOpenSet'), arrow: true });
+					options.push({ id: 'setOpenMenu', name: 'Open set', arrow: true });
 				} else
 				if (type && !type.isDeleted) {
-					options.push({ id: 'setCreate', name: UtilCommon.sprintf(translate('blockFeaturedTypeMenuCreateSetOf'), type.name) });
+					options.push({ id: 'setCreate', name: `Create set of ${type.name}` });
 				};
 
 				showMenu();
@@ -523,7 +522,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 					keyboard.disableClose(true);
 					UtilObject.openAuto({ id: rootId, layout: I.ObjectLayout.Collection }, { replace: true });
-					window.setTimeout(() => { Preview.toastShow({ text: UtilCommon.sprintf(translate('toastTurnIntoCollection'), object.name) }); }, 200);
+					window.setTimeout(() => { Preview.toastShow({ text: `${object.name} is collection now!` }); }, 200);
 
 					analytics.event('SetTurnIntoCollection');
 				});

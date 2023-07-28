@@ -70,7 +70,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 						<Button 
 							id="button-save"
 							className="c28"
-							text={translate('menuWidgetAddWidget')}
+							text="Add widget"
 							onClick={this.save} 
 							onMouseEnter={() => menuStore.closeAll(Constant.menuIds.widget)} 
 						/>
@@ -131,8 +131,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const { isEditing } = data;
 		const hasLimit = ![ I.WidgetLayout.Link, I.WidgetLayout.Tree ].includes(this.layout) || this.isCollection();
 
-		let sourceName = translate('menuWidgetChooseSource');
-		let layoutName = translate('menuWidgetWidgetType');
+		let sourceName = 'Choose a source';
+		let layoutName = 'Widget type';
 
 		if (this.target) {
 			sourceName = UtilObject.name(this.target);
@@ -144,14 +144,14 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		const sections: any[] = [
 			{ 
-				id: 'source', name: translate('menuWidgetWidgetSource'), children: [
+				id: 'source', name: 'Widget Source', children: [
 					{ id: 'source', name: sourceName, arrow: true, object: this.target }
 				] 
 			},
 			{ 
-				id: 'layout', name: translate('commonAppearance'), children: [
+				id: 'layout', name: 'Appearance', children: [
 					{ id: 'layout', name: layoutName, arrow: true },
-					hasLimit ? { id: 'limit', name: translate('menuWidgetNumberOfObjects'), arrow: true, caption: this.limit } : null,
+					hasLimit ? { id: 'limit', name: 'Number of objects', arrow: true, caption: this.limit } : null,
 				] 
 			},
 		];
@@ -159,8 +159,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		if (isEditing) {
 			sections.push({
 				children: [
-					{ id: 'remove', name: translate('menuWidgetRemoveWidget'), icon: 'removeWidget' },
-					{ id: 'edit', name: translate('menuWidgetEditWidgets'), icon: 'source' }
+					{ id: 'remove', name: 'Remove widget', icon: 'removeWidget' },
+					{ id: 'edit', name: 'Edit widgets', icon: 'source' }
 				],
 			});
 		};
@@ -285,10 +285,10 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 					value: this.target ? this.target.id : '',
 					dataChange: (items: any[]) => {
 						const fixed: any[] = [
-							{ id: Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
-							{ id: Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
-							{ id: Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
-							{ id: Constant.widgetId.recent, name: translate('menuWidgetRecent'), iconEmoji: ':date:' },
+							{ id: Constant.widgetId.favorite, name: 'Favorites', iconEmoji: ':star:' },
+							{ id: Constant.widgetId.set, name: 'Sets', iconEmoji: ':mag:' },
+							{ id: Constant.widgetId.collection, name: 'Collections', iconEmoji: ':card_index_dividers:' },
+							{ id: Constant.widgetId.recent, name: 'Recent', iconEmoji: ':date:' },
 						];
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 					},

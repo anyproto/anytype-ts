@@ -2,19 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import {
-	I,
-	C,
-	UtilData,
-	UtilObject,
-	UtilCommon,
-	Onboarding,
-	focus,
-	keyboard,
-	analytics,
-	history as historyPopup,
-	translate
-} from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -85,7 +73,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		const object = detailStore.get(rootId, rootId, []);
 		const items = UtilData.getObjectTypesForNewObject({ withCollection: true, withDefault: true }).filter(it => it.id != object.type);
 
-		items.push({ id: 'menu', icon: 'search', name: translate('blockTypeMyTypes') });
+		items.push({ id: 'menu', icon: 'search', name: 'My types' });
 
 		return items;
 	};

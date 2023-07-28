@@ -42,21 +42,21 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (this.canMoveBackward()) {
 			back = <Icon className="arrow back" onClick={this.onBack} />;
-		}
+		};
 
 		if (![ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
 			indicator = <DotIndicator className="animation" index={stage} count={4} />;
 			label = <Label id="label" className="animation" text={this.getText('Label')} />;
-		}
+		};
 
 		if ([ Stage.Phrase, Stage.Offline ].includes(stage) && config.experimental ) {
 			footer = (
 				<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
 					<Icon className="gear" />
-					{translate('pageAuthOnboardAccountDataLocation')}
+					Account data location
 				</div>
 			);
-		}
+		};
 
 		if (error) {
 			return (
@@ -67,7 +67,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<CanvasWorkerBridge state={animationStage} />
 				</div>
 			);
-		}
+		};
 
 		return (
 			<div ref={(ref) => (this.node = ref)}>
@@ -85,7 +85,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				<CanvasWorkerBridge state={animationStage} />
 			</div>
 		);
-	}
+	};
 
 	renderContent = (): JSX.Element => {
 		const { stage, phraseCopied, iconOption } = this.state;
@@ -101,7 +101,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					/>
 				</div>
 			);
-		}
+		};
 
 		if (stage == Stage.Soul) {
 			return (
@@ -109,25 +109,25 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<Input
 						focusOnMount
 						type="text"
-						placeholder={translate('pageAuthOnboardEnterYourName')}
+						placeholder="Enter your name"
 						value={authStore.name}
 						onKeyUp={(e, v) => authStore.nameSet(v)}
 						maxLength={255}
 					/>
 				</div>
 			);
-		}
+		};
 
 		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
 			const cn = [ 'soulContent' ];
 
 			if (stage == Stage.SoulCreating) {
 				cn.push('soulCreating');
-			}
+			};
 
 			if (stage == Stage.SpaceCreating) {
 				cn.push('spaceCreating');
-			}
+			};
 
 			return (
 				// Hack, because React's diffing algorithm doesnt change the DOM node when only the className changes,
@@ -147,11 +147,11 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					<div className="space">
 						<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={64} />
-						<span className="spaceName">{translate('pageAuthOnboardPersonalSpace')}</span>
+						<span className="spaceName">Personal Space</span>
 					</div>
 				</section>
 			);
-		}
+		};
 
 		return null;
 	};
@@ -162,26 +162,26 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if ([ Stage.SoulCreating, Stage.SpaceCreating ].includes(stage)) {
 			return null;
-		}
+		};
 
 		let text = this.getText('Submit');
 		let moreInfo = null;
 
 		if (stage == Stage.Void) {
 			text = translate('authOnboardSubmit');
-		}
+		};
 
 		if ((stage == Stage.Phrase) && phraseCopied) {
 			text = translate('authOnboardGoAhead');
-		}
+		};
 
 		if (stage == Stage.Phrase) {
-			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>{translate('pageAuthOnboardMoreInfo')}</div>;
-		}
+			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>More info</div>;
+		};
 
 		if (!this.canMoveForward()) {
 			cn.push('disabled');
-		}
+		};
 
 		return (
 			<div className="buttons">
@@ -198,7 +198,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		this.rebind();
 
 		analytics.event('ScreenOnboarding', { step: stage });
-	}
+	};
 
 	componentDidUpdate (_, prevState): void {
 		const { stage } = this.state;
@@ -206,19 +206,19 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (prevState.stage != stage) {
 			Animation.to();
 			analytics.event('ScreenOnboarding', { step: stage });
-		}
+		};
 
 		this.refFrame?.resize();
 		this.rebind();
-	}
+	};
 
 	componentWillUnmount (): void {
 		this.unbind();
-	}
+	};
 
 	unbind () {
 		$(window).off('keydown.onboarding');
-	}
+	};
 
 	rebind () {
 		const node = $(this.node);
@@ -236,7 +236,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		questionAccount.off('mouseenter mouseleave');
 		questionAccount.on('mouseenter', () => this.onAccountTooltip());
 		questionAccount.on('mouseleave', () => Preview.tooltipHide());
-	}
+	};
 
 	getText = (name: string) => {
 		const { stage } = this.state;
@@ -254,15 +254,15 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		if (this.isDelayed) {
 			return false;
-		}
+		};
 
 		let ret = false;
 		if ([ Stage.Void, Stage.Phrase, Stage.Offline ].includes(stage)) {
 			ret = true;
-		}
+		};
 		if ((stage == Stage.Soul) && authStore.name) {
 			ret = true;
-		}
+		};
 		return ret;
 	};
 
@@ -275,7 +275,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	onNext = () => {
 		if (!this.canMoveForward()) {
 			return;
-		}
+		};
 
 		const { stage, phraseCopied } = this.state;
 
@@ -286,7 +286,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 			analytics.event('ClickOnboarding', { type: 'ShowAndCopy', step: stage });
 			return;
-		}
+		};
 
 		const delay = (cb, duration: number) => () => {
 			this.isDelayed = true;
@@ -305,13 +305,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					incrementAnimation(delay(incrementOnboarding(), 100))();
 				});
 				return;
-			}
+			};
 
 			// Move animation forward, wait for delay, move onboarding forward
 			if (stage == Stage.Phrase) {
 				incrementAnimation(delay(incrementOnboarding(), 1000))();
 				return;
-			}
+			};
 
 			// Move animation forward, wait for delay, move animation forward again, then move onboarding forward
 			if (stage == Stage.Offline) {
@@ -320,7 +320,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				incrementAnimation(first)();
 				return;
-			}
+			};
 
 			// Wait for delay, move onboarding forward, wait for delay, move onboarding forward again
 			if (stage == Stage.Soul) {
@@ -329,7 +329,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 				first();
 				return;
-			}
+			};
 		});
 	};
 
@@ -337,25 +337,25 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	onBack = () => {
 		if (!this.canMoveBackward()) {
 			return;
-		}
+		};
 
 		const { stage, animationStage } = this.state;
 
 		if (stage == Stage.Void) {
 			UtilCommon.route('/', { replace: true });
 			return;
-		}
+		};
 
-		const nextStage = stage - 1;
+		let nextStage = stage - 1;
 		let nextAnimation = animationStage - 1;
 
 		if (animationStage == Stage.SoulCreating) {
 			nextAnimation = Stage.Offline;
-		}
+		};
 
 		if (animationStage == Stage.Offline) {
 			nextAnimation = Stage.Void;
-		}
+		};
 
 		this.setState((prev) => ({
 			...prev,
@@ -368,13 +368,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		if (this.account) {
 			callBack();
 			return;
-		}
+		};
 
 		C.WalletCreate(authStore.walletPath, (message) => {
 			if (message.error.code) {
 				this.showErrorAndExit(message);
 				return;
-			}
+			};
 
 			authStore.phraseSet(message.mnemonic);
 
@@ -382,7 +382,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				if (message.error.code) {
 					this.showErrorAndExit(message);
 					return;
-				}
+				};
 
 				const { iconOption } = this.state;
 				const { accountPath, phrase } = authStore;
@@ -391,7 +391,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					if (message.error.code) {
 						this.showErrorAndExit(message);
 						return;
-					}
+					};
 
 					this.account = message.account;
 
@@ -404,7 +404,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					if (callBack) {
 						callBack();
-					}
+					};
 				});
 			});
 		});

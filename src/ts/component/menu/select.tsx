@@ -28,7 +28,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		this.onFilterChange = this.onFilterChange.bind(this);
 		this.onFilterKeyUp = this.onFilterKeyUp.bind(this);
 		this.onScroll = this.onScroll.bind(this);
-	}
+	};
 	
 	render () {
 		const { param } = this.props;
@@ -47,13 +47,13 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 			if (item.isInitial) {
 				cn.push('isInitial');
-			}
+			};
 			if (item.isHidden) {
 				cn.push('isHidden');
-			}
+			};
 			if (disabled) {
 				cn.push('disabled');
-			}
+			};
 
 			let content = null;
 			if (item.isSection) {
@@ -77,7 +77,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 						style={param.style}
 					/>
 				);
-			}
+			};
 
 			return (
 				<CellMeasurer
@@ -137,7 +137,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 				</div>
 			</React.Fragment>
 		);
-	}
+	};
 	
 	componentDidMount () {
 		const { param, setActive } = this.props;
@@ -149,7 +149,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		this._isMounted = true;
 		if (!noKeys) {
 			this.rebind();
-		}
+		};
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -160,15 +160,15 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		let active = value ? items.find(it => it.id == value) : null;
 		if (!active && items.length && !withFilter) {
 			active = items[0];
-		}
+		};
 
 		if (active && !active.isInitial) {
 			window.setTimeout(() => { setActive(active, true); }, 15);
-		}
+		};
 
 		this.focus();
 		this.resize();
-	}
+	};
 
 	componentDidUpdate () {
 		const { param } = this.props;
@@ -181,7 +181,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 			this.filter = filter;
 			this.n = -1;
 			this.top = 0;
-		}
+		};
 
 		this.cache = new CellMeasurerCache({
 			fixedWidth: true,
@@ -191,49 +191,49 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 		if (this.refList) {
 			this.refList.scrollToPosition(this.top);
-		}
+		};
 
 		if (this.n == -1) {
 			this.focus();
-		}
+		};
 		this.resize();
-	}
+	};
 	
 	componentWillUnmount () {
 		this._isMounted = false;
-	}
+	};
 	
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', e => this.props.onKeyDown(e));
 		window.setTimeout(() => this.props.setActive(), 15);
-	}
+	};
 	
 	unbind () {
 		$(window).off('keydown.menu');
-	}
+	};
 
 	focus () {
 		window.setTimeout(() => { 
 			if (this.refFilter) {
 				this.refFilter.focus(); 
-			}
+			};
 		}, 15);
-	}
+	};
 
 	getItemsWithoutFilter () {
 		const { param } = this.props;
 		const { data } = param;
 
 		return (data.options || []).filter(it => it);
-	}
+	};
 
 	getSections () {
 		const { param } = this.props;
 		const { data } = param;
 
 		return (data.sections || []);
-	}
+	};
 	
 	getItems (withSections: boolean) {
 		const { param } = this.props;
@@ -244,30 +244,30 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		let items: any[] = [];
 
 		if (sections && sections.length) {
-			for (const section of sections) {
+			for (let section of sections) {
 				if (withSections) {
 					items.push({ id: section.id, name: section.name, isSection: true });
-				}
+				};
 				items = items.concat(section.children);
-			}
+			};
 		} else {
 			items = this.getItemsWithoutFilter();
-		}
+		};
 
 		if (data.filter && !preventFilter) {
 			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
 
 			items = items.filter(it => String(it.name || '').match(filter));
-		}
+		};
 		return items || [];
-	}
+	};
 
 	onMouseEnter (e: any, item: any) {
 		if (!keyboard.isMouseDisabled) {
 			this.props.setActive(item, false);
 			this.onOver(e, item);
-		}
-	}
+		};
+	};
 	
 	onOver (e: any, item: any) {
 		const { param } = this.props;
@@ -276,12 +276,12 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 		if (item.isInitial && !canSelectInitial) {
 			return;
-		}
+		};
 
 		if (onOver) {
 			onOver(e, item);
-		}
-	}
+		};
+	};
 	
 	onClick (e: any, item: any) {
 		const { param, close } = this.props;
@@ -290,16 +290,16 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 		if (item.isInitial && !canSelectInitial) {
 			return;
-		}
+		};
 
 		if (!noClose) {
 			close();
-		}
+		};
 		
 		if (!disabled && onSelect) {
 			onSelect(e, item);
-		}
-	}
+		};
+	};
 
 	onSwitch (e: any, item: any) {
 		const { param } = this.props;
@@ -308,12 +308,12 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 		if (onSwitch) {
 			onSwitch(e, item);
-		}
-	}
+		};
+	};
 
 	onFilterChange (v: string) {
 		this.props.param.data.filter = v;
-	}
+	};
 
 	onFilterKeyUp (e: React.KeyboardEvent, v: string) {
 		const { param } = this.props;
@@ -322,21 +322,21 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 		if (onFilterKeyUp) {
 			onFilterKeyUp(e, v);
-		}
-	}
+		};
+	};
 
 	getRowHeight (item: any) {
 		if (item.isDiv) return HEIGHT_DIV;
 		if (item.isSection) return HEIGHT_SECTION;
 		if (item.withDescription) return HEIGHT_DESCRIPTION;
 		return HEIGHT_ITEM;
-	}
+	};
 
 	onScroll ({ scrollTop }) {
 		if (scrollTop) {
 			this.top = scrollTop;
-		}
-	}
+		};
+	};
 
 	isWithFilter () {
 		const { param } = this.props;
@@ -345,15 +345,15 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 
 		if (withFilter) {
 			return true;
-		}
+		};
 
 		const options = this.getItemsWithoutFilter().filter(it => !it.isDiv);
 		return !noFilter && (options.length > LIMIT);
-	}
+	};
 
 	updateOptions (options: any[]) {
 		this.props.param.data.options = options;
-	}
+	};
 
 	isActive (item: any) {
 		const { param } = this.props;
@@ -361,7 +361,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		const value = Relation.getArrayValue(data.value);
 
 		return item.checkbox || value.includes(String(item.id));
-	}
+	};
 
 	resize () {
 		const { position, getId, param } = this.props;
@@ -375,27 +375,27 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		let height = 0;
 		if (withFilter) {
 			height += 60;
-		}
+		};
 		if (!withFilter || noScroll) {
 			height += 16;
-		}
+		};
 
 		if (!items.length) {
 			height += HEIGHT_ITEM;
 		} else {
 			items.forEach(it => { height += this.getRowHeight(it); });
-		}
+		};
 
 		if (!noScroll) {
 			height = Math.min(370, height);
-		}
+		};
 		height = Math.max(44, height);
 
 		content.css({ height });
 		withFilter ? obj.addClass('withFilter') : obj.removeClass('withFilter');
 
 		position();
-	}
+	};
 
 });
 

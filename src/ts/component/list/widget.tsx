@@ -106,7 +106,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 				buttons.push({ id: 'widget-list-done', text: translate('commonDone'), onClick: this.onEdit });
 			} else {
-				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: translate('widgetEdit'), onClick: this.onEdit });
+				buttons.push({ id: 'widget-list-edit', className: 'edit c28', text: 'Edit widgets', onClick: this.onEdit });
 			};
 
 			content = (
@@ -134,7 +134,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 					))}
 
 					<Button 
-						text={translate('widgetLibrary')}
+						text="Library" 
 						color="" 
 						className="widget" 
 						icon="store" 
@@ -142,7 +142,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 					/>
 
 					<Button 
-						text={translate('widgetBin')}
+						text="Bin" 
 						color="" 
 						className="widget" 
 						icon="bin" 
@@ -312,11 +312,11 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 		const win = $(window);
 		const widgetIds = blockStore.getChildrenIds(blockStore.widgets, blockStore.widgets);
 		const options: any[] = [
-			{ id: 'edit', name: translate('widgetEdit') },
+			{ id: 'edit', name: 'Edit widgets' },
 		];
 
 		if (widgetIds.length < Constant.limit.widgets) {
-			options.unshift({ id: 'add', name: translate('widgetAdd'), arrow: true });
+			options.unshift({ id: 'add', name: 'Add widget', arrow: true });
 		};
 
 		let menuContext = null;

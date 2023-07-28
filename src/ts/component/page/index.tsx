@@ -58,11 +58,11 @@ const Components = {
 };
 
 const Titles = {
-	index: translate('commonDashboard'),
+	index: 'Dashboard',
 	graph: translate('commonGraph'),
-	navigation: translate('commonFlow'),
-	store: translate('commonLibrary'),
-	archive: translate('commonBin'),
+	navigation: 'Flow',
+	store: 'Library',
+	archive: 'Bin',
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
@@ -86,7 +86,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		const Component = Components[path];
 		if (!Component) {
-			return <div>{UtilCommon.sprintf(translate('pageMainIndexComponentNotFound'), path)}</div>;
+			return <div>Page component &quot;{path}&quot; not found</div>;
 		};
 
 		const wrap = (

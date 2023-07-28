@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, UtilCommon, UtilData, UtilObject, Dataview, analytics, keyboard, Relation, translate } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, Dataview, analytics, keyboard, Relation } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
@@ -46,9 +46,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return (
 				<Empty 
 					{...this.props}
-					title={translate('blockDataviewBoardRelationDeletedTitle')}
-					description={translate('blockDataviewBoardRelationDeletedDescription')}
-					button={translate('blockDataviewBoardOpenViewMenu')}
+					title="Relation has been deleted" 
+					description="Choose another relation to group your Kanban"
+					button="Open view menu"
 					className="withHead"
 					onClick={this.onView}
 				/>

@@ -775,7 +775,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		let addParam: any = {};
 
 		if (isCollection) {
-			addParam.name = translate('blockDataviewCreateNewCollection');
+			addParam.name = 'Create new collection';
 			addParam.onClick = () => {
 				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
 					onSelect(message.details, true); 
@@ -786,7 +786,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
 			]);
 		} else {
-			addParam.name = translate('blockDataviewCreateNewSet');
+			addParam.name = 'Create new set';
 			addParam.onClick = () => {
 				C.ObjectCreateSet([], {}, '', (message: any) => { onSelect(message.details, true); });
 			};
@@ -947,11 +947,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		switch (type) {
 			case 'target': {
-				const name = translate(isCollection ? 'blockDataviewEmptyTargetCollections' : 'blockDataviewEmptyTargetSets');
+				const name = isCollection ? 'collections' : 'sets';
 				emptyProps = {
-					title: translate('blockDataviewEmptyTargetTitle'),
-					description: UtilCommon.sprintf(translate('blockDataviewEmptyTargetDescription'), name),
-					button: translate('blockDataviewEmptyTargetButton'),
+					title: 'No data source',
+					description: UtilCommon.sprintf('Connect one of your %s or create a new<br/>one to continue', name),
+					button: 'Select source',
 					onClick: () => this.onSourceSelect(`#block-${block.id} .dataviewEmpty .button`, {}),
 				};
 				break;
@@ -959,9 +959,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			case 'source': {
 				emptyProps = {
-					title: translate('blockDataviewEmptySourceTitle'),
-					description: translate('blockDataviewEmptySourceDescription'),
-					button: translate('blockDataviewEmptySourceButton'),
+					title: 'No query selected',
+					description: 'Add search query to aggregate objects with equal<br/>types and relations in a live mode',
+					button: 'Select query',
 					onClick: this.onEmpty,
 				};
 				break;
@@ -973,8 +973,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				emptyProps.title = translate('commonNoObjects');
 
 				if (this.isAllowedObject()) {
-					emptyProps.description = translate('blockDataviewEmptyViewDescription');
-					emptyProps.button = translate('blockDataviewEmptyViewButton');
+					emptyProps.description = 'Create your first one to begin';
+					emptyProps.button = 'Create object';
 					emptyProps.onClick = e => this.onRecordAdd(e, 1);
 				};
 				break;

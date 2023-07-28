@@ -37,12 +37,12 @@ class Dispatcher {
 		this.listenEvents();
 
 		console.log('[Dispatcher].init Server address: ', address);
-	}
+	};
 
 	listenEvents () {
 		if (!authStore.token) {
 			return;
-		}
+		};
 
 		const request = new Commands.StreamRequest();
 		request.setToken(authStore.token);
@@ -54,14 +54,14 @@ class Dispatcher {
 				this.event(event, false);
 			} catch (e) {
 				console.error(e);
-			}
+			};
 		});
 
 		this.stream.on('status', (status) => {
 			if (status.code) {
 				console.error('[Dispatcher.stream] Restarting', status);
 				this.listenEvents();
-			}
+			};
 		});
 
 		this.stream.on('end', () => {
@@ -71,7 +71,7 @@ class Dispatcher {
 			if (this.reconnects == 20) {
 				t = 5000;
 				this.reconnects = 0;
-			}
+			};
 
 			window.clearTimeout(this.timeoutStream);
 			this.timeoutStream = window.setTimeout(() => { 
@@ -79,7 +79,7 @@ class Dispatcher {
 				this.reconnects++;
 			}, t);
 		});
-	}
+	};
 
 	eventType (v: number): string {
 		const V = Events.Event.Message.ValueCase;
@@ -145,7 +145,7 @@ class Dispatcher {
 		if (v == V.FILELIMITREACHED)			 t = 'fileLimitReached';
 
 		return t;
-	}
+	};
 
 	event (event: Events.Event, skipDebug?: boolean) {
 		const { config } = commonStore;
@@ -154,7 +154,7 @@ class Dispatcher {
 		
 		if (traceId) {
 			ctx.push(traceId);
-		}
+		};
 
 		const rootId = ctx.join('-');
 		const messages = event.getMessagesList() || [];
@@ -162,12 +162,12 @@ class Dispatcher {
 			console.log(`%cEvent.${type}`, 'font-weight: bold; color: #ad139b;', rootId);
 			if (!type) {
 				console.error('Event not found for valueCase', valueCase);
-			}
+			};
 
 			if (data && data.toObject) {
 				const d = UtilCommon.objectClear(data.toObject());
 				console.log(config.debug.js ? JSON.stringify(d, null, 3) : d); 
-			}
+			};
 		};
 
 		let blocks: any[] = [];
@@ -196,7 +196,7 @@ class Dispatcher {
 				case 'accountShow': {
 					authStore.accountAdd(Mapper.From.Account(data.getAccount()));
 					break;
-				}
+				};
 
 				case 'accountUpdate': {
 					authStore.accountSet({ status: Mapper.From.AccountStatus(data.getStatus()) });
@@ -204,12 +204,12 @@ class Dispatcher {
 
 					Renderer.send('setConfig', UtilCommon.objectCopy(commonStore.config));
 					break;	
-				}
+				};
 
 				case 'accountConfigUpdate': {
 					commonStore.configSet(Mapper.From.AccountConfig(data.getConfig()), true);
 					break;
-				}
+				};
 
 				case 'threadStatus': {
 					authStore.threadSet(rootId, {
@@ -218,38 +218,38 @@ class Dispatcher {
 						accounts: (data.getAccountsList() || []).map(Mapper.From.ThreadAccount),
 					});
 					break;
-				}
+				};
 
 				case 'objectRemove': {
 					break;
-				}
+				};
 
 				case 'objectRelationsAmend': {
 					id = data.getId();
 					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
 					break;
-				}
+				};
 
 				case 'objectRelationsRemove': {
 					id = data.getId();
 					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
 					break;
-				}
+				};
 
 				case 'objectRestrictionsSet': {
 					blockStore.restrictionsSet(rootId, Mapper.From.Restrictions(data.getRestrictions()));
 					break;
-				}
+				};
 
 				case 'fileSpaceUsage': {
 					commonStore.spaceStorageSet({ bytesUsed: data.getBytesusage() });
 					break;
-				}
+				};
 
 				case 'fileLocalUsage': {
 					commonStore.spaceStorageSet({ localUsage: data.getLocalbytesusage() });
 					break;
-				}
+				};
 
 				case 'fileLimitReached': {
 					const { bytesUsed, bytesLimit, localUsage } = commonStore.spaceStorage;
@@ -260,9 +260,9 @@ class Dispatcher {
 					} else
 					if (localUsage > bytesLimit) {
 						Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
-					}
+					};
 					break;
-				}
+				};
 
 				case 'blockAdd': {
 					blocks = data.getBlocksList() || [];
@@ -272,13 +272,13 @@ class Dispatcher {
 						if (block.type == I.BlockType.Dataview) {
 							dbStore.relationsSet(rootId, block.id, block.content.relationLinks);
 							dbStore.viewsSet(rootId, block.id, block.content.views);
-						}
+						};
 
 						blockStore.add(rootId, new M.Block(block));
 						blockStore.updateStructure(rootId, block.id, block.childrenIds);
-					}
+					};
 					break;
-				}
+				};
 
 				case 'blockDelete': {
 					const blockIds = data.getBlockidsList() || [];
@@ -287,16 +287,16 @@ class Dispatcher {
 						const block = blockStore.getLeaf(rootId, blockId);
 						if (!block) {
 							continue;
-						}
+						};
 
 						if (block.type == I.BlockType.Dataview) {
 							Action.dbClearBlock(rootId, blockId);
-						}
+						};
 
 						blockStore.delete(rootId, blockId);
-					}
+					};
 					break;
-				}
+				};
 
 				case 'blockSetChildrenIds': {
 					id = data.getId();
@@ -305,59 +305,59 @@ class Dispatcher {
 
 					if (id == rootId) {
 						blockStore.checkTypeSelect(rootId);
-					}
+					};
 					break;
-				}
+				};
 
 				case 'blockSetFields': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					blockStore.update(rootId, id, { fields: data.hasFields() ? Decode.decodeStruct(data.getFields()) : {} });
 					break;
-				}
+				};
 
 				case 'blockSetLink': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					if (data.hasCardstyle()) {
 						block.content.cardStyle = data.getCardstyle().getValue();
-					}
+					};
 
 					if (data.hasIconsize()) {
 						block.content.iconSize = data.getIconsize().getValue();
-					}
+					};
 
 					if (data.hasDescription()) {
 						block.content.description = data.getDescription().getValue();
-					}
+					};
 
 					if (data.hasTargetblockid()) {
 						block.content.targetblockId = data.getTargetblockid().getValue();
-					}
+					};
 
 					if (data.hasRelations()) {
 						block.content.relations = data.getRelations().getValueList() || [];
-					}
+					};
 
 					if (data.hasTargetblockid()) {
 						block.content.targetBlockId = data.getTargetblockid().getValue();
-					}
+					};
 
 					if (data.hasFields()) {
 						block.content.fields = Decode.decodeStruct(data.getFields());
-					}
+					};
 
 					blockStore.updateContent(rootId, id, block.content);
 					break;
-				}
+				};
 
 				case 'blockSetText': {
 					id = data.getId();
@@ -365,240 +365,240 @@ class Dispatcher {
 
 					if (data.hasText()) {
 						content.text = data.getText().getValue();
-					}
+					};
 
 					if (data.hasMarks()) {
 						content.marks = (data.getMarks().getValue().getMarksList() || []).map(Mapper.From.Mark);
-					}
+					};
 
 					if (data.hasStyle()) {
 						content.style = data.getStyle().getValue();
-					}
+					};
 
 					if (data.hasChecked()) {
 						content.checked = data.getChecked().getValue();
-					}
+					};
 
 					if (data.hasColor()) {
 						content.color = data.getColor().getValue();
-					}
+					};
 
 					if (data.hasIconemoji()) {
 						content.iconEmoji = data.getIconemoji().getValue();
-					}
+					};
 
 					if (data.hasIconimage()) {
 						content.iconImage = data.getIconimage().getValue();
-					}
+					};
 
 					blockStore.updateContent(rootId, id, content);
 					break;
-				}
+				};
 
 				case 'blockSetDiv': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					if (data.hasStyle()) {
 						block.content.style = data.getStyle().getValue();
-					}
+					};
 
 					blockStore.updateContent(rootId, id, block.content);
 					break;
-				}
+				};
 
 				case 'blockDataviewTargetObjectIdSet': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					block.content.targetObjectId = data.getTargetobjectid();
 					blockStore.updateContent(rootId, id, block.content);
 					break;
-				}
+				};
 
 				case 'blockSetWidget': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					if (data.hasLayout()) {
 						block.content.layout = data.getLayout().getValue();
-					}
+					};
 
 					if (data.hasLimit()) {
 						block.content.limit = data.getLimit().getValue();
-					}
+					};
 
 					if (data.hasViewid()) {
 						block.content.viewId = data.getViewid().getValue();
-					}
+					};
 
 					blockStore.updateContent(rootId, id, block.content);
 					break;
-				}
+				};
 
 				case 'blockSetFile': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					if (data.hasName()) {
 						block.content.name = data.getName().getValue();
-					}
+					};
 
 					if (data.hasHash()) {
 						block.content.hash = data.getHash().getValue();
-					}
+					};
 
 					if (data.hasMime()) {
 						block.content.mime = data.getMime().getValue();
-					}
+					};
 
 					if (data.hasSize()) {
 						block.content.size = data.getSize().getValue();
-					}
+					};
 
 					if (data.hasType()) {
 						block.content.type = data.getType().getValue();
-					}
+					};
 
 					if (data.hasStyle()) {
 						block.content.style = data.getStyle().getValue();
-					}
+					};
 
 					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
-					}
+					};
 
 					blockStore.updateContent(rootId, id, block.content);
 					break;
-				}
+				};
 
 				case 'blockSetBookmark': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					if (data.hasTargetobjectid()) {
 						block.content.targetObjectId = data.getTargetobjectid().getValue();
-					}
+					};
 
 					if (data.hasState()) {
 						block.content.state = data.getState().getValue();
-					}
+					};
 
 					blockStore.updateContent(rootId, id, block.content);
 					break;
-				}
+				};
 
 				case 'blockSetBackgroundColor': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					blockStore.update(rootId, id, { bgColor: data.getBackgroundcolor() });
 					break;
-				}
+				};
 
 				case 'blockSetAlign': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					blockStore.update(rootId, id, { hAlign: data.getAlign() });
 					break;
-				}
+				};
 
 				case 'blockSetVerticalAlign': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					blockStore.update(rootId, id, { vAlign: data.getVerticalalign() });
 					break;
-				}
+				};
 
 				case 'blockSetRelation': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					if (data.hasKey()) {
 						block.content.key = data.getKey().getValue();
-					}
+					};
 
 					blockStore.updateContent(rootId, id, block.content);
 					break;
-				}
+				};
 
 				case 'blockSetLatex': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					if (data.hasText()) {
 						block.content.text = data.getText().getValue();
-					}
+					};
 
 					blockStore.updateContent(rootId, id, block.content);
 					break;
-				}
+				};
 
 				case 'blockSetTableRow': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					if (data.hasIsheader()) {
 						block.content.isHeader = data.getIsheader().getValue();
-					}
+					};
 
 					blockStore.updateContent(rootId, id, block.content);
 					break;
-				}
+				};
 
 				case 'blockDataviewViewSet': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					dbStore.viewAdd(rootId, id, Mapper.From.View(data.getView()));
 					blockStore.updateWidgetViews(rootId);
 					break;
-				}
+				};
 
 				case 'blockDataviewViewUpdate': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					viewId = data.getViewid();
 
@@ -613,11 +613,11 @@ class Dispatcher {
 							if (fields[f] != view[f]) {
 								updateData = true;
 								break;
-							}
-						}
+							};
+						};
 
 						view = Object.assign(view, fields);
-					}
+					};
 
 					const keys = [ 
 						{ id: 'filter', field: 'filters', idField: 'id', mapper: 'Filter' },
@@ -644,8 +644,8 @@ class Dispatcher {
 
 								if ([ 'filter', 'sort', 'relation' ].includes(key.id)) {
 									updateData = true;
-								}
-							}
+								};
+							};
 
 							if (item.hasMove()) {
 								const op = item.getMove();
@@ -657,13 +657,13 @@ class Dispatcher {
 									const oidx = list.findIndex(it => it[key.idField] == id);
 									if (oidx >= 0) {
 										list = arrayMove(list, oidx, idx + i);
-									}
+									};
 								});
 
 								if ([ 'sort' ].includes(key.id)) {
 									updateData = true;
-								}
-							}
+								};
+							};
 
 							if (item.hasUpdate()) {
 								const op = item.getUpdate();
@@ -674,7 +674,7 @@ class Dispatcher {
 
 									if ([ 'filter', 'sort' ].includes(key.id)) {
 										updateData = true;
-									}
+									};
 
 									if (idx >= 0) {
 										if (key.id == 'relation') {
@@ -684,14 +684,14 @@ class Dispatcher {
 												if (list[idx][f] != item[f]) {
 													updateData = true;
 													break;
-												}
-											}
-										}
+												};
+											};
+										};
 
 										list[idx] = item;
-									}
-								}
-							}
+									};
+								};
+							};
 
 							if (item.hasRemove()) {
 								const op = item.getRemove();
@@ -703,8 +703,8 @@ class Dispatcher {
 
 								if ([ 'filter', 'sort' ].includes(key.id)) {
 									updateData = true;
-								}
-							}
+								};
+							};
 
 							view[key.field] = list;
 						});
@@ -716,9 +716,9 @@ class Dispatcher {
 					if (updateData) {
 						win.trigger(`updateDataviewData.${id}`);
 						blockStore.updateWidgetData(rootId);
-					}
+					};
 					break;
-				}
+				};
 
 				case 'blockDataviewViewDelete': {
 					id = data.getId();
@@ -733,11 +733,11 @@ class Dispatcher {
 						viewId = views.length ? views[views.length - 1].id : '';
 
 						dbStore.metaSet(subId, '', { viewId: viewId });
-					}
+					};
 
 					blockStore.updateWidgetViews(rootId);
 					break;
-				}
+				};
 
 				case 'blockDataviewViewOrder': {
 					id = data.getId();
@@ -745,19 +745,19 @@ class Dispatcher {
 					dbStore.viewsSort(rootId, id, data.getViewidsList());
 					blockStore.updateWidgetViews(rootId);
 					break; 
-				}
+				};
 
 				case 'blockDataviewRelationDelete': {
 					id = data.getId();
 					dbStore.relationListDelete(rootId, id, data.getRelationkeysList() || []);
 					break;
-				}
+				};
 
 				case 'blockDataviewRelationSet': {
 					id = data.getId();
 					dbStore.relationsSet(rootId, id, (data.getRelationlinksList() || []).map(Mapper.From.RelationLink));
 					break;
-				}
+				};
 
 				case 'blockDataviewGroupOrderUpdate': {
 					id = data.getId();
@@ -765,20 +765,20 @@ class Dispatcher {
 
 					if (!block || !data.hasGrouporder()) {
 						break;
-					}
+					};
 
 					const order = Mapper.From.GroupOrder(data.getGrouporder());
 
 					Dataview.groupOrderUpdate(rootId, id, order.viewId, order.groups);
 					break;
-				}
+				};
 
 				case 'blockDataviewObjectOrderUpdate': {
 					id = data.getId();
 					block = blockStore.getLeaf(rootId, id);
 					if (!block) {
 						break;
-					}
+					};
 
 					viewId = data.getViewid();
 					
@@ -791,7 +791,7 @@ class Dispatcher {
 					if (!el) {
 						el = { viewId, groupId, objectIds: observable.array([]) };
 						block.content.objectOrder.push(el);
-					}
+					};
 
 					changes.forEach(it => {
 						const op = it.getOp();
@@ -812,9 +812,9 @@ class Dispatcher {
 										const oidx = el.objectIds.indexOf(id);
 										if (oidx >= 0) {
 											el.objectIds = arrayMove(el.objectIds, oidx, idx + i);
-										}
+										};
 									});
-								}
+								};
 								break;
 
 							case I.SliceOperation.Remove:
@@ -824,14 +824,14 @@ class Dispatcher {
 							case I.SliceOperation.Replace:
 								el.objectIds = ids;
 								break;
-						}
+						};
 					});
 
 					block.content.objectOrder[index] = el;
 					blockStore.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
 					blockStore.updateWidgetData(rootId);
 					break;
-				}
+				};
 
 				case 'objectDetailsSet': {
 					id = data.getId();
@@ -841,7 +841,7 @@ class Dispatcher {
 
 					this.detailsUpdate(details, rootId, id, subIds, true);
 					break;
-				}
+				};
 
 				case 'objectDetailsAmend': {
 					id = data.getId();
@@ -851,11 +851,11 @@ class Dispatcher {
 					details = {};
 					for (const item of (data.getDetailsList() || [])) {
 						details[item.getKey()] = Decode.decodeValue(item.getValue());
-					}
+					};
 
 					this.detailsUpdate(details, rootId, id, subIds, false);
 					break;
-				}
+				};
 
 				case 'objectDetailsUnset': {
 					id = data.getId();
@@ -870,9 +870,9 @@ class Dispatcher {
 					} else {
 						detailStore.delete(rootId, id, keys);
 						blockStore.checkTypeSelect(rootId);
-					}
+					};
 					break;
-				}
+				};
 
 				case 'subscriptionAdd': {
 					id = data.getId();
@@ -881,7 +881,7 @@ class Dispatcher {
 
 					this.subscriptionPosition(subId, id, afterId, true);
 					break;
-				}
+				};
 
 				case 'subscriptionRemove': {
 					id = data.getId();
@@ -890,9 +890,9 @@ class Dispatcher {
 					if (!dep) {
 						dbStore.recordDelete(subId, '', id);
 						detailStore.delete(subId, id);
-					}
+					};
 					break;
-				}
+				};
 
 				case 'subscriptionPosition': {
 					id = data.getId();
@@ -901,7 +901,7 @@ class Dispatcher {
 
 					this.subscriptionPosition(subId, id, afterId, false);
 					break;
-				}
+				};
 
 				case 'subscriptionCounters': {
 					const total = data.getTotal();
@@ -909,9 +909,9 @@ class Dispatcher {
 					
 					if (!dep) {
 						dbStore.metaSet(subId, '', { total: total });
-					}
+					};
 					break;
-				}
+				};
 
 				case 'subscriptionGroups': {
 					const [ rid, bid ] = data.getSubid().split('-');
@@ -921,9 +921,9 @@ class Dispatcher {
 						dbStore.groupsRemove(rid, bid, [ group.id ]);
 					} else {
 						dbStore.groupsAdd(rid, bid, [ group ]);
-					}
+					};
 					break;
-				}
+				};
 
 				case 'processNew':
 				case 'processUpdate':
@@ -941,7 +941,7 @@ class Dispatcher {
 							if ([ I.ProgressType.Recover, I.ProgressType.Migration ].includes(type)) {
 								canCancel = false;
 								isUnlocked = false;
-							}
+							};
 
 							commonStore.progressSet({
 								id: process.getId(),
@@ -952,12 +952,12 @@ class Dispatcher {
 								canCancel,
 							});
 							break;
-						}
+						};
 
 						case I.ProgressState.Error: {
 							commonStore.progressClear();
 							break;
-						}
+						};
 
 						case I.ProgressState.Done:
 						case I.ProgressState.Canceled: {
@@ -965,25 +965,25 @@ class Dispatcher {
 
 							if (state != I.ProgressState.Done) {
 								break;
-							}
+							};
 
 							let title = '';
 							let text = '';
-							const showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type);
+							let showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type);
 
 							switch (type) {
 								case I.ProgressType.Import: { 
 									title = translate('dispatcherImportSuccessTitle');
 									text = translate('dispatcherImportSuccessText'); 
 									break; 
-								}
+								};
 
 								case I.ProgressType.Export: { 
 									title = translate('dispatcherExportSuccessTitle');
 									text = translate('dispatcherExportSuccessText');
 									break; 
-								}
-							}
+								};
+							};
 
 							if (showPopup) {
 								window.setTimeout(() => { 
@@ -996,25 +996,25 @@ class Dispatcher {
 										} 
 									}); 
 								}, Constant.delay.popup);
-							}
+							};
 							break;
-						}
-					}
+						};
+					};
 					break;
-				}
-			}
+				};
+			};
 
 			if (needLog) {
 				log(rootId, type, data, message.getValueCase());
-			}
-		}
+			};
+		};
 		
 		window.clearTimeout(this.timeoutEvent[rootId]);
 		this.timeoutEvent[rootId] = window.setTimeout(() => { 
 			blockStore.updateNumbers(rootId); 
 			blockStore.updateMarkup(rootId);
 		}, 10);
-	}
+	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		const root = blockStore.getLeaf(rootId, id);
@@ -1028,23 +1028,23 @@ class Dispatcher {
 			if ((id == rootId) && root) {
 				if ((undefined !== details.layout) && (root.layout != details.layout)) {
 					blockStore.update(rootId, rootId, { layout: details.layout });
-				}
+				};
 
 				if (undefined !== details.setOf) {
 					blockStore.updateWidgetData(rootId);
-				}
+				};
 
 				blockStore.checkTypeSelect(rootId);
-			}
-		}
-	}
+			};
+		};
+	};
 
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = subId.split('/');
 
 		if (dep) {
 			return;
-		}
+		};
 
 		const records = dbStore.getRecords(sid, '');
 		const newIndex = afterId ? records.indexOf(afterId) + 1 : 0;
@@ -1053,17 +1053,17 @@ class Dispatcher {
 
 		if (isAdding && (oldIndex >= 0)) {
 			return;
-		}
+		};
 
 		if (oldIndex < 0) {
 			records.push(id);
 			oldIndex = records.indexOf(id);
-		}
+		};
 
 		if (oldIndex !== newIndex) {
 			dbStore.recordsSet(sid, '', arrayMove(records, oldIndex, newIndex));
-		}
-	}
+		};
+	};
 
 	sort (c1: any, c2: any) {
 		const idx1 = SORT_IDS.findIndex(it => it == this.eventType(c1.getValueCase()));
@@ -1072,7 +1072,7 @@ class Dispatcher {
 		if (idx1 > idx2) return 1;
 		if (idx1 < idx2) return -1;
 		return 0;
-	}
+	};
 
 	onObjectView (rootId: string, traceId: string, objectView: any) {
 		const { details, restrictions, relationLinks } = objectView;
@@ -1084,7 +1084,7 @@ class Dispatcher {
 			analytics.setContext(root.fields.analyticsContext, root.fields.analyticsOriginalId);
 		} else {
 			analytics.removeContext();
-		}
+		};
 
 		dbStore.relationsSet(contextId, rootId, relationLinks);
 		detailStore.set(contextId, details);
@@ -1095,13 +1095,13 @@ class Dispatcher {
 
 			root.type = I.BlockType.Page;
 			root.layout = object.layout;
-		}
+		};
 
 		const blocks = objectView.blocks.map(it => {
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(contextId, it.id, it.content.relationLinks);
 				dbStore.viewsSet(contextId, it.id, it.content.views);
-			}
+			};
 
 			structure.push({ id: it.id, childrenIds: it.childrenIds });
 			return new M.Block(it);
@@ -1122,7 +1122,7 @@ class Dispatcher {
 		blockStore.updateNumbers(contextId); 
 		blockStore.updateMarkup(contextId);
 		blockStore.checkTypeSelect(contextId);
-	}
+	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		type = type.replace(/^command_/, '');
@@ -1134,7 +1134,7 @@ class Dispatcher {
 		if (!this.service[ct]) {
 			console.error('[Dispatcher.request] Service not found: ', type);
 			return;
-		}
+		};
 
 		const t0 = performance.now();
 		let t1 = 0;
@@ -1145,20 +1145,20 @@ class Dispatcher {
 			console.log(`%cRequest.${type}`, 'font-weight: bold; color: blue;');
 			d = UtilCommon.objectClear(data.toObject());
 			console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
-		}
+		};
 
 		try {
 			this.service[ct](data, { token: authStore.token }, (error: any, response: any) => {
 				if (!response) {
 					return;
-				}
+				};
 
 				t1 = performance.now();
 
 				if (error) {
 					console.error('Error', error.code, error.description);
 					return;
-				}
+				};
 
 				const err = response.getError();
 				const code = err ? err.getCode() : 0;
@@ -1167,7 +1167,7 @@ class Dispatcher {
 				let message: any = {};
 				if (!code && Response[type]) {
 					message = Response[type](response);
-				}
+				};
 
 				message.event = response.getEvent ? response.getEvent() : null;
 				message.error = { code: code, description: description };
@@ -1178,25 +1178,25 @@ class Dispatcher {
 					if (!SKIP_SENTRY_ERRORS.includes(type)) {
 						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 						analytics.event('Exception', { method: type, code: message.error.code });
-					}
-				}
+					};
+				};
 
 				if (debug && !SKIP_IDS.includes(type)) {
 					console.log(`%cCallback.${type}`, 'font-weight: bold; color: green;');
 					d = UtilCommon.objectClear(response.toObject());
 					console.log(config.debug.js ? JSON.stringify(d, null, 3) : d);
-				}
+				};
 
 				if (message.event) {
 					this.event(message.event, true);
-				}
+				};
 
 				const middleTime = Math.ceil(t1 - t0);
 				message.middleTime = middleTime;
 
 				if (callBack) {
 					callBack(message);
-				}
+				};
 
 				t2 = performance.now();
 				
@@ -1210,12 +1210,12 @@ class Dispatcher {
 						'Total:', totalTime + 'ms',
 					];
 					console.log(`%cTimes.${type}`, 'font-weight: bold; color: darkgreen;', times.join('\t'));
-				}
+				};
 			});
 		} catch (err) {
 			console.error(err);
-		}
-	}
+		};
+	};
 
 	checkLog (type: string) {
 		const { config } = commonStore;
@@ -1226,16 +1226,16 @@ class Dispatcher {
 		let check = false;
 		if (debugCommon && ![ 'threadStatus', 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
 			check = true;
-		}
+		};
 		if (debugThread && [ 'threadStatus' ].includes(type)) {
 			check = true;
-		}
+		};
 		if (debugFile && [ 'fileLocalUsage', 'fileSpaceUsage' ].includes(type)) {
 			check = true;
-		}
+		};
 		return check;
-	}
+	};
 
-}
+};
 
  export const dispatcher = new Dispatcher();

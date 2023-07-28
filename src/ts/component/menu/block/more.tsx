@@ -110,47 +110,47 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let pageInstall = null;
 		let template = null;
 
-		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		let print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
-		let search = { id: 'search', name: translate('menuBlockMoreSearchOnPage'), caption: `${cmd} + F` };
-		let move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
-		let turn = { id: 'turnObject', icon: 'object', name: translate('menuBlockMoreTurnIntoObject'), arrow: true };
-		let history = { id: 'history', name: translate('menuBlockMoreVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
-		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
-		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('menuBlockMoreDuplicateObject') };
-		let pageLink = { id: 'pageLink', icon: 'link', name: translate('menuBlockMoreCopyLink') };
-		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuBlockMoreReloadFromSource') };
-		let blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
+		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
+		let print = { id: 'print', name: 'Print', caption: `${cmd} + P` };
+		let search = { id: 'search', name: 'Search on page', caption: `${cmd} + F` };
+		let move = { id: 'move', name: 'Move to', arrow: true };
+		let turn = { id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true };
+		let history = { id: 'history', name: 'Version history', caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
+		let pageExport = { id: 'pageExport', icon: 'export', name: 'Export' };
+		let pageCopy = { id: 'pageCopy', icon: 'copy', name: 'Duplicate object' };
+		let pageLink = { id: 'pageLink', icon: 'link', name: 'Copy link' };
+		let pageReload = { id: 'pageReload', icon: 'reload', name: 'Reload from source' };
+		let blockRemove = { id: 'blockRemove', icon: 'remove', name: 'Delete' };
 
 		if (isTemplate) {	
-			template = { id: 'pageCreate', icon: 'template', name: translate('menuBlockMoreCreateObject') };
+			template = { id: 'pageCreate', icon: 'template', name: 'Create object' };
 		} else {
-			template = { id: 'templateCreate', icon: 'template', name: translate('menuBlockMoreUseAsTemplate') };
+			template = { id: 'templateCreate', icon: 'template', name: 'Use as a template' };
 		};
 
 		if (object.isFavorite) {
-			fav = { id: 'unfav', name: translate('commonRemoveFromFavorites') };
+			fav = { id: 'unfav', name: 'Remove from Favorites' };
 		} else {
-			fav = { id: 'fav', name: translate('commonAddToFavorites') };
+			fav = { id: 'fav', name: 'Add to Favorites' };
 		};
 
 		if (object.isArchived) {
 			linkTo = null;
-			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
+			archive = { id: 'pageUnarchive', icon: 'restore', name: 'Restore from bin' };
 		} else {
-			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin') };
+			archive = { id: 'pageArchive', icon: 'remove', name: 'Move to bin' };
 		};
 
 		if (block.isLocked()) {
-			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: translate('menuBlockMoreUnlockPage'), caption: `Ctrl + Shift + L` };
+			pageLock = { id: 'pageUnlock', icon: 'pageUnlock', name: 'Unlock page', caption: `Ctrl + Shift + L` };
 		} else {
-			pageLock = { id: 'pageLock', icon: 'pageLock', name: translate('menuBlockMoreLockPage'), caption: `Ctrl + Shift + L` };
+			pageLock = { id: 'pageLock', icon: 'pageLock', name: 'Lock page', caption: `Ctrl + Shift + L` };
 		};
 
 		if (object.isInstalled) {
-			pageInstall = { id: 'pageUninstall', icon: 'remove', name: translate('commonDelete') };
+			pageInstall = { id: 'pageUninstall', icon: 'remove', name: 'Delete' };
 		} else {
-			pageInstall = { id: 'pageInstall', icon: 'install', name: translate('menuBlockMoreInstall') };
+			pageInstall = { id: 'pageInstall', icon: 'install', name: 'Install' };
 		};
 
 		// Restrictions
@@ -202,7 +202,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			];
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		} else {
-			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };
+			const align = { id: 'align', name: 'Align', icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };
 
 			sections.push({ children: [
 				turn,

@@ -16,7 +16,7 @@ const run = async () => {
 
 		fs.writeFileSync(fp, content);
 		console.log('Saved lang file:', fp);
-	}
+	};
 };
 
 const request = async (lang) => {

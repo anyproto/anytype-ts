@@ -258,7 +258,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				items.push({ id: 'add', icon: 'plus', name: addParam.name, isAdd: true });
 			} else
 			if (filter) {
-				items.push({ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), isAdd: true });
+				items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"`, isAdd: true });
 			};
 		};
 

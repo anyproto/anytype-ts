@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, C, analytics, keyboard, UtilData, Action, UtilCommon, translate } from 'Lib';
+import { I, C, analytics, keyboard, UtilData, Action, UtilCommon } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -108,7 +108,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 				{!noFilter ? (
 					<Filter 
 						ref={ref => this.refFilter = ref} 
-						placeholderFocus={translate('menuTypeSuggestFilterTypes')}
+						placeholderFocus="Filter types..." 
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
@@ -292,21 +292,21 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
-			{ id: 'library', name: translate('menuTypeSuggestMyTypes'), children: library },
+			{ id: 'library', name: 'My types', children: library },
 		];
 
 		if (filter) {
 			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 
 			sections = sections.concat([
-				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
-				{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuTypeSuggestCreateType'), filter) } ] }
+				{ id: 'store', name: 'Anytype library', children: store },
+				{ children: [ { id: 'add', name: `Create type "${filter}"` } ] }
 			]);
 		} else {
 			sections = sections.concat([
 				{ 
 					children: [
-						{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
+						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
 					] 
 				},
 			]);
