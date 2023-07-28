@@ -37,14 +37,14 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 	};
 
 	render () {
+		this.init();
+
 		const { error } = this.state;
 		const modeOptions = [ 
 			{ id: I.CsvImportMode.Table, name: 'Table' },
 			{ id: I.CsvImportMode.Collection, name: 'Collection' },
 		].map(it => ({ ...it, id: String(it.id) }));
 		const { delimiter, delimiters } = this.delimiterOptions();
-
-		this.init();
 
 		return (
 			<div>
@@ -129,8 +129,6 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 	componentDidMount(): void {
 		this.init();
-		this.refMode.setValue(String(this.data.mode));
-		this.refDelimiter.setValue(this.data.delimiter);
 	};
 
 	init () {
