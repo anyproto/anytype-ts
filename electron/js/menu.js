@@ -162,7 +162,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Anytype Community', click: () => Util.send(this.win, 'commandGlobal', 'community') },
+					{ label: 'Report a Bug', click: () => Util.send(this.win, 'commandGlobal', 'community') },
 					{ label: 'Help and Tutorials', click: () => Util.send(this.win, 'commandGlobal', 'tutorial') },
 					{ label: 'Contact Us', click: () => Util.send(this.win, 'commandGlobal', 'contact') },
 					{ label: 'Technical Information', click: () => Util.send(this.win, 'commandGlobal', 'tech') },
