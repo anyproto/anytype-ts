@@ -88,6 +88,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let pageCopy = { id: 'copy', icon: 'copy', name: 'Duplicate' };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: 'Link to', arrow: true };
+		let changeType = { id: 'changeType', icon: 'pencil', name: 'Change type', arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -156,7 +157,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, linkTo, div, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, changeType, linkTo, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -212,7 +213,21 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		switch (item.id) {
-			case 'linkTo':
+			case 'changeType':
+				menuId = 'typeSuggest';
+				menuParam.data = Object.assign(menuParam.data, {
+					filter: '',
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
+					],
+					onClick: (item: any) => {
+						C.ObjectListSetObjectType(objectIds, item.id);
+						close();
+					}
+				});
+				break;
+
+			case 'linkTo': {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
@@ -236,6 +251,7 @@ class MenuContext extends React.Component<I.Menu> {
 					}
 				});
 				break;
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
