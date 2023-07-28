@@ -94,7 +94,7 @@ class Select extends React.Component<Props, State> {
 		if (!value.length && options.length) {
 			value = [ options[0].id ];
 		};
-		
+
 		this.setState({ value, options });
 	};
 
