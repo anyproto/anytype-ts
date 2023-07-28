@@ -1,17 +1,6 @@
 import * as React from 'react';
 import { MenuItemVertical, Button } from 'Component';
-import {
-	I,
-	UtilCommon,
-	Onboarding,
-	keyboard,
-	analytics,
-	Renderer,
-	Highlight,
-	Storage,
-	UtilObject,
-	translate
-} from 'Lib';
+import { I, UtilCommon, Onboarding, keyboard, analytics, Renderer, Highlight, Storage, UtilObject, translate } from 'Lib';
 import { popupStore, blockStore } from 'Store';
 import Url from 'json/url.json';
 

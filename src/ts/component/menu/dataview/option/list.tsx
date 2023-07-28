@@ -342,7 +342,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		};
 
 		if (data.filter) {
-			const filter = new RegExp(UtilCommon.filterFix(data.filter), 'gi');
+			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
 			items = items.filter(it => it.name.match(filter));

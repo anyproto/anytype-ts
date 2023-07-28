@@ -88,6 +88,7 @@ class MenuContext extends React.Component<I.Menu> {
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
+		let changeType = { id: 'changeType', icon: 'pencil', name: 'Change type', arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -156,7 +157,7 @@ class MenuContext extends React.Component<I.Menu> {
 		if (!allowedCopy)		 pageCopy = null;
 
 		let sections = [
-			{ children: [ open, fav, linkTo, div, pageCopy, unlink, archive ] },
+			{ children: [ open, fav, linkTo, changeType, div, pageCopy, unlink, archive ] },
 		];
 
 		sections = sections.filter((section: any) => {
@@ -212,7 +213,22 @@ class MenuContext extends React.Component<I.Menu> {
 		};
 
 		switch (item.id) {
-			case 'linkTo':
+			case 'changeType': {
+				menuId = 'typeSuggest';
+				menuParam.data = Object.assign(menuParam.data, {
+					filter: '',
+					filters: [
+						{ operator: I.FilterOperator.And, relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: UtilObject.getPageLayouts().concat([ I.ObjectLayout.Set ]) },
+					],
+					onClick: (item: any) => {
+						C.ObjectListSetObjectType(objectIds, item.id);
+						close();
+					}
+				});
+				break;
+			};
+
+			case 'linkTo': {
 				menuId = 'searchObject';
 				menuParam.data = Object.assign(menuParam.data, {
 					filters: [
@@ -233,9 +249,10 @@ class MenuContext extends React.Component<I.Menu> {
 						};
 
 						close();
-					}
+					},
 				});
 				break;
+			};
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
@@ -265,11 +282,12 @@ class MenuContext extends React.Component<I.Menu> {
 		
 		switch (item.id) {
 
-			case 'open':
+			case 'open': {
 				UtilObject.openPopup(detailStore.get(subId, objectIds[0], []));
 				break;
+			};
 
-			case 'copy':
+			case 'copy': {
 				C.ObjectListDuplicate(objectIds, (message: any) => {
 					if (message.error.code || !message.ids.length) {
 						return;
@@ -292,8 +310,9 @@ class MenuContext extends React.Component<I.Menu> {
 					};
 				});
 				break;
+			};
 
-			case 'archive':
+			case 'archive': {
 				C.ObjectListSetIsArchived(objectIds, true, (message: any) => {
 					cb();
 					analytics.event('MoveToBin', { count });
@@ -301,34 +320,39 @@ class MenuContext extends React.Component<I.Menu> {
 
 				win.trigger('removeGraphNode', { ids: objectIds });
 				break;
+			};
 
-			case 'unarchive':
+			case 'unarchive': {
 				C.ObjectListSetIsArchived(objectIds, false, (message: any) => {
 					cb();
 					analytics.event('RestoreFromBin', { count });
 				});
 				break;
+			};
 
-			case 'fav':
+			case 'fav': {
 				C.ObjectListSetIsFavorite(objectIds, true, () => {
 					cb();
 					analytics.event('AddToFavorites', { count });
 				});
 				break;
+			};
 
-			case 'unfav':
+			case 'unfav': {
 				C.ObjectListSetIsFavorite(objectIds, false, () => {
 					cb();
 					analytics.event('RemoveFromFavorites', { count });
 				});
 				break;
+			};
 
-			case 'unlink':
+			case 'unlink': {
 				C.ObjectCollectionRemove(targetId, objectIds, () => {
 					cb();
 					analytics.event('UnlinkFromCollection', { count });
 				});
 				break;
+			};
 
 		};
 		

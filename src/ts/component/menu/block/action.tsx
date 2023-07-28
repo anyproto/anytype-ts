@@ -2,20 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
-import {
-	I,
-	C,
-	keyboard,
-	UtilData,
-	UtilObject,
-	UtilMenu,
-	focus,
-	Action,
-	translate,
-	analytics,
-	Dataview,
-	UtilCommon
-} from 'Lib';
+import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface State {

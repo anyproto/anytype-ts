@@ -435,7 +435,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.props.close();
 
 		if (item.isObject) {
-			const filter = UtilCommon.filterFix(this.getFilter());
+			const filter = UtilCommon.regexEscape(this.getFilter());
 
 			UtilObject.openEvent(e, { ...item, id: item.id });
 			analytics.event('SearchResult', { index: item.index + 1, length: filter.length });

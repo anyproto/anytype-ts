@@ -1622,6 +1622,15 @@ const ObjectListSetIsFavorite = (ids: string[], isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectListSetIsFavorite.name, request, callBack);
 };
 
+const ObjectListSetObjectType = (ids: string[], typeId: string, callBack?: (message: any) => void) => {
+	const request = new Rpc.Object.ListSetObjectType.Request();
+
+	request.setObjectidsList(ids);
+	request.setObjecttypeid(typeId);
+
+	dispatcher.request(ObjectListSetObjectType.name, request, callBack);
+};
+
 const ObjectListExport = (path: string, objectIds: string[], format: I.ExportType, zip: boolean, includeNested: boolean, includeFiles: boolean, includeArchived: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.ListExport.Request();
 
@@ -1910,6 +1919,7 @@ export {
 	ObjectListDelete,
 	ObjectListSetIsArchived,
 	ObjectListSetIsFavorite,
+	ObjectListSetObjectType,
 	ObjectListExport,
 
 	TemplateCreateFromObject,

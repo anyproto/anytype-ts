@@ -2,19 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import {
-	I,
-	C,
-	UtilData,
-	UtilObject,
-	UtilCommon,
-	Onboarding,
-	focus,
-	keyboard,
-	analytics,
-	history as historyPopup,
-	translate
-} from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Onboarding, focus, keyboard, analytics, history as historyPopup, translate } from 'Lib';
 import { popupStore, detailStore, blockStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
