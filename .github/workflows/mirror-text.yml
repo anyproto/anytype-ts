@@ -26,6 +26,7 @@ jobs:
         with:
           repository: anyproto/l10n-anytype-ts
           path: l10n-anytype-ts
+          token: ${{ secrets.ANY_CLA_TOKEN }}
 
       - name: Copy files
         run: |
