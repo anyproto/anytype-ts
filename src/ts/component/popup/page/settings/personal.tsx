@@ -59,7 +59,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							options={interfaceLanguages}
 							onChange={v => {
 								Storage.set('interfaceLang', v);
-								Renderer.send('reloadAllWindows');
+								Renderer.send('changeInterfaceLang');
 							}}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}

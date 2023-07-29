@@ -1,4 +1,5 @@
 const { app, shell, nativeTheme } = require('electron');
+const { localStorage } = require('electron-browser-storage');
 const { is } = require('electron-util');
 const log = require('electron-log');
 const path = require('path');
@@ -204,6 +205,18 @@ class Util {
 
 	fileName (name) {
 		return sanitize(String(name || 'untitled').trim());
+	};
+
+	translate (key) {
+		let lang = 'en-US';
+		let data = {};
+
+		try { 
+			lang = JSON.stringify(localStorage.getItem('interfaceLang'));
+			data = require(`lib/json/lang/${lang}.json`); 
+		} catch(e) {};
+
+		return data[key] || `⚠️${key}⚠️`;
 	};
 
 };
