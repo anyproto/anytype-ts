@@ -147,7 +147,6 @@ class WindowManager {
 
 		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}&lang=${Util.getLang()}`));
 		win.setMenu(null);
-		win.toggleDevTools();
 
 		win.webContents.on('will-navigate', (e, url) => {
 			e.preventDefault();
