@@ -55,12 +55,9 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 						<Select
 							id="interfaceLang"
-							value={Storage.get('interfaceLang')}
+							value={config.interfaceLang}
 							options={interfaceLanguages}
-							onChange={v => {
-								Storage.set('interfaceLang', v);
-								Renderer.send('changeInterfaceLang');
-							}}
+							onChange={v => Renderer.send('changeInterfaceLang', v)}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
 						/>

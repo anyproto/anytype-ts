@@ -1,4 +1,5 @@
 const { app, shell, BrowserWindow } = require('electron');
+const { localStorage } = require('electron-browser-storage');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 
@@ -34,7 +35,7 @@ class Api {
 	};
 
 	setConfig (win, config) {
-		ConfigManager.set(config, (err) => { Util.send(win, 'config', ConfigManager.config); });
+		ConfigManager.set(config, (err) => Util.send(win, 'config', ConfigManager.config));
 	};
 
 	setAccount (win, account) {
@@ -160,11 +161,15 @@ class Api {
 		BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
 	};
 
-	changeInterfaceLang () {
-		this.reloadAllWindows();
+	changeInterfaceLang (win, lang) {
+		console.log('[changeInterfaceLang]', lang);
 
-		MenuManager.initMenu();
-		MenuManager.initTray();
+		ConfigManager.set({ interfaceLang: lang }, (err) => {
+			this.reloadAllWindows();
+
+			MenuManager.initMenu();
+			MenuManager.initTray();
+		});
 	};
 
 };
