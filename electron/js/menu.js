@@ -33,45 +33,41 @@ class MenuManager {
 
 					Separator,
 
-					{ role: 'services' },
+					{ role: 'hide', label: Util.translate('electronMenuHide') },
+					{ role: 'hideothers', label: Util.translate('electronMenuHideOthers') },
+					{ role: 'unhide', label: Util.translate('electronMenuUnhide') },
 
 					Separator,
 
-					{ role: 'hide', label: 'Hide Anytype' },
-					{ role: 'hideothers' },
-					{ role: 'unhide' },
+					{ label: Util.translate('electronMenuCheckUpdates'), click: () => Api.updateCheck(this.win) },
 
 					Separator,
 
-					{ label: 'Check for updates', click: () => Api.updateCheck(this.win) },
+					{ label: Util.translate('electronMenuSpaceSettings'), click: () => this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: Util.translate('electronMenuAccountSettings'), click: () => this.openSettings('') },
 
 					Separator,
 
-					{ label: 'Space settings', click: () => this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }) },
-					{ label: 'Account settings', click: () => this.openSettings('') },
-
-					Separator,
-
-					{ label: 'Quit', accelerator: 'CmdOrCtrl+Q', click: () => Api.exit(this.win, false) },
+					{ label: Util.translate('electronMenuQuit'), accelerator: 'CmdOrCtrl+Q', click: () => Api.exit(this.win, false) },
 				]
 			},
 			{
-				role: 'fileMenu',
+				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
-					{ label: 'Show work directory', click: () => { shell.openPath(userPath); } },
-					{ label: 'Show logs', click: () => { shell.openPath(logPath); } },
+					{ label: Util.translate('electronMenuDirectory'), click: () => { shell.openPath(userPath); } },
+					{ label: Util.translate('electronMenuLogs'), click: () => { shell.openPath(logPath); } },
 
 					Separator,
-					{ label: 'Import', click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
-					{ label: 'Export', click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
-					{ label: 'Save as file', click: () => Util.send(this.win, 'commandGlobal', 'save') },
+					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: Util.translate('electronMenuExport'), click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: Util.translate('electronMenuSaveAs'), click: () => Util.send(this.win, 'commandGlobal', 'save') },
 
 					Separator,
 
-					{ label: 'Space debug', click: () => { Util.send(this.win, 'command', 'debugSpace'); } },
-					{ label: 'Current object debug', click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
+					{ label: Util.translate('electronMenuDebugSpace'), click: () => { Util.send(this.win, 'command', 'debugSpace'); } },
+					{ label: Util.translate('electronMenuDebugObject'), click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
 					{ 
-						label: 'Process debug', 
+						label: Util.translate('electronMenuDebugProcess'), 
 						click: () => {
 							Api.exit(this.win, 'SIGUSR1', true);
 							shell.openPath(path.join(Util.dataPath(), Api.account.id, 'logs'));
@@ -80,14 +76,14 @@ class MenuManager {
 
 					Separator,
 
-					{ role: 'close' },
+					{ role: 'close', label: Util.translate('electronMenuClose') },
 				]
 			},
 			{
 				role: 'editMenu',
 				submenu: [
 					{
-						label: 'Undo', accelerator: 'CmdOrCtrl+Z',
+						label: Util.translate('electronMenuUndo'), accelerator: 'CmdOrCtrl+Z',
 						click: () => { 
 							if (this.win) {
 								this.win.webContents.undo();
@@ -96,7 +92,7 @@ class MenuManager {
 						}
 					},
 					{
-						label: 'Redo', accelerator: 'CmdOrCtrl+Shift+Z',
+						label: Util.translate('electronMenuRedo'), accelerator: 'CmdOrCtrl+Shift+Z',
 						click: () => {
 							if (this.win) {
 								this.win.webContents.redo();
@@ -107,14 +103,14 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Copy', role: 'copy' },
-					{ label: 'Cut', role: 'cut' },
-					{ label: 'Paste', role: 'paste' },
+					{ label: Util.translate('electronMenuCopy'), role: 'copy' },
+					{ label: Util.translate('electronMenuCut'), role: 'cut' },
+					{ label: Util.translate('electronMenuPaste'), role: 'paste' },
 
 					Separator,
 
 					{
-						label: 'Select all', accelerator: 'CmdOrCtrl+A',
+						label: Util.translate('electronMenuSelectAll'), accelerator: 'CmdOrCtrl+A',
 						click: () => {
 							if (this.win) {
 								this.win.webContents.selectAll();
@@ -122,11 +118,11 @@ class MenuManager {
 							};
 						}
 					},
-					{ label: 'Search', accelerator: 'CmdOrCtrl+F', click: () => Util.send(this.win, 'commandGlobal', 'search') },
+					{ label: Util.translate('electronMenuSearch'), accelerator: 'CmdOrCtrl+F', click: () => Util.send(this.win, 'commandGlobal', 'search') },
 
 					Separator,
 
-					{ label: 'Print', accelerator: 'CmdOrCtrl+P', click: () => Util.send(this.win, 'commandGlobal', 'print') },
+					{ label: Util.translate('electronMenuPrint'), accelerator: 'CmdOrCtrl+P', click: () => Util.send(this.win, 'commandGlobal', 'print') },
 				]
 			},
 			{
@@ -286,17 +282,17 @@ class MenuManager {
 
 			Separator,
 
-			{ label: 'Check for updates', click: () => { show(); Api.updateCheck(this.win); } },
+			{ label: Util.translate('electronMenuCheckUpdates'), click: () => { show(); Api.updateCheck(this.win); } },
 
 			Separator,
 
-			{ label: 'Space settings', click: () => { show(); this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
-			{ label: 'Account settings', click: () => { show(); this.openSettings(''); } },
+			{ label: Util.translate('electronMenuSpaceSettings'), click: () => { show(); this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
+			{ label: Util.translate('electronMenuAccountSettings'), click: () => { show(); this.openSettings(''); } },
 
 			Separator,
 
-			{ label: 'Import', click: () => { show(); this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
-			{ label: 'Export', click: () => { show(); this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
+			{ label: Util.translate('electronMenuImport'), click: () => { show(); this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
+			{ label: Util.translate('electronMenuExport'), click: () => { show(); this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
 			
 			Separator,
 
@@ -310,7 +306,7 @@ class MenuManager {
 
 			Separator,
 
-			{ label: 'Quit', click: () => { hide(); Api.exit(this.win, '', false); } },
+			{ label: Util.translate('electronMenuQuit'), click: () => { hide(); Api.exit(this.win, '', false); } },
 		]));
 	};
 

@@ -1,17 +1,15 @@
 $(() => {
 	var param = getParam();
 	var closeButton = $('#close');
-	var version = $('#version');
 	var versionButton = $('#version-button');
-	var versionText = 'Version: ' + param.version;
 	var lang = 'en-US';
+	var versionText = '';
 
 	try {
 		lang = JSON.parse(localStorage.interfaceLang);
 	} catch (e) {};
 
 	document.title = 'Anytype';
-	version.text(versionText);
 
 	closeButton.on('click', e => {
 		e.preventDefault();
@@ -37,8 +35,11 @@ $(() => {
 		method: 'GET',
 		contentType: 'application/json',
 		success: (data) => {
+			versionText = [ data.electronAboutVersion, param.version ].join(' ');
+
 			$('#description').text(data.electronAboutDescription);
 			$('#copyright').text(data.electronAboutCopyright);
+			$('#version').text(versionText);
 		},
 	});
 

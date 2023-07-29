@@ -2,6 +2,7 @@ const { app, shell, BrowserWindow } = require('electron');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 
+const MenuManager = require('./menu.js');
 const ConfigManager = require('./config.js');
 const WindowManager = require('./window.js');
 const UpdateManager = require('./update.js');
@@ -157,6 +158,13 @@ class Api {
 
 	reloadAllWindows () {
 		BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
+	};
+
+	changeInterfaceLang () {
+		this.reloadAllWindows();
+
+		MenuManager.initMenu();
+		MenuManager.initTray();
 	};
 
 };
