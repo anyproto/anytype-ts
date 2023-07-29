@@ -11,8 +11,14 @@ const LANGS = Object.keys(Constant.interfaceLang);
 
 const run = async () => {
 	for (const lang of LANGS) {
-		const content = await request(lang);
 		const fp = path.join(__dirname, '..', '..', 'dist', 'lib', 'json', 'lang', `${lang}.json`);
+
+		let content = '';
+		if (lang == Constant.default.interfaceLang) {
+			content = JSON.stringify(require('../../src/json/text.json'), null, 2);
+		} else {
+			content = await request(lang);
+		};
 
 		fs.writeFileSync(fp, content);
 		console.log('Saved lang file:', fp);
