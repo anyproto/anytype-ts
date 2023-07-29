@@ -5,9 +5,7 @@ $(() => {
 	var lang = 'en-US';
 	var versionText = '';
 
-	try {
-		lang = JSON.parse(localStorage.interfaceLang);
-	} catch (e) {};
+	try { lang = JSON.parse(localStorage.interfaceLang); } catch (e) {};
 
 	document.title = 'Anytype';
 
@@ -36,6 +34,7 @@ $(() => {
 		contentType: 'application/json',
 		success: (data) => {
 			versionText = [ data.electronAboutVersion, param.version ].join(' ');
+			closeButton.text(data.commonClose);
 
 			$('#description').text(data.electronAboutDescription);
 			$('#copyright').text(data.electronAboutCopyright);
