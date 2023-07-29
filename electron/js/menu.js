@@ -80,7 +80,7 @@ class MenuManager {
 				]
 			},
 			{
-				role: 'editMenu',
+				label: Util.translate('electronMenuEdit'),
 				submenu: [
 					{
 						label: Util.translate('electronMenuUndo'), accelerator: 'CmdOrCtrl+Z',
@@ -126,47 +126,47 @@ class MenuManager {
 				]
 			},
 			{
-				role: 'windowMenu',
+				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
-					{ label: 'New window', accelerator: 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
-					{ label: 'New object', accelerator: 'CmdOrCtrl+Alt+N', click: () => WindowManager.createMain({ route: '/main/create', isChild: true }) },
+					{ label: Util.translate('electronMenuNewWindow'), accelerator: 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
+					{ label: Util.translate('electronMenuNewObject'), accelerator: 'CmdOrCtrl+Alt+N', click: () => WindowManager.createMain({ route: '/main/create', isChild: true }) },
 
 					Separator,
 
-					{ role: 'minimize' },
-					{ label: 'Zoom in', accelerator: 'CmdOrCtrl+=', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1) },
-					{ label: 'Zoom out', accelerator: 'CmdOrCtrl+-', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
-					{ label: 'Default zoom', accelerator: 'CmdOrCtrl+0', click: () => Api.setZoom(this.win, 0) },
+					{ role: 'minimize', label: Util.translate('electronMenuMinimise') },
+					{ label: Util.translate('electronMenuZoomIn'), accelerator: 'CmdOrCtrl+=', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1) },
+					{ label: Util.translate('electronMenuZoomOut'), accelerator: 'CmdOrCtrl+-', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
+					{ label: Util.translate('electronMenuZoomDefault'), accelerator: 'CmdOrCtrl+0', click: () => Api.setZoom(this.win, 0) },
 					{
-						label: 'Fullscreen', accelerator: 'CmdOrCtrl+Alt+F', type: 'checkbox', checked: this.win.isFullScreen(),
+						label: Util.translate('electronMenuFullscreen'), accelerator: 'CmdOrCtrl+Alt+F', type: 'checkbox', checked: this.win.isFullScreen(),
 						click: () => this.win.setFullScreen(!this.win.isFullScreen())
 					},
-					{ label: 'Reload', accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
+					{ label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
 				]
 			},
 			{
-				label: 'Help',
+				label: Util.translate('electronMenuHelp'),
 				submenu: [
 					{
-						label: `What's new (${app.getVersion()})`,
+						label: Util.translate('electronMenuReleaseNotes') + ` (${app.getVersion()})`,
 						click: () => Util.send(this.win, 'popup', 'help', { preventResize: true, data: { document: 'whatsNew' } })
 					},
 					{
-						label: 'Shortcuts', accelerator: 'Ctrl+Space',
+						label: Util.translate('electronMenuShortcuts'), accelerator: 'Ctrl+Space',
 						click: () => Util.send(this.win, 'popup', 'shortcut', { preventResize: true })
 					},
 
 					Separator,
 
-					{ label: 'Report a Bug', click: () => Util.send(this.win, 'commandGlobal', 'community') },
-					{ label: 'Help and Tutorials', click: () => Util.send(this.win, 'commandGlobal', 'tutorial') },
-					{ label: 'Contact Us', click: () => Util.send(this.win, 'commandGlobal', 'contact') },
-					{ label: 'Technical Information', click: () => Util.send(this.win, 'commandGlobal', 'tech') },
+					{ label: Util.translate('electronMenuCommunity'), click: () => Util.send(this.win, 'commandGlobal', 'community') },
+					{ label: Util.translate('electronMenuTutorial'), click: () => Util.send(this.win, 'commandGlobal', 'tutorial') },
+					{ label: Util.translate('electronMenuContact'), click: () => Util.send(this.win, 'commandGlobal', 'contact') },
+					{ label: Util.translate('electronMenuTech'), click: () => Util.send(this.win, 'commandGlobal', 'tech') },
 
 					Separator,
 
-					{ label: 'Terms of Use', click: () => Util.send(this.win, 'commandGlobal', 'terms') },
-					{ label: 'Privacy Policy', click: () => Util.send(this.win, 'commandGlobal', 'privacy') },
+					{ label: Util.translate('electronMenuTerms'), click: () => Util.send(this.win, 'commandGlobal', 'terms') },
+					{ label: Util.translate('electronMenuPrivacy'), click: () => Util.send(this.win, 'commandGlobal', 'privacy') },
 
 				]
 			},
@@ -176,13 +176,13 @@ class MenuManager {
 			config.debug = config.debug || {};
 
 			const flags = { 
-				ui: 'Interface', 
-				ho: 'Hidden objects', 
-				mw: 'Middleware', 
-				th: 'Threads', 
-				fi: 'Files', 
-				an: 'Analytics', 
-				js: 'JSON',
+				ui: Util.translate('electronMenuFlagInterface'), 
+				ho: Util.translate('electronMenuFlagHidden'), 
+				mw: Util.translate('electronMenuFlagMiddleware'), 
+				th: Util.translate('electronMenuFlagThreads'), 
+				fi: Util.translate('electronMenuFlagFiles'), 
+				an: Util.translate('electronMenuFlagAnalytics'), 
+				js: Util.translate('electronMenuFlagJson'),
 			};
 			const flagMenu = [];
 
@@ -201,10 +201,10 @@ class MenuManager {
 			};
 
 			menuParam.push({
-				label: 'Debug',
+				label: Util.translate('electronMenuDebug'),
 				submenu: [
-					{ label: 'Flags', submenu: flagMenu },
-					{ label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.webContents.openDevTools() },
+					{ label: Util.translate('electronMenuFlags'), submenu: flagMenu },
+					{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.webContents.openDevTools() },
 				]
 			});
 		//};
@@ -220,7 +220,7 @@ class MenuManager {
 		}); 
 
 		if (channels.length > 1) {
-			menuParam.push({ label: 'Version', submenu: channels });
+			menuParam.push({ label: Util.translate('electronMenuVersion'), submenu: channels });
 		};
 
 		const menuSudo = { 
