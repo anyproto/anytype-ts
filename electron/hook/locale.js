@@ -15,7 +15,7 @@ const run = async () => {
 
 		let content = '';
 		if (lang == Constant.default.interfaceLang) {
-			content = JSON.stringify(require('../../src/json/text.json'), null, 2);
+			content = JSON.stringify(require('../../src/json/text.json'), null, 4);
 		} else {
 			content = await request(lang);
 		};
