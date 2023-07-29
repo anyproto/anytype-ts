@@ -207,14 +207,15 @@ class Util {
 		return sanitize(String(name || 'untitled').trim());
 	};
 
-	translate (key) {
-		let lang = 'en-US';
-		let data = {};
+	getLang () {
+		return ConfigManager.config.interfaceLang || 'en-US';
+	};
 
-		try { 
-			lang = JSON.stringify(localStorage.getItem('interfaceLang'));
-			data = require(`lib/json/lang/${lang}.json`); 
-		} catch(e) {};
+	translate (key) {
+		const lang = this.getLang();
+		
+		let data = {};
+		try { data = require(`lib/json/lang/${lang}.json`); } catch(e) {};
 
 		return data[key] || `⚠️${key}⚠️`;
 	};

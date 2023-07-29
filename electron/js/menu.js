@@ -24,6 +24,18 @@ class MenuManager {
 		const Api = require('./api.js');
 		const WindowManager = require('./window.js');
 		const UpdateManager = require('./update.js');
+		const Constant = require('../../src/json/constant.json');
+		const lang = Util.getLang();
+		const langMenu = [];
+
+		for (let i in Constant.interfaceLang) {
+			langMenu.push({
+				label: Constant.interfaceLang[i], type: 'checkbox', checked: i == lang,
+				click: () => Api.changeInterfaceLang(this.win, i)
+			});
+		};
+
+		console.log(lang);
 
 		let menuParam = [
 			{
@@ -45,6 +57,7 @@ class MenuManager {
 
 					{ label: Util.translate('electronMenuSpaceSettings'), click: () => this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }) },
 					{ label: Util.translate('electronMenuAccountSettings'), click: () => this.openSettings('') },
+					{ label: Util.translate('electronMenuLanguage'), submenu: langMenu },
 
 					Separator,
 

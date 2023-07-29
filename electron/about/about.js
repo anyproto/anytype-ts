@@ -2,10 +2,7 @@ $(() => {
 	var param = getParam();
 	var closeButton = $('#close');
 	var versionButton = $('#version-button');
-	var lang = 'en-US';
 	var versionText = '';
-
-	try { lang = JSON.parse(localStorage.interfaceLang); } catch (e) {};
 
 	document.title = 'Anytype';
 
@@ -29,7 +26,7 @@ $(() => {
 	});
 
 	$.ajax({
-		url: `../../dist/lib/json/lang/${lang}.json`,
+		url: `../../dist/lib/json/lang/${param.lang}.json`,
 		method: 'GET',
 		contentType: 'application/json',
 		success: (data) => {

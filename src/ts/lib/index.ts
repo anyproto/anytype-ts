@@ -32,6 +32,8 @@ import Highlight from './highlight';
 import Animation from './animation';
 import Constant from 'json/constant.json';
 
+import { commonStore } from 'Store';
+
 /**
  * 
  * @param key the key of the text as found in the json/text.json file
@@ -39,7 +41,7 @@ import Constant from 'json/constant.json';
  * Defaults to the default lang set in constant.json (english)
  */
 const translate = (key: string): string => {
-	const lang = Storage.get('interfaceLang') || Constant.default.interfaceLang;
+	const lang = commonStore.config.interfaceLang || Constant.default.interfaceLang;
 
 	let data = {};
 	if (lang == Constant.default.interfaceLang) {

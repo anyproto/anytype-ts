@@ -154,6 +154,7 @@
 	"electronMenuDevTools": "Dev Tools",
 	"electronMenuVersion": "Version",
 	"electronMenuOpen": "Open Anytype",
+	"electronMenuLanguage": "Interface language",
 
     "month1": "January",
     "month2": "February",
