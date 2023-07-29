@@ -278,7 +278,7 @@ class MenuManager {
 		this.tray = new Tray (this.getTrayIcon());
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
-			{ label: 'Open Anytype', click: () => show() },
+			{ label: Util.translate('electronMenuOpen'), click: () => show() },
 
 			Separator,
 
@@ -296,13 +296,13 @@ class MenuManager {
 			
 			Separator,
 
-			{ label: 'New object', accelerator: 'CmdOrCtrl+N', click: () => { show(); Util.send(this.win, 'commandGlobal', 'create'); } },
-			{ label: 'Search object', click: () => { show(); Util.send(this.win, 'popup', 'search', {}, true); } },
+			{ label: Util.translate('electronMenuNewObject'), accelerator: 'CmdOrCtrl+N', click: () => { show(); Util.send(this.win, 'commandGlobal', 'create'); } },
+			{ label: Util.translate('electronMenuSearchObject'), click: () => { show(); Util.send(this.win, 'popup', 'search', {}, true); } },
 			
 			Separator,
 
-			{ label: 'Space debug', click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugSpace'); } },
-			{ label: 'Tree diagnostics', click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugTree'); } },
+			{ label: Util.translate('electronMenuDebugSpace'), click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugSpace'); } },
+			{ label: Util.translate('electronMenuDebugTree'), click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugTree'); } },
 
 			Separator,
 

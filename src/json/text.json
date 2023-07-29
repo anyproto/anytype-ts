@@ -112,6 +112,7 @@
 	"electronMenuDebugSpace": "Space debug",
 	"electronMenuDebugObject": "Current object debug",
 	"electronMenuDebugProcess": "Process debug",
+	"electronMenuDebugTree": "Tree diagnostics",
 	"electronMenuClose": "Close window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -125,6 +126,7 @@
 	"electronMenuWindow": "Window",
 	"electronMenuNewWindow": "New window",
 	"electronMenuNewObject": "New object",
+	"electronMenuSearchObject": "Search object",
 	"electronMenuMinimise": "Minimise",
 	"electronMenuZoomIn": "Zoom in",
 	"electronMenuZoomOut": "Zoom out",
@@ -151,6 +153,7 @@
 	"electronMenuFlags": "Flags",
 	"electronMenuDevTools": "Dev Tools",
 	"electronMenuVersion": "Version",
+	"electronMenuOpen": "Open Anytype",
 
     "month1": "January",
     "month2": "February",
