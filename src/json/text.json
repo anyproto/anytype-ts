@@ -771,6 +771,8 @@
     "popupPageSettingsImportNotionIntegrationList21": "Select the pages you want to import by adding the integration you created",
     "popupPageSettingsImportNotionIntegrationList22": "Select document -> ... -> Add Connections -> Confirm Integration",
 
+    "popupPageSettingsPinCheckTimeOut": "PIN code check time-out",
+
     "popupPageSettingsImportNotion": "",
 
     "menuAccountPeer": "%d\/%d peers",
