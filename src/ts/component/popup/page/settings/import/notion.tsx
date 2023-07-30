@@ -31,7 +31,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 
 				<Icon className="logo" />
 				<Title text="Notion" />
-				<Label className="description" text="Import your Notion files through the Notion API with 2 simple steps" />
+				<Label className="description" text={translate('popupPageSettingsImportNotionDescription')} />
 
 				<div className="inputWrapper flex">
 					<div className="errorWrapper">
@@ -39,7 +39,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 							focusOnMount
 							ref={(ref: any) => { this.ref = ref; }} 
 							type="password"
-							placeholder="Paste your integration token"
+							placeholder={translate('popupPageSettingsImportNotionTokenPlaceholder')}
 						/>
 						{error ? <Error text={error} /> : ''}
 					</div>
@@ -49,20 +49,20 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 				<div className="line" />
 
 				<div className="helpWrapper flex">
-					<Title text="How to import from Notion" />
+					<Title text={translate('popupPageSettingsImportNotionHowTo')} />
 					<div className="btn" onClick={() => { onPage('importNotionHelp'); }}>
-						<Icon className="help" />Learn more
+						<Icon className="help" />{translate('popupPageSettingsImportNotionLearnMore')}
 					</div>
 				</div>
 
 				<ol className="list">
 					<li>
-						<Label text="Create the integration you need to get Notion files" />
-						<Label className="grey" text={`Settings &amp; members -> My connections -> Develop or manage integrations -> <a href="https://www.notion.so/my-integrations">New integration</a>`} />
+						<Label text={translate('popupPageSettingsImportNotionIntegrationList11')} />
+						<Label className="grey" text={translate('popupPageSettingsImportNotionIntegrationList12')} />
 					</li>
 					<li>
-						<Label text="Select the pages you want to import by adding the integration you created" />
-						<Label className="grey" text="Select document -> ... -> Add Connections -> Confirm Integration" />
+						<Label text={translate('popupPageSettingsImportNotionIntegrationList21')} />
+						<Label className="grey" text={translate('popupPageSettingsImportNotionIntegrationList22')} />
 					</li>
 				</ol>
 			</React.Fragment>

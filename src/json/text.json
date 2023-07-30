@@ -761,6 +761,15 @@
     "popupPageSettingsImportNotionWarningLi4": "<b>Databases</b> will look as Objects with Relations in Anytype documents",
     "popupPageSettingsImportNotionWarningProceed": "Proceed",
 
+    "popupPageSettingsImportNotionDescription": "Import your Notion files through the Notion API with 2 simple steps",
+    "popupPageSettingsImportNotionTokenPlaceholder": "Paste your integration token",
+    "popupPageSettingsImportNotionHowTo": "How to import from Notion",
+    "popupPageSettingsImportNotionLearnMore": "Learn more",
+    "popupPageSettingsImportNotionIntegrationList11": "Create the integration you need to get Notion files",
+    "popupPageSettingsImportNotionIntegrationList12": "Settings &amp; members -> My connections -> Develop or manage integrations -> <a href=\"https://www.notion.so/my-integrations\">New integration</a>",
+    "popupPageSettingsImportNotionIntegrationList21": "Select the pages you want to import by adding the integration you created",
+    "popupPageSettingsImportNotionIntegrationList22": "Select document -> ... -> Add Connections -> Confirm Integration",
+
     "popupPageSettingsImportNotion": "",
 
     "menuAccountPeer": "%d\/%d peers",
