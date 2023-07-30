@@ -107,7 +107,7 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				items = [
 					{ id: 'pageSize', name: translate('popupExportPageSize'), control: 'select', options: pageSize },
 					{ id: 'landscape', name: translate('popupExportLandscape'), control: 'switch' },
-					{ id: 'printBg', name: translate('popupExport'), control: 'switch' },
+					{ id: 'printBg', name: translate('popupExportPrintBackground'), control: 'switch' },
 				];
 				break;
 		};

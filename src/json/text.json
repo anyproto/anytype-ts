@@ -329,16 +329,12 @@
     "popupExportIncludeArchivedObjects": "Include archived objects",
     "popupExportPageSize": "Page size",
     "popupExportLandscape": "Landscape",
-    "popupExport": "Print background",
+    "popupExportPrintBackground": "Print background",
     "popupExportExport": "Export",
     "popupExportExportFormat": "Export format",
-    "popupExport": "",
-    "popupExport": "",
-    "popupExport": "",
-    "popupExport": "",
-    "popupExport": "",
-    "popupExport": "",
-    "popupExport": "",
+
+    "popupHelpOlderReleases": "Older releases",
+
     "popupExport": "",
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
