@@ -1181,6 +1181,8 @@
     "previewCopy": "Copy link",
     "previewEdit": "Edit link",
 
+    "previewObjectTemplateIsBundled": "Template is bundled",
+
     "filterConditionNone": "All",
     "filterConditionEqual": "Is",
     "filterConditionNotEqual": "Is not",
