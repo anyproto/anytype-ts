@@ -1345,5 +1345,8 @@
     "dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",
     "dispatcherExportSuccessTitle": "The export process is complete!",
     "dispatcherExportSuccessText": "You can find the exported objects in the folder you selected.",
-    "dispatcherImportConfirm": "Ok! I got it!"
+    "dispatcherImportConfirm": "Ok! I got it!",
+
+    "utilDeletedBackToDashboard": "Back to dashboard",
+    "utilDeletedObjectNotExist": "This object doesn't exist"
 }
