@@ -735,7 +735,14 @@
     "popupPageSettingsDeleteText2": "Since Anytype stores all your data locally on the device, you need to remove it from other devices also. Launch and remove data in Anytype or just delete the app.",
     "popupPageSettingsDeleteCheckboxLabel": "I have read it and want to delete my account",
 
-    "popupPageSettingsDelete": "",
+    "popupPageSettingsImportCsvTable": "Table",
+    "popupPageSettingsImportCsvCollection": "Collection",
+    "popupPageSettingsImportCsvMode": "Mode",
+    "popupPageSettingsImportCsvUseFirstRow": "Use the first row as column names",
+    "popupPageSettingsImportCsvTranspose": "Transpose rows and columns",
+    "popupPageSettingsImportCsvColumnsDivider": "Columns are divided by",
+    "popupPageSettingsImportCsvCustomSymbol": "Custom symbol",
+    "popupPageSettingsImportCsvCustom": "Custom",
 
     "menuAccountPeer": "%d\/%d peers",
     "menuAccountPathText": "Your key files will be stored here. Click to change the path",
