@@ -1,7 +1,7 @@
-import { I } from 'Lib';
+import { I, translate } from 'Lib';
 
 export default {
-    mainGraph: {
+    mainGraph: () => ({
         category: 'Onboarding',
         items: [
             {
@@ -28,9 +28,9 @@ export default {
 			passThrough: true,
             offsetY: -4,
         },
-    },
+    }),
 
-    mainSet: {
+    mainSet: () => ({
         category: 'Set & Collection',
         items: [
             {
@@ -70,9 +70,9 @@ export default {
             passThrough: true,
             offsetY: -4
         },
-    },
+    }),
 
-    storeType: {
+    storeType: () => ({
         category: 'Library',
         items: [
             {
@@ -105,9 +105,9 @@ export default {
             passThrough: true,
             offsetY: -4
         },
-    },
+    }),
 
-    storeRelation: {
+    storeRelation: () => ({
         category: 'Library',
         items: [
             {
@@ -139,9 +139,9 @@ export default {
             passThrough: true,
             offsetY: -4
         },
-    },
+    }),
 
-    objectCreationStart: {
+    objectCreationStart: () => ({
         category: 'Creating objects',
         items: [
             {
@@ -173,9 +173,9 @@ export default {
             passThrough: true,
             offsetY: -4,
         },
-    },
+    }),
 
-    objectCreationFinish: {
+    objectCreationFinish: () => ({
         category: 'Creating objects',
         items: [
             {
@@ -199,9 +199,9 @@ export default {
             passThrough: true,
             offsetY: -4,
         },
-    },
+    }),
 
-    dashboard: {
+    dashboard: () => ({
         category: 'Onboarding',
         showConfetti: true,
         items: [
@@ -260,9 +260,9 @@ export default {
 			passThrough: true,
 			offsetY: -4,
 		},
-    },
+    }),
 
-    editor: {
+    editor: () => ({
         category: 'Editor',
         items: [
 			{
@@ -302,9 +302,9 @@ export default {
                 }
             },
         ]
-    },
+    }),
 
-    typeDeleted: {
+    typeDeleted: () => ({
 		items: [
 			{
 				name: 'This Type has been deleted',
@@ -315,9 +315,9 @@ export default {
 				}
 			},
 		],
-	},
+	}),
 
-	sourceDeleted: {
+	sourceDeleted: () => ({
 		items: [
 			{
 				name: 'Please check your Installed Types & Relations',
@@ -328,9 +328,9 @@ export default {
 				}
 			},
 		],
-	},
+	}),
 
-	inlineSet: {
+	inlineSet: () => ({
 		items: [
 			{
 				name: 'This is inline set',
@@ -349,9 +349,9 @@ export default {
 				}
 			},
 		],
-	},
+	}),
 
-	inlineCollection: {
+	inlineCollection: () => ({
 		items: [
 			{
 				name: 'This is inline collection',
@@ -370,6 +370,6 @@ export default {
 				}
 			},
 		],
-	},
+	}),
 
 }

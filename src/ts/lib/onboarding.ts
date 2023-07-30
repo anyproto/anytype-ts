@@ -1,15 +1,23 @@
 import { I, Storage, UtilCommon } from 'Lib';
 import * as Docs from 'Docs';
 import { menuStore } from 'Store';
-
 import Constant from 'json/constant.json';
 
 class Onboarding {
+
+	getSection (key: string) {
+		return Docs.Help.Onboarding[key] ? Docs.Help.Onboarding[key]() : {};
+	};
 	
 	start (key: string, isPopup: boolean, force?: boolean, options?: any) {
 		options = options || {};
 
-		const section = Docs.Help.Onboarding[key];
+		console.log('KEY', key);
+
+		const section = this.getSection(key);
+
+		console.log(section);
+
 		if (!section || !section.items || !section.items.length || (!force && Storage.getOnboarding(key))) {
 			return;
 		};
