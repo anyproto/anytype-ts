@@ -754,6 +754,13 @@
     "popupPageSettingsImportNotionHelpStep21": "Select the pages you want to import into Anytype. Click on three dots on the upper right corner, then Add connections. Select your Anytype integration.",
     "popupPageSettingsImportNotionHelpStep22": "Press Confirm. Now you just need to paste your Internal Integration Token to Anytype.",
 
+    "popupPageSettingsImportNotionWarningTitle": "Some data formats will be imported as text",
+    "popupPageSettingsImportNotionWarningLi1": "All <b>@mentions</b> will be converted to text",
+    "popupPageSettingsImportNotionWarningLi2": "<b>Date ranges</b> will be imported as text",
+    "popupPageSettingsImportNotionWarningLi3": "<b>Formulas and rollups</b> will be placed as values",
+    "popupPageSettingsImportNotionWarningLi4": "<b>Databases</b> will look as Objects with Relations in Anytype documents",
+    "popupPageSettingsImportNotionWarningProceed": "Proceed",
+
     "popupPageSettingsImportNotion": "",
 
     "menuAccountPeer": "%d\/%d peers",
