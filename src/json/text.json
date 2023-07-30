@@ -1318,9 +1318,9 @@
     "widgetAdd": "Add widget",
     "widgetLibrary": "Library",
     "widgetBin": "Bin",
-
     "widgetOptions": "Options",
     "widgetToggle": "Toggle",
+    "widgetEmptyLabel": "There are no objects here,<br/>create the first one",
 
     "spaceType0": "Personal space",
     "phrasePlaceholder": "Please enter your Recovery phrase here",
