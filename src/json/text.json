@@ -295,6 +295,8 @@
 
     "pageMainEmptyDescription": "Select an object to show when you login. You can always change it in Settings.",
 
+    "pageMainGraphNewObject": "New object",
+
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
     "pageAuthDeletedDay": "day",
