@@ -744,6 +744,18 @@
     "popupPageSettingsImportCsvCustomSymbol": "Custom symbol",
     "popupPageSettingsImportCsvCustom": "Custom",
 
+    "popupPageSettingsImportNotionHelpTitle": "How to import from Notion",
+    "popupPageSettingsImportNotionHelpStep": "Step %s",
+    "popupPageSettingsImportNotionHelpStep11": "Open Settings and members.",
+    "popupPageSettingsImportNotionHelpStep12": "Open My Connections and then Develop or manage integrations.",
+    "popupPageSettingsImportNotionHelpStep13": "Click New integration or Create new integration.",
+    "popupPageSettingsImportNotionHelpStep14": "Create a name (e.g. Anytype). Check the Capabilities (Read content and Read user information are required for the integration process).",
+    "popupPageSettingsImportNotionHelpStep15": "You integration will be created permanently. Internal Integration Token requires for connecting and importing your content from Notion. Copy it.",
+    "popupPageSettingsImportNotionHelpStep21": "Select the pages you want to import into Anytype. Click on three dots on the upper right corner, then Add connections. Select your Anytype integration.",
+    "popupPageSettingsImportNotionHelpStep22": "Press Confirm. Now you just need to paste your Internal Integration Token to Anytype.",
+
+    "popupPageSettingsImportNotion": "",
+
     "menuAccountPeer": "%d\/%d peers",
     "menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
