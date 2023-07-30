@@ -299,9 +299,9 @@ class Relation {
 
 	public getSizeOptions () {
 		return [
-			{ id: I.CardSize.Small, name: 'Small' },
-			{ id: I.CardSize.Medium, name: 'Medium' },
-			{ id: I.CardSize.Large, name: 'Large' },
+			{ id: I.CardSize.Small, name: translate('libRelationSmall') },
+			{ id: I.CardSize.Medium, name: translate('libRelationMedium') },
+			{ id: I.CardSize.Large, name: translate('libRelationLarge') },
 		];
 	};
 
@@ -316,8 +316,8 @@ class Relation {
 		}));
 
 		return [
-			{ id: '', icon: '', name: 'None' },
-			{ id: Constant.pageCoverRelationKey, icon: 'image', name: 'Page cover' },
+			{ id: '', icon: '', name: translate('libRelationNone') },
+			{ id: Constant.pageCoverRelationKey, icon: 'image', name: translate('libRelationPageCover') },
 		].concat(options);
 	};
 

@@ -1438,7 +1438,12 @@
     "libKeyboardDeviceID": "Device ID",
     "libKeyboardTechInformation": "Tech information",
 
-    "libKeyboard": "",
+    "libRelationSmall": "Small",
+    "libRelationMedium": "Medium",
+    "libRelationLarge": "Large",
+    "libRelationNone": "None",
+    "libRelationPageCover": "Page cover",
+    "libRelation": "",
 
     "utilDeletedBackToDashboard": "Back to dashboard",
     "utilDeletedObjectNotExist": "This object doesn't exist"
