@@ -243,10 +243,10 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		if (isSpace) {
 			return [
 				{ 
-					name: 'Space', isHidden: true, children: [
+					name: translate('popupSettingsSpaceTitle'), isHidden: true, children: [
 						{
 							id: 'spaceIndex',
-							name: 'Space',
+							name: translate('popupSettingsSpaceTitle'),
 							subPages: [
 								'spaceInvite', 'spaceTeam', 'spaceLeave', 'spaceRemove', 'spaceStorageManager',
 								'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importMarkdown', 'importCsv',
@@ -258,16 +258,16 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 			];
 		} else {
 			return [
-				{ id: 'account', children: [ { id: 'account', name: 'Profile', subPages: [ 'logout' ] } ] },
+				{ id: 'account', children: [ { id: 'account', name: translate('popupSettingsProfileTitle'), subPages: [ 'logout' ] } ] },
 				{
-					name: 'Application', children: [
+					name: translate('popupSettingsApplicationTitle'), children: [
 						{ id: 'personal', name: translate('popupSettingsPersonalTitle') },
 						{ id: 'appearance', name: translate('popupSettingsAppearanceTitle') },
 						{ id: 'pinIndex', name: translate('popupSettingsPinTitle'), icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
 					]
 				},
 				{ 
-					name: 'Void & Key', children: [
+					name: translate('popupSettingsVoidTitle'), children: [
 						{ id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), icon: 'storage', subPages: [ 'delete' ] },
 						{ id: 'phrase', name: translate('popupSettingsPhraseTitle') },
 					]

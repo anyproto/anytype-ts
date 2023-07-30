@@ -26,7 +26,7 @@ class Deleted extends React.Component<Props> {
 			textButton = translate('commonClose');
 			onClick = () => popupStore.close('page');
 		} else {
-			textButton = 'Back to dashboard';
+			textButton = translate('utilDeletedBackToDashboard');
 			onClick = () => UtilObject.openHome('route');
 		};
 
@@ -38,7 +38,7 @@ class Deleted extends React.Component<Props> {
 			>
 				<div className="mid">
 					<Icon className="ghost" />
-					<Label text="This object doesn't exist" />
+					<Label text={translate('utilDeletedObjectNotExist')} />
 					<Button color="blank" text={textButton} onClick={onClick} />
 				</div>
 			</div>

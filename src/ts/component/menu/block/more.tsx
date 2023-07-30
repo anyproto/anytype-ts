@@ -114,7 +114,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
 		let search = { id: 'search', name: translate('menuBlockMoreSearchOnPage'), caption: `${cmd} + F` };
 		let move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
-		let turn = { id: 'turnObject', icon: 'object', name: translate('menuBlockMoreTurnIntoObject'), arrow: true };
+		let turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
 		let history = { id: 'history', name: translate('menuBlockMoreVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
 		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('menuBlockMoreDuplicateObject') };

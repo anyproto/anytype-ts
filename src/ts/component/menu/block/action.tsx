@@ -197,7 +197,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		if (filter) {
 			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: UtilMenu.getBlockText() };
 			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: UtilMenu.getBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: translate('menuBlockActionsSectionsTurnIntoObject'), children: UtilMenu.getTurnPage() };
+			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: UtilMenu.getTurnPage() };
 			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: UtilMenu.getTurnDiv() };
 			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: UtilMenu.getTurnFile() };
 			const action = { id: 'action', icon: '', name: translate('menuBlockActionsSectionsActions'), children: [] };

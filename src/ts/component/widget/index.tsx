@@ -97,10 +97,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			buttons = (
 				<div className="buttons">
 					<div className="iconWrap options">
-						<Icon id="button-options" className="options" tooltip="Options" onClick={this.onOptions} />
+						<Icon id="button-options" className="options" tooltip={translate('widgetOptions')} onClick={this.onOptions} />
 					</div>
 					<div className="iconWrap collapse">
-						<Icon className="collapse" tooltip="Toggle" onClick={this.onToggle} />
+						<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={this.onToggle} />
 					</div>
 				</div>
 			);

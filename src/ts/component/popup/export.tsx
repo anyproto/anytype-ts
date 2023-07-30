@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Action, keyboard, analytics } from 'Lib';
+import { I, Action, keyboard, analytics, translate } from 'Lib';
 import { Title, Select, Button, Switch } from 'Component';
 import { commonStore } from 'Store';
 import { observer } from 'mobx-react';
@@ -96,28 +96,28 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 			case I.ExportType.Markdown:
 			case I.ExportType.Protobuf:
 				items = [
-					{ id: 'zip', name: 'Zip archive', control: 'switch' },
-					{ id: 'nested', name: 'Include linked objects', control: 'switch' },
-					{ id: 'files', name: 'Include files', control: 'switch' },
-					{ id: 'archived', name: 'Include archived objects', control: 'switch' },
+					{ id: 'zip', name: translate('popupExportZipArchive'), control: 'switch' },
+					{ id: 'nested', name: translate('popupExportIncludeLinkedObjects'), control: 'switch' },
+					{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
+					{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 				];
 				break;
 
 			case I.ExportType.Pdf:
 				items = [
-					{ id: 'pageSize', name: 'Page size', control: 'select', options: pageSize },
-					{ id: 'landscape', name: 'Landscape', control: 'switch' },
-					{ id: 'printBg', name: 'Print background', control: 'switch' },
+					{ id: 'pageSize', name: translate('popupExportPageSize'), control: 'select', options: pageSize },
+					{ id: 'landscape', name: translate('popupExportLandscape'), control: 'switch' },
+					{ id: 'printBg', name: translate('popupExportPrintBackground'), control: 'switch' },
 				];
 				break;
 		};
 
 		return (
 			<React.Fragment>
-				<Title text="Export" />
+				<Title text={translate('popupExportExport')} />
 
 				<div className="row">
-					<div className="name">Export format</div>
+					<div className="name">{translate('popupExportExportFormat')}</div>
 					<div className="value">
 						<Select 
 							id="format" 
@@ -137,8 +137,8 @@ const PopupExport = observer(class PopupExport extends React.Component<I.Popup> 
 				))}
 
 				<div className="buttons">
-					<Button text="Export" onClick={this.onConfirm} />
-					<Button color="blank" text="Cancel" onClick={this.onCancel} />
+					<Button text={translate('popupExportExport')} onClick={this.onConfirm} />
+					<Button color="blank" text={translate('commonCancel')} onClick={this.onCancel} />
 				</div>
 			</React.Fragment>
 		);

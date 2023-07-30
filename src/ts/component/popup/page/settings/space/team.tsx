@@ -37,11 +37,11 @@ const PopupSettingsSpaceTeam = observer(class PopupSettingsSpaceTeam extends Rea
         };
 
         const memberOptions = [
-            { id: 'reader', name: 'Reader'},
-            { id: 'editor', name: 'Editor'},
-            { id: 'admin', name: 'Admin'},
+			{ id: 'reader', name: translate('popupSettingsSpaceMemberTypeReader')},
+			{ id: 'editor', name: translate('popupSettingsSpaceMemberTypeEditor')},
+			{ id: 'admin', name: translate('popupSettingsSpaceMemberTypeAdmin')},
             { id: '', name: '', isDiv: true },
-            { id: 'remove', name: 'Remove member', icon: 'remove' }
+            { id: 'remove', name: translate('popupSettingsSpaceTeamRemoveMember'), icon: 'remove' }
         ];
 
         const length = this.team.length;

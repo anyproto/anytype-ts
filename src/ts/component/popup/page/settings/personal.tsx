@@ -107,7 +107,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 		ret = ret.concat(commonStore.languages || []);
 		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
-		ret.unshift({ id: '', name: 'Disabled' });
+		ret.unshift({ id: '', name: translate('commonDisabled') });
 
 		return ret;
 	};

@@ -26,7 +26,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
         const { walletPath, accountPath } = authStore;
         const { config } = commonStore;
 
-        const localStorage = { name: 'Local files', iconEmoji: ':desktop_computer:' };
+        const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
         const canMove = config.experimental;
 
         return (
@@ -71,9 +71,9 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
         popupStore.open('confirm',{
             data: {
-                title: 'Are you sure?',
-                text: 'All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.',
-                textConfirm: 'Yes',
+                title: translate('popupSettingsDataOffloadWarningTitle'),
+                text: translate('popupSettingsDataOffloadWarningText'),
+                textConfirm: translate('commonYes'),
                 onConfirm: () => {
                     setLoading(true);
                     analytics.event('SettingsStorageOffload');
@@ -87,9 +87,9 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
                         popupStore.open('confirm',{
                             data: {
-                                title: 'Files offloaded',
+                                title: translate('popupSettingsDataFilesOffloaded'),
                                 //text: UtilCommon.sprintf('Files: %s, Size: %s', message.files, UtilFile.size(message.bytes)),
-                                textConfirm: 'Ok',
+                                textConfirm: translate('commonOk'),
                                 canCancel: false,
                             }
                         });

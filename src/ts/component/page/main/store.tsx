@@ -19,8 +19,8 @@ enum View {
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const Tabs = [
-	{ id: I.StoreTab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
-	{ id: I.StoreTab.Relation, name: 'Relations', tooltipCaption: `${cmd} + ${alt} + T` },
+	{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
+	{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
@@ -78,22 +78,22 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
-				placeholder = 'Search or create a new type...';
-				textService = 'Service type';
-				textInstalled = 'Type is installed';
-				textInstall = 'Install type';
-				textEmpty = '<b>Your type list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
+				title = translate('pageMainStoreTypesTitle');
+				placeholder = translate('pageMainStoreTypesPlaceholder');
+				textService = translate('pageMainStoreTypesService');
+				textInstalled = translate('pageMainStoreTypeInstalled');
+				textInstall = translate('pageMainStoreTypeInstall');
+				textEmpty = translate('pageMainStoreTypeEmpty');
 				iconSize = 18;
 				break;
 
 			case I.StoreTab.Relation:
-				title = 'All objects are connected.<br />Use relations to build connections between objects.';
-				placeholder = 'Search or create a new relation...';
-				textService = 'Service relation';
-				textInstalled = 'Relation is installed';
-				textInstall = 'Install relation';
-				textEmpty = '<b>Your relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
+				title = translate('pageMainStoreRelationsTitle');
+				placeholder = translate('pageMainStoreRelationsPlaceholder');
+				textService = translate('pageMainStoreRelationsService');
+				textInstalled = translate('pageMainStoreRelationsInstalled');
+				textInstall = translate('pageMainStoreRelationsInstall');
+				textEmpty = translate('pageMainStoreRelationsEmpty');
 				iconSize = 20;
 				break;
 		};
@@ -562,15 +562,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				views.push({ id: View.Library, name: 'My types' });
+				views.push({ id: View.Library, name: translate('pageMainStoreMyTypes') });
 				break;
 
 			case I.StoreTab.Relation:
-				views.push({ id: View.Library, name: 'My relations' });
+				views.push({ id: View.Library, name: translate('pageMainStoreMyRelations') });
 				break;
 		};
 
-		views.push({ id: View.Marketplace, name: 'Anytype library' });
+		views.push({ id: View.Marketplace, name: translate('commonAnytypeLibrary') });
 		return views;
 	};
 

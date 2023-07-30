@@ -8,7 +8,7 @@ const PopupSettingsSpaceLeave = observer(class PopupSettingsSpaceLeave extends R
 
     render () {
         const space = {
-            name: 'Anytype Space',
+            name: translate('popupSettingsSpaceAnytypeSpace'),
         };
 
         return (

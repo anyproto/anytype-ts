@@ -31,7 +31,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data, force } = param;
 		const { key, current } = data;
-		const section = Docs.Help.Onboarding[key] || {};
+		const section = Onboarding.getSection(key);
 		const { items, category, showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
@@ -124,7 +124,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param, position } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const section = Docs.Help.Onboarding[key] || {};
+		const section = Onboarding.getSection(key);
 		const { items, showConfetti } = section;
 		const l = items.length;
 		const node = $(this.node);
@@ -242,7 +242,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param, close } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const items = Docs.Help.Onboarding[key].items;
+		const section = Onboarding.getSection(key);
+		const { items } = section;
 
 		if ((dir < 0) && (current == 0)) {
 			return;
@@ -260,7 +261,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data, onOpen, onClose } = param;
 		const { key, isPopup, options } = data;
-		const section = Docs.Help.Onboarding[key];
+		const section = Onboarding.getSection(key);
 		const { items } = section;
 		const item = items[next];
 

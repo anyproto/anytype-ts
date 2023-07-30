@@ -41,7 +41,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 				<Input 
 					ref={ref => this.ref = ref} 
 					value={value} 
-					placeholder={translate('commonSearch')} 
+					placeholder={translate('commonSearchPlaceholder')}
 					onKeyDown={this.onKeyDown} 
 					onKeyUp={this.onKeyUp} 
 				/>
