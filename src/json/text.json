@@ -87,6 +87,7 @@
     "commonFinish": "commonFinish",
     "commonAnytypeLibrary": "Anytype library",
     "commonHomepage": "Homepage",
+    "commonYes": "Yes",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -322,20 +323,6 @@
     "pageMainTypeRecommendedLayout": "Recommended layout",
     "pageMainTypeNewObject": "New object",
     "pageMainTypeNewSetOfObjects": "New set of objects",
-
-    "popupExportZipArchive": "Zip archive",
-    "popupExportIncludeLinkedObjects": "Include linked objects",
-    "popupExportIncludeFiles": "Include files",
-    "popupExportIncludeArchivedObjects": "Include archived objects",
-    "popupExportPageSize": "Page size",
-    "popupExportLandscape": "Landscape",
-    "popupExportPrintBackground": "Print background",
-    "popupExportExport": "Export",
-    "popupExportExportFormat": "Export format",
-
-    "popupHelpOlderReleases": "Older releases",
-
-    "popupIndexComponentNotFound": "Component %s not found",
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
@@ -722,6 +709,27 @@
     "popupConfirmUpdateDoneOk": "'Great!",
     "popupConfirmUpdateErrorTitle": "Oops!",
     "popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
+
+    "popupExportZipArchive": "Zip archive",
+    "popupExportIncludeLinkedObjects": "Include linked objects",
+    "popupExportIncludeFiles": "Include files",
+    "popupExportIncludeArchivedObjects": "Include archived objects",
+    "popupExportPageSize": "Page size",
+    "popupExportLandscape": "Landscape",
+    "popupExportPrintBackground": "Print background",
+    "popupExportExport": "Export",
+    "popupExportExportFormat": "Export format",
+
+    "popupHelpOlderReleases": "Older releases",
+
+    "popupIndexComponentNotFound": "Component %s not found",
+
+    "popupPageSettingsDataLocalFiles": "Local files",
+    "popupPageSettingsDataOffloadWarningTitle": "Are you sure?",
+    "popupPageSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
+    "popupPageSettingsDataFilesOffloaded": "Files offloaded",
+
+    "popupPageSettingsData": "",
 
     "menuAccountPeer": "%d\/%d peers",
     "menuAccountPathText": "Your key files will be stored here. Click to change the path",
