@@ -12,8 +12,8 @@ const Separator = { type: 'separator' };
 class MenuManager {
 
 	win = null;
-	menu = {};
-	tray = {};
+	menu = null;
+	tray = null;
 
 	setWindow (win) {
 		this.win = win;
@@ -286,6 +286,10 @@ class MenuManager {
 			if (this.win) {
 				this.win.hide();
 			};
+		};
+
+		if (this.tray) {
+			this.tray.destroy();
 		};
 
 		this.tray = new Tray (this.getTrayIcon());

@@ -1,5 +1,4 @@
 const { app, shell, nativeTheme } = require('electron');
-const { localStorage } = require('electron-browser-storage');
 const { is } = require('electron-util');
 const log = require('electron-log');
 const path = require('path');
@@ -213,9 +212,9 @@ class Util {
 
 	translate (key) {
 		const lang = this.getLang();
-		
+
 		let data = {};
-		try { data = require(`lib/json/lang/${lang}.json`); } catch(e) {};
+		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
 
 		return data[key] || `⚠️${key}⚠️`;
 	};
