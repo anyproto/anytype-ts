@@ -734,7 +734,7 @@
     "popupPageSettingsDeleteTitle2": "Delete data from other devices",
     "popupPageSettingsDeleteText2": "Since Anytype stores all your data locally on the device, you need to remove it from other devices also. Launch and remove data in Anytype or just delete the app.",
     "popupPageSettingsDeleteCheckboxLabel": "I have read it and want to delete my account",
-    "popupPageSettingsDelete": "",
+
     "popupPageSettingsDelete": "",
 
     "menuAccountPeer": "%d\/%d peers",
