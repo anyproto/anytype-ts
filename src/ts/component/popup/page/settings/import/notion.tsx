@@ -31,7 +31,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 
 				<Icon className="logo" />
 				<Title text="Notion" />
-				<Label className="description" text={translate('popupPageSettingsImportNotionDescription')} />
+				<Label className="description" text={translate('popupSettingsImportNotionDescription')} />
 
 				<div className="inputWrapper flex">
 					<div className="errorWrapper">
@@ -39,7 +39,7 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 							focusOnMount
 							ref={(ref: any) => { this.ref = ref; }} 
 							type="password"
-							placeholder={translate('popupPageSettingsImportNotionTokenPlaceholder')}
+							placeholder={translate('popupSettingsImportNotionTokenPlaceholder')}
 						/>
 						{error ? <Error text={error} /> : ''}
 					</div>
@@ -49,20 +49,20 @@ class PopupSettingsPageImportNotion extends React.Component<I.PopupSettings, Sta
 				<div className="line" />
 
 				<div className="helpWrapper flex">
-					<Title text={translate('popupPageSettingsImportNotionHowTo')} />
+					<Title text={translate('popupSettingsImportNotionHowTo')} />
 					<div className="btn" onClick={() => { onPage('importNotionHelp'); }}>
-						<Icon className="help" />{translate('popupPageSettingsImportNotionLearnMore')}
+						<Icon className="help" />{translate('popupSettingsImportNotionLearnMore')}
 					</div>
 				</div>
 
 				<ol className="list">
 					<li>
-						<Label text={translate('popupPageSettingsImportNotionIntegrationList11')} />
-						<Label className="grey" text={translate('popupPageSettingsImportNotionIntegrationList12')} />
+						<Label text={translate('popupSettingsImportNotionIntegrationList11')} />
+						<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList12')} />
 					</li>
 					<li>
-						<Label text={translate('popupPageSettingsImportNotionIntegrationList21')} />
-						<Label className="grey" text={translate('popupPageSettingsImportNotionIntegrationList22')} />
+						<Label text={translate('popupSettingsImportNotionIntegrationList21')} />
+						<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList22')} />
 					</li>
 				</ol>
 			</React.Fragment>

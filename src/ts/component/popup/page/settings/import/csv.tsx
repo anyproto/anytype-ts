@@ -41,8 +41,8 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 		const { error } = this.state;
 		const modeOptions = [ 
-			{ id: I.CsvImportMode.Table, name: translate('popupPageSettingsImportCsvTable') },
-			{ id: I.CsvImportMode.Collection, name: translate('popupPageSettingsImportCsvCollection') },
+			{ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') },
+			{ id: I.CsvImportMode.Collection, name: translate('popupSettingsImportCsvCollection') },
 		].map(it => ({ ...it, id: String(it.id) }));
 		const { delimiter, delimiters } = this.delimiterOptions();
 
@@ -56,7 +56,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 				<div className="actionItems">
 					<div className="item">
-						<Label text={translate('popupPageSettingsImportCsvMode')} />
+						<Label text={translate('popupSettingsImportCsvMode')} />
 						<Select 
 							ref={ref => this.refMode = ref}
 							id="csv-import-mode" 
@@ -72,7 +72,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 					</div>
 
 					<div className="item">
-						<Label text={translate('popupPageSettingsImportCsvUseFirstRow')} />
+						<Label text={translate('popupSettingsImportCsvUseFirstRow')} />
 						<Switch 
 							value={this.data.firstRow} 
 							className="big" 
@@ -84,7 +84,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 					</div>
 
 					<div className="item">
-						<Label text={translate('popupPageSettingsImportCsvTranspose')} />
+						<Label text={translate('popupSettingsImportCsvTranspose')} />
 						<Switch 
 							value={this.data.transpose} 
 							className="big" 
@@ -96,7 +96,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 					</div>
 
 					<div className="item">
-						<Label text={translate('popupPageSettingsImportCsvColumnsDivider')} />
+						<Label text={translate('popupSettingsImportCsvColumnsDivider')} />
 						<Select 
 							ref={ref => this.refDelimiter = ref}
 							id="csv-import-delimiter" 
@@ -109,7 +109,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 								data: { 
 									withFilter: true,
 									preventFilter: true,
-									placeholder: translate('popupPageSettingsImportCsvCustomSymbol'),
+									placeholder: translate('popupSettingsImportCsvCustomSymbol'),
 									onFilterKeyUp: this.onFilterKeyUp,
 								},
 							}}
@@ -189,7 +189,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 		let delimiter = delimiters.find(it => (it.value == this.data.delimiter) || (it.caption == this.data.delimiter));
 		if (!delimiter) {
-			delimiter = { id: 'custom', name: translate('popupPageSettingsImportCsvCustom'), caption: this.data.delimiter };
+			delimiter = { id: 'custom', name: translate('popupSettingsImportCsvCustom'), caption: this.data.delimiter };
 			delimiters.push(delimiter);
 		};
 

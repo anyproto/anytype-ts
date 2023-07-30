@@ -16,26 +16,26 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 		return (
 			<div>
 				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
-				<Title text={translate('popupPageSettingsImportNotionWarningTitle')} />
+				<Title text={translate('popupSettingsImportNotionWarningTitle')} />
 
 				<div className="listWrapper">
 					<ol className="list">
 						<li className="label">
-							{translate('popupPageSettingsImportNotionWarningLi1')}
+							{translate('popupSettingsImportNotionWarningLi1')}
 						</li>
 						<li className="label">
-							{translate('popupPageSettingsImportNotionWarningLi2')}
+							{translate('popupSettingsImportNotionWarningLi2')}
 						</li>
 						<li className="label">
-							{translate('popupPageSettingsImportNotionWarningLi3')}
+							{translate('popupSettingsImportNotionWarningLi3')}
 						</li>
 						<li className="label">
-							{translate('popupPageSettingsImportNotionWarningLi4')}
+							{translate('popupSettingsImportNotionWarningLi4')}
 						</li>
 					</ol>
 				</div>
 
-				<Button className="c36" text={translate('popupPageSettingsImportNotionWarningProceed')} onClick={this.onImport} />
+				<Button className="c36" text={translate('popupSettingsImportNotionWarningProceed')} onClick={this.onImport} />
 			</div>
 		);
 	};

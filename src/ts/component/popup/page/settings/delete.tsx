@@ -26,15 +26,15 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 				<div className="text">
-					<b>1. {translate('popupPageSettingsDeleteTitle1')}</b>
-					<p className="first">{translate('popupPageSettingsDeleteText1')}</p>
+					<b>1. {translate('popupSettingsDeleteTitle1')}</b>
+					<p className="first">{translate('popupSettingsDeleteText1')}</p>
 
-					<b>2. {translate('popupPageSettingsDeleteTitle2')}</b>
-					<p>{translate('popupPageSettingsDeleteText2')}</p>
+					<b>2. {translate('popupSettingsDeleteTitle2')}</b>
+					<p>{translate('popupSettingsDeleteText2')}</p>
 				</div>
 
 				<div className="check" onClick={this.onCheck}>
-					<Checkbox ref={ref => this.refCheckbox = ref} /> {translate('popupPageSettingsDeleteCheckboxLabel')}
+					<Checkbox ref={ref => this.refCheckbox = ref} /> {translate('popupSettingsDeleteCheckboxLabel')}
 				</div>
 
 				<Button id="button" text={translate('commonDelete')} color="red c36" className="disabled" onClick={this.onDelete} />

@@ -26,7 +26,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
         const { walletPath, accountPath } = authStore;
         const { config } = commonStore;
 
-        const localStorage = { name: translate('popupPageSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
+        const localStorage = { name: translate('popupSettingsDataLocalFiles'), iconEmoji: ':desktop_computer:' };
         const canMove = config.experimental;
 
         return (
@@ -71,8 +71,8 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
         popupStore.open('confirm',{
             data: {
-                title: translate('popupPageSettingsDataOffloadWarningTitle'),
-                text: translate('popupPageSettingsDataOffloadWarningText'),
+                title: translate('popupSettingsDataOffloadWarningTitle'),
+                text: translate('popupSettingsDataOffloadWarningText'),
                 textConfirm: translate('commonYes'),
                 onConfirm: () => {
                     setLoading(true);
@@ -87,7 +87,7 @@ const PopupSettingsPageDataManagement = observer(class PopupSettingsPageStorageI
 
                         popupStore.open('confirm',{
                             data: {
-                                title: translate('popupPageSettingsDataFilesOffloaded'),
+                                title: translate('popupSettingsDataFilesOffloaded'),
                                 //text: UtilCommon.sprintf('Files: %s, Size: %s', message.files, UtilFile.size(message.bytes)),
                                 textConfirm: translate('commonOk'),
                                 canCancel: false,

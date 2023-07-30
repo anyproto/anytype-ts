@@ -12,38 +12,38 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 				<Icon className="logo" />
 				<Title text={translate('')} />
 				
-				<Label className="step" text={UtilCommon.sprintf(translate('popupPageSettingsImportNotionHelpStep'), 1)} />
+				<Label className="step" text={UtilCommon.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
 				<ol className="list">
 					<li>
-						{translate('popupPageSettingsImportNotionHelpStep11')}
+						{translate('popupSettingsImportNotionHelpStep11')}
 						<img src="./img/help/notion/1-1.png" />
 					</li>
 					<li>
-						{translate('popupPageSettingsImportNotionHelpStep12')}
+						{translate('popupSettingsImportNotionHelpStep12')}
 						<img src="./img/help/notion/1-2.png" />
 					</li>
 					<li>
-						{translate('popupPageSettingsImportNotionHelpStep13')}
+						{translate('popupSettingsImportNotionHelpStep13')}
 						<img src="./img/help/notion/1-3.png" />
 					</li>
 					<li>
-						{translate('popupPageSettingsImportNotionHelpStep14')}
+						{translate('popupSettingsImportNotionHelpStep14')}
 						<img src="./img/help/notion/1-4.png" />
 					</li>
 					<li>
-						{translate('popupPageSettingsImportNotionHelpStep15')}
+						{translate('popupSettingsImportNotionHelpStep15')}
 						<img src="./img/help/notion/1-5.png" />
 					</li>
 				</ol>
 
-				<Label className="step" text={UtilCommon.sprintf(translate('popupPageSettingsImportNotionHelpStep'), 2)} />
+				<Label className="step" text={UtilCommon.sprintf(translate('popupSettingsImportNotionHelpStep'), 2)} />
 				<ol className="list">
 					<li>
-						{translate('popupPageSettingsImportNotionHelpStep21')}
+						{translate('popupSettingsImportNotionHelpStep21')}
 						<img src="./img/help/notion/2-1.png" />
 					</li>
 					<li>
-						{translate('popupPageSettingsImportNotionHelpStep22')}
+						{translate('popupSettingsImportNotionHelpStep22')}
 						<img src="./img/help/notion/2-2.png" />
 					</li>
 				</ol>
