@@ -84,8 +84,8 @@
     "commonDescending": "Descending",
     "commonObjectType": "Object type",
     "commonSelect": "Select",
-    "commonNext": "commonNext",
-    "commonFinish": "commonFinish",
+    "commonNext": "Next",
+    "commonFinish": "Finish",
     "commonAnytypeLibrary": "Anytype library",
     "commonHomepage": "Homepage",
     "commonYes": "Yes",
@@ -1351,6 +1351,27 @@
     "dispatcherExportSuccessTitle": "The export process is complete!",
     "dispatcherExportSuccessText": "You can find the exported objects in the folder you selected.",
     "dispatcherImportConfirm": "Ok! I got it!",
+
+    "onboardingMainGraph": "Onboarding",
+    "onboardingMainGraph11": "<b>Welcome to your Anytype Space.</b> Space is a graph of interconnected objects, providing a natural way to organize information.",
+    "onboardingMainGraph12": "To access your Homepage, click on its icon in the graph or the <span class=\"highlight\">Next</span> button.",
+
+    "onboardingMainSet": "Set & Collection",
+    "onboardingMainSet11": "<b>Anytype has two basic formats: Sets and Collections.</b> As in computer science, a Set is a data structure that contains only unique elements, while a Collection is any group of objects that are stored together. You can convert any set into a collection, but not the other way around.",
+    "onboardingMainSet21": "<b>Sets</b> contain no duplicates and can be used to filter specific objects or relation types, such as all my bookmarks. <b>Collections</b>, however, can contain duplicates and are used for more general-purpose data storage; they can store anything.",
+    "onboardingMainSet31": "<b>View sets or collections as an entire object, or place them inline in documents.</b> The first column will contain the collecting objects, and the others will show their relations.",
+    "onboardingMainSet32": "Filter and adjust objects by any relation, such as today's notes (filter by date) or project documents (filter by project).",
+    "onboardingMainSetButton": "Great! I will try",
+
+    "onboarding": "",
+    "onboarding": "",
+    "onboarding": "",
+    "onboarding": "",
+    "onboarding": "",
+    "onboarding": "",
+    "onboarding": "",
+    "onboarding": "",
+    "onboarding": "",
 
     "utilDeletedBackToDashboard": "Back to dashboard",
     "utilDeletedObjectNotExist": "This object doesn't exist"
