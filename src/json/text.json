@@ -11,8 +11,8 @@
     "commonDelete": "Delete",
     "commonSoon": "Soon",
     "commonTitle": "anytype",
-    "commonSearch": "Search...",
-    "commonSearchButton": "Search",
+    "commonSearch": "Search",
+    "commonSearchPlaceholder": "Search...",
     "commonFilterClick": "Click to filter...",
     "commonFilterEmpty": "No items match filter",
     "commonFilterObjects": "Filter objects...",
@@ -85,6 +85,7 @@
     "commonNext": "commonNext",
     "commonFinish": "commonFinish",
     "commonAnytypeLibrary": "Anytype library",
+    "commonHomepage": "Homepage",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -291,6 +292,8 @@
     "pageMainUsecaseTitle": "How would you like to start?",
     "pageMainUsecaseLabel": "We'll load some templates to get you started",
     "pageMainUsecaseSkip": "Skip",
+
+    "pageMainEmptyDescription": "Select an object to show when you login. You can always change it in Settings.",
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
@@ -582,7 +585,6 @@
     "popupSettingsSpaceIndexRemoteStorageExtend": "Get more space",
     "popupSettingsSpaceIndexStorageText": "You can store up to %s of your files on our encrypted backup node for free. If you reach the limit, files will be stored only locally.",
     "popupSettingsSpaceIndexStorageManageFiles": "Manage files",
-    "popupSettingsSpaceIndexHomepageTitle": "Homepage",
     "popupSettingsSpaceIndexHomepageDescription": "Select an object to show when you login",
     "popupSettingsSpaceIndexIntegrations": "Integrations",
     "popupSettingsSpaceIndexImport": "Import to space",
@@ -635,7 +637,6 @@
     "popupSettingsSpaceInviteMemberTypeTextAdmin": "Admin can do everything in this space including moving it to the bin.",
     "popupSettingsSpaceInviteButton": "Copy invite link",
 
-    "popupSettingsSpaceHomepageTitle": "Homepage",
     "popupSettingsSpaceHomepageText": "Select an object to show when you login",
 
     "popupSettingsSpaceTeam": "%s team",

@@ -120,7 +120,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<div className="item">
 								<div className="sides">
 									<div className="side left">
-										<Title text={translate(`popupSettingsSpaceIndexHomepageTitle`)} />
+										<Title text={translate(`commonHomepage`)} />
 										<Label text={translate(`popupSettingsSpaceIndexHomepageDescription`)} />
 									</div>
 									<div className="side right">

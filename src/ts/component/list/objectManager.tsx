@@ -140,7 +140,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 								ref={ref => this.refFilter = ref}
 								onChange={this.onFilterChange}
 								onClear={this.onFilterClear}
-								placeholder={translate('commonSearch')}
+								placeholder={translate('commonSearchPlaceholder')}
 							/>
 						</div>
 					</div>
