@@ -729,7 +729,13 @@
     "popupPageSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
     "popupPageSettingsDataFilesOffloaded": "Files offloaded",
 
-    "popupPageSettingsData": "",
+    "popupPageSettingsDeleteTitle1": "You have 30 days to cancel account deletion",
+    "popupPageSettingsDeleteText1": "We&apos;re sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+    "popupPageSettingsDeleteTitle2": "Delete data from other devices",
+    "popupPageSettingsDeleteText2": "Since Anytype stores all your data locally on the device, you need to remove it from other devices also. Launch and remove data in Anytype or just delete the app.",
+    "popupPageSettingsDeleteCheckboxLabel": "I have read it and want to delete my account",
+    "popupPageSettingsDelete": "",
+    "popupPageSettingsDelete": "",
 
     "menuAccountPeer": "%d\/%d peers",
     "menuAccountPathText": "Your key files will be stored here. Click to change the path",
