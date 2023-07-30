@@ -10,9 +10,9 @@ const PopupSettingsSpaceInvite = observer(class PopupSettingsSpaceInvite extends
 
     render () {
         const memberTypes = [
-            { id: 'reader', name: translate('popupSettingsSpaceInviteReader')},
-            { id: 'editor', name: translate('popupSettingsSpaceInviteEditor')},
-            { id: 'admin', name: translate('popupSettingsSpaceInviteAdmin')}
+            { id: 'reader', name: translate('popupSettingsSpaceMemberTypeReader')},
+            { id: 'editor', name: translate('popupSettingsSpaceMemberTypeEditor')},
+            { id: 'admin', name: translate('popupSettingsSpaceMemberTypeAdmin')}
         ];
 
         return (

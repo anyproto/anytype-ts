@@ -773,11 +773,13 @@
 
     "popupSettingsPinCheckTimeOut": "PIN code check time-out",
 
-    "popupSettingsSpaceInviteReader": "Reader",
-    "popupSettingsSpaceInviteEditor": "Editor",
-    "popupSettingsSpaceInviteAdmin": "Admin",
+    "popupSettingsSpaceMemberTypeReader": "Reader",
+    "popupSettingsSpaceMemberTypeEditor": "Editor",
+    "popupSettingsSpaceMemberTypeAdmin": "Admin",
 
     "popupSettingsSpaceAnytypeSpace": "Anytype Space",
+
+    "popupSettingsSpaceStorageDeleteImmediately": "Delete immediately",
 
     "menuAccountPeer": "%d\/%d peers",
     "menuAccountPathText": "Your key files will be stored here. Click to change the path",
