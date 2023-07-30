@@ -335,7 +335,7 @@
 
     "popupHelpOlderReleases": "Older releases",
 
-    "popupExport": "",
+    "popupIndexComponentNotFound": "Component %s not found",
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
