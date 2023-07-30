@@ -12,12 +12,7 @@ class Onboarding {
 	start (key: string, isPopup: boolean, force?: boolean, options?: any) {
 		options = options || {};
 
-		console.log('KEY', key);
-
 		const section = this.getSection(key);
-
-		console.log(section);
-
 		if (!section || !section.items || !section.items.length || (!force && Storage.getOnboarding(key))) {
 			return;
 		};

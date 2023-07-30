@@ -501,7 +501,6 @@ class Mark {
 		html.replace(reg, (s: string, p: string, o: number) => {
 			let check = true;
 			for (const mark of checked) {
-				console.log(o, mark.range.from, mark.range.to);
 				if ((mark.range.from <= o) && (mark.range.to >= o)) {
 					check = false;
 					break;
