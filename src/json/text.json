@@ -1319,6 +1319,9 @@
     "widgetLibrary": "Library",
     "widgetBin": "Bin",
 
+    "widgetOptions": "Options",
+    "widgetToggle": "Toggle",
+
     "spaceType0": "Personal space",
     "phrasePlaceholder": "Please enter your Recovery phrase here",
     "navigationCreateNew": "Create new object",
