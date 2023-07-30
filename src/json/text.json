@@ -550,6 +550,11 @@
     "popupSettingsAccountMoveTitle": "Account data location",
 
     "popupSettingsSpaceTitle": "Space",
+    "popupSettingsProfileTitle": "Profile",
+    "popupSettingsApplicationTitle": "Application",
+    "popupSettingsVoidTitle": "Void & Key",
+
+
     "popupSettingsPersonalTitle": "Preferences",
     "popupSettingsPersonalDefaultObjectType": "Default object type",
     "popupSettingsPersonalDefaultObjectTypeSelect": "Select",
