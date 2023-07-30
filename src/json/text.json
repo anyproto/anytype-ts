@@ -23,6 +23,7 @@
     "commonArchived": "Object is in the bin",
     "commonEmpty": "Empty",
     "commonBack": "Back",
+    "commonForward": "Forward",
     "commonNew": "New",
     "commonLater": "Later",
     "commonRetry": "Retry",
@@ -89,6 +90,7 @@
     "commonHomepage": "Homepage",
     "commonYes": "Yes",
     "commonDisabled": "Disabled",
+    "commonSettings": "Settings",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
