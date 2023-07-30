@@ -1418,10 +1418,14 @@
     "onboardingInlineSet2Title": "Views",
     "onboardingInlineSet2Description": "Adjust rules and views to suit the current context.",
 
-    "onboardingInlineCollection1Title": "",
-    "onboardingInlineCollection1Description": "",
-    "onboardingInlineCollection2Title": "",
-    "onboardingInlineCollection2Description": "",
+    "onboardingInlineCollection1Title": "This is inline collection",
+    "onboardingInlineCollection1Description": "Congratulations! You can embed a set or collection and modify it using filters and views without altering the original instance.",
+    "onboardingInlineCollection2Title": "Views",
+    "onboardingInlineCollection2Description": "Adjust rules and views to suit the current context.",
+
+    "libDataviewRelations": "Relations",
+    "libDataviewGroups": "Groups",
+    "libDataviewView": "View",
 
     "utilDeletedBackToDashboard": "Back to dashboard",
     "utilDeletedObjectNotExist": "This object doesn't exist"
