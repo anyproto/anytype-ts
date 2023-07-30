@@ -26,10 +26,10 @@ const PopupSettingsPageDelete = observer(class PopupSettingsPageDelete extends R
 				<Title text={translate('popupSettingsAccountDeleteTitle')} />
 
 				<div className="text">
-					<b>1. {translate('popupSettingsDeleteTitle1')}</b>
+					<b>{translate('popupSettingsDeleteTitle1')}</b>
 					<p className="first">{translate('popupSettingsDeleteText1')}</p>
 
-					<b>2. {translate('popupSettingsDeleteTitle2')}</b>
+					<b>{translate('popupSettingsDeleteTitle2')}</b>
 					<p>{translate('popupSettingsDeleteText2')}</p>
 				</div>
 

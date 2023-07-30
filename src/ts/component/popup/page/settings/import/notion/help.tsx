@@ -10,7 +10,7 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 			<div>
 				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
 				<Icon className="logo" />
-				<Title text={translate('')} />
+				<Title text={translate('popupSettingsImportNotionHelpTitle')} />
 				
 				<Label className="step" text={UtilCommon.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
 				<ol className="list">
