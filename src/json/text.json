@@ -699,6 +699,9 @@
     "popupSearchPlaceholder": "Search for an object...",
     "popupSearchEmpty": "No objects found",
     "popupSearchEmptyFilter": "<b>There are no objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
+    "popupSearchRecentObjects": "Recent objects",
+    "popupSearchCreateObject": "Create object",
+    "popupSearchAddRelation": "Add relation"
 
     "popupConfirmUpdatePromptTitle": "Update available",
     "popupConfirmUpdatePromptText": "Do you want to update on a new version?",

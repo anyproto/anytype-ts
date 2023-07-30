@@ -383,7 +383,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 
 		let items = this.items.filter(this.filterMapper);
 		if (items.length) {
-			items.unshift({ name: 'Recent objects', isSection: true });
+			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
 		};
 
 		items = items.map(it => {
@@ -396,9 +396,9 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 			}
 		});
 
-		items.push({ id: 'add', name: 'Create object', icon: 'plus', shortcut: [ cmd, 'N' ] });
+		items.push({ id: 'add', name: translate('popupSearchCreateObject'), icon: 'plus', shortcut: [ cmd, 'N' ] });
 		if (hasRelations) {
-			items.push({ id: 'relation', name: 'Add relation', icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
+			items.push({ id: 'relation', name: translate('popupSearchAddRelation'), icon: 'relation', shortcut: [ cmd, 'Shift', 'R' ] });
 		};
 		return items;
 	};
