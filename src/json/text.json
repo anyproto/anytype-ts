@@ -92,6 +92,7 @@
     "commonDisabled": "Disabled",
     "commonSettings": "Settings",
     "commonImport": "Import",
+    "commonExport": "Export",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -1426,6 +1427,18 @@
     "libDataviewRelations": "Relations",
     "libDataviewGroups": "Groups",
     "libDataviewView": "View",
+
+    "libKeyboardDevice": "Device",
+    "libKeyboardOSVersion": "OS version",
+    "libKeyboardAppVersion": "App version",
+    "libKeyboardBuildNumber": "Build number",
+    "libKeyboardLibraryVersion": "Library version",
+    "libKeyboardAccountID": "Account ID",
+    "libKeyboardAnalyticsID": "Analytics ID",
+    "libKeyboardDeviceID": "Device ID",
+    "libKeyboardTechInformation": "Tech information",
+
+    "libKeyboard": "",
 
     "utilDeletedBackToDashboard": "Back to dashboard",
     "utilDeletedObjectNotExist": "This object doesn't exist"
