@@ -213,12 +213,8 @@ class Util {
 	translate (key) {
 		const lang = this.getLang();
 
-		console.log('[translate]', lang);
-		
 		let data = {};
 		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
-
-		console.log('[translate]', data);
 
 		return data[key] || `⚠️${key}⚠️`;
 	};
