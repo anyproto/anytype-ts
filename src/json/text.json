@@ -300,6 +300,25 @@
 
     "pageMainNavigationItemEmptyTitle": "Object can not be shown",
 
+    "pageMainStoreTypes": "Types",
+    "pageMainStoreRelations": "Relations",
+    "pageMainStoreTypesTitle": "Types are like categories<br/>that help you group and manage<br/>your objects.",
+    "pageMainStoreTypesPlaceholder": "Search or create a new type...",
+    "pageMainStoreTypesService": "Service type",
+    "pageMainStoreTypeInstalled": "Type is installed",
+    "pageMainStoreTypeInstall": "Install type",
+    "pageMainStoreTypeEmpty": "<b>Your type list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above",
+    "pageMainStoreRelationsTitle": "All objects are connected.<br />Use relations to build connections between objects.",
+    "pageMainStoreRelationsPlaceholder": "Search or create a new relation...",
+    "pageMainStoreRelationsService": "Service relation",
+    "pageMainStoreRelationsInstalled": "Relation is installed",
+    "pageMainStoreRelationsInstall": "Install relation",
+    "pageMainStoreRelationsEmpty": "<b>Your relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above",
+    "pageMainStoreMyTypes": "My types",
+    "pageMainStoreMyRelations": "My relations",
+
+    "pageMainStore": "",
+
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
     "pageAuthDeletedDay": "day",
