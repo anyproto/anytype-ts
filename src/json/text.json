@@ -773,7 +773,11 @@
 
     "popupPageSettingsPinCheckTimeOut": "PIN code check time-out",
 
-    "popupPageSettingsImportNotion": "",
+    "popupPageSettingsSpaceInviteReader": "Reader",
+    "popupPageSettingsSpaceInviteEditor": "Editor",
+    "popupPageSettingsSpaceInviteAdmin": "Admin",
+
+    "popupPageSettingsSpaceInvite": "",
 
     "menuAccountPeer": "%d\/%d peers",
     "menuAccountPathText": "Your key files will be stored here. Click to change the path",
