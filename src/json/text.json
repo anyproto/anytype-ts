@@ -298,6 +298,8 @@
 
     "pageMainGraphNewObject": "New object",
 
+    "pageMainNavigationItemEmptyTitle": "Object can not be shown",
+
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
     "pageAuthDeletedDay": "day",

@@ -26,7 +26,7 @@ const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const Tabs = [
 	{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${cmd} + ${alt} + O` },
-	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltipCaption: `${cmd} + O` },
+	{ id: 'navigation', name: translate('commonFlow'), layout: I.ObjectLayout.Navigation, tooltipCaption: `${cmd} + O` },
 ];
 
 const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
@@ -183,7 +183,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 					</div>
 
 					<div id={'panel-' + Panel.Center} className="items center">
-						{info ? <Selected {...info} /> : <ItemEmpty name="Object can not be shown" />}
+						{info ? <Selected {...info} /> : <ItemEmpty name={translate('pageMainNavigationItemEmptyTitle')} />}
 					</div>
 
 					<div id={'panel-' + Panel.Right} className="items right">
