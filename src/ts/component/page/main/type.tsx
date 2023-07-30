@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -98,13 +98,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const isFileType = UtilObject.isFileType(rootId);
 		const columns: any[] = [
 			{ 
-				relationKey: 'lastModifiedDate', name: 'Updated',  
+				relationKey: 'lastModifiedDate', name: translate('pageMainTypeUpdated'),
 				mapper: (v: any) => UtilCommon.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
 			},
 		];
 
 		if (!isFileType) {
-			columns.push({ relationKey: 'creator', name: 'Owner', isObject: true });
+			columns.push({ relationKey: 'creator', name: translate('pageMainTypeOwner'), isObject: true });
 		};
 
 		const ItemRelation = (item: any) => (
@@ -120,7 +120,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			<div id="item-add" className="item add" onClick={this.onRelationAdd}>
 				<div className="clickable">
 					<Icon className="plus" />
-					<div className="name">New</div>
+					<div className="name">{translate('commonNew')}</div>
 				</div>
 				<div className="value" />
 			</div>
@@ -174,7 +174,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<React.Fragment>
 							{allowedLayout ? (
 								<div className="section layout">
-									<div className="title">Recommended layout</div>
+									<div className="title">{translate('pageMainTypeRecommendedLayout')}</div>
 									<div className="content">
 										{allowedDetails ? (
 											<Select 
@@ -343,10 +343,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const options = [];
 
 		if (allowedObject) {
-			options.push({ id: 'object', name: 'New object' });
+			options.push({ id: 'object', name: translate('pageMainTypeNewObject') });
 		};
 
-		options.push({ id: 'set', name: 'New set of objects' });
+		options.push({ id: 'set', name: translate('pageMainTypeNewSetOfObjects') });
 
 		menuStore.open('select', { 
 			element: `#button-create`,

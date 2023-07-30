@@ -317,7 +317,20 @@
     "pageMainStoreMyTypes": "My types",
     "pageMainStoreMyRelations": "My relations",
 
-    "pageMainStore": "",
+    "pageMainTypeUpdated": "Updated",
+    "pageMainTypeOwner": "Owner",
+    "pageMainTypeRecommendedLayout": "Recommended layout",
+    "pageMainTypeNewObject": "New object",
+    "pageMainTypeNewSetOfObjects": "New set of objects",
+    "pageMainType": "",
+    "pageMainType": "",
+    "pageMainType": "",
+    "pageMainType": "",
+    "pageMainType": "",
+    "pageMainType": "",
+    "pageMainType": "",
+    "pageMainType": "",
+    "pageMainType": "",
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
