@@ -723,6 +723,17 @@ class UtilCommon {
 		return cnt.substr(-1) == '1' ? w1 : w2;
 	};
 
+	plural (cnt: any, words: string) {
+		const chunks = words.split('|');
+		const single = chunks[0];
+		const multiple = chunks[1] ? chunks[1] : single + 's';
+
+		if (cnt.substr(-2) == 11) {
+			return multiple;
+		};
+		return cnt.substr(-1) == '1' ? single : multiple;
+	};
+
 	getPlatform () {
 		return Constant.platforms[window.Electron.platform];
 	};

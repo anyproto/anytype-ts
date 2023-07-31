@@ -1146,6 +1146,8 @@
 
     "menuItemFilterTimeAgo": "%d %s ago",
     "menuItemFilterTimeFromNow": "%d %s from now",
+    "menuItemFilterDay": "day",
+    "menuItemFilterDays": "days",
 
     "menuRelationSuggestFilterOrCreateRelation": "Filter or create a relation...",
     "menuRelationSuggestMyRelations": "My relations",
@@ -1458,9 +1460,6 @@
     "libMenuChangeSource": "Change source %s",
     "libMenuOpenSource ": "Open source %s",
     "libMenuOpenFullscreen": "Open fullscreen",
-    "libMenu": "",
-    "libMenu": "",
-    "libMenu": "",
 
     "utilDeletedBackToDashboard": "Back to dashboard",
     "utilDeletedObjectNotExist": "This object doesn't exist"

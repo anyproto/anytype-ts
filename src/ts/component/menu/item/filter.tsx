@@ -59,7 +59,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
 					value = Number(value) || 0;
 					name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
-					v.push(UtilCommon.sprintf(translate(name), value, UtilCommon.cntWord(value, 'day', 'days')));
+					v.push(UtilCommon.sprintf(translate(name), value, translate(UtilCommon.plural(value, 'menuItemFilterDay|menuItemFilterDays'))));
 				} else 
 				if (filterOption) {
 					v.push(name);
