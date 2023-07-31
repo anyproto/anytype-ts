@@ -1480,6 +1480,8 @@
     "libMenuOpenSource ": "Open source %s",
     "libMenuOpenFullscreen": "Open fullscreen",
 
+    "utilLoadMoreText": "Show %s more %s",
+
     "utilDeletedBackToDashboard": "Back to dashboard",
     "utilDeletedObjectNotExist": "This object doesn't exist"
 }
