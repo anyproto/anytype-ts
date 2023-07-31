@@ -728,6 +728,8 @@ class UtilCommon {
 		const single = chunks[0];
 		const multiple = chunks[1] ? chunks[1] : single;
 
+		cnt = String(cnt || '');
+
 		if (cnt.substr(-2) == 11) {
 			return multiple;
 		};

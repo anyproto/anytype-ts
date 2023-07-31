@@ -9,6 +9,7 @@
     "commonSave": "Save",
     "commonCancel": "Cancel",
     "commonDelete": "Delete",
+    "commonDeleteImmediately": "Delete immediately",
     "commonDefault": "Default",
     "commonSoon": "Soon",
     "commonTitle": "anytype",
@@ -79,6 +80,7 @@
     "commonDuplicate": "Duplicate",
     "commonRemoveFromFavorites": "Remove from Favorites",
     "commonAddToFavorites": "Add to Favorites",
+    "commonRestore": "Restore",
     "commonRestoreFromBin": "Restore from bin",
     "commonMoveToBin": "Move to bin",
     "commonMoveTo": "Move to",
@@ -104,6 +106,7 @@
     "commonLCSet": "set",
 
     "pluralDay": "day|days",
+    "pluralObject": "object|objects",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -363,6 +366,9 @@
 
     "pageMainArchiveEmpty": "Your bin is empty",
     "pageMainBlockEmpty": "Block not found",
+
+    "pageMainArchiveDeletionWarningTitle": "Are you sure you want to delete %s %s?",
+    "pageMainArchiveDeletionWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
 
     "editorControlIcon": "Icon",
     "editorControlCover": "Cover",
