@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, UtilObject } from 'Lib';
+import { analytics, C, I, keyboard, UtilObject } from 'Lib';
 
 class MenuTemplate extends React.Component<I.Menu> {
 
@@ -81,7 +81,7 @@ class MenuTemplate extends React.Component<I.Menu> {
                 break;
             };
             case 'delete': {
-                console.log('DELETE TEMPLATE');
+                C.ObjectSetIsArchived(template.id, true);
                 break;
             };
         };
