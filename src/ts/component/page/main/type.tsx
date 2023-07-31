@@ -98,7 +98,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const isFileType = UtilObject.isFileType(rootId);
 		const columns: any[] = [
 			{ 
-				relationKey: 'lastModifiedDate', name: translate('pageMainTypeUpdated'),
+				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
 				mapper: (v: any) => UtilCommon.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
 			},
 		];

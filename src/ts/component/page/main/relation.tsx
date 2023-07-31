@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted } from 'Component';
-import { I, C, Action, UtilCommon, UtilObject, UtilData } from 'Lib';
+import { I, C, Action, UtilCommon, UtilObject, UtilData, translate } from 'Lib';
 import { detailStore, dbStore } from 'Store';
 import Errors from 'json/error.json';
 import HeadSimple from 'Component/page/head/simple';
@@ -42,7 +42,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 		const { total } = dbStore.getMeta(subId, '');
 		const columns: any[] = [
 			{ 
-				relationKey: 'lastModifiedDate', name: 'Updated',  
+				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
 				mapper: (v: any) => UtilCommon.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
 			},
 			{ relationKey: object.relationKey, name: object.name, isCell: true }
@@ -57,7 +57,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{total} {UtilCommon.cntWord(total, 'object', 'objects')}</div>
+							<div className="title">{total} {UtilCommon.plural(total, translate('pluralObject'))}</div>
 							<div className="content">
 								<ListObject rootId={rootId} columns={columns} />
 							</div>

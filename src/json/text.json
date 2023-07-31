@@ -101,6 +101,7 @@
     "commonImport": "Import",
     "commonExport": "Export",
     "commonTurnIntoObject": "Turn into object",
+    "commonUpdated": "Updated",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -334,7 +335,6 @@
     "pageMainStoreMyTypes": "My types",
     "pageMainStoreMyRelations": "My relations",
 
-    "pageMainTypeUpdated": "Updated",
     "pageMainTypeOwner": "Owner",
     "pageMainTypeRecommendedLayout": "Recommended layout",
     "pageMainTypeNewObject": "New object",
