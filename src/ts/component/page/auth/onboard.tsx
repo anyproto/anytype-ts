@@ -424,7 +424,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Shows an error message and reroutes to the index page after a delay */
 	showErrorAndExit = (message) => {
-		const error = Errors.AccountCreate[message.error.code] || message.error.description;
+		const error = UtilCommon.translateError('AccountCreate', message.error);
 
 		this.setState({ error }, () => window.setTimeout(() => UtilCommon.route('/', { replace: true }), 3000));
 	};

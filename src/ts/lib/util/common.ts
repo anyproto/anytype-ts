@@ -1048,6 +1048,16 @@ class UtilCommon {
 		return Number((part / whole * 100).toFixed(1));
 	};
 
+	translateError (command: string, error: any) {
+		const { code, description } = error;
+
+		if (Errors.AccountRecover[code]) {
+			return translate(this.toCamelCase(`error-${command}${code}`));
+		} else {
+			return description;
+		};
+	};
+
 };
 
 export default new UtilCommon();

@@ -219,7 +219,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 			onImport(I.ImportType.Csv, { paths, ...this.data }, (message: any) => {
 				if (message.error.code) {
-					this.setState({ error: message.error.description });
+					this.setState({ error: UtilCommon.translateError('ObjectImport', message.error) });
 					return;
 				};
 
