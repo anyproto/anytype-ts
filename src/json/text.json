@@ -1491,7 +1491,20 @@
     "libActionUninstallRelationText": "This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.",
 
     "utilLoadMoreText": "Show %s more %s",
-
     "utilDeletedBackToDashboard": "Back to dashboard",
-    "utilDeletedObjectNotExist": "This object doesn't exist"
+    "utilDeletedObjectNotExist": "This object doesn't exist",
+
+	"errorAccountCreate901": "Network error",
+	"errorAccountCreate902": "Connection refused",
+	"errorAccountCreate903": "Network offline",
+	"errorAccountRecover101": "No accounts have been found",
+	"errorAccountRecover102": "You'll have to convert your wallet first",
+	"errorAccountRecover103": "Failed to create local repo",
+	"errorAccountRecover104": "Local repo exists but is corrupted",
+	"errorAccountRecover105": "Failed to run node",
+	"errorAccountRecover106": "Wallet recover has not been performed",
+	"errorAccountRecover107": "Failed to stop running node",
+	"errorAccountRecover108": "Another process is running",
+	"errorAccountRecover109": "Account has been deleted",
+	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns."
 }

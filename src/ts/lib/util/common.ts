@@ -1,9 +1,9 @@
 import $ from 'jquery';
-import raf from 'raf';
 import { I, Preview, Renderer, translate } from 'Lib';
 import { popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
+import Text from 'json/text.json';
 
 class UtilCommon {
 
@@ -1050,6 +1050,13 @@ class UtilCommon {
 
 	getPercent (part: number, whole: number): number {
 		return Number((part / whole * 100).toFixed(1));
+	};
+
+	translateError (command: string, error: any) {
+		const { code, description } = error;
+		const id = this.toCamelCase(`error-${command}${code}`);
+
+		return Text[id] ? translate(id) : description;
 	};
 
 };

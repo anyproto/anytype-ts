@@ -13,7 +13,9 @@ npm install -D
 Also, [install `gitleaks`](https://github.com/zricethezav/gitleaks#installing) to ensure proper work of pre-commit hooks.
 
 ### Install middleware library and protobuf bindings
-Fetch the latest binary from the [github releases](https://github.com/anyproto/anytype-heart/releases)
+Fetch the latest binary from the [github releases](https://github.com/anyproto/anytype-heart/releases).
+
+**Warning** When building client from source be aware that middleware version in latest release may diverge from current client version, so it is highly recommended to build middleware from source as well.
 
 ```shell
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd> # arm/amd only for macos/ubuntu
@@ -57,6 +59,10 @@ SERVER_PORT=<PORT> ANYPROF=:<PROFILER_PORT> npm run start:dev-win
 Options:
 - `SERVER_PORT` — NPM variable, local server port
 - `ANYPROF` — Go variable, profiler port, access `http://localhost:<PORT>/debug/pprof/profile?seconds=30` for profiling
+
+## Localisation
+
+`npm run update:locale` - Update localisation files
 
 ## Contribution
 Thank you for your desire to develop Anytype together!
