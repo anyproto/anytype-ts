@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Title, Label, Button } from 'Component';
-import { analytics, I, Onboarding } from 'Lib';
+import { analytics, I, Onboarding, translate, UtilCommon } from 'Lib';
 import { commonStore } from 'Store';
 import QRCode from 'qrcode.react';
 import Url from 'json/url.json';
@@ -39,18 +39,18 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 			case 'onboarding': {
 				content = (
 					<React.Fragment>
-						<Title text="⚡️ Congratulations!" />
-						<Label text="You're now using the new & improved version of Anytype.<br/>It's still encrypted, offline-first and the safest app for your personal information." />
-						<Label text="The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:" />
+						<Title text={'⚡️ ' + translate('popupMigrationOnboardingTitle')} />
+						<Label text={translate('popupMigrationOnboardingText1')} />
+						<Label text={translate('popupMigrationOnboardingText2')} />
 
 						<div className="qrWrap">
 							<QRCode value={Url.download} fgColor={fgColor[theme]} bgColor={bgColor[theme]} size={100} />
 						</div>
 
-						<Label text={`We're excited to hear your feedback about the new features.`} />
+						<Label text={translate('popupMigrationOnboardingText3')} />
 
 						<div className="buttons">
-							<Button text="Done" className="c36" onClick={close} />
+							<Button text={translate('commonDone')} className="c36" onClick={close} />
 						</div>
 					</React.Fragment>
 				);
@@ -60,18 +60,18 @@ const PopupMigration = observer(class PopupMigration extends React.Component<I.P
 			case 'import': {
 				content = (
 					<React.Fragment>
-						<Title text="You're all set!" />
-						<Label text="Please take a few moments to check that your data has been imported correctly." />
-						<Label text="One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:" />
+						<Title text={translate('popupMigrationImportTitle')} />
+						<Label text={translate('popupMigrationImportText1')} />
+						<Label text={translate('popupMigrationImportText2')} />
 
 						<div className="qrWrap">
 							<QRCode value={Url.download} fgColor={fgColor[theme]} bgColor={bgColor[theme]} size={100} />
 						</div>
 
-						<Label text={`In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href="${Url.community}">community forum</a>.`} />
+						<Label text={UtilCommon.sprintf(translate('popupMigrationImportText3'), Url.community)} />
 
 						<div className="buttons">
-							<Button text="Done" className="c36" onClick={close} />
+							<Button text={translate('commonDone')} className="c36" onClick={close} />
 						</div>
 					</React.Fragment>
 				);

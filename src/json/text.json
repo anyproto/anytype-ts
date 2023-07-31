@@ -945,6 +945,15 @@
     "popupShortcutCommandOther2": "Dots divider",
     "popupShortcutCommandOther3": "Code  snippet",
 
+    "popupMigrationOnboardingTitle": "Congratulations!",
+    "popupMigrationOnboardingText1": "You're now using the new & improved version of Anytype.<br/>It's still encrypted, offline-first and the safest app for your personal information.",
+    "popupMigrationOnboardingText2": "The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
+    "popupMigrationOnboardingText3": "We're excited to hear your feedback about the new features.",
+    "popupMigrationImportTitle": "You're all set!",
+    "popupMigrationImportText1": "Please take a few moments to check that your data has been imported correctly.",
+    "popupMigrationImportText2": "One last thing. The updated version of Anytype on iOS and Android is also available for download! If you haven't already, please scan this QR code to update your devices:",
+    "popupMigrationImportText3": "In case of any issues, you can repeat the migration process using the legacy desktop app or visit our <a href=\"%s\">community forum</a>.",
+
     "menuAccountPeer": "%d\/%d peers",
     "menuAccountPathText": "Your key files will be stored here. Click to change the path",
 
