@@ -1144,6 +1144,9 @@
     "menuItemRelationViewFeaturedAdd": "Add to featured relations",
     "menuItemRelationViewFeaturedRemove": "Remove from featured relations",
 
+    "menuItemFilterTimeAgo": "%d %s ago",
+    "menuItemFilterTimeFromNow": "%d %s from now",
+
     "menuRelationSuggestFilterOrCreateRelation": "Filter or create a relation...",
     "menuRelationSuggestMyRelations": "My relations",
     "menuRelationSuggestCreateRelation": "Create relation %s",
