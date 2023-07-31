@@ -726,7 +726,7 @@ class UtilCommon {
 	plural (cnt: any, words: string) {
 		const chunks = words.split('|');
 		const single = chunks[0];
-		const multiple = chunks[1] ? chunks[1] : single + 's';
+		const multiple = chunks[1] ? chunks[1] : single;
 
 		if (cnt.substr(-2) == 11) {
 			return multiple;

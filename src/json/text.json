@@ -1148,7 +1148,7 @@
     "menuItemFilterTimeFromNow": "%d %s from now",
     "menuItemFilterDay": "day",
     "menuItemFilterDays": "days",
-    
+
     "pluralDay": "day|days",
 
     "menuRelationSuggestFilterOrCreateRelation": "Filter or create a relation...",
