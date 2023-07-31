@@ -35,8 +35,6 @@ class MenuManager {
 			});
 		};
 
-		console.log(lang);
-
 		let menuParam = [
 			{
 				label: 'Anytype',

@@ -84,9 +84,15 @@ class Dataview {
 				if (index >= 0) {
 					const newView = dbStore.getView(rootId, blockId, view.id);
 					const oldIndex = (newView.relations || []).findIndex(it => it.relationKey == relationKey);
+					
+					let keys = newView.relations.map(it => it.relationKey);
+					if (oldIndex < 0) {
+						keys.splice(index, 0, relationKey);
+					} else {
+						keys = arrayMove(newView.relations, oldIndex, index);
+					};
 
-					newView.relations = arrayMove(newView.relations, oldIndex, index);
-					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, newView.relations.map(it => it.relationKey), callBack);
+					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);
 				} else {
 					if (callBack) {
 						callBack(message);
