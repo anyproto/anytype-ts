@@ -315,14 +315,21 @@
 	},
 
 	"interfaceLang": {
-		"en-US": "English (United States)",
 		"de-DE": "Deutsch (Deutschland)",
-		"es-ES": "Spanish",
-		"fr-FR": "French",
-		"it-IT": "Italian",
-		"pt-BR": "Portugese (Brazil)",
-		"pt-PT": "Portugese (Portugal)",
-		"zh-CN": "Chinese"
+		"fr-FR": "Français (France)",
+		"ko-KR": "한국어 (대한민국)",
+		"no-NO": "Norsk (Norge)",
+		"ru-RU": "Русский (Россия)",
+		"en-US": "English (United States)",
+		"hi-IN": "हिन्दी (भारत)",
+		"nb-NO": "Norsk bokmål (Norge)",
+		"pt-BR": "Português (Brasil)",
+		"uk-UA": "Українська (Україна)",
+		"es-ES": "Español (España)",
+		"it-IT": "Italiano (Italia)",
+		"nl-NL": "Nederlands (Nederland)",
+		"pt-PT": "Português (Portugal)",
+		"zh-CN": "中文 (中国)"
 	},
 
 	"spellingLang": {
