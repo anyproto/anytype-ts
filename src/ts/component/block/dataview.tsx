@@ -36,7 +36,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	refSelect = null;
 	refCells: Map<string, any> = new Map();
 
-	menuContext: any = null;
 	viewId = '';
 	creating = false;
 	frame = 0;
@@ -702,7 +701,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 								template: item,
 								onOver: () => menuStore.closeAll([ 'previewObject' ]),
 								onSetDefault: () => console.log('SET DEFAULT TEMPLATE FOR THIS VIEW'),
-								onDelete: () => menuContext.ref.load(true)
+								onDelete: () => menuContext.ref.reload()
 							}
 						});
 					}

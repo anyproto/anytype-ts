@@ -63,8 +63,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
-
-		const { defaultTemplateId } = object;
 		const templates = dbStore.getRecords(subIdTemplate, '');
 
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
@@ -154,9 +152,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={ref => this.refListPreview = ref}
-										getItems={() => {
-											return dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
-										}}
+										getItems={() => dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []))}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
 										onMenu={(e: any, item: any) => this.onMenu(item)}
@@ -318,7 +314,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onTemplateAdd () {
 		const rootId = this.getRootId();
-		const subId = this.getSubIdTemplate();
 		const object = detailStore.get(rootId, rootId);
 		const details: any = { 
 			type: Constant.typeId.template, 
@@ -331,18 +326,20 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				return;
 			};
 
-			dbStore.recordAdd(subId, '', message.objectId, 0);
-
 			focus.clear(true);
 			analytics.event('CreateTemplate', { objectType: rootId, route: 'Library' });
 
-			UtilObject.openPopup(message.details, {
-				onClose: () => {
-					if (this.refListPreview) {
-						this.refListPreview.updateItem(message.objectId);
-					};
-				}
-			});
+			this.templateOpen(message.details);
+		});
+	};
+
+	templateOpen (object: any) {
+		UtilObject.openPopup(object, {
+			onClose: () => {
+				if (this.refListPreview) {
+					this.refListPreview.updateItem(object.id);
+				};
+			}
 		});
 	};
 
@@ -550,7 +547,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					template,
 					onSetDefault: () => {
 						UtilObject.setDefaultTemplateId(rootId, item.id);
-					}
+					},
+					onDuplicate: (object: any) => {
+						this.templateOpen(object);
+					},
 				}
 			});
 		});

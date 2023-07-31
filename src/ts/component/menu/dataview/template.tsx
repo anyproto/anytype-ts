@@ -61,7 +61,7 @@ class MenuTemplate extends React.Component<I.Menu> {
     onClick (e: any, item: any) {
         const { param, close } = this.props;
         const { data } = param;
-        const { template, onSetDefault, onDelete } = data;
+        const { template, onSetDefault, onDelete, onDuplicate } = data;
 
 		close();
 
@@ -72,20 +72,25 @@ class MenuTemplate extends React.Component<I.Menu> {
                 };
                 break;
             };
+
             case 'edit': {
                 UtilObject.openPopup(template);
                 break;
             };
+
             case 'duplicate': {
                 C.ObjectListDuplicate([ template.id ], (message: any) => {
                     if (!message.error.code && message.ids.length) {
-                        UtilObject.openPopup({ id: message.ids[0], layout: template.layout });
+						if (onDuplicate) {
+							onDuplicate({ ...template, id: message.ids[0] });
+						};
 
                         analytics.event('DuplicateObject', { count: 1, route: 'menuDataviewTemplate' });
                     };
                 });
                 break;
             };
+
             case 'delete': {
                 C.ObjectSetIsArchived(template.id, true, (message: any) => {
                     if (!message.error.code) {

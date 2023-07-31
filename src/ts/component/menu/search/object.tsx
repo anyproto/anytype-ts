@@ -198,9 +198,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (this.filter != filter) {
 			this.filter = filter;
-			this.n = -1;
-			this.offset = 0;
-			this.load(true);
+			this.reload();
 			return;
 		};
 
@@ -275,6 +273,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
+	};
+
+	reload () {
+		this.n = -1;
+		this.offset = 0;
+		this.load(true);
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {
