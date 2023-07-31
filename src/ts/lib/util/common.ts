@@ -1,9 +1,9 @@
 import $ from 'jquery';
-import raf from 'raf';
 import { I, Preview, Renderer, translate } from 'Lib';
 import { popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
+import Text from 'json/text.json';
 
 class UtilCommon {
 
@@ -1050,12 +1050,9 @@ class UtilCommon {
 
 	translateError (command: string, error: any) {
 		const { code, description } = error;
+		const id = this.toCamelCase(`error-${command}${code}`);
 
-		if (Errors[command][code]) {
-			return translate(this.toCamelCase(`error-${command}${code}`));
-		} else {
-			return description;
-		};
+		return Text[id] ? translate(id) : description;
 	};
 
 };
