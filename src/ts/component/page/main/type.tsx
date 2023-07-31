@@ -98,7 +98,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const isFileType = UtilObject.isFileType(rootId);
 		const columns: any[] = [
 			{ 
-				relationKey: 'lastModifiedDate', name: translate('pageMainTypeUpdated'),
+				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
 				mapper: (v: any) => UtilCommon.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
 			},
 		];
@@ -137,11 +137,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{totalTemplate} {UtilCommon.cntWord(totalTemplate, 'template', 'templates')}
+								{totalTemplate} {UtilCommon.plural(totalTemplate, translate('pluralTemplate'))}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
-										<Icon className="plus" />New
+										<Icon className="plus" />{translate('commonNew')}
 									</div>
 								) : ''}
 							</div>
@@ -159,7 +159,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 								</div>
 							) : (
 								<div className="empty">
-									This object type doesn&apos;t have templates
+									{translate('pageMainTypeNoTemplates')}
 								</div>
 							)}
 						</div>
@@ -195,7 +195,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 							) : ''}
 
 							<div className="section relation">
-								<div className="title">{relations.length} {UtilCommon.cntWord(relations.length, 'relation', 'relations')}</div>
+								<div className="title">{relations.length} {UtilCommon.plural(relations.length, translate('pluralRelation'))}</div>
 								<div className="content">
 									{relations.map((item: any, i: number) => (
 										<ItemRelation key={i} {...item} />
@@ -208,7 +208,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{totalObject} {UtilCommon.cntWord(totalObject, 'object', 'objects')}</div>
+							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
 								<ListObject rootId={rootId} columns={columns} />
 							</div>

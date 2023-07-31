@@ -44,7 +44,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 			<div className="wrapper">
 				<div className="head">
 					<Title text={translate('popupTemplateTitle')} />
-					<Label text={`Type “${UtilCommon.shorten(type.name, 32)}” has ${length} ${UtilCommon.cntWord(length, 'template', 'templates')}, use ←→ to switch and ENTER to choose`} />
+					<Label text={UtilCommon.sprintf(translate('popupTemplateText'), UtilCommon.shorten(type.name, 32), length, UtilCommon.plural(length, translate('pluralTemplate')))} />
 				</div>
 
 				<ListObjectPreview 
