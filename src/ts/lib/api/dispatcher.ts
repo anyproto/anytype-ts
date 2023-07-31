@@ -954,34 +954,53 @@ class Dispatcher {
 							break;
 						};
 
-						case I.ProgressState.Error: {
-							commonStore.progressClear();
-							break;
-						};
-
+						case I.ProgressState.Error:
 						case I.ProgressState.Done:
 						case I.ProgressState.Canceled: {
 							commonStore.progressClear();
 
-							if (state != I.ProgressState.Done) {
-								break;
-							};
-
 							let title = '';
 							let text = '';
-							let showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type);
+							let textConfirm = '';
+							let showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type) && [ I.ProgressState.Done, I.ProgressState.Error ].includes(state);
 
-							switch (type) {
-								case I.ProgressType.Import: { 
-									title = translate('dispatcherImportSuccessTitle');
-									text = translate('dispatcherImportSuccessText'); 
-									break; 
+							switch (state) {
+								case I.ProgressState.Error: {
+									textConfirm = translate('dispatcherImportTryAgain');
+
+									switch (type) {
+										case I.ProgressType.Import: { 
+											title = translate('dispatcherImportErrorTitle');
+											text = translate('dispatcherImportErrorText'); 
+											break; 
+										};
+
+										case I.ProgressType.Export: { 
+											title = translate('dispatcherExportErrorTitle');
+											text = translate('dispatcherExportErrorText');
+											break; 
+										};
+									};
+									break;
 								};
 
-								case I.ProgressType.Export: { 
-									title = translate('dispatcherExportSuccessTitle');
-									text = translate('dispatcherExportSuccessText');
-									break; 
+								case I.ProgressState.Done: {
+									textConfirm = translate('dispatcherImportConfirm');
+
+									switch (type) {
+										case I.ProgressType.Import: { 
+											title = translate('dispatcherImportSuccessTitle');
+											text = translate('dispatcherImportSuccessText'); 
+											break; 
+										};
+
+										case I.ProgressType.Export: { 
+											title = translate('dispatcherExportSuccessTitle');
+											text = translate('dispatcherExportSuccessText');
+											break; 
+										};
+									};
+									break;
 								};
 							};
 
@@ -991,7 +1010,7 @@ class Dispatcher {
 										data: { 
 											title, 
 											text,
-											textConfirm: translate('dispatcherImportConfirm'),
+											textConfirm,
 											canCancel: false,
 										} 
 									}); 

@@ -1385,7 +1385,12 @@
     "dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",
     "dispatcherExportSuccessTitle": "The export process is complete!",
     "dispatcherExportSuccessText": "You can find the exported objects in the folder you selected.",
+	"dispatcherImportErrorTitle": "The import wasn't completed",
+    "dispatcherImportErrorText": "Sorry, but something went wrong during the import process. Please try again or let us know if it doesn't work.",
+    "dispatcherExportErrorTitle": "The export wasn't completed",
+    "dispatcherExportErrorText": "Sorry, but something went wrong during the export process. Please try again or let us know if it doesn't work.",
     "dispatcherImportConfirm": "Ok! I got it!",
+	"dispatcherImportTryAgain": "Try again",
 
     "onboardingMainGraph": "Onboarding",
     "onboardingMainGraph11": "<b>Welcome to your Anytype Space.</b> Space is a graph of interconnected objects, providing a natural way to organize information.",
