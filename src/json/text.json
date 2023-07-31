@@ -711,6 +711,7 @@
 
     "popupHelpLabel": "Stay tuned for Anytype's news",
     "popupTemplateTitle": "Choose a template",
+    "popupTemplateText": "Type %s has %s %s, use ←→ to switch and ENTER to choose",
 
     "popupNavigationOpen": "Open",
     "popupNavigationMove": "Move to",
