@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select } from 'Component';
-import { I, translate, analytics, Renderer, UtilObject } from 'Lib';
+import { I, translate, analytics, Renderer, UtilObject, Storage } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -16,7 +16,8 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	render () {
 		const { config } = commonStore;
 		const type = dbStore.getType(commonStore.type);
-		const languages = this.getLanguages();
+		const interfaceLanguages = this.getInterfaceLanguages();
+		const spellingLanguages = this.getSpellinngLanguages();
 
 		return (
 			<React.Fragment>
@@ -35,16 +36,29 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 					</div>
 
 					<div className="item">
-						<Label text={translate('popupSettingsPersonalSpellcheckLanguages')} />
+						<Label text={translate('popupSettingsPersonalSpellcheckLanguage')} />
 
 						<Select
 							id="spellcheck"
 							value={config.languages}
-							options={languages}
+							options={spellingLanguages}
 							onChange={v => Renderer.send('setLanguage', v)}
 							arrowClassName="black"
 							isMultiple={true}
 							noFilter={false}
+							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
+						/>
+					</div>
+
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalInterfaceLanguage')} />
+
+						<Select
+							id="interfaceLang"
+							value={config.interfaceLang}
+							options={interfaceLanguages}
+							onChange={v => Renderer.send('changeInterfaceLang', v)}
+							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
 						/>
 					</div>
@@ -78,14 +92,24 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		analytics.event('DefaultTypeChange', { objectType: id });
 	};
 
-	getLanguages () {
-		let languages: any[] = [];
+	getInterfaceLanguages () {
+		const ret: any[] = [];
 
-		languages = languages.concat(commonStore.languages || []);
-		languages = languages.map(id => ({ id, name: Constant.spellingLang[id] }));
-		languages.unshift({ id: '', name: 'Disabled' });
+		for (let id in Constant.interfaceLang) {
+			ret.push({ id, name: Constant.interfaceLang[id] })
+		};
 
-		return languages;
+		return ret;
+	};
+
+	getSpellinngLanguages () {
+		let ret: any[] = [];
+
+		ret = ret.concat(commonStore.languages || []);
+		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
+		ret.unshift({ id: '', name: translate('commonDisabled') });
+
+		return ret;
 	};
 
 });

@@ -85,7 +85,7 @@ class UpdateManager {
 			Util.send(this.win, 'update-downloaded');
 
 			if (!this.autoUpdate) {
-				Api.exit(this.win, true);
+				Api.exit(this.win, '', true);
 			} else {
 				Util.send(this.win, 'update-confirm');
 			};

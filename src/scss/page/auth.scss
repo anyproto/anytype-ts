@@ -49,7 +49,10 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		}
 	}
 
-	.tooltip { padding: 12px 16px; background: $colorPopUp !important; color: $colorSecondary; box-shadow: $shadow !important; @include text-common; }
+	.tooltip { 
+		width: 410px; padding: 12px 16px; background: $colorPopUp !important; color: $colorSecondary; box-shadow: $shadow !important; @include text-common; 
+		white-space: normal;
+	}
 	.tooltip {
 		.txt { line-height: 22px; }
 		b { display: block; font-weight: 500; color: $colorPrimary; }
@@ -71,21 +74,11 @@ html.bodyAuthDeleted {
 	.footer { width: 100% !important; }
 
 	.icon.arrow.back {
-		position: fixed; top: 50%; left: 10px; width: 28px; height: 56px; margin-top: -22px; background-image: url('~img/arrow/auth0.svg');
-		background-position: center; background-repeat: no-repeat; background-size: 8px 24px;
+		position: fixed; top: 50%; left: 10px; width: 32px; height: 56px; margin-top: -28px; background-image: url('~img/arrow/auth0.svg');
 		z-index: 2;
 	}
 	.icon.arrow.back:hover { background-image: url('~img/arrow/auth1.svg'); }
 	
-	.authBackWrap { 
-		position: absolute; top: 4px; left: 4px; display: flex; align-items: center; flex-wrap: nowrap; color: $colorDarkGrey; 
-		line-height: 28px; padding: 0px 6px 0px 0px; border-radius: 4px;
-	}
-	.authBackWrap {
-		.icon.back { width: 20px; height: 20px; background-size: 8px; background-image: url('~img/icon/popup/settings/back.svg'); transition: none; }
-	}
-	.authBackWrap:hover { background: $colorHoverMedium; }
-
 	.textareaWrap { margin: 0px 0px 32px 0px; }
 	.iconObject { margin-bottom: 12px; }
 
@@ -191,7 +184,7 @@ html.bodyAuthDeleted {
 .pageAuthOnboard {
 	.title { margin: 0px 0px 10px 0px; }
 	.label { margin: 0px 0px 20px 0px; }
-	.dotIndicator { margin: 0px 0px 8px 0px; }
+	.dotIndicator { margin: 0px 0px 12px 0px; }
 
 	canvas { height: 100vh; width: 100vw; }
 
@@ -225,7 +218,7 @@ html.bodyAuthDeleted {
 		.account, .space { align-items: center; gap: 12px; width: 100px; top: 0; left: 0; }
 		.account { z-index: 2; }
 		.space { transition: all 600ms ease-in, opacity 300ms ease-in; z-index: 1; opacity: 0; }
-		.iconObject.withOption.isSpace { background: $colorBlack !important; border-radius: 8px; }
+		.iconObject.withOption.isSpace { background: $colorLineTertiary !important; border-radius: 8px; }
 		
 		.line { z-index: 0; height: 1px; top: 32px; width: 0; background: $colorWhite; }
 		.line.left { right: 50%; }
@@ -235,11 +228,11 @@ html.bodyAuthDeleted {
 	}
 
 	.soulContent.soulCreating {
-		.iconObject { background: $colorWhite; box-shadow: 0px 0px 0px 0px $colorWhite; animation: pulse 2s infinite; }
+		.iconObject { background: $colorWhite; box-shadow: 0px 0px 0px 0px $colorWhite; animation: pulse 1.5s infinite; }
 
 		@keyframes pulse {
 			0% { transform: scale(1); }
-			70% { transform: scale(1.05); }
+			70% { transform: scale(1.1); }
 			100% { transform: scale(1); }
 		}
 	}

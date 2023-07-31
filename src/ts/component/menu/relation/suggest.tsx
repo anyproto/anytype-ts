@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, Loader } from 'Component';
-import { I, analytics, keyboard, UtilData, UtilObject, Action, UtilCommon } from 'Lib';
+import { I, analytics, keyboard, UtilData, UtilObject, Action, UtilCommon, translate } from 'Lib';
 import { commonStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -108,7 +108,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 				{!noFilter ? (
 					<Filter 
 						ref={ref => this.refFilter = ref} 
-						placeholderFocus="Filter or create a relation..." 
+						placeholderFocus={translate('menuRelationSuggestFilterOrCreateRelation')}
 						value={filter}
 						onChange={this.onFilterChange} 
 					/>
@@ -283,20 +283,20 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const librarySources = library.map(it => it.sourceObject);
 
 		let sections: any[] = [
-			{ id: 'library', name: 'My relations', children: library },
+			{ id: 'library', name: translate('menuRelationSuggestMyRelations'), children: library },
 		];
 
 		if (filter) {
 			const store = items.filter(it => (it.workspaceId == Constant.storeSpaceId) && !librarySources.includes(it.id));
 			sections = sections.concat([
-				{ id: 'store', name: 'Anytype library', children: store },
-				{ children: [ { id: 'add', name: `Create relation "${filter}"` } ] }
+				{ id: 'store', name: translate('commonAnytypeLibrary'), children: store },
+				{ children: [ { id: 'add', name: UtilCommon.sprintf(translate('menuRelationSuggestCreateRelation'), filter) } ] }
 			]);
 		} else {
 			sections = sections.concat([
 				{ 
 					children: [
-						{ id: 'store', icon: 'store', name: 'Anytype library', arrow: true }
+						{ id: 'store', icon: 'store', name: translate('commonAnytypeLibrary'), arrow: true }
 					] 
 				},
 			]);

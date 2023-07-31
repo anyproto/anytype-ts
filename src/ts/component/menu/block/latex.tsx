@@ -239,7 +239,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { param } = this.props;
 		const { data } = param;
 		const { isTemplate } = data;
-		const filter = UtilCommon.filterFix(commonStore.filter.text);
+		const filter = UtilCommon.regexEscape(commonStore.filter.text);
 
 		let sections = UtilMenu.sectionsMap(Sections);
 		sections = sections.filter(it => (it.id == 'templates') == isTemplate);

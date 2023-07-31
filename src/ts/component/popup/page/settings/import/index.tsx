@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, UtilCommon, translate } from 'Lib';
+import { I, UtilCommon, translate, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 import { commonStore } from 'Store';
 
@@ -80,6 +80,8 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		if (UtilCommon.isPlatformMac()) {
 			fileOptions.properties.push('openDirectory');
 		};
+
+		analytics.event('ClickImport', { type });
 
 		window.Electron.showOpenDialog(fileOptions).then((result: any) => {
 			const paths = result.filePaths;

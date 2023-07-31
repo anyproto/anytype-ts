@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
-import { I, C, keyboard, UtilObject, analytics } from 'Lib';
+import { I, C, keyboard, UtilObject, analytics, translate, UtilCommon } from 'Lib';
 import { menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -121,9 +121,9 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		let options: any[] = [
-			{ id: 'editTitle', icon: 'editText', name: 'Edit title' },
-			{ id: 'sourceChange', icon: 'source', name: `Change source ${sourceName}`, arrow: true },
-			{ id: 'sourceOpen', icon: 'expand', name: `Open source ${sourceName}` },
+			{ id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') },
+			{ id: 'sourceChange', icon: 'source', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true },
+			{ id: 'sourceOpen', icon: 'expand', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		];
 
 		if (object.isArchived || object.isDeleted) {
@@ -158,7 +158,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		let addParam: any = {};
 
 		if (isCollection) {
-			addParam.name = 'Create new collection';
+			addParam.name = translate('blockDataviewCreateNewCollection');
 			addParam.onClick = () => {
 				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, onCreate);
@@ -170,7 +170,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
 			]);
 		} else {
-			addParam.name = 'Create new set';
+			addParam.name = translate('blockDataviewCreateNewSet');
 			addParam.onClick = () => {
 				C.ObjectCreateSet([], {}, '', (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
@@ -292,7 +292,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		this.checkInput(!this.getValue());
 
 		window.clearTimeout(this.timeout);
-		this.timeout = window.setTimeout(() => { this.save(); }, 500);
+		this.timeout = window.setTimeout(() => this.save(), 1000);
 	};
 
 	onSelect () {

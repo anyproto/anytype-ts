@@ -30,10 +30,9 @@ import Survey from './survey';
 import Preview from './preview';
 import Highlight from './highlight';
 import Animation from './animation';
-
 import Constant from 'json/constant.json';
-import Text from 'json/text.json';
 
+import { commonStore } from 'Store';
 
 /**
  * 
@@ -41,17 +40,21 @@ import Text from 'json/text.json';
  * @returns a piece of display text in the language of the user
  * Defaults to the default lang set in constant.json (english)
  */
-const translate = (key: keyof typeof Text | Omit<string, keyof typeof Text>): string => {
-	const lang = Storage.get('lang') || Constant.default.lang;
+const translate = (key: string): string => {
+	const lang = commonStore.config.interfaceLang || Constant.default.interfaceLang;
 
-	if (undefined === Text[key as string]) {
-		return `*No key: ${key}*`;
+	let data = {};
+	if (lang == Constant.default.interfaceLang) {
+		data = require(`json/text.json`); 
+	} else {
+		try { 
+			data = require(`lib/json/lang/${lang}.json`); 
+		} catch(e) {
+			data = require(`json/text.json`); 
+		};
 	};
 
-	if (undefined === Text[key as string][lang]) {
-		return `*No ${lang}: ${key}*`;
-	};
-	return Text[key as string][lang];
+	return data[key] || `⚠️${key}⚠️`;
 };
 
 export {

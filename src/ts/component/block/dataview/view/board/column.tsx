@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, LoadMore } from 'Component';
-import { I, Relation, UtilData, UtilCommon } from 'Lib';
+import { I, Relation, UtilData, UtilCommon, translate } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Card from './card';
 import Cell from 'Component/block/dataview/cell';
@@ -87,13 +87,13 @@ const Column = observer(class Column extends React.Component<Props> {
 								readonly={true} 
 								arrayLimit={4}
 								withLabel={true}
-								placeholder="Uncategorized"
+								placeholder={translate('commonUncategorized')}
 							/>
 						</div>
 
 						<div className="side right">
-							<Icon id={`button-${id}-more`} className="more" tooltip="Column settings" onClick={this.onMore} />
-							<Icon className="add" tooltip="Create new object" onClick={this.onAdd} />
+							<Icon id={`button-${id}-more`} className="more" tooltip={translate('blockDataviewBoardColumnSettings')} onClick={this.onMore} />
+							<Icon className="add" tooltip={translate('blockDataviewCreateNew')} onClick={this.onAdd} />
 						</div>
 					</div>
 

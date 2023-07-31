@@ -1,6 +1,6 @@
 import arrayMove from 'array-move';
 import { dbStore, commonStore, blockStore, detailStore } from 'Store';
-import { I, M, C, UtilCommon, UtilData, UtilObject, Relation } from 'Lib';
+import { I, M, C, UtilCommon, UtilData, UtilObject, Relation, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 class Dataview {
@@ -14,18 +14,18 @@ class Dataview {
 
 		const order: any = {};
 
-		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId));
+		let relations = UtilCommon.objectCopy(dbStore.getObjectRelations(rootId, blockId)).filter(it => it);
 		let o = 0;
 
 		if (!config.debug.ho) {
-			relations = relations.filter(it => it && ((it.relationKey == 'name') || !it.isHidden));
+			relations = relations.filter(it => (it.relationKey == 'name') || !it.isHidden);
 		};
 
-		(view.relations || []).forEach((it: any) => {
+		(view.relations || []).filter(it => it).forEach(it => {
 			order[it.relationKey] = o++;
 		});
 
-		relations.forEach((it: any) => {
+		relations.forEach(it => {
 			if (it && (undefined === order[it.relationKey])) {
 				order[it.relationKey] = o++;
 			};
@@ -181,9 +181,9 @@ class Dataview {
 		};
 
 		const tabs: I.MenuTab[] = [
-			{ id: 'relation', name: 'Relations', component: 'dataviewRelationList' },
-			view.isBoard() ? { id: 'group', name: 'Groups', component: 'dataviewGroupList' } : null,
-			{ id: 'view', name: 'View', component: 'dataviewViewEdit' },
+			{ id: 'relation', name: translate('libDataviewRelations'), component: 'dataviewRelationList' },
+			view.isBoard() ? { id: 'group', name: translate('libDataviewGroups'), component: 'dataviewGroupList' } : null,
+			{ id: 'view', name: translate('libDataviewView'), component: 'dataviewViewEdit' },
 		];
 		return tabs.filter(it => it);
 	};

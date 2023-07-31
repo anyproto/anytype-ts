@@ -128,7 +128,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 					<div className="head">
 						<div className="btn" onClick={this.onRandom}>{translate('menuSmileRandom')}</div>
 						{!noUpload ? <div className="btn" onClick={this.onUpload}>{translate('menuSmileUpload')}</div> : ''}
-						{!noRemove ? <div className="btn" onClick={this.onRemove}>{translate('menuSmileRemove')}</div> : ''}
+						{!noRemove ? <div className="btn" onClick={this.onRemove}>{translate('commonRemove')}</div> : ''}
 					</div>
 				) : ''}
 				
@@ -266,7 +266,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				};
 			});
 
-			sections.unshift({ id: ID_RECENT, name: 'Recently used', children: recent });
+			sections.unshift({ id: ID_RECENT, name: translate('menuSmileRecent'), children: recent });
 		};
 
 		return sections;
@@ -327,7 +327,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		if (length && (length <= LIMIT_SEARCH)) {
 			sections = [
 				{ 
-					id: 'search', name: 'Search results', isSection: true,
+					id: 'search', name: translate('menuSmileSearch'), isSection: true,
 					children: sections.reduce((res: any[], section: any) => {
 						return (section.id == ID_RECENT) ? res : res.concat(section.children); 
 					}, [])
@@ -377,7 +377,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	onKeyUp (e: any, force: boolean) {
 		window.clearTimeout(this.timeoutFilter);
 		this.timeoutFilter = window.setTimeout(() => {
-			this.setState({ page: 0, filter: UtilCommon.filterFix(this.refFilter.getValue()) });
+			this.setState({ page: 0, filter: UtilCommon.regexEscape(this.refFilter.getValue()) });
 		}, force ? 0 : 50);
 	};
 
@@ -423,8 +423,17 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			};
 
 			e.preventDefault();
+
+			const item = EmojiData.emojis[this.active.itemId];
+
+			if (!item || !item.skin_variations) {
+				this.onSelect(this.active.itemId, this.skin);
+				close();
+			} else {
+				this.onSkin(e, this.active.id, this.active.itemId);
+			};
+
 			Preview.tooltipHide(true);
-			this.onSkin(e, this.active.id, this.active.itemId);
 		});
 	};
 

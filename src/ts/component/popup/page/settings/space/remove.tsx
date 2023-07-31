@@ -8,7 +8,7 @@ const PopupSettingsSpaceRemove = observer(class PopupSettingsSpaceRemove extends
 
     render () {
         const space = {
-            name: 'Anytype Space',
+            name: translate('popupSettingsSpaceAnytypeSpace'),
         };
 
         return (

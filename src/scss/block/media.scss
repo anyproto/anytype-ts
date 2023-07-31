@@ -19,7 +19,7 @@
 		.error { margin: 0px; @include text-small; line-height: 22px; }
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
-		.media { width: 100%; display: block; }
+		.mediaImage { width: 100%; display: block; cursor: zoom-in; }
 		video { height: 100%; }
 
 		.pdfWrapper { 
@@ -39,7 +39,7 @@
 				}
 			}
 
-			.pager { flex-shrink: 0; }
+			.pager { flex-shrink: 0; cursor: default; }
 			.pager {
 				.icon { opacity: 0 !important; }
 			}
@@ -89,10 +89,6 @@
 		.icon.download { display: none; }
 		.icon.dots { display: none; }
 		.icon.play { display: none; }
-	}
-
-	.block.blockMedia.withContent {
-		.focusable { cursor: zoom-in; }
 	}
 
 	.block.blockMedia.isAudio.withContent > .wrapContent { background-color: $colorVeryLightGrey; }

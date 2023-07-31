@@ -38,7 +38,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		const { error } = this.state;
 		const duration = Math.max(0, account.status.date - UtilCommon.time());
 		const days = Math.max(1, Math.ceil(duration / 86400));
-		const dt = `${days} ${UtilCommon.cntWord(days, 'day', 'days')}`;
+		const dt = `${days} ${UtilCommon.plural(days, translate('pluralDay'))}`;
 		const daysUntilDeletion = Math.ceil(Math.max(0, (account.status.date - UtilCommon.time()) / 86400 ));
 
 		// Deletion Status
@@ -56,7 +56,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		switch (status) {
 			case I.AccountStatusType.PendingDeletion: {
 				showPie = true;
-				title = `This account is planned for deletion in ${dt}`;
+				title = UtilCommon.sprintf(translate('pageAuthDeletedAccountDeletionTitle'), dt);
 				description = translate('authDeleteDescription');
 				cancelButton = <Button type="input" text={translate('authDeleteCancelButton')} onClick={this.onCancel} />;
 				break;

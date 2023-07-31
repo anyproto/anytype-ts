@@ -49,7 +49,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		const { data } = param;
 		const { filter, noFilter } = data;
 		const items = this.getItems();
-		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
+		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
@@ -242,7 +242,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 			if (ret.length) {
 				ret.push({ isDiv: true });
 			};
-			ret.push({ id: 'add', name: `Create object "${data.filter}"` });
+			ret.push({ id: 'add', name: UtilCommon.sprintf(translate('commonCreateObject'), data.filter) });
 		};
 
 		return ret;

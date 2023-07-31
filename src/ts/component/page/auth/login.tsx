@@ -100,7 +100,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		C.WalletRecover(walletPath, phrase, (message: any) => {
 			if (message.error.code) {
 				this.refPhrase.setError(true);
-				this.setState({ error: 'Invalid recovery phrase' });	
+				this.setState({ error: translate('pageAuthLoginInvalidPhrase') });	
 				return;
 			};
 
@@ -139,7 +139,7 @@ const PageAuthLogin = observer(class PageAuthLogin extends React.Component<I.Pag
 		popupStore.open('confirm', {
             data: {
                 text: translate('authLoginLostPhrasePopupContent'),
-				textConfirm: 'Okay',
+				textConfirm: translate('commonOkay'),
 				canConfirm: true,
 				canCancel: false,
             },

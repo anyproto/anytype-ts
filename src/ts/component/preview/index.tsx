@@ -45,7 +45,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 					<div className="head">
 						<div id="button-copy" className="item" onClick={this.onCopy}>{translate('previewCopy')}</div>
 						<div id="button-edit" className="item" onClick={this.onEdit}>{translate('previewEdit')}</div>
-						{!noUnlink ? <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div> : ''}
+						{!noUnlink ? <div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div> : ''}
 					</div>
 				);
 
@@ -57,7 +57,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				if (!noUnlink) {
 					head = (
 						<div className="head">
-							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div>
+							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div>
 						</div>
 					);
 				};
@@ -70,7 +70,7 @@ const PreviewComponent = observer(class PreviewComponent extends React.Component
 				if (!noUnlink) {
 					head = (
 						<div className="head">
-							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('previewUnlink')}</div>
+							<div id="button-unlink" className="item" onClick={this.onUnlink}>{translate('commonUnlink')}</div>
 						</div>
 					);
 				};

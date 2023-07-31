@@ -574,10 +574,6 @@ class UtilData {
 		content.cardStyle = Number(content.cardStyle) || I.LinkCardStyle.Text;
 		content.relations = (content.relations || []).filter(it => relationKeys.includes(it));
 
-		if (content.cardStyle == I.LinkCardStyle.Text) {
-			content.iconSize = I.LinkIconSize.Small;
-		};
-
 		if (layout == I.ObjectLayout.Task) {
 			content.iconSize = I.LinkIconSize.Small;
 		};
@@ -751,7 +747,7 @@ class UtilData {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isArchived', condition: I.FilterCondition.NotEqual, value: true });
 		};
 
-		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), UtilCommon.filterFix(param.fullText), offset, limit, callBack);
+		C.ObjectSearch(filters, sorts, keys.concat([ idField ]), UtilCommon.regexEscape(param.fullText), offset, limit, callBack);
 	};
 
 	setWindowTitle (rootId: string, objectId: string) {

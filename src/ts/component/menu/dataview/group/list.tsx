@@ -78,7 +78,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 							readonly={true} 
 							arrayLimit={4}
 							withLabel={true}
-							placeholder={translate('placeholderCellCommon')}
+							placeholder={translate('commonUncategorized')}
 						/>
 					</span>
 					{canHide ? (

@@ -3,7 +3,7 @@ import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon, ObjectName } from 'Component';
 import { I, UtilCommon, UtilObject, UtilData, UtilMenu, translate, Storage, Action, analytics } from 'Lib';
-import { blockStore, detailStore, menuStore } from 'Store';
+import { blockStore, detailStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import WidgetSpace from './space';
@@ -97,10 +97,10 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			buttons = (
 				<div className="buttons">
 					<div className="iconWrap options">
-						<Icon id="button-options" className="options" tooltip="Options" onClick={this.onOptions} />
+						<Icon id="button-options" className="options" tooltip={translate('widgetOptions')} onClick={this.onOptions} />
 					</div>
 					<div className="iconWrap collapse">
-						<Icon className="collapse" tooltip="Toggle" onClick={this.onToggle} />
+						<Icon className="collapse" tooltip={translate('widgetToggle')} onClick={this.onToggle} />
 					</div>
 				</div>
 			);
@@ -329,18 +329,20 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	};
 
 	getData (subId: string, callBack?: () => void) {
-		const { block } = this.props;
+		const { block, isPreview } = this.props;
 		const child = this.getTargetBlock();
 		const { targetBlockId } = child?.content;
-		const limit = this.getLimit(block.content);
 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
 		];
 
+		let limit = this.getLimit(block.content);
+
 		switch (targetBlockId) {
 			case Constant.widgetId.favorite: {
 				filters.push({ operator: I.FilterOperator.And, relationKey: 'isFavorite', condition: I.FilterCondition.Equal, value: true });
+				limit = 0;
 				break;
 			};
 
@@ -367,7 +369,21 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			sorts,
 			limit,
 			keys: Constant.sidebarRelationKeys,
-		}, callBack);
+		}, () => {
+			if (targetBlockId == Constant.widgetId.favorite) {
+				let records = this.sortFavorite(dbStore.getRecords(subId, ''));
+
+				if (!isPreview) {
+					records = records.slice(0, this.getLimit(block.content));
+				};
+
+				dbStore.recordsSet(subId, '', records);
+			};
+
+			if (callBack) {
+				callBack();
+			};
+		});
 	};
 
 	sortFavorite (records: string[]): string[] {
@@ -388,7 +404,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 		const { block, isPreview, setPreview } = this.props;
 		const object = this.getObject();
 		const child = this.getTargetBlock();
-		const { targetBlockId } = child?.content;
+		
+		if (!child) {
+			return;
+		};
+
+		const { targetBlockId } = child.content;
 
 		let blockId = '';
 		let event = 'ScreenHome';

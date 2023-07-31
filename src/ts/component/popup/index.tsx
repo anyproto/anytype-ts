@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, UtilCommon, analytics, Storage, Preview } from 'Lib';
+import { I, UtilCommon, analytics, Storage, Preview, translate } from 'Lib';
 import { Dimmer } from 'Component';
 import { menuStore, popupStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -67,7 +67,7 @@ class Popup extends React.Component<I.Popup> {
 		};
 		
 		if (!Component) {
-			return <div>Component {id} not found</div>
+			return <div>{UtilCommon.sprintf(translate('popupIndexComponentNotFound'), id)}</div>
 		};
 
 		return (

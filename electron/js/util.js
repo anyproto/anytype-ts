@@ -47,7 +47,8 @@ class Util {
 	};
 
 	getTheme () {
-		const theme = (undefined !== ConfigManager.config.theme) ? ConfigManager.config.theme : 'dark';
+		const theme = ConfigManager.config.theme;
+
 		switch (theme) {
 			default:
 				return theme;
@@ -203,6 +204,19 @@ class Util {
 
 	fileName (name) {
 		return sanitize(String(name || 'untitled').trim());
+	};
+
+	getLang () {
+		return ConfigManager.config.interfaceLang || 'en-US';
+	};
+
+	translate (key) {
+		const lang = this.getLang();
+
+		let data = {};
+		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
+
+		return data[key] || `⚠️${key}⚠️`;
 	};
 
 };

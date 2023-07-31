@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, UtilObject, keyboard, Relation } from 'Lib';
+import { I, UtilObject, keyboard, Relation, translate } from 'Lib';
 import { commonStore, detailStore, menuStore } from 'Store';
 
 const HEIGHT = 28;
@@ -195,7 +195,7 @@ const MenuObjectValues = observer(class MenuObjectValues extends React.Component
 			value = value.filter(it => !it.isHidden);
 		};
 
-		value.unshift({ id: 'add', name: (nameAdd || 'Add object') });
+		value.unshift({ id: 'add', name: (nameAdd || translate('menuDataviewObjectValuesAddObject')) });
 		return value;
 	};
 

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Title, Icon, IconObject, Header, Footer, Filter, Button, EmptySearch } from 'Component';
-import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilCommon, Storage, Onboarding, analytics, Action, keyboard, translate } from 'Lib';
 import { dbStore, blockStore, detailStore, commonStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -19,8 +19,8 @@ enum View {
 const cmd = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const Tabs = [
-	{ id: I.StoreTab.Type, name: 'Types', tooltipCaption: `${cmd} + T` },
-	{ id: I.StoreTab.Relation, name: 'Relations', tooltipCaption: `${cmd} + ${alt} + T` },
+	{ id: I.StoreTab.Type, name: translate('pageMainStoreTypes'), tooltipCaption: `${cmd} + T` },
+	{ id: I.StoreTab.Relation, name: translate('pageMainStoreRelations'), tooltipCaption: `${cmd} + ${alt} + T` },
 ];
 
 const PageMainStore = observer(class PageMainStore extends React.Component<I.PageComponent, State> {
@@ -61,10 +61,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			return null;
 		};
 
+		const { isPopup } = this.props;
 		const views = this.getViews();
 		const items = this.getItems();
 		const sources = this.getSources();
 		const limit = this.getLimit();
+		const length = items.length;
 
 		let title = '';
 		let placeholder = '';
@@ -76,22 +78,22 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				title = 'Types are like categories<br/>that help you group and manage<br/>your objects.';
-				placeholder = 'Search or create a new type...';
-				textService = 'Service type';
-				textInstalled = 'Type is installed';
-				textInstall = 'Install type';
-				textEmpty = '<b>Your type list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
+				title = translate('pageMainStoreTypesTitle');
+				placeholder = translate('pageMainStoreTypesPlaceholder');
+				textService = translate('pageMainStoreTypesService');
+				textInstalled = translate('pageMainStoreTypeInstalled');
+				textInstall = translate('pageMainStoreTypeInstall');
+				textEmpty = translate('pageMainStoreTypeEmpty');
 				iconSize = 18;
 				break;
 
 			case I.StoreTab.Relation:
-				title = 'All objects are connected.<br />Use relations to build connections between objects.';
-				placeholder = 'Search or create a new relation...';
-				textService = 'Service relation';
-				textInstalled = 'Relation is installed';
-				textInstall = 'Install relation';
-				textEmpty = '<b>Your relation list is empty</b>Add some from the Anytype Library using the search icon or create your own using the button above';
+				title = translate('pageMainStoreRelationsTitle');
+				placeholder = translate('pageMainStoreRelationsPlaceholder');
+				textService = translate('pageMainStoreRelationsService');
+				textInstalled = translate('pageMainStoreRelationsInstalled');
+				textInstall = translate('pageMainStoreRelationsInstall');
+				textEmpty = translate('pageMainStoreRelationsEmpty');
 				iconSize = 20;
 				break;
 		};
@@ -136,7 +138,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			switch (this.view) {
 				case View.Library:
 					if (allowedDelete) {
-						buttons.push({ text: 'Remove', onClick: (e: any) => { this.onRemove(e, item); } });
+						buttons.push({ text: translate('commonRemove'), onClick: e => this.onRemove(e, item) });
 					} else {
 						icons.push({ className: 'lock', tooltip: textService });
 					};
@@ -215,28 +217,37 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 				<div className="body">
 					<div className="items">
 						<InfiniteLoader
-							rowCount={items.length}
 							loadMoreRows={() => {}}
-							isRowLoaded={() => true}
+							isRowLoaded={({ index }) => !!items[index]}
+							rowCount={length}
+							threshold={10}
 						>
 							{({ onRowsRendered }) => (
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={ref => this.refList = ref}
-											width={width}
-											height={height}
-											deferredMeasurmentCache={this.cache}
-											rowCount={items.length}
-											rowHeight={({ index }) => this.getRowHeight(items[index])}
-											rowRenderer={rowRenderer}
-											onRowsRendered={onRowsRendered}
-											overscanRowCount={10}
-											onScroll={this.onScroll}
-											scrollToAlignment="start"
-										/>
+								<WindowScroller scrollElement={isPopup ? $('#popupPage-innerWrap').get(0) : window}>
+									{({ height, isScrolling, registerChild, scrollTop }) => (
+										<AutoSizer disableHeight={true}>
+											{({ width }) => {
+												return (
+													<div ref={registerChild}>
+														<List
+															autoHeight={true}
+															height={Number(height) || 0}
+															width={Number(width) || 0}
+															isScrolling={isScrolling}
+															rowCount={length}
+															rowHeight={({ index }) => this.getRowHeight(items[index])}
+															onRowsRendered={onRowsRendered}
+															rowRenderer={rowRenderer}
+															onScroll={this.onScroll}
+															scrollTop={scrollTop}
+															scrollToAlignment="start"
+														/>
+													</div>
+												);
+											}}
+										</AutoSizer>
 									)}
-								</AutoSizer>
+								</WindowScroller>
 							)}
 						</InfiniteLoader>
 					</div>
@@ -264,14 +275,11 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	componentDidUpdate () {
-		const { isPopup } = this.props;
-
 		this.resize();
+
 		if (this.refList) {
 			this.refList.recomputeRowHeights();
 		};
-
-		Onboarding.start(UtilCommon.toCamelCase('store-' + this.tab), isPopup);
 	};
 
 	componentWillUnmount () {
@@ -293,8 +301,8 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	onKeyDown (e: any) {
 		const cmd = keyboard.cmdKey();
 
-		keyboard.shortcut(`${cmd}+t`, e, () => { this.onTab(I.StoreTab.Type, true); });
-		keyboard.shortcut(`${cmd}+alt+t`, e, () => { this.onTab(I.StoreTab.Relation, true); });
+		keyboard.shortcut(`${cmd}+t`, e, () => this.onTab(I.StoreTab.Type, true));
+		keyboard.shortcut(`${cmd}+alt+t`, e, () => this.onTab(I.StoreTab.Relation, true));
 	};
 
 	getRowHeight (item: any) {
@@ -375,7 +383,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 		const filter = node.find('#store-filter');
 
 		const menuParam: any = {
-			element: filter,
+			element: '#store-filter',
 			commonFilter: true,
 			horizontal: I.MenuDirection.Center,
 			width: filter.outerWidth(),
@@ -554,15 +562,15 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
-				views.push({ id: View.Library, name: 'My types' });
+				views.push({ id: View.Library, name: translate('pageMainStoreMyTypes') });
 				break;
 
 			case I.StoreTab.Relation:
-				views.push({ id: View.Library, name: 'My relations' });
+				views.push({ id: View.Library, name: translate('pageMainStoreMyRelations') });
 				break;
 		};
 
-		views.push({ id: View.Marketplace, name: 'Anytype library' });
+		views.push({ id: View.Marketplace, name: translate('commonAnytypeLibrary') });
 		return views;
 	};
 
@@ -606,8 +614,12 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.top = scrollTop;
 		};
 
+		if (this.refFilter) {
+			this.refFilter.forceUpdate();
+		};
+
 		for (let menu of menus) {
-			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
+			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${menu.id}`));
 		};
 	};
 
@@ -621,52 +633,32 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	resize () {
-		const container = UtilCommon.getPageContainer(this.props.isPopup);
-		const win = $(window);
 		const node = $(this.node);
-		const content = $('#popupPage .content');
-		const body = node.find('.body');
-		const hh = UtilCommon.sizeHeader();
-		const isPopup = this.isPopup();
 		const limit = this.getLimit();
-		const wh = isPopup ? container.height() : win.height();
 		const midHeight = node.find('.mid').outerHeight();
 		const filter = node.find('#store-filter');
+		const grid = node.find('.ReactVirtualized__Grid__innerScrollContainer');
+		const items = this.getItems();
+		const height = items.reduce((res, current) => res += this.getRowHeight(current), 0);
 
-		node.css({ height: wh });
-		
-		if (isPopup) {
-			body.css({ height: wh - hh });
-			content.css({ minHeight: 'unset', height: '100%' });
-		} else {
-			body.css({ height: '' });
-			content.css({ minHeight: '', height: '' });
-		};
+		grid.css({ height });
 
 		if ((limit != this.limit) || (midHeight != this.midHeight)) {
 			this.limit = limit;
 			this.midHeight = midHeight;
 
 			raf.cancel(this.frame);
-			this.frame = raf(() => { this.forceUpdate(); });
+			this.frame = raf(() => this.forceUpdate());
 		};
 
-		if (!menuStore.get(this.getMenuId())) {
-			return;
-		}
+		if (menuStore.isOpen(this.getMenuId())) {
+			if (this.refFilter && this.filter.length) {
+				this.refFilter.setValue(this.filter);
+				this.refFilter.focus();
+			};
 
-		if (this.refFilter && this.filter.length) {
-			this.refFilter.setValue(this.filter);
-			this.refFilter.focus();
+			menuStore.update(this.getMenuId(), { width: filter.outerWidth() });
 		};
-		menuStore.update(this.getMenuId(), { element: filter, width: filter.outerWidth() });
-	};
-
-	isPopup () {
-		const { isPopup } = this.props;
-		const container = UtilCommon.getPageContainer(isPopup);
-
-		return isPopup && !container.hasClass('full');
 	};
 
 });

@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuDataviewOptionList {
-		.content { overflow: visible; padding: 0px; }
+		.content { overflow: visible !important; padding: 0px; }
 		.items { height: 100%; }
 
 		.item.add {

@@ -11,6 +11,7 @@ class AccountInfo implements I.AccountInfo {
 	accountSpaceId = '';
 	widgetsId = '';
 	analyticsId = '';
+	networkId = '';
 	
 	constructor (props: I.AccountInfo) {
 		this.homeObjectId = String(props.homeObjectId || '');
@@ -21,6 +22,7 @@ class AccountInfo implements I.AccountInfo {
 		this.accountSpaceId = String(props.accountSpaceId || '');
 		this.widgetsId = String(props.widgetsId || '');
 		this.analyticsId = String(props.analyticsId || '');
+		this.networkId = String(props.networkId || '');
 
 		makeObservable(this, {
 			homeObjectId: observable,
@@ -31,6 +33,7 @@ class AccountInfo implements I.AccountInfo {
 			accountSpaceId: observable,
 			widgetsId: observable,
 			analyticsId: observable,
+			networkId: observable,
 		});
 
 		intercept(this as any, change => UtilCommon.intercept(this, change));

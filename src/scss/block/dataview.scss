@@ -136,8 +136,8 @@
 		}
 
 		.content {
-			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); }
-			.scrollWrap { background: #fff; padding-bottom: 14px; }
+			.scroll { overflow-x: auto; overflow-y: visible; transform: translate3d(0px,0px,0px); padding-bottom: 14px; }
+			.scrollWrap { background: #fff; }
 		}
 
 		.viewContent {
@@ -217,17 +217,6 @@
 		}
 	}
 	
-}
-
-html.platformMac {
-	.blocks {
-		.block.blockDataview {
-			.content {
-				.scrollWrap { padding: 0px; }
-				.scroll::-webkit-scrollbar { display: none; }
-			}
-		}
-	}
 }
 
 html.platformWindows {

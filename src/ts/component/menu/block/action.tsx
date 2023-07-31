@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { Filter, MenuItemVertical } from 'Component';
 import { detailStore, blockStore, menuStore } from 'Store';
-import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview } from 'Lib';
+import { I, C, keyboard, UtilData, UtilObject, UtilMenu, focus, Action, translate, analytics, Dataview, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface State {
@@ -76,7 +76,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			>
 				<Filter 
 					ref={ref => this.refFilter = ref} 
-					placeholderFocus="Filter actions..." 
+					placeholderFocus={translate('menuBlockActionsFilterActions')}
 					value={filter}
 					onFocus={this.onFilterFocus} 
 					onChange={this.onFilterChange} 
@@ -195,16 +195,16 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let sections: any[] = [];
 		
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: 'Text style', children: UtilMenu.getBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: 'List style', children: UtilMenu.getBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: 'Turn into object', children: UtilMenu.getTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: 'Divider style', children: UtilMenu.getTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: 'File style', children: UtilMenu.getTurnFile() };
-			const action = { id: 'action', icon: '', name: 'Actions', children: [] };
-			const align = { id: 'align', icon: '', name: 'Align', children: [] };
-			const bgColor = { id: 'bgColor', icon: '', name: 'Background', children: UtilMenu.getBgColors() };
-			const color = { id: 'color', icon: 'color', name: 'Color', arrow: true, children: UtilMenu.getTextColors() };
-			const dataview = { id: 'dataview', icon: '', name: 'Dataview', children: UtilMenu.getDataviewActions(rootId, blockId) };
+			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: UtilMenu.getBlockText() };
+			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: UtilMenu.getBlockList() };
+			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: UtilMenu.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: UtilMenu.getTurnDiv() };
+			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: UtilMenu.getTurnFile() };
+			const action = { id: 'action', icon: '', name: translate('menuBlockActionsSectionsActions'), children: [] };
+			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: [] };
+			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: UtilMenu.getBgColors() };
+			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: UtilMenu.getTextColors() };
+			const dataview = { id: 'dataview', icon: '', name: translate('menuBlockActionsSectionsDataview'), children: UtilMenu.getDataviewActions(rootId, blockId) };
 
 			let hasTurnText = true;
 			let hasTurnObject = true;
@@ -323,7 +323,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 
 			const section2: any = { 
 				children: [
-					//{ id: 'comment', icon: 'comment', name: 'Comment' },
+					// { id: 'comment', icon: 'comment', name: translate('commonComment') },
 				]
 			};
 
@@ -332,11 +332,11 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasLink) {
-				section2.children.push({ id: 'linkSettings', icon: 'linkStyle' + content.cardStyle, name: 'Preview', arrow: true });
+				section2.children.push({ id: 'linkSettings', icon: 'linkStyle' + content.cardStyle, name: translate('commonPreview'), arrow: true });
 			};
 
 			if (hasFile) {
-				section2.children.push({ id: 'turnStyle', icon: 'customize', name: 'Appearance', arrow: true, isFile: true },);
+				section2.children.push({ id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isFile: true },);
 			};
 
 			if (hasTitle) {
@@ -344,23 +344,23 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			};
 
 			if (hasTurnText) {
-				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: 'Text style', arrow: true });
+				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true });
 			};
 
 			if (hasTurnDiv) {
-				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: 'Divider style', arrow: true, isDiv: true });
+				section2.children.push({ id: 'turnStyle', icon: UtilData.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isDiv: true });
 			};
 
 			if (hasAlign) {
-				section2.children.push({ id: 'align', icon: [ 'align', UtilData.alignIcon(align) ].join(' '), name: 'Align', arrow: true });
+				section2.children.push({ id: 'align', icon: [ 'align', UtilData.alignIcon(align) ].join(' '), name: translate('commonAlign'), arrow: true });
 			};
 
 			if (hasColor) {
-				section2.children.push({ id: 'color', icon: 'color', name: 'Color', arrow: true, isTextColor: true, value: (color || 'default') });
+				section2.children.push({ id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') });
 			};
 
 			if (hasBg) {
-				section2.children.push({ id: 'background', icon: 'color', name: 'Background', arrow: true, isBgColor: true, value: (bgColor || 'default') });
+				section2.children.push({ id: 'background', icon: 'color', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') });
 			};
 
 			sections = [ section1, section2 ];
@@ -593,10 +593,10 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				menuParam.className = 'single';
 
 				const isCollection = Dataview.isCollection(rootId, blockId);
-				const name = isCollection ? 'collection' : 'set';
+				const name = translate(isCollection ? 'commonLCCollection' : 'commonLCSet');
 
 				let addParam: any = {
-					name: `Create new ${name}`,
+					name: UtilCommon.sprintf(translate('menuBlockActionsCreateNew'), name),
 				};
 				if (isCollection) {
 					addParam.onClick = () => {

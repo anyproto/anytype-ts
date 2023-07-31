@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, UtilCommon, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, Preview, Action } from 'Lib';
+import { I, C, UtilCommon, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, Preview, Action, translate } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -62,6 +62,8 @@ class Keyboard {
 			if (!commonStore.isSidebarFixed) {
 				sidebar.hide();
 			};
+
+			menuStore.closeAll([ 'blockContext' ]);
 		});
 
 		doc.off('mouseleave.common').on('mouseleave.common', () => {
@@ -133,7 +135,7 @@ class Keyboard {
 			keyboard.shortcut(isMac ? 'cmd+[' : 'alt+arrowleft', e, () => this.onBack());
 			keyboard.shortcut(isMac ? 'cmd+]' : 'alt+arrowright', e, () => this.onForward());
 
-			if (!UtilCommon.selectionRange() && isMac) {
+			if (!UtilCommon.getSelectionRange() && isMac) {
 				keyboard.shortcut(`${cmd}+arrowleft`, e, () => this.onBack());
 				keyboard.shortcut(`${cmd}+arrowright`, e, () => this.onForward());
 			};
@@ -148,7 +150,7 @@ class Keyboard {
 			if (popupStore.isOpen()) {
 				let canClose = true;
 
-				if (UtilCommon.selectionRange()) {
+				if (UtilCommon.getSelectionRange()) {
 					$(document.activeElement).blur();
 					window.getSelection().removeAllRanges();
 					canClose = false;
@@ -259,14 +261,11 @@ class Keyboard {
 					className: 'isWide isLeft',
 					data: {
 						text: `ID: ${this.getRootId()}`,
-						textConfirm: 'Copy',
-						textCancel: 'Close',
+						textConfirm: translate('commonCopy'),
+						textCancel: translate('commonClose'),
 						canConfirm: true,
 						canCancel: true,
-						onConfirm: () => {
-							UtilCommon.clipboardCopy({ text: this.getRootId() });
-							Preview.toastShow({ text: 'ID copied to clipboard' });
-						},
+						onConfirm: () => UtilCommon.copyToast('ID', this.getRootId()),
 					}
 				});
 			});
@@ -277,7 +276,7 @@ class Keyboard {
 
 	// Check if smth is selected
 	checkSelection () {
-		const range = UtilCommon.selectionRange();
+		const range = UtilCommon.getSelectionRange();
 
 		if ((range && !range.collapsed) || (this.selection && this.selection.get(I.SelectType.Block).length)) {
 			return true;
@@ -331,7 +330,7 @@ class Keyboard {
 		const { account } = authStore;
 		const isPopup = this.isPopup();
 
-		if (authStore.accountIsDeleted() || authStore.accountIsPending()) {
+		if (authStore.accountIsDeleted() || authStore.accountIsPending() || !this.checkBack()) {
 			return;
 		};
 
@@ -344,7 +343,9 @@ class Keyboard {
 				});
 			};
 		} else {
-			let prev = UtilCommon.history.entries[UtilCommon.history.index - 1];
+			const history = UtilCommon.history;
+
+			let prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
 				UtilObject.openHome('route');
@@ -354,23 +355,15 @@ class Keyboard {
 			if (prev) {
 				const route = UtilCommon.getRoute(prev.pathname);
 
-				if ([ 'index', 'auth' ].includes(route.page) && account) {
-					return;
-				};
-
-				if ((route.page == 'main') && !account) {
-					return;
-				};
-
 				if ((route.page == 'main') && (route.action == 'history')) {
-					prev = UtilCommon.history.entries[UtilCommon.history.index - 3];
+					prev = history.entries[history.index - 3];
 					if (prev) {
 						UtilCommon.route(prev.pathname, {});
 					};
 					return;
 				};
 
-				UtilCommon.history.goBack();
+				history.goBack();
 			};
 		};
 
@@ -381,6 +374,10 @@ class Keyboard {
 
 	onForward () {
 		const isPopup = this.isPopup();
+
+		if (!this.checkForward()) {
+			return;
+		};
 
 		if (isPopup) {
 			historyPopup.goForward((match: any) => { 
@@ -395,6 +392,7 @@ class Keyboard {
 	};
 
 	checkBack (): boolean {
+		const { account } = authStore;
 		const isPopup = this.isPopup();
 		const history = UtilCommon.history;
 
@@ -402,22 +400,31 @@ class Keyboard {
 			return;
 		};
 
-		let ret = true;
 		if (!isPopup) {
-			ret = history.index - 1 >= 0;
+			let prev = history.entries[history.index - 1];
 
-			if (history.index === 0) {
-				const entry = history.entries[history.index];
-				const route = UtilCommon.getRoute(entry.pathname);
-				const home = UtilObject.getSpaceDashboard();
+			if (account && !prev) {
+				return false;
+			};
 
-				if (home && (route.id != home.id)) {
-					ret = true;
+			if (prev) {
+				const route = UtilCommon.getRoute(prev.pathname);
+
+				if ([ 'index', 'auth' ].includes(route.page) && account) {
+					return false;
+				};
+
+				if ((route.page == 'main') && !account) {
+					return false;
+				};
+
+				if ((route.page == 'main') && (route.action == 'usecase')) {
+					return false;
 				};
 			};
 		};
 
-		return ret;
+		return true;
 	};
 
 	checkForward (): boolean {
@@ -510,7 +517,7 @@ class Keyboard {
 			};
 
 			case 'exportTemplates': {
-				Action.openDir({ buttonLabel: 'Export' }, paths => {
+				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
 					C.TemplateExportAll(paths[0], (message: any) => {
 						if (message.error.code) {
 							return;
@@ -523,7 +530,7 @@ class Keyboard {
 			};
 
 			case 'exportLocalstore': {
-				Action.openDir({ buttonLabel: 'Export' }, paths => {
+				Action.openDir({ buttonLabel: translate('commonExport') }, paths => {
 					C.DebugExportLocalstore(paths[0], [], (message: any) => {
 						if (!message.error.code) {
 							Renderer.send('pathOpen', paths[0]);
@@ -591,27 +598,26 @@ class Keyboard {
 
 		C.AppGetVersion((message: any) => {
 			const data = [
-				[ 'Device', window.Electron.version.device ],
-				[ 'OS version', window.Electron.version.os ],
-				[ 'App version', window.Electron.version.app ],
-				[ 'Build number', message.details ],
-				[ 'Library version', message.version ],
-				[ 'Account ID', account.id ],
-				[ 'Analytics ID', account.info.analyticsId ],
-				[ 'Device ID', account.info.deviceId ],
+				[ translate('libKeyboardDevice'), window.Electron.version.device ],
+				[ translate('libKeyboardOSVersion'), window.Electron.version.os ],
+				[ translate('libKeyboardAppVersion'), window.Electron.version.app ],
+				[ translate('libKeyboardBuildNumber'), message.details ],
+				[ translate('libKeyboardLibraryVersion'), message.version ],
+				[ translate('libKeyboardAccountID'), account.id ],
+				[ translate('libKeyboardAnalyticsID'), account.info.analyticsId ],
+				[ translate('libKeyboardDeviceID'), account.info.deviceId ],
 			];
 
 			popupStore.open('confirm', {
 				className: 'isWide isLeft',
 				data: {
 					text: data.map(it => `<b>${it[0]}</b>: ${it[1]}`).join('<br/>'),
-					textConfirm: 'Copy',
-					textCancel: 'Close',
+					textConfirm: translate('commonCopy'),
+					textCancel: translate('commonClose'),
 					canConfirm: true,
 					canCancel: true,
 					onConfirm: () => {
-						UtilCommon.clipboardCopy({ text: data.map(it => `${it[0]}: ${it[1]}`).join('\n') });
-						Preview.toastShow({ text: 'Tech information copied to clipboard' });
+						UtilCommon.copyToast(translate('libKeyboardTechInformation'), data.map(it => `${it[0]}: ${it[1]}`).join('\n'));
 					},
 				}
 			});

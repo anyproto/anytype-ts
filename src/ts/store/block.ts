@@ -241,6 +241,10 @@ class BlockStore {
 
     getHighestParent (rootId: string, blockId: string): I.Block {
 		const block = blockStore.getLeaf(rootId, blockId);
+		if (!block) {
+			return null;
+		};
+
 		const parent = blockStore.getLeaf(rootId, block.parentId);
 
 		if (!parent || (parent && (parent.isPage() || parent.isLayoutDiv()))) {
@@ -248,6 +252,30 @@ class BlockStore {
 		} else {
 			return this.getHighestParent(rootId, parent.id);
 		};
+	};
+
+	// Check if blockId is inside parentId children recursively
+	checkIsChild (rootId: string, parentId: string, blockId: string): boolean {
+		const element = this.getMapElement(rootId, parentId);
+
+		if (!element.childrenIds.length) {
+			return false;
+		};
+
+		if (element.childrenIds.includes(blockId)) {
+			return true;
+		};
+
+		let ret = false;
+
+		for (let childId of element.childrenIds) {
+			ret = this.checkIsChild(rootId, childId, blockId);
+			if (ret) {
+				break;
+			};
+		};
+
+		return ret;
 	};
 
     updateNumbers (rootId: string) {
@@ -409,13 +437,13 @@ class BlockStore {
 					continue;
 				};
 
-				const old = text.substr(from, to - from);
+				const old = text.substring(from, to);
 
 				let name = UtilCommon.shorten(object.name, 30);
 				if (object.layout == I.ObjectLayout.Note) {
 					name = name || translate('commonEmpty');
 				};
-				name = Mark.fromUnicode(name).trim();
+				name = Mark.fromUnicode(name, marks).trim();
 
 				if (old != name) {
 					const d = String(old || '').length - String(name || '').length;
@@ -494,6 +522,17 @@ class BlockStore {
 				win.trigger(`${code}.${block.id}`);
 			};
 		});
+	};
+
+	getTableData (rootId: string, blockId: string) {
+		const childrenIds = this.getChildrenIds(rootId, blockId);
+		const children = this.getChildren(rootId, blockId);
+		const rowContainer = children.find(it => it.isLayoutTableRows());
+		const columnContainer = children.find(it => it.isLayoutTableColumns());
+		const columns = columnContainer ? this.getChildren(rootId, columnContainer.id, it => it.isTableColumn()) : [];
+		const rows = rowContainer ? this.unwrapTree([ this.wrapTree(rootId, rowContainer.id) ]).filter(it => it.isTableRow()) : [];
+
+		return { childrenIds, columnContainer, columns, rowContainer, rows };
 	};
 
 };

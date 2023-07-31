@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Select, Label } from 'Component';
 import { blockStore, dbStore, detailStore } from 'Store';
-import { Dataview, I, C, UtilCommon, Relation, keyboard, UtilObject } from 'Lib';
+import { Dataview, I, C, UtilCommon, Relation, keyboard, UtilObject, translate } from 'Lib';
 import WidgetListItem from './item';
 import Constant from 'json/constant.json';
 
@@ -58,7 +58,7 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 			content = <Loader />;
 		} else
 		if (!length) {
-			content = <Label className="empty" text="There are no objects here,<br/>create the first one" />;
+			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
 		} else
 		if (isPreview) {
 			const rowRenderer = ({ index, key, parent, style }) => (
@@ -127,7 +127,11 @@ const WidgetList = observer(class WidgetList extends React.Component<Props, Stat
 						options={views} 
 						onChange={this.onChangeView}
 						arrowClassName="light"
-						menuParam={{ width: 300 }}
+						menuParam={{ 
+							width: 300,
+							className: 'fixed',
+							classNameWrap: 'fromSidebar',
+						}}
 					/>
 				);
 			} else {

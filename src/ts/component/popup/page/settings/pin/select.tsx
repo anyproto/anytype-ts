@@ -23,7 +23,7 @@ const PopupSettingsPagePinSelect = observer(class PopupSettingsPagePinSelect ext
 
 		return (
 			<div>
-				<Head onPage={this.onBack} name={translate('commonBack')}></Head>
+				<Head onPage={this.onBack} name={translate('commonBack')} />
 				<Title text={translate(pin ? 'popupSettingsPinSelectRepeat' : 'popupSettingsPinSelect')} />
 				<Pin 
 					ref={ref => this.ref = ref} 

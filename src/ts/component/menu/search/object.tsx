@@ -49,7 +49,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { filter, value, placeholder, label, isBig, noFilter, noIcon, onMore } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
-		const placeholderFocus = data.placeholderFocus || 'Filter objects...';
+		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
 
 		if (label) {
 			cn.push('withLabel');
@@ -259,7 +259,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 				items.push({ id: 'add', icon: 'plus', name: addParam.name, isAdd: true });
 			} else
 			if (filter) {
-				items.push({ id: 'add', icon: 'plus', name: `Create object "${filter}"`, isAdd: true });
+				items.push({ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), isAdd: true });
 			};
 		};
 
@@ -307,6 +307,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		};
 		if ([ I.NavigationType.Move, I.NavigationType.LinkTo ].includes(type)) {
 			filters.push({ operator: I.FilterOperator.And, relationKey: 'isReadonly', condition: I.FilterCondition.Equal, value: false });
+		};
+		if ([ I.NavigationType.Link ].includes(type)) {
+			filters.push({ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: [ Constant.typeId.relation ] });
 		};
 
 		if (clear) {

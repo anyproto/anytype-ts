@@ -1,5 +1,4 @@
 import * as React from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Popup } from 'Component';
 import { popupStore } from 'Store';
@@ -17,13 +16,6 @@ const ListPopup = observer(class ListPopup extends React.Component<I.PageCompone
 				))}
 			</div>
 		);
-	};
-	
-	componentDidUpdate () {
-		const { list } = popupStore;
-		const body = $('body');
-		
-		list.length > 0 ? body.addClass('overPopup') : body.removeClass('overPopup');
 	};
 	
 });

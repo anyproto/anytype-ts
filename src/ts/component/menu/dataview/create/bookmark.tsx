@@ -34,7 +34,7 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 				<Input ref={ref => this.ref = ref} value={value} placeholder={translate('defaultNameBookmark')} />
 
 				<div className="buttons">
-					<Button type="input" color="blank" text="Create" onClick={this.onSubmit} />
+					<Button type="input" color="blank" text={translate('commonCreate')} onClick={this.onSubmit} />
 				</div>
 			</form>
 		);
@@ -70,9 +70,9 @@ class MenuDataviewCreateBookmark extends React.Component<I.Menu, State> {
 			if (message.error.code) {
 				popupStore.open('confirm', {
 					data: {
-						title: 'Oops - something went wrong!',
-						text: 'Please try again',
-						textConfirm: 'Ok',
+						title: translate('menuDataviewCreateSomethingWentWrong'),
+						text: translate('menuDataviewContextTryAgain'),
+						textConfirm: translate('commonOk'),
 						canCancel: false,
 					},
 				});

@@ -12,8 +12,8 @@ const Separator = { type: 'separator' };
 class MenuManager {
 
 	win = null;
-	menu = {};
-	tray = {};
+	menu = null;
+	tray = null;
 
 	setWindow (win) {
 		this.win = win;
@@ -24,63 +24,79 @@ class MenuManager {
 		const Api = require('./api.js');
 		const WindowManager = require('./window.js');
 		const UpdateManager = require('./update.js');
+		const Constant = require('../../src/json/constant.json');
+		const lang = Util.getLang();
+		const langMenu = [];
+
+		for (let i in Constant.interfaceLang) {
+			langMenu.push({
+				label: Constant.interfaceLang[i], type: 'checkbox', checked: i == lang,
+				click: () => Api.changeInterfaceLang(this.win, i)
+			});
+		};
+
+		console.log(lang);
 
 		let menuParam = [
 			{
 				label: 'Anytype',
 				submenu: [
-					{ label: 'About Anytype', click: () => WindowManager.createAbout() },
+					{ label: Util.translate('electronMenuAbout'), click: () => WindowManager.createAbout() },
 
 					Separator,
 
-					{ role: 'services' },
+					{ role: 'hide', label: Util.translate('electronMenuHide') },
+					{ role: 'hideothers', label: Util.translate('electronMenuHideOthers') },
+					{ role: 'unhide', label: Util.translate('electronMenuUnhide') },
 
 					Separator,
 
-					{ role: 'hide', label: 'Hide Anytype' },
-					{ role: 'hideothers' },
-					{ role: 'unhide' },
+					{ label: Util.translate('electronMenuCheckUpdates'), click: () => Api.updateCheck(this.win) },
 
 					Separator,
 
-					{ label: 'Check for updates', click: () => Api.updateCheck(this.win) },
+					{ label: Util.translate('electronMenuSpaceSettings'), click: () => this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: Util.translate('electronMenuAccountSettings'), click: () => this.openSettings('') },
+					{ label: Util.translate('electronMenuLanguage'), submenu: langMenu },
 
 					Separator,
 
-					{ label: 'Space settings', click: () => this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }) },
-					{ label: 'Account settings', click: () => this.openSettings('') },
-
-					Separator,
-
-					{ label: 'Quit', accelerator: 'CmdOrCtrl+Q', click: () => Api.exit(this.win, false) },
+					{ label: Util.translate('electronMenuQuit'), accelerator: 'CmdOrCtrl+Q', click: () => Api.exit(this.win, false) },
 				]
 			},
 			{
-				role: 'fileMenu',
+				role: 'fileMenu', label: Util.translate('electronMenuFile'),
 				submenu: [
-					{ label: 'Show work directory', click: () => { shell.openPath(userPath); } },
-					{ label: 'Show logs', click: () => { shell.openPath(logPath); } },
+					{ label: Util.translate('electronMenuDirectory'), click: () => { shell.openPath(userPath); } },
+					{ label: Util.translate('electronMenuLogs'), click: () => { shell.openPath(logPath); } },
 
 					Separator,
-					{ label: 'Import', click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
-					{ label: 'Export', click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
-					{ label: 'Save as file', click: () => Util.send(this.win, 'commandGlobal', 'save') },
-
-					Separator,
-
-					{ label: 'Space debug', click: () => Util.send(this.win, 'commandGlobal', 'debugSpace') },
-					{ label: 'Current object debug', click: () => { Util.send(this.win, 'commandGlobal', 'debugTree'); } },
+					{ label: Util.translate('electronMenuImport'), click: () => this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: Util.translate('electronMenuExport'), click: () => this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }) },
+					{ label: Util.translate('electronMenuSaveAs'), click: () => Util.send(this.win, 'commandGlobal', 'save') },
 
 					Separator,
 
-					{ role: 'close' },
+					{ label: Util.translate('electronMenuDebugSpace'), click: () => { Util.send(this.win, 'command', 'debugSpace'); } },
+					{ label: Util.translate('electronMenuDebugObject'), click: () => { this.win.show(); Util.send(this.win, 'command', 'debugTree'); } },
+					{ 
+						label: Util.translate('electronMenuDebugProcess'), 
+						click: () => {
+							Api.exit(this.win, 'SIGUSR1', true);
+							shell.openPath(path.join(Util.dataPath(), Api.account.id, 'logs'));
+						}
+					},
+
+					Separator,
+
+					{ role: 'close', label: Util.translate('electronMenuClose') },
 				]
 			},
 			{
-				role: 'editMenu',
+				label: Util.translate('electronMenuEdit'),
 				submenu: [
 					{
-						label: 'Undo', accelerator: 'CmdOrCtrl+Z',
+						label: Util.translate('electronMenuUndo'), accelerator: 'CmdOrCtrl+Z',
 						click: () => { 
 							if (this.win) {
 								this.win.webContents.undo();
@@ -89,7 +105,7 @@ class MenuManager {
 						}
 					},
 					{
-						label: 'Redo', accelerator: 'CmdOrCtrl+Shift+Z',
+						label: Util.translate('electronMenuRedo'), accelerator: 'CmdOrCtrl+Shift+Z',
 						click: () => {
 							if (this.win) {
 								this.win.webContents.redo();
@@ -100,14 +116,14 @@ class MenuManager {
 
 					Separator,
 
-					{ label: 'Copy', role: 'copy' },
-					{ label: 'Cut', role: 'cut' },
-					{ label: 'Paste', role: 'paste' },
+					{ label: Util.translate('electronMenuCopy'), role: 'copy' },
+					{ label: Util.translate('electronMenuCut'), role: 'cut' },
+					{ label: Util.translate('electronMenuPaste'), role: 'paste' },
 
 					Separator,
 
 					{
-						label: 'Select all', accelerator: 'CmdOrCtrl+A',
+						label: Util.translate('electronMenuSelectAll'), accelerator: 'CmdOrCtrl+A',
 						click: () => {
 							if (this.win) {
 								this.win.webContents.selectAll();
@@ -115,55 +131,55 @@ class MenuManager {
 							};
 						}
 					},
-					{ label: 'Search', accelerator: 'CmdOrCtrl+F', click: () => Util.send(this.win, 'commandGlobal', 'search') },
+					{ label: Util.translate('electronMenuSearch'), accelerator: 'CmdOrCtrl+F', click: () => Util.send(this.win, 'commandGlobal', 'search') },
 
 					Separator,
 
-					{ label: 'Print', accelerator: 'CmdOrCtrl+P', click: () => Util.send(this.win, 'commandGlobal', 'print') },
+					{ label: Util.translate('electronMenuPrint'), accelerator: 'CmdOrCtrl+P', click: () => Util.send(this.win, 'commandGlobal', 'print') },
 				]
 			},
 			{
-				role: 'windowMenu',
+				role: 'windowMenu', label: Util.translate('electronMenuWindow'),
 				submenu: [
-					{ label: 'New window', accelerator: 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
-					{ label: 'New object', accelerator: 'CmdOrCtrl+Alt+N', click: () => WindowManager.createMain({ route: '/main/create', isChild: true }) },
+					{ label: Util.translate('electronMenuNewWindow'), accelerator: 'CmdOrCtrl+Shift+N', click: () => WindowManager.createMain({ isChild: true }) },
+					{ label: Util.translate('electronMenuNewObject'), accelerator: 'CmdOrCtrl+Alt+N', click: () => WindowManager.createMain({ route: '/main/create', isChild: true }) },
 
 					Separator,
 
-					{ role: 'minimize' },
-					{ label: 'Zoom in', accelerator: 'CmdOrCtrl+=', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1) },
-					{ label: 'Zoom out', accelerator: 'CmdOrCtrl+-', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
-					{ label: 'Default zoom', accelerator: 'CmdOrCtrl+0', click: () => Api.setZoom(this.win, 0) },
+					{ role: 'minimize', label: Util.translate('electronMenuMinimise') },
+					{ label: Util.translate('electronMenuZoomIn'), accelerator: 'CmdOrCtrl+=', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() + 1) },
+					{ label: Util.translate('electronMenuZoomOut'), accelerator: 'CmdOrCtrl+-', click: () => Api.setZoom(this.win, this.win.webContents.getZoomLevel() - 1) },
+					{ label: Util.translate('electronMenuZoomDefault'), accelerator: 'CmdOrCtrl+0', click: () => Api.setZoom(this.win, 0) },
 					{
-						label: 'Fullscreen', accelerator: 'CmdOrCtrl+Alt+F', type: 'checkbox', checked: this.win.isFullScreen(),
+						label: Util.translate('electronMenuFullscreen'), accelerator: 'CmdOrCtrl+Alt+F', type: 'checkbox', checked: this.win.isFullScreen(),
 						click: () => this.win.setFullScreen(!this.win.isFullScreen())
 					},
-					{ label: 'Reload', accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
+					{ label: Util.translate('electronMenuReload'), accelerator: 'CmdOrCtrl+R', click: () => this.win.reload() }
 				]
 			},
 			{
-				label: 'Help',
+				label: Util.translate('electronMenuHelp'),
 				submenu: [
 					{
-						label: `What's new (${app.getVersion()})`,
+						label: Util.translate('electronMenuReleaseNotes') + ` (${app.getVersion()})`,
 						click: () => Util.send(this.win, 'popup', 'help', { preventResize: true, data: { document: 'whatsNew' } })
 					},
 					{
-						label: 'Shortcuts', accelerator: 'Ctrl+Space',
+						label: Util.translate('electronMenuShortcuts'), accelerator: 'Ctrl+Space',
 						click: () => Util.send(this.win, 'popup', 'shortcut', { preventResize: true })
 					},
 
 					Separator,
 
-					{ label: 'Anytype Community', click: () => Util.send(this.win, 'commandGlobal', 'community') },
-					{ label: 'Help and Tutorials', click: () => Util.send(this.win, 'commandGlobal', 'tutorial') },
-					{ label: 'Contact Us', click: () => Util.send(this.win, 'commandGlobal', 'contact') },
-					{ label: 'Technical Information', click: () => Util.send(this.win, 'commandGlobal', 'tech') },
+					{ label: Util.translate('electronMenuCommunity'), click: () => Util.send(this.win, 'commandGlobal', 'community') },
+					{ label: Util.translate('electronMenuTutorial'), click: () => Util.send(this.win, 'commandGlobal', 'tutorial') },
+					{ label: Util.translate('electronMenuContact'), click: () => Util.send(this.win, 'commandGlobal', 'contact') },
+					{ label: Util.translate('electronMenuTech'), click: () => Util.send(this.win, 'commandGlobal', 'tech') },
 
 					Separator,
 
-					{ label: 'Terms of Use', click: () => Util.send(this.win, 'commandGlobal', 'terms') },
-					{ label: 'Privacy Policy', click: () => Util.send(this.win, 'commandGlobal', 'privacy') },
+					{ label: Util.translate('electronMenuTerms'), click: () => Util.send(this.win, 'commandGlobal', 'terms') },
+					{ label: Util.translate('electronMenuPrivacy'), click: () => Util.send(this.win, 'commandGlobal', 'privacy') },
 
 				]
 			},
@@ -173,13 +189,13 @@ class MenuManager {
 			config.debug = config.debug || {};
 
 			const flags = { 
-				ui: 'Interface', 
-				ho: 'Hidden objects', 
-				mw: 'Middleware', 
-				th: 'Threads', 
-				fi: 'Files', 
-				an: 'Analytics', 
-				js: 'JSON',
+				ui: Util.translate('electronMenuFlagInterface'), 
+				ho: Util.translate('electronMenuFlagHidden'), 
+				mw: Util.translate('electronMenuFlagMiddleware'), 
+				th: Util.translate('electronMenuFlagThreads'), 
+				fi: Util.translate('electronMenuFlagFiles'), 
+				an: Util.translate('electronMenuFlagAnalytics'), 
+				js: Util.translate('electronMenuFlagJson'),
 			};
 			const flagMenu = [];
 
@@ -198,10 +214,10 @@ class MenuManager {
 			};
 
 			menuParam.push({
-				label: 'Debug',
+				label: Util.translate('electronMenuDebug'),
 				submenu: [
-					{ label: 'Flags', submenu: flagMenu },
-					{ label: 'Dev Tools', accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.webContents.openDevTools() },
+					{ label: Util.translate('electronMenuFlags'), submenu: flagMenu },
+					{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.win.webContents.openDevTools() },
 				]
 			});
 		//};
@@ -217,7 +233,7 @@ class MenuManager {
 		}); 
 
 		if (channels.length > 1) {
-			menuParam.push({ label: 'Version', submenu: channels });
+			menuParam.push({ label: Util.translate('electronMenuVersion'), submenu: channels });
 		};
 
 		const menuSudo = { 
@@ -272,38 +288,42 @@ class MenuManager {
 			};
 		};
 
+		if (this.tray) {
+			this.tray.destroy();
+		};
+
 		this.tray = new Tray (this.getTrayIcon());
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
-			{ label: 'Open Anytype', click: () => show() },
+			{ label: Util.translate('electronMenuOpen'), click: () => show() },
 
 			Separator,
 
-			{ label: 'Check for updates', click: () => { show(); Api.updateCheck(this.win); } },
+			{ label: Util.translate('electronMenuCheckUpdates'), click: () => { show(); Api.updateCheck(this.win); } },
 
 			Separator,
 
-			{ label: 'Space settings', click: () => { show(); this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
-			{ label: 'Account settings', click: () => { show(); this.openSettings(''); } },
+			{ label: Util.translate('electronMenuSpaceSettings'), click: () => { show(); this.openSettings('spaceIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
+			{ label: Util.translate('electronMenuAccountSettings'), click: () => { show(); this.openSettings(''); } },
 
 			Separator,
 
-			{ label: 'Import', click: () => { show(); this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
-			{ label: 'Export', click: () => { show(); this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
+			{ label: Util.translate('electronMenuImport'), click: () => { show(); this.openSettings('importIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
+			{ label: Util.translate('electronMenuExport'), click: () => { show(); this.openSettings('exportIndex', { data: { isSpace: true }, className: 'isSpace' }); } },
 			
 			Separator,
 
-			{ label: 'New object', accelerator: 'CmdOrCtrl+N', click: () => { show(); Util.send(this.win, 'commandGlobal', 'create'); } },
-			{ label: 'Search object', click: () => { show(); Util.send(this.win, 'popup', 'search', {}, true); } },
+			{ label: Util.translate('electronMenuNewObject'), accelerator: 'CmdOrCtrl+N', click: () => { show(); Util.send(this.win, 'commandGlobal', 'create'); } },
+			{ label: Util.translate('electronMenuSearchObject'), click: () => { show(); Util.send(this.win, 'popup', 'search', {}, true); } },
 			
 			Separator,
 
-			{ label: 'Space debug', click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugSpace'); } },
-			{ label: 'Tree diagnostics', click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugTree'); } },
+			{ label: Util.translate('electronMenuDebugSpace'), click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugSpace'); } },
+			{ label: Util.translate('electronMenuDebugTree'), click: () => { show(); Util.send(this.win, 'commandGlobal', 'debugTree'); } },
 
 			Separator,
 
-			{ label: 'Quit', click: () => { hide(); Api.exit(this.win, false); } },
+			{ label: Util.translate('electronMenuQuit'), click: () => { hide(); Api.exit(this.win, '', false); } },
 		]));
 	};
 
@@ -333,9 +353,9 @@ class MenuManager {
 			icon = 'icon32x32.png';
 		} else 
 		if (is.linux) {
-			icon = 'icon-tray-white.png';
+			icon = 'iconTrayWhite.png';
 		} else {
-			icon = `icon-tray-${(Util.isDarkTheme() ? 'white' : 'black')}.png`;
+			icon = `iconTrayTemplate.png`;
 		};
 		return path.join(Util.imagePath(), icon);
 	};

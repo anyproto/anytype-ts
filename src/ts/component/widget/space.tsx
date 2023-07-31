@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Icon, IconObject, ObjectName } from 'Component';
+import { IconObject, ObjectName } from 'Component';
 import { I, UtilObject, translate } from 'Lib';
 import { commonStore, popupStore } from 'Store';
 	

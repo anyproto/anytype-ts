@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader, Title, Label, ListObjectPreview } from 'Component';
-import { I, focus, UtilCommon, UtilData } from 'Lib';
+import { I, focus, UtilCommon, UtilData, translate } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -43,8 +43,8 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		return (
 			<div className="wrapper">
 				<div className="head">
-					<Title text="Choose a template" />
-					<Label text={`Type “${UtilCommon.shorten(type.name, 32)}” has ${length} ${UtilCommon.cntWord(length, 'template', 'templates')}, use ←→ to switch and ENTER to choose`} />
+					<Title text={translate('popupTemplateTitle')} />
+					<Label text={UtilCommon.sprintf(translate('popupTemplateText'), UtilCommon.shorten(type.name, 32), length, UtilCommon.plural(length, translate('pluralTemplate')))} />
 				</div>
 
 				<ListObjectPreview 

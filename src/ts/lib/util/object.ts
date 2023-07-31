@@ -23,7 +23,7 @@ class UtilObject {
 	};
 
 	getSpace () {
-		return detailStore.get(Constant.subId.space, commonStore.workspace)
+		return detailStore.get(Constant.subId.space, commonStore.workspace);
 	};
 
 	getSpaceDashboard () {
@@ -51,7 +51,7 @@ class UtilObject {
 	graph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
-			name: 'Graph', 
+			name: translate('commonGraph'), 
 			iconEmoji: ':earth_americas:',
 			layout: I.ObjectLayout.Graph,
 		};
@@ -60,7 +60,7 @@ class UtilObject {
 	lastOpened () {
 		return { 
 			id: I.HomePredefinedId.Last,
-			name: 'Last opened object', 
+			name: translate('spaceLast'), 
 		};
 	};
 
@@ -143,7 +143,7 @@ class UtilObject {
 		if (!object) {
 			return;
 		};
-
+	
 		const action = this.actionByLayout(object.layout);
 
 		param = param || {};

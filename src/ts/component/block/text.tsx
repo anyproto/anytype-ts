@@ -105,7 +105,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			case I.TextStyle.Description: {
-				placeholder = 'Add a description';
+				placeholder = translate('placeholderBlockDescription');
 				break;
 			};
 
@@ -145,12 +145,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						<div className="buttons">
 							<div className="btn" onClick={this.onToggleWrap}>
 								<Icon className="codeWrap" />
-								<div className="txt">{fields.isUnwrapped ? 'Wrap' : 'Unwrap'}</div>
+								<div className="txt">{fields.isUnwrapped ? translate('blockTextWrap') : translate('blockTextUnwrap')}</div>
 							</div>
 
 							<div className="btn" onClick={this.onCopy}>
 								<Icon className="copy" />
-								<div className="txt">Copy</div>
+								<div className="txt">{translate('commonCopy')}</div>
 							</div>
 						</div>
 					</React.Fragment>
@@ -281,7 +281,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				html = Prism.highlight(html, grammar, lang);
 			};
 		} else {
-			html = Mark.fromUnicode(html);
+			html = Mark.fromUnicode(html, this.marks);
 			html = Mark.toHtml(html, this.marks);
 		};
 
@@ -328,6 +328,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		items.off('mouseenter.link');
 		items.on('mouseenter.link', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const url = String(element.attr('href') || '');
@@ -405,8 +410,13 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 
 		items.off('mouseenter.object mouseleave.object');
-		items.on('mouseleave.object', () => { Preview.tooltipHide(false); });
+		items.on('mouseleave.object', () => Preview.tooltipHide(false));
 		items.on('mouseenter.object', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const param = String(element.attr('data-param') || '');
@@ -503,8 +513,12 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		});
 		
 		items.off('mouseenter.mention');
-
 		items.on('mouseenter.mention', e => {
+			const sr = UtilCommon.getSelectionRange();
+			if (sr && !sr.collapsed) {
+				return;
+			};
+
 			const element = $(e.currentTarget);
 			const range = String(element.attr('data-range') || '').split('-');
 			const param = String(element.attr('data-param') || '');
@@ -558,11 +572,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const smile = item.find('smile');
-			if (!smile.length) {
-				return;
+			if (smile.length) {
+				ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 			};
-
-			ReactDOM.render(<IconObject size={size} object={{ iconEmoji: data.param }} />, smile.get(0));
 		});
 	};
 
@@ -858,11 +870,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
 		const canOpenMenuAdd = (oneSymbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const canOpenMentionMenu = (oneSymbolBefore == '@') && !this.preventMenu && (isAllowedMention || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
-		const parsed = this.getMarksFromHtml();
-		const marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
-
+		
 		this.preventMenu = false;
-		this.marks = parsed.marks;
+
+		let parsed: any = {};
+		let marksChanged = false;
+		if (block.canHaveMarks()) {
+			parsed = this.getMarksFromHtml();
+			//marksChanged = JSON.stringify(parsed.marks) != JSON.stringify(this.marks);
+			this.marks = parsed.marks;
+		};
 
 		if (menuOpenAdd || menuOpenMention) {
 			window.clearTimeout(this.timeoutFilter);
@@ -883,7 +900,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				if (!ret && range) {
 					const d = range.from - filter.from;
 					if (d >= 0) {
-						const part = value.substr(filter.from, d).replace(/^\//, '');
+						const part = value.substring(filter.from, filter.from + d).replace(/^\//, '');
 						commonStore.filterSetText(part);
 					};
 				};
@@ -982,14 +999,10 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		this.placeholderCheck();
 
-		let text = block.canHaveMarks() ? parsed.text : value;
-		if (!block.isTextCode()) {
-			text = Mark.fromUnicode(text);
-		};
+		const text = block.canHaveMarks() ? parsed.text : value;
 
 		if (!ret && (marksChanged || (value != text))) {
 			this.setValue(text);
-
 			const { focused, range } = focus.state;
 
 			diff += marksChanged ? (value.length - text.length) : 0;
@@ -1018,11 +1031,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			menuStore.open('blockMention', {
 				element: el,
 				recalcRect: () => {
-					const rect = UtilCommon.selectionRect();
+					const rect = UtilCommon.getSelectionRect();
 					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 				},
 				offsetX: () => {
-					const rect = UtilCommon.selectionRect();
+					const rect = UtilCommon.getSelectionRect();
 					return rect ? 0 : Constant.size.blockMenu;
 				},
 				noFlipX: false,
@@ -1064,11 +1077,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		menuStore.open('smile', {
 			element: `#block-${block.id}`,
 			recalcRect: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
 			},
 			offsetX: () => {
-				const rect = UtilCommon.selectionRect();
+				const rect = UtilCommon.getSelectionRect();
 				return rect ? 0 : Constant.size.blockMenu;
 			},
 			data: {
@@ -1246,7 +1259,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				},
 			});
 
-			Preview.toastShow({ text: `Block has been copied to clipboard` });
+			Preview.toastShow({ text: translate('toastCopyBlock') });
 		});
 	};
 	
@@ -1298,18 +1311,11 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				return;
 			};
 
-			const pageContainer = UtilCommon.getPageContainer(isPopup);
-
-			pageContainer.off('click.context').on('click.context', () => { 
-				pageContainer.off('click.context');
-				menuStore.close('blockContext'); 
-			});
-
 			this.setText(this.marks, true, () => {
 				menuStore.open('blockContext', {
 					element: el,
 					recalcRect: () => { 
-						const rect = UtilCommon.selectionRect();
+						const rect = UtilCommon.getSelectionRect();
 						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
 					},
 					type: I.MenuType.Horizontal,
@@ -1331,6 +1337,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 						onChange,
 					},
 				});
+
+				window.setTimeout(() => {
+					const pageContainer = UtilCommon.getPageContainer(isPopup);
+
+					pageContainer.off('click.context').on('click.context', () => { 
+						pageContainer.off('click.context');
+						menuStore.close('blockContext'); 
+					});
+				}, Constant.delay.menu);
 			});
 		}, 150);
 	};
@@ -1345,11 +1360,15 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		if (selection && (this.clicks == 3)) {
 			e.preventDefault();
 			e.stopPropagation();
-			
-			this.clicks = 0;
 
-			focus.set(block.id, { from: 0, to: block.getLength() });
-			focus.apply();
+			menuStore.closeAll([ 'blockContext' ], () => {
+				this.clicks = 0;
+
+				focus.set(block.id, { from: 0, to: block.getLength() });
+				focus.apply();
+
+				this.onSelect();
+			});
 		};
 	};
 	
