@@ -1051,7 +1051,7 @@ class UtilCommon {
 	translateError (command: string, error: any) {
 		const { code, description } = error;
 
-		if (Errors.AccountRecover[code]) {
+		if (Errors[command][code]) {
 			return translate(this.toCamelCase(`error-${command}${code}`));
 		} else {
 			return description;

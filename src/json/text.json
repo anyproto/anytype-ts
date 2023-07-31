@@ -1471,5 +1471,5 @@
 	"errorAccountRecover107": "Failed to stop running node",
 	"errorAccountRecover108": "Another process is running",
 	"errorAccountRecover109": "Account has been deleted",
-	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns"
+	"errorObjectImport7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns."
 }

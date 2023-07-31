@@ -18,6 +18,10 @@
 		"109": "Account has been deleted"
 	},
 
+	"ObjectImport": {
+		"7": "Import has not been completed. CSV import supports up to 1000 rows and 10 columns"
+	},
+
 	"Code": {
 		"ANYTYPE_NEEDS_UPGRADE": 10,
 		"NO_ACCOUNTS_FOUND": 101,
