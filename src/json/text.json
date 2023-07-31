@@ -116,6 +116,8 @@
     "pluralTemplate": "template|templates",
     "pluralRelation": "relation|relations",
     "pluralBlock": "block|blocks",
+    "pluralType": "type|types",
+    "pluralUCRelation": "Relation|Relations",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -351,8 +353,6 @@
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
-    "pageAuthDeletedDay": "day",
-    "pageAuthDeletedDays": "days",
     "pageAuthDeletedAccountDeletionTitle": "This account is planned for deletion in ",
 
     "pageAuthOnboardAccountDataLocation": "Account data location",
@@ -516,10 +516,6 @@
     "blockTableOfContentsAdd": "Add headings to create a table of contents",
 
 
-    "blockFeaturedType": "type",
-    "blockFeaturedTypes": "types",
-    "blockFeaturedRelation": "Relation",
-    "blockFeaturedRelations": "Relations",
     "blockFeaturedTypesList": "Object %s: %s",
     "blockFeaturedQuery": "Query",
 
@@ -655,11 +651,6 @@
 
     "popupSettingsSpaceStorageManagerTitle": "Synced files",
     "popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
-    "popupSettingsSpaceStorageManagerDeletionWarningTitle": "Are you sure you want to delete %s %s?",
-    "popupSettingsSpaceStorageManagerDeletionWarningTitleObject": "object",
-    "popupSettingsSpaceStorageManagerDeletionWarningTitleObjects": "objects",
-    "popupSettingsSpaceStorageManagerDeletionWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
-    "popupSettingsSpaceStorageManagerDeletionWarningConfirm": "Delete",
 
     "popupSettingsImportTitle": "Import",
     "popupSettingsImportText": "Choose application or format of data source",
@@ -810,8 +801,6 @@
     "popupSettingsSpaceMemberTypeAdmin": "Admin",
 
     "popupSettingsSpaceAnytypeSpace": "Anytype Space",
-
-    "popupSettingsSpaceStorageDeleteImmediately": "Delete immediately",
 
     "popupSettingsSpaceTeamRemoveMember": "Remove member",
 

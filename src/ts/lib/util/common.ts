@@ -714,15 +714,6 @@ class UtilCommon {
 		return rect;
 	};
 
-	cntWord (cnt: any, w1: string, w2?: string) {
-		cnt = String(cnt || '');
-		w2 = w2 ? w2 : w1 + 's';
-		if (cnt.substr(-2) == 11) {
-			return w2;
-		};
-		return cnt.substr(-1) == '1' ? w1 : w2;
-	};
-
 	plural (cnt: any, words: string) {
 		const chunks = words.split('|');
 		const single = chunks[0];

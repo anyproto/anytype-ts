@@ -38,7 +38,7 @@ const PageAuthDeleted = observer(class PageAuthDeleted extends React.Component<I
 		const { error } = this.state;
 		const duration = Math.max(0, account.status.date - UtilCommon.time());
 		const days = Math.max(1, Math.ceil(duration / 86400));
-		const dt = `${days} ${UtilCommon.cntWord(days, translate('pageAuthDeletedDay'), translate('pageAuthDeletedDays'))}`;
+		const dt = `${days} ${UtilCommon.plural(days, translate('pluralDay'))}`;
 		const daysUntilDeletion = Math.ceil(Math.max(0, (account.status.date - UtilCommon.time()) / 86400 ));
 
 		// Deletion Status
