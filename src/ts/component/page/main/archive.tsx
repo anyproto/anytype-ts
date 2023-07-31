@@ -99,8 +99,8 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<P
 
 		popupStore.open('confirm', {
 			data: {
-				title: UtilCommon.sprintf(translate('pageMainArchiveDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
-				text: translate('pageMainArchiveDeletionWarningText'),
+				title: UtilCommon.sprintf(translate('commonDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
+				text: translate('commonDeletionWarningText'),
 				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(selected);

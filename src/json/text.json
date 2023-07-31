@@ -108,6 +108,9 @@
     "commonLCCollection": "collection",
     "commonLCSet": "set",
 
+    "commonDeletionWarningTitle": "Are you sure you want to delete %s %s?",
+    "commonDeletionWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
+
     "pluralDay": "day|days",
     "pluralObject": "object|objects",
     "pluralTemplate": "template|templates",
@@ -372,9 +375,6 @@
 
     "pageMainArchiveEmpty": "Your bin is empty",
     "pageMainBlockEmpty": "Block not found",
-
-    "pageMainArchiveDeletionWarningTitle": "Are you sure you want to delete %s %s?",
-    "pageMainArchiveDeletionWarningText": "These objects will be deleted irrevocably. You can't undo this action.",
 
     "editorControlIcon": "Icon",
     "editorControlCover": "Cover",
@@ -1266,6 +1266,11 @@
     "toastUploadLimitExceeded": "You exceeded file limit upload",
     "toastManageFiles": "Manage files",
 
+    "toastObjectTypeAdded": "Object type <b>%s</b> has been added to your library",
+    "toastRelationAdded": "Relation <b>%s</b> has been added to your library",
+    "toastObjectTypeRemoved": "Object type <b>%s</b> has been removed from your library",
+    "toastRelationRemoved": "Relation <b>%s</b> has been removed from your library",
+
     "textColor-grey": "Grey",
     "textColor-yellow": "Yellow",
     "textColor-orange": "Amber",
@@ -1490,6 +1495,11 @@
     "libMenuChangeSource": "Change source %s",
     "libMenuOpenSource ": "Open source %s",
     "libMenuOpenFullscreen": "Open fullscreen",
+
+    "libActionUninstallTypeTitle": "Are you sure you want to remove this Type?",
+    "libActionUninstallTypeText": "This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.",
+    "libActionUninstallRelationTitle": "Are you sure you want to remove this Relation?",
+    "libActionUninstallRelationText": "This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.",
 
     "utilLoadMoreText": "Show %s more %s",
 
