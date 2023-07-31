@@ -103,6 +103,8 @@
     "commonLCCollection": "collection",
     "commonLCSet": "set",
 
+    "pluralDay": "day|days",
+
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
 	"electronAboutCopyright": "Made by Any — a Swiss association 🇨🇭",
@@ -1146,10 +1148,6 @@
 
     "menuItemFilterTimeAgo": "%d %s ago",
     "menuItemFilterTimeFromNow": "%d %s from now",
-    "menuItemFilterDay": "day",
-    "menuItemFilterDays": "days",
-
-    "pluralDay": "day|days",
 
     "menuRelationSuggestFilterOrCreateRelation": "Filter or create a relation...",
     "menuRelationSuggestMyRelations": "My relations",
