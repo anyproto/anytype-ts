@@ -1170,7 +1170,7 @@ class Dispatcher {
 				};
 
 				message.event = response.getEvent ? response.getEvent() : null;
-				message.error = { code: code, description: description };
+				message.error = { code, description };
 
 				if (message.error.code) {
 					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
@@ -1179,6 +1179,8 @@ class Dispatcher {
 						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};
+
+					message.error.description = UtilCommon.translateError(type, message.error);
 				};
 
 				if (debug && !SKIP_IDS.includes(type)) {
