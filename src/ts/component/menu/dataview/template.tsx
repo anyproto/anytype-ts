@@ -88,7 +88,7 @@ class MenuTemplate extends React.Component<I.Menu> {
             };
             case 'delete': {
                 C.ObjectSetIsArchived(template.id, true, (message: any) => {
-                    if (!message.error.code && message.ids.length) {
+                    if (!message.error.code) {
                         analytics.event('MoveToBin', { count: 1, route: 'menuDataviewTemplate' });
                     };
                 });
