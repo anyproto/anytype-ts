@@ -61,7 +61,7 @@ class MenuTemplate extends React.Component<I.Menu> {
     onClick (e: any, item: any) {
         const { param, close } = this.props;
         const { data } = param;
-        const { template, onSetDefault } = data;
+        const { template, onSetDefault, onDelete } = data;
 
 		close();
 
@@ -89,6 +89,10 @@ class MenuTemplate extends React.Component<I.Menu> {
             case 'delete': {
                 C.ObjectSetIsArchived(template.id, true, (message: any) => {
                     if (!message.error.code) {
+                        if (onDelete) {
+                            onDelete();
+                        };
+
                         analytics.event('MoveToBin', { count: 1, route: 'menuDataviewTemplate' });
                     };
                 });
