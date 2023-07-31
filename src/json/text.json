@@ -108,6 +108,8 @@
 
     "pluralDay": "day|days",
     "pluralObject": "object|objects",
+    "pluralTemplate": "template|templates",
+    "pluralRelation": "relation|relations",
 
 	"electronAboutVersion": "Version:",
 	"electronAboutDescription": "Anytype is a next generation software that breaks down barriers between applications, gives back privacy and data ownership to users.",
@@ -339,6 +341,7 @@
     "pageMainTypeRecommendedLayout": "Recommended layout",
     "pageMainTypeNewObject": "New object",
     "pageMainTypeNewSetOfObjects": "New set of objects",
+    "pageMainTypeNoTemplates": "This object type doesn&apos;t have templates",
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
