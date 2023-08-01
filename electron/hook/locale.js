@@ -18,7 +18,11 @@ const run = async () => {
 		if (lang == Constant.default.interfaceLang) {
 			content = JSON.stringify(require('../../src/json/text.json'), null, 4);
 		} else {
-			content = await request(lang);
+			content = await request(lang).catch(() => {});
+		};
+
+		if (!content) {
+			content = JSON.stringify(require('../../src/json/text.json'), null, 4);
 		};
 
 		fs.writeFileSync(fp, content);
@@ -46,7 +50,11 @@ const request = async (lang) => {
 			response.on('data', d => str += d);
 			response.on('end', function () {
 				const data = JSON.parse(str);
-				resolve(Buffer.from(data.content, 'base64').toString());
+				if (data.content) {
+					resolve(Buffer.from(data.content, 'base64').toString());
+				} else {
+					reject('Content is empty');
+				};
 			});
 		};
 
