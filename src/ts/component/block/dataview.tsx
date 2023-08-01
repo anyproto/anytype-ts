@@ -680,7 +680,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			if (message.records.length && withPopup) {
 				popupStore.open('template', { data: { typeId: details.type, onSelect: (template) => this.recordCreate(e, template, dir) } });
 			} else {
-				const template = !UtilData.checkBlankTemplate(defaultTemplateId) ? { id: defaultTemplateId } : '';
+				const template = defaultTemplateId != Constant.templateId.blank ? { id: defaultTemplateId } : '';
 				this.recordCreate(e, template, dir);
 			};
 		});
