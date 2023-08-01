@@ -475,6 +475,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getTypeId (): string {
 		const { rootId } = this.props;
+		const { defaultTemplateId } = this.getView();
 		const objectId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
@@ -495,6 +496,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			});
 		};
+		if (!UtilData.checkBlankTemplate(defaultTemplateId)) {
+			type = defaultTemplateId;
+		}
 		if (!type) {
 			type = commonStore.type;
 		};
@@ -574,6 +578,62 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: id }, cb);
 	};
 
+	recordCreate (e: any, template: any, dir: number) {
+		const { rootId, block } = this.props;
+		const objectId = this.getObjectId();
+		const subId = dbStore.getSubId(rootId, block.id);
+		const isCollection = this.isCollection();
+
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
+		const details = this.getDetails();
+		const flags: I.ObjectFlag[] = [];
+		if (!types.length || isCollection) {
+			flags.push(I.ObjectFlag.SelectType);
+		};
+
+		C.ObjectCreate(details, flags, template?.id, (message: any) => {
+			this.creating = false;
+
+			if (message.error.code) {
+				return;
+			};
+
+			const object = message.details;
+			const records = this.getRecords();
+			const oldIndex = records.indexOf(message.objectId);
+			const newIndex = dir > 0 ? records.length : 0;
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
+			};
+
+			detailStore.update(subId, { id: object.id, details: object }, true);
+
+			if (oldIndex < 0) {
+				dbStore.recordAdd(subId, '', object.id, newIndex);
+			} else {
+				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+			};
+
+			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+			const ref = this.refCells.get(id);
+
+			if (object.type == Constant.typeId.note) {
+				this.onCellClick(e, 'name', object.id);
+			} else
+			if (ref) {
+				window.setTimeout(() => { ref.onClick(e); }, 15);
+			};
+
+			analytics.event('CreateObject', {
+				route: (isCollection ? 'Collection' : 'Set'),
+				objectType: object.type,
+				layout: object.layout,
+				template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
+			});
+		});
+	};
+
 	onEmpty (e: any) {
 		const { isInline } = this.props;
 
@@ -623,7 +683,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			if (message.records.length && withPopup) {
 				popupStore.open('template', { data: { typeId: details.type, onSelect: (template) => this.recordCreate(e, template, dir) } });
 			} else {
-				const template = defaultTemplateId != Constant.templateId.blank ? { id: defaultTemplateId } : '';
+				const template = !UtilData.checkBlankTemplate(defaultTemplateId) ? { id: defaultTemplateId } : '';
 				this.recordCreate(e, template, dir);
 			};
 		});
@@ -743,62 +803,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			analytics.event('CreateTemplate', { objectType: typeId, route: 'Dataview' });
 
 			UtilObject.openPopup(message.details);
-		});
-	};
-
-	recordCreate (e: any, template: any, dir: number) {
-		const { rootId, block } = this.props;
-		const objectId = this.getObjectId();
-		const subId = dbStore.getSubId(rootId, block.id);
-		const isCollection = this.isCollection();
-
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
-		const details = this.getDetails();
-		const flags: I.ObjectFlag[] = [];
-		if (!types.length || isCollection) {
-			flags.push(I.ObjectFlag.SelectType);
-		};
-
-		C.ObjectCreate(details, flags, template?.id, (message: any) => {
-			this.creating = false;
-
-			if (message.error.code) {
-				return;
-			};
-
-			const object = message.details;
-			const records = this.getRecords();
-			const oldIndex = records.indexOf(message.objectId);
-			const newIndex = dir > 0 ? records.length : 0;
-
-			if (isCollection) {
-				C.ObjectCollectionAdd(objectId, [ object.id ]);
-			};
-
-			detailStore.update(subId, { id: object.id, details: object }, true);
-
-			if (oldIndex < 0) {
-				dbStore.recordAdd(subId, '', object.id, newIndex);
-			} else {
-				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
-			};
-
-			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-			const ref = this.refCells.get(id);
-
-			if (object.type == Constant.typeId.note) {
-				this.onCellClick(e, 'name', object.id);
-			} else
-			if (ref) {
-				window.setTimeout(() => { ref.onClick(e); }, 15);
-			};
-
-			analytics.event('CreateObject', {
-				route: (isCollection ? 'Collection' : 'Set'),
-				objectType: object.type,
-				layout: object.layout,
-				template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
-			});
 		});
 	};
 
