@@ -4,10 +4,11 @@ const path = require('path');
 const fs = require('fs');
 
 const Constant = require('../../src/json/constant.json');
+const Locale = require('../../src/json/locale.json');
 const OWNER = 'anyproto';
 const REPO = 'l10n-anytype-ts';
 const PATH = '/locales';
-const LANGS = Object.keys(Constant.interfaceLang);
+const LANGS = Object.keys(Locale);
 
 const run = async () => {
 	for (const lang of LANGS) {

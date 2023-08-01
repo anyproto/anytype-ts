@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select } from 'Component';
-import { I, translate, analytics, Renderer, UtilObject, Storage } from 'Lib';
+import { I, translate, analytics, Renderer, UtilObject } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
+import Locale from 'json/locale.json';
 
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
@@ -96,7 +97,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		const ret: any[] = [];
 
 		for (let id of Constant.enabledInterfaceLang) {
-			ret.push({ id, name: Constant.interfaceLang[id] })
+			ret.push({ id, name: Locale[id] })
 		};
 
 		return ret;
