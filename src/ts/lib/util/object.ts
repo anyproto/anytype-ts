@@ -338,6 +338,15 @@ class UtilObject {
 		];
 	};
 
+	getLayoutsWithoutTemplates () {
+		return [
+			I.ObjectLayout.Note,
+			I.ObjectLayout.Set,
+			I.ObjectLayout.Collection,
+			I.ObjectLayout.Bookmark,
+		].concat(this.getFileAndSystemLayouts());
+	};
+
 	getFileAndSystemLayouts () {
 		return this.getFileLayouts().concat(this.getSystemLayouts());
 	};
