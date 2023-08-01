@@ -123,6 +123,7 @@ export interface ViewComponent {
 	getVisibleRelations?(): I.ViewRelation[];
 	getEmpty?(type: string): any;
 	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
+	onTemplatesMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;

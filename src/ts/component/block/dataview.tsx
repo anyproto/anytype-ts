@@ -55,7 +55,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getVisibleRelations = this.getVisibleRelations.bind(this);
 		this.getEmpty = this.getEmpty.bind(this);
 		this.getTarget = this.getTarget.bind(this);
-		this.getTypeId = this.getTypeId.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -68,6 +67,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onEmpty = this.onEmpty.bind(this);
 		this.onDragRecordStart = this.onDragRecordStart.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
+		this.onTemplatesMenu = this.onTemplatesMenu.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
 		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isCollection = this.isCollection.bind(this);
@@ -143,6 +143,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getVisibleRelations: this.getVisibleRelations,
 			getEmpty: this.getEmpty,
 			onRecordAdd: this.onRecordAdd,
+			onTemplatesMenu: this.onTemplatesMenu,
 			isAllowedObject: this.isAllowedObject,
 			isAllowedTemplate: this.isAllowedTemplate,
 			onSourceSelect: this.onSourceSelect,
@@ -501,71 +502,22 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return type;
 	};
 
-	onEmpty (e: any) {
-		const { isInline } = this.props;
-
-		if (isInline) {
-			this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center });
-		} else {
-			this.onSourceTypeSelect(e.currentTarget);
-		};
-	};
-
-	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
-		if (e.persist) {
-			e.persist();
-		};
-
-		if (this.creating) {
-			return;
-		};
-
+	getDetails (): any {
 		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
-		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
-		const setOf = object.setOf || [];
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
 		const view = this.getView();
-		const subId = dbStore.getSubId(rootId, block.id);
-		const isCollection = this.isCollection();
 		const conditions = [
 			I.FilterCondition.Equal,
 			I.FilterCondition.GreaterOrEqual,
 			I.FilterCondition.LessOrEqual,
 			I.FilterCondition.In,
 			I.FilterCondition.AllIn,
-		]; 
-
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
-		const details: any = {};
-		const flags: I.ObjectFlag[] = [];
-		const node = $(this.node);
-		const hoverArea = node.find('.hoverArea');
-
-		if (!types.length || isCollection) {
-			flags.push(I.ObjectFlag.SelectType);
+		];
+		const details: any = {
+			type: this.getTypeId()
 		};
 
-		const menuParam: any = {
-			onClose: () => {
-				this.creating = false;
-				hoverArea.removeClass('active');
-			},
-		};
-
-		if (dir) {
-			menuParam.element = $(e.currentTarget);
-		} else {
-			menuParam.horizontal = I.MenuDirection.Center;
-			menuParam.recalcRect = () => {
-				const { ww, wh } = UtilCommon.getWindowDimensions();
-				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
-			};
-		};
-
-		details.type = this.getTypeId();
-
-		// Relations population
 		if (relations.length) {
 			relations.forEach((it: any) => {
 				details[it.relationKey] = Relation.formatValue(it, null, true);
@@ -588,53 +540,65 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 
-		this.creating = true;
+		return details;
+	};
 
-		const create = (template: any) => {
-			C.ObjectCreate(details, flags, template?.id, (message: any) => {
+	getMenuParam (e: any, dir: number): any {
+		const node = $(this.node);
+		const hoverArea = node.find('.hoverArea');
+
+		const menuParam: any = {
+			onClose: () => {
 				this.creating = false;
-
-				if (message.error.code) {
-					return;
-				};
-
-				const object = message.details;
-				const records = this.getRecords();
-				const oldIndex = records.indexOf(message.objectId);
-				const newIndex = dir > 0 ? records.length : 0;
-
-				if (isCollection) {
-					C.ObjectCollectionAdd(objectId, [ object.id ]);
-				};
-
-				detailStore.update(subId, { id: object.id, details: object }, true);
-
-				if (oldIndex < 0) {
-					dbStore.recordAdd(subId, '', object.id, newIndex);
-				} else {
-					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
-				};
-
-				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-				const ref = this.refCells.get(id);
-
-				if (object.type == Constant.typeId.note) {
-					this.onCellClick(e, 'name', object.id);
-				} else
-				if (ref) {
-					window.setTimeout(() => { ref.onClick(e); }, 15);
-				};
-
-				analytics.event('CreateObject', {
-					route: (isCollection ? 'Collection' : 'Set'),
-					objectType: object.type,
-					layout: object.layout,
-					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
-				});
-			});
+				hoverArea.removeClass('active');
+			},
 		};
 
+		if (dir) {
+			menuParam.element = $(e.currentTarget);
+		} else {
+			menuParam.horizontal = I.MenuDirection.Center;
+			menuParam.recalcRect = () => {
+				const { ww, wh } = UtilCommon.getWindowDimensions();
+				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
+			};
+		};
+
+		return menuParam;
+	};
+
+	onEmpty (e: any) {
+		const { isInline } = this.props;
+
+		if (isInline) {
+			this.onSourceSelect(e.currentTarget, { horizontal: I.MenuDirection.Center });
+		} else {
+			this.onSourceTypeSelect(e.currentTarget);
+		};
+	};
+
+	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
+		if (e.persist) {
+			e.persist();
+		};
+
+		if (this.creating) {
+			return;
+		};
+
+		const { rootId } = this.props;
+		const objectId = this.getObjectId();
+		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
+		const setOf = object.setOf || [];
+
+		const details: any = this.getDetails();
+		const menuParam: any = this.getMenuParam(e, dir);
+
+		this.creating = true;
+
 		if (details.type == Constant.typeId.bookmark) {
+			$(this.node).find('.hoverArea').addClass('active');
+			
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,
@@ -647,94 +611,152 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const showPopup = () => {
-			popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
-		};
-
-		const showMenu = () => {
-			hoverArea.addClass('active');
-
-			let menuContext = null;
-
-			menuStore.open('searchObject', {
-				...menuParam,
-				offsetY: 10,
-				className: 'single',
-				subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
-				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
-				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-				onOpen: (context: any) => {
-					menuContext = context;
-				},
-				data: {
-					label: translate('blockDataviewSelectTemplate'),
-					noFilter: true,
-					noIcon: true,
-					mapElement: it => ({ ...it, withMore: true }),
-					dataChange: (items: any[]) => {
-						const fixed: any[] = [
-							{ id: Constant.templateId.blank, name: 'Blank', isBlank: true },
-						];
-						return !items.length ? fixed : fixed.concat(items);
-					},
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
-					],
-					sorts: [
-						{ relationKey: 'name', type: I.SortType.Asc },
-					],
-					onOver: (e: any, context: any, item: any) => {
-						if (item.isBlank) {
-							menuStore.closeAll(Constant.menuIds.dataviewTemplate);
-							return;
-						};
-
-						menuStore.open('previewObject', {
-							element: `#${menuContext.getId()} #item-${item.id}`,
-							offsetX: menuContext.getSize().width,
-							isSub: true,
-							vertical: I.MenuDirection.Center,
-							data: { rootId: item.id }
-						});
-					},
-					onSelect: (item: any) => {
-						create(UtilData.checkBlankTemplate(item));
-						menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
-					},
-					onMore: (e: any, item: any) => {
-						e.preventDefault();
-						e.stopPropagation();
-
-						if (menuStore.isOpen('dataviewTemplate', item.id)) {
-							menuStore.close('dataviewTemplate');
-							return;
-						};
-
-						menuStore.closeAll(Constant.menuIds.dataviewTemplate);
-						menuStore.open('dataviewTemplate', {
-							menuKey: item.id,
-							element: `#${menuContext.getId()} #item-${item.id}`,
-							vertical: I.MenuDirection.Bottom,
-							horizontal: I.MenuDirection.Right,
-							data: {
-								template: item,
-								onOver: () => menuStore.closeAll([ 'previewObject' ]),
-								onSetDefault: () => console.log('SET DEFAULT TEMPLATE FOR THIS VIEW'),
-								onDelete: () => menuContext.ref.reload()
-							}
-						});
-					}
-				}
-			});
-		};
-
 		UtilData.checkTemplateCnt(setOf, (message: any) => {
-			if (message.records.length) {
-				withPopup ? showPopup() : showMenu();
+			if (message.records.length && withPopup) {
+				popupStore.open('template', { data: { typeId: details.type, onSelect: (template) => this.recordCreate(e, template, dir) } });
 			} else {
-				create('');
+				this.recordCreate(e, '', dir);
 			};
+		});
+	};
+
+	onTemplatesMenu (e: any, dir: number) {
+		const { rootId, block } = this.props;
+		const objectId = this.getObjectId();
+		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
+		const setOf = object.setOf || [];
+		const menuParam = this.getMenuParam(e, dir);
+
+		$(this.node).find('.hoverArea').addClass('active');
+
+		let menuContext = null;
+
+		menuStore.open('searchObject', {
+			...menuParam,
+			offsetY: 10,
+			className: 'single',
+			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
+			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
+			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+			onOpen: (context: any) => {
+				menuContext = context;
+			},
+			data: {
+				label: translate('blockDataviewSelectTemplate'),
+				noFilter: true,
+				noIcon: true,
+				mapElement: it => ({ ...it, withMore: true }),
+				dataChange: (items: any[]) => {
+					const fixed: any[] = [
+						{ id: Constant.templateId.blank, name: 'Blank', isBlank: true },
+					];
+					return !items.length ? fixed : fixed.concat(items);
+				},
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				onOver: (e: any, context: any, item: any) => {
+					if (item.isBlank) {
+						menuStore.closeAll(Constant.menuIds.dataviewTemplate);
+						return;
+					};
+
+					menuStore.open('previewObject', {
+						element: `#${menuContext.getId()} #item-${item.id}`,
+						offsetX: menuContext.getSize().width,
+						isSub: true,
+						vertical: I.MenuDirection.Center,
+						data: { rootId: item.id }
+					});
+				},
+				onSelect: (item: any) => {
+					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
+					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
+				},
+				onMore: (e: any, item: any) => {
+					e.preventDefault();
+					e.stopPropagation();
+
+					if (menuStore.isOpen('dataviewTemplate', item.id)) {
+						menuStore.close('dataviewTemplate');
+						return;
+					};
+
+					menuStore.closeAll(Constant.menuIds.dataviewTemplate);
+					menuStore.open('dataviewTemplate', {
+						menuKey: item.id,
+						element: `#${menuContext.getId()} #item-${item.id}`,
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Right,
+						data: {
+							template: item,
+							onOver: () => menuStore.closeAll([ 'previewObject' ]),
+							onSetDefault: () => console.log('SET DEFAULT TEMPLATE FOR THIS VIEW'),
+							onDelete: () => menuContext.ref.reload()
+						}
+					});
+				}
+			}
+		});
+	};
+
+	recordCreate (e: any, template: any, dir: number) {
+		const { rootId, block } = this.props;
+		const objectId = this.getObjectId();
+		const subId = dbStore.getSubId(rootId, block.id);
+		const isCollection = this.isCollection();
+
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
+		const details = this.getDetails();
+		const flags: I.ObjectFlag[] = [];
+		if (!types.length || isCollection) {
+			flags.push(I.ObjectFlag.SelectType);
+		};
+
+		C.ObjectCreate(details, flags, template?.id, (message: any) => {
+			this.creating = false;
+
+			if (message.error.code) {
+				return;
+			};
+
+			const object = message.details;
+			const records = this.getRecords();
+			const oldIndex = records.indexOf(message.objectId);
+			const newIndex = dir > 0 ? records.length : 0;
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
+			};
+
+			detailStore.update(subId, { id: object.id, details: object }, true);
+
+			if (oldIndex < 0) {
+				dbStore.recordAdd(subId, '', object.id, newIndex);
+			} else {
+				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+			};
+
+			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+			const ref = this.refCells.get(id);
+
+			if (object.type == Constant.typeId.note) {
+				this.onCellClick(e, 'name', object.id);
+			} else
+			if (ref) {
+				window.setTimeout(() => { ref.onClick(e); }, 15);
+			};
+
+			analytics.event('CreateObject', {
+				route: (isCollection ? 'Collection' : 'Set'),
+				objectType: object.type,
+				layout: object.layout,
+				template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
+			});
 		});
 	};
 

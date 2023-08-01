@@ -24,7 +24,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, isInline } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, onTemplatesMenu, isInline } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -147,8 +147,8 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 									<Button
 										id={`button-${block.id}-add-record-select`}
 										className="select c28"
-										tooltip={translate('blockDataviewCreateNew')}
-										onClick={e => onRecordAdd(e, -1)}
+										tooltip={translate('blockDataviewShowTemplates')}
+										onClick={e => onTemplatesMenu(e, -1)}
 									/>
 								) : ''}
 							</div>
