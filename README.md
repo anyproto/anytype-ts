@@ -14,7 +14,7 @@ apt install libsecret-1-dev
 [Fedora](https://packages.fedoraproject.org/pkgs/libsecret/libsecret):
 
 ```
-dnf install packagename
+dnf install libsecret
 ```
 
 [Arch-based](https://archlinux.org/packages/core/x86_64/libsecret) (Manjaro / EndeavourOS / ... ):
