@@ -2,6 +2,33 @@
 Official Anytype client for MacOS, Linux, and Windows.
 
 ## Building the source
+
+### Dependencies
+
+[Debian-based](https://packages.debian.org/bookworm/libsecret-1-dev) (Ubuntu / Pop! OS / Mint / ... ):
+
+```
+apt install libsecret-1-dev
+```
+
+[Fedora](https://packages.fedoraproject.org/pkgs/libsecret/libsecret):
+
+```
+dnf install packagename
+```
+
+[Arch-based](https://archlinux.org/packages/core/x86_64/libsecret) (Manjaro / EndeavourOS / ... ):
+
+```
+pacman -S libsecret
+```
+
+[Alpine](https://pkgs.alpinelinux.org/packages?name=libsecret) (usually for docker-related stuff):
+
+```
+apk add libsecret
+```
+
 ### Installation
 
 ```shell
