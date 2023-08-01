@@ -4,11 +4,10 @@ const path = require('path');
 const fs = require('fs');
 
 const Constant = require('../../src/json/constant.json');
-const Locale = require('../../src/json/locale.json');
 const OWNER = 'anyproto';
 const REPO = 'l10n-anytype-ts';
 const PATH = '/locales';
-const LANGS = Object.keys(Locale);
+const LANGS = Constant.enabledInterfaceLang;
 
 const run = async () => {
 	for (const lang of LANGS) {
@@ -18,15 +17,13 @@ const run = async () => {
 		if (lang == Constant.default.interfaceLang) {
 			content = JSON.stringify(require('../../src/json/text.json'), null, 4);
 		} else {
-			content = await request(lang).catch(() => {});
+			content = await request(lang).catch(e => console.log(e));
 		};
 
-		if (!content) {
-			content = JSON.stringify(require('../../src/json/text.json'), null, 4);
+		if (content) {
+			fs.writeFileSync(fp, content);
+			console.log('Saved lang file:', fp);
 		};
-
-		fs.writeFileSync(fp, content);
-		console.log('Saved lang file:', fp);
 	};
 };
 
@@ -50,10 +47,11 @@ const request = async (lang) => {
 			response.on('data', d => str += d);
 			response.on('end', function () {
 				const data = JSON.parse(str);
-				if (data.content) {
-					resolve(Buffer.from(data.content, 'base64').toString());
+
+				if (data.message) {
+					reject(data.message);
 				} else {
-					reject('Content is empty');
+					resolve(Buffer.from(data.content, 'base64').toString());
 				};
 			});
 		};
