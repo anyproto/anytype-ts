@@ -336,6 +336,8 @@
 		"zh-TW": "中文 (台灣)"
 	},
 
+	"enabledInterfaceLang": [ "en-US", "fr-FR", "zh-CN", "zh-TW", "de-DE", "es-ES", "nb-NO" ],
+
 	"spellingLang": {
 		"af": "Afrikaans", 
 		"bg": "Български", 

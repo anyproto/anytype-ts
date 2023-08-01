@@ -95,7 +95,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 	getInterfaceLanguages () {
 		const ret: any[] = [];
 
-		for (let id in Constant.interfaceLang) {
+		for (let id of Constant.enabledInterfaceLang) {
 			ret.push({ id, name: Constant.interfaceLang[id] })
 		};
 

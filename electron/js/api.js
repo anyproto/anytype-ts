@@ -1,5 +1,4 @@
 const { app, shell, BrowserWindow } = require('electron');
-const { localStorage } = require('electron-browser-storage');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 
