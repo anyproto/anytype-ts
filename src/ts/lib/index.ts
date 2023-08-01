@@ -51,7 +51,6 @@ const translate = (key: string): string => {
 			data = require(`lib/json/lang/${lang}.json`); 
 		} catch(e) {
 			data = require(`json/text.json`); 
-			console.log(e, lang);
 		};
 	};
 

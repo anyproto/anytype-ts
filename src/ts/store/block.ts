@@ -535,6 +535,15 @@ class BlockStore {
 		return { childrenIds, columnContainer, columns, rowContainer, rows };
 	};
 
+	closeRecentWidgets () {
+		const { recentEdit, recentOpen } = Constant.widgetId;
+
+		const blocks = this.getBlocks(this.widgets, it => it.isLink() && [ recentEdit, recentOpen ].includes(it.content.targetBlockId));
+		if (blocks.length) {
+			blocks.forEach(it => Storage.setToggle('widget', it.parentId, true));
+		};
+	};
+
 };
 
  export const blockStore: BlockStore = new BlockStore();
