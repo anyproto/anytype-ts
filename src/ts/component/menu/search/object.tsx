@@ -87,6 +87,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 				if (item.isAdd) {
 					cn.push('add');
+					props.isAdd = true;
 				};
 				if (item.isHidden) {
 					cn.push('isHidden');
@@ -98,6 +99,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					props.iconSize = 40;
 				} else {
 					props.caption = (type ? type.name : undefined);
+				};
+
+				if (item.caption) {
+					props.caption = item.caption;
 				};
 
 				if (noIcon) {

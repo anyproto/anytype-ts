@@ -567,6 +567,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return menuParam;
 	};
 
+	setDefaultTemplateForView (id, cb) {
+		const { rootId, block } = this.props;
+		const view = this.getView();
+
+		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: id }, cb);
+	};
+
 	onEmpty (e: any) {
 		const { isInline } = this.props;
 
@@ -587,6 +594,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const { rootId } = this.props;
+		const { defaultTemplateId } = this.getView();
 		const objectId = this.getObjectId();
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
@@ -615,16 +623,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			if (message.records.length && withPopup) {
 				popupStore.open('template', { data: { typeId: details.type, onSelect: (template) => this.recordCreate(e, template, dir) } });
 			} else {
-				this.recordCreate(e, '', dir);
+				const template = defaultTemplateId != Constant.templateId.blank ? { id: defaultTemplateId } : '';
+				this.recordCreate(e, template, dir);
 			};
 		});
 	};
 
 	onTemplatesMenu (e: any, dir: number) {
-		const { rootId, block } = this.props;
-		const objectId = this.getObjectId();
-		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
-		const setOf = object.setOf || [];
 		const menuParam = this.getMenuParam(e, dir);
 
 		$(this.node).find('.hoverArea').addClass('active');
@@ -634,7 +639,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		menuStore.open('searchObject', {
 			...menuParam,
 			offsetY: 10,
-			className: 'single',
+			className: 'big',
 			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
@@ -645,22 +650,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				label: translate('blockDataviewSelectTemplate'),
 				noFilter: true,
 				noIcon: true,
-				mapElement: it => ({ ...it, withMore: true }),
+				mapElement: it => ({
+					...it,
+					withMore: it.id != 'newTemplate',
+					caption: it.id == this.getView().defaultTemplateId ? 'Default' : ' '
+				}),
 				dataChange: (items: any[]) => {
-					const fixed: any[] = [
-						{ id: Constant.templateId.blank, name: 'Blank', isBlank: true },
+					const fixed: any[] = [ { id: Constant.templateId.blank, name: 'Blank', isBlank: true } ];
+					const bottom: any[] = [
+						{ isDiv: true },
+						{ id: 'newTemplate', name: 'New template', icon: 'plus' }
 					];
-					return !items.length ? fixed : fixed.concat(items);
+
+					return !items.length ? fixed.concat(bottom) : fixed.concat(items).concat(bottom);
 				},
 				filters: [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
+					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: this.getTypeId() },
 				],
 				sorts: [
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				onOver: (e: any, context: any, item: any) => {
-					if (item.isBlank) {
+					if (item.isBlank || item.id == 'newTemplate') {
 						menuStore.closeAll(Constant.menuIds.dataviewTemplate);
 						return;
 					};
@@ -674,6 +686,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					});
 				},
 				onSelect: (item: any) => {
+					if (item.id == 'newTemplate') {
+						this.onTemplateAdd();
+						return;
+					};
+
 					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
 					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
 				},
@@ -695,12 +712,37 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						data: {
 							template: item,
 							onOver: () => menuStore.closeAll([ 'previewObject' ]),
-							onSetDefault: () => console.log('SET DEFAULT TEMPLATE FOR THIS VIEW'),
+							onSetDefault: () => {
+								this.setDefaultTemplateForView(item.id, () => {
+									menuContext.ref.reload();
+								});
+							},
 							onDelete: () => menuContext.ref.reload()
 						}
 					});
 				}
 			}
+		});
+	};
+
+	onTemplateAdd () {
+		const typeId = this.getTypeId();
+		const type = dbStore.getType(typeId);
+		const details: any = {
+			type: Constant.typeId.template,
+			targetObjectType: typeId,
+			layout: type.recommendedLayout,
+		};
+
+		C.ObjectCreate(details, [], '', (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			focus.clear(true);
+			analytics.event('CreateTemplate', { objectType: typeId, route: 'Dataview' });
+
+			UtilObject.openPopup(message.details);
 		});
 	};
 

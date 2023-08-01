@@ -100,9 +100,6 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						{...selectMenuParam}
 					/>
 				);
-			} else
-			if (withMore) {
-				additional = <Icon className="more" onMouseDown={onMore} />;
 			} else {
 				additional = (
 					<React.Fragment>
@@ -111,6 +108,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						) : (
 							<div className="caption">{caption}</div>
 						)}
+						{withMore ? <Icon className="more" onMouseDown={onMore} /> : ''}
 					</React.Fragment>
 				);
 			};
