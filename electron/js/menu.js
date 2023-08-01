@@ -28,10 +28,10 @@ class MenuManager {
 		const lang = Util.getLang();
 		const langMenu = [];
 
-		for (let i in Constant.interfaceLang) {
+		for (let key of Constant.enabledInterfaceLang) {
 			langMenu.push({
-				label: Constant.interfaceLang[i], type: 'checkbox', checked: i == lang,
-				click: () => Api.changeInterfaceLang(this.win, i)
+				label: Constant.interfaceLang[key], type: 'checkbox', checked: key == lang,
+				click: () => Api.changeInterfaceLang(this.win, key)
 			});
 		};
 
