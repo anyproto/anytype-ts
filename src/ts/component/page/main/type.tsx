@@ -14,13 +14,6 @@ interface State {
 	isDeleted: boolean;
 };
 
-const NO_TEMPLATES = [ 
-	Constant.typeId.note, 
-	Constant.typeId.set, 
-	Constant.typeId.collection,
-	Constant.typeId.bookmark,
-].concat(UtilObject.getFileTypes()).concat(UtilObject.getSystemTypes());
-
 const PageMainType = observer(class PageMainType extends React.Component<I.PageComponent, State> {
 
 	_isMounted = false;
@@ -66,7 +59,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const templates = dbStore.getRecords(subIdTemplate, '');
 
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
-		const showTemplates = !NO_TEMPLATES.includes(rootId);
+		const showTemplates = !UtilObject.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		const systemRelations = Relation.systemKeys();
 

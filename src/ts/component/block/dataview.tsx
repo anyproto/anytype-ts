@@ -55,6 +55,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.getVisibleRelations = this.getVisibleRelations.bind(this);
 		this.getEmpty = this.getEmpty.bind(this);
 		this.getTarget = this.getTarget.bind(this);
+		this.getTypeId = this.getTypeId.bind(this);
 		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onCellClick = this.onCellClick.bind(this);
 		this.onCellChange = this.onCellChange.bind(this);
@@ -68,6 +69,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onDragRecordStart = this.onDragRecordStart.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
+		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
@@ -142,6 +144,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getEmpty: this.getEmpty,
 			onRecordAdd: this.onRecordAdd,
 			isAllowedObject: this.isAllowedObject,
+			isAllowedTemplate: this.isAllowedTemplate,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
 		};
@@ -469,6 +472,35 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 	};
 
+	getTypeId (): string {
+		const { rootId } = this.props;
+		const objectId = this.getObjectId();
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
+
+		let type = '';
+
+		if (types.length) {
+			type = types[0].id;
+		};
+		if (relations.length) {
+			relations.forEach((it: any) => {
+				if (it.objectTypes.length && !type) {
+					const first = it.objectTypes[0];
+
+					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
+						type = first;
+					};
+				};
+			});
+		};
+		if (!type) {
+			type = commonStore.type;
+		};
+
+		return type;
+	};
+
 	onEmpty (e: any) {
 		const { isInline } = this.props;
 
@@ -531,25 +563,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 
-		// Type detection and relations population
-		if (types.length) {
-			details.type = types[0].id;
-		};
+		details.type = this.getTypeId();
+
+		// Relations population
 		if (relations.length) {
 			relations.forEach((it: any) => {
-				if (it.objectTypes.length && !details.type) {
-					const first = it.objectTypes[0];
-
-					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
-						details.type = first;
-					};
-				};
-
 				details[it.relationKey] = Relation.formatValue(it, null, true);
 			});
-		};
-		if (!details.type) {
-			details.type = commonStore.type;
 		};
 
 		for (let filter of view.filters) {
@@ -1045,6 +1065,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		return allowed;
+	};
+
+	isAllowedTemplate () {
+		const typeId = this.getTypeId();
+		const type = dbStore.getType(typeId);
+		const restrictions = UtilObject.getLayoutsWithoutTemplates();
+
+		return !restrictions.includes(type.recommendedLayout);
 	};
 
 	isCollection (): boolean {

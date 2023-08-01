@@ -130,6 +130,7 @@ export interface ViewComponent {
 	onSelectToggle?: (e: React.MouseEvent, id: string) => void;
 	onSelectEnd?: () => void;
 	isAllowedObject?: () => boolean;
+	isAllowedTemplate?: () => boolean;
 	objectOrderUpdate?: (orders: any[], records: any[], callBack?: (message: any) => void) => void;
 	applyObjectOrder?: (groupId: string, records: any[]) => any[];
 	onSourceSelect?(element: any, param: Partial<I.MenuParam>): void;

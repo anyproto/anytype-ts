@@ -341,6 +341,38 @@ class UtilObject {
 		];
 	};
 
+	getLayoutsWithoutTemplates () {
+		return [
+			I.ObjectLayout.Note,
+			I.ObjectLayout.Set,
+			I.ObjectLayout.Collection,
+			I.ObjectLayout.Bookmark,
+		].concat(this.getFileAndSystemLayouts());
+	}
+
+	getFileAndSystemLayouts () {
+		return this.getFileLayouts().concat(this.getSystemLayouts());
+	};
+
+	getSystemLayouts () {
+		return [
+			I.ObjectLayout.Type,
+			I.ObjectLayout.Relation,
+			I.ObjectLayout.Option,
+			I.ObjectLayout.Dashboard,
+			I.ObjectLayout.Date,
+		];
+	};
+
+	getFileLayouts () {
+		return [
+			I.ObjectLayout.File,
+			I.ObjectLayout.Image,
+			I.ObjectLayout.Audio,
+			I.ObjectLayout.Video,
+		];
+	};
+
 };
 
 export default new UtilObject();

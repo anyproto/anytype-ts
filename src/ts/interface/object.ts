@@ -14,6 +14,9 @@ export enum ObjectLayout {
 	OptionList	 = 12,
 	Option		 = 13,
 	Collection   = 14,
+	Audio		 = 15,
+	Video		 = 16,
+	Date		 = 17,
 	
 	Database	 = 20,
 
@@ -24,9 +27,6 @@ export enum ObjectLayout {
 	History		 = 104,
 	Archive		 = 105,
 	Block		 = 106,
-
-	Video		 = 1000,
-	Audio		 = 1001,
 };
 
 export enum RelationType { 
