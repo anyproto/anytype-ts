@@ -496,9 +496,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				};
 			});
 		};
-		if (!UtilData.checkBlankTemplate(defaultTemplateId)) {
-			type = defaultTemplateId;
-		}
 		if (!type) {
 			type = commonStore.type;
 		};
