@@ -1140,6 +1140,7 @@
     "menuDataviewViewListViews": "Views",
 
     "menuDataviewTemplateSetDefault": "Set as default",
+    "menuDataviewTemplateSetDefaultForView": "Default for this view",
     "menuDataviewTemplateEdit": "Edit template",
 
     "menuGraphSettingsTitles": "Titles",
