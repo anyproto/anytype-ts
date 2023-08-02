@@ -105,6 +105,7 @@
     "commonUndo": "Undo",
     "commonRedo": "Redo",
     "commonBlank": "Blank",
+    "commonTemplateSetDefault": "Set as default",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -1027,6 +1028,7 @@
     "menuBlockMoreVersionHistory": "Version history",
     "menuBlockMoreExport": "Export",
     "menuBlockMoreDuplicateObject": "Duplicate object",
+    "menuBlockMoreDuplicateTemplate": "Duplicate template",
     "menuBlockMoreCopyLink": "Copy link",
     "menuBlockMoreReloadFromSource": "Reload from source",
     "menuBlockMoreCreateObject": "Create object",
@@ -1139,7 +1141,6 @@
     "menuDataviewViewListAddView": "Add a view",
     "menuDataviewViewListViews": "Views",
 
-    "menuDataviewTemplateSetDefault": "Set as default",
     "menuDataviewTemplateSetDefaultForView": "Default for this view",
     "menuDataviewTemplateEdit": "Edit template",
 

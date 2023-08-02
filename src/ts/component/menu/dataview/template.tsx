@@ -53,7 +53,7 @@ class MenuTemplate extends React.Component<I.Menu> {
         const { isBlank, isDefault } = template;
        
 		return [
-			!isDefault ? ({ id: 'default', name: translate(isView ? 'menuDataviewTemplateSetDefaultForView' : 'menuDataviewTemplateSetDefault') }) : null,
+			!isDefault ? ({ id: 'default', name: translate(isView ? 'menuDataviewTemplateSetDefaultForView' : 'commonTemplateSetDefault') }) : null,
 			!isBlank ? ({ id: 'edit', name: translate('menuDataviewTemplateEdit') }) : null,
 			{ id: 'duplicate', name: translate('commonDuplicate') },
 			!isBlank ? ({ id: 'remove', name: translate('commonDelete') }) : null,
@@ -63,7 +63,7 @@ class MenuTemplate extends React.Component<I.Menu> {
     onClick (e: any, item: any) {
         const { param, close } = this.props;
         const { data } = param;
-        const { template, onSetDefault, onDelete, onDuplicate, onTemplateAdd } = data;
+        const { template, onSetDefault, onDelete, onDuplicate } = data;
 
 		close();
 
