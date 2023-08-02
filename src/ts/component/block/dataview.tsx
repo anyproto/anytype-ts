@@ -776,6 +776,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 									menuContext.ref.reload();
 								});
 							},
+							onDuplicate: (object) => UtilObject.openPopup(object, {}),
 							onDelete: () => menuContext.ref.reload()
 						}
 					});
