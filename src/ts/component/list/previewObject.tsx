@@ -2,13 +2,18 @@ import * as React from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
 import { keyboard } from 'Lib';
+import Constant from 'json/constant.json';
 
 interface Props {
-	getItems: () => any[];
 	offsetX: number;
 	canAdd?: boolean;
+	withBlank?: boolean;
+	defaultId?: string;
+	getItems: () => any[];
 	onClick?: (e: any, item: any) => void;
 	onAdd?: (e: any) => void;
+	onBlank?: (e: any) => void;
+	onMenu?: (e: any, item: any) => void;
 };
 
 const WIDTH = 344;
@@ -28,22 +33,52 @@ class ListObjectPreview extends React.Component<Props> {
 	refObj: any = {};
 
 	render () {
-		const { getItems, canAdd, onAdd } = this.props;
+		const { getItems, canAdd, onAdd, withBlank, onBlank, onMenu, defaultId } = this.props;
 		const items = getItems();
+
+		const DefaultLabel = (item: any) => {
+			if (!defaultId || defaultId != item.id) {
+				return null;
+			};
+			return <div className="defaultLabel">Default</div>;
+		};
 
 		const Item = (item: any) => {
 			return (
-				<div 
-					id={'item-' + item.id} 
-					className="item" 
-					onMouseEnter={e => this.onMouseEnter(e, item)} 
-					onMouseLeave={e => this.onMouseLeave(e, item)}
-				>
-					<PreviewObject 
-						ref={ref => this.refObj[item.id] = ref} 
-						rootId={item.id} 
-						onClick={e => this.onClick(e, item)} 
-					/>
+				<div id={'item-' + item.id} className="item">
+					<DefaultLabel {...item} />
+					{onMenu ? <Icon className="more" onClick={e => onMenu(e, item)} /> : ''}
+
+					<div
+						className="hoverArea"
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onMouseLeave={e => this.onMouseLeave(e, item)}
+					>
+						<PreviewObject
+							ref={ref => this.refObj[item.id] = ref}
+							rootId={item.id}
+							onClick={e => this.onClick(e, item)}
+						/>
+					</div>
+				</div>
+			);
+		};
+
+		const ItemBlank = () => {
+			return (
+				<div id={`item-${Constant.templateId.blank}`} className="item" onClick={onBlank}>
+					<DefaultLabel {...{id: Constant.templateId.blank}} />
+
+					{onMenu ? <Icon className="more" onClick={e => onMenu(e, { id: Constant.templateId.blank })} /> : ''}
+
+					<div className="previewObject blank">
+						<div className="scroller">
+							<div className="heading">
+								<div className="name">Blank</div>
+							</div>
+						</div>
+						<div className="border" />
+					</div>
 				</div>
 			);
 		};
@@ -61,6 +96,7 @@ class ListObjectPreview extends React.Component<Props> {
 			>
 				<div className="wrap">
 					<div id="scroll" className="scroll">
+						{withBlank ? <ItemBlank /> : ''}
 						{items.map((item: any, i: number) => (
 							<Item key={i} {...item} index={i} />
 						))}
@@ -68,8 +104,8 @@ class ListObjectPreview extends React.Component<Props> {
 					</div>
 				</div>
 
-				<Icon id="arrowLeft" className="arrow left" onClick={() => { this.onArrow(-1); }} />
-				<Icon id="arrowRight" className="arrow right" onClick={() => { this.onArrow(1); }} />	
+				<Icon id="arrowLeft" className="arrow left" onClick={() => this.onArrow(-1)} />
+				<Icon id="arrowRight" className="arrow right" onClick={() => this.onArrow(1)} />	
 			</div>
 		);
 	};
@@ -80,16 +116,21 @@ class ListObjectPreview extends React.Component<Props> {
 
 	componentDidUpdate () {
 		this.resize();
-		this.setActive();
 	};
 
 	getMaxPage () {
-		const { getItems, canAdd } = this.props;
-		const items = getItems();
-		const length = items.length + (canAdd ? 1 : 0);
+		const { getItems, canAdd, withBlank } = this.props;
 		const node = $(this.node);
+		const items = getItems();
 		const cnt = Math.floor(node.width() / WIDTH);
 
+		let length = items.length;
+		if (withBlank) {
+			length++;
+		};
+		if (canAdd) {
+			length++;
+		};
 		return Math.max(0, Math.ceil(length / cnt) - 1);
 	};
 
@@ -104,6 +145,7 @@ class ListObjectPreview extends React.Component<Props> {
 	onMouseLeave (e: any, item: any) {
 		const node = $(this.node);
 		node.find('.item.hover').removeClass('hover');
+		node.find('.hoverArea.hover').removeClass('hover');
 	};
 
 	onClick (e: any, item: any) {
@@ -125,7 +167,9 @@ class ListObjectPreview extends React.Component<Props> {
 		const node = $(this.node);
 
 		node.find('.item.hover').removeClass('hover');
-		node.find('#item-' + item.id).addClass('hover');
+		node.find('.hoverArea.hover').removeClass('hover');
+		node.find(`#item-${item.id}`).addClass('hover');
+		node.find(`#item-${item.id} .hoverArea`).addClass('hover');
 	};
 
 	onKeyUp (e: any) {
@@ -148,7 +192,7 @@ class ListObjectPreview extends React.Component<Props> {
 			this.setActive();
 		});
 
-		keyboard.shortcut('enter, space', e, (pressed: string) => {
+		keyboard.shortcut('enter, space', e, () => {
 			this.onClick(e, items[this.n]);
 		});
 	};
@@ -165,6 +209,8 @@ class ListObjectPreview extends React.Component<Props> {
 		this.page += dir;
 		this.page = Math.min(max, Math.max(0, this.page));
 
+		const x = -this.page * (w + 16 + offsetX);
+
 		arrowLeft.removeClass('dn');
 		arrowRight.removeClass('dn');
 
@@ -174,8 +220,6 @@ class ListObjectPreview extends React.Component<Props> {
 		if (this.page == max) {
 			arrowRight.addClass('dn');
 		};
-
-		let x = -this.page * (w + 16 + offsetX);
 
 		scroll.css({ transform: `translate3d(${x}px,0px,0px` });
 	};

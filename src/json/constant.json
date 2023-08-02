@@ -61,14 +61,15 @@
 		"featuredType":	 [ "searchObject", "typeSuggest" ],
 		"dataviewHead":	 [ "dataviewSource", "searchObject" ],
 		"store":		 [ "typeSuggest", "relationSuggest" ],
-		"widget":		 [ "searchObject", "select" ]
+		"widget":		 [ "searchObject", "select" ],
+		"dataviewTemplate": [ "previewObject" ]
 	},
 
 	"popupPinIds": [ "search" ],
 
 	"defaultRelationKeys": [ 
 		"id", "workspaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
-		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions"
+		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions", "defaultTemplateId"
 	],
 
 	"sidebarRelationKeys": [
@@ -83,7 +84,7 @@
 
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
-	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject" ],
+	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "defaultTemplateId" ],
 	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 
 	"pageCoverRelationKey": "pageCover",
@@ -131,6 +132,10 @@
 	},
 
 	"storeSpaceId": "_anytype_marketplace",
+
+	"templateId": {
+		"blank": "blank"
+	},
 
 	"blockId": {
 		"title": "title",

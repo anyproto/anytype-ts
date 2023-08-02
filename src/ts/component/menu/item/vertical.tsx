@@ -9,8 +9,8 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 
 	render () {
 		const { 
-			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect,
-			className, style, iconSize, switchValue, selectValue, options, readonly, forceLetter, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave,
+			id, icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore,
+			className, style, iconSize, switchValue, selectValue, options, readonly, forceLetter, onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore,
 			selectMenuParam,
 		} = this.props;
 		const cn = [ 'item' ];
@@ -42,6 +42,9 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 		};
 		if (checkbox) {
 			cn.push('withCheckbox');
+		};
+		if (withMore) {
+			cn.push('withMore');
 		};
 		if (isActive) {
 			cn.push('active');
@@ -105,6 +108,7 @@ class MenuItemVertical extends React.Component<I.MenuItem> {
 						) : (
 							<div className="caption">{caption}</div>
 						)}
+						{withMore ? <Icon className="more" onMouseDown={onMore} /> : ''}
 					</React.Fragment>
 				);
 			};

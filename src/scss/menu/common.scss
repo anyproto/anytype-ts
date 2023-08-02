@@ -87,6 +87,9 @@
 		.item.hover, .item:hover {
 			.icon.delete, .icon.more { opacity: 1; }
 		}
+		.item.withMore.hover, .item.withMore:hover {
+			.caption { opacity: 0; }
+		}
 
 		.item.isReadonly::before { transition: none; }
 		.item.isReadonly.hover::before, .item.isReadonly:hover::before { opacity: 0; background: none; }

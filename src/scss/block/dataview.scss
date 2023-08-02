@@ -71,6 +71,18 @@
 				> .side.right { flex-shrink: 0; gap: 0px 4px; justify-content: flex-end; }
 				> .side.right {
 					.button { margin-left: 6px; }
+
+					.buttonNewWrapper { margin-left: 6px; }
+					.buttonNewWrapper {
+						.button { margin-left: 0; }
+					}
+					.buttonNewWrapper.withSelect {
+						.button.addRecord { border-radius: 6px 0 0 6px; }
+						.button.select {
+							width: 24px; height: 28px; border: 0 solid; border-left: 1px solid rgba(255, 255, 255, .1); border-radius: 0 6px 6px 0;
+						}
+						.button.select:after { content: ''; position: absolute; left: 1px; top: 4px; width: 20px; height: 20px; background: url('~img/arrow/button/white.svg') 50% 50% no-repeat; }
+					}
 				}
 			}
 

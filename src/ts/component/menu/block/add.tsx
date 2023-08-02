@@ -624,7 +624,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					};
 
 					UtilData.checkTemplateCnt([ item.objectTypeId ], (message: any) => {
-						if (message.records.length > 1) {
+						if (message.records.length) {
 							popupStore.open('template', {
 								data: { 
 									typeId: item.objectTypeId,
@@ -632,7 +632,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								},
 							});
 						} else {
-							create(message.records.length ? message.records[0] : '');
+							create('');
 						};
 					});
 				} else {

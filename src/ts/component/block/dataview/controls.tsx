@@ -24,7 +24,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	};
 
 	render () {
-		const { className, rootId, block, getView, onRecordAdd, isInline } = this.props;
+		const { className, rootId, block, getView, onRecordAdd, onTemplatesMenu, isInline } = this.props;
 		const views = dbStore.getViews(rootId, block.id);
 		const view = getView();
 		const sortCnt = view.sorts.length;
@@ -32,7 +32,13 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const filterCnt = filters.length;
 		const allowedView = blockStore.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 		const cn = [ 'dataviewControls' ];
+		const buttonWrapperCn = [ 'buttonNewWrapper' ];
 		const isAllowedObject = this.props.isAllowedObject();
+		const isAllowedTemplate = this.props.isAllowedTemplate();
+
+		if (isAllowedTemplate) {
+			buttonWrapperCn.push('withSelect')
+		};
 
 		if (className) {
 			cn.push(className);
@@ -129,13 +135,23 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 							<ButtonItem key={item.id} {...item} />
 						))}	
 						{isAllowedObject ? (
-							<Button 
-								id={`button-${block.id}-add-record`}
-								className="addRecord c28" 
-								tooltip={translate('blockDataviewCreateNew')} 
-								text={translate('commonNew')} 
-								onClick={e => onRecordAdd(e, -1)} 
-							/>
+							<div className={buttonWrapperCn.join(' ')}>
+								<Button
+									id={`button-${block.id}-add-record`}
+									className="addRecord c28"
+									tooltip={translate('blockDataviewCreateNew')}
+									text={translate('commonNew')}
+									onClick={e => onRecordAdd(e, -1)}
+								/>
+								{isAllowedTemplate ? (
+									<Button
+										id={`button-${block.id}-add-record-select`}
+										className="select c28"
+										tooltip={translate('blockDataviewShowTemplates')}
+										onClick={e => onTemplatesMenu(e, -1)}
+									/>
+								) : ''}
+							</div>
  						) : ''}
 					</div>
 				</div>
