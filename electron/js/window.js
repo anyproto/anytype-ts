@@ -197,7 +197,7 @@ class WindowManager {
 						Util.send(win, 'commandGlobal', 'saveAsHTMLSuccess');
 					} else {
 						Util[cmd](win, path.dirname(fp), path.basename(fp), param.options);
-					}
+					};
 				});
 				break;
 		};
@@ -212,7 +212,7 @@ class WindowManager {
 	getWindowPosition (param, displayWidth, displayHeight) {
 		let x = Math.round(displayWidth / 2 - param.width / 2);
 		let y = Math.round(displayHeight / 2 - param.height / 2 + 20);
-		const currentWindow = BrowserWindow.getFocusedWindow();
+		let currentWindow = BrowserWindow.getFocusedWindow();
 
 		if (currentWindow) {
 			const [xPos, yPos] = currentWindow.getPosition();
