@@ -492,7 +492,7 @@ class Relation {
 	};
 
 	systemKeys () {
-		return require('lib/json/systemRelations.json');
+		return require('lib/json/generated/systemRelations.json');
 	};
 	
 };

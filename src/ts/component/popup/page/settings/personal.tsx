@@ -4,7 +4,6 @@ import { Icon, Title, Label, Select } from 'Component';
 import { I, translate, analytics, Renderer, UtilObject } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
-import Locale from 'json/locale.json';
 
 const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal extends React.Component<I.PopupSettings> {
 
@@ -95,6 +94,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	getInterfaceLanguages () {
 		const ret: any[] = [];
+		const Locale = require('lib/json/locale.json');
 
 		for (let id of Constant.enabledInterfaceLang) {
 			ret.push({ id, name: Locale[id] })

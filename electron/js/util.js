@@ -119,7 +119,7 @@ class Util {
 
 			// Replace files loaded by url and copy them in page folder
 			try {
-				content = content.replace(/"(file:\/\/[^"]+)"/g, function (s, p, o) {
+				content = content.replace(/'(file:\/\/[^']+)'/g, function (s, p, o) {
 					let a = p.split('app.asar/dist/');
 					let name = a[1].split('/');
 
@@ -129,7 +129,7 @@ class Util {
 					let dst = path.join(filesPath, name).replace(/\?.*/, '');
 
 					fs.copyFileSync(src, dst);
-					return `"./${fn}/${name}"`;
+					return `'./${fn}/${name}'`;
 				});
 			} catch (e) {
 				this.log('info', e);
@@ -145,17 +145,17 @@ class Util {
 				let replaceJs = '';
 				let replaceCss = '';
 				let replaceMeta = `
-					<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+					<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 				`;
 
 				js.forEach(it => {
 					fs.copyFileSync(`${ap}/dist/js/${it}.js`, path.join(filesPath, it + '.js'));
-					replaceJs += `<script src="./${fn}/${it}.js" type="text/javascript"></script>`;
+					replaceJs += `<script src='./${fn}/${it}.js' type='text/javascript'></script>`;
 				});
 
 				css.forEach(it => {
 					fs.copyFileSync(`${ap}/dist/css/${it}.css`, path.join(filesPath, it + '.css'));
-					replaceCss += `<link rel="stylesheet" href="./${fn}/${it}.css" type="text/css" />`;
+					replaceCss += `<link rel='stylesheet' href='./${fn}/${it}.css' type='text/css' />`;
 				});
 
 				content = content.replace('<!-- %REPLACE-JS% -->', replaceJs);
@@ -208,6 +208,10 @@ class Util {
 
 	getLang () {
 		return ConfigManager.config.interfaceLang || 'en-US';
+	};
+
+	enabledLangs () {
+		return [ 'da-DK', 'de-DE', 'en-US', 'es-ES', 'fr-FR', 'hi-IN', 'it-IT', 'nb-NO', 'zh-CN', 'zh-TW' ];
 	};
 
 	translate (key) {
