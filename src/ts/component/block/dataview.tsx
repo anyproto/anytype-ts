@@ -775,6 +775,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						horizontal: I.MenuDirection.Right,
 						data: {
 							template: item,
+							isView: true,
 							onOver: () => menuStore.closeAll([ 'previewObject' ]),
 							onSetDefault: () => {
 								this.setDefaultTemplateForView(item.id, () => {
