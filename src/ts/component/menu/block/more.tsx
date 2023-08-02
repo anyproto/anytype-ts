@@ -177,7 +177,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!allowedHistory)	 history = null;
 		if (!allowedFav)		 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
-		if (!allowedTemplate)	 template = null;
+		if (!isTemplate && !allowedTemplate)	 template = null;
 		if (allowedUninstall)	 archive = null;
 
 		let sections = [];
