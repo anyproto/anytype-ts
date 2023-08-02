@@ -245,7 +245,7 @@ class MenuContext extends React.Component<I.Menu> {
 					onSelect: (el: any) => {
 						if (onLinkTo) {
 							onLinkTo(itemId, el.id);
-						}
+						};
 
 						close();
 					},

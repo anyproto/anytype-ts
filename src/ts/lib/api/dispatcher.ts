@@ -79,7 +79,7 @@ class Dispatcher {
 				this.reconnects++;
 			}, t);
 		});
-	}
+	};
 
 	eventType (v: number): string {
 		const V = Events.Event.Message.ValueCase;
@@ -145,7 +145,7 @@ class Dispatcher {
 		if (v == V.FILELIMITREACHED)			 t = 'fileLimitReached';
 
 		return t;
-	}
+	};
 
 	event (event: Events.Event, skipDebug?: boolean) {
 		const { config } = commonStore;
@@ -262,7 +262,7 @@ class Dispatcher {
 						Preview.toastShow({ text: 'Your local storage exceeds syncing limit. Locally stored files won\'t be synced' });
 					};
 					break;
-				}
+				};
 
 				case 'blockAdd': {
 					blocks = data.getBlocksList() || [];
@@ -718,7 +718,7 @@ class Dispatcher {
 						blockStore.updateWidgetData(rootId);
 					};
 					break;
-				}
+				};
 
 				case 'blockDataviewViewDelete': {
 					id = data.getId();
@@ -831,7 +831,7 @@ class Dispatcher {
 					blockStore.updateContent(rootId, id, { objectOrder: block.content.objectOrder });
 					blockStore.updateWidgetData(rootId);
 					break;
-				}
+				};
 
 				case 'objectDetailsSet': {
 					id = data.getId();
@@ -901,7 +901,7 @@ class Dispatcher {
 
 					this.subscriptionPosition(subId, id, afterId, false);
 					break;
-				}
+				};
 
 				case 'subscriptionCounters': {
 					const total = data.getTotal();
@@ -1026,14 +1026,14 @@ class Dispatcher {
 			if (needLog) {
 				log(rootId, type, data, message.getValueCase());
 			};
-		}
+		};
 		
 		window.clearTimeout(this.timeoutEvent[rootId]);
 		this.timeoutEvent[rootId] = window.setTimeout(() => { 
 			blockStore.updateNumbers(rootId); 
 			blockStore.updateMarkup(rootId);
 		}, 10);
-	}
+	};
 
 	detailsUpdate (details: any, rootId: string, id: string, subIds: string[], clear: boolean) {
 		const root = blockStore.getLeaf(rootId, id);
@@ -1120,7 +1120,7 @@ class Dispatcher {
 			if (it.type == I.BlockType.Dataview) {
 				dbStore.relationsSet(contextId, it.id, it.content.relationLinks);
 				dbStore.viewsSet(contextId, it.id, it.content.views);
-			}
+			};
 
 			structure.push({ id: it.id, childrenIds: it.childrenIds });
 			return new M.Block(it);
@@ -1141,7 +1141,7 @@ class Dispatcher {
 		blockStore.updateNumbers(contextId); 
 		blockStore.updateMarkup(contextId);
 		blockStore.checkTypeSelect(contextId);
-	}
+	};
 
 	public request (type: string, data: any, callBack?: (message: any) => void) {
 		type = type.replace(/^command_/, '');
@@ -1155,7 +1155,7 @@ class Dispatcher {
 			return;
 		};
 
-		const t0 = performance.now();
+		let t0 = performance.now();
 		let t1 = 0;
 		let t2 = 0;
 		let d = null;

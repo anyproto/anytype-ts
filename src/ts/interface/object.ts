@@ -52,7 +52,7 @@ export enum RelationScope {
 	SetOfTheSameType	 = 2,
 	ObjectsOfTheSameType = 3,
 	Library				 = 4,
-}
+};
 
 export enum OptionScope {
     Local	 = 0,

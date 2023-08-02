@@ -6,11 +6,11 @@ import Head from '../head';
 
 interface Props extends I.PopupSettings {
 	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
-}
+};
 
 interface State {
 	error: string;
-}
+};
 
 const Delimiters: any[] = [
 	{ id: 'comma', name: 'Comma', caption: ',' },
@@ -215,13 +215,13 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 			const paths = result.filePaths;
 			if ((paths == undefined) || !paths.length) {
 				return;
-			}
+			};
 
 			onImport(I.ImportType.Csv, { paths, ...this.data }, (message: any) => {
 				if (message.error.code) {
 					this.setState({ error: message.error.description });
 					return;
-				}
+				};
 
 				close();
 			});
@@ -232,6 +232,6 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 		this.props.storageSet({ csv: this.data });
 	};
 
-}
+};
 
 export default PopupSettingsPageImportCsv;
