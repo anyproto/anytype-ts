@@ -104,6 +104,7 @@
     "commonUpdated": "Updated",
     "commonUndo": "Undo",
     "commonRedo": "Redo",
+    "commonBlank": "commonBlank",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -493,6 +494,7 @@
 
     "blockDataviewBoardColumnSettings": "Column settings",
     "blockDataviewSelectTemplate": "Choose a template",
+    "blockDataviewNewTemplate": "New template",
 
     "blockCoverDrag": "Drag image to reposition",
     "blockCoverSave": "Save changes",

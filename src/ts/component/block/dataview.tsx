@@ -710,13 +710,13 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				mapElement: it => ({
 					...it,
 					withMore: it.id != 'newTemplate',
-					caption: it.id == this.getView().defaultTemplateId ? 'Default' : ' '
+					caption: it.id == this.getView().defaultTemplateId ? translate('commonDefault') : ' '
 				}),
 				dataChange: (items: any[]) => {
-					const fixed: any[] = [ { id: Constant.templateId.blank, name: 'Blank', isBlank: true } ];
+					const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank'), isBlank: true } ];
 					const bottom: any[] = [
 						{ isDiv: true },
-						{ id: 'newTemplate', name: 'New template', icon: 'plus' }
+						{ id: 'newTemplate', name: translate('blockDataviewNewTemplate'), icon: 'plus' }
 					];
 
 					return !items.length ? fixed.concat(bottom) : fixed.concat(items).concat(bottom);
