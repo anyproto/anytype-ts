@@ -509,7 +509,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
 		const { defaultTemplateId } = object;
-		const template: any = { id: item.id };
+		const template: any = { id: item.id, typeId: rootId };
 
 		if (menuStore.isOpen('dataviewTemplate', item.id)) {
 			menuStore.close('dataviewTemplate');

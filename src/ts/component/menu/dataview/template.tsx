@@ -1,7 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, translate } from 'Lib';
+import { analytics, C, I, keyboard, UtilObject, translate, focus } from 'Lib';
+import Constant from 'json/constant.json';
+import { commonStore, dbStore } from 'Store';
 
 class MenuTemplate extends React.Component<I.Menu> {
 
@@ -61,7 +63,7 @@ class MenuTemplate extends React.Component<I.Menu> {
     onClick (e: any, item: any) {
         const { param, close } = this.props;
         const { data } = param;
-        const { template, onSetDefault, onDelete, onDuplicate } = data;
+        const { template, onSetDefault, onDelete, onDuplicate, onTemplateAdd } = data;
 
 		close();
 
@@ -79,15 +81,36 @@ class MenuTemplate extends React.Component<I.Menu> {
             };
 
             case 'duplicate': {
+				if (template.id == Constant.templateId.blank) {
+					const type = dbStore.getType(template.typeId);
+					const details: any = {
+						type: Constant.typeId.template,
+						targetObjectType: template.typeId,
+						layout: type.recommendedLayout,
+					};
+
+					C.ObjectCreate(details, [], '', (message) => {
+						if (message.error.code) {
+							return;
+						};
+
+						analytics.event('CreateTemplate', { objectType: template.typeId, route: 'menuDataviewTemplate' });
+
+						if (onDuplicate) {
+							onDuplicate(message.details);
+						};
+					});
+					break;
+				};
+
                 C.ObjectListDuplicate([ template.id ], (message: any) => {
-                    if (!message.error.code && message.ids.length) {
+					if (!message.error.code && message.ids.length) {
 						if (onDuplicate) {
 							onDuplicate({ ...template, id: message.ids[0] });
 						};
-
-                        analytics.event('DuplicateObject', { count: 1, route: 'menuDataviewTemplate' });
-                    };
-                });
+						analytics.event('DuplicateObject', { count: 1, route: 'menuDataviewTemplate' });
+					};
+				});
                 break;
             };
 
