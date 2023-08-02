@@ -314,7 +314,7 @@
 		"yaml":			 "YAML"
 	},
 
-	"enabledInterfaceLang": [ "en-US", "fr-FR", "zh-CN", "zh-TW", "de-DE", "es-ES", "nb-NO" ],
+	"enabledInterfaceLang": ["da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "hi-IN", "it-IT", "nb-NO", "zh-CN", "zh-TW"],
 
 	"spellingLang": {
 		"af": "Afrikaans", 
