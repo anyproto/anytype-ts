@@ -56,7 +56,7 @@ class MenuTemplate extends React.Component<I.Menu> {
 			!isDefault ? ({ id: 'default', name: translate('menuDataviewTemplateSetDefault') }) : null,
 			!isBlank ? ({ id: 'edit', name: translate('menuDataviewTemplateEdit') }) : null,
 			{ id: 'duplicate', name: translate('commonDuplicate') },
-			!isBlank ? ({ id: 'delete', name: translate('commonDelete') }) : null,
+			!isBlank ? ({ id: 'remove', name: translate('commonDelete') }) : null,
 		].filter(it => it);
     };
 
@@ -114,7 +114,7 @@ class MenuTemplate extends React.Component<I.Menu> {
                 break;
             };
 
-            case 'delete': {
+            case 'remove': {
                 C.ObjectSetIsArchived(template.id, true, (message: any) => {
                     if (!message.error.code) {
                         if (onDelete) {

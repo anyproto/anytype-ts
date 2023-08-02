@@ -568,11 +568,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return menuParam;
 	};
 
-	setDefaultTemplateForView (id, cb) {
+	setDefaultTemplateForView (id: string, cb?: () => void) {
 		const { rootId, block } = this.props;
 		const view = this.getView();
 
-		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: id }, cb);
+		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: id }, () => {
+			if (cb) {
+				cb();
+			};
+		});
 	};
 
 	recordCreate (e: any, template: any, dir: number) {
@@ -778,7 +782,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 								});
 							},
 							onDuplicate: (object) => UtilObject.openPopup(object, {}),
-							onDelete: () => menuContext.ref.reload()
+							onDelete: () => {
+								if (item.isDefault) {
+									this.setDefaultTemplateForView(Constant.templateId.blank);
+								};
+								menuContext.ref.reload();
+							}
 						}
 					});
 				}
