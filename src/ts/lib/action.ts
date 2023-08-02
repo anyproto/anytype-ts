@@ -213,7 +213,7 @@ class Action {
 	};
 
 	export (ids: string[], format: I.ExportType, zip: boolean, nested: boolean, files: boolean, archived: boolean, onSelectPath?: () => void, callBack?: (message: any) => void): void {
-		this.openDir({ buttonLabel: 'Export' }, paths => {
+		this.openDir({ buttonLabel: translate('commonExport') }, paths => {
 			if (onSelectPath) {
 				onSelectPath();
 			};
@@ -249,13 +249,13 @@ class Action {
 
 			switch (object.layout) {
 				case I.ObjectLayout.Type: {
-					toast = `Object type <b>${object.name}</b> has been added to your library`;
+					toast = UtilCommon.sprintf(translate('toastObjectTypeAdded'), object.name);
 					subId = Constant.subId.type;
 					break;
 				};
 
 				case I.ObjectLayout.Relation: {
-					toast = `Relation <b>${object.name}</b> has been added to your library`;
+					toast = UtilCommon.sprintf(translate('toastRelationAdded'), object.name);
 					subId = Constant.subId.relation;
 					break;
 				};
@@ -277,16 +277,16 @@ class Action {
 		
 		switch (object.layout) {
 			case I.ObjectLayout.Type: {
-				title = 'Are you sure you want to remove this Type?';
-				text = 'This Type and any associated Templates will be removed. If you have created any Objects with this Type, they may become more difficult to locate.';
-				toast = `Object type <b>${object.name}</b> has been removed from your library`;
+				title = translate('libActionUninstallTypeTitle');
+				text = translate('libActionUninstallTypeText');
+				toast = UtilCommon.sprintf(translate('toastObjectTypeRemoved'), object.name);
 				break;
 			};
 
 			case I.ObjectLayout.Relation: {
-				title = 'Are you sure you want to remove this Relation?';
-				text = 'This Relation will be removed from your Library. If you have created any Objects with which use this Relation, you will no longer be able to edit the Relation value.';
-				toast = `Relation <b>${object.name}</b> has been removed from your library`;
+				title = translate('libActionUninstallRelationTitle');
+				text = translate('libActionUninstallRelationText');
+				toast = UtilCommon.sprintf(translate('toastRelationRemoved'), object.name);
 				break;
 			};
 		};
@@ -324,9 +324,9 @@ class Action {
 
 		popupStore.open('confirm', {
 			data: {
-				title: `Are you sure you want to delete ${count} ${UtilCommon.cntWord(count, 'object', 'objects')}?`,
-				text: `These objects will be deleted irrevocably. You can't undo this action.`,
-				textConfirm: 'Delete',
+				title: UtilCommon.sprintf(translate('commonDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
+				text: translate('commonDeletionWarningText'),
+				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(ids); 
 					callBack();

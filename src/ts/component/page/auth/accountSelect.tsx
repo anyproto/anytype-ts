@@ -40,14 +40,10 @@ const PageAccountSelect = observer(class PageAccountSelect extends React.Compone
 		C.WalletRecover(walletPath, phrase, () => {
 			UtilData.createSession(() => {
 				C.AccountRecover((message) => {
-					let error = '';
-					
 					if (message.error.code) {
 						UtilCommon.checkError(message.error.code);
-						error = Errors.AccountRecover[message.error.code] || message.error.description;
+						this.setState({ error: message.error.description });
 					};
-
-					this.setState({ error });
 				});
 			});
 		});

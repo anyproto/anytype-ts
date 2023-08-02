@@ -37,14 +37,14 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 	}
 
 	render () {
+		this.init();
+
 		const { error } = this.state;
 		const modeOptions = [ 
-			{ id: I.CsvImportMode.Table, name: 'Table' },
-			{ id: I.CsvImportMode.Collection, name: 'Collection' },
+			{ id: I.CsvImportMode.Table, name: translate('popupSettingsImportCsvTable') },
+			{ id: I.CsvImportMode.Collection, name: translate('popupSettingsImportCsvCollection') },
 		].map(it => ({ ...it, id: String(it.id) }));
 		const { delimiter, delimiters } = this.delimiterOptions();
-
-		this.init();
 
 		return (
 			<div>
@@ -56,7 +56,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 				<div className="actionItems">
 					<div className="item">
-						<Label text="Mode" />
+						<Label text={translate('popupSettingsImportCsvMode')} />
 						<Select 
 							ref={ref => this.refMode = ref}
 							id="csv-import-mode" 
@@ -72,7 +72,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 					</div>
 
 					<div className="item">
-						<Label text="Use the first row as column names" />
+						<Label text={translate('popupSettingsImportCsvUseFirstRow')} />
 						<Switch 
 							value={this.data.firstRow} 
 							className="big" 
@@ -84,7 +84,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 					</div>
 
 					<div className="item">
-						<Label text="Transpose rows and columns" />
+						<Label text={translate('popupSettingsImportCsvTranspose')} />
 						<Switch 
 							value={this.data.transpose} 
 							className="big" 
@@ -96,7 +96,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 					</div>
 
 					<div className="item">
-						<Label text="Columns are divided by" />
+						<Label text={translate('popupSettingsImportCsvColumnsDivider')} />
 						<Select 
 							ref={ref => this.refDelimiter = ref}
 							id="csv-import-delimiter" 
@@ -109,7 +109,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 								data: { 
 									withFilter: true,
 									preventFilter: true,
-									placeholder: 'Custom symbol',
+									placeholder: translate('popupSettingsImportCsvCustomSymbol'),
 									onFilterKeyUp: this.onFilterKeyUp,
 								},
 							}}
@@ -129,9 +129,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 	componentDidMount(): void {
 		this.init();
-		this.refMode.setValue(String(this.data.mode));
-		this.refDelimiter.setValue(this.data.delimiter);
-	}
+	};
 
 	init () {
 		const { storageGet } = this.props;
@@ -147,7 +145,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 			transpose: Boolean(options.transpose),
 			delimiter: String(options.delimiter || ','),
 		};
-	}
+	};
 
 	onFilterKeyUp (e: React.KeyboardEvent, v: string) {
 		keyboard.shortcut('enter', e, () => {
@@ -163,7 +161,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 			menuStore.close('select');
 		});
-	}
+	};
 
 	delimiterSet (id: string, v: string) {
 		const option = Delimiters.find(it => {
@@ -184,19 +182,19 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 		}
 
 		this.save();
-	}
+	};
 
 	delimiterOptions () {
 		const delimiters = UtilCommon.objectCopy(Delimiters);
 
 		let delimiter = delimiters.find(it => (it.value == this.data.delimiter) || (it.caption == this.data.delimiter));
 		if (!delimiter) {
-			delimiter = { id: 'custom', name: 'Custom', caption: this.data.delimiter };
+			delimiter = { id: 'custom', name: translate('popupSettingsImportCsvCustom'), caption: this.data.delimiter };
 			delimiters.push(delimiter);
 		}
 
 		return { delimiter, delimiters };
-	}
+	};
 
 	onImport () {
 		const { close, onImport } = this.props;
@@ -209,7 +207,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 		if (UtilCommon.isPlatformMac()) {
 			options.properties.push('openDirectory');
-		}
+		};
 
 		analytics.event('ClickImport', { type: I.ImportType.Csv });
 
@@ -228,13 +226,11 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 				close();
 			});
 		});
-	}
+	};
 
 	save () {
-		const { storageSet } = this.props;
-
-		storageSet({ csv: this.data });
-	}
+		this.props.storageSet({ csv: this.data });
+	};
 
 }
 

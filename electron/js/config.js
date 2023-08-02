@@ -3,9 +3,9 @@ const storage = require('electron-json-storage');
 const version = app.getVersion();
 
 const ChannelSettings = [
-	{ id: 'alpha', name: 'Alpha' },
-	{ id: 'beta', name: 'Pre-release' },
-	{ id: 'latest', name: 'Public' },
+	{ id: 'alpha', lang: 'electronChannelAlpha' },
+	{ id: 'beta', lang: 'electronChannelBeta' },
+	{ id: 'latest', lang: 'electronChannelLatest' },
 ];
 
 const CONFIG_NAME = 'devconfig';
@@ -74,8 +74,10 @@ class ConfigManager {
 	};
 
 	getChannels () {
+		const Util = require('./util.js');
+
 		let channels = ChannelSettings.map((it) => {
-			return { id: it.id, label: it.name, type: 'radio', checked: (this.config.channel == it.id) };
+			return { id: it.id, label: Util.translate(it.lang), type: 'radio', checked: (this.config.channel == it.id) };
 		});
 		if (!this.config.sudo) {
 			channels = channels.filter(it => it.id != 'alpha');

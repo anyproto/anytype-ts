@@ -10,40 +10,40 @@ class PopupSettingsPageImportNotionHelp extends React.Component<I.PopupSettings>
 			<div>
 				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
 				<Icon className="logo" />
-				<Title text="How to import from Notion" />
+				<Title text={translate('popupSettingsImportNotionHelpTitle')} />
 				
-				<Label className="step" text="Step 1" />
+				<Label className="step" text={UtilCommon.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
 				<ol className="list">
 					<li>
-						Open Settings and members
+						{translate('popupSettingsImportNotionHelpStep11')}
 						<img src="./img/help/notion/1-1.png" />
 					</li>
 					<li>
-						Open My Connections and then Develop or manage integrations
+						{translate('popupSettingsImportNotionHelpStep12')}
 						<img src="./img/help/notion/1-2.png" />
 					</li>
 					<li>
-						Click New integration or Create new integration
+						{translate('popupSettingsImportNotionHelpStep13')}
 						<img src="./img/help/notion/1-3.png" />
 					</li>
 					<li>
-						Create a name (e.g. Anytype). Check the Capabilities (Read content and Read user information are required for the integration process). 
+						{translate('popupSettingsImportNotionHelpStep14')}
 						<img src="./img/help/notion/1-4.png" />
 					</li>
 					<li>
-						You integration will be created permanently. Internal Integration Token requires for connecting and importing your content from Notion. Copy it.
+						{translate('popupSettingsImportNotionHelpStep15')}
 						<img src="./img/help/notion/1-5.png" />
 					</li>
 				</ol>
 
-				<Label className="step" text="Step 2" />
+				<Label className="step" text={UtilCommon.sprintf(translate('popupSettingsImportNotionHelpStep'), 2)} />
 				<ol className="list">
 					<li>
-						Select the pages you want to import into Anytype. Click on three dots on the upper right corner, then Add connections. Select your Anytype integration.
+						{translate('popupSettingsImportNotionHelpStep21')}
 						<img src="./img/help/notion/2-1.png" />
 					</li>
 					<li>
-						Press Confirm. Now you just need to paste your Internal Integration Token to Anytype.
+						{translate('popupSettingsImportNotionHelpStep22')}
 						<img src="./img/help/notion/2-2.png" />
 					</li>
 				</ol>

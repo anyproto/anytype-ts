@@ -10,7 +10,7 @@ const ctrl = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const Tabs = [
 	{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${ctrl} + ${alt} + O` },
-	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltipCaption: `${ctrl} + O` },
+	{ id: 'navigation', name: translate('commonFlow'), layout: I.ObjectLayout.Navigation, tooltipCaption: `${ctrl} + O` },
 ];
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
@@ -337,7 +337,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			...param,
 			data: {
 				options: [
-					{ id: 'newObject', name: 'New object' },
+					{ id: 'newObject', name: translate('pageMainGraphNewObject') },
 				],
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {

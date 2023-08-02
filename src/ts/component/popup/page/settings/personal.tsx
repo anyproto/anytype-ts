@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, Title, Label, Select } from 'Component';
-import { I, translate, analytics, Renderer, UtilObject, Storage } from 'Lib';
+import { I, translate, analytics, Renderer, UtilObject } from 'Lib';
 import { commonStore, menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -55,12 +55,9 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 						<Select
 							id="interfaceLang"
-							value={Storage.get('interfaceLang')}
+							value={config.interfaceLang}
 							options={interfaceLanguages}
-							onChange={v => {
-								Storage.set('interfaceLang', v);
-								Renderer.send('reloadAllWindows');
-							}}
+							onChange={v => Renderer.send('changeInterfaceLang', v)}
 							arrowClassName="black"
 							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
 						/>
@@ -92,9 +89,10 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 	getInterfaceLanguages () {
 		const ret: any[] = [];
+		const Locale = require('lib/json/locale.json');
 
-		for (let id in Constant.interfaceLang) {
-			ret.push({ id, name: Constant.interfaceLang[id] })
+		for (let id of Constant.enabledInterfaceLang) {
+			ret.push({ id, name: Locale[id] })
 		};
 
 		return ret;
@@ -105,7 +103,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 		ret = ret.concat(commonStore.languages || []);
 		ret = ret.map(id => ({ id, name: Constant.spellingLang[id] }));
-		ret.unshift({ id: '', name: 'Disabled' });
+		ret.unshift({ id: '', name: translate('commonDisabled') });
 
 		return ret;
 	};

@@ -313,7 +313,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			const actions = UtilMenu.getActions({ hasFile: false, hasLink: false });
 
 			if (block.canTurnPage()) {
-				actions.push({ id: 'turnObject', icon: 'object', name: translate('menuBlockActionsSectionsTurnIntoObject'), arrow: true });
+				actions.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
 			};
 
 			sections = sections.concat([

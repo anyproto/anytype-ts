@@ -2,6 +2,7 @@ const { app, shell, BrowserWindow } = require('electron');
 const keytar = require('keytar');
 const { download } = require('electron-dl');
 
+const MenuManager = require('./menu.js');
 const ConfigManager = require('./config.js');
 const WindowManager = require('./window.js');
 const UpdateManager = require('./update.js');
@@ -33,7 +34,7 @@ class Api {
 	};
 
 	setConfig (win, config) {
-		ConfigManager.set(config, (err) => { Util.send(win, 'config', ConfigManager.config); });
+		ConfigManager.set(config, (err) => Util.send(win, 'config', ConfigManager.config));
 	};
 
 	setAccount (win, account) {
@@ -157,6 +158,17 @@ class Api {
 
 	reloadAllWindows () {
 		BrowserWindow.getAllWindows().forEach(win => win.webContents.reload());
+	};
+
+	changeInterfaceLang (win, lang) {
+		console.log('[changeInterfaceLang]', lang);
+
+		ConfigManager.set({ interfaceLang: lang }, (err) => {
+			this.reloadAllWindows();
+
+			MenuManager.initMenu();
+			MenuManager.initTray();
+		});
 	};
 
 };

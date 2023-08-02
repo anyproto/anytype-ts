@@ -92,7 +92,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		let rl = relations.length;
 
 		if (tl) {
-			const pluralType = UtilCommon.cntWord(tl, translate('blockFeaturedType'), translate('blockFeaturedTypes'));
+			const pluralType = UtilCommon.plural(tl, translate('pluralType'));
 			types = types.slice(0, SOURCE_LIMIT);
 			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), pluralType, types.join(', ')));
 
@@ -102,7 +102,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		};
 		if (rl) {
 			relations = relations.slice(0, SOURCE_LIMIT);
-			setOfString.push(`${UtilCommon.cntWord(rl, translate('blockFeaturedRelation'), translate('blockFeaturedRelations'))}: ${relations.join(', ')}`);
+			setOfString.push(`${UtilCommon.plural(rl, translate('pluralUCRelation'))}: ${relations.join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{rl - SOURCE_LIMIT}</div>);

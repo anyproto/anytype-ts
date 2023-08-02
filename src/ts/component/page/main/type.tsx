@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Icon, Header, Footer, Loader, ListObjectPreview, ListObject, Select, Deleted } from 'Component';
-import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation } from 'Lib';
+import { I, C, UtilData, UtilObject, UtilMenu, UtilCommon, focus, Action, analytics, Relation, translate } from 'Lib';
 import { commonStore, detailStore, dbStore, menuStore, popupStore, blockStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -91,13 +91,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const isFileType = UtilObject.isFileLayout(object.recommendedLayout);
 		const columns: any[] = [
 			{ 
-				relationKey: 'lastModifiedDate', name: 'Updated',  
+				relationKey: 'lastModifiedDate', name: translate('commonUpdated'),
 				mapper: (v: any) => UtilCommon.date(UtilData.dateFormat(I.DateFormat.MonthAbbrBeforeDay), v),
 			},
 		];
 
 		if (!isFileType) {
-			columns.push({ relationKey: 'creator', name: 'Owner', isObject: true });
+			columns.push({ relationKey: 'creator', name: translate('pageMainTypeOwner'), isObject: true });
 		};
 
 		const ItemRelation = (item: any) => (
@@ -113,7 +113,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			<div id="item-add" className="item add" onClick={this.onRelationAdd}>
 				<div className="clickable">
 					<Icon className="plus" />
-					<div className="name">New</div>
+					<div className="name">{translate('commonNew')}</div>
 				</div>
 				<div className="value" />
 			</div>
@@ -130,11 +130,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					{showTemplates ? (
 						<div className="section template">
 							<div className="title">
-								{totalTemplate} {UtilCommon.cntWord(totalTemplate, 'template', 'templates')}
+								{totalTemplate} {UtilCommon.plural(totalTemplate, translate('pluralTemplate'))}
 
 								{allowedTemplate ? (
 									<div className="btn" onClick={this.onTemplateAdd}>
-										<Icon className="plus" />New
+										<Icon className="plus" />{translate('commonNew')}
 									</div>
 								) : ''}
 							</div>
@@ -152,7 +152,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 								</div>
 							) : (
 								<div className="empty">
-									This object type doesn&apos;t have templates
+									{translate('pageMainTypeNoTemplates')}
 								</div>
 							)}
 						</div>
@@ -167,7 +167,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 						<React.Fragment>
 							{allowedLayout ? (
 								<div className="section layout">
-									<div className="title">Recommended layout</div>
+									<div className="title">{translate('pageMainTypeRecommendedLayout')}</div>
 									<div className="content">
 										{allowedDetails ? (
 											<Select 
@@ -188,7 +188,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 							) : ''}
 
 							<div className="section relation">
-								<div className="title">{relations.length} {UtilCommon.cntWord(relations.length, 'relation', 'relations')}</div>
+								<div className="title">{relations.length} {UtilCommon.plural(relations.length, translate('pluralRelation'))}</div>
 								<div className="content">
 									{relations.map((item: any, i: number) => (
 										<ItemRelation key={i} {...item} />
@@ -201,7 +201,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 					{object.isInstalled ? (
 						<div className="section set">
-							<div className="title">{totalObject} {UtilCommon.cntWord(totalObject, 'object', 'objects')}</div>
+							<div className="title">{totalObject} {UtilCommon.plural(totalObject, translate('pluralObject'))}</div>
 							<div className="content">
 								<ListObject rootId={rootId} columns={columns} />
 							</div>
@@ -341,10 +341,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const options = [];
 
 		if (allowedObject) {
-			options.push({ id: 'object', name: 'New object' });
+			options.push({ id: 'object', name: translate('pageMainTypeNewObject') });
 		};
 
-		options.push({ id: 'set', name: 'New set of objects' });
+		options.push({ id: 'set', name: translate('pageMainTypeNewSetOfObjects') });
 
 		menuStore.open('select', { 
 			element: `#button-create`,

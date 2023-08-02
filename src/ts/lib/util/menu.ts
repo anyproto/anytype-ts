@@ -126,25 +126,25 @@ class UtilMenu {
 		const { hasText, hasFile, hasBookmark, hasTurnObject } = param;
 		const cmd = keyboard.cmdSymbol();
 		const items: any[] = [
-			{ id: 'remove', icon: 'remove', name: 'Delete', caption: 'Del' },
-			{ id: 'copy', icon: 'copy', name: 'Duplicate', caption: `${cmd} + D` },
-			{ id: 'move', icon: 'move', name: 'Move to', arrow: true },
-			//{ id: 'comment', icon: 'comment', name: 'Comment' }
+			{ id: 'remove', icon: 'remove', name: translate('commonDelete'), caption: 'Del' },
+			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate'), caption: `${cmd} + D` },
+			{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
+			//{ id: 'comment', icon: 'comment', name: translate('commonComment')' }
 		];
 
 		if (hasTurnObject) {
-			items.push({ id: 'turnObject', icon: 'object', name: 'Turn into object', arrow: true });
+			items.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
 		};
 		
 		if (hasText) {
-			items.push({ id: 'clear', icon: 'clear', name: 'Clear style' });
+			items.push({ id: 'clear', icon: 'clear', name: translate('libMenuClearStyle') });
 		};
 		
 		if (hasFile) {
-			items.push({ id: 'download', icon: 'download', name: 'Download' });
+			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
 			items.push({ id: 'openFileAsObject', icon: 'expand', name: translate('commonOpenObject') });
-			//items.push({ id: 'rename', icon: 'rename', name: 'Rename' });
-			//items.push({ id: 'replace', icon: 'replace', name: 'Replace' });
+			//items.push({ id: 'rename', icon: 'rename', name: translate('libMenuRename') });
+			//items.push({ id: 'replace', icon: 'replace', name: translate('libMenuReplace') });
 		};
 
 		if (hasBookmark) {
@@ -159,15 +159,15 @@ class UtilMenu {
 		const sourceName = isCollection ? 'collection' : 'set';
 
 		return [
-			{ id: 'dataviewSource', icon: 'source', name: `Change source ${sourceName}`, arrow: true },
-			{ id: 'openDataviewObject', icon: 'expand', name: `Open source ${sourceName}` },
-			//{ id: 'openDataviewFullscreen', icon: 'expand', name: 'Open fullscreen' }
+			{ id: 'dataviewSource', icon: 'source', name: UtilCommon.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true },
+			{ id: 'openDataviewObject', icon: 'expand', name: UtilCommon.sprintf(translate('libMenuOpenSource'), sourceName) },
+			//{ id: 'openDataviewFullscreen', icon: 'expand', name: translate('libMenuOpenFullscreen') }
 		].map(it => ({ ...it, isAction: true }));
 	};
 	
 	getTextColors () {
 		const items: any[] = [
-			{ id: 'color-default', name: 'Default', value: '', className: 'default', isTextColor: true }
+			{ id: 'color-default', name: translate('commonDefault'), value: '', className: 'default', isTextColor: true }
 		];
 		for (const color of Constant.textColor) {
 			items.push({ id: 'color-' + color, name: translate('textColor-' + color), value: color, className: color, isTextColor: true });
@@ -177,7 +177,7 @@ class UtilMenu {
 	
 	getBgColors () {
 		let items: any[] = [
-			{ id: 'bgColor-default', name: 'Default', value: '', className: 'default', isBgColor: true }
+			{ id: 'bgColor-default', name: translate('commonDefault'), value: '', className: 'default', isBgColor: true }
 		];
 		for (let color of Constant.textColor) {
 			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
@@ -187,9 +187,9 @@ class UtilMenu {
 	
 	getAlign (hasQuote: boolean) {
 		let ret = [
-			{ id: I.BlockHAlign.Left, icon: 'align left', name: 'Align left', isAlign: true },
-			{ id: I.BlockHAlign.Center, icon: 'align center', name: 'Align center', isAlign: true },
-			{ id: I.BlockHAlign.Right, icon: 'align right', name: 'Align right', isAlign: true },
+			{ id: I.BlockHAlign.Left, icon: 'align left', name: translate('commonAlignLeft'), isAlign: true },
+			{ id: I.BlockHAlign.Center, icon: 'align center', name: translate('commonAlignCenter'), isAlign: true },
+			{ id: I.BlockHAlign.Right, icon: 'align right', name: translate('commonAlignRight'), isAlign: true },
 		];
 
 		if (hasQuote) {

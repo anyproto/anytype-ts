@@ -423,9 +423,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Shows an error message and reroutes to the index page after a delay */
 	showErrorAndExit = (message) => {
-		const error = Errors.AccountCreate[message.error.code] || message.error.description;
-
-		this.setState({ error }, () => window.setTimeout(() => UtilRouter.go('/', { replace: true }), 3000));
+		this.setState({ error: message.error.description }, () => window.setTimeout(() => UtilRouter.go('/', { replace: true }), 3000));
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */

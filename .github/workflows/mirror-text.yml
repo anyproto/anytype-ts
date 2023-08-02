@@ -10,6 +10,7 @@ on:
 
 jobs:
   mirror-text-json:
+    if: ${{ github.repository_owner == 'anyproto' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout text.json
@@ -26,6 +27,7 @@ jobs:
         with:
           repository: anyproto/l10n-anytype-ts
           path: l10n-anytype-ts
+          token: ${{ secrets.ANY_CLA_TOKEN }}
 
       - name: Copy files
         run: |

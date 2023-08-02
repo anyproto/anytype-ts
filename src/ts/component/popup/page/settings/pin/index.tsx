@@ -19,7 +19,7 @@ const PopupSettingsPagePinIndex = observer(class PopupSettingsPagePinIndex exten
 				{pin ? (
 					<div className="actionItems">
 						<div className="item">
-							<Label text="PIN code check time-out" />
+							<Label text={translate('popupSettingsPinCheckTimeOut')} />
 
 							<Select
 								id="pinTime"

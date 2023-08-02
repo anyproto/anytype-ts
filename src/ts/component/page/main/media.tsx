@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, ObjectName } from 'Component';
-import { I, M, C, UtilCommon, Action, Renderer, UtilObject } from 'Lib';
+import { I, M, C, UtilCommon, Action, Renderer, UtilObject, translate } from 'Lib';
 import { blockStore, detailStore } from 'Store';
 import Errors from 'json/error.json';
 
@@ -123,8 +123,8 @@ const PageMainMedia = observer(class PageMainMedia extends React.Component<I.Pag
 									/>
 
 									<div className="buttons">
-										<Button text="Open" color="blank" onClick={this.onOpen} />
-										<Button text="Download" color="blank" onClick={this.onDownload} />
+										<Button text={translate('commonOpen')} color="blank" onClick={this.onOpen} />
+										<Button text={translate('commonDownload')} color="blank" onClick={this.onDownload} />
 									</div>
 								</div>
 

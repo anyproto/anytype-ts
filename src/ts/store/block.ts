@@ -306,6 +306,8 @@ class BlockStore {
 
 			const ret = [] as any[];
 			for (const item of list) {
+				item.childBlocks = item.childBlocks || [];
+
 				for (let i = 0; i < item.childBlocks.length; i++) {
 					const child = item.childBlocks[i];
 					if (child.isLayoutDiv()) {
@@ -314,6 +316,7 @@ class BlockStore {
 						item.childBlocks = item.childBlocks.concat(unwrap(child.childBlocks));
 					};
 				};
+
 				ret.push(item);
 			};
 			return ret;
@@ -333,7 +336,7 @@ class BlockStore {
 					};
 				};
 
-				cb(item.childBlocks);
+				cb(unwrap(item.childBlocks));
 			};
 		};
 

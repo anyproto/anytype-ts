@@ -68,11 +68,11 @@ fi;
 rm -rf dist/lib/pb
 rm -rf dist/lib/pkg
 rm -rf dist/lib/protos
-rm -rf dist/lib/json/*.json
+rm -rf dist/lib/json/generated/*.json
 
 mv -fv protobuf/* "dist/lib/"
-mkdir -p dist/lib/json
-mv -fv json/* "dist/lib/json"
+mkdir -p dist/lib/json/generated
+mv -fv json/* "dist/lib/json/generated"
 rm -rf protobuf
 rm -rf relations
 rm -rf json

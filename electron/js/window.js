@@ -145,7 +145,7 @@ class WindowManager {
 			backgroundColor: Util.getBgColor(Util.getTheme()),
 		});
 
-		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}`));
+		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}&lang=${Util.getLang()}`));
 		win.setMenu(null);
 
 		win.webContents.on('will-navigate', (e, url) => {

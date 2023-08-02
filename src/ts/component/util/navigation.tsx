@@ -36,11 +36,11 @@ class Navigation extends React.Component {
 		const cf = isWin ? `${alt} + →` : `${cmd} + →`;
 
 		const buttons: any[] = [
-			{ id: 'back', tooltip: 'Back', caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
-			{ id: 'forward', tooltip: 'Forward', caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
+			{ id: 'back', tooltip: translate('commonBack'), caption: cb, onClick: this.onBack, disabled: !keyboard.checkBack() },
+			{ id: 'forward', tooltip: translate('commonForward'), caption: cf, onClick: this.onForward, disabled: !keyboard.checkForward() },
 			{ id: 'plus', tooltip: translate('navigationCreateNew'), caption: `${cmd} + N`, onClick: this.onAdd },
 			{ id: 'graph', tooltip: translate('commonGraph'), caption: `${cmd} + ${alt} + O`, onClick: this.onGraph },
-			{ id: 'search', tooltip: 'Search', caption: `${cmd} + S`, onClick: this.onSearch },
+			{ id: 'search', tooltip: translate('commonSearch'), caption: `${cmd} + S`, onClick: this.onSearch },
 		];
 
 		return (
@@ -77,7 +77,7 @@ class Navigation extends React.Component {
 						id="button-navigation-profile"
 						className="iconWrap"
 						onClick={this.onProfile}
-						onMouseEnter={e => this.onTooltipShow(e, 'Settings')}
+						onMouseEnter={e => this.onTooltipShow(e, translate('commonSettings'))}
 						onMouseLeave={e => Preview.tooltipHide(false)}
 					>
 						<IconObject object={profile} />

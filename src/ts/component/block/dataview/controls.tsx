@@ -223,14 +223,17 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 	onViewAdd (e: any) {
 		e.persist();
 
-		const { rootId, block, getSources, getTarget, isInline } = this.props;
+		const { rootId, block, getSources, getTarget, isInline, getView } = this.props;
 		const sources = getSources();
 		const object = getTarget();
+		const view = getView();
 		const newView = {
+			...view,
+			id: '',
 			name: translate(`viewName${I.ViewType.Grid}`),
 			type: I.ViewType.Grid,
-			groupRelationKey: Relation.getGroupOption(rootId, block.id, '')?.id,
-			cardSize: I.CardSize.Medium,
+			groupRelationKey: view.groupRelationKey || Relation.getGroupOption(rootId, block.id, '')?.id,
+			cardSize: view.cardSize || I.CardSize.Medium,
 		};
 
 		C.BlockDataviewViewCreate(rootId, block.id, newView, sources, (message: any) => {

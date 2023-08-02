@@ -26,7 +26,7 @@ html.themeDark {
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); }
 	::selection { background-color: rgba(24, 163, 241, 0.15); }
 
-    .textColor-default { color: $colorPrimary; }
+    .textColor-default { color: $colorPrimary !important; }
 
     .bgColor-grey { background: rgba(140, 158, 165, 0.25) !important; }
     .bgColor-yellow { background: rgba(236, 217, 27, 0.25) !important; }

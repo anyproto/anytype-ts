@@ -30,8 +30,8 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 		];
 
 		const buttons: I.ButtonComponent[] = [
-			{ icon: 'restore', text: 'Restore', onClick: this.onRestore },
-			{ icon: 'remove', text: 'Delete immediately', onClick: this.onRemove }
+			{ icon: 'restore', text: translate('commonRestore'), onClick: this.onRestore },
+			{ icon: 'remove', text: translate('commonDeleteImmediately'), onClick: this.onRemove }
 		];
 
 		const Info = (item: any) => (
@@ -40,12 +40,12 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 
 		return (
 			<div className="wrapper">
-				<Header component="mainEmpty" text="Bin" layout={I.ObjectLayout.Archive} {...this.props} />
+				<Header component="mainEmpty" text={translate('commonBin')} layout={I.ObjectLayout.Archive} {...this.props} />
 
 				<div className="body">
 					<div className="titleWrapper">
 						<Icon className="archive" />
-						<Title text="Bin" />
+						<Title text={translate('commonBin')} />
 					</div>
 
 					<ListObjectManager
@@ -95,9 +95,9 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 
 		popupStore.open('confirm', {
 			data: {
-				title: `Are you sure you want to delete ${count} ${UtilCommon.cntWord(count, 'object', 'objects')}?`,
-				text: 'These objects will be deleted irrevocably. You can\'t undo this action.',
-				textConfirm: 'Delete',
+				title: UtilCommon.sprintf(translate('commonDeletionWarningTitle'), count, UtilCommon.plural(count, translate('pluralObject'))),
+				text: translate('commonDeletionWarningText'),
+				textConfirm: translate('commonDelete'),
 				onConfirm: () => { 
 					C.ObjectListDelete(selected);
 					this.selectionClear();

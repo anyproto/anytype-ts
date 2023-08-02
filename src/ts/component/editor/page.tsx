@@ -1218,6 +1218,10 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const mark = Mark.getInRange(marks, type, range);
 		const win = $(window);
+		const cb = () => {
+			focus.set(block.id, range);
+			focus.apply(); 
+		};
 
 		if (type == I.MarkType.Link) {
 			menuStore.close('blockContext', () => {
@@ -1233,14 +1237,14 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 						type: mark ? mark.type : null,
 						onChange: (newType: I.MarkType, param: string) => {
 							marks = Mark.toggleLink({ type: newType, param, range }, marks);
-							UtilData.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
+							UtilData.blockSetText(rootId, block.id, text, marks, true, cb);
 						}
 					}
 				});
 			});
 		} else {
-			marks = Mark.toggle(marks, { type: type, param: mark ? '' : param, range: range });
-			UtilData.blockSetText(rootId, block.id, text, marks, true, () => { focus.apply(); });
+			marks = Mark.toggle(marks, { type, param: mark ? '' : param, range });
+			UtilData.blockSetText(rootId, block.id, text, marks, true, cb);
 		};
 	};
 

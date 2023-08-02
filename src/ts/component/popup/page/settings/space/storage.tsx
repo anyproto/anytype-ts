@@ -18,7 +18,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 
     render () {
         const buttons: I.ButtonComponent[] = [
-            { icon: 'remove', text: 'Delete immediately', onClick: this.onRemove }
+            { icon: 'remove', text: translate('commonDeleteImmediately'), onClick: this.onRemove }
         ];
         const filters: I.Filter[] = [
             { operator: I.FilterOperator.And, relationKey: 'fileSyncStatus', condition: I.FilterCondition.Equal, value: I.FileSyncStatus.Synced },
@@ -67,12 +67,12 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 		popupStore.open('confirm', {
 			data: {
 				title: UtilCommon.sprintf(
-					translate(`popupSettingsSpaceStorageManagerDeletionWarningTitle`),
+					translate(`commonDeletionWarningTitle`),
 					count,
-					UtilCommon.cntWord(count, translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObject`), translate(`popupSettingsSpaceStorageManagerDeletionWarningTitleObjects`))
+					UtilCommon.plural(count, translate(`pluralObject`))
 				),
-				text: translate(`popupSettingsSpaceStorageManagerDeletionWarningText`),
-				textConfirm: translate(`popupSettingsSpaceStorageManagerDeletionWarningConfirm`),
+				text: translate(`commonDeletionWarningText`),
+				textConfirm: translate(`commonDelete`),
 				onConfirm: () => {
 					C.ObjectListSetIsArchived(selected, true, () => {
 						C.ObjectListDelete(selected);

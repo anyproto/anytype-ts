@@ -1,9 +1,9 @@
 import $ from 'jquery';
-import raf from 'raf';
 import { I, Preview, Renderer, translate } from 'Lib';
 import { popupStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 import Errors from 'json/error.json';
+import Text from 'json/text.json';
 
 class UtilCommon {
 
@@ -714,14 +714,17 @@ class UtilCommon {
 		return rect;
 	};
 
-	cntWord (cnt: any, w1: string, w2?: string) {
+	plural (cnt: any, words: string) {
+		const chunks = words.split('|');
+		const single = chunks[0];
+		const multiple = chunks[1] ? chunks[1] : single;
+
 		cnt = String(cnt || '');
 
-		w2 = w2 ? w2 : w1 + 's';
 		if (cnt.substr(-2) == 11) {
-			return w2;
+			return multiple;
 		};
-		return cnt.substr(-1) == '1' ? w1 : w2;
+		return cnt.substr(-1) == '1' ? single : multiple;
 	};
 
 	getPlatform () {
@@ -1003,6 +1006,13 @@ class UtilCommon {
 
 	getPercent (part: number, whole: number): number {
 		return Number((part / whole * 100).toFixed(1));
+	};
+
+	translateError (command: string, error: any) {
+		const { code, description } = error;
+		const id = this.toCamelCase(`error-${command}${code}`);
+
+		return Text[id] ? translate(id) : description;
 	};
 
 };

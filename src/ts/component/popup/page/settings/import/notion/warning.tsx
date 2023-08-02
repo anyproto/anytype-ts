@@ -16,26 +16,26 @@ class PopupSettingsPageImportNotionWarning extends React.Component<I.PopupSettin
 		return (
 			<div>
 				<Head {...this.props} returnTo="importNotion" name={translate('commonBack')} />
-				<Title text="Some data formats will be imported as text" />
+				<Title text={translate('popupSettingsImportNotionWarningTitle')} />
 
 				<div className="listWrapper">
 					<ol className="list">
 						<li className="label">
-							All <b>@mentions</b> will be converted to text
+							{translate('popupSettingsImportNotionWarningLi1')}
 						</li>
 						<li className="label">
-							<b>Date ranges</b> will be imported as text
+							{translate('popupSettingsImportNotionWarningLi2')}
 						</li>
 						<li className="label">
-							<b>Formulas and rollups</b> will be placed as values
+							{translate('popupSettingsImportNotionWarningLi3')}
 						</li>
 						<li className="label">
-							<b>Databases</b> will look as Objects with Relations in Anytype documents
+							{translate('popupSettingsImportNotionWarningLi4')}
 						</li>
 					</ol>
 				</div>
 
-				<Button className="c36" text="Proceed" onClick={this.onImport} />
+				<Button className="c36" text={translate('popupSettingsImportNotionWarningProceed')} onClick={this.onImport} />
 			</div>
 		);
 	};

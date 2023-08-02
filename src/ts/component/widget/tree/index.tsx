@@ -4,7 +4,7 @@ import sha1 from 'sha1';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Loader, Label } from 'Component';
-import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon } from 'Lib';
+import { analytics, C, UtilData, I, UtilObject, Relation, Storage, UtilCommon, translate } from 'Lib';
 import { blockStore, dbStore, detailStore } from 'Store';
 import Item from './item';
 import Constant from 'json/constant.json';
@@ -57,7 +57,7 @@ const WidgetTree = observer(class WidgetTree extends React.Component<I.WidgetCom
 			content = <Loader />;
 		} else
 		if (!length) {
-			content = <Label className="empty" text="There are no objects here,<br/>create the first one" />;
+			content = <Label className="empty" text={translate('widgetEmptyLabel')} />;
 		} else 
 		if (isPreview) {
 			const rowRenderer = ({ index, parent, style }) => {

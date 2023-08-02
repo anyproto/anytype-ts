@@ -4,7 +4,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget } from 'Component';
 import { blockStore, menuStore, detailStore } from 'Store';
-import { I, UtilCommon, UtilObject, keyboard, analytics } from 'Lib';
+import { I, UtilCommon, UtilObject, keyboard, analytics, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 type Props = {
@@ -67,7 +67,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					{descr}
 				</div>
 				<div className="buttons">
-					<Icon className="more" tooltip="Options" onMouseDown={e => this.onContext(e, true)} />
+					<Icon className="more" tooltip={translate('widgetOptions')} onMouseDown={e => this.onContext(e, true)} />
 				</div>
 			</div>
 		);

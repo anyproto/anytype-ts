@@ -290,7 +290,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 				{loading ? <Loader /> : (
 					<React.Fragment>
 						<div className="scroller">
-							{object.templateIsBundled ? <Icon className="logo" tooltip="Template is bundled" /> : ''}
+							{object.templateIsBundled ? <Icon className="logo" tooltip={translate('previewObjectTemplateIsBundled')} /> : ''}
 
 							{(coverType != I.CoverType.None) && coverId ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 							<div className="heading">

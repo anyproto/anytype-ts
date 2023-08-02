@@ -68,18 +68,18 @@ class MenuHelp extends React.Component<I.Menu> {
 		const btn = <Button className="c16" text={window.Electron.version.app} />;
 
 		return [
-			{ id: 'whatsNew', name: translate('menuHelpWhatsNew'), document: 'whatsNew', caption: btn },
-			{ id: 'shortcut', name: translate('menuHelpKeyboardShortcuts'), caption: 'Ctrl+Space' },
-			{ id: 'hints', name: translate('menuHelpShowHints') },
+			{ id: 'whatsNew', document: 'whatsNew', caption: btn },
+			{ id: 'shortcut', caption: 'Ctrl+Space' },
+			{ id: 'hints' },
 			{ isDiv: true },
-			{ id: 'community', name: translate('menuHelpAnytypeCommunity') },
-			{ id: 'tutorial', name: translate('menuHelpHelpAndTutorials') },
-			{ id: 'contact', name: translate('menuHelpContactUs') },
-			{ id: 'tech', name: translate('menuHelpTechnicalInformation') },
+			{ id: 'community' },
+			{ id: 'tutorial' },
+			{ id: 'contact' },
+			{ id: 'tech' },
 			{ isDiv: true },
-			{ id: 'terms', name: translate('menuHelpTermsOfUse') },
-			{ id: 'privacy', name: translate('menuHelpPrivacyPolicy') },
-		];
+			{ id: 'terms' },
+			{ id: 'privacy' },
+		].map(it => ({ ...it, name: translate(UtilCommon.toCamelCase(`menuHelp-${it.id}`)) }));
 	};
 
 	onMouseEnter (e: any, item: any) {

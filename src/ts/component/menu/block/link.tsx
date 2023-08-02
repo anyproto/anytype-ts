@@ -32,6 +32,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	n = -1;
 	top = 0;
 	offset = 0;
+	timeout = 0;
 	refList: any = null;
 	refFilter: any = null;
 
@@ -200,6 +201,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		window.clearTimeout(this.timeout);
 	};
 
 	rebind () {
@@ -213,7 +215,10 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 	};
 
 	onFilterChange (e: any) {
-		menuStore.updateData(this.props.id, { filter: this.refFilter.getValue() });
+		window.clearTimeout(this.timeout);
+		this.timeout = window.setTimeout(() => {
+			menuStore.updateData(this.props.id, { filter: this.refFilter.getValue() });
+		}, 500);
 	};
 
 	onFilterClear () {

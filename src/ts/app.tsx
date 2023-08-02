@@ -14,6 +14,7 @@ import {
 	I, C, UtilCommon, UtilRouter, UtilFile, UtilData, UtilObject, UtilMenu, keyboard, Storage, analytics, dispatcher, translate, Renderer, 
 	focus, Preview, Mark, Animation, Onboarding, Survey
 } from 'Lib';
+import * as Docs from 'Docs';
 
 configure({ enforceActions: 'never' });
 
@@ -243,6 +244,7 @@ window.Lib = {
 	Animation,
 	Onboarding,
 	Survey,
+	Docs,
 };
 
 /*
