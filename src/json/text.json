@@ -1192,7 +1192,7 @@
 
     "menuTypeSuggestFilterTypes": "Filter types...",
     "menuTypeSuggestMyTypes": "My types",
-    "menuTypeSuggestCreateType ": "Create type %s",
+    "menuTypeSuggestCreateType": "Create type %s",
 
     "menuWidgetAddWidget": "Add widget",
     "menuWidgetChooseSource": "Choose a source",
@@ -1497,7 +1497,7 @@
     "libMenuReplace": "Replace",
 
     "libMenuChangeSource": "Change source %s",
-    "libMenuOpenSource ": "Open source %s",
+    "libMenuOpenSource": "Open source %s",
     "libMenuOpenFullscreen": "Open fullscreen",
 
     "libActionUninstallTypeTitle": "Are you sure you want to remove this Type?",
