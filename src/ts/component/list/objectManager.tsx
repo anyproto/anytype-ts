@@ -69,12 +69,14 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
 		let textEmpty = String(this.props.textEmpty || '');
         let buttonsList: I.ButtonComponent[] = [];
+
         if (this.selected.length) {
-            buttonsList.push({ icon: 'checkbox active', text: 'Deselect all', onClick: this.onSelectAll });
+			cnControls.push('withSelected');
+
+            buttonsList.push({ icon: 'checkbox active', text: translate('commonDeselectAll'), onClick: this.onSelectAll });
             buttonsList = buttonsList.concat(buttons);
-            cnControls.push('withSelected');
         } else {
-            buttonsList.push({ icon: 'checkbox', text: 'Select all', onClick: this.onSelectAll });
+            buttonsList.push({ icon: 'checkbox', text: translate('commonSelectAll'), onClick: this.onSelectAll });
         };
 
         const Button = (item: any) => (
@@ -138,7 +140,7 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 								ref={ref => this.refFilter = ref}
 								onChange={this.onFilterChange}
 								onClear={this.onFilterClear}
-								placeholder="Type to search..."
+								placeholder={translate('commonSearchPlaceholder')}
 							/>
 						</div>
 					</div>

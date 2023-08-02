@@ -51,7 +51,7 @@ let csp = [
 	"media-src 'self' http://*:* https://*:* data: blob: file://*",
 	"style-src 'unsafe-inline' http://localhost:* file://*",
 	"font-src data: file://* http://localhost:*",
-	"connect-src http://localhost:* http://127.0.0.1:* ws://localhost:* https://*.anytype.io https://api.amplitude.com/ devtools://devtools data:",
+	"connect-src file://* http://localhost:* http://127.0.0.1:* ws://localhost:* https://*.anytype.io https://api.amplitude.com/ devtools://devtools data:",
 	"script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
 	"frame-src chrome-extension://react-developer-tools",
 	"worker-src 'self' 'unsafe-eval' blob: http://localhost:*",
@@ -59,12 +59,12 @@ let csp = [
 
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
-	Api.exit(mainWindow, false);
+	Api.exit(mainWindow, '', false);
 	return;
 };
 
 if (app.isPackaged && !app.requestSingleInstanceLock()) {
-	Api.exit(mainWindow, false);
+	Api.exit(mainWindow, '' ,false);
 	return;
 };
 
@@ -188,7 +188,7 @@ app.on('before-quit', (e) => {
 		app.exit(0);
 	} else {
 		e.preventDefault();
-		Api.exit(mainWindow, false);
+		Api.exit(mainWindow, '', false);
 	};
 });
 

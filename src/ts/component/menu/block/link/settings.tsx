@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, UtilCommon, UtilData, UtilMenu, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { blockStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -148,8 +148,8 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getStyles () {
 		return [
-			{ id: I.LinkCardStyle.Text, name: 'Text', icon: 'style-text' },
-			{ id: I.LinkCardStyle.Card, name: 'Card', icon: 'style-card' },
+			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText'), icon: 'style-text' },
+			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard'), icon: 'style-card' },
         ].map((it: any) => {
 			it.icon = 'linkStyle' + it.id;
 			return it;
@@ -158,9 +158,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getIcons () {
 		return [
-			{ id: I.LinkIconSize.None, name: 'None' },
-			{ id: I.LinkIconSize.Small, name: 'Small' },
-			{ id: I.LinkIconSize.Medium, name: 'Medium' },
+			{ id: I.LinkIconSize.None, name: translate('menuBlockLinkSettingsSizeNone') },
+			{ id: I.LinkIconSize.Small, name: translate('menuBlockLinkSettingsSizeSmall') },
+			{ id: I.LinkIconSize.Medium, name: translate('menuBlockLinkSettingsSizeMedium') },
 		];
 	};
 
@@ -170,9 +170,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 
 	getDescriptions () {
 		return [
-			{ id: I.LinkDescription.None, name: 'None' },
-			{ id: I.LinkDescription.Added, name: 'Relation description' },
-			{ id: I.LinkDescription.Content, name: 'Content preview' },
+			{ id: I.LinkDescription.None, name: translate('menuBlockLinkSettingsDescriptionNone') },
+			{ id: I.LinkDescription.Added, name: translate('menuBlockLinkSettingsDescriptionRelationDescription') },
+			{ id: I.LinkDescription.Content, name: translate('menuBlockLinkSettingsDescriptionContentPreview') },
 		];
 	};
 
@@ -189,7 +189,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const object = detailStore.get(rootId, block.content.targetBlockId);
         const content = this.getContent();
 
-        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout) && (content.cardStyle == I.LinkCardStyle.Card);
+        const canIcon = ![ I.ObjectLayout.Task, I.ObjectLayout.Note ].includes(object.layout);
+		const canIconSize = canIcon && (content.cardStyle == I.LinkCardStyle.Card);
+		const canIconSwitch = canIcon && (content.cardStyle == I.LinkCardStyle.Text);
         const canCover = ![ I.ObjectLayout.Note ].includes(object.layout) && (content.cardStyle == I.LinkCardStyle.Card);
         const canDescription = ![ I.ObjectLayout.Note ].includes(object.layout);
 
@@ -215,20 +217,21 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			description = descriptions.find(it => it.id == content.description) || descriptions[0];
 		};
 
-		const itemStyle = { id: 'cardStyle', name: 'Preview layout', caption: style.name, arrow: true };
-		const itemSize = canIcon ? { id: 'iconSize', name: 'Icon', caption: icon.name, arrow: true } : null;
-		const itemCover = canCover ? { id: 'cover', name: 'Cover', withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
-		const itemName = { id: 'name', name: 'Name', icon: 'relation ' + Relation.className(I.RelationType.ShortText) };
+		const itemStyle = { id: 'cardStyle', name: translate('menuBlockLinkSettingsPreviewLayout'), caption: style.name, arrow: true };
+		const itemIconSize = canIconSize ? { id: 'iconSize', name: translate('commonIcon'), caption: icon.name, arrow: true } : null;
+		const itemIconSwitch = canIconSwitch ? { id: 'iconSwitch', name: translate('commonIcon'), withSwitch: true, switchValue: (icon.id != I.LinkIconSize.None) } : null;
+		const itemCover = canCover ? { id: 'cover', name: translate('menuBlockLinkSettingsCover'), withSwitch: true, switchValue: this.hasRelationKey('cover') } : null;
+		const itemName = { id: 'name', name: translate('menuBlockLinkSettingsName'), icon: 'relation ' + Relation.className(I.RelationType.ShortText) };
 		const itemDescription = canDescription ? { 
-			id: 'description', name: 'Description', icon: 'relation ' + Relation.className(I.RelationType.LongText), 
+			id: 'description', name: translate('menuBlockLinkSettingsDescription'), icon: 'relation ' + Relation.className(I.RelationType.LongText),
 			caption: description.name, arrow: true
 		} : null;
-		const itemTags = { id: 'tag', name: 'Tags', icon: 'relation ' + Relation.className(I.RelationType.Tag), withSwitch: true, switchValue: this.hasRelationKey('tag') };
-		const itemType = { id: 'type', name: 'Object type', icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
+		const itemTags = { id: 'tag', name: translate('menuBlockLinkSettingsTags'), icon: 'relation ' + Relation.className(I.RelationType.Tag), withSwitch: true, switchValue: this.hasRelationKey('tag') };
+		const itemType = { id: 'type', name: translate('commonObjectType'), icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
 
 		let sections: any[] = [
-			{ children: [ itemStyle, itemSize, itemCover ] },
-			{ name: 'Attributes', children: [ itemName, itemDescription, itemType ] },
+			{ children: [ itemStyle, itemIconSize, itemIconSwitch, itemCover ] },
+			{ name: translate('menuBlockLinkSettingAttributes'), children: [ itemName, itemDescription, itemType ] },
 		];
 
 		sections = sections.map((s: any) => {
@@ -241,12 +244,17 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			s.children = s.children.map((child: any) => {
 				if (child.withSwitch) {
 					child.onSwitch = (e: any, v: boolean) => {
-						if (v) {
-							content.relations.push(child.itemId);
+						let key = '';
+
+						if (child.itemId == 'iconSwitch') {
+							content.iconSize = v ? I.LinkIconSize.Small : I.LinkIconSize.None;
+							key = 'iconSize';
 						} else {
-							content.relations = content.relations.filter(it => it != child.itemId);
+							content.relations = v ? content.relations.concat([ child.itemId ]) : content.relations.filter(it => it != child.itemId);
+							key = 'relations';
 						};
-						this.save('relations', content.relations);
+
+						this.save(key, content[key]);
 					};
 				};
 				return child;
@@ -273,10 +281,9 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
         const { data } = param;
         const { rootId, blockId, blockIds } = data;
         const block = blockStore.getLeaf(rootId, blockId);
-        
-        let content = UtilCommon.objectCopy(block.content || {});
-        content[id] = v;
+        const content = UtilCommon.objectCopy(block.content || {});
 
+        content[id] = v;
 		C.BlockLinkListSetAppearance(rootId, blockIds, content.iconSize, content.cardStyle, content.description, content.relations);
     };
 

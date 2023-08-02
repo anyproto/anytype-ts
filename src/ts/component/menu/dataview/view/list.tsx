@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List as VList, CellMeasurerCache } from 'react-virtualized';
 import { Icon } from 'Component';
-import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject } from 'Lib';
+import { I, C, UtilCommon, keyboard, Relation, analytics, UtilObject, translate } from 'Lib';
 import { menuStore, dbStore, blockStore } from 'Store';
 
 const HEIGHT = 28;
@@ -88,7 +88,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 				<div className="items">
 					{!items.length ? (
 						<div className="item empty">
-							<div className="inner">No filters applied to this view</div>
+							<div className="inner">{translate('menuDataviewViewListNoViewsFound')}</div>
 						</div>
 					) : (
 						<InfiniteLoader
@@ -149,7 +149,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 							onMouseLeave={() => { this.props.setHover(); }}
 						>
 							<Icon className="plus" />
-							<div className="name">Add a view</div>
+							<div className="name">{translate('menuDataviewViewListAddView')}</div>
 						</div>
 					</div>
 				) : ''}
@@ -205,7 +205,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 			...it, name: it.name || UtilObject.defaultName('Page'),
 		}));
 
-		items.unshift({ id: 'label', name: 'Views', isSection: true });
+		items.unshift({ id: 'label', name: translate('menuDataviewViewListViews'), isSection: true });
 		return items;
 	};
 

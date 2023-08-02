@@ -4,7 +4,7 @@ import raf from 'raf';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, Preview, sidebar } from 'Lib';
+import { I, keyboard, Preview, sidebar, translate } from 'Lib';
 import { commonStore } from 'Store';
 import ListWidget from 'Component/list/widget';
 import Constant from 'json/constant.json';
@@ -53,7 +53,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					<div className="head" draggable={true} onDragStart={this.onDragStart}>
 						<Icon
 							className="toggle"
-							tooltip="Toggle sidebar fixed mode"
+							tooltip={translate('sidebarToggle')}
 							tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 							tooltipY={I.MenuDirection.Bottom}
 							onClick={() => sidebar.toggleExpandCollapse()}
@@ -65,10 +65,9 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 					</div>
 				</div>
 
-				<div className="resize-h" draggable={true} onDragStart={e => this.onResizeStart(e, I.MenuType.Horizontal)}>
+				<div className="resize-h" draggable={true} onDragStart={this.onResizeStart}>
 					<div className="resize-handle" onClick={this.onHandleClick} />
 				</div>
-				{/*<div className="resize-v" onMouseDown={(e: any) => { this.onResizeStart(e, I.MenuType.Vertical); }} />*/}
             </div>
 		);
     };
@@ -158,7 +157,7 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		keyboard.setDragging(false);
 	};
 
-	onResizeStart (e: React.MouseEvent, dir: I.MenuType) {
+	onResizeStart (e: React.MouseEvent) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -171,25 +170,20 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 		const body = $('body');
 		const { left, top } = node.offset();
 
-		if (commonStore.isSidebarFixed && (dir == I.MenuType.Vertical)) {
-			return;
-		};
-
 		this.ox = left;
 		this.oy = top;
 		this.sx = e.pageX;
 
 		keyboard.disableSelection(true);
 		keyboard.setResize(true);
-
-		body.addClass(dir == I.MenuType.Vertical ? 'rowResize' : 'colResize');
+		body.addClass('colResize');
 
 		win.off('mousemove.sidebar mouseup.sidebar blur.sidebar');
-		win.on('mousemove.sidebar', e => this.onResizeMove(e, dir));
+		win.on('mousemove.sidebar', e => this.onResizeMove(e));
 		win.on('mouseup.sidebar blur.sidebar', e => this.onResizeEnd());
 	};
 
-	onResizeMove (e: any, dir: I.MenuType) {
+	onResizeMove (e: any) {
 		const { width, snap } = sidebar.data;
 
 		if (this.frame) {
@@ -201,37 +195,31 @@ const Sidebar = observer(class Sidebar extends React.Component<Props> {
 				return;
 			};
 
-			if (dir == I.MenuType.Horizontal) {
-				if (Math.abs(this.sx - e.pageX) >= 10) {
-					this.movedX = true;
-				};
-
-				const w = Math.max(0, snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
-				const d = w - this.width;
-
-				if (d < 0) {
-					if (commonStore.isSidebarFixed && (w <= Constant.size.sidebar.width.close)) {
-						sidebar.close();
-					} else {
-						sidebar.setWidth(w);
-					};
-				};
-
-				if (d > 0) {
-					if ((w >= 0) && (w <= Constant.size.sidebar.width.close)) {
-						sidebar.open(Constant.size.sidebar.width.min);
-					} else 
-					if (w > Constant.size.sidebar.width.close) {
-						sidebar.setWidth(w);
-					};
-				};
-
-				this.width = w;
+			if (Math.abs(this.sx - e.pageX) >= 10) {
+				this.movedX = true;
 			};
 
-			if (dir == I.MenuType.Vertical) {
-				sidebar.setHeight(e.pageY - this.oy);
+			const w = Math.max(0, snap == I.MenuDirection.Right ? (this.ox - e.pageX + width) : (e.pageX - this.ox));
+			const d = w - this.width;
+
+			if (d < 0) {
+				if (commonStore.isSidebarFixed && (w <= Constant.size.sidebar.width.close)) {
+					sidebar.close();
+				} else {
+					sidebar.setWidth(w);
+				};
 			};
+
+			if (d > 0) {
+				if ((w >= 0) && (w <= Constant.size.sidebar.width.close)) {
+					sidebar.open(Constant.size.sidebar.width.min);
+				} else 
+				if (w > Constant.size.sidebar.width.close) {
+					sidebar.setWidth(w);
+				};
+			};
+
+			this.width = w;
 		});
 	};
 

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import * as Docs from 'Docs';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
-import { I, Onboarding, UtilCommon, analytics, keyboard, UtilObject } from 'Lib';
+import { I, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 
@@ -31,7 +31,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data, force } = param;
 		const { key, current } = data;
-		const section = Docs.Help.Onboarding[key] || {};
+		const section = Onboarding.getSection(key);
 		const { items, category, showConfetti } = section;
 		const item = items[current];
 		const l = items.length;
@@ -39,10 +39,10 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		let buttons = [];
 
 		if (!item.noButton) {
-			let buttonText = 'Next';
+			let buttonText = translate('commonNext');
 
 			if (current == l - 1) {
-				buttonText = 'Finish';
+				buttonText = translate('commonFinish');
 			};
 
 			if (item.buttonText) {
@@ -124,7 +124,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param, position } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const section = Docs.Help.Onboarding[key] || {};
+		const section = Onboarding.getSection(key);
 		const { items, showConfetti } = section;
 		const l = items.length;
 		const node = $(this.node);
@@ -242,7 +242,8 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param, close } = this.props;
 		const { data } = param;
 		const { key, current } = data;
-		const items = Docs.Help.Onboarding[key].items;
+		const section = Onboarding.getSection(key);
+		const { items } = section;
 
 		if ((dir < 0) && (current == 0)) {
 			return;
@@ -260,7 +261,7 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 		const { param } = this.props;
 		const { data, onOpen, onClose } = param;
 		const { key, isPopup, options } = data;
-		const section = Docs.Help.Onboarding[key];
+		const section = Onboarding.getSection(key);
 		const { items } = section;
 		const item = items[next];
 
@@ -325,9 +326,9 @@ const MenuOnboarding = observer(class MenuSelect extends React.Component<I.Menu,
 
 		popupStore.open('confirm', {
 			data: {
-				title: 'Error',
+				title: translate('commonError'),
 				text: error.description,
-				textConfirm: 'Ok',
+				textConfirm: translate('commonOk'),
 				canCancel: false,
 			},
 		});

@@ -11,6 +11,8 @@ interface State {
 	showFull: boolean;
 };
 
+const LIMIT = 1;
+
 class PopupHelp extends React.Component<I.Popup, State> {
 
 	_isMounted = false;
@@ -37,7 +39,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 
 		let sections = this.getSections();
 		if (isWhatsNew && !showFull) {
-			sections = sections.slice(0, 3);
+			sections = sections.slice(0, LIMIT);
 		};
 
 		return (
@@ -67,7 +69,7 @@ class PopupHelp extends React.Component<I.Popup, State> {
 
 					{isWhatsNew && !showFull ? (
 						<div className="buttons">
-							<Button text="Older releases" onClick={() => { this.setState({ showFull: true }) }} />
+							<Button text={translate('popupHelpOlderReleases')} onClick={() => { this.setState({ showFull: true }) }} />
 						</div>
 					) : ''}
 				</div>

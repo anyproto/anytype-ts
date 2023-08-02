@@ -30,7 +30,8 @@ const COLORS = [
 	'lime',
 ];
 
-const LIMIT = 12;
+const LIMIT_WORDS = 12;
+const LIMIT_LETTER = 8;
 
 class Phrase extends React.Component<Props, State> {
 
@@ -226,7 +227,7 @@ class Phrase extends React.Component<Props, State> {
 		const { checkPin, onToggle } = this.props;
 		const { isHidden } = this.state;
 		const pin = Storage.get('pin');
-		const callBack = () => {
+		const onSuccess = () => {
 			this.setState({ isHidden: !isHidden });
 
 			if (onToggle) {
@@ -235,18 +236,14 @@ class Phrase extends React.Component<Props, State> {
 		};
 
 		if (isHidden && checkPin && pin) {
-			popupStore.open('pin', {
-				data: {
-					onSuccess: callBack
-				}
-			});
+			popupStore.open('pin', { data: { onSuccess } });
 		} else {
-			callBack();
+			onSuccess();
 		};
 	};
 
 	checkValue (v: string[]) {
-		return v.filter(it => it).slice(0, LIMIT);
+		return v.map(it => it.substring(0, LIMIT_LETTER)).filter(it => it).slice(0, LIMIT_WORDS);
 	};
 
 	setError (v: boolean) {

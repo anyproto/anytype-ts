@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import arrayMove from 'array-move';
 import $ from 'jquery';
 import raf from 'raf';
-import { I, C, UtilCommon, UtilData, UtilObject, Dataview, analytics, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilData, UtilObject, Dataview, analytics, keyboard, Relation, translate } from 'Lib';
 import { dbStore, detailStore, popupStore, menuStore, commonStore, blockStore } from 'Store';
 import Empty from '../empty';
 import Column from './board/column';
@@ -46,9 +46,9 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return (
 				<Empty 
 					{...this.props}
-					title="Relation has been deleted" 
-					description="Choose another relation to group your Kanban"
-					button="Open view menu"
+					title={translate('blockDataviewBoardRelationDeletedTitle')}
+					description={translate('blockDataviewBoardRelationDeletedDescription')}
+					button={translate('blockDataviewBoardOpenViewMenu')}
 					className="withHead"
 					onClick={this.onView}
 				/>
@@ -59,7 +59,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			<div 
 				ref={node => this.node = node} 
 				id="scrollWrap"
-				className="wrap"
+				className="scrollWrap"
 			>
 				<div id="scroll" className="scroll">
 					<div className={cn.join(' ')}>
@@ -181,6 +181,10 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	onRecordAdd (e: any, groupId: string, dir: number) {
+		if (e.persist) {
+			e.persist();
+		};
+
 		if (this.creating) {
 			return;
 		};
@@ -262,28 +266,29 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const object = message.details;
 				const records = dbStore.getRecords(subId, '');
 				const oldIndex = records.indexOf(message.objectId);
-				const newIndex = dir > 0 ? records.length : 0;
-				const update = arrayMove(records, oldIndex, newIndex);
+
+				if (oldIndex < 0) {
+					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+				};
 
 				if (isCollection) {
 					C.ObjectCollectionAdd(objectId, [ object.id ]);
 				};
 
 				detailStore.update(subId, { id: object.id, details: object }, true);
-
-				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: update } ], update, () => {
-					dbStore.recordsSet(subId, '', update);
+				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
+					dbStore.recordsSet(subId, '', records);
 				});
 
 				const id = Relation.cellId(getIdPrefix(), 'name', object.id);
 				const ref = refCells.get(id);
 
 				if (ref && (object.type != Constant.typeId.note)) {
-					window.setTimeout(() => { ref.onClick(e); }, 15);
+					window.setTimeout(() => ref.onClick(e), 15);
 				};
 
 				analytics.event('CreateObject', {
-					route: isCollection ? 'Collection' : 'Set',
+					route: (isCollection ? 'Collection' : 'Set'),
 					objectType: object.type,
 					layout: object.layout,
 					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
@@ -744,7 +749,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			const margin = width >= maxWidth ? (cw - maxWidth) / 2 : 0;
 
 			scroll.css({ width: cw, marginLeft: -margin / 2, paddingLeft: margin / 2 });
-			view.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 });
+			view.css({ width: width < maxWidth ? maxWidth : width + PADDING + margin / 2 + 4 });
 		} else {
 			if (parent.isPage() || parent.isLayoutDiv()) {
 				const wrapper = $('#editorWrapper');
@@ -752,7 +757,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				const margin = (cw - ww) / 2;
 
 				scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin });
-				view.css({ width: width + margin });
+				view.css({ width: width + margin + 2 });
 			};
 		};
 	};

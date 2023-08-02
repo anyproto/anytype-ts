@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, focus, UtilObject, UtilCommon } from 'Lib';
+import { I, focus, UtilObject, UtilCommon, translate } from 'Lib';
 import { blockStore } from 'Store';
 import { observer } from 'mobx-react';
 
@@ -35,7 +35,7 @@ const BlockTableOfContents = observer(class BlockTableOfContents extends React.C
 		return (
 			<div className={cn.join(' ')} tabIndex={0} onKeyDown={this.onKeyDown} onKeyUp={this.onKeyUp} onFocus={this.onFocus}>
 				{!tree.length ? (
-					<div className="empty">Add headings to create a table of contents</div>
+					<div className="empty">{translate('blockTableOfContentsAdd')}</div>
 				) : (
 					<React.Fragment>
 						{tree.map((item: any, i: number) => (

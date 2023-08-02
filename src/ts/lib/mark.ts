@@ -79,8 +79,8 @@ class Mark {
 		];
 
 		for (let item of Markdown) {
-			const non = UtilCommon.filterFix(item.key.substr(0, 1));
-			const k = UtilCommon.filterFix(item.key);
+			const non = UtilCommon.regexEscape(item.key.substring(0, 1));
+			const k = UtilCommon.regexEscape(item.key);
 			this.regexpMarkdown.push({ 
 				type: item.type,
 				reg: new RegExp('([^\\*_]{1}|^)(' + k + ')([^' + non + ']+)(' + k + ')(\\s|$)', 'gi'),
@@ -449,9 +449,7 @@ class Mark {
 			return '';
 		});
 
-		text = this.fromUnicode(text);
 		html = text;
-
 		html.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();
@@ -474,7 +472,7 @@ class Mark {
 				let param = pm ? pm[1]: '';
 				
 				marks.push({
-					type: type,
+					type,
 					range: { from: offset, to: 0 },
 					param: param,
 				});
@@ -484,13 +482,15 @@ class Mark {
 			return '';
 		});
 
+		text = this.fromUnicode(text, marks);
 		return this.fromMarkdown(text, marks, restricted);
 	};
 
 	// Unicode symbols
-	fromUnicode (html: string): string {
+	fromUnicode (html: string, marks: I.Mark[]): string {
+		let checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
 		let text = html;
-		let keys = Object.keys(Patterns).map(it => UtilCommon.filterFix(it));
+		let keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
 		let reg = new RegExp('(' + keys.join('|') + ')', 'g');
 		let test = reg.test(text);
 
@@ -498,8 +498,16 @@ class Mark {
 			return text;
 		};
 
-		html.replace(reg, (s: string, p: string) => {
-			if (Patterns[p]) {
+		html.replace(reg, (s: string, p: string, o: number) => {
+			let check = true;
+			for (const mark of checked) {
+				if ((mark.range.from <= o) && (mark.range.to >= o)) {
+					check = false;
+					break;
+				};
+			};
+
+			if (check && Patterns[p]) {
 				text = text.replace(s, Patterns[p]);
 			};
 			return '';
@@ -511,6 +519,7 @@ class Mark {
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]) {
 		let text = html;
 		let test = /[`\*_~\[]{1}/.test(text);
+		let checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 
 		if (!test) {
 			return { marks, text };
@@ -534,9 +543,19 @@ class Mark {
 				let to = from + p3.length;
 				let replace = String((p1 + p3 + ' ') || '').replace(new RegExp('\\$', 'g'), '$$$');
 
-				this.adjust(marks, from, -p2.length * 2);
-				marks.push({ type: item.type, range: { from: from, to: to }, param: '' });
-				text = text.replace(s, replace);
+				let check = true;
+				for (const mark of checked) {
+					if ((mark.range.from <= from) && (mark.range.to >= to)) {
+						check = false;
+						break;
+					};
+				};
+
+				if (check) {
+					this.adjust(marks, from, -p2.length * 2);
+					marks.push({ type: item.type, range: { from, to }, param: '' });
+					text = text.replace(s, replace);
+				};
 				return s;
 			});
 		};

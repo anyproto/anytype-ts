@@ -1,17 +1,17 @@
 {
  	"0": {
-		"url": "https://anytype.typeform.com/to/GlS8NAKb"
+		"url": "https://community.anytype.io/survey0"
 	},
 
 	"1": {
-		"url": "https://anytype.typeform.com/to/lSyoRr8U"
+		"url": "https://community.anytype.io/survey1"
 	},
 
 	"2": {
-		"url": "https://anytype.typeform.com/to/CXu6nG9R#anytypeid=%s"
+		"url": "https://community.anytype.io/survey2#anytypeid=%s"
 	},
 
 	"3": {
-		"url": "https://anytype.typeform.com/to/edqF9PKQ"
+		"url": "https://community.anytype.io/survey3"
 	}
 }

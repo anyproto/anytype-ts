@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { I, Relation, UtilCommon } from 'Lib';
+import { I, Relation, UtilCommon, translate } from 'Lib';
 import { Icon, Tag, IconObject } from 'Component';
 import { detailStore } from 'Store';
 import { SortableHandle, SortableElement } from 'react-sortable-hoc';
@@ -58,8 +58,8 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 				} else
 				if ([ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow ].includes(quickOption)) {
 					value = Number(value) || 0;
-					name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `%d %s ago` : `%d %s from now`;
-					v.push(UtilCommon.sprintf(name, value, UtilCommon.cntWord(value, 'day', 'days')));
+					name = quickOption == I.FilterQuickOption.NumberOfDaysAgo ? `menuItemFilterTimeAgo` : `menuItemFilterTimeFromNow`;
+					v.push(UtilCommon.sprintf(translate(name), value, UtilCommon.plural(value, translate('pluralDay'))));
 				} else 
 				if (filterOption) {
 					v.push(name);
@@ -70,7 +70,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 			};
 
 			case I.RelationType.Checkbox: {
-				v = value ? 'checked' : 'unchecked';
+				v = translate(`relationCheckboxLabelShort${Number(value)}`);
 				break;
 			};
 

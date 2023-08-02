@@ -40,12 +40,12 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					<div className="importBackupWrap">
 						{back}
 
-						<Title className="animation" text="⚡️ Congratulations!" />
-						<Label className="animation" text="You're now using the new & improved version of Anytype. It's still encrypted, offline-first and the safest app for your personal information. We're excited to hear your feedback about the new features. First, let's get your data imported." />
+						<Title className="animation" text={translate('pageAuthSetupCongratulations')} />
+						<Label className="animation" text={translate('pageAuthSetupLongread')} />
 
 						<div className="buttons">
 							<div className="animation">
-								<Button text="Import backup" onClick={this.onBackup} />
+								<Button text={translate('pageAuthSetupImportBackup')} onClick={this.onBackup} />
 							</div>
 						</div>
 					</div>
@@ -55,7 +55,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 					<React.Fragment>
 						{back}
 
-						<Title className="animation" text="Error" />
+						<Title className="animation" text={translate('commonError')} />
 						<Error className="animation" text={error.description} />
 
 						<div className="buttons">
@@ -69,7 +69,7 @@ const PageAuthSetup = observer(class PageAuthSetup extends React.Component<I.Pag
 		} else {
 			content = (
 				<React.Fragment>
-					<Title className="animation" text="Entering the void..." />
+					<Title className="animation" text={translate('pageAuthSetupEnteringVoid')} />
 					<Loader className="animation" />
 				</React.Fragment>
 			);

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'Component';
-import { I, UtilObject, UtilData, keyboard, sidebar } from 'Lib';
+import { I, UtilObject, UtilData, keyboard, sidebar, translate } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 
 class HeaderMainGraph extends React.Component<I.HeaderComponent> {
@@ -26,12 +26,12 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				<div className="side left">
 					<Icon
 						className="toggle big"
-						tooltip="Toggle sidebar fixed mode"
+						tooltip={translate('sidebarToggle')}
 						tooltipCaption={`${cmd} + \\, ${cmd} + .`}
 						tooltipY={I.MenuDirection.Bottom}
 						onClick={() => sidebar.toggleExpandCollapse()}
 					/>
-					<Icon className="expand big" tooltip="Open as object" onClick={this.onOpen} />
+					<Icon className="expand big" tooltip={translate('commonOpenObject')} onClick={this.onOpen} />
 				</div>
 
 				<div className="side center">
@@ -51,9 +51,9 @@ class HeaderMainGraph extends React.Component<I.HeaderComponent> {
 				</div>
 
 				<div className="side right">
-					<Icon id="button-header-search" className="btn-search big" tooltip="Search" onClick={this.onSearch} />
-					<Icon id="button-header-filter" className="btn-filter big dn" tooltip="Filters" onClick={this.onFilter} />
-					<Icon id="button-header-settings" className="btn-settings big" tooltip="Settings" onClick={this.onSettings} />
+					<Icon id="button-header-search" className="btn-search big" tooltip={translate('headerGraphTooltipSearch')} onClick={this.onSearch} />
+					<Icon id="button-header-filter" className="btn-filter big dn" tooltip={translate('headerGraphTooltipFilters')} onClick={this.onFilter} />
+					<Icon id="button-header-settings" className="btn-settings big" tooltip={translate('headerGraphTooltipSettings')} onClick={this.onSettings} />
 				</div>
 			</React.Fragment>
 		);

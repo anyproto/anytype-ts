@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuBlockCover { width: 410px; }
 	.menu.menuBlockCover {
-		.content { max-height: 450px; padding: 0px; overflow: visible; }
+		.content { max-height: 450px; padding: 0px; overflow: visible !important; }
 
 		.wrap { display: flex; flex-direction: column; }
 

@@ -41,7 +41,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 				<Input 
 					ref={ref => this.ref = ref} 
 					value={value} 
-					placeholder={translate('commonSearch')} 
+					placeholder={translate('commonSearchPlaceholder')}
 					onKeyDown={this.onKeyDown} 
 					onKeyUp={this.onKeyUp} 
 				/>
@@ -124,7 +124,7 @@ class MenuSearchText extends React.Component<I.Menu> {
 		const { data } = param;
 		const { route } = data;
 		const searchContainer = this.getSearchContainer();
-		const value = UtilCommon.filterFix(this.ref.getValue());
+		const value = UtilCommon.regexEscape(this.ref.getValue());
 		const node = $(this.node);
 		const switcher = node.find('#switcher').removeClass('active');
 

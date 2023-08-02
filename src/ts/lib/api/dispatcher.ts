@@ -4,7 +4,7 @@ import { observable } from 'mobx';
 import Commands from 'protobuf/pb/protos/commands_pb';
 import Events from 'protobuf/pb/protos/events_pb';
 import Service from 'protobuf/pb/protos/service/service_grpc_web_pb';
-import { authStore, commonStore, blockStore, detailStore, dbStore } from 'Store';
+import { authStore, commonStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import { UtilCommon, I, M, translate, analytics, Renderer, Action, Dataview, Preview, Mapper, Decode } from 'Lib';
 import * as Response from './response';
 import { ClientReadableStream } from 'grpc-web';
@@ -607,7 +607,7 @@ class Dispatcher {
 
 					if (data.hasFields()) {
 						const fields = Mapper.From.ViewFields(data.getFields());
-						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit' ];
+						const updateKeys = [ 'type', 'groupRelationKey', 'pageLimit', 'defaultTemplateId' ];
 
 						for (const f of updateKeys) {
 							if (fields[f] != view[f]) {
@@ -954,20 +954,67 @@ class Dispatcher {
 							break;
 						};
 
+						case I.ProgressState.Error:
 						case I.ProgressState.Done:
 						case I.ProgressState.Canceled: {
 							commonStore.progressClear();
 
-							if (state == I.ProgressState.Done) {
-								let toast = '';
-								switch (type) {
-									case I.ProgressType.Import: { toast = 'Import finished'; break; };
-									case I.ProgressType.Export: { toast = 'Export finished'; break; };
+							let title = '';
+							let text = '';
+							let textConfirm = '';
+							let showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type) && [ I.ProgressState.Done, I.ProgressState.Error ].includes(state);
+
+							switch (state) {
+								case I.ProgressState.Error: {
+									textConfirm = translate('dispatcherImportTryAgain');
+
+									switch (type) {
+										case I.ProgressType.Import: { 
+											title = translate('dispatcherImportErrorTitle');
+											text = translate('dispatcherImportErrorText'); 
+											break; 
+										};
+
+										case I.ProgressType.Export: { 
+											title = translate('dispatcherExportErrorTitle');
+											text = translate('dispatcherExportErrorText');
+											break; 
+										};
+									};
+									break;
 								};
 
-								if (toast) {
-									Preview.toastShow({ text: toast });
+								case I.ProgressState.Done: {
+									textConfirm = translate('dispatcherImportConfirm');
+
+									switch (type) {
+										case I.ProgressType.Import: { 
+											title = translate('dispatcherImportSuccessTitle');
+											text = translate('dispatcherImportSuccessText'); 
+											break; 
+										};
+
+										case I.ProgressType.Export: { 
+											title = translate('dispatcherExportSuccessTitle');
+											text = translate('dispatcherExportSuccessText');
+											break; 
+										};
+									};
+									break;
 								};
+							};
+
+							if (showPopup) {
+								window.setTimeout(() => { 
+									popupStore.open('confirm', { 
+										data: { 
+											title, 
+											text,
+											textConfirm,
+											canCancel: false,
+										} 
+									}); 
+								}, Constant.delay.popup);
 							};
 							break;
 						};
@@ -1142,7 +1189,7 @@ class Dispatcher {
 				};
 
 				message.event = response.getEvent ? response.getEvent() : null;
-				message.error = { code: code, description: description };
+				message.error = { code, description };
 
 				if (message.error.code) {
 					console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
@@ -1151,6 +1198,8 @@ class Dispatcher {
 						Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
 						analytics.event('Exception', { method: type, code: message.error.code });
 					};
+
+					message.error.description = UtilCommon.translateError(type, message.error);
 				};
 
 				if (debug && !SKIP_IDS.includes(type)) {

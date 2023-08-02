@@ -484,7 +484,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		const { rootId, block } = this.props;
 		const root = blockStore.getLeaf(rootId, rootId);
 
-		if (!block.isSelectable() || (block.isText() && (focused == block.id))) {
+		if (!block.isSelectable() || (block.isText() && (focused == block.id)) || block.isTable()) {
 			return;
 		};
 
@@ -497,7 +497,7 @@ const Block = observer(class Block extends React.Component<Props> {
 
 		focus.clear(true);
 		menuStore.closeAll([], () => {
-			this.ids = UtilData.selectionGet(block.id, true, true, this.props);
+			this.ids = UtilData.selectionGet(block.id, false, false, this.props);
 			this.menuOpen({
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 })
 			});

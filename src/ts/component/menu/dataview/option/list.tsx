@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Tag, Filter } from 'Component';
-import { I, C, UtilCommon, UtilMenu, keyboard, Relation } from 'Lib';
+import { I, C, UtilCommon, UtilMenu, keyboard, Relation, translate } from 'Lib';
 import { menuStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -33,8 +33,18 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const relation = data.relation.get();
 		const value = data.value || [];
 		const items = this.getItems();
-		const placeholder = canAdd ? 'Filter or create options...' : 'Filter options...';
-		const empty = canAdd ? 'Type to create a new option' : 'Type to search options';
+
+		let placeholder;
+		let empty;
+
+		if (canAdd) {
+			placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
+			empty = translate('menuDataviewOptionListTypeToCreate')
+		}
+		else {
+			placeholder = translate('menuDataviewOptionListFilterOptions');
+			empty = translate('menuDataviewOptionListTypeToSearch')
+		};
 
 		if (!this.cache) {
 			return null;
@@ -332,13 +342,17 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		};
 
 		if (data.filter) {
-			const filter = new RegExp(UtilCommon.filterFix(data.filter), 'gi');
+			const filter = new RegExp(UtilCommon.regexEscape(data.filter), 'gi');
 			
 			check = items.filter(it => it.name.toLowerCase() == data.filter.toLowerCase());
 			items = items.filter(it => it.name.match(filter));
 
 			if (canAdd && !check.length) {
-				ret.unshift({ id: 'add', name: isStatus ? `Set status "${data.filter}"` : `Create option "${data.filter}"` });
+				let addItemNameKey = 'menuDataviewOptionListCreateOption';
+				if (isStatus) {
+					addItemNameKey = 'menuDataviewOptionListSetStatus';
+				};
+				ret.unshift({ id: 'add', name: UtilCommon.sprintf(translate(addItemNameKey), data.filter) });
 			};
 		};
 

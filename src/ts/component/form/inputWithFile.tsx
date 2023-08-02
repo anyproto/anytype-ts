@@ -107,7 +107,7 @@ class InputWithFile extends React.Component<Props, State> {
 									id="url" 
 									ref={ref => this.refUrl = ref}
 									placeholder={placeholder}
-									onPaste={(e: any) => { this.onChangeUrl(e, true); }} 
+									onPaste={e => this.onChangeUrl(e, true)} 
 									onFocus={onFocus} 
 									onBlur={onBlur} 
 								/>

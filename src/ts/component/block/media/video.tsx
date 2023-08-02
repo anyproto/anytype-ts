@@ -53,7 +53,7 @@ const BlockVideo = observer(class BlockVideo extends React.Component<I.BlockComp
 						<InputWithFile 
 							block={block} 
 							icon="video" 
-							textFile="Upload a video" 
+							textFile={translate('blockVideoUpload')} 
 							accept={Constant.extension.video} 
 							onChangeUrl={this.onChangeUrl} 
 							onChangeFile={this.onChangeFile} 

@@ -22,15 +22,11 @@
 	},
 
 	"default": {
-		"lang": "en",
+		"interfaceLang": "en-US",
 		"cover": "sky",
 		"codeLang": "javascript",
 		"pinTime": 600
 	},
-	
-	"langs": [
-		{ "id": "en", "name": "English" }
-	],
 	
 	"delay": {
 		"menu": 160,
@@ -73,7 +69,7 @@
 
 	"defaultRelationKeys": [ 
 		"id", "workspaceId", "name", "description", "snippet", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "isHidden", "isArchived", 
-		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions"
+		"isReadonly", "isDeleted", "isFavorite", "done", "fileExt", "fileMimeType", "sizeInBytes", "restrictions", "defaultTemplateId"
 	],
 
 	"sidebarRelationKeys": [
@@ -88,7 +84,7 @@
 
 	"coverRelationKeys":	 [ "coverId", "coverType", "coverX", "coverY", "coverScale" ],
 	"optionRelationKeys":	 [ "id", "relationKey", "type", "layout", "name", "relationOptionColor" ],
-	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject" ],
+	"typeRelationKeys":		 [ "recommendedRelations", "recommendedLayout", "sourceObject", "defaultTemplateId" ],
 	"graphRelationKeys":	 [ "id", "name", "snippet", "description", "iconEmoji", "iconImage", "iconOption", "relationFormat", "type", "layout", "done", "fileExt", "fileMimeType", "isDeleted", "isArchived", "isFavorite" ],
 
 	"pageCoverRelationKey": "pageCover",
@@ -321,6 +317,25 @@
 		"wolfram":		 "Wolfram",
 		"xml":			 "XML",
 		"yaml":			 "YAML"
+	},
+
+	"interfaceLang": {
+		"de-DE": "Deutsch (Deutschland)",
+		"fr-FR": "Français (France)",
+		"ko-KR": "한국어 (대한민국)",
+		"no-NO": "Norsk (Norge)",
+		"ru-RU": "Русский (Россия)",
+		"en-US": "English (United States)",
+		"hi-IN": "हिन्दी (भारत)",
+		"nb-NO": "Norsk bokmål (Norge)",
+		"pt-BR": "Português (Brasil)",
+		"uk-UA": "Українська (Україна)",
+		"es-ES": "Español (España)",
+		"it-IT": "Italiano (Italia)",
+		"nl-NL": "Nederlands (Nederland)",
+		"pt-PT": "Português (Portugal)",
+		"zh-CN": "中文 (中国)",
+		"zh-TW": "中文 (台灣)"
 	},
 
 	"spellingLang": {

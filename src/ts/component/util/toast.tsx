@@ -58,7 +58,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 };
 
                 textObject = <Element {...object} />;
-                textAction = value ? 'is locked' : 'is unlocked';
+                textAction = translate(value ? 'toastIsLocked' : 'toastIsUnlocked');
                 break;
 			};
 
@@ -67,20 +67,20 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					break;
 				};
 
-				const cnt = `${count} ${UtilCommon.cntWord(count, 'block', 'blocks')}`;
+				const cnt = `${count} ${UtilCommon.plural(count, translate('pluralBlock'))}`;
 
-				textAction = `${cnt} moved to`;
+				textAction = UtilCommon.sprintf(translate('toastMovedTo'), cnt);
 				textTarget = <Element {...target} />;
 
 				if (origin) {
-					textAction = `${cnt} moved from`;
+					textAction = UtilCommon.sprintf(translate('toastMovedFrom'), cnt);
 					textActionTo = translate('commonTo');
 					textOrigin = <Element {...origin} />;
 				};
 
 				buttons = buttons.concat([
-					{ action: 'open', label: 'Open' },
-					{ action: 'undo', label: 'Undo' }
+					{ action: 'open', label: translate('commonOpen') },
+					{ action: 'undo', label: translate('commonUndo') }
 				]);
                 break;
 			};
@@ -91,23 +91,23 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 					break;
 				};
 
-				textAction = action == I.ToastAction.Collection ? 'has been added to collection' : 'has been linked to';
+				textAction = translate(action == I.ToastAction.Collection ? 'toastAddedToCollection' : 'toastLinkedTo');
 				textObject = <Element {...object} />;
 				textTarget = <Element {...target} />;
 
                 if (target.id != keyboard.getRootId()) {
                     buttons = buttons.concat([
-                        { action: 'open', label: 'Open' }
+                        { action: 'open', label: translate('commonOpen') }
                     ]);
                 };
                 break;
 			};
 
             case I.ToastAction.StorageFull: {
-                textAction = 'You exceeded file limit upload';
+                textAction = translate('toastUploadLimitExceeded');
 
                 buttons = buttons.concat([ 
-					{ action: 'manageStorage', label: 'Manage files' } 
+					{ action: 'manageStorage', label: translate('toastManageFiles') }
 				]);
             };
 

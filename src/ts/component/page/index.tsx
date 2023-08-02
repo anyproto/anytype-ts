@@ -2,9 +2,9 @@ import * as React from 'react';
 import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
-import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject } from 'Lib';
-import { Sidebar, Navigation } from 'Component';
-import { authStore, commonStore, menuStore, popupStore, blockStore } from 'Store';
+import { I, Onboarding, UtilCommon, Storage, analytics, keyboard, sidebar, Survey, Preview, Highlight, UtilData, UtilObject, translate } from 'Lib';
+import { Sidebar } from 'Component';
+import { authStore, commonStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import PageAuthSelect from './auth/select';
@@ -58,11 +58,11 @@ const Components = {
 };
 
 const Titles = {
-	index: 'Dashboard',
-	graph: 'Graph',
-	navigation: 'Flow',
-	store: 'Library',
-	archive: 'Bin',
+	index: translate('commonDashboard'),
+	graph: translate('commonGraph'),
+	navigation: translate('commonFlow'),
+	store: translate('commonLibrary'),
+	archive: translate('commonBin'),
 };
 
 const Page = observer(class Page extends React.Component<I.PageComponent> {
@@ -86,7 +86,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 		const Component = Components[path];
 		if (!Component) {
-			return <div>Page component &quot;{path}&quot; not found</div>;
+			return <div>{UtilCommon.sprintf(translate('pageMainIndexComponentNotFound'), path)}</div>;
 		};
 
 		const wrap = (
@@ -235,6 +235,10 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		const isPopup = keyboard.isPopup();
 
 		if (!home || !id || (home.id != id) || isPopup || Storage.getOnboarding('dashboard')) {
+			return;
+		};
+
+		if ([ I.HomePredefinedId.Graph, I.HomePredefinedId.Last ].includes(home.id)) {
 			return;
 		};
 

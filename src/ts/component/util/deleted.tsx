@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
-import { UtilObject, UtilCommon } from 'Lib';
+import { UtilObject, translate } from 'Lib';
 import { popupStore } from 'Store';
 
 interface Props {
@@ -23,10 +23,10 @@ class Deleted extends React.Component<Props> {
 		let textButton = '';
 
 		if (isPopup) {
-			textButton = 'Close';
+			textButton = translate('commonClose');
 			onClick = () => popupStore.close('page');
 		} else {
-			textButton = 'Back to dashboard';
+			textButton = translate('utilDeletedBackToDashboard');
 			onClick = () => UtilObject.openHome('route');
 		};
 
@@ -38,7 +38,7 @@ class Deleted extends React.Component<Props> {
 			>
 				<div className="mid">
 					<Icon className="ghost" />
-					<Label text="This object doesn't exist" />
+					<Label text={translate('utilDeletedObjectNotExist')} />
 					<Button color="blank" text={textButton} onClick={onClick} />
 				</div>
 			</div>

@@ -23,7 +23,7 @@ class UtilObject {
 	};
 
 	getSpace () {
-		return detailStore.get(Constant.subId.space, commonStore.workspace)
+		return detailStore.get(Constant.subId.space, commonStore.workspace);
 	};
 
 	getSpaceDashboard () {
@@ -51,7 +51,7 @@ class UtilObject {
 	graph () {
 		return { 
 			id: I.HomePredefinedId.Graph, 
-			name: 'Graph', 
+			name: translate('commonGraph'), 
 			iconEmoji: ':earth_americas:',
 			layout: I.ObjectLayout.Graph,
 		};
@@ -60,7 +60,7 @@ class UtilObject {
 	lastOpened () {
 		return { 
 			id: I.HomePredefinedId.Last,
-			name: 'Last opened object', 
+			name: translate('spaceLast'), 
 		};
 	};
 
@@ -143,7 +143,7 @@ class UtilObject {
 		if (!object) {
 			return;
 		};
-
+	
 		const action = this.actionByLayout(object.layout);
 
 		param = param || {};
@@ -226,6 +226,10 @@ class UtilObject {
 
 	setAlign (rootId: string, align: I.BlockHAlign, callBack?: (message: any) => void) {
 		C.BlockListSetAlign(rootId, [], align, callBack);
+	};
+
+	setDefaultTemplateId (rootId: string, templateId: string, callBack?: (message: any) => void) {
+		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: templateId } ], callBack);
 	};
 
 	defaultName (key: string) {
@@ -334,6 +338,38 @@ class UtilObject {
 			I.ObjectLayout.Task, 
 			I.ObjectLayout.Note, 
 			I.ObjectLayout.Bookmark, 
+		];
+	};
+
+	getLayoutsWithoutTemplates () {
+		return [
+			I.ObjectLayout.Note,
+			I.ObjectLayout.Set,
+			I.ObjectLayout.Collection,
+			I.ObjectLayout.Bookmark,
+		].concat(this.getFileAndSystemLayouts());
+	}
+
+	getFileAndSystemLayouts () {
+		return this.getFileLayouts().concat(this.getSystemLayouts());
+	};
+
+	getSystemLayouts () {
+		return [
+			I.ObjectLayout.Type,
+			I.ObjectLayout.Relation,
+			I.ObjectLayout.Option,
+			I.ObjectLayout.Dashboard,
+			I.ObjectLayout.Date,
+		];
+	};
+
+	getFileLayouts () {
+		return [
+			I.ObjectLayout.File,
+			I.ObjectLayout.Image,
+			I.ObjectLayout.Audio,
+			I.ObjectLayout.Video,
 		];
 	};
 

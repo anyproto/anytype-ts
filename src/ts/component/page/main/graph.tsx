@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, analytics, UtilData, UtilObject, keyboard } from 'Lib';
+import { I, C, UtilCommon, analytics, UtilData, UtilObject, keyboard, translate } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
 import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -9,8 +9,8 @@ import Constant from 'json/constant.json';
 const ctrl = keyboard.cmdSymbol();
 const alt = keyboard.altSymbol();
 const Tabs = [
-	{ id: 'graph', name: 'Graph', layout: I.ObjectLayout.Graph, tooltipCaption: `${ctrl} + ${alt} + O` },
-	{ id: 'navigation', name: 'Flow', layout: I.ObjectLayout.Navigation, tooltipCaption: `${ctrl} + O` },
+	{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${ctrl} + ${alt} + O` },
+	{ id: 'navigation', name: translate('commonFlow'), layout: I.ObjectLayout.Navigation, tooltipCaption: `${ctrl} + O` },
 ];
 
 const PageMainGraph = observer(class PageMainGraph extends React.Component<I.PageComponent> {
@@ -199,11 +199,11 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 	};
 
 	resize () {
+		const { isPopup } = this.props;
 		const win = $(window);
-		const obj = UtilCommon.getPageContainer(this.props.isPopup);
+		const obj = UtilCommon.getPageContainer(isPopup);
 		const node = $(this.node);
 		const wrapper = obj.find('.wrapper');
-		const isPopup = this.props.isPopup && !obj.hasClass('full');
 		const oh = obj.height();
 		const header = node.find('#header');
 		const hh = header.height();
@@ -287,7 +287,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 				onLinkTo: (sourceId: string, targetId: string) => {
 					let target = this.getNode(targetId);
 					if (target) {
-						this.data.edges.push(this.refGraph.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
+						this.data.edges.push(this.refGraph?.edgeMapper({ type: I.EdgeType.Link, source: sourceId, target: targetId }));
 						this.refGraph?.send('onSetEdges', { edges: this.data.edges });
 					} else {
 						this.addNewNode(targetId, target => this.refGraph?.send('onAddNode', { target, sourceId }));
@@ -337,7 +337,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			...param,
 			data: {
 				options: [
-					{ id: 'newObject', name: 'New object' },
+					{ id: 'newObject', name: translate('pageMainGraphNewObject') },
 				],
 				onSelect: (e: any, item: any) => {
 					switch (item.id) {

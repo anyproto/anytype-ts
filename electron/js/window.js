@@ -28,7 +28,6 @@ class WindowManager {
 
 		param = Object.assign({
 			backgroundColor: Util.getBgColor('dark'),
-			icon: this.getIcon(),
 			show: false,
 			titleBarStyle: 'hidden-inset',
 			webPreferences: {},
@@ -94,12 +93,10 @@ class WindowManager {
 			param.titleBarStyle = 'hidden';
 			param.icon = path.join(Util.imagePath(), 'icon.icns');
 			param.trafficLightPosition = { x: 20, y: 18 };
-		};
-
+		} else
 		if (is.windows) {
-			param.icon = path.join(Util.imagePath(), 'icon64x64.png');
-		};
-
+			param.icon = path.join(Util.imagePath(), 'icon32x32.png');
+		} else
 		if (is.linux) {
 			param.icon = image;
 		};
@@ -133,15 +130,11 @@ class WindowManager {
 		} else {
 			win.loadURL('file://' + path.join(Util.appPath, 'dist', 'index.html'));
 		};
-		return win;
-	};
 
-	getIcon () {
-		if (is.windows) {
-			return path.join(Util.imagePath(), 'icon32x32.png');
-		} else {
-			return path.join(Util.imagePath(), 'icon.png');
-		};
+		win.on('enter-full-screen', () => MenuManager.initMenu());
+		win.on('leave-full-screen', () => MenuManager.initMenu());
+
+		return win;
 	};
 
 	createAbout () {
@@ -152,16 +145,18 @@ class WindowManager {
 			backgroundColor: Util.getBgColor(Util.getTheme()),
 		});
 
-		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}`));
+		win.loadURL('file://' + path.join(Util.electronPath(), 'about', `index.html?version=${version}&theme=${Util.getTheme()}&lang=${Util.getLang()}`));
 		win.setMenu(null);
 
 		win.webContents.on('will-navigate', (e, url) => {
 			e.preventDefault();
+			// eslint-disable-next-line no-undef
 			shell.openExternal(url);
 		});
 
 		win.webContents.on('new-window', (e, url) => {
 			e.preventDefault();
+			// eslint-disable-next-line no-undef
 			shell.openExternal(url);
 		});
 

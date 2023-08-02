@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon, Title, Label, Input, IconObject, Button, ProgressBar } from 'Component';
-import { C, UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview, analytics } from 'Lib';
+import { UtilObject, UtilMenu, UtilCommon, UtilData, UtilFile, I, translate, Renderer, Preview, analytics } from 'Lib';
 import { observer } from 'mobx-react';
 import { detailStore, menuStore, commonStore, authStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -24,7 +24,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 		const { onPage } = this.props;
 		const { localUsage, bytesUsed, bytesLimit } = commonStore.spaceStorage;
 		const { account } = authStore;
-		const space = UtilObject.getSpace() || {};
+		const space = UtilObject.getSpace();
 		const name = this.checkName(space.name);
 		const home = UtilObject.getSpaceDashboard();
 
@@ -120,7 +120,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<div className="item">
 								<div className="sides">
 									<div className="side left">
-										<Title text={translate(`popupSettingsSpaceIndexHomepageTitle`)} />
+										<Title text={translate(`commonHomepage`)} />
 										<Label text={translate(`popupSettingsSpaceIndexHomepageDescription`)} />
 									</div>
 									<div className="side right">
@@ -136,14 +136,14 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 					</div>
 
 					<div className="section sectionIntegrations">
-						<Title text={translate(`popupSettingsSpaceIndexIntegrationsTitle`)} />
+						<Title text={translate(`popupSettingsSpaceIndexIntegrations`)} />
 						<div className="sectionContent">
 
 							<div className="item" onClick={() => onPage('importIndex')}>
 								<div className="sides">
 									<div className="side left">
 										<Icon className="import" />
-										<Title text={translate(`popupSettingsSpaceIndexImportDataTitle`)} />
+										<Title text={translate(`popupSettingsSpaceIndexImport`)} />
 									</div>
 									<div className="side right">
 										<Icon className="arrow" />
@@ -155,7 +155,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								<div className="sides">
 									<div className="side left">
 										<Icon className="export" />
-										<Title text={translate(`popupSettingsSpaceIndexExportDataTitle`)} />
+										<Title text={translate(`popupSettingsSpaceIndexExport`)} />
 									</div>
 									<div className="side right">
 										<Icon className="arrow" />
@@ -168,9 +168,13 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 					<div className="section sectionInfo">
 						<Title text={translate(`popupSettingsSpaceIndexSpaceInfoTitle`)} />
+
 						<div className="sectionContent">
 
-							<div onClick={() => UtilCommon.clipboardCopyToast('Space ID', space.id)} className="item">
+							<div
+								className="item"
+								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexSpaceIdTitle`), space.id)}
+							>
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexSpaceIdTitle`)} />
@@ -182,11 +186,29 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 								</div>
 							</div>
 
-							<div onClick={() => UtilCommon.clipboardCopyToast('Account ID', account.id)} className="item">
+							<div 
+								className="item" 
+								onClick={() => UtilCommon.copyToast(translate('popupSettingsAccountAnytypeIdentityAccountId'), account.id)}
+							>
 								<div className="sides">
 									<div className="side left">
 										<Title text={translate(`popupSettingsSpaceIndexCreatedByTitle`)} />
 										<Label text={account.id} />
+									</div>
+									<div className="side right">
+										<Icon className="copy" />
+									</div>
+								</div>
+							</div>
+
+							<div
+								className="item"
+								onClick={() => UtilCommon.copyToast(translate(`popupSettingsSpaceIndexNetworkIdTitle`), account.info.networkId)}
+							>
+								<div className="sides">
+									<div className="side left">
+										<Title text={translate(`popupSettingsSpaceIndexNetworkIdTitle`)} />
+										<Label text={account.info.networkId} />
 									</div>
 									<div className="side right">
 										<Icon className="copy" />

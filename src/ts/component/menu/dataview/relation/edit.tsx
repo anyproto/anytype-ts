@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilData } from 'Lib';
+import { I, C, UtilObject, UtilMenu, Relation, translate, Dataview, keyboard, analytics, Preview, UtilData, UtilCommon } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import { blockStore, dbStore, menuStore, detailStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -47,7 +47,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			const typeId = length ? this.objectTypes[0] : '';
 			const type = dbStore.getType(typeId);
 			const typeProps: any = { 
-				name: 'Select object type',
+				name: translate('menuDataviewRelationEditSelectObjectType'),
 				caption: (length > 1 ? '+' + (length - 1) : ''),
 			};
 
@@ -58,7 +58,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 			opts = (
 				<div className="section noLine">
-					<div className="name">Limit object Types</div>
+					<div className="name">{translate('menuDataviewRelationEditLimitObjectTypes')}</div>
 					<MenuItemVertical
 						id="object-type"
 						onMouseEnter={this.onObjectType}
@@ -76,7 +76,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					<MenuItemVertical 
 						id="includeTime" 
 						icon="clock" 
-						name="Include time" 
+						name={translate('menuDataviewRelationEditIncludeTime')}
 						onMouseEnter={this.menuClose}
 						withSwitch={true}
 						switchValue={viewRelation?.includeTime}
@@ -86,7 +86,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 					<MenuItemVertical 
 						id="date-settings" 
 						icon="settings" 
-						name="Preferences" 
+						name={translate('commonPreferences')}
 						arrow={true} 
 						onMouseEnter={this.onDateSettings} 
 						onClick={this.onDateSettings} 
@@ -103,7 +103,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				onMouseDown={this.menuClose}
 			>
 				<div className="section">
-					<div className="name">Relation name</div>
+					<div className="name">{translate('menuDataviewRelationEditRelationName')}</div>
 					{!isReadonly ? (
 						<div className="inputWrap">
 							<Input 
@@ -122,11 +122,11 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				</div>
 
 				<div className={[ 'section', (!opts && !isReadonly ? 'noLine' : '') ].join(' ')}>
-					<div className="name">Relation type</div>
+					<div className="name">{translate('menuDataviewRelationEditRelationType')}</div>
 					<MenuItemVertical 
 						id="relation-type" 
 						icon={this.format === null ? undefined : 'relation ' + Relation.className(this.format)} 
-						name={this.format === null ? 'Select relation type' : translate('relationName' + this.format)} 
+						name={this.format === null ? translate('menuDataviewRelationEditSelectRelationType') : translate('relationName' + this.format)}
 						onMouseEnter={this.onRelationType} 
 						readonly={isReadonly}
 						arrow={!relation}
@@ -138,7 +138,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				{!isReadonly ? (
 					<div className="section" onMouseEnter={this.menuClose}>
 						<div className="inputWrap">
-							<Button id="button" type="input" text={relation ? 'Save' : 'Create'} color="blank" className="c28" />
+							<Button id="button" type="input" text={translate(relation ? 'commonSave' : 'commonCreate')} color="blank" className="c28" />
 						</div>
 					</div>
 				) : ''}
@@ -223,9 +223,9 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		let sections: any[] = [
 			{
 				children: [
-					relation ? { id: 'open', icon: 'expand', name: 'Open as object' } : null,
-					allowed ? { id: 'copy', icon: 'copy', name: 'Duplicate' } : null,
-					canDelete ? { id: 'remove', icon: 'remove', name: 'Delete' } : null,
+					relation ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
+					allowed ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
+					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonDelete') } : null,
 				]
 			}
 		];
@@ -233,12 +233,12 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		if (extendedOptions) {
 			sections.push({
 				children: [
-					canFilter ? { id: 'filter', icon: 'relation-filter', name: 'Add filter' } : null,
-					canSort ? { id: 'sort0', icon: 'relation-sort0', name: 'Sort ascending', type: I.SortType.Asc } : null,
-					canSort ? { id: 'sort1', icon: 'relation-sort1', name: 'Sort descending', type: I.SortType.Desc } : null,
-					{ id: 'insert-left', icon: 'relation-insert-left', name: 'Insert left', dir: -1 },
-					{ id: 'insert-right', icon: 'relation-insert-right', name: 'Insert right', dir: 1 },
-					canHide ? { id: 'hide', icon: 'relation-hide', name: 'Hide relation' } : null,
+					canFilter ? { id: 'filter', icon: 'relation-filter', name: translate('menuDataviewRelationEditAddFilter') } : null,
+					canSort ? { id: 'sort0', icon: 'relation-sort0', name: translate('menuDataviewRelationEditSortAscending'), type: I.SortType.Asc } : null,
+					canSort ? { id: 'sort1', icon: 'relation-sort1', name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
+					{ id: 'insert-left', icon: 'relation-insert-left', name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
+					{ id: 'insert-right', icon: 'relation-insert-right', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
+					canHide ? { id: 'hide', icon: 'relation-hide', name: translate('menuDataviewRelationEditHideRelation') } : null,
 				]
 			});
 		};
@@ -436,8 +436,8 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 			data: {
 				rootId,
 				blockId,
-				nameAdd: 'Add object type',
-				placeholderFocus: 'Filter object types...',
+				nameAdd: translate('menuDataviewRelationEditAddObjectType'),
+				placeholderFocus: translate('menuDataviewRelationEditFilterObjectTypes'),
 				value: this.objectTypes, 
 				types: [ Constant.typeId.type ],
 				filters: [
@@ -612,7 +612,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				addCommand(rootId, blockId, { ...details, _index_: item._index_ }, onChange);
 			};
 
-			Preview.toastShow({ text: `Relation <b>${details.name}</b> has been created and added to your library` });
+			Preview.toastShow({ text: UtilCommon.sprintf(translate('blockDataviewEmptyTargetDescription'), details.name) });
 			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};

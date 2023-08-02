@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, keyboard, UtilObject } from 'Lib';
+import { analytics, C, I, keyboard, UtilObject } from 'Lib';
 
 class MenuTemplate extends React.Component<I.Menu> {
 
@@ -61,25 +61,46 @@ class MenuTemplate extends React.Component<I.Menu> {
     onClick (e: any, item: any) {
         const { param, close } = this.props;
         const { data } = param;
-        const { template } = data;
+        const { template, onSetDefault, onDelete, onDuplicate } = data;
 
 		close();
 
         switch (item.id) {
             case 'default': {
-                console.log('SET TEMPLATE AS DEFAULT FOR THIS ... ???');
+                if (onSetDefault) {
+                    onSetDefault();
+                };
                 break;
             };
+
             case 'edit': {
                 UtilObject.openPopup(template);
                 break;
             };
+
             case 'duplicate': {
-                console.log('DUPLICATE TEMPLATE');
+                C.ObjectListDuplicate([ template.id ], (message: any) => {
+                    if (!message.error.code && message.ids.length) {
+						if (onDuplicate) {
+							onDuplicate({ ...template, id: message.ids[0] });
+						};
+
+                        analytics.event('DuplicateObject', { count: 1, route: 'menuDataviewTemplate' });
+                    };
+                });
                 break;
             };
+
             case 'delete': {
-                console.log('DELETE TEMPLATE');
+                C.ObjectSetIsArchived(template.id, true, (message: any) => {
+                    if (!message.error.code) {
+                        if (onDelete) {
+                            onDelete();
+                        };
+
+                        analytics.event('MoveToBin', { count: 1, route: 'menuDataviewTemplate' });
+                    };
+                });
                 break;
             };
         };

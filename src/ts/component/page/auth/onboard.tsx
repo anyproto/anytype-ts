@@ -53,7 +53,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			footer = (
 				<div id="accountPath" className="animation small bottom" onClick={this.onAccountPath}>
 					<Icon className="gear" />
-					Account data location
+					{translate('pageAuthOnboardAccountDataLocation')}
 				</div>
 			);
 		};
@@ -109,9 +109,10 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 					<Input
 						focusOnMount
 						type="text"
-						placeholder="Enter your name"
+						placeholder={translate('pageAuthOnboardEnterYourName')}
 						value={authStore.name}
 						onKeyUp={(e, v) => authStore.nameSet(v)}
+						maxLength={255}
 					/>
 				</div>
 			);
@@ -146,7 +147,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 					<div className="space">
 						<IconObject object={{ iconOption, layout: I.ObjectLayout.Space }} size={64} />
-						<span className="spaceName">Personal Space</span>
+						<span className="spaceName">{translate('pageAuthOnboardPersonalSpace')}</span>
 					</div>
 				</section>
 			);
@@ -175,7 +176,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (stage == Stage.Phrase) {
-			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>More info</div>;
+			moreInfo = <div className="animation small" onClick={this.onPhraseInfo}>{translate('pageAuthOnboardMoreInfo')}</div>;
 		};
 
 		if (!this.canMoveForward()) {
@@ -296,7 +297,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			// Move animation forward, wait for delay, move onboarding forward
 			if (stage == Stage.Void) {
 				this.accountCreate(() => {
-					incrementAnimation(delay(incrementOnboarding(), 2000))();
+					incrementAnimation(delay(incrementOnboarding(), 100))();
 				});
 				return;
 			};
@@ -423,15 +424,13 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	/** Shows an error message and reroutes to the index page after a delay */
 	showErrorAndExit = (message) => {
-		const error = Errors.AccountCreate[message.error.code] || message.error.description;
-
-		this.setState({ error }, () => window.setTimeout(() => UtilCommon.route('/', { replace: true }), 3000));
+		this.setState({ error: message.error.description }, () => window.setTimeout(() => UtilCommon.route('/', { replace: true }), 3000));
 	};
 
 	/** Copies key phrase to clipboard and shows a toast */
 	onCopy = () => {
-		UtilCommon.clipboardCopy({ text: authStore.phrase });
-		Preview.toastShow({ text: translate('toastRecoveryCopiedClipboard') });
+		UtilCommon.copyToast(translate('commonPhrase'), authStore.phrase);
+		analytics.event('KeychainCopy', { type: 'Onboarding' });
 	};
 
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
@@ -455,7 +454,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		popupStore.open('confirm', {
 			data: {
 				text: translate('authOnboardPhraseMoreInfoPopupContent'),
-				textConfirm: 'Okay',
+				textConfirm: translate('commonOkay'),
 				canConfirm: true,
 				canCancel: false,
 				onConfirm: () => {

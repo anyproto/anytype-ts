@@ -1,10 +1,11 @@
 {
 	"name": "anytype",
-	"version": "0.32.13-alpha",
+	"version": "0.33.4-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
-		"lint": "npx lint-staged",
+		"precommit": "npx lint-staged",
+		"lint": "eslint .",
 		"electron": "npx electron .",
 		"electron-win": "npx electron.cmd .",
 		"start:watch": "cross-env-shell webpack-dev-server --progress --mode=development --node-env=development  --env SERVER_PORT=$SERVER_PORT --env DATA_PATH=$DATA_PATH --history-api-fallback --cache",
@@ -27,7 +28,8 @@
 		"postinstall": "npx patch-package && electron-builder install-app-deps",
 		"prepare": "husky install",
 		"sentry:source-map": "npx sentry-cli --url \"https://sentry.anytype.io\" releases files \"0.31.54\" upload-sourcemaps ./dist/main.js.map --org \"anytype\" --log-level=debug",
-		"sentry": "npm run build && npm run sentry:source-map"
+		"sentry": "npm run build && npm run sentry:source-map",
+		"update:locale": "node ./electron/hook/locale.js"
 	},
 	"repository": {
 		"type": "git",
@@ -37,6 +39,7 @@
 		"name": "Any Association",
 		"email": "info@anytype.io"
 	},
+	"license": "SEE LICENSE IN LICENSE.md",
 	"bugs": {
 		"url": "https://github.com/anyproto/anytype-ts/issues"
 	},
@@ -57,19 +60,17 @@
 		"cross-env": "^7.0.2",
 		"css-loader": "^3.6.0",
 		"electron": "^22.0.0",
-		"electron-builder": "^23.6.0",
+		"electron-builder": "^24.6.3",
 		"electron-notarize": "^0.2.1",
 		"eslint": "^8.29.0",
-		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-react": "^7.31.11",
 		"husky": "^8.0.3",
 		"license-checker": "^25.0.1",
 		"lint-staged": "^13.0.3",
 		"node-loader": "^1.0.2",
-		"npm": "^8.13.2",
+		"npm": "^9.8.1",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
-		"prettier": "^2.7.1",
 		"sass": "^1.62.0",
 		"sass-loader": "^8.0.2",
 		"source-map-loader": "^0.2.4",
@@ -95,6 +96,7 @@
 		"blueimp-load-image": "^2.31.0",
 		"d3": "^7.0.1",
 		"d3-force": "^3.0.0",
+		"electron-browser-storage": "^1.0.7",
 		"electron-dl": "^1.14.0",
 		"electron-json-storage": "^4.5.0",
 		"electron-log": "^3.0.9",
@@ -143,7 +145,6 @@
 		"generateUpdatesFilesForAllChannels": true,
 		"beforeBuild": "./electron/hook/beforebuild.js",
 		"afterSign": "./electron/hook/aftersign.js",
-		"artifactBuildCompleted": "./electron/hook/afterbuild.js",
 		"appId": "com.anytype.anytype",
 		"compression": "normal",
 		"productName": "Anytype",
@@ -516,6 +517,7 @@
 			]
 		},
 		"win": {
+			"sign": "./electron/hook/sign.js",
 			"target": "nsis",
 			"icon": "electron/img/icon256x256.png",
 			"publish": [
@@ -535,7 +537,8 @@
 			"target": [
 				"snap",
 				"AppImage",
-				"deb"
+				"deb",
+				"rpm"
 			],
 			"description": "Anytype",
 			"publish": [
@@ -548,9 +551,7 @@
 		}
 	},
 	"lint-staged": {
-		"{src,electron}/*.{ts,tsx}": "npx tsc --noEmit -p tsconfig.json",
-		"{src,electron}/*.{js,jsx,ts,tsx}": "npx eslint --fix",
-		"{src,electron}/*.{js,jsx,ts,tsx,html,css,scss,json}": "npx prettier --fix"
+		"{src,electron}/*.{ts,tsx}": "npx tsc --noEmit -p tsconfig.json"
 	},
 	"husky": {
 		"hooks": {

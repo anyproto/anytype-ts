@@ -11,10 +11,10 @@ const PopupSettingsPageExportMarkdown = observer(class PopupSettingsPageExportMa
 	render () {
 		const { onExport } = this.props;
 		const items = [
-			{ id: 'zip', name: 'Zip archive', control: 'switch' },
-			{ id: 'nested', name: 'Include linked objects', control: 'switch' },
-			{ id: 'files', name: 'Include files', control: 'switch' },
-			{ id: 'archived', name: 'Include archived objects', control: 'switch' },
+			{ id: 'zip', name: translate('popupExportZipArchive'), control: 'switch' },
+			{ id: 'nested', name: translate('popupExportIncludeLinkedObjects'), control: 'switch' },
+			{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
+			{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 		];
 
 		this.init();

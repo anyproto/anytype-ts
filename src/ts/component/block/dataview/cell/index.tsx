@@ -181,7 +181,6 @@ class Cell extends React.Component<Props> {
 
 			if (menuId) {
 				keyboard.disableBlur(true);
-				$(bodyContainer).addClass('overMenu');
 			};
 
 			if (this.ref) {
@@ -211,10 +210,6 @@ class Cell extends React.Component<Props> {
 
 			$(`#${cellId}`).removeClass('isEditing');
 			commonStore.cellId = '';
-
-			if (menuId) {
-				window.setTimeout(() => { $(bodyContainer).removeClass('overMenu'); }, Constant.delay.menu);
-			};
 		};
 
 		let ret = false;
@@ -348,11 +343,11 @@ class Cell extends React.Component<Props> {
 				};
 
 				let options = [
-					{ id: 'go', icon: 'browse', name: translate('menuDataviewUrlActionGo' + relation.format) },
-					{ id: 'copy', icon: 'copy', name: 'Copy link' },
+					{ id: 'go', icon: 'browse', name: translate(`menuDataviewUrlActionGo${relation.format}`) },
+					{ id: 'copy', icon: 'copy', name: translate('menuDataviewUrlActionGoCopy') },
 				];
 				if (relation.relationKey == 'source') {
-					options.push({ id: 'reload', icon: 'reload', name: 'Reload from source' });
+					options.push({ id: 'reload', icon: 'reload', name: translate('menuDataviewUrlActionGoReload') });
 				};
 
 				param.data = Object.assign(param.data, {

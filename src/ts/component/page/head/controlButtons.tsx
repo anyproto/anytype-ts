@@ -135,13 +135,13 @@ const ControlButtons = observer(class ControlButtons extends React.Component<Pro
 		};
 
 		const options: any[] = [
-			{ id: 'change', icon: 'coverChange', name: 'Change cover' },
+			{ id: 'change', icon: 'coverChange', name: translate('pageHeadControlButtonsChangeCover') },
 		];
 		if (UtilData.coverIsImage(object.coverType)) {
-			options.push({ id: 'position', icon: 'coverPosition', name: 'Reposition' });
+			options.push({ id: 'position', icon: 'coverPosition', name: translate('pageHeadControlButtonsReposition') });
 		};
 		if (hasCover) {
-			options.push({ id: 'remove', icon: 'remove', name: 'Remove' });
+			options.push({ id: 'remove', icon: 'remove', name: translate('commonRemove') });
 		};
 
 		menuStore.open('select', {
