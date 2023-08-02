@@ -1140,7 +1140,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const type = dbStore.getType(typeId);
 		const restrictions = UtilObject.getLayoutsWithoutTemplates();
 
-		return this.isCollection() || !restrictions.includes(type.recommendedLayout);
+		return !restrictions.includes(type.recommendedLayout);
 	};
 
 	isCollection (): boolean {
