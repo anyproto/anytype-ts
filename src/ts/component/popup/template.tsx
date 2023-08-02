@@ -51,7 +51,9 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 					ref={ref => this.ref = ref}
 					getItems={() => items}
 					offsetX={-128}
-					onClick={this.onClick} 
+					onClick={this.onClick}
+					withBlank={true}
+					onBlank={e => this.onClick(e, { id: Constant.templateId.blank })}
 				/>
 			</div>
 		);
@@ -72,8 +74,6 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 	};
 
 	componentWillUnmount () {
-		const { items } = this.state;
-
 		this._isMounted = false;
 		this.unbind();
 	};
@@ -132,7 +132,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		close();
 		window.setTimeout(() => {
 			if (onSelect) {
-				onSelect(item);
+				onSelect(UtilData.checkBlankTemplate(item));
 			};
 		}, Constant.delay.popup);
 	};

@@ -165,7 +165,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedReload = object.source && block.isObjectBookmark();
 		const allowedInstall = !object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout);
 		const allowedUninstall = object.isInstalled && UtilObject.isTypeOrRelationLayout(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedTemplate = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
+		const allowedTemplate = !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const hasShortMenu = block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectCollection() || block.isObjectSpace();
 
 		if (!allowedArchive)	 archive = null;
@@ -177,7 +177,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!allowedHistory)	 history = null;
 		if (!allowedFav)		 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
-		if (!allowedTemplate)	 template = null;
+		if (!isTemplate && !allowedTemplate)	 template = null;
 		if (allowedUninstall)	 archive = null;
 
 		let sections = [];

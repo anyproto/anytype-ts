@@ -160,6 +160,12 @@ html.themeDark {
         .item.add { border-color: $colorLinePrimary; }
         .item:before { background: $colorHoverMedium; }
 
+        .item {
+            > .icon.more:hover,
+            > .icon.more.hover { background-color: $colorHoverMedium; }
+            > .defaultLabel { background: $colorHoverMedium; color: $colorSecondary; }
+        }
+
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
         .icon.arrow:hover { background-image: url('#{$themePath}/arrow/template1.svg'); }
         .icon.arrow.disabled:hover { background-image: url('#{$themePath}/arrow/template0.svg'); }
@@ -194,6 +200,12 @@ html.themeDark {
                     }
                 }
             }
+        }
+    }
+
+    .previewObject.blank {
+        .heading {
+            .name { color: $colorSecondary; }
         }
     }
 

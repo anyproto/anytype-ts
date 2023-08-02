@@ -56,10 +56,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const check = UtilData.checkDetails(rootId);
 		const object = detailStore.get(rootId, rootId);
 		const subIdTemplate = this.getSubIdTemplate();
+		const templates = dbStore.getRecords(subIdTemplate, '');
 
-		const templates = dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []));
-		const totalTemplate = dbStore.getMeta(subIdTemplate, '').total;
-		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !UtilObject.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
@@ -70,6 +68,9 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const allowedRelation = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Relation ]);
 		const allowedTemplate = object.isInstalled && allowedObject && showTemplates;
 		const allowedLayout = object.recommendedLayout != I.ObjectLayout.Bookmark;
+		
+		const totalObject = dbStore.getMeta(this.getSubIdObject(), '').total;
+		const totalTemplate = templates.length + (allowedTemplate ? 1 : 0);
 
 		if (!recommendedRelations.includes('rel-description')) {
 			recommendedRelations.push('rel-description');
@@ -144,10 +145,13 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 									<ListObjectPreview 
 										key="listTemplate"
 										ref={ref => this.refListPreview = ref}
-										getItems={() => templates}
+										getItems={() => dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []))}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
-										onClick={(e: any, item: any) => { UtilObject.openPopup(item); }} 
+										onMenu={(e: any, item: any) => this.onMenu(item)}
+										onClick={(e: any, item: any) => UtilObject.openPopup(item)}
+										withBlank={true}
+										defaultId={object.defaultTemplateId || Constant.templateId.blank}
 									/>
 								</div>
 							) : (
@@ -316,15 +320,19 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			};
 
 			focus.clear(true);
-			analytics.event('CreateTemplate', { objectType: rootId });
+			analytics.event('CreateTemplate', { objectType: rootId, route: 'Library' });
 
-			UtilObject.openPopup(message.details, {
-				onClose: () => {
-					if (this.refListPreview) {
-						this.refListPreview.updateItem(message.objectId);
-					};
-				}
-			});
+			this.templateOpen(message.details);
+		});
+	};
+
+	templateOpen (object: any) {
+		UtilObject.openPopup(object, {
+			onClose: () => {
+				if (this.refListPreview) {
+					this.refListPreview.updateItem(object.id);
+				};
+			}
 		});
 	};
 
@@ -405,10 +413,10 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		};
 
 		UtilData.checkTemplateCnt([ rootId ], (message: any) => {
-			if (message.records.length > 1) {
+			if (message.records.length) {
 				showMenu();
 			} else {
-				create(message.records.length ? message.records[0] : '');
+				create('');
 			};
 		});
 	};
@@ -498,6 +506,55 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			{ key: 'recommendedLayout', value: Number(layout) || I.ObjectLayout.Page } 
 		]);
 		analytics.event('ChangeRecommendedLayout', { objectType: rootId, layout: layout });
+	};
+
+	onMenu (item: any) {
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
+		const { defaultTemplateId } = object;
+		const template: any = { id: item.id, typeId: rootId };
+
+		if (menuStore.isOpen('dataviewTemplate', item.id)) {
+			menuStore.close('dataviewTemplate');
+			return;
+		};
+
+		if (template.id == Constant.templateId.blank) {
+			template.isBlank = true;
+
+			if (!object.defaultTemplateId) {
+				template.isDefault = true;
+			};
+		};
+
+		if (template.id == defaultTemplateId) {
+			template.isDefault = true;
+		};
+
+		menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
+			menuStore.open('dataviewTemplate', {
+				menuKey: item.id,
+				element: `#item-${item.id} .more`,
+				vertical: I.MenuDirection.Bottom,
+				horizontal: I.MenuDirection.Right,
+				onOpen: () => $(`#item-${item.id}`).addClass('active'),
+				onClose: () => $(`#item-${item.id}`).removeClass('active'),
+				data: {
+					template,
+					onSetDefault: () => {
+						UtilObject.setDefaultTemplateId(rootId, item.id);
+					},
+					onDuplicate: (object: any) => {
+						this.templateOpen(object);
+					},
+					onDelete: () => {
+						if (template.isDefault) {
+							UtilObject.setDefaultTemplateId(rootId, Constant.templateId.blank);
+						};
+					}
+				}
+			});
+		});
 	};
 
 	getRootId () {

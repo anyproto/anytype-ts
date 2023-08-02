@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Loader, IconObject, Cover, Icon, ObjectType } from 'Component';
 import { commonStore, detailStore, blockStore } from 'Store';
-import { I, C, UtilData, Action } from 'Lib';
+import { I, C, UtilData, Action, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props {

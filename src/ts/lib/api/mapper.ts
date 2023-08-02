@@ -306,6 +306,7 @@ export const Mapper = {
 				groupRelationKey: obj.getGrouprelationkey(),
 				groupBackgroundColors: obj.getGroupbackgroundcolors(),
 				pageLimit: obj.getPagelimit(),
+				defaultTemplateId: obj.getDefaulttemplateid(),
 			};
 		},
 
@@ -736,6 +737,7 @@ export const Mapper = {
 			item.setRelationsList(obj.relations.map(Mapper.To.ViewRelation));
 			item.setFiltersList(obj.filters.map(Mapper.To.Filter));
 			item.setSortsList(obj.sorts.map(Mapper.To.Sort));
+			item.setDefaulttemplateid(obj.defaultTemplateId);
 
 			return item;
 		},

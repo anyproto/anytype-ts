@@ -46,7 +46,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 		const { isLoading } = this.state;
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, value, placeholder, label, isBig, noFilter, noIcon } = data;
+		const { filter, value, placeholder, label, isBig, noFilter, noIcon, onMore } = data;
 		const items = this.getItems();
 		const cn = [ 'wrap' ];
 		const placeholderFocus = data.placeholderFocus || translate('commonFilterObjects');
@@ -87,6 +87,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 				if (item.isAdd) {
 					cn.push('add');
+					props.isAdd = true;
 				};
 				if (item.isHidden) {
 					cn.push('isHidden');
@@ -100,6 +101,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					props.caption = (type ? type.name : undefined);
 				};
 
+				if (item.caption) {
+					props.caption = item.caption;
+				};
+
 				if (noIcon) {
 					props.object = undefined;
 				};
@@ -108,8 +113,9 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					<MenuItemVertical
 						{...props}
 						name={<ObjectName object={item} />}
-						onMouseEnter={(e: any) => { this.onMouseEnter(e, item); }}
-						onClick={(e: any) => { this.onClick(e, item); }}
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onClick={e => this.onClick(e, item)}
+						onMore={onMore ? e => onMore(e, item) : undefined}
 						style={param.style}
 						checkbox={checkbox}
 						className={cn.join(' ')}
@@ -197,9 +203,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 
 		if (this.filter != filter) {
 			this.filter = filter;
-			this.n = -1;
-			this.offset = 0;
-			this.load(true);
+			this.reload();
 			return;
 		};
 
@@ -240,7 +244,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, label, canAdd, addParam } = data;
+		const { filter, label, canAdd, addParam, mapElement } = data;
 
 		let items = [].concat(this.items);
 		let length = items.length;
@@ -262,6 +266,10 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			};
 		};
 
+		if (mapElement) {
+			items = items.map(mapElement);
+		};
+
 		return items;
 	};
 
@@ -270,6 +278,12 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			this.offset += Constant.limit.menuRecords;
 			this.load(false, resolve);
 		});
+	};
+
+	reload () {
+		this.n = -1;
+		this.offset = 0;
+		this.load(true);
 	};
 	
 	load (clear: boolean, callBack?: (message: any) => void) {

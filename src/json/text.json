@@ -104,6 +104,7 @@
     "commonUpdated": "Updated",
     "commonUndo": "Undo",
     "commonRedo": "Redo",
+    "commonBlank": "Blank",
 
     "commonLCCollection": "collection",
     "commonLCSet": "set",
@@ -349,7 +350,7 @@
     "pageMainTypeRecommendedLayout": "Recommended layout",
     "pageMainTypeNewObject": "New object",
     "pageMainTypeNewSetOfObjects": "New set of objects",
-    "pageMainTypeNoTemplates": "This object type doesn&apos;t have templates",
+    "pageMainTypeNoTemplates": "This object type doesn't have templates",
 
     "pageAuthLoginInvalidPhrase": "Invalid recovery phrase",
 
@@ -459,6 +460,7 @@
     "blockDataviewCreateNew": "Create new object",
     "blockDataviewCreateNewCollection": "Create new collection",
     "blockDataviewCreateNewSet": "Create new set",
+    "blockDataviewShowTemplates": "Show templates",
 
     "blockDataviewEmptyTargetSets": "sets",
     "blockDataviewEmptyTargetCollections": "collections",
@@ -492,6 +494,7 @@
 
     "blockDataviewBoardColumnSettings": "Column settings",
     "blockDataviewSelectTemplate": "Choose a template",
+    "blockDataviewNewTemplate": "New template",
 
     "blockCoverDrag": "Drag image to reposition",
     "blockCoverSave": "Save changes",
@@ -754,7 +757,7 @@
     "popupSettingsDataFilesOffloaded": "Files offloaded",
 
     "popupSettingsDeleteTitle1": "1. You have 30 days to cancel account deletion",
-    "popupSettingsDeleteText1": "We&apos;re sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
+    "popupSettingsDeleteText1": "We're sorry to see you go. Once you request your account to be deleted, you have 30 days to cancel this request. After 30 days, your account data is permanently removed from the backup node, you won't be able to sign into Anytype on new devices.",
     "popupSettingsDeleteTitle2": "2. Delete data from other devices",
     "popupSettingsDeleteText2": "Since Anytype stores all your data locally on the device, you need to remove it from other devices also. Launch and remove data in Anytype or just delete the app.",
     "popupSettingsDeleteCheckboxLabel": "I have read it and want to delete my account",
@@ -1136,6 +1139,10 @@
     "menuDataviewViewListAddView": "Add a view",
     "menuDataviewViewListViews": "Views",
 
+    "menuDataviewTemplateSetDefault": "Set as default",
+    "menuDataviewTemplateSetDefaultForView": "Default for this view",
+    "menuDataviewTemplateEdit": "Edit template",
+
     "menuGraphSettingsTitles": "Titles",
     "menuGraphSettingsArrows": "Arrows",
     "menuGraphSettingsIcons": "Icons",
@@ -1185,7 +1192,7 @@
 
     "menuTypeSuggestFilterTypes": "Filter types...",
     "menuTypeSuggestMyTypes": "My types",
-    "menuTypeSuggestCreateType ": "Create type %s",
+    "menuTypeSuggestCreateType": "Create type %s",
 
     "menuWidgetAddWidget": "Add widget",
     "menuWidgetChooseSource": "Choose a source",
@@ -1197,7 +1204,9 @@
     "menuWidgetFavorites": "Favorites",
     "menuWidgetSets": "Sets",
     "menuWidgetCollections": "Collections",
-    "menuWidgetRecent": "Recent",
+    "menuWidgetRecentEdit": "Recently edited",
+	"menuWidgetRecentOpen": "Recently opened",
+	"menuWidgetRecentOpenCaption": "On this device",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
@@ -1346,7 +1355,8 @@
     "widget3Name": "Compact list",
     "widget3Description": "Widget with list view of set object",
     "widgetFavorite": "Favorites",
-    "widgetRecent": "Recent",
+    "widgetRecent": "Recently edited",
+	"widgetRecentOpen": "Recently opened",
     "widgetSet": "Sets",
     "widgetCollection": "Collections",
     "widgetEdit": "Edit widgets",
@@ -1487,7 +1497,7 @@
     "libMenuReplace": "Replace",
 
     "libMenuChangeSource": "Change source %s",
-    "libMenuOpenSource ": "Open source %s",
+    "libMenuOpenSource": "Open source %s",
     "libMenuOpenFullscreen": "Open fullscreen",
 
     "libActionUninstallTypeTitle": "Are you sure you want to remove this Type?",

@@ -229,6 +229,7 @@ class DetailStore {
 		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
 		object.typeKey = Relation.getStringValue(object.id);
+		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 
 		if (object.isDeleted) {
 			object.name = translate('commonDeletedType');

@@ -119,3 +119,9 @@
 .previewObject.align2 {
 	.heading { text-align: right; }
 }
+
+.previewObject.blank {
+	.heading {
+		.name { color: $colorSecondary; }
+	}
+}
