@@ -710,10 +710,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				mapElement: it => ({
 					...it,
 					withMore: it.id != 'newTemplate',
-					caption: it.id == this.getView().defaultTemplateId ? translate('commonDefault') : ' '
+					caption: it.id == this.getView().defaultTemplateId ? translate('commonDefault') : ' ',
+					isDefault: it.id == this.getView().defaultTemplateId,
+					isBlank: it.id == Constant.templateId.blank
 				}),
 				dataChange: (items: any[]) => {
-					const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank'), isBlank: true } ];
+					const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank') } ];
 					const bottom: any[] = [
 						{ isDiv: true },
 						{ id: 'newTemplate', name: translate('blockDataviewNewTemplate'), icon: 'plus' }

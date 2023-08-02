@@ -1139,6 +1139,9 @@
     "menuDataviewViewListAddView": "Add a view",
     "menuDataviewViewListViews": "Views",
 
+    "menuDataviewTemplateSetDefault": "Set as default",
+    "menuDataviewTemplateEdit": "Edit template",
+
     "menuGraphSettingsTitles": "Titles",
     "menuGraphSettingsArrows": "Arrows",
     "menuGraphSettingsIcons": "Icons",

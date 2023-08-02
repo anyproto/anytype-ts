@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { analytics, C, I, keyboard, UtilObject } from 'Lib';
+import { analytics, C, I, keyboard, UtilObject, translate } from 'Lib';
 
 class MenuTemplate extends React.Component<I.Menu> {
 
@@ -51,10 +51,10 @@ class MenuTemplate extends React.Component<I.Menu> {
         const { isBlank, isDefault } = template;
        
 		 return [
-			!isDefault ? ({ id: 'default', name: 'Set as default' }) : null,
-			!isBlank ? ({ id: 'edit', name: 'Edit template' }) : null,
-			{ id: 'duplicate', name: 'Duplicate' },
-			!isBlank ? ({ id: 'delete', name: 'Delete' }) : null,
+			!isDefault ? ({ id: 'default', name: translate('menuDataviewTemplateSetDefault') }) : null,
+			!isBlank ? ({ id: 'edit', name: translate('menuDataviewTemplateEdit') }) : null,
+			{ id: 'duplicate', name: translate('commonDuplicate') },
+			!isBlank ? ({ id: 'delete', name: translate('commonDelete') }) : null,
 		].filter(it => it);
     };
 

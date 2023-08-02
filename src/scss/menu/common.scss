@@ -87,7 +87,7 @@
 		.item.hover, .item:hover {
 			.icon.delete, .icon.more { opacity: 1; }
 		}
-		.item.withMore:hover {
+		.item.withMore.hover, .item.withMore:hover {
 			.caption { opacity: 0; }
 		}
 
