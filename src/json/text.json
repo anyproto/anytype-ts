@@ -1205,7 +1205,8 @@
     "menuWidgetSets": "Sets",
     "menuWidgetCollections": "Collections",
     "menuWidgetRecentEdit": "Recently edited",
-	"menuWidgetRecentOpen": "Recently opened (on this device)",
+	"menuWidgetRecentOpen": "Recently opened",
+	"menuWidgetRecentOpenCaption": "On this device",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
