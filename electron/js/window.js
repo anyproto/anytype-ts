@@ -68,7 +68,7 @@ class WindowManager {
 		Api.setZoom(win, zoom);
 
 		return win;
-	}
+	};
 
 	createMain (options) {
 		const { isChild } = options;
@@ -99,7 +99,7 @@ class WindowManager {
 		} else
 		if (is.linux) {
 			param.icon = image;
-		}
+		};
 
 		if (!isChild) {
 			state = windowStateKeeper({ defaultWidth: DEFAULT_WIDTH, defaultHeight: DEFAULT_HEIGHT });
@@ -114,7 +114,7 @@ class WindowManager {
 	  		const { width, height } = primaryDisplay.workAreaSize;
 
 			param = Object.assign(param, this.getWindowPosition(param, width, height));
-		}
+		};
 
 		const win = this.create(options, param);
 
@@ -122,20 +122,20 @@ class WindowManager {
 
 		if (!isChild) {
 			state.manage(win);
-		}
+		};
 
 		if (is.development) {
 			win.loadURL(`http://localhost:${port}`);
 			win.toggleDevTools();
 		} else {
 			win.loadURL('file://' + path.join(Util.appPath, 'dist', 'index.html'));
-		}
+		};
 
 		win.on('enter-full-screen', () => MenuManager.initMenu());
 		win.on('leave-full-screen', () => MenuManager.initMenu());
 
 		return win;
-	}
+	};
 
 	createAbout () {
 		const win = this.create({}, { 
@@ -161,7 +161,7 @@ class WindowManager {
 		});
 
 		return win;
-	}
+	};
 
 	command (win, cmd, param) {
 		param = param || {};
@@ -200,14 +200,14 @@ class WindowManager {
 					}
 				});
 				break;
-		}
-	}
+		};
+	};
 
 	updateTheme () {
 		this.list.forEach(it => {
 			Util.send(it, 'native-theme', Util.isDarkTheme());
 		});
-	}
+	};
 
 	getWindowPosition (param, displayWidth, displayHeight) {
 		let x = Math.round(displayWidth / 2 - param.width / 2);
@@ -226,12 +226,12 @@ class WindowManager {
 			if (xLimit || yLimit) {
 				x = 0;
 				y = 0;
-			}
-		}
+			};
+		};
 
 		return { x, y };
-	}
+	};
 
-}
+};
 
 module.exports = new WindowManager();

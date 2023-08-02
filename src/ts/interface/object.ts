@@ -27,7 +27,7 @@ export enum ObjectLayout {
 	History		 = 104,
 	Archive		 = 105,
 	Block		 = 106,
-}
+};
 
 export enum RelationType { 
 	LongText	 = 0, 
@@ -44,7 +44,7 @@ export enum RelationType {
 	Tag			 = 11,
 	Object		 = 100,
 	Relations	 = 101,
-}
+};
 
 export enum RelationScope {
 	Object				 = 0,
@@ -57,10 +57,10 @@ export enum RelationScope {
 export enum OptionScope {
     Local	 = 0,
 	Relation = 1,
-}
+};
 
 export enum ObjectFlag {
 	DeleteEmpty		 = 0,
 	SelectType		 = 1,
     SelectTemplate	 = 2,
-}
+};

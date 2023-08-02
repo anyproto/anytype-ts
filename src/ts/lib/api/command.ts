@@ -200,7 +200,7 @@ const FileDrop = (contextId: string, targetId: string, position: I.BlockPosition
 const FileUpload = (spaceId: string, url: string, path: string, type: I.FileType, callBack?: (message: any) => void) => {
 	if (!url && !path) {
 		return;
-	}
+	};
 
 	const request = new Rpc.File.Upload.Request();
 
@@ -1080,11 +1080,11 @@ const HistoryShowVersion = (objectId: string, versionId: string, callBack?: (mes
 	dispatcher.request(HistoryShowVersion.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, '', message.objectView);
-		}
+		};
 
 		if (callBack) {
 			callBack(message);
-		}
+		};
 	});
 };
 
@@ -1217,17 +1217,17 @@ const ObjectOpen = (objectId: string, traceId: string, callBack?: (message: any)
 	dispatcher.request(ObjectOpen.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
-		}
+		};
 
 		// Save last opened object
 		const object = detailStore.get(objectId, objectId, []);
 		if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout)) {
 			Storage.set('lastOpened', { id: object.id, layout: object.layout });
-		}
+		};
 
 		if (callBack) {
 			callBack(message);
-		}
+		};
 	});
 };
 
@@ -1240,11 +1240,11 @@ const ObjectShow = (objectId: string, traceId: string, callBack?: (message: any)
 	dispatcher.request(ObjectShow.name, request, (message: any) => {
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView);
-		}
+		};
 
 		if (callBack) {
 			callBack(message);
-		}
+		};
 	});
 };
 
@@ -1285,35 +1285,39 @@ const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing:
 	let params = null;
 
 	switch (type) {
-		case I.ImportType.Notion:
+		case I.ImportType.Notion: {
 			params = new Rpc.Object.Import.Request.NotionParams();
 			params.setApikey(options.apiKey);
 
 			request.setNotionparams(params);
 			break;
+		};
 
-		case I.ImportType.Markdown:
+		case I.ImportType.Markdown: {
 			params = new Rpc.Object.Import.Request.MarkdownParams();
 			params.setPathList(options.paths);
 
 			request.setMarkdownparams(params);
 			break;
+		};
 
-		case I.ImportType.Html:
+		case I.ImportType.Html: {
 			params = new Rpc.Object.Import.Request.HtmlParams();
 			params.setPathList(options.paths);
 
 			request.setHtmlparams(params);
 			break;
+		};
 
-		case I.ImportType.Text:
+		case I.ImportType.Text: {
 			params = new Rpc.Object.Import.Request.TxtParams();
 			params.setPathList(options.paths);
 
 			request.setTxtparams(params);
 			break;
+		};
 
-		case I.ImportType.Csv:
+		case I.ImportType.Csv: {
 			params = new Rpc.Object.Import.Request.CsvParams();
 			params.setPathList(options.paths);
 			params.setMode(options.mode);
@@ -1323,16 +1327,18 @@ const ObjectImport = (spaceId: string, options: any, snapshots: any[], existing:
 
 			request.setCsvparams(params);
 			break;
+		};
 
-		case I.ImportType.Protobuf:
+		case I.ImportType.Protobuf: {
 			params = new Rpc.Object.Import.Request.PbParams();
 			params.setPathList(options.paths);
 			params.setNocollection(options.noCollection);
 
 			request.setPbparams(params);
 			break;
+		};
 
-	}
+	};
 
 	request.setSpaceid(spaceId);
 	request.setSnapshotsList((snapshots || []).map(Mapper.To.Snapshot));

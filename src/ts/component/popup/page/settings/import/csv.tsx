@@ -34,7 +34,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 		this.onImport = this.onImport.bind(this);
 		this.onFilterKeyUp = this.onFilterKeyUp.bind(this);
-	}
+	};
 
 	render () {
 		this.init();
@@ -125,7 +125,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 				<Error text={error} />
 			</div>
 		);
-	}
+	};
 
 	componentDidMount(): void {
 		this.init();
@@ -137,7 +137,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 
 		if (undefined === options.firstRow) {
 			options.firstRow = true;
-		}
+		};
 
 		this.data = {
 			mode: Number(options.mode) || I.CsvImportMode.Collection,
@@ -167,10 +167,10 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 		const option = Delimiters.find(it => {
 			if (id && (it.id == id)) {
 				return true;
-			}
+			};
 			if (v && ((it.value == v) || (it.caption == v))) {
 				return true;
-			}
+			};
 			return false;
 		});
 
@@ -179,7 +179,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 		} else 
 		if (v) {
 			this.data.delimiter = v.substring(0, 10);
-		}
+		};
 
 		this.save();
 	};
@@ -191,7 +191,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 		if (!delimiter) {
 			delimiter = { id: 'custom', name: translate('popupSettingsImportCsvCustom'), caption: this.data.delimiter };
 			delimiters.push(delimiter);
-		}
+		};
 
 		return { delimiter, delimiters };
 	};
