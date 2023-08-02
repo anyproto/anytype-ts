@@ -87,10 +87,17 @@ class Survey {
         const obj = storage[I.SurveyType.Pmf] || {};
         const lastTime = Number(Storage.get('lastSurveyTime')) || Number(obj.time) || 0;
         const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || obj.cancel || false;
-        const days = lastTime ? 90 : 30;
-        const surveyTime = lastTime <= UtilCommon.time() - 86400 * days;
+        const surveyTime = lastTime <= UtilCommon.time() - 86400 * 30;
+		const randSeed = 10000000;
+		const rand = UtilCommon.rand(0, randSeed);
 
-        if (storage.askPmf && !popupStore.isOpen() && !lastCanceled && surveyTime) {
+		// Show this survey to 5% of users
+		if (rand > randSeed * 0.05) {
+			Storage.set('survey', { ...obj, time: UtilCommon.time() });
+			return;
+		};
+
+        if (!popupStore.isOpen() && !lastCanceled && surveyTime) {
             this.show(I.SurveyType.Pmf);
         };
     };

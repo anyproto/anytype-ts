@@ -243,7 +243,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 				filter: '',
 				ref: 'menu',
 				menuIdEdit: 'blockRelationEdit',
-				skipKeys: dbStore.getObjectRelationsKeys(rootId, rootId),
+				skipKeys: dbStore.getObjectRelationKeys(rootId, rootId),
 				addCommand: (rootId: string, blockId: string, relation: any, onChange: (message: any) => void) => {
 					C.ObjectRelationAdd(rootId, [ relation.relationKey ], onChange);
 				},

@@ -319,24 +319,7 @@
 		"yaml":			 "YAML"
 	},
 
-	"interfaceLang": {
-		"de-DE": "Deutsch (Deutschland)",
-		"fr-FR": "Français (France)",
-		"ko-KR": "한국어 (대한민국)",
-		"no-NO": "Norsk (Norge)",
-		"ru-RU": "Русский (Россия)",
-		"en-US": "English (United States)",
-		"hi-IN": "हिन्दी (भारत)",
-		"nb-NO": "Norsk bokmål (Norge)",
-		"pt-BR": "Português (Brasil)",
-		"uk-UA": "Українська (Україна)",
-		"es-ES": "Español (España)",
-		"it-IT": "Italiano (Italia)",
-		"nl-NL": "Nederlands (Nederland)",
-		"pt-PT": "Português (Portugal)",
-		"zh-CN": "中文 (中国)",
-		"zh-TW": "中文 (台灣)"
-	},
+	"enabledInterfaceLang": [ "da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "hi-IN", "it-IT", "nb-NO", "zh-CN", "zh-TW" ],
 
 	"spellingLang": {
 		"af": "Afrikaans", 

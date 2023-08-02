@@ -107,6 +107,7 @@
 		content: ""; display: block; width: calc(100% - 48px); height: 2px; background: $colorOrange; position: absolute; right: 0px; bottom: -2px;
 	}
 	
+	.block:hover > .wrapMenu > .icon.dnd { opacity: 1; }
 	.block.showMenu > .wrapMenu > .icon.dnd { opacity: 1; }
 
 	.block.isAdding.top > .wrapContent > .selectable > .dropTarget { border-radius: 0px 0px 4px 4px !important; }

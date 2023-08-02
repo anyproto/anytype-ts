@@ -202,7 +202,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		let item = this.getItems()[this.n];
 		let ret = false;
 
-		keyboard.shortcut('arrowright', e, (pressed: string) => {
+		keyboard.shortcut('arrowright', e, () => {
 			this.onEdit(e, item);
 			ret = true;
 		});
@@ -302,7 +302,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	onEdit (e: any, item: any) {
 		e.stopPropagation();
 
-		if (!item) {
+		if (!item || (item.id == 'add')) {
 			return;
 		};
 

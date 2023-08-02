@@ -224,8 +224,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			Survey.check(I.SurveyType.Register);
 			Survey.check(I.SurveyType.Pmf);
 			Survey.check(I.SurveyType.Object);
-
-			Storage.set('survey', { askPmf: true });
 		}, Constant.delay.popup);
 	};
 

@@ -322,7 +322,7 @@ class BlockStore {
 					};
 				};
 
-				cb(item.childBlocks);
+				cb(unwrap(item.childBlocks));
 			};
 		};
 

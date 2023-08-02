@@ -1054,7 +1054,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getVisibleRelations () {
 		const { rootId, block } = this.props;
 		const view = this.getView();
-		const keys = dbStore.getObjectRelationsKeys(rootId, block.id);
+		const keys = dbStore.getObjectRelationKeys(rootId, block.id);
 
 		return view.getVisibleRelations().filter(it => keys.includes(it.relationKey));
 	};
