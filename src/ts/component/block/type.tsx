@@ -216,17 +216,21 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 			this.onObjectTo(item.id);
 		} else {
 			UtilData.checkTemplateCnt([ item.id ], (message: any) => {
-				if (message.records.length > 1) {
+				if (message.records.length) {
 					popupStore.open('template', { 
 						data: { 
 							typeId: item.id, 
 							onSelect: (template: any) => {
+								if (template && (template.id == Constant.templateId.blank)) {
+									template = null;
+								};
+
 								this.onCreate(item.id, template);
 							} 
 						} 
 					});
 				} else {
-					this.onCreate(item.id, message.records.length ? message.records[0] : null);
+					this.onCreate(item.id, null);
 				};
 			});
 		};

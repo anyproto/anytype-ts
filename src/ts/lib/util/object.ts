@@ -228,6 +228,10 @@ class UtilObject {
 		C.BlockListSetAlign(rootId, [], align, callBack);
 	};
 
+	setDefaultTemplateId (rootId: string, templateId: string, callBack?: (message: any) => void) {
+		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: templateId } ], callBack);
+	};
+
 	defaultName (key: string) {
 		return translate(`defaultName${key}`);
 	};
@@ -334,6 +338,38 @@ class UtilObject {
 			I.ObjectLayout.Task, 
 			I.ObjectLayout.Note, 
 			I.ObjectLayout.Bookmark, 
+		];
+	};
+
+	getLayoutsWithoutTemplates () {
+		return [
+			I.ObjectLayout.Note,
+			I.ObjectLayout.Set,
+			I.ObjectLayout.Collection,
+			I.ObjectLayout.Bookmark,
+		].concat(this.getFileAndSystemLayouts());
+	}
+
+	getFileAndSystemLayouts () {
+		return this.getFileLayouts().concat(this.getSystemLayouts());
+	};
+
+	getSystemLayouts () {
+		return [
+			I.ObjectLayout.Type,
+			I.ObjectLayout.Relation,
+			I.ObjectLayout.Option,
+			I.ObjectLayout.Dashboard,
+			I.ObjectLayout.Date,
+		];
+	};
+
+	getFileLayouts () {
+		return [
+			I.ObjectLayout.File,
+			I.ObjectLayout.Image,
+			I.ObjectLayout.Audio,
+			I.ObjectLayout.Video,
 		];
 	};
 

@@ -24,12 +24,11 @@ class MenuManager {
 		const Api = require('./api.js');
 		const WindowManager = require('./window.js');
 		const UpdateManager = require('./update.js');
-		const Constant = require('../../src/json/constant.json');
-		const Locale = require('../../src/json/locale.json');
+		const Locale = require('../../dist/lib/json/locale.json');
 		const lang = Util.getLang();
 		const langMenu = [];
 
-		for (let key of Constant.enabledInterfaceLang) {
+		for (let key of Util.enabledLangs()) {
 			langMenu.push({
 				label: Locale[key], type: 'checkbox', checked: key == lang,
 				click: () => Api.changeInterfaceLang(this.win, key)

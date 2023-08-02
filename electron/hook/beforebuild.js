@@ -1,5 +1,4 @@
 const fs = require('fs-extra');
-const path = require('path');
 
 exports.default = async function (context) {
     const { platform, arch } = context;

@@ -7,12 +7,34 @@
 
 	.item { display: inline-block; vertical-align: top; margin-right: 16px; position: relative; }
 	.item {
+		.hoverArea { height: 100%; }
+		.hoverArea:before {
+			content: ""; background: $colorHoverMedium; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
+			z-index: 2; border-radius: 8px; display: none; pointer-events: none;
+		}
+		.hoverArea.hover:before, .hoverArea:hover:before { display: block; }
+
+		> .icon.more { opacity: 0; }
+		> .icon.more {
+			width: 28px; height: 28px; background-size: 20px; position: absolute; right: 8px; top: 8px;
+			border-radius: 6px; z-index: 10; background-image: url('~img/icon/menu/action/more0.svg'); cursor: pointer;
+		}
+		> .icon.more:hover,
+		> .icon.more.hover { background-color: $colorHoverMedium; }
+
+		> .defaultLabel {
+			position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500;
+			padding: 1px 4px; border-radius: 4px; background: $colorVeryLightGrey; color: $colorDarkGrey;
+		}
+
 		.previewObject { width: 344px; height: 216px; }
 		.icon.plus { width: 28px; height: 28px; position: absolute; left: 50%; top: 50%; margin: -14px 0px 0px -14px; background-image: url('~img/icon/plus/templateBig.svg'); }
 	}
-	.item:before {
-		content: ""; background: $colorHoverMedium; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
-		z-index: 2; height: 216px; border-radius: 8px; display: none; pointer-events: none;
+
+	.item:hover,
+	.item.active {
+		> .icon.more { opacity: 1; }
+		> .defaultLabel { opacity: 0; }
 	}
 
 	.item > .name { padding: 0px 14px; @include text-overflow-nw; color: $colorDarkGrey; }
@@ -20,7 +42,6 @@
 		.input { border: 0px; padding: 0px; height: 22px; }
 	}
 	.item:last-child { margin-right: 0px; }
-	.item.hover:before, .item:hover:before { display: block; }
 
 	.item.add { border: 1px solid $colorBorderLight; border-radius: 8px; width: 344px; height: 216px; }
 

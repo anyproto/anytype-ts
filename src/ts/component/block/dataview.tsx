@@ -36,7 +36,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	refSelect = null;
 	refCells: Map<string, any> = new Map();
 
-	menuContext: any = null;
 	viewId = '';
 	creating = false;
 	frame = 0;
@@ -68,7 +67,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onEmpty = this.onEmpty.bind(this);
 		this.onDragRecordStart = this.onDragRecordStart.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
+		this.onTemplatesMenu = this.onTemplatesMenu.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
+		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isCollection = this.isCollection.bind(this);
 		this.objectOrderUpdate = this.objectOrderUpdate.bind(this);
 		this.applyObjectOrder = this.applyObjectOrder.bind(this);
@@ -142,7 +143,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getVisibleRelations: this.getVisibleRelations,
 			getEmpty: this.getEmpty,
 			onRecordAdd: this.onRecordAdd,
+			onTemplatesMenu: this.onTemplatesMenu,
 			isAllowedObject: this.isAllowedObject,
+			isAllowedTemplate: this.isAllowedTemplate,
 			onSourceSelect: this.onSourceSelect,
 			onSourceTypeSelect: this.onSourceTypeSelect,
 		};
@@ -470,6 +473,168 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return detailStore.get(rootId, isInline ? targetObjectId : rootId, [ 'setOf' ]);
 	};
 
+	getTypeId (): string {
+		const { rootId } = this.props;
+		const { defaultTemplateId } = this.getView();
+		const objectId = this.getObjectId();
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
+
+		let type = '';
+
+		if (types.length) {
+			type = types[0].id;
+		};
+		if (relations.length) {
+			relations.forEach((it: any) => {
+				if (it.objectTypes.length && !type) {
+					const first = it.objectTypes[0];
+
+					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
+						type = first;
+					};
+				};
+			});
+		};
+		if (!type) {
+			type = commonStore.type;
+		};
+
+		return type;
+	};
+
+	getDetails (): any {
+		const { rootId, block } = this.props;
+		const objectId = this.getObjectId();
+		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
+		const view = this.getView();
+		const conditions = [
+			I.FilterCondition.Equal,
+			I.FilterCondition.GreaterOrEqual,
+			I.FilterCondition.LessOrEqual,
+			I.FilterCondition.In,
+			I.FilterCondition.AllIn,
+		];
+		const details: any = {
+			type: this.getTypeId()
+		};
+
+		if (relations.length) {
+			relations.forEach((it: any) => {
+				details[it.relationKey] = Relation.formatValue(it, null, true);
+			});
+		};
+
+		for (let filter of view.filters) {
+			if (!conditions.includes(filter.condition)) {
+				continue;
+			};
+
+			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
+			if (!value) {
+				continue;
+			};
+
+			const relation = dbStore.getRelationByKey(filter.relationKey);
+			if (relation && !relation.isReadonlyValue) {
+				details[filter.relationKey] = Relation.formatValue(relation, value, true);
+			};
+		};
+
+		return details;
+	};
+
+	getMenuParam (e: any, dir: number): any {
+		const node = $(this.node);
+		const hoverArea = node.find('.hoverArea');
+
+		const menuParam: any = {
+			onClose: () => {
+				this.creating = false;
+				hoverArea.removeClass('active');
+			},
+		};
+
+		if (dir) {
+			menuParam.element = $(e.currentTarget);
+		} else {
+			menuParam.horizontal = I.MenuDirection.Center;
+			menuParam.recalcRect = () => {
+				const { ww, wh } = UtilCommon.getWindowDimensions();
+				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
+			};
+		};
+
+		return menuParam;
+	};
+
+	setDefaultTemplateForView (id: string, cb?: () => void) {
+		const { rootId, block } = this.props;
+		const view = this.getView();
+
+		C.BlockDataviewViewUpdate(rootId, block.id, view.id, { ...view, defaultTemplateId: id }, () => {
+			if (cb) {
+				cb();
+			};
+		});
+	};
+
+	recordCreate (e: any, template: any, dir: number) {
+		const { rootId, block } = this.props;
+		const objectId = this.getObjectId();
+		const subId = dbStore.getSubId(rootId, block.id);
+		const isCollection = this.isCollection();
+
+		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
+		const details = this.getDetails();
+		const flags: I.ObjectFlag[] = [];
+		if (!types.length || isCollection) {
+			flags.push(I.ObjectFlag.SelectType);
+		};
+
+		C.ObjectCreate(details, flags, template?.id, (message: any) => {
+			this.creating = false;
+
+			if (message.error.code) {
+				return;
+			};
+
+			const object = message.details;
+			const records = this.getRecords();
+			const oldIndex = records.indexOf(message.objectId);
+			const newIndex = dir > 0 ? records.length : 0;
+
+			if (isCollection) {
+				C.ObjectCollectionAdd(objectId, [ object.id ]);
+			};
+
+			detailStore.update(subId, { id: object.id, details: object }, true);
+
+			if (oldIndex < 0) {
+				dbStore.recordAdd(subId, '', object.id, newIndex);
+			} else {
+				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+			};
+
+			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
+			const ref = this.refCells.get(id);
+
+			if (object.type == Constant.typeId.note) {
+				this.onCellClick(e, 'name', object.id);
+			} else
+			if (ref) {
+				window.setTimeout(() => { ref.onClick(e); }, 15);
+			};
+
+			analytics.event('CreateObject', {
+				route: (isCollection ? 'Collection' : 'Set'),
+				objectType: object.type,
+				layout: object.layout,
+				template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
+			});
+		});
+	};
+
 	onEmpty (e: any) {
 		const { isInline } = this.props;
 
@@ -489,133 +654,20 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
+		const { defaultTemplateId } = this.getView();
 		const objectId = this.getObjectId();
 		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
 		const setOf = object.setOf || [];
-		const view = this.getView();
-		const subId = dbStore.getSubId(rootId, block.id);
-		const isCollection = this.isCollection();
-		const conditions = [
-			I.FilterCondition.Equal,
-			I.FilterCondition.GreaterOrEqual,
-			I.FilterCondition.LessOrEqual,
-			I.FilterCondition.In,
-			I.FilterCondition.AllIn,
-		]; 
 
-		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
-		const details: any = {};
-		const flags: I.ObjectFlag[] = [];
-		const node = $(this.node);
-		const hoverArea = node.find('.hoverArea');
-
-		if (!types.length || isCollection) {
-			flags.push(I.ObjectFlag.SelectType);
-		};
-
-		const menuParam: any = {
-			onClose: () => {
-				this.creating = false;
-				hoverArea.removeClass('active');
-			},
-		};
-
-		if (dir) {
-			menuParam.element = $(e.currentTarget);
-		} else {
-			menuParam.horizontal = I.MenuDirection.Center;
-			menuParam.recalcRect = () => {
-				const { ww, wh } = UtilCommon.getWindowDimensions();
-				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
-			};
-		};
-
-		// Type detection and relations population
-		if (types.length) {
-			details.type = types[0].id;
-		};
-		if (relations.length) {
-			relations.forEach((it: any) => {
-				if (it.objectTypes.length && !details.type) {
-					const first = it.objectTypes[0];
-
-					if (!UtilObject.isFileType(first) && !UtilObject.isSystemType(first)) {
-						details.type = first;
-					};
-				};
-
-				details[it.relationKey] = Relation.formatValue(it, null, true);
-			});
-		};
-		if (!details.type) {
-			details.type = commonStore.type;
-		};
-
-		for (let filter of view.filters) {
-			if (!conditions.includes(filter.condition)) {
-				continue;
-			};
-
-			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
-			if (!value) {
-				continue;
-			};
-
-			const relation = dbStore.getRelationByKey(filter.relationKey);
-			if (relation && !relation.isReadonlyValue) {
-				details[filter.relationKey] = Relation.formatValue(relation, value, true);
-			};
-		};
+		const details: any = this.getDetails();
+		const menuParam: any = this.getMenuParam(e, dir);
 
 		this.creating = true;
 
-		const create = (template: any) => {
-			C.ObjectCreate(details, flags, template?.id, (message: any) => {
-				this.creating = false;
-
-				if (message.error.code) {
-					return;
-				};
-
-				const object = message.details;
-				const records = this.getRecords();
-				const oldIndex = records.indexOf(message.objectId);
-				const newIndex = dir > 0 ? records.length : 0;
-
-				if (isCollection) {
-					C.ObjectCollectionAdd(objectId, [ object.id ]);
-				};
-
-				detailStore.update(subId, { id: object.id, details: object }, true);
-
-				if (oldIndex < 0) {
-					dbStore.recordAdd(subId, '', object.id, newIndex);
-				} else {
-					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
-				};
-
-				const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
-				const ref = this.refCells.get(id);
-
-				if (object.type == Constant.typeId.note) {
-					this.onCellClick(e, 'name', object.id);
-				} else
-				if (ref) {
-					window.setTimeout(() => { ref.onClick(e); }, 15);
-				};
-
-				analytics.event('CreateObject', {
-					route: (isCollection ? 'Collection' : 'Set'),
-					objectType: object.type,
-					layout: object.layout,
-					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
-				});
-			});
-		};
-
 		if (details.type == Constant.typeId.bookmark) {
+			$(this.node).find('.hoverArea').addClass('active');
+			
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,
@@ -628,53 +680,140 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const showPopup = () => {
-			popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
-		};
-
-		const showMenu = () => {
-			hoverArea.addClass('active');
-
-			menuStore.open('searchObject', {
-				...menuParam,
-				className: 'single',
-				subIds: [ 'previewObject' ],
-				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
-				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-				data: {
-					label: translate('blockDataviewSelectTemplate'),
-					noFilter: true,
-					noIcon: true,
-					filters: [
-						{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
-						{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: setOf },
-					],
-					sorts: [
-						{ relationKey: 'name', type: I.SortType.Asc },
-					],
-					onOver: (e: any, context: any, item: any) => {
-						menuStore.open('previewObject', {
-							element: `#${context.props.getId()} #item-${item.id}`,
-							offsetX: context.props.getSize().width,
-							isSub: true,
-							vertical: I.MenuDirection.Center,
-							data: { rootId: item.id }
-						});
-					},
-					onSelect: (item: any) => {
-						create(item);
-						window.setTimeout(() => { menuStore.close('previewObject'); }, Constant.delay.menu);
-					}
-				}
-			});
-		};
-
 		UtilData.checkTemplateCnt(setOf, (message: any) => {
-			if (message.records.length > 1) {
-				withPopup ? showPopup() : showMenu();
+			if (message.records.length && withPopup) {
+				popupStore.open('template', { data: { typeId: details.type, onSelect: (template) => this.recordCreate(e, template, dir) } });
 			} else {
-				create(message.records.length ? message.records[0] : '');
+				const template = defaultTemplateId != Constant.templateId.blank ? { id: defaultTemplateId } : '';
+				this.recordCreate(e, template, dir);
 			};
+		});
+	};
+
+	onTemplatesMenu (e: any, dir: number) {
+		const menuParam = this.getMenuParam(e, dir);
+
+		$(this.node).find('.hoverArea').addClass('active');
+
+		let menuContext = null;
+
+		menuStore.open('searchObject', {
+			...menuParam,
+			offsetY: 10,
+			className: 'big',
+			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
+			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
+			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
+			onOpen: (context: any) => {
+				menuContext = context;
+			},
+			data: {
+				label: translate('blockDataviewSelectTemplate'),
+				noFilter: true,
+				noIcon: true,
+				mapElement: it => ({
+					...it,
+					withMore: it.id != 'newTemplate',
+					caption: it.id == this.getView().defaultTemplateId ? translate('commonDefault') : ' ',
+					isDefault: it.id == this.getView().defaultTemplateId,
+					isBlank: it.id == Constant.templateId.blank,
+					typeId: this.getTypeId()
+				}),
+				dataChange: (items: any[]) => {
+					const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank') } ];
+					const bottom: any[] = [
+						{ isDiv: true },
+						{ id: 'newTemplate', name: translate('blockDataviewNewTemplate'), icon: 'plus' }
+					];
+
+					return !items.length ? fixed.concat(bottom) : fixed.concat(items).concat(bottom);
+				},
+				filters: [
+					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.template },
+					{ operator: I.FilterOperator.And, relationKey: 'targetObjectType', condition: I.FilterCondition.In, value: this.getTypeId() },
+				],
+				sorts: [
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				onOver: (e: any, context: any, item: any) => {
+					if (item.isBlank || item.id == 'newTemplate') {
+						menuStore.closeAll(Constant.menuIds.dataviewTemplate);
+						return;
+					};
+
+					menuStore.open('previewObject', {
+						element: `#${menuContext.getId()} #item-${item.id}`,
+						offsetX: menuContext.getSize().width,
+						isSub: true,
+						vertical: I.MenuDirection.Center,
+						data: { rootId: item.id }
+					});
+				},
+				onSelect: (item: any) => {
+					if (item.id == 'newTemplate') {
+						this.onTemplateAdd();
+						return;
+					};
+
+					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
+					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
+				},
+				onMore: (e: any, item: any) => {
+					e.preventDefault();
+					e.stopPropagation();
+
+					if (menuStore.isOpen('dataviewTemplate', item.id)) {
+						menuStore.close('dataviewTemplate');
+						return;
+					};
+
+					menuStore.closeAll(Constant.menuIds.dataviewTemplate);
+					menuStore.open('dataviewTemplate', {
+						menuKey: item.id,
+						element: `#${menuContext.getId()} #item-${item.id}`,
+						vertical: I.MenuDirection.Bottom,
+						horizontal: I.MenuDirection.Right,
+						data: {
+							template: item,
+							isView: true,
+							onOver: () => menuStore.closeAll([ 'previewObject' ]),
+							onSetDefault: () => {
+								this.setDefaultTemplateForView(item.id, () => {
+									menuContext.ref.reload();
+								});
+							},
+							onDuplicate: (object) => UtilObject.openPopup(object, {}),
+							onDelete: () => {
+								if (item.isDefault) {
+									this.setDefaultTemplateForView(Constant.templateId.blank);
+								};
+								menuContext.ref.reload();
+							}
+						}
+					});
+				}
+			}
+		});
+	};
+
+	onTemplateAdd () {
+		const typeId = this.getTypeId();
+		const type = dbStore.getType(typeId);
+		const details: any = {
+			type: Constant.typeId.template,
+			targetObjectType: typeId,
+			layout: type.recommendedLayout,
+		};
+
+		C.ObjectCreate(details, [], '', (message) => {
+			if (message.error.code) {
+				return;
+			};
+
+			focus.clear(true);
+			analytics.event('CreateTemplate', { objectType: typeId, route: 'Dataview' });
+
+			UtilObject.openPopup(message.details);
 		});
 	};
 
@@ -1005,6 +1144,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 		};
 		return allowed;
+	};
+
+	isAllowedTemplate () {
+		const typeId = this.getTypeId();
+		const type = dbStore.getType(typeId);
+		const restrictions = UtilObject.getLayoutsWithoutTemplates();
+
+		return !restrictions.includes(type.recommendedLayout);
 	};
 
 	isCollection (): boolean {
