@@ -148,7 +148,8 @@
 
 	"widgetId": {
 		"favorite": "favorite",
-		"recent": "recent",
+		"recentEdit": "recent",
+		"recentOpen": "recentOpen",
 		"set": "set",
 		"collection": "collection"
 	},
