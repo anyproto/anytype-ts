@@ -25,6 +25,7 @@ interface Props {
 	tooltipY?: I.MenuDirection.Top | I.MenuDirection.Bottom;
 	color?: string;
 	forceLetter?: boolean;
+	noUpload?: boolean;
 	noRemove?: boolean;
 	noClick?: boolean;
 	menuParam?: Partial<I.MenuParam>;
@@ -381,7 +382,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 		const { id, offsetX, offsetY, onSelect, onUpload, noRemove, menuParam } = this.props;
 		const object = this.getObject();
 		const { iconEmoji, iconImage, layout } = object;
-		const noUpload = layout == I.ObjectLayout.Type;
+		const noUpload = this.props.noUpload || (layout == I.ObjectLayout.Type);
 
 		menuStore.open('smile', { 
 			element: `#${id}`,
