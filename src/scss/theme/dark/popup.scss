@@ -44,6 +44,7 @@
 
 				.input,
 				.select { border-color: $colorLinePrimary; }
+				.select .item { color: $colorPrimary; }
 
 				.select { color: $colorSecondary; }
 				.select:hover { background-color: $colorHoverMedium; }
@@ -98,12 +99,6 @@
 
 		.side.right.tabSpaceIndex .sectionIntegrations .item:hover,
 		.side.right.tabPinIndex .actionItems > .item.cp:hover { background-color: rgba(166, 166, 166, 0.04) !important; }
-
-		.side.right.tabPersonal,
-		.side.right.tabImportCsv,
-		.side.right.tabPinIndex {
-			.select .item { color: $colorPrimary; }
-		}
 
         .side.right.tabImportIndex, 
 		.side.right.tabExportIndex {
