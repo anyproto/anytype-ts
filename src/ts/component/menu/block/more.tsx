@@ -423,6 +423,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 						UtilObject.openPopup({ id: message.ids[0], layout: object.layout }, {
 							onClose: () => {
 								$(window).trigger(`updatePreviewObject${message.ids[0]}`);
+								$(window).trigger(`updateType${object.targetObjectType}`);
 							}
 						});
 

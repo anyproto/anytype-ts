@@ -221,6 +221,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	componentDidMount () {
 		this._isMounted = true;
 		this.open();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -230,6 +231,16 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.close();
+		this.unbind();
+	};
+
+	rebind () {
+		this.unbind();
+		$(window).on(`updateType${this.getRootId()}`, () => this.forceUpdate());
+	};
+
+	unbind () {
+		$(window).off(`updateType${this.getRootId()}`);
 	};
 
 	open () {
