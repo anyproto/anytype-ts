@@ -36,7 +36,7 @@ class CommonStore {
     public cellId = '';
 	public themeId = '';
 	public nativeThemeIsDark = false;
-	public typeKey = '';
+	public defaultTypeKey = '';
 	public pinTimeId = 0;
 	public isFullScreen = false;
 	public autoSidebarValue = false;
@@ -81,7 +81,7 @@ class CommonStore {
 			spaceStorageObj: observable,
 			themeId: observable,
 			nativeThemeIsDark: observable,
-			typeKey: observable,
+			defaultTypeKey: observable,
 			isFullScreen: observable,
 			autoSidebarValue: observable,
 			isSidebarFixedValue: observable,
@@ -136,9 +136,9 @@ class CommonStore {
 	};
 
 	get type(): string {
-		const typeKey = String(this.typeKey || Storage.get('defaultType') || Constant.typeKey.note);
+		const key = String(this.defaultTypeKey || Storage.get('defaultType') || Constant.typeKey.note);
 
-		let type = dbStore.getTypeByKey(typeKey);
+		let type = dbStore.getTypeByKey(key);
 		if (!type || !type.isInstalled || !UtilObject.getPageLayouts().includes(type.recommendedLayout)) {
 			type = dbStore.getTypeByKey(Constant.typeKey.note);
 		};
@@ -280,9 +280,9 @@ class CommonStore {
 	};
 
 	typeSet (v: string) {
-		this.typeKey = String(v || '');
+		this.defaultTypeKey = String(v || '');
 
-		Storage.set('defaultType', this.typeKey);
+		Storage.set('defaultType', this.defaultTypeKey);
 	};
 
 	pinTimeSet (v: string) {

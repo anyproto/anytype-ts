@@ -297,7 +297,7 @@ class UtilData {
 				ignoreWorkspace: true,
 				ignoreDeleted: true,
 				onSubscribe: () => {
-					dbStore.getTypes().forEach(it => dbStore.typeKeyMapSet(it.spaceId, it.typeKey, it.id));
+					dbStore.getTypes().forEach(it => dbStore.typeKeyMapSet(it.spaceId, it.uniqueKey, it.id));
 				}
 			},
 			{

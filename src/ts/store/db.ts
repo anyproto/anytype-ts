@@ -263,8 +263,8 @@ class DbStore {
 		return object._empty_ ? null : object;
 	};
 
-	getTypeByKey (typeKey: string): any {
-		const id = this.typeKeyMapGet(typeKey);
+	getTypeByKey (key: string): any {
+		const id = this.typeKeyMapGet(key);
 		return id ? this.getTypeById(id) : null;
 	};
 

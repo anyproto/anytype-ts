@@ -101,7 +101,7 @@ class DetailStore {
 			dbStore.relationKeyMapSet(item.details.spaceId, item.details.relationKey, item.details.id);
 		};
 		if (item.details.layout == I.ObjectLayout.Type) {
-			dbStore.typeKeyMapSet(item.details.spaceId, item.details.typeKey, item.details.id);
+			dbStore.typeKeyMapSet(item.details.spaceId, item.details.uniqueKey, item.details.id);
 		};
 
 		if (createMap) {
@@ -228,7 +228,7 @@ class DetailStore {
 		object.recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
 		object.isInstalled = object.spaceId != Constant.storeSpaceId;
 		object.sourceObject = Relation.getStringValue(object.sourceObject);
-		object.typeKey = Relation.getStringValue(object.id);
+		object.uniqueKey = Relation.getStringValue(object.uniqueKey);
 		object.defaultTemplateId = Relation.getStringValue(object.defaultTemplateId);
 
 		if (object.isDeleted) {
