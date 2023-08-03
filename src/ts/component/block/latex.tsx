@@ -1,7 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
 import Prism from 'prismjs';
-import katex from 'katex';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Icon } from 'Component';
@@ -9,6 +8,9 @@ import { I, keyboard, UtilCommon, C, focus, Renderer, translate } from 'Lib';
 import { menuStore, commonStore, blockStore } from 'Store';
 import { getRange, setRange } from 'selection-ranges';
 import Constant from 'json/constant.json';
+
+const katex = require('katex');
+require('katex/dist/contrib/mhchem');
 
 const BlockLatex = observer(class BlockLatex extends React.Component<I.BlockComponent> {
 	
