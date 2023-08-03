@@ -41,6 +41,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	frame = 0;
 	isMultiSelecting = false;
 	selected: string[] = [];
+	menuContext = null;
 
 	constructor (props: Props) {
 		super(props);
@@ -549,6 +550,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const hoverArea = node.find('.hoverArea');
 
 		const menuParam: any = {
+			onOpen: (context: any) => {
+				this.menuContext = context;
+				hoverArea.addClass('active');
+			},
 			onClose: () => {
 				this.creating = false;
 				hoverArea.removeClass('active');
@@ -666,8 +671,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.creating = true;
 
 		if (details.type == Constant.typeId.bookmark) {
-			$(this.node).find('.hoverArea').addClass('active');
-			
 			menuStore.open('dataviewCreateBookmark', {
 				...menuParam,
 				type: I.MenuType.Horizontal,
@@ -682,7 +685,12 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		UtilData.checkTemplateCnt(setOf, (message: any) => {
 			if (message.records.length && withPopup) {
-				popupStore.open('template', { data: { typeId: details.type, onSelect: (template) => this.recordCreate(e, template, dir) } });
+				popupStore.open('template', { 
+					data: { 
+						typeId: details.type, 
+						onSelect: (template) => this.recordCreate(e, template, dir) 
+					} 
+				});
 			} else {
 				const template = defaultTemplateId != Constant.templateId.blank ? { id: defaultTemplateId } : '';
 				this.recordCreate(e, template, dir);
@@ -693,10 +701,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplatesMenu (e: any, dir: number) {
 		const menuParam = this.getMenuParam(e, dir);
 
-		$(this.node).find('.hoverArea').addClass('active');
-
-		let menuContext = null;
-
 		menuStore.open('searchObject', {
 			...menuParam,
 			offsetY: 10,
@@ -704,9 +708,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-			onOpen: (context: any) => {
-				menuContext = context;
-			},
 			data: {
 				label: translate('blockDataviewSelectTemplate'),
 				noFilter: true,
@@ -736,14 +737,14 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				onOver: (e: any, context: any, item: any) => {
-					if (item.isBlank || item.id == 'newTemplate') {
+					if (item.isBlank || (item.id == 'newTemplate')) {
 						menuStore.closeAll(Constant.menuIds.dataviewTemplate);
 						return;
 					};
 
 					menuStore.open('previewObject', {
-						element: `#${menuContext.getId()} #item-${item.id}`,
-						offsetX: menuContext.getSize().width,
+						element: `#${this.menuContext.getId()} #item-${item.id}`,
+						offsetX: this.menuContext.getSize().width,
 						isSub: true,
 						vertical: I.MenuDirection.Center,
 						data: { rootId: item.id }
@@ -770,7 +771,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					menuStore.closeAll(Constant.menuIds.dataviewTemplate);
 					menuStore.open('dataviewTemplate', {
 						menuKey: item.id,
-						element: `#${menuContext.getId()} #item-${item.id}`,
+						element: `#${this.menuContext.getId()} #item-${item.id}`,
 						vertical: I.MenuDirection.Bottom,
 						horizontal: I.MenuDirection.Right,
 						data: {
@@ -778,16 +779,15 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 							isView: true,
 							onOver: () => menuStore.closeAll([ 'previewObject' ]),
 							onSetDefault: () => {
-								this.setDefaultTemplateForView(item.id, () => {
-									menuContext.ref.reload();
-								});
+								this.setDefaultTemplateForView(item.id, () => { this.menuContext.ref.reload(); });
 							},
 							onDuplicate: (object) => UtilObject.openPopup(object, {}),
 							onDelete: () => {
 								if (item.isDefault) {
 									this.setDefaultTemplateForView(Constant.templateId.blank);
 								};
-								menuContext.ref.reload();
+
+								this.menuContext.ref.reload();
 							}
 						}
 					});
