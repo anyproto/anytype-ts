@@ -81,6 +81,10 @@
 			}
 		}
 
+		.side.right.tabSpaceCreate {
+			.loaderWrapper { background-color: $colorBgLoader; }
+		}
+
 		.side.right.tabDataManagement {
 			.iconObject { background: $colorHoverMedium; }
 		}
