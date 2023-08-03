@@ -216,11 +216,12 @@ class Util {
 
 	translate (key) {
 		const lang = this.getLang();
+		const defaultData = require(`../../dist/lib/json/lang/en-US.json`);
 
 		let data = {};
 		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
 
-		return data[key] || `⚠️${key}⚠️`;
+		return data[key] || defaultData[key] || `⚠️${key}⚠️`;
 	};
 
 };

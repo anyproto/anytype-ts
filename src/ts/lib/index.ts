@@ -42,19 +42,20 @@ import { commonStore } from 'Store';
  */
 const translate = (key: string): string => {
 	const lang = commonStore.config.interfaceLang || Constant.default.interfaceLang;
+	const defaultData = require(`json/text.json`);
 
-	let data = {};
+	let data = defaultData;
 	if (lang == Constant.default.interfaceLang) {
-		data = require(`json/text.json`); 
+		data = defaultData; 
 	} else {
 		try { 
 			data = require(`lib/json/lang/${lang}.json`); 
 		} catch(e) {
-			data = require(`json/text.json`); 
+			data = defaultData; 
 		};
 	};
 
-	return data[key] || `⚠️${key}⚠️`;
+	return data[key] || defaultData[key] || `⚠️${key}⚠️`;
 };
 
 export {
