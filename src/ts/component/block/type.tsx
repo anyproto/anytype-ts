@@ -220,13 +220,7 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 					popupStore.open('template', { 
 						data: { 
 							typeId: item.id, 
-							onSelect: (template: any) => {
-								if (template && (template.id == Constant.templateId.blank)) {
-									template = null;
-								};
-
-								this.onCreate(item.id, template);
-							} 
+							onSelect: (template: any) => this.onCreate(item.id, template) 
 						} 
 					});
 				} else {
