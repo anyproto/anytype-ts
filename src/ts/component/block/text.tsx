@@ -1342,8 +1342,8 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				window.setTimeout(() => {
 					const pageContainer = UtilCommon.getPageContainer(isPopup);
 
-					pageContainer.off('click.context').on('click.context', () => { 
-						pageContainer.off('click.context');
+					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
+						pageContainer.off('mousedown.context');
 						menuStore.close('blockContext'); 
 					});
 				}, Constant.delay.menu);
