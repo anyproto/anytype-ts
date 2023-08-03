@@ -13,6 +13,14 @@
 
 		.bullet { width: 4px; height: 4px; border-radius: 100%; background: $colorDarkGrey; display: inline-block; vertical-align: middle; margin: 0px 2px; }
 
+		.cell.canEdit {
+			.cellContent {
+				.empty { display: inline; }
+			}
+		}
+
+		.cell.first .bullet { display: none; }
+
 		.cellContent { display: inline; border-radius: 4px; vertical-align: top; padding: 5.5px 6px; transition: background $transitionCommon; }
 		.cellContent.disabled { opacity: 1; }
 
@@ -40,12 +48,6 @@
 			.more { margin: 0px; vertical-align: middle; }
 		} 
 
-		.cell.canEdit {
-			.cellContent {
-				.empty { display: inline; }
-			}
-		}
-
 		.cellContent.c-file {
 			.element { margin-right: 2px; }
 			.element:last-child { margin-right: 0px; }
@@ -65,7 +67,6 @@
 
 	.block.blockFeatured.align0 {
 		.cell.first { margin-left: -6px; }
-		.cell.first .bullet { display: none; }
 	}
 
 	.block.blockFeatured.small { @include text-common; padding: 0px; margin: 0px; line-height: 22px; }

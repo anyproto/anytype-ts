@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { Icon, Drag, Cover, Loader } from 'Component';
+import { Icon, Drag, Cover, Loader, Label } from 'Component';
 import { I, C, UtilCommon, UtilData, UtilObject, focus, translate, keyboard, Action } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
 import ControlButtons  from 'Component/page/head/controlButtons';
@@ -79,9 +79,7 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 		if (coverType == I.CoverType.Source) {
 			image = detailStore.get(rootId, coverId, [ 'mediaArtistName', 'mediaArtistURL' ], true);
 			author = (
-				<div className="author">
-					{UtilCommon.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>`)}
-				</div>
+				<Label className="author" text={UtilCommon.sprintf(translate('unsplashString'), `<a href=${image.mediaArtistURL + Url.unsplash.utm}>${image.mediaArtistName}</a>`, `<a href=${Url.unsplash.site + Url.unsplash.utm}>Unsplash</a>`)} />
 			);
 		};
 

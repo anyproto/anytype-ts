@@ -89,7 +89,7 @@ class Dataview {
 					if (oldIndex < 0) {
 						keys.splice(index, 0, relationKey);
 					} else {
-						keys = arrayMove(newView.relations, oldIndex, index);
+						keys = arrayMove(keys, oldIndex, index);
 					};
 
 					C.BlockDataviewViewRelationSort(rootId, blockId, view.id, keys, callBack);

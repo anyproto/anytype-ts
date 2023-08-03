@@ -211,16 +211,17 @@ class Util {
 	};
 
 	enabledLangs () {
-		return [ 'da-DK', 'de-DE', 'en-US', 'es-ES', 'fr-FR', 'hi-IN', 'it-IT', 'nb-NO', 'zh-CN', 'zh-TW' ];
+		return [ "da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "hi-IN", "id-ID", "it-IT", "no-NO", "zh-CN", "zh-TW" ];
 	};
 
 	translate (key) {
 		const lang = this.getLang();
+		const defaultData = require(`../../dist/lib/json/lang/en-US.json`);
 
 		let data = {};
 		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
 
-		return data[key] || `⚠️${key}⚠️`;
+		return data[key] || defaultData[key] || `⚠️${key}⚠️`;
 	};
 
 };
