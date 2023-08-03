@@ -35,6 +35,7 @@ const MenuSpace = observer(class MenuSpace extends React.Component<I.Menu> {
 		return (
 			<div 
 				ref={node => this.node = node}
+				className="wrap"
 			>
 				<div className="head">
 					<div className="side left">
