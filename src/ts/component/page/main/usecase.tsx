@@ -86,11 +86,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 
         C.ObjectImportUseCase(id, () => {
 			analytics.event('SelectUsecase', { type: id });
-
-			const blocks = blockStore.getBlocks(blockStore.widgets, it => it.isLink() && (it.content.targetBlockId == Constant.widgetId.recent));
-			if (blocks.length) {
-				Storage.setToggle('widget', blocks[0].parentId, true);
-			};
+			blockStore.closeRecentWidgets();
 
 			this.setState({ isLoading: false });
 			UtilCommon.route('/main/graph', { animate: true });

@@ -1193,7 +1193,7 @@
 
     "menuTypeSuggestFilterTypes": "Filter types...",
     "menuTypeSuggestMyTypes": "My types",
-    "menuTypeSuggestCreateType ": "Create type %s",
+    "menuTypeSuggestCreateType": "Create type %s",
 
     "menuWidgetAddWidget": "Add widget",
     "menuWidgetChooseSource": "Choose a source",
@@ -1205,7 +1205,9 @@
     "menuWidgetFavorites": "Favorites",
     "menuWidgetSets": "Sets",
     "menuWidgetCollections": "Collections",
-    "menuWidgetRecent": "Recent",
+    "menuWidgetRecentEdit": "Recently edited",
+	"menuWidgetRecentOpen": "Recently opened",
+	"menuWidgetRecentOpenCaption": "On this device",
 
     "menuPreviewLatexExample": "Example: %s",
     "menuSelectEmpty": "No options found",
@@ -1354,7 +1356,8 @@
     "widget3Name": "Compact list",
     "widget3Description": "Widget with list view of set object",
     "widgetFavorite": "Favorites",
-    "widgetRecent": "Recent",
+    "widgetRecent": "Recently edited",
+	"widgetRecentOpen": "Recently opened",
     "widgetSet": "Sets",
     "widgetCollection": "Collections",
     "widgetEdit": "Edit widgets",
@@ -1495,7 +1498,7 @@
     "libMenuReplace": "Replace",
 
     "libMenuChangeSource": "Change source %s",
-    "libMenuOpenSource ": "Open source %s",
+    "libMenuOpenSource": "Open source %s",
     "libMenuOpenFullscreen": "Open fullscreen",
 
     "libActionUninstallTypeTitle": "Are you sure you want to remove this Type?",

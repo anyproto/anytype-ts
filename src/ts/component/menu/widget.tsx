@@ -288,7 +288,8 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 							{ id: Constant.widgetId.favorite, name: translate('menuWidgetFavorites'), iconEmoji: ':star:' },
 							{ id: Constant.widgetId.set, name: translate('menuWidgetSets'), iconEmoji: ':mag:' },
 							{ id: Constant.widgetId.collection, name: translate('menuWidgetCollections'), iconEmoji: ':card_index_dividers:' },
-							{ id: Constant.widgetId.recent, name: translate('menuWidgetRecent'), iconEmoji: ':date:' },
+							{ id: Constant.widgetId.recentEdit, name: translate('menuWidgetRecentEdit'), iconEmoji: ':memo:' },
+							{ id: Constant.widgetId.recentOpen, name: translate('menuWidgetRecentOpen'), iconEmoji: ':date:', caption: translate('menuWidgetRecentOpenCaption') },
 						];
 						return !items.length ? fixed : fixed.concat([ { isDiv: true } ]).concat(items);
 					},

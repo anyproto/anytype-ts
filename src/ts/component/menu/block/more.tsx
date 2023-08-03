@@ -168,7 +168,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedReload = object.source && block.isObjectBookmark();
 		const allowedInstall = !object.isInstalled && [ Constant.storeTypeId.type, Constant.storeTypeId.relation ].includes(object.type);
 		const allowedUninstall = object.isInstalled && [ Constant.typeId.type, Constant.typeId.relation ].includes(object.type) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
-		const allowedTemplate = object.type != Constant.typeId.note;
+		const allowedTemplate = !UtilObject.getLayoutsWithoutTemplates().includes(object.layout) && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const hasShortMenu = block.isObjectType() || block.isObjectRelation() || block.isObjectFileKind() || block.isObjectSet() || block.isObjectCollection() || block.isObjectSpace();
 
 		if (!allowedArchive)	 archive = null;
@@ -180,7 +180,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		if (!allowedHistory)	 history = null;
 		if (!allowedFav)		 fav = null;
 		if (!allowedInstall && !allowedUninstall)	 pageInstall = null;
-		if (!allowedTemplate)	 template = null;
+		if (!isTemplate && !allowedTemplate)	 template = null;
 		if (allowedUninstall)	 archive = null;
 
 		let sections = [];
@@ -420,7 +420,11 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'pageCopy': {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
-						UtilObject.openPopup({ id: message.ids[0], layout: object.layout });
+						UtilObject.openPopup({ id: message.ids[0], layout: object.layout }, {
+							onClose: () => {
+								$(window).trigger(`updatePreviewObject${message.ids[0]}`);
+							}
+						});
 
 						analytics.event('DuplicateObject', { count: 1, route });
 					};
