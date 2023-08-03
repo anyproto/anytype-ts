@@ -659,12 +659,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const { rootId } = this.props;
 		const { defaultTemplateId } = this.getView();
-		const objectId = this.getObjectId();
-		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
-		const setOf = object.setOf || [];
-
 		const details: any = this.getDetails();
 		const menuParam: any = this.getMenuParam(e, dir);
 
@@ -683,8 +678,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		UtilData.checkTemplateCnt(setOf, (message: any) => {
-			if (message.records.length && withPopup) {
+		UtilData.checkTemplateCnt([ this.getTypeId() ], (cnt: number) => {
+			if (cnt && withPopup) {
 				popupStore.open('template', { 
 					data: { 
 						typeId: details.type, 

@@ -409,12 +409,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			});
 		};
 
-		UtilData.checkTemplateCnt([ rootId ], (message: any) => {
-			if (message.records.length) {
-				showMenu();
-			} else {
-				create('');
-			};
+		UtilData.checkTemplateCnt([ rootId ], (cnt: number) => {
+			cnt ? showMenu() : create('');
 		});
 	};
 

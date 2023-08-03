@@ -215,8 +215,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		if (UtilObject.getSetTypes().includes(item.id)) {
 			this.onObjectTo(item.id);
 		} else {
-			UtilData.checkTemplateCnt([ item.id ], (message: any) => {
-				if (message.records.length) {
+			UtilData.checkTemplateCnt([ item.id ], (cnt: number) => {
+				if (cnt) {
 					popupStore.open('template', { 
 						data: { 
 							typeId: item.id, 
