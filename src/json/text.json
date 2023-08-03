@@ -652,6 +652,10 @@
     "popupSettingsSpaceIndexCreatedByTitle": "Created by",
     "popupSettingsSpaceIndexCreationDateTitle": "Creation date",
 
+	"popupSettingsSpaceCreateTitle": "Create a space",
+	"popupSettingsSpaceCreateUsecaseTitle": "How do you want to start?",
+	"popupSettingsSpaceCreateUsecaseLabel": "We can load some objects for you",
+
     "popupSettingsSpaceStorageManagerTitle": "Synced files",
     "popupSettingsSpaceStorageManagerEmptyLabel": "Your storage is empty",
 

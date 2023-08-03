@@ -53,7 +53,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 
 				{isLoading ? <Loader /> : ''}
 
-				<Title text="Create a space" />
+				<Title text={translate('popupSettingsSpaceCreateTitle')} />
 
 				<div className="spaceHeader">
 					<div className="iconWrapper">
@@ -94,8 +94,8 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 							<div className="item">
 								<div className="sides">
 									<div className="side left">
-										<Title text="How do you want to start?" />
-										<Label text="We can load some objects for you" />
+										<Title text={translate('popupSettingsSpaceCreateUsecaseTitle')} />
+										<Label text={translate('popupSettingsSpaceCreateUsecaseLabel')} />
 									</div>
 									<div className="side right">
 										<Select 
@@ -116,7 +116,7 @@ const PopupSettingsSpaceIndex = observer(class PopupSettingsSpaceIndex extends R
 				</div>
 
 				<div className="buttons">
-					<Button text="Create" onClick={this.onSubmit} />
+					<Button text={translate('commonCreate')} onClick={this.onSubmit} />
 				</div>
 
 			</React.Fragment>
