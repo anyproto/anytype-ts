@@ -152,14 +152,14 @@
 			.iconObject, .icon.dnd { flex-shrink: 0; }
 			.name { width: 100%; margin-right: 6px; }
 
-			.clickable { width: calc(100% - 108px); margin-right: 6px; }
+			.clickable { width: calc(100% - 128px); margin-right: 6px; }
 			.clickable {
 				.name { margin: 0px; width: 100%; }
 			}
 
 			.caption { 
 				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
-				flex-shrink: 0; line-height: 20px; width: 80px;
+				flex-shrink: 0; line-height: 20px; width: 100px;
 			}
 
 			.highlightMark { position: relative; top: auto; right: auto; margin: 0px 0px 0px 10px; }
