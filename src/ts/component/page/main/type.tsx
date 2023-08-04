@@ -221,7 +221,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	componentDidMount () {
 		this._isMounted = true;
 		this.open();
-		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -231,20 +230,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.close();
-		this.unbind();
-	};
-
-	rebind () {
-		this.unbind();
-		$(window).on(`updatePreviewObject.templatePreview`, (e, data) => {
-			if (data.templateId) {
-				this.templateClose(data.templateId);
-			};
-		});
-	};
-
-	unbind () {
-		$(window).off(`updateType${this.getRootId()}`);
 	};
 
 	open () {
@@ -343,16 +328,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	templateOpen (object: any) {
 		UtilObject.openPopup(object, {
-			onClose: () => {
-				this.templateClose(object.id);
-			}
+			onClose: () => $(window).trigger(`updatePreviewObject${object.id}`)
 		});
-	};
-
-	templateClose (templateId: string) {
-		if (this.refListPreview) {
-			this.refListPreview.updateItem(templateId);
-		};
 	};
 
 	onCreate () {

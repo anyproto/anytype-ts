@@ -4,6 +4,7 @@ import { Loader, IconObject, Cover, Icon } from 'Component';
 import { commonStore, detailStore, blockStore } from 'Store';
 import { I, C, UtilData, Action, translate, UtilCommon } from 'Lib';
 import Constant from 'json/constant.json';
+import $ from 'jquery';
 
 interface Props {
 	rootId: string;
@@ -335,6 +336,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	componentDidMount () {
 		this._isMounted = true;
 		this.load();
+		this.rebind();
 	};
 
 	componentDidUpdate () {
@@ -355,7 +357,20 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
 		Action.pageClose(this.getRootId(), false);
+	};
+
+	rebind () {
+		const { rootId } = this.props;
+		this.unbind();
+		$(window).on(`updatePreviewObject${rootId}`, () => {
+			this.update();
+		});
+	};
+
+	unbind () {
+		$(window).off(`updatePreviewObject${this.getRootId()}`);
 	};
 
 	load () {

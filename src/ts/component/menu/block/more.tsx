@@ -421,7 +421,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
 						UtilObject.openPopup({ id: message.ids[0], layout: object.layout }, {
-							onClose: () => $(window).trigger(`updatePreviewObject.templatePreview`, { templateId: message.ids[0]})
+							onClose: () => $(window).trigger(`updatePreviewObject${message.ids[0]}`)
 						});
 
 						analytics.event('DuplicateObject', { count: 1, route });
