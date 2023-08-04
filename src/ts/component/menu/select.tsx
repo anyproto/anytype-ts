@@ -201,6 +201,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 	
 	componentWillUnmount () {
 		this._isMounted = false;
+		this.unbind();
 	};
 	
 	rebind () {

@@ -635,6 +635,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	};
 
 	close () {
+		if (this.ref && this.ref.unbind) {
+			this.ref.unbind();
+		};
+
 		menuStore.close(this.props.id);
 	};
 
