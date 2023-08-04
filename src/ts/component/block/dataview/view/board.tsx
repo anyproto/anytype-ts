@@ -312,8 +312,8 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return;
 		};
 
-		UtilData.checkTemplateCnt(setOf, (message: any) => {
-			if (message.records.length) {
+		UtilData.checkTemplateCnt(setOf, (cnt: number) => {
+			if (cnt) {
 				popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
 			} else {
 				create('');
