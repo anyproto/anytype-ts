@@ -364,13 +364,14 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	rebind () {
 		const { rootId } = this.props;
 		this.unbind();
-		$(window).on(`updatePreviewObject${rootId}`, () => {
+		$(window).on(`updatePreviewObject.${rootId}`, () => {
 			this.update();
 		});
 	};
 
 	unbind () {
-		$(window).off(`updatePreviewObject${this.getRootId()}`);
+		const { rootId } = this.props;
+		$(window).off(`updatePreviewObject.${rootId}`);
 	};
 
 	load () {

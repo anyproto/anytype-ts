@@ -328,7 +328,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	templateOpen (object: any) {
 		UtilObject.openPopup(object, {
-			onClose: () => $(window).trigger(`updatePreviewObject${object.id}`)
+			onClose: () => $(window).trigger(`updatePreviewObject.${object.id}`)
 		});
 	};
 
