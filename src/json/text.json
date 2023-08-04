@@ -446,7 +446,7 @@
     "blockTextNewRelation": "Meaningful connection between objects",
     "blockTextLatex": "Display a math equations",
     "blockTextSimpleTable": "Create a simple table",
-    "blockTextTableOfContents": "",
+    "blockTextTableOfContents": "Create a table of contents",
     "blockTextSet": "Add existing or create new inline set to this object",
     "blockTextCollection": "Add inline collection of objects with different properties",
     "blockTextToggleEmpty": "Empty toggle. Click or drop block inside",
