@@ -109,6 +109,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let pageLock = null;
 		let pageInstall = null;
 		let template = null;
+		let setDefaultTemplate = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
 		let print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
@@ -124,6 +125,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('menuBlockMoreCreateObject') };
+			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('commonTemplateSetDefault') };
+			pageCopy.name = translate('menuBlockMoreDuplicateTemplate')
 		} else {
 			template = { id: 'templateCreate', icon: 'template', name: translate('menuBlockMoreUseAsTemplate') };
 		};
@@ -200,8 +203,17 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				{ children: [ search ] },
 				{ children: [ print, pageExport, pageReload ] },
 			];
+
+			if (isTemplate) {
+				sections = [
+					{ children: [ archive, history ] },
+					{ children: [ template, pageCopy, setDefaultTemplate ] },
+					{ children: [ search ] },
+					{ children: [ print, pageExport ] },
+				];
+			};
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
-		} else {
+		}  else {
 			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };
 
 			sections.push({ children: [
@@ -408,7 +420,9 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'pageCopy': {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
-						UtilObject.openPopup({ id: message.ids[0], layout: object.layout });
+						UtilObject.openPopup({ id: message.ids[0], layout: object.layout }, {
+							onClose: () => $(window).trigger(`updatePreviewObject.${message.ids[0]}`)
+						});
 
 						analytics.event('DuplicateObject', { count: 1, route });
 					};
@@ -451,8 +465,8 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			case 'pageCreate': {
-				UtilObject.create('', '', {}, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
-					UtilObject.openRoute({ id: message.targetId });
+				UtilObject.create('', '', { type: object.targetObjectType }, I.BlockPosition.Bottom, rootId, {}, [], (message: any) => {
+					UtilObject.openAuto({ id: message.targetId, layout: object.layout });
 
 					analytics.event('CreateObject', {
 						route,
@@ -518,6 +532,11 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 					analytics.event('CreateTemplate', { objectType: object.type, route });
 				});
+				break;
+			};
+
+			case 'setDefault': {
+				UtilObject.setDefaultTemplateId(object.targetObjectType, rootId);
 				break;
 			};
 		};
