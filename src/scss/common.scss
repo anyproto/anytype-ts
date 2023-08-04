@@ -71,6 +71,8 @@ html.platformWindows, html.platformLinux {
 	::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.5); border-radius: 6px; }
 	::-webkit-scrollbar-corner { background-color: transparent; }
 	::-webkit-scrollbar-button { display: none; }
+
+	.overPopup { padding-right: 10px; }
 }
 
 .dn { display: none !important; }
@@ -85,6 +87,7 @@ html.platformWindows, html.platformLinux {
 .no-br { border-radius: unset !important; }
 .noAnimation { transition: none !important; }
 .over { overflow: hidden !important; }
+.overPopup { overflow: hidden !important; }
 .empty, .emptyText { color: $colorSecondary; }
 .isDone { color: $colorDarkGrey; }
 .placeholder { 

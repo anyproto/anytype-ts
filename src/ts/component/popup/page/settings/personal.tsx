@@ -59,7 +59,11 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 							options={interfaceLanguages}
 							onChange={v => Renderer.send('changeInterfaceLang', v)}
 							arrowClassName="black"
-							menuParam={{ horizontal: I.MenuDirection.Right, width: 300 }}
+							menuParam={{ 
+								horizontal: I.MenuDirection.Right, 
+								width: 300,
+								className: 'fixed',
+							}}
 						/>
 					</div>
 				</div>

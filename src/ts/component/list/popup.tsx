@@ -17,6 +17,13 @@ const ListPopup = observer(class ListPopup extends React.Component<I.PageCompone
 			</div>
 		);
 	};
+
+	componentDidUpdate () {
+		const { list } = popupStore;
+		const body = $('body');
+
+		list.length > 0 ? body.addClass('overPopup') : body.removeClass('overPopup');
+	};
 	
 });
 
