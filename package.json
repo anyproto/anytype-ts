@@ -76,8 +76,6 @@
 		"source-map-loader": "^0.2.4",
 		"style-loader": "^1.2.1",
 		"ts-loader": "^6.2.2",
-		"tslint": "^5.20.1",
-		"tslint-react": "^4.2.0",
 		"typescript": "^3.9.7",
 		"typescript-eslint": "^0.0.1-alpha.0",
 		"url-loader": "^4.1.1",
