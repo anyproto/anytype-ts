@@ -236,7 +236,11 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	rebind () {
 		this.unbind();
-		$(window).on(`updateType${this.getRootId()}`, () => this.forceUpdate());
+		$(window).on(`updatePreviewObject.templatePreview`, (e, data) => {
+			if (data.templateId) {
+				this.templateClose(data.templateId);
+			};
+		});
 	};
 
 	unbind () {
@@ -340,11 +344,15 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	templateOpen (object: any) {
 		UtilObject.openPopup(object, {
 			onClose: () => {
-				if (this.refListPreview) {
-					this.refListPreview.updateItem(object.id);
-				};
+				this.templateClose(object.id);
 			}
 		});
+	};
+
+	templateClose (templateId: string) {
+		if (this.refListPreview) {
+			this.refListPreview.updateItem(templateId);
+		};
 	};
 
 	onCreate () {
