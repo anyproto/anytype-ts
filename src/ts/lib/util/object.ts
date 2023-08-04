@@ -229,8 +229,6 @@ class UtilObject {
 	};
 
 	setDefaultTemplateId (rootId: string, templateId: string, callBack?: (message: any) => void) {
-		console.log('ROOT ID: ', rootId)
-		console.log('TEMPLATE ID: ', templateId)
 		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: templateId } ], callBack);
 	};
 
