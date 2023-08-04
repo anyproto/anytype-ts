@@ -15,6 +15,8 @@
     },
     "settings": {
         "editor.formatOnSave": false,
+        "editor.formatOnPaste": false,
+        "editor.formatOnType": false,
         "debug.inlineValues": "on"
     }
 }
