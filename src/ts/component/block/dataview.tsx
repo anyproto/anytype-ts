@@ -695,6 +695,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	onTemplatesMenu (e: any, dir: number) {
 		const menuParam = this.getMenuParam(e, dir);
+		const typeId = this.getTypeId();
+		const defaultTemplateId = this.getView().defaultTemplateId;
+
 
 		menuStore.open('searchObject', {
 			...menuParam,
@@ -709,11 +712,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				noIcon: true,
 				mapElement: it => ({
 					...it,
+					typeId,
 					withMore: it.id != 'newTemplate',
-					caption: it.id == this.getView().defaultTemplateId ? translate('commonDefault') : ' ',
-					isDefault: it.id == this.getView().defaultTemplateId,
+					caption: it.id == defaultTemplateId ? translate('commonDefault') : ' ',
+					isDefault: it.id == defaultTemplateId,
 					isBlank: it.id == Constant.templateId.blank,
-					typeId: this.getTypeId()
 				}),
 				dataChange: (items: any[]) => {
 					const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank') } ];
