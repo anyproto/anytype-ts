@@ -35,6 +35,9 @@ jobs:
       - name: Install Webpack
         run: npm install --save-dev webpack-cli --legacy-peer-deps
 
+      - name: Update locale
+        run: npm run update:locale
+
       #- name: Update Deps
       #  run: npm run build:deps
 
