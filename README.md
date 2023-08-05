@@ -89,6 +89,8 @@ Options:
 
 ## Localisation
 
+Project localisation is managed via [Crowdin](https://crowdin.com/project/anytype-desktop)
+
 `npm run update:locale` - Update localisation files
 
 ## Contribution
