@@ -1,17 +1,17 @@
-const Util = require('./util.js');
+const SentryCli = require('@sentry/cli');
+const cli = new SentryCli();
 
 exports.default = async function (context) {
-	const cmd = [
-		`npx sentry-cli`,
-		`--url \"https://sentry.anytype.io\"`,
-		`releases files \"${context.packager.appInfo.version}\"`,
-		`upload-sourcemaps`,
-		`../../dist/main.js.map`,
-		`--org \"anytype\"`,
-		`--project \"desktop\"`,
-		`--log-level=debug`,
-		`--auth-token ${process.env.SENTRY_AUTH_TOKEN}`
-	].join(' ');
+	cli.releases.options = {
+		url: 'https://sentry.anytype.io',
+		authToken: process.env.SENTRY_AUTH_TOKEN,
+		logLevel: 'debug',
+		org: 'anytype',
+		project: 'desktop',
+		silent: false,
+	};
 
-	return await Util.execPromise(cmd);
+	return await cli.releases.uploadSourceMaps(context.packager.appInfo.version, { 
+		include: [ '../../dist/main.js.map' ],
+	});
 };
