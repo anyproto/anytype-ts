@@ -1,24 +1,9 @@
-const { exec } = require('child_process');
-
-function execPromise (command) {
-    return new Promise(function(resolve, reject) {
-        exec(command, (error, stdout, stderr) => {
-			console.log('Error: ', error, stderr);
-
-            if (error || stderr) {
-                reject(error || stderr);
-                return;
-            };
-
-			console.log('Out: ', stdout.trim());
-
-            resolve(stdout.trim());
-        });
-    });
-};
+const Util = require('./util.js');
 
 exports.default = async function (context) {
-	console.log(context);
+	if (process.env.ELECTRON_SKIP_NOTARIZE) {
+		return;
+	};
 
 	const cmd = [
 		`AzureSignTool.exe sign`,
@@ -35,5 +20,5 @@ exports.default = async function (context) {
 		`"${context.path}"`,
 	].join(' ');
 
-	return await execPromise(cmd);
+	return await Util.execPromise(cmd);
 };
