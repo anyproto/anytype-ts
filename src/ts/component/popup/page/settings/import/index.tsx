@@ -68,7 +68,9 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 		const { close, onImport } = this.props;
 		const fileOptions: any = { 
 			properties: [ 'openFile' ],
-			filters: [ { name: '', extensions } ]
+			filters: [ 
+				{ name: 'Filtered extensions', extensions },
+			],
 		};
 
 		if (UtilCommon.isPlatformMac()) {

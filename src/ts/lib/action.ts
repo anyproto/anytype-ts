@@ -180,7 +180,9 @@ class Action {
 		};
 
 		if (extensions && extensions.length) {
-			options.filters = [ { name: '', extensions } ];
+			options.filters = [ 
+				{ name: 'Filtered extensions', extensions },
+			];
 		};
 		
 		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
