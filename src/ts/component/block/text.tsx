@@ -1011,8 +1011,6 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 			diff += value.length - text.length;
 
-			console.log(value, text, diff, range.from, range.to);
-
 			focus.set(focused, { from: range.from - diff, to: range.to - diff });
 			focus.apply();
 		};
