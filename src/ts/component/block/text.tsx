@@ -860,16 +860,16 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		
 		let value = this.getValue();
 		let cmdParsed = false;
-		let newBlock: any = { 
-			bgColor: block.bgColor,
-			content: {},
-		};
 
 		const oneSymbolBefore = range ? value[range.from - 1] : '';
 		const twoSymbolBefore = range ? value[range.from - 2] : '';
 		const isAllowedMention = range ? (!range.from || [ ' ', '\n', '(', '[', '"', '\'' ].includes(twoSymbolBefore)) : false;
 		const canOpenMenuAdd = (oneSymbolBefore == '/') && !this.preventMenu && !keyboard.isSpecial(e) && !menuOpenAdd && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
 		const canOpenMentionMenu = (oneSymbolBefore == '@') && !this.preventMenu && (isAllowedMention || (range.from == 1)) && !keyboard.isSpecial(e) && !menuOpenMention && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription();
+		const newBlock: any = { 
+			bgColor: block.bgColor,
+			content: {},
+		};
 		
 		this.preventMenu = false;
 
@@ -926,15 +926,18 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Make div
-		if ([ '---', '—-', '***' ].includes(value)) {
+		const divReg = new RegExp('^(---|—-|\\*\\*\\*)');
+		const match = value.match(divReg);
+
+		if (match) {
 			newBlock.type = I.BlockType.Div;
-			newBlock.content.style = value == '***' ? I.DivStyle.Dot : I.DivStyle.Line;
+			newBlock.content.style = match[1] == '***' ? I.DivStyle.Dot : I.DivStyle.Line;
 			cmdParsed = true;
 		};
-		
+
 		if (newBlock.type && !isInsideTable) {
 			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
-				this.setValue('');
+				this.setValue(value.replace(divReg, ''));
 				
 				focus.set(block.id, { from: 0, to: 0 });
 				focus.apply();
@@ -1006,7 +1009,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			this.setValue(text);
 			const { focused, range } = focus.state;
 
-			diff += marksChanged ? (value.length - text.length) : 0;
+			diff += value.length - text.length;
+
+			console.log(value, text, diff, range.from, range.to);
 
 			focus.set(focused, { from: range.from - diff, to: range.to - diff });
 			focus.apply();
