@@ -314,6 +314,7 @@ class UtilObject {
 			Constant.typeId.option,
 			Constant.typeId.dashboard,
 			Constant.typeId.date,
+			Constant.typeId.space,
 		].concat(this.getStoreTypes());
 	};
 
