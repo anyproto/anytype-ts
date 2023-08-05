@@ -193,7 +193,7 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 			return;
 		};
 
-		if (!isPopup && Titles[action]) {
+		if (Titles[action]) {
 			UtilData.setWindowTitleText(Titles[action]);
 		};
 

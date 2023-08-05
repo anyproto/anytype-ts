@@ -150,11 +150,9 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	setTitle () {
-		const { rootId, isPopup } = this.props;
+		const { rootId } = this.props;
 
-		if (!isPopup) {
-			UtilData.setWindowTitle(rootId, rootId);
-		};
+		UtilData.setWindowTitle(rootId, rootId);
 	};
 	
 });
