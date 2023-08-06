@@ -4,7 +4,7 @@ import raf from 'raf';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { observer } from 'mobx-react';
 import { Icon, Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, UtilObject, UtilCommon, keyboard, Key, focus, translate } from 'Lib';
+import { I, C, UtilObject, UtilCommon, UtilMenu, keyboard, Key, focus, translate } from 'Lib';
 import { blockStore, popupStore, commonStore } from 'Store';
 
 interface State {
@@ -21,13 +21,6 @@ enum Panel {
 	Center = 2, 
 	Right = 3,
 };
-
-const cmd = keyboard.cmdSymbol();
-const alt = keyboard.altSymbol();
-const Tabs = [
-	{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${cmd} + ${alt} + O` },
-	{ id: 'navigation', name: translate('commonFlow'), layout: I.ObjectLayout.Navigation, tooltipCaption: `${cmd} + O` },
-];
 
 const PageMainNavigation = observer(class PageMainNavigation extends React.Component<I.PageComponent, State> {
 	
@@ -143,7 +136,15 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 				ref={node => this.node = node} 
 				className="wrapper"
 			>
-				<Header component="mainNavigation" ref={ref => this.refHeader = ref} {...this.props} rootId={rootId} tabs={Tabs} tab="navigation" onTab={this.onTab} />
+				<Header 
+					{...this.props} 
+					ref={ref => this.refHeader = ref} 
+					component="mainNavigation" 
+					rootId={rootId} 
+					tabs={UtilMenu.getGraphTabs()} 
+					tab="navigation" 
+					onTab={this.onTab} 
+				/>
 
 				{loading ? <Loader id="loader" /> : ''}
 				<div key="sides" className="sides">
@@ -491,13 +492,13 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 	};
 
 	onTab (id: string) {
-		const tab = Tabs.find(it => it.id == id);
+		const tab = UtilMenu.getGraphTabs().find(it => it.id == id);
 
 		if (tab) {
 			UtilObject.openAuto({ id: this.getRootId(), layout: tab.layout });
 		};
 	};
-	
+
 });
 
 export default PageMainNavigation;

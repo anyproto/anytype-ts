@@ -450,6 +450,16 @@ class UtilMenu {
 		});
 	};
 
+	getGraphTabs () {
+		const cmd = keyboard.cmdSymbol();
+		const alt = keyboard.altSymbol();
+
+		return [
+			{ id: 'graph', name: translate('commonGraph'), layout: I.ObjectLayout.Graph, tooltipCaption: `${cmd} + ${alt} + O` },
+			{ id: 'navigation', name: translate('commonFlow'), layout: I.ObjectLayout.Navigation, tooltipCaption: `${cmd} + O` },
+		];
+	};
+
 };
 
 export default new UtilMenu();
