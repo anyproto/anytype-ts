@@ -212,7 +212,7 @@ class Util {
 	};
 
 	enabledLangs () {
-		return [ "da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "hi-IN", "id-ID", "it-IT", "no-NO", "ro-RO", "zh-CN", "zh-TW" ];
+		return [ "da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "hi-IN", "id-ID", "it-IT", "no-NO", "ro-RO", "uk-UA", "zh-CN", "zh-TW" ];
 	};
 
 	translate (key) {
