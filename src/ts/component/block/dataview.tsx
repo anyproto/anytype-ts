@@ -98,7 +98,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const isCollection = this.isCollection();
 		const cn = [ 'focusable', 'c' + block.id ];
 
-		let { groupRelationKey, pageLimit } = view;
+		let { groupRelationKey, pageLimit, defaultTemplateId } = view;
 		let ViewComponent: any = null;
 		let className = [ UtilCommon.toCamelCase('view-' + I.ViewType[view.type]) ];
 		let head = null;
@@ -430,10 +430,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getRecord (recordId: string) {
-		const { rootId, block } = this.props;
 		const view = this.getView();
 		const keys = this.getKeys(view.id);
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const item = detailStore.get(subId, recordId, keys);
 
 		if (!item) {
@@ -481,7 +480,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getTypeId (): string {
 		const { rootId } = this.props;
-		const { defaultTemplateId } = this.getView();
 		const objectId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
@@ -522,14 +520,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.AllIn,
 		];
 		const details: any = {
-			type: this.getTypeId()
+			type: this.getTypeId(),
 		};
 
 		let group = null;
 
 		if (groupId) {
 			group = dbStore.getGroup(rootId, block.id, groupId);
-			details[view.groupRelationKey] = group.value;
+			if (group) {
+				details[view.groupRelationKey] = group.value;
+			};
 		};
 
 		if (relations.length) {
@@ -597,14 +597,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	recordCreate (e: any, template: any, dir: number, groupId?: string) {
-		const { rootId, block } = this.props;
+		const { rootId } = this.props;
 		const objectId = this.getObjectId();
 		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
+		const view = this.getView();
 
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
+
 		if (!types.length || isCollection) {
 			flags.push(I.ObjectFlag.SelectType);
 		};
@@ -616,10 +618,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				return;
 			};
 
+			let records = this.getRecords(groupId);
+
 			const object = message.details;
-			const records = this.getRecords(groupId);
 			const oldIndex = records.indexOf(message.objectId);
-			const newIndex = dir > 0 ? records.length : 0;
 
 			if (isCollection) {
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
@@ -627,22 +629,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 			detailStore.update(subId, { id: object.id, details: object }, true);
 
-			if (groupId) {
-				const view = this.getView();
-				if (oldIndex < 0) {
-					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
-				};
+			if (oldIndex < 0) {
+				dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
+			} else {
+				records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
+			};
 
+			if (groupId) {
 				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
 					dbStore.recordsSet(subId, '', records);
 				});
-			}
-			else {
-				if (oldIndex < 0) {
-					dbStore.recordAdd(subId, '', object.id, newIndex);
-				} else {
-					dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
-				};
+			} else {
+				dbStore.recordsSet(subId, '', records);
 			};
 
 			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
@@ -684,7 +682,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const { defaultTemplateId } = this.getView();
-		const details: any = this.getDetails(groupId);
+		const details = this.getDetails(groupId);
 		const menuParam: any = this.getMenuParam(e, dir);
 
 		this.creating = true;

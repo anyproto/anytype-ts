@@ -224,9 +224,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, onRecordAdd } = this.props;
-
-		onRecordAdd(e, dir, id, true);
+		this.props.onRecordAdd(e, dir, this.props.id);
 	};
 
 	onMore (e: any) {
