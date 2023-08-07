@@ -7,6 +7,11 @@
 	@include text-paragraph;
 }
 
+.button > .loaderWrapper { position: absolute; z-index: 1; width: 100%; height: 100%; }
+.button.isLoading {
+	.txt, .icon { display: none; }
+}
+
 .button.orange { background: $colorOrange; color: $colorWhite; }
 .button.orange:not(.disabled):hover { background: #f09c0e; }
 
