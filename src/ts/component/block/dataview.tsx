@@ -722,6 +722,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const typeId = this.getTypeId();
 		const defaultTemplateId = this.getDefaultTemplateId();
 
+		analytics.event('ClickNewOption', { route: (this.isCollection() ? 'Collection' : 'Set') });
+
 		menuStore.open('searchObject', {
 			...menuParam,
 			offsetY: 10,
@@ -797,6 +799,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						data: {
 							template: item,
 							isView: true,
+							route: this.isCollection() ? 'Collection' : 'Set',
 							onOver: () => menuStore.closeAll([ 'previewObject' ]),
 							onSetDefault: () => {
 								this.setDefaultTemplateForView(item.id, () => { this.menuContext.ref.reload(); });
