@@ -625,19 +625,19 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
 			};
 
+			detailStore.update(subId, { id: object.id, details: object }, true);
+
 			if (groupId) {
 				const view = this.getView();
 				if (oldIndex < 0) {
 					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
 				};
 
-				detailStore.update(subId, { id: object.id, details: object }, true);
 				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
 					dbStore.recordsSet(subId, '', records);
 				});
 			}
 			else {
-				detailStore.update(subId, { id: object.id, details: object }, true);
 				if (oldIndex < 0) {
 					dbStore.recordAdd(subId, '', object.id, newIndex);
 				} else {
