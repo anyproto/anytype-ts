@@ -131,7 +131,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		this.unbind();
 
 		win.on('keydown.set' + namespace, e => this.onKeyDown(e));
-		win.on('createNewObject.set' + namespace, e => this.onRecordAdd(e));
 		container.on('scroll.set' + namespace, e => this.onScroll());
 	};
 
@@ -254,14 +253,6 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 				selection.clear();
 				analytics.event('MoveToBin', { count });
 			});
-		};
-	};
-
-	onRecordAdd (e: any) {
-		const ref = this.blockRefs[Constant.blockId.dataview]?.ref;
-
-		if (ref) {
-			ref.onRecordAdd(e, 0, true); 
 		};
 	};
 

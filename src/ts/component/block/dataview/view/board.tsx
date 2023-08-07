@@ -70,7 +70,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 									ref={ref => this.columnRefs[group.id] = ref}
 									{...this.props} 
 									{...group}
-									onColumnRecordAdd={this.onRecordAdd}
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
 									getSubId={() => dbStore.getGroupSubId(rootId, block.id, group.id)}
