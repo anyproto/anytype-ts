@@ -597,6 +597,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		if (type && type.defaultTemplateId) {
 			return type.defaultTemplateId;
 		};
+		return Constant.templateId.blank;
 	};
 
 	setDefaultTemplateForView (id: string, cb?: () => void) {
