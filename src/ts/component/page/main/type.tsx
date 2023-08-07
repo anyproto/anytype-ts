@@ -148,7 +148,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 										getItems={() => dbStore.getRecords(subIdTemplate, '').map(id => detailStore.get(subIdTemplate, id, []))}
 										canAdd={allowedTemplate}
 										onAdd={this.onTemplateAdd}
-										onMenu={(e: any, item: any) => this.onMenu(item)}
+										onMenu={allowedTemplate ? (e: any, item: any) => this.onMenu(item) : null}
 										onClick={(e: any, item: any) => UtilObject.openPopup(item)}
 										withBlank={true}
 										defaultId={object.defaultTemplateId || Constant.templateId.blank}
@@ -498,15 +498,15 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	};
 
 	onMenu (item: any) {
-		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId);
-		const { defaultTemplateId } = object;
-		const template: any = { id: item.id, typeId: rootId };
-
 		if (menuStore.isOpen('dataviewTemplate', item.id)) {
 			menuStore.close('dataviewTemplate');
 			return;
 		};
+
+		const rootId = this.getRootId();
+		const object = detailStore.get(rootId, rootId);
+		const { defaultTemplateId } = object;
+		const template: any = { id: item.id, typeId: rootId };
 
 		if (template.id == Constant.templateId.blank) {
 			template.isBlank = true;
@@ -514,8 +514,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			if (!object.defaultTemplateId) {
 				template.isDefault = true;
 			};
-		};
-
+		} else
 		if (template.id == defaultTemplateId) {
 			template.isDefault = true;
 		};
@@ -531,14 +530,14 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				data: {
 					template,
 					onSetDefault: () => {
-						UtilObject.setDefaultTemplateId(rootId, item.id);
+						UtilObject.setDefaultTemplateId(rootId, template.id);
 					},
 					onDuplicate: (object: any) => {
 						this.templateOpen(object);
 					},
 					onDelete: () => {
 						if (template.isDefault) {
-							UtilObject.setDefaultTemplateId(rootId, Constant.templateId.blank);
+							UtilObject.setDefaultTemplateId(rootId, '');
 						};
 					}
 				}

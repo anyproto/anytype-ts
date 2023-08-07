@@ -42,27 +42,6 @@ const PageHeadEdit = observer(class PageHeadEdit extends React.Component<Props> 
 			icon.type = I.BlockType.IconUser;
 		};
 
-		/*
-		let note = null;
-		if (templateIsBundled) {
-			note = (
-				<div id="note" className="note">
-					<div className="inner">
-						<div className="sides">
-							<div className="side left">
-								This template cannot be changed, because it is Basic for this object type.<br />
-								If you want to edit, create a Duplicate of this template.
-							</div>
-							<div className="side right">
-								<Button color="dark" text={translate('commonDuplicate')} onClick={this.onClone} />
-							</div>
-						</div>
-					</div>
-				</div>
-			);
-		};
-		*/
-
 		return (
 			<div ref={node => this.node = node}>
 				<div id="editorSize" className="dragWrap">

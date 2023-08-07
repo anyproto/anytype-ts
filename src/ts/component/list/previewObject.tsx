@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
-import { keyboard } from 'Lib';
+import { keyboard, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props {
@@ -37,37 +37,32 @@ class ListObjectPreview extends React.Component<Props> {
 		const items = getItems();
 
 		const DefaultLabel = (item: any) => {
-			if (!defaultId || defaultId != item.id) {
-				return null;
-			};
-			return <div className="defaultLabel">Default</div>;
+			return defaultId == item.id ? <div className="defaultLabel">{translate('commonDefault')}</div> : null;
 		};
 
-		const Item = (item: any) => {
-			return (
-				<div id={'item-' + item.id} className="item">
-					<DefaultLabel {...item} />
-					{onMenu ? <Icon className="more" onClick={e => onMenu(e, item)} /> : ''}
+		const Item = (item: any) => (
+			<div id={`item-${item.id}`} className="item">
+				<DefaultLabel id={item.id} />
+				{onMenu ? <Icon className="more" onClick={e => onMenu(e, item)} /> : ''}
 
-					<div
-						className="hoverArea"
-						onMouseEnter={e => this.onMouseEnter(e, item)}
-						onMouseLeave={e => this.onMouseLeave(e, item)}
-					>
-						<PreviewObject
-							ref={ref => this.refObj[item.id] = ref}
-							rootId={item.id}
-							onClick={e => this.onClick(e, item)}
-						/>
-					</div>
+				<div
+					className="hoverArea"
+					onMouseEnter={e => this.onMouseEnter(e, item)}
+					onMouseLeave={e => this.onMouseLeave(e, item)}
+				>
+					<PreviewObject
+						ref={ref => this.refObj[item.id] = ref}
+						rootId={item.id}
+						onClick={e => this.onClick(e, item)}
+					/>
 				</div>
-			);
-		};
+			</div>
+		);
 
 		const ItemBlank = () => {
 			return (
 				<div id={`item-${Constant.templateId.blank}`} className="item" onClick={onBlank}>
-					<DefaultLabel {...{id: Constant.templateId.blank}} />
+					<DefaultLabel id={Constant.templateId.blank} />
 
 					{onMenu ? <Icon className="more" onClick={e => onMenu(e, { id: Constant.templateId.blank })} /> : ''}
 

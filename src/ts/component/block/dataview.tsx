@@ -25,6 +25,8 @@ interface State {
 	loading: boolean;
 };
 
+const NEW_TEMPLATE_ID = 'newTemplate';
+
 const BlockDataview = observer(class BlockDataview extends React.Component<Props, State> {
 
 	state = {
@@ -585,6 +587,18 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return menuParam;
 	};
 
+	getDefaultTemplateId (): string {
+		const view = this.getView();
+		const type = dbStore.getType(this.getTypeId());
+
+		if (view && view.defaultTemplateId) {
+			return view.defaultTemplateId;
+		};
+		if (type && type.defaultTemplateId) {
+			return type.defaultTemplateId;
+		};
+	};
+
 	setDefaultTemplateForView (id: string, cb?: () => void) {
 		const { rootId, block } = this.props;
 		const view = this.getView();
@@ -681,7 +695,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		const { defaultTemplateId } = this.getView();
+		const defaultTemplateId = this.getDefaultTemplateId();
 		const details = this.getDetails(groupId);
 		const menuParam: any = this.getMenuParam(e, dir);
 
@@ -706,13 +720,11 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	onTemplatesMenu (e: any, dir: number) {
 		const menuParam = this.getMenuParam(e, dir);
 		const typeId = this.getTypeId();
-		const defaultTemplateId = this.getView().defaultTemplateId;
-
+		const defaultTemplateId = this.getDefaultTemplateId();
 
 		menuStore.open('searchObject', {
 			...menuParam,
 			offsetY: 10,
-			className: 'big',
 			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
@@ -723,16 +735,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				mapElement: it => ({
 					...it,
 					typeId,
-					withMore: it.id != 'newTemplate',
-					caption: it.id == defaultTemplateId ? translate('commonDefault') : ' ',
-					isDefault: it.id == defaultTemplateId,
-					isBlank: it.id == Constant.templateId.blank,
+					withMore: (it.id != NEW_TEMPLATE_ID),
+					caption: (it.id == defaultTemplateId) ? translate('commonDefault') : '',
+					isDefault: (it.id == defaultTemplateId),
+					isBlank: (it.id == Constant.templateId.blank),
 				}),
 				dataChange: (items: any[]) => {
 					const fixed: any[] = [ { id: Constant.templateId.blank, name: translate('commonBlank') } ];
 					const bottom: any[] = [
 						{ isDiv: true },
-						{ id: 'newTemplate', name: translate('blockDataviewNewTemplate'), icon: 'plus' }
+						{ id: NEW_TEMPLATE_ID, name: translate('blockDataviewNewTemplate'), icon: 'plus' }
 					];
 
 					return !items.length ? fixed.concat(bottom) : fixed.concat(items).concat(bottom);
@@ -745,7 +757,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				onOver: (e: any, context: any, item: any) => {
-					if (item.isBlank || (item.id == 'newTemplate')) {
+					if (item.isBlank || (item.id == NEW_TEMPLATE_ID)) {
 						menuStore.closeAll(Constant.menuIds.dataviewTemplate);
 						return;
 					};
@@ -759,7 +771,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					});
 				},
 				onSelect: (item: any) => {
-					if (item.id == 'newTemplate') {
+					if (item.id == NEW_TEMPLATE_ID) {
 						this.onTemplateAdd();
 						return;
 					};

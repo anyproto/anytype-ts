@@ -550,10 +550,7 @@ class UtilData {
 	};
 
 	checkBlankTemplate (template: any) {
-		if (!template.id || (template.id == Constant.templateId.blank)) {
-			return null;
-		};
-		return template;
+		return template && (template.id != Constant.templateId.blank) ? template : null;
 	};
 
 	// Check if there is at least 1 set for object types

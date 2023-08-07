@@ -229,6 +229,10 @@ class UtilObject {
 	};
 
 	setDefaultTemplateId (rootId: string, templateId: string, callBack?: (message: any) => void) {
+		if (templateId == Constant.templateId.blank) {
+			templateId = '';
+		};
+
 		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: templateId } ], callBack);
 	};
 

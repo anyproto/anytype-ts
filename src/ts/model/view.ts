@@ -14,7 +14,7 @@ class View implements I.View {
 	groupRelationKey = '';
 	groupBackgroundColors = false;
 	pageLimit = 0;
-	defaultTemplateId = 'blank'
+	defaultTemplateId = '';
 	sorts: I.Sort[] = [];
 	filters: I.Filter[] = [];
 	relations: any[] = [];
@@ -30,7 +30,7 @@ class View implements I.View {
 		this.groupRelationKey = String(props.groupRelationKey || '');
 		this.groupBackgroundColors = Boolean(props.groupBackgroundColors);
 		this.pageLimit = Number(props.pageLimit) || 0;
-		this.defaultTemplateId = String(props.defaultTemplateId || 'blank')
+		this.defaultTemplateId = String(props.defaultTemplateId || '');
 		
 		this.relations = (props.relations || []).map(it => new M.ViewRelation(it));
 		this.filters = (props.filters || []).map(it => new M.Filter(it));
