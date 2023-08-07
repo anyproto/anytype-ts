@@ -98,7 +98,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const isCollection = this.isCollection();
 		const cn = [ 'focusable', 'c' + block.id ];
 
-		let { groupRelationKey, pageLimit } = view;
+		let { groupRelationKey, pageLimit, defaultTemplateId } = view;
 		let ViewComponent: any = null;
 		let className = [ UtilCommon.toCamelCase('view-' + I.ViewType[view.type]) ];
 		let head = null;
@@ -322,7 +322,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.viewId = viewId;
 
 		const { rootId, block } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
 		const isCollection = this.isCollection();
@@ -416,19 +416,23 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return limit;
 	};
 
-	getRecords (): string[] {
+	getSubId (groupId?: string): string {
 		const { rootId, block } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+
+		return groupId ? dbStore.getGroupSubId(rootId, block.id, groupId) : dbStore.getSubId(rootId, block.id);
+	};
+
+	getRecords (groupId?: string): string[] {
+		const subId = this.getSubId(groupId);
 		const records = dbStore.getRecords(subId, '');
 
 		return this.applyObjectOrder('', UtilCommon.objectCopy(records));
 	};
 
 	getRecord (recordId: string) {
-		const { rootId, block } = this.props;
 		const view = this.getView();
 		const keys = this.getKeys(view.id);
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const item = detailStore.get(subId, recordId, keys);
 
 		if (!item) {
@@ -476,7 +480,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 	getTypeId (): string {
 		const { rootId } = this.props;
-		const { defaultTemplateId } = this.getView();
 		const objectId = this.getObjectId();
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
@@ -504,7 +507,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		return type;
 	};
 
-	getDetails (): any {
+	getDetails (groupId?: string): any {
 		const { rootId, block } = this.props;
 		const objectId = this.getObjectId();
 		const relations = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.relation);
@@ -517,7 +520,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			I.FilterCondition.AllIn,
 		];
 		const details: any = {
-			type: this.getTypeId()
+			type: this.getTypeId(),
+		};
+
+		let group = null;
+
+		if (groupId) {
+			group = dbStore.getGroup(rootId, block.id, groupId);
+			if (group) {
+				details[view.groupRelationKey] = group.value;
+			};
 		};
 
 		if (relations.length) {
@@ -584,15 +596,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		});
 	};
 
-	recordCreate (e: any, template: any, dir: number) {
-		const { rootId, block } = this.props;
+	recordCreate (e: any, template: any, dir: number, groupId?: string) {
+		const { rootId } = this.props;
 		const objectId = this.getObjectId();
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId(groupId);
 		const isCollection = this.isCollection();
+		const view = this.getView();
 
 		const types = Relation.getSetOfObjects(rootId, objectId, Constant.typeId.type);
-		const details = this.getDetails();
+		const details = this.getDetails(groupId);
 		const flags: I.ObjectFlag[] = [];
+
 		if (!types.length || isCollection) {
 			flags.push(I.ObjectFlag.SelectType);
 		};
@@ -604,10 +618,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				return;
 			};
 
+			let records = this.getRecords(groupId);
+
 			const object = message.details;
-			const records = this.getRecords();
 			const oldIndex = records.indexOf(message.objectId);
-			const newIndex = dir > 0 ? records.length : 0;
 
 			if (isCollection) {
 				C.ObjectCollectionAdd(objectId, [ object.id ]);
@@ -616,9 +630,17 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			detailStore.update(subId, { id: object.id, details: object }, true);
 
 			if (oldIndex < 0) {
-				dbStore.recordAdd(subId, '', object.id, newIndex);
+				dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
 			} else {
-				dbStore.recordsSet(subId, '', arrayMove(records, oldIndex, newIndex));
+				records = arrayMove(records, oldIndex, dir > 0 ? records.length : 0);
+			};
+
+			if (groupId) {
+				this.objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
+					dbStore.recordsSet(subId, '', records);
+				});
+			} else {
+				dbStore.recordsSet(subId, '', records);
 			};
 
 			const id = Relation.cellId(this.getIdPrefix(), 'name', object.id);
@@ -650,7 +672,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onRecordAdd (e: any, dir: number, withPopup?: boolean) {
+	onRecordAdd (e: any, dir: number, groupId?: string) {
 		if (e.persist) {
 			e.persist();
 		};
@@ -660,7 +682,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 
 		const { defaultTemplateId } = this.getView();
-		const details: any = this.getDetails();
+		const details = this.getDetails(groupId);
 		const menuParam: any = this.getMenuParam(e, dir);
 
 		this.creating = true;
@@ -678,18 +700,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		UtilData.checkTemplateCnt([ this.getTypeId() ], (cnt: number) => {
-			if (cnt && withPopup) {
-				popupStore.open('template', { 
-					data: { 
-						typeId: details.type, 
-						onSelect: (template) => this.recordCreate(e, UtilData.checkBlankTemplate(template), dir)
-					} 
-				});
-			} else {
-				this.recordCreate(e, UtilData.checkBlankTemplate({ id: defaultTemplateId }), dir);
-			};
-		});
+		this.recordCreate(e, UtilData.checkBlankTemplate({ id: defaultTemplateId }), dir, groupId);
 	};
 
 	onTemplatesMenu (e: any, dir: number) {
@@ -853,8 +864,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
-		const { rootId, block } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation) {
@@ -877,9 +887,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		
 		let ids = selection.get(I.SelectType.Record);
@@ -1029,9 +1039,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {
-		const { rootId, block, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const view = this.getView();
 
 		if (!ids.length) {
