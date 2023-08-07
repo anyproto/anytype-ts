@@ -9,8 +9,8 @@
 	},
 	"protocol": "anytype://",
 	"download": "https://download.anytype.io",
-	"terms": "https://anytype.io/terms.pdf",
-	"privacy": "https://anytype.io/privacy_policy.html",
+	"terms": "https://anytype.io/terms_of_use/",
+	"privacy": "https://anytype.io/app_privacy/",
 	"contact": "mailto:support@anytype.io?subject=Support%20request%2C%20account%20%25accountId%25&body=%0A%0ATechnical%20information%0A----------------------------------------------%0ADevice%3A%20%25device%25%0AOS%20version%3A%20%25os%25%0AApp%20version%3A%20%25version%25%0ABuild%20number%3A%20%25build%25%0ALibrary%20version%3A%20%25middleware%25%0AAccount%20ID%3A%20%25accountId%25%0AAnalytics%20ID%3A%20%25analyticsId%25%0ADevice%20ID%3A%20%25deviceId%25",
 	"extendStorage": "mailto:storage@anytype.io?subject=Get%20more%20storage%2C%20account%20%25accountId%25&body=Hi%2C%20Anytype%20team.%20I%20am%20reaching%20out%20to%20request%20an%20increase%20in%20my%20file%20storage%20capacity%20as%20I%20have%20run%20out%20of%20storage.%20My%20current%20limit%20is%20%25storageLimit%25.%20My%20account%20id%20is%20%25accountId%25.%20Cheers%2C%20%25spaceName%25"
 }
