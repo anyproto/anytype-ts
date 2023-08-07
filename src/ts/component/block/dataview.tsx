@@ -322,7 +322,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.viewId = viewId;
 
 		const { rootId, block } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const keys = this.getKeys(viewId);
 		const sources = this.getSources();
 		const isCollection = this.isCollection();
@@ -672,7 +672,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		};
 	};
 
-	onRecordAdd (e: any, dir: number, groupId?: string, withPopup?: boolean) {
+	onRecordAdd (e: any, dir: number, groupId?: string) {
 		if (e.persist) {
 			e.persist();
 		};
@@ -700,18 +700,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return;
 		};
 
-		UtilData.checkTemplateCnt([ this.getTypeId() ], (cnt: number) => {
-			if (cnt && withPopup) {
-				popupStore.open('template', { 
-					data: { 
-						typeId: details.type, 
-						onSelect: (template) => this.recordCreate(e, UtilData.checkBlankTemplate(template), dir, groupId)
-					} 
-				});
-			} else {
-				this.recordCreate(e, UtilData.checkBlankTemplate({ id: defaultTemplateId }), dir, groupId);
-			};
-		});
+		this.recordCreate(e, UtilData.checkBlankTemplate({ id: defaultTemplateId }), dir, groupId);
 	};
 
 	onTemplatesMenu (e: any, dir: number) {
@@ -875,8 +864,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onCellChange (id: string, relationKey: string, value: any, callBack?: (message: any) => void) {
-		const { rootId, block } = this.props;
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const relation = dbStore.getRelationByKey(relationKey);
 
 		if (!relation) {
@@ -899,9 +887,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { rootId, block, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const isCollection = this.isCollection();
 		
 		let ids = selection.get(I.SelectType.Record);
@@ -1051,9 +1039,9 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	onRecordDrop (targetId: string, ids: string[]) {
-		const { rootId, block, dataset } = this.props;
+		const { dataset } = this.props;
 		const { selection } = dataset || {};
-		const subId = dbStore.getSubId(rootId, block.id);
+		const subId = this.getSubId();
 		const view = this.getView();
 
 		if (!ids.length) {
