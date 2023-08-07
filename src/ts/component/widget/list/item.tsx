@@ -64,7 +64,10 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload} 
 					onCheckbox={this.onCheckbox} 
-					menuParam={{ className: 'fixed' }}
+					menuParam={{ 
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
+					}}
 				/>
 
 				<div className="info">

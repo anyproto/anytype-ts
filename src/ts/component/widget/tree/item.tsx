@@ -79,7 +79,10 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload} 
 						onCheckbox={this.onCheckbox}
-						menuParam={{ className: 'fixed' }}
+						menuParam={{ 
+							className: 'fixed',
+							classNameWrap: 'fromSidebar',
+						}}
 					/>
 					<ObjectName object={object} />
 				</div>
