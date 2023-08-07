@@ -323,6 +323,7 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		menuStore.open('selectList', {
 			component: 'select',
+			className: 'fixed',
 			onOpen: (context) => {
 				menuContext = context;
 			},

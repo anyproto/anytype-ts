@@ -78,7 +78,8 @@ const TreeItem = observer(class Node extends React.Component<Props> {
 						canEdit={!isReadonly && !isArchived} 
 						onSelect={this.onSelect} 
 						onUpload={this.onUpload} 
-						onCheckbox={this.onCheckbox} 
+						onCheckbox={this.onCheckbox}
+						menuParam={{ className: 'fixed' }}
 					/>
 					<ObjectName object={object} />
 				</div>
