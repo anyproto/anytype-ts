@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { I, C, keyboard, analytics, translate, UtilObject, focus } from 'Lib';
+import { I, C, keyboard, analytics, translate, UtilObject, focus, Preview } from 'Lib';
 import { detailStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -316,6 +316,7 @@ class MenuContext extends React.Component<I.Menu> {
 				C.ObjectListSetIsArchived(objectIds, true, (message: any) => {
 					cb();
 					analytics.event('MoveToBin', { count });
+					Preview.toastShow({ action: I.ToastAction.Archive, ids: objectIds });
 				});
 
 				win.trigger('removeGraphNode', { ids: objectIds });

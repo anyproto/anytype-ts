@@ -47,6 +47,7 @@ export interface Toast {
 	origin?: any;
 	count?: number;
 	value?: boolean;
+	ids?: string[];
 };
 
 export enum ToastAction {
@@ -57,6 +58,7 @@ export enum ToastAction {
 	Collection	 	= 4,
 	StorageFull  	= 5,
 	TemplateCreate	= 6,
+	Archive 		= 7,
 };
 
 export interface Option {

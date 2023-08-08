@@ -30,7 +30,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			return null;
 		};
 
-        const { count, action, text, value, object, target, origin } = toast;
+        const { count, action, text, value, object, target, origin, ids } = toast;
 
         let buttons = [];
         let textObject = null;
@@ -120,6 +120,20 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                 textAction = translate('toastTemplateCreate');
                 break;
             };
+
+			case I.ToastAction.Archive: {
+				if (!ids) {
+					break;
+				};
+
+				const cnt = `${ids.length} ${UtilCommon.plural(ids.length, translate('pluralObject'))}`;
+				textAction = UtilCommon.sprintf(translate('toastMovedToBin'), cnt);
+
+				buttons = buttons.concat([
+					{ action: 'undoArchive', label: translate('commonUndo'), data: ids }
+				]);
+				break;
+			};
         };
 
         return (
@@ -136,7 +150,7 @@ const Toast = observer(class Toast extends React.Component<object, State> {
                     {buttons.length ? (
 						<div className="buttons">
 							{buttons.map((item: any, i: number) => (
-								<Button key={i} text={item.label} onClick={e => this.onClick(e, item.action)} />
+								<Button key={i} text={item.label} onClick={e => this.onClick(e, item)} />
 							))}
 						</div>
 					) : ''}
@@ -153,9 +167,9 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 		Preview.toastHide(true);
 	};
 
-    onClick (e: any, action: string) {
+    onClick (e: any, item: any) {
        
-		switch (action) {
+		switch (item.action) {
             case 'open': {
                 this.onOpen(e);
                 break;
@@ -164,6 +178,15 @@ const Toast = observer(class Toast extends React.Component<object, State> {
             case 'undo': {
                 keyboard.onUndo(commonStore.toast.originId, 'Toast');
                 break;
+			};
+
+			case 'undoArchive': {
+				if (!item.data) {
+					break;
+				};
+
+				C.ObjectListSetIsArchived(item.data, false);
+				break;
 			};
 
             case 'manageStorage': {

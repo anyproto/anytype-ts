@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilMenu, analytics, UtilData, UtilObject, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, UtilMenu, analytics, UtilData, UtilObject, keyboard, translate, Preview } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
 import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -130,6 +130,7 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 					if (!message.error.code) {
 						this.data.nodes = this.data.nodes.filter(d => !this.ids.includes(d.id));
 						this.refGraph?.send('onRemoveNode', { ids: this.ids });
+						Preview.toastShow({ action: I.ToastAction.Archive, ids: this.ids });
 					};
 				});
 				

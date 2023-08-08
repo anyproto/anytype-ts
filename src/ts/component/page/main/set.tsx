@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, analytics } from 'Lib';
+import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, analytics, Preview } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -248,7 +248,9 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (count) {
 			keyboard.shortcut('backspace, delete', e, () => {
 				e.preventDefault();
-				C.ObjectListSetIsArchived(ids, true);
+				C.ObjectListSetIsArchived(ids, true, () => {
+					Preview.toastShow({ action: I.ToastAction.Archive, ids });
+				});
 				
 				selection.clear();
 				analytics.event('MoveToBin', { count });
