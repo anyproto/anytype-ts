@@ -723,6 +723,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const typeId = this.getTypeId();
 		const defaultTemplateId = this.getDefaultTemplateId();
 
+		analytics.event('ClickNewOption', { route: (this.isCollection() ? 'Collection' : 'Set') });
+
 		menuStore.open('searchObject', {
 			...menuParam,
 			offsetY: 10,
@@ -779,6 +781,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
 					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
+					analytics.event('SelectTemplate', {
+						route: this.isCollection() ? 'Collection' : 'Set',
+						type: item.templateIsBundled ? item.id : 'custom'
+					});
 				},
 				onMore: (e: any, item: any) => {
 					e.preventDefault();
@@ -798,6 +804,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						data: {
 							template: item,
 							isView: true,
+							route: this.isCollection() ? 'Collection' : 'Set',
 							onOver: () => menuStore.closeAll([ 'previewObject' ]),
 							onSetDefault: () => {
 								this.setDefaultTemplateForView(item.id, () => { this.menuContext.ref.reload(); });

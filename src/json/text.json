@@ -1036,6 +1036,7 @@
     "menuBlockMoreUnlockPage": "Unlock page",
     "menuBlockMoreLockPage": "Lock page",
     "menuBlockMoreInstall": "Install",
+    "menuBlockMoreSetDefaultTemplate": "Set as default template",
 
     "menuBlockRelationEditUnlinkFromType": "Unlink from type",
     "menuBlockRelationEditUnlinkFromObject": "Unlink from object",

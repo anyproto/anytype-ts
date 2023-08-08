@@ -401,6 +401,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 				data: {
 					typeId: rootId,
 					onSelect: create,
+					route: 'ObjectType',
 				},
 			});
 		};

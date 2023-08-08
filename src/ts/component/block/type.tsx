@@ -220,7 +220,8 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 					popupStore.open('template', { 
 						data: { 
 							typeId: item.id, 
-							onSelect: (template: any) => this.onCreate(item.id, template) 
+							onSelect: (template: any) => this.onCreate(item.id, template),
+							route: 'Navigation'
 						} 
 					});
 				} else {
