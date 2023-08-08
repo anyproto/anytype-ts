@@ -73,7 +73,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (isDeleted) {
-			// return <Deleted {...this.props} />;
+			return <Deleted {...this.props} />;
 		};
 
 		if (isLoading) {
@@ -226,7 +226,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			if (message.error.code) {
-				if (message.error.code == Errors.Code.NOT_FOUND) {
+				if ([ Errors.Code.NOT_FOUND, Errors.Code.DELETED ].includes(message.error.code)) {
 					this.setState({ isDeleted: true, isLoading: false });
 				} else {
 					UtilObject.openHome('route');

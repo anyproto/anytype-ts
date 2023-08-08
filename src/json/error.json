@@ -6,7 +6,8 @@
 		"ANOTHER_ANYTYPE_PROCESS_IS_RUNNING": 108,
 		"ACCOUNT_IS_DELETED": 109,
 		"PROTOCOL_NEEDS_UPGRADE": 110,
-		"NOT_FOUND": 3
+		"NOT_FOUND": 3,
+		"DELETED": 1
 	},
 
 	"Error: net::ERR_TIMED_OUT": "Network time-out",

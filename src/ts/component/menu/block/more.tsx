@@ -140,6 +140,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		if (object.isArchived) {
 			linkTo = null;
+			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
 			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -216,7 +217,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 			if (object.isArchived) {
 				sections = [
-					{ children: [ archive ] },
+					{ children: [ remove, archive ] },
 					{ children: [ search ] },
 					{ children: [ print, pageExport ] },
 				];
@@ -458,6 +459,15 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				C.ObjectSetIsArchived(object.id, false, (message: any) => {
 					if (!message.error.code) {
 						analytics.event('RestoreFromBin', { count: 1, route });
+					};
+				});
+				break;
+			};
+
+			case 'pageRemove': {
+				C.ObjectListDelete([ object.id ], (message: any) => {
+					if (!message.error.code) {
+						analytics.event('RemoveCompletely', { count: 1, route });
 					};
 				});
 				break;

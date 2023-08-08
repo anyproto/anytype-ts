@@ -35,9 +35,9 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		let center = null;
 
-		if (object.isDeleted) {
+		if (object.isArchived) {
 			center = (
-				<div className="templateBanner">
+				<div className="headerBanner">
 					<Label text={translate('deletedBanner')} />
 				</div>
 			);
@@ -45,7 +45,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		if (UtilObject.isTemplate(object.type)) {
 			const type = dbStore.getType(object.targetObjectType);
 			center = (
-				<div className="templateBanner">
+				<div className="headerBanner">
 					<Label text={translate('templateBannner')} />
 					{type ? (
 						<div className="typeName" onClick={() => UtilObject.openAuto(type)}>
