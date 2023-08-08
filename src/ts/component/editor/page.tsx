@@ -205,7 +205,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const object = detailStore.get(rootId, rootId, []);
 
-		if (object.isArchived || object.isDeleted) {
+		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
 	};
@@ -235,7 +235,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			const object = detailStore.get(rootId, rootId, []);
-			if (object.isArchived || object.isDeleted) {
+			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
 			};
