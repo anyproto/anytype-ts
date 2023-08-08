@@ -629,6 +629,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								data: { 
 									typeId: item.objectTypeId,
 									onSelect: create,
+									route: 'Powertool',
 								},
 							});
 						} else {

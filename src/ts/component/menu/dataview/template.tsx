@@ -63,7 +63,7 @@ class MenuTemplate extends React.Component<I.Menu> {
     onClick (e: any, item: any) {
         const { param, close } = this.props;
         const { data } = param;
-        const { template, onSetDefault, onDelete, onDuplicate } = data;
+        const { template, onSetDefault, onDelete, onDuplicate, route } = data;
 
 		close();
 
@@ -72,15 +72,21 @@ class MenuTemplate extends React.Component<I.Menu> {
                 if (onSetDefault) {
                     onSetDefault();
                 };
-                break;
+
+				analytics.event('ChangeDefaultTemplate', { route, type: template.templateIsBundled ? template.id : 'custom' });
+				break;
             };
 
             case 'edit': {
                 UtilObject.openPopup(template);
+
+				analytics.event('EditTemplate', { route, type: template.templateIsBundled ? template.id : 'custom' });
                 break;
             };
 
             case 'duplicate': {
+				analytics.event('DuplicateTemplate', { route, type: template.templateIsBundled ? template.id : 'custom' });
+
 				if (template.id == Constant.templateId.blank) {
 					const type = dbStore.getType(template.typeId);
 					const details: any = {
