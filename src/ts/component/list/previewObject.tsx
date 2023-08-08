@@ -2,7 +2,6 @@ import * as React from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
 import { UtilCommon, keyboard, translate } from 'Lib';
-import Constant from 'json/constant.json';
 
 interface Props {
 	offsetX: number;
