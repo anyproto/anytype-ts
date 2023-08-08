@@ -268,7 +268,7 @@ export default {
                 }
             },
             {
-				name: translate('onboardingEditor3Title'),
+				name: translate('onboardingEditor4Title'),
 				description: translate('onboardingEditor4Description'),
                 param: {
                     element: '#navigationPanel #button-navigation-graph',

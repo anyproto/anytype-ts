@@ -387,6 +387,9 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		};
 
 		const { close } = this.props;
+		const checkFilter = () => {
+			return this.refFilter && this.refFilter.isFocused;
+		};
 
 		e.stopPropagation();
 		keyboard.disableMouse(true);
@@ -399,7 +402,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		});
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
-			if (this.refFilter.isFocused && this.refFilter.getValue().length) {
+			if (checkFilter()) {
 				return;
 			};
 
@@ -418,7 +421,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		});
 
 		keyboard.shortcut('tab, space', e, () => {
-			if (this.refFilter.isFocused || !this.active) {
+			if (checkFilter() || !this.active) {
 				return;
 			};
 
