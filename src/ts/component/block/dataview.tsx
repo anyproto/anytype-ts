@@ -780,6 +780,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
 					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
+					analytics.event('SelectTemplate', {
+						route: this.isCollection() ? 'Collection' : 'Set',
+						type: item.templateIsBundled ? item.id : 'custom'
+					});
 				},
 				onMore: (e: any, item: any) => {
 					e.preventDefault();
