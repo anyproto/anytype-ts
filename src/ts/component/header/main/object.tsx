@@ -86,11 +86,11 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	};
 
 	componentDidMount () {
-		this.setTitle();
+		keyboard.setWindowTitle();
 	};
 
 	componentDidUpdate () {
-		this.setTitle();
+		keyboard.setWindowTitle();
 	};
 
 	onOpen () {
@@ -149,12 +149,6 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		});
 	};
 
-	setTitle () {
-		const { rootId } = this.props;
-
-		UtilData.setWindowTitle(rootId, rootId);
-	};
-	
 });
 
 export default HeaderMainObject;
