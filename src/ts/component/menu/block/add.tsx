@@ -618,7 +618,6 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								route: 'Powertool',
 								objectType: item.objectTypeId,
 								layout: template?.layout,
-								template: (template && template.templateIsBundled ? template.id : 'custom'),
 							});
 						});
 					};

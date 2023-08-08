@@ -276,7 +276,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		analytics.event('SelectObjectType', {
 			objectType: typeId,
 			layout: template?.layout,
-			template: (template && template.templateIsBundled ? template.id : 'custom'),
 		});
 	};
 

@@ -472,7 +472,6 @@ class MenuBlockMore extends React.Component<I.Menu> {
 						route,
 						objectType: object.targetObjectType,
 						layout: object.layout,
-						template: (object.templateIsBundled ? object.id : 'custom'),
 					});
 				});
 				break;

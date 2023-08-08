@@ -672,7 +672,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				route: (isCollection ? 'Collection' : 'Set'),
 				objectType: object.type,
 				layout: object.layout,
-				template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
 			});
 		});
 	};
@@ -781,10 +780,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
 					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
-					analytics.event('SelectTemplate', {
-						route: this.isCollection() ? 'Collection' : 'Set',
-						type: item.templateIsBundled ? item.id : 'custom'
-					});
+
+					analytics.event('SelectTemplate', { route: this.isCollection() ? 'Collection' : 'Set' });
 				},
 				onMore: (e: any, item: any) => {
 					e.preventDefault();

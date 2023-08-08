@@ -36,43 +36,54 @@ class ListObjectPreview extends React.Component<Props> {
 		const { getItems, canAdd, onAdd, withBlank, onBlank, onMenu, defaultId } = this.props;
 		const items = getItems();
 
-		const DefaultLabel = (item: any) => {
-			return defaultId == item.id ? <div className="defaultLabel">{translate('commonDefault')}</div> : null;
-		};
+		const Item = (item: any) => {
+			const cn = [ 'item' ];
 
-		const Item = (item: any) => (
-			<div id={`item-${item.id}`} className="item">
-				<DefaultLabel id={item.id} />
-				{onMenu ? <Icon className="more" onClick={e => onMenu(e, item)} /> : ''}
+			let icon = null;
+			let label = null;
+			let content = null;
 
-				<div
-					className="hoverArea"
-					onMouseEnter={e => this.onMouseEnter(e, item)}
-					onMouseLeave={e => this.onMouseLeave(e, item)}
-				>
-					<PreviewObject
-						ref={ref => this.refObj[item.id] = ref}
-						rootId={item.id}
-						onClick={e => this.onClick(e, item)}
-					/>
-				</div>
-			</div>
-		);
+			if (onMenu) {
+				cn.push('withMenu');
+				icon = <Icon className="more" onClick={e => onMenu(e, item)} />;
+			};
 
-		const ItemBlank = () => {
-			return (
-				<div id={`item-${Constant.templateId.blank}`} className="item" onClick={onBlank}>
-					<DefaultLabel id={Constant.templateId.blank} />
+			if (defaultId == item.id) {
+				label = <div className="defaultLabel">{translate('commonDefault')}</div>;
+			};
 
-					{onMenu ? <Icon className="more" onClick={e => onMenu(e, { id: Constant.templateId.blank })} /> : ''}
-
-					<div className="previewObject blank">
+			if (item.id == Constant.templateId.blank) {
+				content = (
+					<div className="previewObject blank" onClick={onBlank}>
 						<div className="scroller">
 							<div className="heading">
 								<div className="name">Blank</div>
 							</div>
 						</div>
 						<div className="border" />
+					</div>
+				);
+			} else {
+				content = (
+					<PreviewObject
+						ref={ref => this.refObj[item.id] = ref}
+						rootId={item.id}
+						onClick={e => this.onClick(e, item)}
+					/>
+				);
+			};
+
+			return (
+				<div id={`item-${item.id}`} className={cn.join(' ')}>
+					{label}
+					{icon}
+
+					<div
+						className="hoverArea"
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onMouseLeave={e => this.onMouseLeave(e, item)}
+					>
+						{content}
 					</div>
 				</div>
 			);
@@ -91,7 +102,7 @@ class ListObjectPreview extends React.Component<Props> {
 			>
 				<div className="wrap">
 					<div id="scroll" className="scroll">
-						{withBlank ? <ItemBlank /> : ''}
+						{withBlank ? <Item id={Constant.templateId.blank} /> : ''}
 						{items.map((item: any, i: number) => (
 							<Item key={i} {...item} index={i} />
 						))}

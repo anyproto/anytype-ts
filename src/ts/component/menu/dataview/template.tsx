@@ -73,19 +73,19 @@ class MenuTemplate extends React.Component<I.Menu> {
                     onSetDefault();
                 };
 
-				analytics.event('ChangeDefaultTemplate', { route, type: template.templateIsBundled ? template.id : 'custom' });
+				analytics.event('ChangeDefaultTemplate', { route });
 				break;
             };
 
             case 'edit': {
                 UtilObject.openPopup(template);
 
-				analytics.event('EditTemplate', { route, type: template.templateIsBundled ? template.id : 'custom' });
+				analytics.event('EditTemplate', { route });
                 break;
             };
 
             case 'duplicate': {
-				analytics.event('DuplicateTemplate', { route, type: template.templateIsBundled ? template.id : 'custom' });
+				analytics.event('DuplicateTemplate', { route });
 
 				if (template.id == Constant.templateId.blank) {
 					const type = dbStore.getType(template.typeId);
