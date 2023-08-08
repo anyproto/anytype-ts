@@ -727,6 +727,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		menuStore.open('searchObject', {
 			...menuParam,
 			offsetY: 10,
+			noAnimation: true,
 			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
@@ -779,7 +780,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					};
 
 					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
-					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
+					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate', 'previewObject' ]));
 
 					analytics.event('SelectTemplate', { route: this.isCollection() ? 'Collection' : 'Set' });
 				},
