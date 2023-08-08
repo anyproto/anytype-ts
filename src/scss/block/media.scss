@@ -70,7 +70,6 @@
 	.block.blockMedia > .wrapContent > .selectable > .dropTarget { line-height: 0px; }
 
 	.block.blockMedia.isReadonly > .wrapContent > .selectable > .dropTarget .icon.resize { display: none; }
-	.block.blockMedia.isReadonly > .wrapContent > .selectable > .dropTarget .icon.download { display: none; }
 	
 	.block.blockMedia:hover {
 		.icon.resize { opacity: 1; }
