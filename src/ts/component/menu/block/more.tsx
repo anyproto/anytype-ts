@@ -467,6 +467,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			case 'pageRemove': {
 				C.ObjectListDelete([ object.id ], (message: any) => {
 					if (!message.error.code) {
+						keyboard.onBack();
 						analytics.event('RemoveCompletely', { count: 1, route });
 					};
 				});

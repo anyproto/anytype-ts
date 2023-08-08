@@ -226,7 +226,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			if (message.error.code) {
-				if ([ Errors.Code.NOT_FOUND, Errors.Code.DELETED ].includes(message.error.code)) {
+				if (message.error.code == Errors.Code.NOT_FOUND) {
 					this.setState({ isDeleted: true, isLoading: false });
 				} else {
 					UtilObject.openHome('route');
