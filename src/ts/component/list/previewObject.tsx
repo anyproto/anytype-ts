@@ -1,13 +1,14 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
-import { keyboard, translate } from 'Lib';
+import { UtilCommon, keyboard, translate } from 'Lib';
 import Constant from 'json/constant.json';
 
 interface Props {
 	offsetX: number;
 	canAdd?: boolean;
 	withBlank?: boolean;
+	blankId?: string;
 	defaultId?: string;
 	getItems: () => any[];
 	onClick?: (e: any, item: any) => void;
@@ -33,10 +34,21 @@ class ListObjectPreview extends React.Component<Props> {
 	refObj: any = {};
 
 	render () {
-		const { getItems, canAdd, onAdd, withBlank, onBlank, onMenu, defaultId } = this.props;
-		const items = getItems();
+		const { onAdd, onBlank, onMenu, defaultId, blankId } = this.props;
+		const items = this.getItems();
+
+		const ItemAdd = () => (
+			<div id="item-add" className="item add" onClick={onAdd}>
+				<Icon className="plus" />
+				<div className="hoverArea" />
+			</div>
+		);
 
 		const Item = (item: any) => {
+			if (item.id == 'add') {
+				return <ItemAdd />;
+			};
+
 			const cn = [ 'item' ];
 
 			let icon = null;
@@ -52,7 +64,7 @@ class ListObjectPreview extends React.Component<Props> {
 				label = <div className="defaultLabel">{translate('commonDefault')}</div>;
 			};
 
-			if (item.id == Constant.templateId.blank) {
+			if (item.id == blankId) {
 				content = (
 					<div className="previewObject blank" onClick={onBlank}>
 						<div className="scroller">
@@ -89,12 +101,6 @@ class ListObjectPreview extends React.Component<Props> {
 			);
 		};
 
-		const ItemAdd = () => (
-			<div className="item add" onClick={onAdd}>
-				<Icon className="plus" />
-			</div>
-		);
-
 		return (
 			<div 
 				ref={node => this.node = node}
@@ -102,11 +108,9 @@ class ListObjectPreview extends React.Component<Props> {
 			>
 				<div className="wrap">
 					<div id="scroll" className="scroll">
-						{withBlank ? <Item id={Constant.templateId.blank} /> : ''}
 						{items.map((item: any, i: number) => (
 							<Item key={i} {...item} index={i} />
 						))}
-						{canAdd ? <ItemAdd /> : ''}
 					</div>
 				</div>
 
@@ -124,25 +128,29 @@ class ListObjectPreview extends React.Component<Props> {
 		this.resize();
 	};
 
-	getMaxPage () {
-		const { getItems, canAdd, withBlank } = this.props;
-		const node = $(this.node);
-		const items = getItems();
-		const cnt = Math.floor(node.width() / WIDTH);
+	getItems () {
+		const { getItems, canAdd, withBlank, blankId } = this.props;
+		const items = UtilCommon.objectCopy(getItems());
 
-		let length = items.length;
 		if (withBlank) {
-			length++;
+			items.unshift({ id: blankId });
 		};
 		if (canAdd) {
-			length++;
+			items.push({ id: 'add' });
 		};
-		return Math.max(0, Math.ceil(length / cnt) - 1);
+		return items;
+	};
+
+	getMaxPage () {
+		const node = $(this.node);
+		const items = this.getItems();
+		const cnt = Math.floor(node.width() / WIDTH);
+
+		return Math.max(0, Math.ceil(items.length / cnt) - 1);
 	};
 
 	onMouseEnter (e: any, item: any) {
-		const { getItems } = this.props;
-		const items = getItems();
+		const items = this.getItems();
 
 		this.n = items.findIndex(it => it.id == item.id);
 		this.setActive();
@@ -162,8 +170,7 @@ class ListObjectPreview extends React.Component<Props> {
 	};
 
 	setActive () {
-		const { getItems } = this.props;
-		const items = getItems();
+		const items = this.getItems();
 		const item = items[this.n];
 
 		if (!item) {
@@ -179,8 +186,7 @@ class ListObjectPreview extends React.Component<Props> {
 	};
 
 	onKeyUp (e: any) {
-		const { getItems } = this.props;
-		const items = getItems();
+		const items = this.getItems();
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			const dir = pressed == 'arrowleft' ? -1 : 1;

@@ -151,6 +151,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 										onMenu={allowedTemplate ? (e: any, item: any) => this.onMenu(item) : null}
 										onClick={(e: any, item: any) => UtilObject.openPopup(item)}
 										withBlank={true}
+										blankId={Constant.templateId.blank}
 										defaultId={object.defaultTemplateId}
 									/>
 								</div>
