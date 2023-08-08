@@ -1394,6 +1394,8 @@
     "unsplashString": "Photo by %s on %s",
     "templateBannner": "You are editing a template",
 
+    "deletedBanner": "This file is in the Bin and is shown in view mode. Restore to use it.",
+
     "dispatcherImportSuccessTitle": "The import process is complete!",
     "dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",
     "dispatcherExportSuccessTitle": "The export process is complete!",

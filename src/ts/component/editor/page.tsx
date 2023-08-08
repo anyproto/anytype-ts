@@ -91,8 +91,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const readonly = this.isReadonly();
 		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
 
-		console.log('OBJECT (editor/main/page): ', object)
-
 		return (
 			<div 
 				ref={node => this.node = node} 

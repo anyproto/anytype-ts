@@ -105,6 +105,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const isTemplate = UtilObject.isTemplate(object.type);
 
 		let archive = null;
+		let remove = null;
 		let fav = null;
 		let pageLock = null;
 		let pageInstall = null;
@@ -208,6 +209,14 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				sections = [
 					{ children: [ archive, history ] },
 					{ children: [ template, pageCopy, setDefaultTemplate ] },
+					{ children: [ search ] },
+					{ children: [ print, pageExport ] },
+				];
+			};
+
+			if (object.isArchived) {
+				sections = [
+					{ children: [ archive ] },
 					{ children: [ search ] },
 					{ children: [ print, pageExport ] },
 				];

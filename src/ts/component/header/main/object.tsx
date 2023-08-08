@@ -5,7 +5,15 @@ import { I, UtilData, UtilObject, keyboard, sidebar, translate } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
+interface State {
+	isDeleted: boolean;
+};
+
+const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent, State> {
+
+	state = {
+		isDeleted: false
+	};
 
 	constructor (props: I.HeaderComponent) {
 		super(props);
@@ -25,10 +33,15 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
 
-		console.log('OBJECT (header/main/object): ', object)
-
 		let center = null;
 
+		if (object.isDeleted) {
+			center = (
+				<div className="templateBanner">
+					<Label text={translate('deletedBanner')} />
+				</div>
+			);
+		} else
 		if (UtilObject.isTemplate(object.type)) {
 			const type = dbStore.getType(object.targetObjectType);
 			center = (
