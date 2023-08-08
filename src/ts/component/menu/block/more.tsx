@@ -125,7 +125,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('menuBlockMoreCreateObject') };
-			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('commonTemplateSetDefault') };
+			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuBlockMoreSetDefaultTemplate') };
 			pageCopy.name = translate('menuBlockMoreDuplicateTemplate')
 		} else {
 			template = { id: 'templateCreate', icon: 'template', name: translate('menuBlockMoreUseAsTemplate') };
