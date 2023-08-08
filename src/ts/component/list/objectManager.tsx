@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, Loader, ObjectName, EmptySearch } from 'Component';
-import { UtilData, I, UtilCommon, translate } from 'Lib';
+import { UtilData, I, UtilCommon, translate, UtilObject } from 'Lib';
 import { dbStore, detailStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -87,19 +87,23 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
         );
 
         const Item = (item: any) => (
-            <div className="item" onClick={e => this.onClick(e, item)}>
-                <Checkbox
-                    ref={ref => this.refCheckbox.set(item.id, ref)}
-                    readonly={true}
-                    value={this.selected.includes(item.id)}
-                />
-                <IconObject object={item} size={iconSize} />
+            <div className="item">
+				<div className="checkboxClickArea" onClick={e => this.onClick(e, item)}>
+					<Checkbox
+						ref={ref => this.refCheckbox.set(item.id, ref)}
+						readonly={true}
+						value={this.selected.includes(item.id)}
+					/>
+				</div>
+                <div className="objectClickArea" onClick={() => UtilObject.openPopup(item)}>
+					<IconObject object={item} size={iconSize} />
 
-                <div className="info">
-                    <ObjectName object={item} />
+					<div className="info">
+						<ObjectName object={item} />
 
-                    <Info {...item} />
-                </div>
+						<Info {...item} />
+					</div>
+				</div>
             </div>
         );
 

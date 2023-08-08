@@ -25,6 +25,8 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 		const canSync = showMenu && !object.templateIsBundled;
 		const cmd = keyboard.cmdSymbol();
 
+		console.log('OBJECT (header/main/object): ', object)
+
 		let center = null;
 
 		if (UtilObject.isTemplate(object.type)) {

@@ -54,6 +54,7 @@
 
         .item { display: flex; flex-direction: row; align-items: center; gap: 0px; margin: 0px 0px 16px 0px; }
         .item {
+            .objectClickArea { display: flex; flex-direction: row; align-items: center; gap: 0 12px; }
             .info { width: calc(100% - 100px); flex-grow: 1; }
 
             .icon.checkbox {

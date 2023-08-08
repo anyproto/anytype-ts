@@ -73,7 +73,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const root = blockStore.getLeaf(rootId, rootId);
 
 		if (isDeleted) {
-			return <Deleted {...this.props} />;
+			// return <Deleted {...this.props} />;
 		};
 
 		if (isLoading) {
@@ -90,6 +90,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const width = root.fields?.width;
 		const readonly = this.isReadonly();
 		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
+
+		console.log('OBJECT (editor/main/page): ', object)
 
 		return (
 			<div 
@@ -2243,9 +2245,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	isReadonly () {
 		const { rootId } = this.props;
+		const { isDeleted } = this.state;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 
+		if (isDeleted) {
+			return true;
+		};
 		return root?.isLocked() || !allowed;
 	};
 
