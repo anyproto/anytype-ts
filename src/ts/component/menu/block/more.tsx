@@ -446,28 +446,19 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 				
 			case 'pageArchive': {
-				C.ObjectSetIsArchived(object.id, true, (message: any) => {
-					if (!message.error.code) {
-						onBack();
-						analytics.event('MoveToBin', { count: 1, route });
-					};
-				});
+				Action.archive([ object.id ]);
 				break;
 			};
 
 			case 'pageUnarchive': {
-				C.ObjectSetIsArchived(object.id, false, (message: any) => {
-					if (!message.error.code) {
-						analytics.event('RestoreFromBin', { count: 1, route });
-					};
-				});
+				Action.restore([ object.id ]);
 				break;
 			};
 
 			case 'pageRemove': {
 				C.ObjectListDelete([ object.id ], (message: any) => {
 					if (!message.error.code) {
-						keyboard.onBack();
+						onBack();
 						analytics.event('RemoveCompletely', { count: 1, route });
 					};
 				});
