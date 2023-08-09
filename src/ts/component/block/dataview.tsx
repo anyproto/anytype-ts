@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate } from 'Lib';
-import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
+import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import Controls from './dataview/controls';
@@ -780,7 +780,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 					};
 
 					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
-					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate', 'previewObject' ]));
+					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
 
 					analytics.event('SelectTemplate', { route: this.isCollection() ? 'Collection' : 'Set' });
 				},
