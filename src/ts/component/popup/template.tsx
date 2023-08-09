@@ -55,7 +55,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 					withBlank={true}
 					onBlank={e => this.onClick(e, { id: Constant.templateId.blank })}
 					blankId={Constant.templateId.blank}
-					defaultId={type.defaultTemplateId}
+					defaultId={type.defaultTemplateId || Constant.templateId.blank}
 				/>
 			</div>
 		);

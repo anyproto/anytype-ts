@@ -23,7 +23,7 @@
 		> .icon.more.hover { background-color: $colorHoverMedium; }
 
 		> .defaultLabel {
-			position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500;
+			position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500; z-index: 2;
 			padding: 1px 4px; border-radius: 4px; background: $colorVeryLightGrey; color: $colorDarkGrey;
 		}
 

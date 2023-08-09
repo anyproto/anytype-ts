@@ -163,6 +163,7 @@ class ListObjectPreview extends React.Component<Props> {
 
 	onClick (e: any, item: any) {
 		const { onClick } = this.props;
+
 		if (onClick) {
 			onClick(e, item);
 		};

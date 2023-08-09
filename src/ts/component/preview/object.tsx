@@ -358,19 +358,20 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 	componentWillUnmount () {
 		this._isMounted = false;
 		this.unbind();
+
 		Action.pageClose(this.getRootId(), false);
 	};
 
 	rebind () {
 		const { rootId } = this.props;
+
 		this.unbind();
-		$(window).on(`updatePreviewObject.${rootId}`, () => {
-			this.update();
-		});
+		$(window).on(`updatePreviewObject.${rootId}`, () => this.update());
 	};
 
 	unbind () {
 		const { rootId } = this.props;
+
 		$(window).off(`updatePreviewObject.${rootId}`);
 	};
 
