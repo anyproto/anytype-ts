@@ -105,6 +105,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const isTemplate = UtilObject.isTemplate(object.type);
 
 		let archive = null;
+		let remove = null;
 		let fav = null;
 		let pageLock = null;
 		let pageInstall = null;
@@ -139,6 +140,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 
 		if (object.isArchived) {
 			linkTo = null;
+			remove = { id: 'pageRemove', icon: 'remove', name: translate('commonDeleteImmediately') };
 			archive = { id: 'pageUnarchive', icon: 'restore', name: translate('commonRestoreFromBin') };
 		} else {
 			archive = { id: 'pageArchive', icon: 'remove', name: translate('commonMoveToBin') };
@@ -190,20 +192,13 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			sections = [
-				{ children: [ fav, archive, pageInstall ] },
+				{ children: [ fav, remove, archive, pageInstall ] },
 				{ children: [ pageCopy, linkTo, pageLink ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
 		} else
 		if (block.isPage()) {
-			sections = [
-				{ children: [ fav, archive, history ] },
-				{ children: [ pageCopy, linkTo, pageLink, pageLock, template ] },
-				{ children: [ search ] },
-				{ children: [ print, pageExport, pageReload ] },
-			];
-
 			if (isTemplate) {
 				sections = [
 					{ children: [ archive, history ] },
@@ -211,7 +206,22 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					{ children: [ search ] },
 					{ children: [ print, pageExport ] },
 				];
+			} else
+			if (object.isArchived) {
+				sections = [
+					{ children: [ remove, archive ] },
+					{ children: [ search ] },
+					{ children: [ print, pageExport ] },
+				];
+			} else {
+				sections = [
+					{ children: [ fav, archive, history ] },
+					{ children: [ pageCopy, linkTo, pageLink, pageLock, template ] },
+					{ children: [ search ] },
+					{ children: [ print, pageExport, pageReload ] },
+				];
 			};
+
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		}  else {
 			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };
@@ -449,6 +459,16 @@ class MenuBlockMore extends React.Component<I.Menu> {
 				C.ObjectSetIsArchived(object.id, false, (message: any) => {
 					if (!message.error.code) {
 						analytics.event('RestoreFromBin', { count: 1, route });
+					};
+				});
+				break;
+			};
+
+			case 'pageRemove': {
+				C.ObjectListDelete([ object.id ], (message: any) => {
+					if (!message.error.code) {
+						keyboard.onBack();
+						analytics.event('RemoveCompletely', { count: 1, route });
 					};
 				});
 				break;

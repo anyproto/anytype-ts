@@ -1257,10 +1257,11 @@
     "toastTemplateCreate": "is saved as a template!",
     "toastCopy": "%s has been copied to clipboard",
     "toastCopyBlock": "Block has been copied to clipboard",
-    "toastTurnIntoCollection": "%s  is collection now!",
+    "toastTurnIntoCollection": "%s is collection now!",
     "toastIsLocked": "is locked",
     "toastIsUnlocked": "is unlocked",
     "toastMovedTo": "%s moved to",
+    "toastMovedToBin": "%s moved to bin",
     "toastMovedFrom": "%s moved from",
     "toastAddedToCollection": "has been added to collection",
     "toastLinkedTo": "has been linked to",
@@ -1393,6 +1394,8 @@
     "sidebarToggle": "Toggle sidebar fixed mode",
     "unsplashString": "Photo by %s on %s",
     "templateBannner": "You are editing a template",
+
+    "deletedBanner": "This file is in the Bin and is shown in view mode. Restore to use it.",
 
     "dispatcherImportSuccessTitle": "The import process is complete!",
     "dispatcherImportSuccessText": "Now the data is yours. You will find the imported objects in your favorite collection.",

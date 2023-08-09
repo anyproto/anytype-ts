@@ -88,8 +88,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const children = blockStore.getChildren(rootId, rootId, it => !it.isLayoutHeader());
 		const length = childrenIds.length;
 		const width = root.fields?.width;
-		const readonly = this.isReadonly();
 		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
+		const readonly = this.isReadonly() || object.isArchived;
 
 		return (
 			<div 
@@ -205,7 +205,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const object = detailStore.get(rootId, rootId, []);
 
-		if (object.isArchived || object.isDeleted) {
+		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
 	};
@@ -235,7 +235,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			const object = detailStore.get(rootId, rootId, []);
-			if (object.isArchived || object.isDeleted) {
+			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
 			};
@@ -2243,9 +2243,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	isReadonly () {
 		const { rootId } = this.props;
+		const { isDeleted } = this.state;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 
+		if (isDeleted) {
+			return true;
+		};
 		return root?.isLocked() || !allowed;
 	};
 

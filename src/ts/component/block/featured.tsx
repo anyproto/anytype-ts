@@ -354,7 +354,11 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const typeIsDeleted = type._empty_ || type.isDeleted
 		const options: any[] = [];
 
-		if (!type.isArchived && !typeIsDeleted) {
+		if (readonly) {
+			return;
+		};
+
+		if (!typeIsDeleted) {
 			options.push({ id: 'open', name: translate('blockFeaturedTypeMenuOpenType') });
 		};
 
@@ -406,7 +410,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 	};
 
 	onTypeOver (e: any, item: any) {
-		const { rootId, block } = this.props;
+		const { rootId, block, readonly } = this.props;
 
 		if (!item.arrow) {
 			menuStore.closeAll(Constant.menuIds.featuredType);

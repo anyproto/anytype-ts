@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
-import { I, C, UtilCommon, UtilMenu, analytics, UtilData, UtilObject, keyboard, translate } from 'Lib';
+import { I, C, UtilCommon, UtilMenu, analytics, UtilData, UtilObject, keyboard, translate, Action } from 'Lib';
 import { Header, Footer, Graph, Loader } from 'Component';
 import { detailStore, menuStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
@@ -119,21 +119,17 @@ const PageMainGraph = observer(class PageMainGraph extends React.Component<I.Pag
 			return;
 		};
 
-		keyboard.shortcut('escape', e, (pressed: string) => {
+		keyboard.shortcut('escape', e, () => {
 			this.ids = [];
 			this.refGraph?.send('onSetSelected', { ids: [] });
 		});
 
 		if (this.ids.length) {
-			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-				C.ObjectListSetIsArchived(this.ids, true, (message: any) => {
-					if (!message.error.code) {
-						this.data.nodes = this.data.nodes.filter(d => !this.ids.includes(d.id));
-						this.refGraph?.send('onRemoveNode', { ids: this.ids });
-					};
+			keyboard.shortcut('backspace, delete', e, () => {
+				Action.archive(this.ids, () => {
+					this.data.nodes = this.data.nodes.filter(d => !this.ids.includes(d.id));
+					this.refGraph?.send('onRemoveNode', { ids: this.ids });
 				});
-				
-				analytics.event('MoveToBin', { count: length });
 			});
 		};
 	};
