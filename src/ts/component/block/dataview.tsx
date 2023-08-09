@@ -809,7 +809,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 									this.setDefaultTemplateForView(item.id, () => { this.menuContext.ref.reload(); });
 								},
 								onDuplicate: (object) => UtilObject.openPopup(object, {}),
-								onDelete: () => {
+								onArchive: () => {
 									if (item.isDefault) {
 										this.setDefaultTemplateForView(Constant.templateId.blank);
 									};

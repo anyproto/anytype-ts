@@ -536,7 +536,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 					onDuplicate: (object: any) => {
 						this.templateOpen(object);
 					},
-					onDelete: () => {
+					onArchive: () => {
 						if (template.isDefault) {
 							UtilObject.setDefaultTemplateId(rootId, '');
 						};

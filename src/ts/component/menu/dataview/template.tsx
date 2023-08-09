@@ -1,9 +1,9 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
-import { analytics, C, I, keyboard, UtilObject, translate, focus } from 'Lib';
+import { analytics, C, I, keyboard, UtilObject, translate, Action } from 'Lib';
+import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
-import { commonStore, dbStore } from 'Store';
 
 class MenuTemplate extends React.Component<I.Menu> {
 
@@ -63,7 +63,7 @@ class MenuTemplate extends React.Component<I.Menu> {
     onClick (e: any, item: any) {
         const { param, close } = this.props;
         const { data } = param;
-        const { template, onSetDefault, onDelete, onDuplicate, route } = data;
+        const { template, onSetDefault, onArchive, onDuplicate, route } = data;
 
 		close();
 
@@ -121,15 +121,11 @@ class MenuTemplate extends React.Component<I.Menu> {
             };
 
             case 'remove': {
-                C.ObjectSetIsArchived(template.id, true, (message: any) => {
-                    if (!message.error.code) {
-                        if (onDelete) {
-                            onDelete();
-                        };
-
-                        analytics.event('MoveToBin', { count: 1, route: 'menuDataviewTemplate' });
-                    };
-                });
+				Action.archive([ template.id ], () => {
+					 if (onArchive) {
+						onArchive();
+					};
+				});
                 break;
             };
         };

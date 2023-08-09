@@ -1478,15 +1478,6 @@ const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: 
 	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
 };
 
-const ObjectSetIsArchived = (contextId: string, isArchived: boolean, callBack?: (message: any) => void) =>  {
-	const request = new Rpc.Object.SetIsArchived.Request();
-
-	request.setContextid(contextId);
-    request.setIsarchived(isArchived);
-
-	dispatcher.request(ObjectSetIsArchived.name, request, callBack);
-};
-
 const ObjectGraph = (filters: any[], limit: number, types: string[], keys: string[], callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.Graph.Request();
 
@@ -1908,7 +1899,6 @@ export {
 	ObjectSetObjectType,
 	ObjectSetLayout,
 	ObjectSetIsFavorite,
-	ObjectSetIsArchived,
 	ObjectSetSource,
 
 	ObjectCollectionAdd,
