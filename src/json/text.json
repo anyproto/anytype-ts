@@ -673,7 +673,7 @@
 
     "popupSettingsExportTitle": "Export",
     "popupSettingsExportText": "Choose application or format of data source",
-	"popupSettingsExportOk": "Export data",
+    "popupSettingsExportOk": "Export data",
 
     "popupSettingsExportMarkdownTitle": "Export to Markdown",
     "popupSettingsExportMarkdownText1": "All your workspace data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications.",
@@ -734,7 +734,7 @@
     "popupConfirmUpdatePromptCancel": "Later",
     "popupConfirmUpdateDoneTitle": "You are up-to-date",
     "popupConfirmUpdateDoneText": "You are on the latest version: %s",
-    "popupConfirmUpdateDoneOk": "'Great!",
+    "popupConfirmUpdateDoneOk": "Great!",
     "popupConfirmUpdateErrorTitle": "Oops!",
     "popupConfirmUpdateErrorText": "Can't check available updates, please try again later.<br\/><span class=\"error\">%s<\/span>",
 
