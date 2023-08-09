@@ -323,6 +323,8 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 
 		menuStore.open('selectList', {
 			component: 'select',
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
 			onOpen: (context) => {
 				menuContext = context;
 			},
@@ -350,6 +352,8 @@ const ListWidget = observer(class ListWidget extends React.Component<Props, Stat
 						offsetX: menuContext.getSize().width,
 						isSub: true,
 						vertical: I.MenuDirection.Center,
+						className: 'fixed',
+						classNameWrap: 'fromSidebar',
 						data: {
 							coords: { x, y },
 							onSave: () => {

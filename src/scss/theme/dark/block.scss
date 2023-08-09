@@ -99,6 +99,14 @@
 		}
 
         .dataviewControls {
+			> .sides {
+				> .side.right {
+					.buttonNewWrapper.withSelect {
+						.button.select { border-left-color: rgba(23,23,23,0.1); }
+						.button.select:after { background-image:  url('~img/arrow/button/black.svg'); }
+					}
+				}
+			}
             .viewItem { color: $colorSecondary; }
             .viewItem {
                 .icon.arrow { background-image: url('#{$themePath}/arrow/view.svg'); }

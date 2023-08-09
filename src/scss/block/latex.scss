@@ -23,7 +23,7 @@
 			.select:hover, .select.active { background: none; }
 		}
 
-		#value { font-size: 20px; line-height: 20px; width: 100%; overflow-x: auto; overflow-y: visible; }
+		#value { font-size: 20px; line-height: 20px; width: 100%; }
 		#value:empty { display: none; }
 		#input { 
 			background: $colorVeryLightGrey; text-align: left; font-family: 'Inter'; padding: 8px; @include text-common; 
@@ -32,5 +32,7 @@
 
 		.katex-display { margin: 0px; text-align: inherit; }
 		.katex { line-height: 1.5em; text-align: inherit; }
+		.katex > .katex-html { white-space: normal; }
+		.katex .base { margin-top: 2px; margin-bottom: 2px; }
 	}
 }

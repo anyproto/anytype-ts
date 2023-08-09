@@ -1,7 +1,7 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { Loader, Title, Label, ListObjectPreview } from 'Component';
-import { I, focus, UtilCommon, UtilData, translate } from 'Lib';
+import { I, focus, UtilCommon, UtilData, translate, analytics } from 'Lib';
 import { dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -54,6 +54,8 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 					onClick={this.onClick}
 					withBlank={true}
 					onBlank={e => this.onClick(e, { id: Constant.templateId.blank })}
+					blankId={Constant.templateId.blank}
+					defaultId={type.defaultTemplateId || Constant.templateId.blank}
 				/>
 			</div>
 		);
@@ -124,17 +126,19 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 		};
 	};
 
-	onClick (e: any, item: any) {
+	onClick (e: any, template: any) {
 		const { param, close } = this.props;
 		const { data } = param;
-		const { onSelect } = data;
+		const { onSelect, route } = data;
 
 		close();
 		window.setTimeout(() => {
 			if (onSelect) {
-				onSelect(UtilData.checkBlankTemplate(item));
+				onSelect(UtilData.checkBlankTemplate(template));
 			};
 		}, Constant.delay.popup);
+
+		analytics.event('SelectTemplate', { route });
 	};
 
 };

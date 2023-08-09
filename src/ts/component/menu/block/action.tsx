@@ -377,7 +377,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let flag = false;
 		if (id) {
 			const object = detailStore.get(rootId, id, [ 'isArchived', 'isDeleted' ], true);
-			if (!object.isArchived && !object.isDeleted) {
+			if (!object.isDeleted) {
 				flag = true;
 			};
 		};

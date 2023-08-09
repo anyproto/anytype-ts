@@ -125,7 +125,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			{ id: 'sourceOpen', icon: 'expand', name: UtilCommon.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		];
 
-		if (object.isArchived || object.isDeleted) {
+		if (object.isDeleted) {
 			options = options.filter(it => it.id == 'sourceChange');
 		};
 

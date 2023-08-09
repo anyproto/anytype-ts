@@ -1,13 +1,13 @@
 import * as React from 'react';
 import $ from 'jquery';
 import { PreviewObject, Icon } from 'Component';
-import { keyboard } from 'Lib';
-import Constant from 'json/constant.json';
+import { UtilCommon, keyboard, translate } from 'Lib';
 
 interface Props {
 	offsetX: number;
 	canAdd?: boolean;
 	withBlank?: boolean;
+	blankId?: string;
 	defaultId?: string;
 	getItems: () => any[];
 	onClick?: (e: any, item: any) => void;
@@ -33,45 +33,39 @@ class ListObjectPreview extends React.Component<Props> {
 	refObj: any = {};
 
 	render () {
-		const { getItems, canAdd, onAdd, withBlank, onBlank, onMenu, defaultId } = this.props;
-		const items = getItems();
+		const { onAdd, onBlank, onMenu, defaultId, blankId } = this.props;
+		const items = this.getItems();
 
-		const DefaultLabel = (item: any) => {
-			if (!defaultId || defaultId != item.id) {
-				return null;
-			};
-			return <div className="defaultLabel">Default</div>;
-		};
+		const ItemAdd = () => (
+			<div id="item-add" className="item add" onClick={onAdd}>
+				<Icon className="plus" />
+				<div className="hoverArea" />
+			</div>
+		);
 
 		const Item = (item: any) => {
-			return (
-				<div id={'item-' + item.id} className="item">
-					<DefaultLabel {...item} />
-					{onMenu ? <Icon className="more" onClick={e => onMenu(e, item)} /> : ''}
+			if (item.id == 'add') {
+				return <ItemAdd />;
+			};
 
-					<div
-						className="hoverArea"
-						onMouseEnter={e => this.onMouseEnter(e, item)}
-						onMouseLeave={e => this.onMouseLeave(e, item)}
-					>
-						<PreviewObject
-							ref={ref => this.refObj[item.id] = ref}
-							rootId={item.id}
-							onClick={e => this.onClick(e, item)}
-						/>
-					</div>
-				</div>
-			);
-		};
+			const cn = [ 'item' ];
 
-		const ItemBlank = () => {
-			return (
-				<div id={`item-${Constant.templateId.blank}`} className="item" onClick={onBlank}>
-					<DefaultLabel {...{id: Constant.templateId.blank}} />
+			let icon = null;
+			let label = null;
+			let content = null;
 
-					{onMenu ? <Icon className="more" onClick={e => onMenu(e, { id: Constant.templateId.blank })} /> : ''}
+			if (onMenu) {
+				cn.push('withMenu');
+				icon = <Icon className="more" onClick={e => onMenu(e, item)} />;
+			};
 
-					<div className="previewObject blank">
+			if (defaultId == item.id) {
+				label = <div className="defaultLabel">{translate('commonDefault')}</div>;
+			};
+
+			if (item.id == blankId) {
+				content = (
+					<div className="previewObject blank" onClick={onBlank}>
 						<div className="scroller">
 							<div className="heading">
 								<div className="name">Blank</div>
@@ -79,15 +73,32 @@ class ListObjectPreview extends React.Component<Props> {
 						</div>
 						<div className="border" />
 					</div>
+				);
+			} else {
+				content = (
+					<PreviewObject
+						ref={ref => this.refObj[item.id] = ref}
+						rootId={item.id}
+						onClick={e => this.onClick(e, item)}
+					/>
+				);
+			};
+
+			return (
+				<div id={`item-${item.id}`} className={cn.join(' ')}>
+					{label}
+					{icon}
+
+					<div
+						className="hoverArea"
+						onMouseEnter={e => this.onMouseEnter(e, item)}
+						onMouseLeave={e => this.onMouseLeave(e, item)}
+					>
+						{content}
+					</div>
 				</div>
 			);
 		};
-
-		const ItemAdd = () => (
-			<div className="item add" onClick={onAdd}>
-				<Icon className="plus" />
-			</div>
-		);
 
 		return (
 			<div 
@@ -96,11 +107,9 @@ class ListObjectPreview extends React.Component<Props> {
 			>
 				<div className="wrap">
 					<div id="scroll" className="scroll">
-						{withBlank ? <ItemBlank /> : ''}
 						{items.map((item: any, i: number) => (
 							<Item key={i} {...item} index={i} />
 						))}
-						{canAdd ? <ItemAdd /> : ''}
 					</div>
 				</div>
 
@@ -118,25 +127,29 @@ class ListObjectPreview extends React.Component<Props> {
 		this.resize();
 	};
 
-	getMaxPage () {
-		const { getItems, canAdd, withBlank } = this.props;
-		const node = $(this.node);
-		const items = getItems();
-		const cnt = Math.floor(node.width() / WIDTH);
+	getItems () {
+		const { getItems, canAdd, withBlank, blankId } = this.props;
+		const items = UtilCommon.objectCopy(getItems());
 
-		let length = items.length;
 		if (withBlank) {
-			length++;
+			items.unshift({ id: blankId });
 		};
 		if (canAdd) {
-			length++;
+			items.push({ id: 'add' });
 		};
-		return Math.max(0, Math.ceil(length / cnt) - 1);
+		return items;
+	};
+
+	getMaxPage () {
+		const node = $(this.node);
+		const items = this.getItems();
+		const cnt = Math.floor(node.width() / WIDTH);
+
+		return Math.max(0, Math.ceil(items.length / cnt) - 1);
 	};
 
 	onMouseEnter (e: any, item: any) {
-		const { getItems } = this.props;
-		const items = getItems();
+		const items = this.getItems();
 
 		this.n = items.findIndex(it => it.id == item.id);
 		this.setActive();
@@ -150,14 +163,14 @@ class ListObjectPreview extends React.Component<Props> {
 
 	onClick (e: any, item: any) {
 		const { onClick } = this.props;
+
 		if (onClick) {
 			onClick(e, item);
 		};
 	};
 
 	setActive () {
-		const { getItems } = this.props;
-		const items = getItems();
+		const items = this.getItems();
 		const item = items[this.n];
 
 		if (!item) {
@@ -173,8 +186,7 @@ class ListObjectPreview extends React.Component<Props> {
 	};
 
 	onKeyUp (e: any) {
-		const { getItems } = this.props;
-		const items = getItems();
+		const items = this.getItems();
 
 		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
 			const dir = pressed == 'arrowleft' ? -1 : 1;

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { I, UtilCommon, translate } from 'Lib';
-import katex from 'katex';
+
+const katex = require('katex');
+require('katex/dist/contrib/mhchem');
 
 class MenuPreviewLatex extends React.Component<I.Menu> {
 

@@ -63,11 +63,13 @@ After `./update.sh` downloaded the binary or after compiling it from source, you
 Build [`anytype-heart`](https://github.com/anyproto/anytype-heart) first.
 
 ```shell
+npm run update:locale
 npm run dist:(mac|win|linux)
 ```
 
-Options:
-- `ELECTRON_SKIP_NOTARIZE=1` — skip MacOS notarization process
+Options (these options allow building locally and bypass CI-only hooks):
+- `ELECTRON_SKIP_NOTARIZE=1` — skip MacOS|Windows notarization and signature process
+- `ELECTRON_SKIP_SENTRY=1` - skip source map upload to Sentry
 
 ## Running
 
@@ -88,6 +90,8 @@ Options:
 - `ANYPROF` — Go variable, profiler port, access `http://localhost:<PORT>/debug/pprof/profile?seconds=30` for profiling
 
 ## Localisation
+
+Project localisation is managed via [Crowdin](https://crowdin.com/project/anytype-desktop)
 
 `npm run update:locale` - Update localisation files
 

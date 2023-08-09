@@ -201,9 +201,6 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		let icon: any = {};
         let icons: any[] = [];
 
-		let cover: any = {};
-		let covers: any[] = [];
-
 		let description: any = {};
 		let descriptions: any[] = [];
 
@@ -226,12 +223,11 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 			id: 'description', name: translate('menuBlockLinkSettingsDescription'), icon: 'relation ' + Relation.className(I.RelationType.LongText),
 			caption: description.name, arrow: true
 		} : null;
-		const itemTags = { id: 'tag', name: translate('menuBlockLinkSettingsTags'), icon: 'relation ' + Relation.className(I.RelationType.Tag), withSwitch: true, switchValue: this.hasRelationKey('tag') };
 		const itemType = { id: 'type', name: translate('commonObjectType'), icon: 'relation ' + Relation.className(I.RelationType.Object), withSwitch: true, switchValue: this.hasRelationKey('type') };
 
 		let sections: any[] = [
 			{ children: [ itemStyle, itemIconSize, itemIconSwitch, itemCover ] },
-			{ name: translate('menuBlockLinkSettingAttributes'), children: [ itemName, itemDescription, itemType ] },
+			{ name: translate('menuBlockLinkSettingsAttributes'), children: [ itemName, itemDescription, itemType ] },
 		];
 
 		sections = sections.map((s: any) => {

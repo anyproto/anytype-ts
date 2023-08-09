@@ -215,18 +215,13 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		if (UtilObject.getSetLayouts().includes(item.recommendedLayout)) {
 			this.onObjectTo(item.recommendedLayout);
 		} else {
-			UtilData.checkTemplateCnt([ item.id ], (message: any) => {
-				if (message.records.length) {
+			UtilData.checkTemplateCnt([ item.id ], (cnt: number) => {
+				if (cnt) {
 					popupStore.open('template', { 
 						data: { 
 							typeId: item.id, 
-							onSelect: (template: any) => {
-								if (template && (template.id == Constant.templateId.blank)) {
-									template = null;
-								};
-
-								this.onCreate(item.id, template);
-							} 
+							onSelect: (template: any) => this.onCreate(item.id, template),
+							route: 'Navigation'
 						} 
 					});
 				} else {
@@ -277,7 +272,6 @@ const BlockType = observer(class BlockType extends React.Component<I.BlockCompon
 		analytics.event('SelectObjectType', {
 			objectType: typeId,
 			layout: template?.layout,
-			template: (template && template.templateIsBundled ? template.id : 'custom'),
 		});
 	};
 

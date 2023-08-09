@@ -30,7 +30,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		super(props);
 		
 		this.onView = this.onView.bind(this);
-		this.onRecordAdd = this.onRecordAdd.bind(this);
 		this.onDragStartColumn = this.onDragStartColumn.bind(this);
 		this.onDragStartCard = this.onDragStartCard.bind(this);
 	};
@@ -70,7 +69,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 									ref={ref => this.columnRefs[group.id] = ref}
 									{...this.props} 
 									{...group}
-									onColumnRecordAdd={this.onRecordAdd}
 									onDragStartColumn={this.onDragStartColumn}
 									onDragStartCard={this.onDragStartCard}
 									getSubId={() => dbStore.getGroupSubId(rootId, block.id, group.id)}
@@ -177,149 +175,6 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			});
 
 			dbStore.groupsSet(rootId, block.id, this.applyGroupOrder(groups));
-		});
-	};
-
-	onRecordAdd (e: any, groupId: string, dir: number) {
-		if (e.persist) {
-			e.persist();
-		};
-
-		if (this.creating) {
-			return;
-		};
-
-		const { rootId, block, getView, getIdPrefix, isInline, isCollection, objectOrderUpdate, refCells } = this.props;
-		const view = getView();
-		const group = dbStore.getGroup(rootId, block.id, groupId);
-		const objectId = isInline ? block.content.targetObjectId : rootId;
-		const object = detailStore.get(rootId, objectId, [ 'setOf' ], true);
-		const setOf = object.setOf || [];
-		const subId = dbStore.getGroupSubId(rootId, block.id, groupId);
-		const node = $(this.node);
-		const element = node.find(`#record-${groupId}-add`);
-		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
-		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
-		const details: any = {};
-		const conditions = [
-			I.FilterCondition.Equal,
-			I.FilterCondition.GreaterOrEqual,
-			I.FilterCondition.LessOrEqual,
-			I.FilterCondition.In,
-			I.FilterCondition.AllIn,
-		]; 
-		const flags: I.ObjectFlag[] = [];
-
-		if (!types.length || isCollection) {
-			flags.push(I.ObjectFlag.SelectType);
-		};
-
-		details[view.groupRelationKey] = group.value;
-
-		// Type detection and relations population
-		if (types.length) {
-			details.type = types[0].id;
-		};
-		if (relations.length) {
-			relations.forEach((it: any) => {
-				if (it.objectTypes.length && !details.type) {
-					const first = dbStore.getTypeById(it.objectTypes[0]);
-
-					if (!UtilObject.isFileLayout(first.recommendedLayout) && !UtilObject.isSystemLayout(first.recommendedLayout)) {
-						details.type = first;
-					};
-				};
-
-				details[it.relationKey] = Relation.formatValue(it, null, true);
-			});
-		};
-		if (!details.type) {
-			details.type = commonStore.type;
-		};
-
-		for (let filter of view.filters) {
-			if (!conditions.includes(filter.condition)) {
-				continue;
-			};
-
-			const value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
-			if (!value) {
-				continue;
-			};
-			
-			const relation = dbStore.getRelationByKey(filter.relationKey);
-			if (relation && !relation.isReadonlyValue) {
-				details[filter.relationKey] = Relation.formatValue(relation, filter.value, true);
-			};
-		};
-
-		this.creating = true;
-
-		const create = (template: any) => {
-			C.ObjectCreate(details, flags, template?.id, commonStore.space, (message: any) => {
-				this.creating = false;
-
-				if (message.error.code) {
-					return;
-				};
-
-				const object = message.details;
-				const records = dbStore.getRecords(subId, '');
-				const oldIndex = records.indexOf(message.objectId);
-
-				if (oldIndex < 0) {
-					dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
-				};
-
-				if (isCollection) {
-					C.ObjectCollectionAdd(objectId, [ object.id ]);
-				};
-
-				detailStore.update(subId, { id: object.id, details: object }, true);
-				objectOrderUpdate([ { viewId: view.id, groupId, objectIds: records } ], records, () => {
-					dbStore.recordsSet(subId, '', records);
-				});
-
-				const id = Relation.cellId(getIdPrefix(), 'name', object.id);
-				const ref = refCells.get(id);
-
-				if (ref && (object.layout != I.ObjectLayout.Note)) {
-					window.setTimeout(() => ref.onClick(e), 15);
-				};
-
-				analytics.event('CreateObject', {
-					route: (isCollection ? 'Collection' : 'Set'),
-					objectType: object.type,
-					layout: object.layout,
-					template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
-				});
-			});
-		};
-
-		const type = dbStore.getTypeById(details.type);
-
-		if (type && (type.recommendedLayout == I.ObjectLayout.Bookmark)) {
-			menuStore.open('dataviewCreateBookmark', {
-				type: I.MenuType.Horizontal,
-				element,
-				vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
-				horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
-				onClose: () => {
-					this.creating = false;
-				},
-				data: {
-					details,
-				},
-			});
-			return;
-		};
-
-		UtilData.checkTemplateCnt(setOf, (message: any) => {
-			if (message.records.length) {
-				popupStore.open('template', { data: { typeId: details.type, onSelect: create } });
-			} else {
-				create('');
-			};
 		});
 	};
 

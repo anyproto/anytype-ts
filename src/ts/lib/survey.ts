@@ -83,16 +83,18 @@ class Survey {
 	};
 
     checkPmf () {
+		const time = UtilCommon.time();
+		const timeRegister = Number(Storage.get('timeRegister')) || 0;
 		const storage = Storage.get('survey') || {};
         const obj = storage[I.SurveyType.Pmf] || {};
         const lastTime = Number(Storage.get('lastSurveyTime')) || Number(obj.time) || 0;
         const lastCanceled = Number(Storage.get('lastSurveyCanceled')) || obj.cancel || false;
-        const surveyTime = lastTime <= UtilCommon.time() - 86400 * 30;
+        const surveyTime = (timeRegister <= time - 86400 * 7) && (lastTime <= time - 86400 * 30);
 		const randSeed = 10000000;
 		const rand = UtilCommon.rand(0, randSeed);
 
 		// Show this survey to 5% of users
-		if (rand > randSeed * 0.05) {
+		if (rand > randSeed * 1) {
 			Storage.set('survey', { ...obj, time: UtilCommon.time() });
 			return;
 		};

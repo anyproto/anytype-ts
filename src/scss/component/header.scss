@@ -93,10 +93,10 @@
 	}
 	.path:hover { border-color: $colorBorderLight; }
 
-	.templateBanner {
+	.headerBanner {
 		display: flex; align-items: center; gap: 0px 4px; height: 32px; padding: 6px 8px; @include text-small; border-radius: 6px; background: $colorVeryLightGrey;
 	}
-	.templateBanner {
+	.headerBanner {
 		.typeName { display: flex; gap: 0px 4px; }
 		.typeName {
 			.name { font-weight: 600; }

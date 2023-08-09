@@ -1,10 +1,17 @@
 import * as React from 'react';
 import { I, UtilCommon, Preview } from 'Lib';
-import { Icon } from 'Component';
+import { Icon, Loader } from 'Component';
 
-class Button extends React.Component<I.ButtonComponent> {
+interface State {
+	isLoading: boolean;
+};
+
+class Button extends React.Component<I.ButtonComponent, State> {
 
 	node: any = null;
+	state: State = {
+		isLoading: false,
+	};
 
 	public static defaultProps = {
 		subType: 'submit',
@@ -23,6 +30,11 @@ class Button extends React.Component<I.ButtonComponent> {
 	render () {
 		const { id, type, subType, icon, arrow, text, className, color, onClick, dataset } = this.props;
 		const cn = [ 'button', color, className ];
+		const { isLoading } = this.state;
+
+		if (isLoading) {
+			cn.push('isLoading');
+		};
 
 		let content = null;
 		
@@ -39,6 +51,7 @@ class Button extends React.Component<I.ButtonComponent> {
 						onMouseLeave={this.onMouseLeave}
 						{...UtilCommon.dataProps(dataset)}
 					>
+						{isLoading ? <Loader type="loader" /> : ''}
 						{icon ? <Icon className={icon} /> : ''}
 						<div className="txt" dangerouslySetInnerHTML={{ __html: text }} />
 						{arrow ? <div className="arrow" /> : ''}
@@ -81,6 +94,10 @@ class Button extends React.Component<I.ButtonComponent> {
 	
 	onMouseLeave (e: any) {
 		Preview.tooltipHide(false);
+	};
+
+	setLoading (v: boolean) {
+		this.setState({ isLoading: v });
 	};
 	
 };

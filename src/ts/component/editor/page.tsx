@@ -88,8 +88,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const children = blockStore.getChildren(rootId, rootId, it => !it.isLayoutHeader());
 		const length = childrenIds.length;
 		const width = root.fields?.width;
-		const readonly = this.isReadonly();
 		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
+		const readonly = this.isReadonly() || object.isArchived;
 
 		return (
 			<div 
@@ -205,7 +205,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const object = detailStore.get(rootId, rootId, []);
 
-		if (object.isArchived || object.isDeleted) {
+		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
 	};
@@ -235,7 +235,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			};
 
 			const object = detailStore.get(rootId, rootId, []);
-			if (object.isArchived || object.isDeleted) {
+			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
 			};
@@ -2148,17 +2148,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			const last = node.find('#blockLast');
 			const size = node.find('#editorSize');
 			const cover = node.find('.block.blockCover');
-			const obj = this.getContainer();
-			const header = obj.find('#header');
+			const pageContainer = UtilCommon.getPageContainer(this.props.isPopup);
+			const header = pageContainer.find('#header');
 			const root = blockStore.getLeaf(rootId, rootId);
-			const container = UtilCommon.getScrollContainer(isPopup);
+			const scrollContainer = UtilCommon.getScrollContainer(isPopup);
 			const hh = isPopup ? header.height() : UtilCommon.sizeHeader();
 
 			this.setLayoutWidth(root?.fields?.width);
 
-			if (blocks.length && last.length && container.length) {
-				const ct = isPopup ? container.offset().top : 0;
-				const ch = container.height();
+			if (blocks.length && last.length && scrollContainer.length) {
+				const ct = isPopup ? scrollContainer.offset().top : 0;
+				const ch = scrollContainer.height();
 				const height = Math.max(ch / 2, ch - blocks.outerHeight() - blocks.offset().top - ct - 2);
 
 				last.css({ height: Math.max(Constant.size.lastBlock, height) });
@@ -2176,10 +2176,6 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		});
 	};
 
-	getContainer () {
-		return UtilCommon.getPageContainer(this.props.isPopup);
-	};
-	
 	focus (id: string, from: number, to: number, scroll: boolean) {
 		const { isPopup } = this.props;
 
@@ -2247,9 +2243,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 	isReadonly () {
 		const { rootId } = this.props;
+		const { isDeleted } = this.state;
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 
+		if (isDeleted) {
+			return true;
+		};
 		return root?.isLocked() || !allowed;
 	};
 

@@ -163,7 +163,6 @@ html.themeDark {
         .item {
             > .icon.more:hover,
             > .icon.more.hover { background-color: $colorHoverMedium; }
-            > .defaultLabel { background: $colorHoverMedium; color: $colorSecondary; }
         }
 
         .icon.arrow { background-image: url('#{$themePath}/arrow/template0.svg'); }
@@ -309,7 +308,7 @@ html.themeDark {
             .tab.active, .tab:hover { color: $colorPrimary; border-color: $colorLinePrimary; }
         }
 
-		.templateBanner { background: $colorLineTertiary; color: $colorPrimary; }
+		.headerBanner { background: $colorLineTertiary; color: $colorPrimary; }
     }
 	.header.isCommon.active {
 		.path { background-color: $colorHoverMedium; color: $colorPrimary; }

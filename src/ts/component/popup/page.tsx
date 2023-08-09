@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { observer } from 'mobx-react';
-import { I, history as historyPopup, UtilCommon } from 'Lib';
+import { I, history as historyPopup, UtilCommon, keyboard } from 'Lib';
 import { Page } from 'Component';
 import { menuStore } from 'Store';
 
@@ -49,6 +49,7 @@ const PopupPage = observer(class PopupPage extends React.Component<Props> {
 		this.unbind();
 
 		historyPopup.clear();
+		keyboard.setWindowTitle();
 	};
 
 	rebind () {

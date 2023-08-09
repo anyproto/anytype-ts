@@ -10,7 +10,6 @@ import Cell from 'Component/block/dataview/cell';
 interface Props extends I.ViewComponent {
 	id: string;
 	value: any;
-	onColumnRecordAdd (e: any, groupId: string, dir: number): void;
 	onDragStartColumn?: (e: any, groupId: string) => void;
 	onDragStartCard?: (e: any, groupId: string, record: any) => void;
 	getSubId?: () => string;
@@ -34,7 +33,7 @@ const Column = observer(class Column extends React.Component<Props> {
 	};
 
 	render () {
-		const { rootId, block, id, getSubId, getView, getLimit, onColumnRecordAdd, value, onDragStartColumn } = this.props;
+		const { rootId, block, id, getSubId, getView, getLimit, value, onDragStartColumn } = this.props;
 		const view = getView();
 		const subId = getSubId();
 		const items = this.getItems();
@@ -93,7 +92,7 @@ const Column = observer(class Column extends React.Component<Props> {
 
 						<div className="side right">
 							<Icon id={`button-${id}-more`} className="more" tooltip={translate('blockDataviewBoardColumnSettings')} onClick={this.onMore} />
-							<Icon className="add" tooltip={translate('blockDataviewCreateNew')} onClick={this.onAdd} />
+							<Icon className="add" tooltip={translate('blockDataviewCreateNew')} onClick={(e) => this.onAdd(e, -1)} />
 						</div>
 					</div>
 
@@ -115,7 +114,7 @@ const Column = observer(class Column extends React.Component<Props> {
 						{limit + this.offset < total ? <LoadMore limit={limit} loaded={items.length} total={total} onClick={this.onLoadMore} /> : ''}
 
 						{isAllowedObject ? (
-							<div id={`record-${id}-add`} className="card add" onClick={(e) => { onColumnRecordAdd(e, id, 1); }}>
+							<div id={`record-${id}-add`} className="card add" onClick={(e) => { this.onAdd(e, 1); }}>
 								<Icon className="plus" />
 							</div>
 						) : ''}
@@ -221,13 +220,11 @@ const Column = observer(class Column extends React.Component<Props> {
 		this.load(false);
 	};
 
-	onAdd (e: any) {
+	onAdd (e: any, dir: number) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { id, onColumnRecordAdd } = this.props;
-
-		onColumnRecordAdd(e, id, -1);
+		this.props.onRecordAdd(e, dir, this.props.id);
 	};
 
 	onMore (e: any) {

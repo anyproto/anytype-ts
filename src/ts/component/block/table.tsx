@@ -25,6 +25,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	frames: any[] = [];
 	rowId = '';
 	cellId = '';
+	data: any = {};
 
 	constructor (props: I.BlockComponent) {
 		super(props);
@@ -57,7 +58,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	render () {
 		const { block, readonly } = this.props;
-		const { rows, columns } = this.getData();
+
+		this.data = this.getData();
+
+		const { rows, columns } = this.data;
 		const cn = [ 'wrap', 'focusable', 'c' + block.id, 'resizable' ];
 
 		// Subscriptions
@@ -85,7 +89,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 											{...this.props}
 											block={row}
 											index={i}
-											getData={this.getData}
+											getData={() => this.data}
 											onOptions={this.onOptions}
 											onEnterHandle={this.onEnterHandle}
 											onLeaveHandle={this.onLeaveHandle}
@@ -128,6 +132,8 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	
 	componentDidMount () {
 		this._isMounted = true;
+
+		this.data = this.getData();
 		this.initSize();
 		this.resize();
 		this.rebind();
@@ -137,6 +143,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		const node = $(this.node);
 		const wrap = node.find('#scrollWrap');
 
+		this.data = this.getData();
 		this.initSize();
 		this.resize();
 
@@ -833,7 +840,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		widths[idx] = this.checkWidth(e.pageX - this.offsetX);
 
-		this.setColumnsWidths(widths);
+		this.setColumnWidths(widths);
 		this.resize();
 	};
 
@@ -861,15 +868,18 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		return ret;
 	};
 
-	setColumnsWidths (widths: number[]) {
+	setColumnWidths (widths: number[]) {
 		if (!this._isMounted) {
 			return;
 		};
 
 		const node = $(this.node);
 		const rows = node.find('.row');
+		const gridTemplateColumns = widths.map(it => it + 'px').join(' ');
 
-		rows.css({ gridTemplateColumns: widths.map(it => it + 'px').join(' ') });
+		rows.each((i, item) => {
+			item.style.gridTemplateColumns = gridTemplateColumns;
+		});
 	};
 
 	onDragStartColumn (e: any, id: string) {
@@ -1184,20 +1194,10 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 	};
 
 	initSize () {
-		if (!this._isMounted) {
-			return;
-		};
-
 		const { columns } = this.getData();
-		const node = $(this.node);
-		const rows = node.find('.row');
-		const sizes = [];
+		const widths = columns.map(it => this.checkWidth(it.fields.width || Constant.size.table.default));
 
-		columns.forEach((it: I.Block) => {
-			sizes.push(this.checkWidth(it.fields.width || Constant.size.table.default));
-		});
-
-		rows.css({ gridTemplateColumns: sizes.map(it => it + 'px').join(' ') });
+		this.setColumnWidths(widths);
 	};
 
 	checkWidth (w: number) {

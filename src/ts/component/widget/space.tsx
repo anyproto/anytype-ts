@@ -27,6 +27,7 @@ const WidgetSpace = observer(class WidgetSpace extends React.Component<I.WidgetC
 					canEdit={true} 
 					onSelect={this.onSelect} 
 					onUpload={this.onUpload}
+					menuParam={{ className: 'fixed' }}
 				/>
 				<div className="txt">
 					<ObjectName object={space} />

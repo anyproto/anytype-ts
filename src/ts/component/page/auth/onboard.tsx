@@ -4,7 +4,6 @@ import { Frame, Title, Label, Button, DotIndicator, Phrase, Error, Icon, IconObj
 import { I, translate, Animation, C, UtilData, Storage, UtilCommon, Renderer, analytics, Preview, keyboard, UtilObject, UtilRouter } from 'Lib';
 import { authStore, commonStore, popupStore, menuStore, blockStore } from 'Store';
 import Constant from 'json/constant.json';
-import Errors from 'json/error.json';
 import CanvasWorkerBridge from './animation/canvasWorkerBridge';
 import { OnboardStage as Stage } from './animation/constants';
 
@@ -21,6 +20,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	node: HTMLDivElement = null;
 	refFrame: Frame = null;
 	refPhrase: Phrase = null;
+	refNext = null;
 	account: I.Account = null;
 	isDelayed = false;
 
@@ -39,6 +39,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		let indicator = null;
 		let label = null;
 		let footer = null;
+		let content = null;
 
 		if (this.canMoveBackward()) {
 			back = <Icon className="arrow back" onClick={this.onBack} />;
@@ -59,13 +60,17 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (error) {
-			return (
-				<div>
-					<Frame ref={ref => this.refFrame = ref}>
-						<Error className="animation" text={error} />
-					</Frame>
-					<CanvasWorkerBridge state={animationStage} />
-				</div>
+			content = <Error className="animation" text={error} />;
+		} else {
+			content = (
+				<React.Fragment>
+					{indicator}
+					<Title className="animation" text={this.getText('Title')} />
+					{label}
+					{this.renderContent()}
+					{this.renderButtons()}
+					{footer}
+				</React.Fragment>
 			);
 		};
 
@@ -74,12 +79,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 				{back}
 
 				<Frame ref={(ref) => (this.refFrame = ref)}>
-					{indicator}
-					<Title className="animation" text={this.getText('Title')} />
-					{label}
-					{this.renderContent()}
-					{this.renderButtons()}
-					{footer}
+					{content}
 				</Frame>
 
 				<CanvasWorkerBridge state={animationStage} />
@@ -185,7 +185,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		return (
 			<div className="buttons">
-				<Button className={cn.join(' ')} text={text} onClick={this.onNext} />
+				<Button ref={ref => this.refNext = ref} className={cn.join(' ')} text={text} onClick={this.onNext} />
 				{moreInfo}
 			</div>
 		);
@@ -222,15 +222,20 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 	rebind () {
 		const node = $(this.node);
-		const question = node.find('.questionMark');
+		const questionPhrase = node.find('#questionMarkPhrase');
+		const questionAccount = node.find('#questionMarkAccount');
 
 		this.unbind();
 
 		$(window).on('keydown.onboarding', (e) => this.onKeyDown(e));
 
-		question.off('mouseenter mouseleave');
-		question.on('mouseenter', () => this.onPhraseTooltip());
-		question.on('mouseleave', () => Preview.tooltipHide());
+		questionPhrase.off('mouseenter mouseleave');
+		questionPhrase.on('mouseenter', () => this.onPhraseTooltip());
+		questionPhrase.on('mouseleave', () => Preview.tooltipHide());
+
+		questionAccount.off('mouseenter mouseleave');
+		questionAccount.on('mouseenter', () => this.onAccountTooltip());
+		questionAccount.on('mouseleave', () => Preview.tooltipHide());
 	};
 
 	getText = (name: string) => {
@@ -293,39 +298,49 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		const incrementAnimation = (cb?) => () => this.setState((prev) => ({ ...prev, animationStage: prev.animationStage + 1 }), cb);
 		const incrementOnboarding = (cb?) => () => this.setState((prev) => ({ ...prev, stage: prev.stage + 1 }), cb);
 
-		Animation.from(() => {
-			// Move animation forward, wait for delay, move onboarding forward
-			if (stage == Stage.Void) {
-				this.accountCreate(() => {
+		const run = () => {
+			Animation.from(() => {
+				// Move animation forward, wait for delay, move onboarding forward
+				if (stage == Stage.Void) {
 					incrementAnimation(delay(incrementOnboarding(), 100))();
-				});
-				return;
-			};
+					return;
+				};
 
-			// Move animation forward, wait for delay, move onboarding forward
-			if (stage == Stage.Phrase) {
-				incrementAnimation(delay(incrementOnboarding(), 1000))();
-				return;
-			};
+				// Move animation forward, wait for delay, move onboarding forward
+				if (stage == Stage.Phrase) {
+					incrementAnimation(delay(incrementOnboarding(), 1000))();
+					return;
+				};
 
-			// Move animation forward, wait for delay, move animation forward again, then move onboarding forward
-			if (stage == Stage.Offline) {
-				const second = delay(incrementOnboarding(), 500);
-				const first = delay(incrementAnimation(second), 2400);
+				// Move animation forward, wait for delay, move animation forward again, then move onboarding forward
+				if (stage == Stage.Offline) {
+					const second = delay(incrementOnboarding(), 500);
+					const first = delay(incrementAnimation(second), 2400);
 
-				incrementAnimation(first)();
-				return;
-			};
+					incrementAnimation(first)();
+					return;
+				};
 
-			// Wait for delay, move onboarding forward, wait for delay, move onboarding forward again
-			if (stage == Stage.Soul) {
-				const second = delay(incrementOnboarding(this.accountUpdate), 3000);
-				const first = delay(incrementOnboarding(second), 1000);
+				// Wait for delay, move onboarding forward, wait for delay, move onboarding forward again
+				if (stage == Stage.Soul) {
+					const second = delay(incrementOnboarding(this.accountUpdate), 3000);
+					const first = delay(incrementOnboarding(second), 1000);
 
-				first();
-				return;
-			};
-		});
+					first();
+					return;
+				};
+			});
+		};
+
+		if (stage == Stage.Void) {
+			this.refNext.setLoading(true);
+			this.accountCreate(() => {
+				this.refNext.setLoading(false);
+				run();
+			});
+		} else {
+			run();
+		};
 	};
 
 	/** Moves the Onboarding Flow one stage backward, or exits it entirely */
@@ -435,13 +450,26 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 	/** Shows a tooltip that tells the user how to keep their Key Phrase secure */
 	onPhraseTooltip = () => {
 		const node = $(this.node);
-		const label = node.find('#label');
+		const element = node.find('#questionMarkPhrase');
 
 		Preview.tooltipShow({
 			delay: 150,
 			text: translate('authOnboardPhraseTooltip'),
-			element: label,
+			element,
 			typeY: I.MenuDirection.Bottom,
+			typeX: I.MenuDirection.Center,
+		});
+	};
+
+	onAccountTooltip = () => {
+		const node = $(this.node);
+		const element = node.find('#questionMarkAccount');
+
+		Preview.tooltipShow({
+			delay: 150,
+			text: translate('authOnboardAccountTooltip'),
+			element,
+			typeY: I.MenuDirection.Top,
 			typeX: I.MenuDirection.Center,
 		});
 	};

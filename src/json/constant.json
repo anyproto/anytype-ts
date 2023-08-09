@@ -73,7 +73,7 @@
 	],
 
 	"sidebarRelationKeys": [
-		"id", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
+		"id", "name", "description", "snippet", "layout", "type", "iconEmoji", "iconImage", "iconOption", "isReadonly", "isHidden", "isDeleted", "isArchived", "isFavorite", "done", 
 		"relationFormat", "fileExt", "fileMimeType", "links", "restrictions", "source"
 	],
 
@@ -314,7 +314,7 @@
 		"yaml":			 "YAML"
 	},
 
-	"enabledInterfaceLang": [ "da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "hi-IN", "id-ID", "it-IT", "no-NO", "zh-CN", "zh-TW" ],
+	"enabledInterfaceLang": [ "da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "hi-IN", "id-ID", "it-IT", "no-NO", "ro-RO", "ru-RU", "uk-UA", "zh-CN", "zh-TW" ],
 
 	"spellingLang": {
 		"af": "Afrikaans", 

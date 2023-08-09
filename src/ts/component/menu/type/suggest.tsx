@@ -368,6 +368,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const { getId, getSize, param } = this.props;
 		const { data } = param;
 		const sources = this.getLibrarySources();
+		const className = [];
 
 		let menuId = '';
 		let menuParam: I.MenuParam = {
@@ -386,8 +387,14 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 		switch (item.id) {
 			case 'store': {
+				className.push('single');
+
+				if (param.className) {
+					className.push(param.className);
+				};
+
 				menuId = 'searchObject';
-				menuParam.className = 'single';
+				menuParam.className = className.join(' ');
 
 				let filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: Constant.storeSpaceId },
@@ -413,9 +420,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		};
 
 		if (menuId && !menuStore.isOpen(menuId, item.id)) {
-			menuStore.closeAll([ 'searchObject' ], () => {
-				menuStore.open(menuId, menuParam);
-			});
+			menuStore.closeAll([ 'searchObject' ], () => menuStore.open(menuId, menuParam));
 		};
 	};
 	

@@ -10,6 +10,7 @@ html.printMedia {
 	.sidebarDummy { display: none; }
 	.progress { display: none; }
 	.toast { display: none !important; }
+	.overPopup { overflow: visible !important; }
 
 	#drag, #previewLink, .menu, 
 	.controlButtons, 
@@ -51,9 +52,9 @@ html.printMedia {
 
 	.block.blockCover { left: 0px !important; top: 0px !important; width: 100%; border-radius: 0px; }
 
-	.blocks { width: 100%; }
+	.blocks { width: 100%; margin: 0px; }
 	.blocks {
-		.wrapMenu .icon.dnd { display: none; }
+		.wrapMenu { display: none; }
 		#button-block-add { display: none; }
 
 		.block.blockMedia, .block.blockBookmark { break-inside: avoid-page; }
@@ -64,6 +65,8 @@ html.printMedia {
 		.block.blockText {
 			.placeholder { display: none !important; }
 		}
+
+		.block.blockText.textCode > .wrapContent > .selectable > .dropTarget #value { white-space: normal; overflow-x: visible; }
 	}
 }
 

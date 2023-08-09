@@ -25,7 +25,7 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		switch (type) {
 			case I.FileType.Image: {
-				content = <img className="media" src={src} onClick={() => close()} />
+				content = <img className="media" src={src} onClick={() => close()} onDragStart={e => e.preventDefault()} />
 				break;
 			};
 

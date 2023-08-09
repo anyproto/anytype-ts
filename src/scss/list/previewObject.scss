@@ -23,7 +23,7 @@
 		> .icon.more.hover { background-color: $colorHoverMedium; }
 
 		> .defaultLabel {
-			position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500;
+			position: absolute; right: 12px; top: 12px; @include text-small; font-weight: 500; z-index: 2;
 			padding: 1px 4px; border-radius: 4px; background: $colorVeryLightGrey; color: $colorDarkGrey;
 		}
 
@@ -31,8 +31,8 @@
 		.icon.plus { width: 28px; height: 28px; position: absolute; left: 50%; top: 50%; margin: -14px 0px 0px -14px; background-image: url('~img/icon/plus/templateBig.svg'); }
 	}
 
-	.item:hover,
-	.item.active {
+	.item.withMenu:hover,
+	.item.withMenu.active {
 		> .icon.more { opacity: 1; }
 		> .defaultLabel { opacity: 0; }
 	}

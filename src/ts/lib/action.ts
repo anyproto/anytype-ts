@@ -180,7 +180,9 @@ class Action {
 		};
 
 		if (extensions && extensions.length) {
-			options.filters = [ { name: '', extensions } ];
+			options.filters = [ 
+				{ name: 'Filtered extensions', extensions },
+			];
 		};
 		
 		window.Electron.showOpenDialog(options).then(({ filePaths }) => {
@@ -368,6 +370,35 @@ class Action {
 					});
 				});
 			});
+		});
+	};
+
+	archive (ids: string[], callBack?: () => void) {
+		C.ObjectListSetIsArchived(ids, true, (message: any) => {
+			if (!message.error.code) {
+				return;
+			};
+
+			Preview.toastShow({ action: I.ToastAction.Archive, ids });
+			analytics.event('MoveToBin', { count: ids.length });
+
+			if (callBack) {
+				callBack();
+			};
+		});
+	};
+
+	restore (ids: string[], callBack?: () => void) {
+		C.ObjectListSetIsArchived(ids, false, (message: any) => {
+			if (!message.error.code) {
+				return;
+			};
+
+			analytics.event('RestoreFromBin', { count: ids.length });
+
+			if (callBack) {
+				callBack();
+			};
 		});
 	};
 

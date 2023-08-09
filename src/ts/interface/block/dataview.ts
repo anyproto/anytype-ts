@@ -122,8 +122,8 @@ export interface ViewComponent {
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
 	getEmpty?(type: string): any;
-	onRecordAdd?: (e: any, dir: number, withPopup?: boolean) => void;
-	onTemplatesMenu?: (e: any, dur: number) => void;
+	onRecordAdd?: (e: any, dir: number, groupId?: string) => void;
+	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string): void;
 	onContext?(e: any, id: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;

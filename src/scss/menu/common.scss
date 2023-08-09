@@ -147,19 +147,19 @@
 			.info { padding-left: 52px; }
 		}
 
-		.item.withCaption { display: flex; align-items: center; }
+		.item.withCaption { display: flex; align-items: center; justify-content: space-between; }
 		.item.withCaption {
 			.iconObject, .icon.dnd { flex-shrink: 0; }
 			.name { width: 100%; margin-right: 6px; }
 
-			.clickable { width: calc(100% - 128px); margin-right: 6px; }
+			.clickable { margin-right: 6px; flex-grow: 1; }
 			.clickable {
 				.name { margin: 0px; width: 100%; }
 			}
 
 			.caption { 
 				@include text-overflow-nw; display: inline-block; vertical-align: top; color: $colorDarkGrey; @include text-small; text-align: right;
-				flex-shrink: 0; line-height: 20px; width: 100px;
+				flex-shrink: 0; line-height: 20px;
 			}
 
 			.highlightMark { position: relative; top: auto; right: auto; margin: 0px 0px 0px 10px; }

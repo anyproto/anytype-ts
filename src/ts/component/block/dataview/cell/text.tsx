@@ -220,8 +220,11 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 	componentDidUpdate () {
 		const { isEditing } = this.state;
-		const { id, relation, cellPosition, getView, recordId, viewType } = this.props;
+		const { id, relation, recordId, viewType, cellPosition, getView, getRecord } = this.props;
 		const cell = $(`#${id}`);
+		const record = getRecord(recordId);
+
+		this.setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 
 		let view = null;
 		let viewRelation: any = {};

@@ -84,8 +84,8 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 
         this.setState({ isLoading: true });
 
-        C.ObjectImportUseCase(commonStore.space, id, () => {
-			analytics.event('SelectUsecase', { type: id });
+        C.ObjectImportUseCase(commonStore.space, id, (message: any) => {
+			analytics.event('SelectUsecase', { type: id, middleTime: message.middleTime });
 			blockStore.closeRecentWidgets();
 
 			this.setState({ isLoading: false });

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Title, Header, Footer, ObjectDescription, Icon, ListObjectManager } from 'Component';
-import { C, I, UtilCommon, analytics, translate } from 'Lib';
+import { C, I, UtilCommon, analytics, translate, Action } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -73,13 +73,7 @@ const PageMainArchive = observer(class PageMainArchive extends React.Component<I
 			return;
 		};
 
-		const selected = this.refManager.selected || [];
-		const count = selected.length;
-
-		C.ObjectListSetIsArchived(selected, false, () => {
-			analytics.event('RestoreFromBin', { count });
-		});
-
+		Action.restore(this.refManager.selected || []);
 		this.selectionClear();
 	};
 

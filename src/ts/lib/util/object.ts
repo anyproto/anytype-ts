@@ -45,7 +45,7 @@ class UtilObject {
 			home = detailStore.get(Constant.subId.space, space.spaceDashboardId);
 		};
 
-		if (!home || home._empty_ || home.isArchived || home.isDeleted) {
+		if (!home || home._empty_ || home.isDeleted) {
 			return null;
 		};
 		return home;
@@ -249,6 +249,10 @@ class UtilObject {
 	};
 
 	setDefaultTemplateId (rootId: string, templateId: string, callBack?: (message: any) => void) {
+		if (templateId == Constant.templateId.blank) {
+			templateId = '';
+		};
+
 		C.ObjectSetDetails(rootId, [ { key: 'defaultTemplateId', value: templateId } ], callBack);
 	};
 
@@ -362,6 +366,7 @@ class UtilObject {
 			I.ObjectLayout.Option,
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Date,
+			I.ObjectLayout.Space,
 		];
 	};
 

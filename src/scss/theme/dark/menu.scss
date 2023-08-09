@@ -181,6 +181,14 @@
         }
     }
 
+	/* MenuDataviewFilterValues */
+
+    .menu.menuDataviewFilterValues {
+		.select {
+            .icon.arrow { background-image: url('#{$themePath}/arrow/menu.svg') !important; }
+        }
+    }
+
     /* MenuDataviewSort */
 
     .menu.menuDataviewSort {

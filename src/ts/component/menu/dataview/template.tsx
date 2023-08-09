@@ -53,7 +53,7 @@ class MenuTemplate extends React.Component<I.Menu> {
         const { isBlank, isDefault } = template;
        
 		return [
-			!isDefault ? ({ id: 'default', name: translate(isView ? 'menuDataviewTemplateSetDefaultForView' : 'menuDataviewTemplateSetDefault') }) : null,
+			!isDefault ? ({ id: 'default', name: translate(isView ? 'menuDataviewTemplateSetDefaultForView' : 'commonTemplateSetDefault') }) : null,
 			!isBlank ? ({ id: 'edit', name: translate('menuDataviewTemplateEdit') }) : null,
 			{ id: 'duplicate', name: translate('commonDuplicate') },
 			!isBlank ? ({ id: 'remove', name: translate('commonDelete') }) : null,
@@ -63,7 +63,7 @@ class MenuTemplate extends React.Component<I.Menu> {
     onClick (e: any, item: any) {
         const { param, close } = this.props;
         const { data } = param;
-        const { template, onSetDefault, onDelete, onDuplicate, onTemplateAdd } = data;
+        const { template, onSetDefault, onDelete, onDuplicate, route } = data;
 
 		close();
 
@@ -72,15 +72,21 @@ class MenuTemplate extends React.Component<I.Menu> {
                 if (onSetDefault) {
                     onSetDefault();
                 };
-                break;
+
+				analytics.event('ChangeDefaultTemplate', { route });
+				break;
             };
 
             case 'edit': {
                 UtilObject.openPopup(template);
+
+				analytics.event('EditTemplate', { route });
                 break;
             };
 
             case 'duplicate': {
+				analytics.event('DuplicateTemplate', { route });
+
 				if (template.id == Constant.templateId.blank) {
 					const type = dbStore.getTypeById(template.typeId);
 					const details: any = {

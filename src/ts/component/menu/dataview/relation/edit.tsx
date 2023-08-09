@@ -612,7 +612,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 				addCommand(rootId, blockId, { ...details, _index_: item._index_ }, onChange);
 			};
 
-			Preview.toastShow({ text: UtilCommon.sprintf(translate('blockDataviewEmptyTargetDescription'), details.name) });
+			Preview.toastShow({ text: UtilCommon.sprintf(translate('menuDataviewRelationEditToastOnCreate'), details.name) });
 			analytics.event('CreateRelation', { format: item.relationFormat, type: ref, objectType: object.type });
 		});
 	};

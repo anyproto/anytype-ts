@@ -614,17 +614,17 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 								route: 'Powertool',
 								objectType: item.objectTypeId,
 								layout: template?.layout,
-								template: (template && template.templateIsBundled ? template.id : 'custom'),
 							});
 						});
 					};
 
-					UtilData.checkTemplateCnt([ item.objectTypeId ], (message: any) => {
-						if (message.records.length) {
+					UtilData.checkTemplateCnt([ item.objectTypeId ], (cnt: number) => {
+						if (cnt) {
 							popupStore.open('template', {
 								data: { 
 									typeId: item.objectTypeId,
 									onSelect: create,
+									route: 'Powertool',
 								},
 							});
 						} else {

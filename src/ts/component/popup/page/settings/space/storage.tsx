@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Label, Title, ListObjectManager } from 'Component';
-import { analytics, C, UtilFile, I, translate, UtilCommon } from 'Lib';
+import { analytics, C, UtilFile, I, translate, UtilCommon, Action } from 'Lib';
 import { popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Head from '../head';
@@ -74,7 +74,7 @@ const PopupSettingsPageStorageManager = observer(class PopupSettingsPageStorageM
 				text: translate(`commonDeletionWarningText`),
 				textConfirm: translate(`commonDelete`),
 				onConfirm: () => {
-					C.ObjectListSetIsArchived(selected, true, () => {
+					Action.archive(selected, () => {
 						C.ObjectListDelete(selected);
 						this.selectionClear();
 

@@ -59,14 +59,6 @@ const Components = {
 	'main/usecase':			 PageMainUsecase,
 };
 
-const Titles = {
-	index: translate('commonDashboard'),
-	graph: translate('commonGraph'),
-	navigation: translate('commonFlow'),
-	store: translate('commonLibrary'),
-	archive: translate('commonBin'),
-};
-
 const Page = observer(class Page extends React.Component<I.PageComponent> {
 
 	_isMounted = false;
@@ -195,10 +187,6 @@ const Page = observer(class Page extends React.Component<I.PageComponent> {
 		if (isMain && (authStore.accountIsDeleted() || authStore.accountIsPending())) {
 			UtilRouter.go('/auth/deleted', routeParam);
 			return;
-		};
-
-		if (!isPopup && Titles[action]) {
-			UtilData.setWindowTitleText(Titles[action]);
 		};
 
 		this.setBodyClass();

@@ -101,7 +101,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 					props.caption = (type ? type.name : undefined);
 				};
 
-				if (item.caption) {
+				if (undefined !== item.caption) {
 					props.caption = item.caption;
 				};
 

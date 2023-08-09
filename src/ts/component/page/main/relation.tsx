@@ -104,7 +104,7 @@ const PageMainRelation = observer(class PageMainRelation extends React.Component
 			};
 
 			const object = detailStore.get(rootId, rootId, []);
-			if (object.isArchived || object.isDeleted) {
+			if (object.isDeleted) {
 				this.setState({ isDeleted: true });
 				return;
 			};

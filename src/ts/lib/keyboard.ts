@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { I, C, UtilCommon, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, Preview, Action, translate, UtilRouter } from 'Lib';
+import { I, C, UtilCommon, UtilData, Storage, focus, history as historyPopup, analytics, Renderer, sidebar, UtilObject, UtilRouter, Preview, Action, translate } from 'Lib';
 import { commonStore, authStore, blockStore, detailStore, menuStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
@@ -315,6 +315,7 @@ class Keyboard {
 	getRootId (): string {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
+
 		return isPopup ? popupMatch.params.id : (this.match?.params?.id);
 	};
 
@@ -741,6 +742,25 @@ class Keyboard {
 		
 		if (root) {
 			this.onLock(rootId, !root.isLocked(), 'Shortcut');
+		};
+	};
+
+	setWindowTitle () {
+		const match = this.getMatch();
+		const action = match?.params?.action;
+		const titles = {
+			index: translate('commonDashboard'),
+			graph: translate('commonGraph'),
+			navigation: translate('commonFlow'),
+			store: translate('commonLibrary'),
+			archive: translate('commonBin'),
+		};
+
+		if (titles[action]) {
+			UtilData.setWindowTitleText(titles[action]);
+		} else {
+			const rootId = this.getRootId();
+			UtilData.setWindowTitle(rootId, rootId);
 		};
 	};
 

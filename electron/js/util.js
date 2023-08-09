@@ -1,3 +1,4 @@
+const { exec } = require('child_process');
 const { app, shell, nativeTheme } = require('electron');
 const { is } = require('electron-util');
 const log = require('electron-log');
@@ -211,7 +212,7 @@ class Util {
 	};
 
 	enabledLangs () {
-		return [ "da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "hi-IN", "id-ID", "it-IT", "no-NO", "zh-CN", "zh-TW" ];
+		return [ "da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "hi-IN", "id-ID", "it-IT", "no-NO", "ro-RO", "ru-RU", "uk-UA", "zh-CN", "zh-TW" ];
 	};
 
 	translate (key) {
@@ -222,6 +223,23 @@ class Util {
 		try { data = require(`../../dist/lib/json/lang/${lang}.json`); } catch(e) {};
 
 		return data[key] || defaultData[key] || `⚠️${key}⚠️`;
+	};
+
+	execPromise (command) {
+		return new Promise(function(resolve, reject) {
+			exec(command, (error, stdout, stderr) => {
+				console.log('Error: ', error, stderr);
+
+				if (error || stderr) {
+					reject(error || stderr);
+					return;
+				};
+
+				console.log('Out: ', stdout.trim());
+
+				resolve(stdout.trim());
+			});
+		});
 	};
 
 };

@@ -547,16 +547,17 @@ class UtilData {
 	};
 
 	// Check if there are at least 1 template for object types
-	checkTemplateCnt (ids: string[], callBack?: (message: any) => void) {
+	checkTemplateCnt (ids: string[], callBack?: (cnt: number) => void) {
 		const templateType = dbStore.getTemplateType();
-		this.checkObjectWithRelationCnt('targetObjectType', templateType?.id, ids, 1, callBack);
+		this.checkObjectWithRelationCnt('targetObjectType', templateType?.id, ids, 1, (message: any) => {
+			if (callBack) {
+				callBack(message.records.length);
+			};
+		});
 	};
 
 	checkBlankTemplate (template: any) {
-		if (!template.id || (template.id == Constant.templateId.blank)) {
-			return null;
-		};
-		return template;
+		return template && (template.id != Constant.templateId.blank) ? template : null;
 	};
 
 	// Check if there is at least 1 set for object types

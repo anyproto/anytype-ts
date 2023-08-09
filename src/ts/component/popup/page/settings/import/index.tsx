@@ -54,27 +54,23 @@ const PopupSettingsPageImportIndex = observer(class PopupSettingsPageImportIndex
 	};
 
 	getItems () {
-		const { config } = commonStore;
-		const ret: any[] = [
+		return [
 			{ id: 'notion', name: 'Notion' },
 			{ id: 'markdown', name: 'Markdown' },
 			{ id: 'html', name: 'HTML', skipPage: true },
 			{ id: 'text', name: 'TXT', skipPage: true },
 			{ id: 'protobuf', name: 'Protobuf', skipPage: true },
+			{ id: 'csv', name: 'CSV' },
 		];
-
-		if (config.experimental) {
-			ret.push({ id: 'csv', name: 'CSV' });
-		};
-
-		return ret;
 	};
 
 	onImportCommon (type: I.ImportType, extensions: string[], options?: any) {
 		const { close, onImport } = this.props;
 		const fileOptions: any = { 
 			properties: [ 'openFile' ],
-			filters: [ { name: '', extensions } ]
+			filters: [ 
+				{ name: 'Filtered extensions', extensions },
+			],
 		};
 
 		if (UtilCommon.isPlatformMac()) {
