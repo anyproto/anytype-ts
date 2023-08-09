@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Button, IconObject, ObjectName } from 'Component';
 import { commonStore, popupStore } from 'Store';
-import { I, C, UtilCommon, UtilObject, Preview, analytics, translate, keyboard } from 'Lib';
+import { I, C, UtilCommon, UtilObject, Preview, Action, translate, keyboard } from 'Lib';
 
 interface State {
 	object: any;
@@ -181,11 +181,9 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			};
 
 			case 'undoArchive': {
-				if (!item.data) {
-					break;
+				if (item.data) {
+          Action.restore(item.data);
 				};
-
-				C.ObjectListSetIsArchived(item.data, false);
 				break;
 			};
 
