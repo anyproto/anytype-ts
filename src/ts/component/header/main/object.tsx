@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
-import { I, UtilData, UtilObject, keyboard, sidebar, translate } from 'Lib';
+import { I, UtilObject, keyboard, sidebar, translate } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -27,10 +27,17 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 
 		let center = null;
 
+		if (object.isArchived) {
+			center = (
+				<div className="headerBanner">
+					<Label text={translate('deletedBanner')} />
+				</div>
+			);
+		} else
 		if (UtilObject.isTemplate(object.type)) {
 			const type = dbStore.getType(object.targetObjectType);
 			center = (
-				<div className="templateBanner">
+				<div className="headerBanner">
 					<Label text={translate('templateBannner')} />
 					{type ? (
 						<div className="typeName" onClick={() => UtilObject.openAuto(type)}>

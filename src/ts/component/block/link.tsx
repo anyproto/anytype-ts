@@ -255,10 +255,10 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		const { selection } = dataset || {};
 		const { targetBlockId } = block.content;
 		const object = detailStore.get(rootId, targetBlockId, []);
-		const { _empty_ , isArchived } = object;
+		const { _empty_ } = object;
 		const ids = selection ? selection.get(I.SelectType.Block) : [];
 
-		if (_empty_ || isArchived || (targetBlockId == rootId)) {
+		if (_empty_ || (targetBlockId == rootId)) {
 			return;
 		};
 		
@@ -296,7 +296,7 @@ const BlockLink = observer(class BlockLink extends React.Component<I.BlockCompon
 		};
 
 		const object = detailStore.get(rootId, targetBlockId, []);
-		if (object._empty_ || object.isArchived || object.isDeleted) {
+		if (object._empty_ || object.isDeleted) {
 			return;
 		};
 

@@ -453,7 +453,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 			return false;
 		};
 
-		let ret = !it.isArchived && !it.isDeleted;
+		let ret = !it.isDeleted;
 		if (!config.debug.ho) {
 			ret = ret && !it.isHidden;
 		};

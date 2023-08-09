@@ -3,7 +3,7 @@ import $ from 'jquery';
 import raf from 'raf';
 import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted } from 'Component';
-import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, analytics } from 'Lib';
+import { I, M, C, UtilData, UtilCommon, Action, UtilObject, keyboard, analytics, Preview } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Controls from 'Component/page/head/controls';
 import HeadSimple from 'Component/page/head/simple';
@@ -143,7 +143,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, []);
 
-		if (object.isArchived || object.isDeleted) {
+		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
 	};
@@ -173,7 +173,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			};
 
 			const object = detailStore.get(rootId, rootId, []);
-			if (object.isArchived || object.isDeleted) {
+			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
 			};
@@ -248,10 +248,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (count) {
 			keyboard.shortcut('backspace, delete', e, () => {
 				e.preventDefault();
-				C.ObjectListSetIsArchived(ids, true);
-				
+				Action.archive(ids);
 				selection.clear();
-				analytics.event('MoveToBin', { count });
 			});
 		};
 	};
