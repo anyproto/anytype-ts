@@ -248,12 +248,8 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		if (count) {
 			keyboard.shortcut('backspace, delete', e, () => {
 				e.preventDefault();
-				C.ObjectListSetIsArchived(ids, true, () => {
-					Preview.toastShow({ action: I.ToastAction.Archive, ids });
-				});
-				
+				Action.archive(ids);
 				selection.clear();
-				analytics.event('MoveToBin', { count });
 			});
 		};
 	};
