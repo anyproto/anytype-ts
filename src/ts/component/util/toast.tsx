@@ -181,11 +181,9 @@ const Toast = observer(class Toast extends React.Component<object, State> {
 			};
 
 			case 'undoArchive': {
-				if (!item.data) {
-					break;
+				if (item.data) {
+					C.ObjectListSetIsArchived(item.data, false);
 				};
-
-				C.ObjectListSetIsArchived(item.data, false);
 				break;
 			};
 
