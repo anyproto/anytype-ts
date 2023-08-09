@@ -5,7 +5,7 @@ import arrayMove from 'array-move';
 import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { I, C, UtilCommon, UtilData, UtilObject, analytics, Dataview, keyboard, Onboarding, Relation, Renderer, focus, translate, Action } from 'Lib';
-import { blockStore, menuStore, dbStore, detailStore, popupStore, commonStore } from 'Store';
+import { blockStore, menuStore, dbStore, detailStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 import Controls from './dataview/controls';
@@ -727,6 +727,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		menuStore.open('searchObject', {
 			...menuParam,
 			offsetY: 10,
+			noAnimation: true,
 			subIds: Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]),
 			vertical: dir > 0 ? I.MenuDirection.Top : I.MenuDirection.Bottom,
 			horizontal: dir > 0 ? I.MenuDirection.Left : I.MenuDirection.Right,
