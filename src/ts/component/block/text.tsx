@@ -400,9 +400,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const object = detailStore.get(rootId, data.param, []);
-			const { _empty_, isArchived, isDeleted } = object;
+			const { _empty_, isDeleted } = object;
 
-			if (_empty_ || isArchived || isDeleted) {
+			if (_empty_ || isDeleted) {
 				item.addClass('disabled');
 			};
 
@@ -486,7 +486,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 			};
 
 			const object = detailStore.get(rootId, data.param, []);
-			const { _empty_, layout, done, isArchived, isDeleted } = object;
+			const { _empty_, layout, done, isDeleted } = object;
 
 			let icon = null;
 			if (_empty_) {
@@ -495,7 +495,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				icon = <IconObject size={size} object={object} />;
 			};
 
-			if (_empty_ || isArchived || isDeleted) {
+			if (_empty_ || isDeleted) {
 				item.addClass('disabled');
 			};
 

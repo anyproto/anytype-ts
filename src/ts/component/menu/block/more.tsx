@@ -192,20 +192,13 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			sections = [
-				{ children: [ fav, archive, pageInstall ] },
+				{ children: [ fav, remove, archive, pageInstall ] },
 				{ children: [ pageCopy, linkTo, pageLink ] },
 				{ children: [ search ] },
 				{ children: [ print ] },
 			];
 		} else
 		if (block.isPage()) {
-			sections = [
-				{ children: [ fav, archive, history ] },
-				{ children: [ pageCopy, linkTo, pageLink, pageLock, template ] },
-				{ children: [ search ] },
-				{ children: [ print, pageExport, pageReload ] },
-			];
-
 			if (isTemplate) {
 				sections = [
 					{ children: [ archive, history ] },
@@ -213,15 +206,22 @@ class MenuBlockMore extends React.Component<I.Menu> {
 					{ children: [ search ] },
 					{ children: [ print, pageExport ] },
 				];
-			};
-
+			} else
 			if (object.isArchived) {
 				sections = [
 					{ children: [ remove, archive ] },
 					{ children: [ search ] },
 					{ children: [ print, pageExport ] },
 				];
+			} else {
+				sections = [
+					{ children: [ fav, archive, history ] },
+					{ children: [ pageCopy, linkTo, pageLink, pageLock, template ] },
+					{ children: [ search ] },
+					{ children: [ print, pageExport, pageReload ] },
+				];
 			};
+
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
 		}  else {
 			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };

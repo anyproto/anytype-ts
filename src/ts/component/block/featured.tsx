@@ -358,7 +358,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			return;
 		};
 
-		if (!type.isArchived && !typeIsDeleted) {
+		if (!typeIsDeleted) {
 			options.push({ id: 'open', name: translate('blockFeaturedTypeMenuOpenType') });
 		};
 

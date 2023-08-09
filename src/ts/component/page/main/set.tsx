@@ -143,7 +143,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId, []);
 
-		if (object.isArchived || object.isDeleted) {
+		if (object.isDeleted) {
 			this.setState({ isDeleted: true });
 		};
 	};
@@ -173,7 +173,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 			};
 
 			const object = detailStore.get(rootId, rootId, []);
-			if (object.isArchived || object.isDeleted) {
+			if (object.isDeleted) {
 				this.setState({ isDeleted: true, isLoading: false });
 				return;
 			};
