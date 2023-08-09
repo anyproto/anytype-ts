@@ -54,6 +54,8 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 					onClick={this.onClick}
 					withBlank={true}
 					onBlank={e => this.onClick(e, { id: Constant.templateId.blank })}
+					blankId={Constant.templateId.blank}
+					defaultId={type.defaultTemplateId}
 				/>
 			</div>
 		);
@@ -134,7 +136,7 @@ class PopupTemplate extends React.Component<I.Popup, State> {
 			};
 		}, Constant.delay.popup);
 
-		analytics.event('SelectTemplate', { route, type: template.templateIsBundled ? template.id : 'custom' });
+		analytics.event('SelectTemplate', { route });
 	};
 
 };

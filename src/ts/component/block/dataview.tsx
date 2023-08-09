@@ -85,7 +85,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.onEmpty = this.onEmpty.bind(this);
 		this.onDragRecordStart = this.onDragRecordStart.bind(this);
 		this.onRecordDrop = this.onRecordDrop.bind(this);
-		this.onTemplatesMenu = this.onTemplatesMenu.bind(this);
+		this.onTemplateMenu = this.onTemplateMenu.bind(this);
 		this.isAllowedObject = this.isAllowedObject.bind(this);
 		this.isAllowedTemplate = this.isAllowedTemplate.bind(this);
 		this.isCollection = this.isCollection.bind(this);
@@ -161,7 +161,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			getVisibleRelations: this.getVisibleRelations,
 			getEmpty: this.getEmpty,
 			onRecordAdd: this.onRecordAdd,
-			onTemplatesMenu: this.onTemplatesMenu,
+			onTemplateMenu: this.onTemplateMenu,
 			isAllowedObject: this.isAllowedObject,
 			isAllowedTemplate: this.isAllowedTemplate,
 			onSourceSelect: this.onSourceSelect,
@@ -687,7 +687,6 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 				route: (isCollection ? 'Collection' : 'Set'),
 				objectType: object.type,
 				layout: object.layout,
-				template: template ? (template.templateIsBundled ? template.id : 'custom') : '',
 			});
 		});
 	};
@@ -733,7 +732,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		this.recordCreate(e, UtilData.checkBlankTemplate({ id: defaultTemplateId }), dir, groupId);
 	};
 
-	onTemplatesMenu (e: any, dir: number) {
+	onTemplateMenu (e: any, dir: number) {
 		const menuParam = this.getMenuParam(e, dir);
 		const typeId = this.getTypeId();
 		const defaultTemplateId = this.getDefaultTemplateId();
@@ -796,10 +795,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 					this.recordCreate(e, UtilData.checkBlankTemplate(item), dir);
 					menuStore.closeAll(Constant.menuIds.dataviewTemplate.concat([ 'dataviewTemplate' ]));
-					analytics.event('SelectTemplate', {
-						route: this.isCollection() ? 'Collection' : 'Set',
-						type: item.templateIsBundled ? item.id : 'custom'
-					});
+
+					analytics.event('SelectTemplate', { route: this.isCollection() ? 'Collection' : 'Set' });
 				},
 				onMore: (e: any, item: any) => {
 					e.preventDefault();
@@ -810,29 +807,31 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 						return;
 					};
 
-					menuStore.closeAll(Constant.menuIds.dataviewTemplate);
-					menuStore.open('dataviewTemplate', {
-						menuKey: item.id,
-						element: `#${this.menuContext.getId()} #item-${item.id}`,
-						vertical: I.MenuDirection.Bottom,
-						horizontal: I.MenuDirection.Right,
-						data: {
-							template: item,
-							isView: true,
-							route: this.isCollection() ? 'Collection' : 'Set',
-							onOver: () => menuStore.closeAll([ 'previewObject' ]),
-							onSetDefault: () => {
-								this.setDefaultTemplateForView(item.id, () => { this.menuContext.ref.reload(); });
-							},
-							onDuplicate: (object) => UtilObject.openPopup(object, {}),
-							onDelete: () => {
-								if (item.isDefault) {
-									this.setDefaultTemplateForView(Constant.templateId.blank);
-								};
+					menuStore.closeAll(Constant.menuIds.dataviewTemplate, () => {
+						menuStore.open('dataviewTemplate', {
+							menuKey: item.id,
+							element: `#${this.menuContext.getId()} #item-${item.id}`,
+							vertical: I.MenuDirection.Bottom,
+							horizontal: I.MenuDirection.Right,
+							subIds: Constant.menuIds.dataviewTemplate,
+							data: {
+								template: item,
+								isView: true,
+								route: this.isCollection() ? 'Collection' : 'Set',
+								onOver: () => menuStore.closeAll([ 'previewObject' ]),
+								onSetDefault: () => {
+									this.setDefaultTemplateForView(item.id, () => { this.menuContext.ref.reload(); });
+								},
+								onDuplicate: (object) => UtilObject.openPopup(object, {}),
+								onDelete: () => {
+									if (item.isDefault) {
+										this.setDefaultTemplateForView(Constant.templateId.blank);
+									};
 
-								this.menuContext.ref.reload();
+									this.menuContext.ref.reload();
+								}
 							}
-						}
+						});
 					});
 				}
 			}
