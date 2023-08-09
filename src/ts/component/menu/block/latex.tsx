@@ -1,11 +1,13 @@
 import * as React from 'react';
 import $ from 'jquery';
-import katex from 'katex';
 import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { I, keyboard, UtilData, UtilMenu, UtilCommon } from 'Lib';
 import { commonStore, menuStore } from 'Store';
 import Sections from 'json/latex.json';
+
+const katex = require('katex');
+require('katex/dist/contrib/mhchem');
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_BIG = 80;
@@ -13,20 +15,20 @@ const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
 const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.Menu> {
-	
+
 	_isMounted = false;
 	emptyLength = 0;
 	refList: any = null;
 	cache: any = {};
 	n = -1;
 	filter = '';
-	
+
 	constructor (props: I.Menu) {
 		super(props);
-		
+
 		this.rebind = this.rebind.bind(this);
 	};
-	
+
 	render () {
 		const { param } = this.props;
 		const { data } = param;
@@ -40,7 +42,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 		const rowRenderer = (param: any) => {
 			const item: any = items[param.index];
-			
+
 			let content = null;
 			if (item.isSection) {
 				content = (<div className="sectionName" style={param.style}>{item.name}</div>);
@@ -48,17 +50,17 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 				const name = String(item.name || '').replace(/\\\\/g, '\\');
 
 				const math = katex.renderToString(item.comment || item.symbol, {
-					displayMode: true, 
+					displayMode: true,
 					throwOnError: false,
 					output: 'html',
 					trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 				});
 
 				content = (
-					<div 
-						id={'item-' + item.id} 
-						className="item" 
-						style={param.style} 
+					<div
+						id={'item-' + item.id}
+						className="item"
+						style={param.style}
 						onMouseEnter={e => this.onMouseEnter(e, item)}
 						onClick={e => this.onClick(e, item)}
 					>
@@ -122,7 +124,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			</div>
 		);
 	};
-	
+
 	componentDidMount () {
 		const { param } = this.props;
 		const { data } = param;
@@ -222,7 +224,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const { param, close } = this.props;
 		const { data } = param;
 		const { onSelect, isTemplate } = data;
-		
+
 		let from = filter.from;
 		let to = filter.from;
 
@@ -265,7 +267,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 					let w = 0;
 					if (n === filter) {
 						w = 10000;
-					} else 
+					} else
 					if (n.match(regS)) {
 						w = 1000;
 					};
@@ -329,7 +331,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		for (let item of items) {
 			height += this.getRowHeight(item);
 		};
-		
+
 		height = Math.max(ih + offset, Math.min(ih * 10, height));
 
 		if (!items.length) {
@@ -339,7 +341,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		obj.css({ height: height });
 		position();
 	};
-	
+
 });
 
 export default MenuBlockLatex;
