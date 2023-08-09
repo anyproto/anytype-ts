@@ -1,19 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Icon, IconObject, Sync, ObjectName, Label } from 'Component';
-import { I, UtilData, UtilObject, keyboard, sidebar, translate } from 'Lib';
+import { I, UtilObject, keyboard, sidebar, translate } from 'Lib';
 import { blockStore, detailStore, popupStore, dbStore } from 'Store';
 import Constant from 'json/constant.json';
 
-interface State {
-	isDeleted: boolean;
-};
-
-const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent, State> {
-
-	state = {
-		isDeleted: false
-	};
+const HeaderMainObject = observer(class HeaderMainObject extends React.Component<I.HeaderComponent> {
 
 	constructor (props: I.HeaderComponent) {
 		super(props);
