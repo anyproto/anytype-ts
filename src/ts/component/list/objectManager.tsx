@@ -88,13 +88,11 @@ const ListObjectManager = observer(class ListObjectManager extends React.Compone
 
         const Item = (item: any) => (
             <div className="item">
-				<div className="checkboxClickArea" onClick={e => this.onClick(e, item)}>
-					<Checkbox
-						ref={ref => this.refCheckbox.set(item.id, ref)}
-						readonly={true}
-						value={this.selected.includes(item.id)}
-					/>
-				</div>
+				<Checkbox
+					ref={ref => this.refCheckbox.set(item.id, ref)}
+					value={this.selected.includes(item.id)}
+					onChange={(e) => this.onClick(e, item)}
+				/>
                 <div className="objectClickArea" onClick={() => UtilObject.openPopup(item)}>
 					<IconObject object={item} size={iconSize} />
 
