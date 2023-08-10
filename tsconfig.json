@@ -6,7 +6,6 @@
         "module": "ES2020",
         "target": "es6",
         "jsx": "react",
-        "skipLibCheck": true,
         "resolveJsonModule": true,
         "moduleResolution": "Node",
         "experimentalDecorators": false,
