@@ -548,7 +548,9 @@
 		}
 	},
 	"lint-staged": {
-		"{src,electron}/**/*.{ts,tsx}": "eslint"
+		"{src,electron}/**/*.{ts,tsx}": [
+			"npm run lint"
+		]
 	},
 	"husky": {
 		"hooks": {
