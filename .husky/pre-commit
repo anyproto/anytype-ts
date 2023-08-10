@@ -2,6 +2,7 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npx lint-staged --concurrent false
+npm run typecheck
 
 # Checking for secrets
 gitleaks protect --verbose --redact --staged

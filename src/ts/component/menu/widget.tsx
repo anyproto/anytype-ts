@@ -194,7 +194,13 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
     getItems () {
-		return this.getSections().flatMap(section => section.children);
+		const sections = this.getSections();
+
+		let items = [];
+		for (let section of sections) {
+			items = items.concat(section.children);
+		};
+		return items;
 	};
 
 	getLayoutOptions () {

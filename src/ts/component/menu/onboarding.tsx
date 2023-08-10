@@ -1,6 +1,5 @@
 import * as React from 'react';
 import $ from 'jquery';
-import * as Docs from 'Docs';
 import { observer } from 'mobx-react';
 import { Button, Icon, Label } from 'Component';
 import { I, Onboarding, UtilCommon, analytics, keyboard, UtilObject, translate } from 'Lib';
