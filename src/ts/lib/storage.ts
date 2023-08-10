@@ -143,10 +143,6 @@ class Storage {
 		this.set('toggle', obj, true);
 	};
 
-	deleteToggleId (rootId: string, id: string) {
-		this.set('toggle', this.getToggle(rootId).filter(it => it != id), true);
-	};
-
 	setScroll (key: string, rootId: string, scroll: number) {
 		const obj = this.get('scroll') || {};
 		try {
