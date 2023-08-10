@@ -42,3 +42,14 @@ jobs:
           git add .
           git commit -m "Update source file"
           git push origin main
+
+      - name: Send message to Slack
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "diff_link": ${{ github.event.head_commit.url }}
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

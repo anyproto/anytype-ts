@@ -1224,7 +1224,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let options: any[] = [
 			{ 
-				id: 'rowHeader', icon: 'table-header-row', name: translate('blockTableHeaderRow'), withSwitch: true, switchValue: isHeader,
+				id: 'rowHeader', icon: 'table-header-row', name: translate('blockTableOptionsRowHeaderRow'), withSwitch: true, switchValue: isHeader,
 				onSwitch: (e: any, v: boolean, callBack?: () => void) => { 
 					C.BlockTableRowSetHeader(rootId, id, v, (message: any) => {
 						this.frames.forEach((it: any) => {
