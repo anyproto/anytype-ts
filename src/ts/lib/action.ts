@@ -2,6 +2,7 @@ import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilDat
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
+
 class Action {
 
 	pageClose (rootId: string, close: boolean) {

@@ -548,7 +548,7 @@
 		}
 	},
 	"lint-staged": {
-		"{src,electron}/**/*.{ts,tsx}": []
+		"{src,electron}/**/*.{ts,tsx}": "eslint"
 	},
 	"husky": {
 		"hooks": {
