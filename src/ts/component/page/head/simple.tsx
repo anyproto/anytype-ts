@@ -77,7 +77,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 		let button = null;
 		let descr = null;
 		let featured = null;
-		let cn = [ 'headSimple', check.className ];
+		const cn = [ 'headSimple', check.className ];
 
 		if (!isTypeOrRelation) {
 			if (featuredRelations.includes('description')) {
@@ -113,8 +113,8 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 			const cn = [ 'c36' ];
 			const isInstalled = this.isInstalled();
 
-			let onClick = isInstalled ? null : this.onInstall;
-			let color = isInstalled ? 'blank' : 'black';
+			const onClick = isInstalled ? null : this.onInstall;
+			const color = isInstalled ? 'blank' : 'black';
 
 			if (isInstalled) {
 				cn.push('disabled');
@@ -164,7 +164,7 @@ const HeadSimple = observer(class Controls extends React.Component<Props> {
 
 		this.setValue();
 
-		for (let item of EDITORS) {
+		for (const item of EDITORS) {
 			this.placeholderCheck(item.blockId);
 		};
 

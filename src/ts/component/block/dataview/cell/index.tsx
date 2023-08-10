@@ -63,7 +63,7 @@ class Cell extends React.Component<Props> {
 			Relation.className(relation.format), 
 			(canEdit ? 'canEdit' : ''), 
 			(relationKey == 'name' ? 'isName' : ''),
-			(!check ? 'isEmpty' :  ''),
+			(!check ? 'isEmpty' : ''),
 		];
 
 		let CellComponent: any = null;
@@ -172,7 +172,7 @@ class Cell extends React.Component<Props> {
 
 		let closeIfOpen = true;
 		let menuId = '';
-		let setOn = () => {
+		const setOn = () => {
 			cell.addClass('isEditing');
 
 			if (cellPosition) {
@@ -196,7 +196,7 @@ class Cell extends React.Component<Props> {
 			win.trigger('resize');
 		};
 
-		let setOff = () => {
+		const setOff = () => {
 			keyboard.disableBlur(false);
 
 			if (this.ref) {
@@ -342,7 +342,7 @@ class Cell extends React.Component<Props> {
 					break;
 				};
 
-				let options = [
+				const options = [
 					{ id: 'go', icon: 'browse', name: translate(`menuDataviewUrlActionGo${relation.format}`) },
 					{ id: 'copy', icon: 'copy', name: translate('menuDataviewUrlActionGoCopy') },
 				];

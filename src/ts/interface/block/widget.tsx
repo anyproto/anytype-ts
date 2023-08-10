@@ -26,7 +26,7 @@ export interface WidgetComponent {
 export interface WidgetTreeItem {
 	id: string;
 	rootId: string; // the id of the root node (root node)
-	parentId: string;  // the id of the parent node
+	parentId: string; // the id of the parent node
 	depth: number; // the depth of the node in the tree
 	numChildren: number; // the number of children of the node
 };

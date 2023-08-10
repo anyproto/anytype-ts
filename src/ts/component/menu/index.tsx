@@ -197,9 +197,9 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			tab = this.state.tab || tabs[0].id;
 		};
 		
-		let menuId = this.getId();
+		const menuId = this.getId();
 		let Component = null;
-		let arrowDirection = this.getArrowDirection();
+		const arrowDirection = this.getArrowDirection();
 
 		const cn = [ 
 			'menu', 
@@ -260,7 +260,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 						</div>
 					) : ''}
 
-					{withArrow ? <Icon id="arrowDirection" className={[ 'arrowDirection', 'c' + arrowDirection ].join(' ')} /> :  ''}
+					{withArrow ? <Icon id="arrowDirection" className={[ 'arrowDirection', 'c' + arrowDirection ].join(' ')} /> : ''}
 
 					<div className="content">
 						<Component 
@@ -448,7 +448,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			let eh = 0;
 			let ox = 0;
 			let oy = 0;
-			let minY = UtilCommon.sizeHeader();
+			const minY = UtilCommon.sizeHeader();
 			let rect = null;
 
 			if (recalcRect) {

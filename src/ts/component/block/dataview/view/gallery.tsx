@@ -53,13 +53,13 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		const items = this.getItems();
 
 		// Subscriptions on dependent objects
-		for (let id of records) {
+		for (const id of records) {
 			const item = detailStore.get(subId, id, getKeys(view.id));
 			if (item._empty_) {
 				continue;
 			};
 		
-			for (let k in item) {
+			for (const k in item) {
 				const relation = dbStore.getRelationByKey(k);
 				if (!relation || ![ I.RelationType.Object, I.RelationType.File ].includes(relation.format)) {
 					continue;
@@ -199,10 +199,10 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 	};
 
 	loadMoreCards ({ startIndex, stopIndex }) {
-		let { rootId, block, loadData, getView, getLimit } = this.props;
-		let subId = dbStore.getSubId(rootId, block.id);
+		const { rootId, block, loadData, getView, getLimit } = this.props;
+		const subId = dbStore.getSubId(rootId, block.id);
 		let { offset } = dbStore.getMeta(subId, '');
-		let view = getView();
+		const view = getView();
 
 		return new Promise((resolve, reject) => {
 			offset += getLimit();
@@ -229,7 +229,7 @@ const ViewGallery = observer(class ViewGallery extends React.Component<I.ViewCom
 		let n = 0;
 		let row = { children: [] };
 
-		for (let item of records) {
+		for (const item of records) {
 			row.children.push(item);
 
 			n++;

@@ -61,7 +61,7 @@ const PageMainBlock = observer(class PageMainBlock extends React.Component<I.Pag
 							block={block} 
 							className="noPlus" 
 						/>
- 					) : translate('pageMainBlockEmpty')}
+					) : translate('pageMainBlockEmpty')}
 				</div>
 			</div>
 		);

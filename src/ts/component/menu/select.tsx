@@ -245,7 +245,7 @@ const MenuSelect = observer(class MenuSelect extends React.Component<I.Menu> {
 		let items: any[] = [];
 
 		if (sections && sections.length) {
-			for (let section of sections) {
+			for (const section of sections) {
 				if (withSections) {
 					items.push({ id: section.id, name: section.name, isSection: true });
 				};

@@ -19,4 +19,4 @@ class BlockContentTableRow implements I.ContentTableRow {
 
 export {
 	BlockContentTableRow,
-}
+};

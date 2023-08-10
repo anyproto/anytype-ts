@@ -78,7 +78,7 @@ class Mark {
 			{ key: '~~', type: I.MarkType.Strike },
 		];
 
-		for (let item of Markdown) {
+		for (const item of Markdown) {
 			const non = UtilCommon.regexEscape(item.key.substring(0, 1));
 			const k = UtilCommon.regexEscape(item.key);
 			this.regexpMarkdown.push({ 
@@ -93,8 +93,8 @@ class Mark {
 			return marks;	
 		};
 
-		let map = UtilCommon.mapToArray(marks, 'type');
-		let type = mark.type;
+		const map = UtilCommon.mapToArray(marks, 'type');
+		const type = mark.type;
 		let add = true;
 
 		map[type] = map[type] || [];
@@ -102,8 +102,8 @@ class Mark {
 		
 		for (let i = 0; i < map[type].length; ++i) {
 			let del = false;
-			let el = map[type][i];
-			let overlap = this.overlap(mark.range, el.range);
+			const el = map[type][i];
+			const overlap = this.overlap(mark.range, el.range);
 			
 			switch (overlap) {
 				case Overlap.Equal:
@@ -198,8 +198,8 @@ class Mark {
 		marks = (marks || []).slice().sort(this.sort);
 		
 		for (let i = 0; i < marks.length; ++i) {
-			let mark = marks[i];
-			let prev = marks[(i - 1)];
+			const mark = marks[i];
+			const prev = marks[(i - 1)];
 			let del = false;
 			
 			if (mark.range.from >= text.length) {
@@ -237,7 +237,7 @@ class Mark {
 				};
 				
 				if (mark.range.from > mark.range.to) {
-					let t = mark.range.to;
+					const t = mark.range.to;
 					mark.range.to = mark.range.from;
 					mark.range.from = t;
 				};
@@ -247,13 +247,13 @@ class Mark {
 	};
 	
 	getInRange (marks: I.Mark[], type: I.MarkType, range: I.TextRange): any {
-		let map = UtilCommon.mapToArray(marks, 'type');
+		const map = UtilCommon.mapToArray(marks, 'type');
 		if (!map[type] || !map[type].length) {
 			return null;
 		};
 		
-		for (let mark of map[type]) {
-			let overlap = this.overlap(range, mark.range);
+		for (const mark of map[type]) {
+			const overlap = this.overlap(range, mark.range);
 			if ([ Overlap.Inner, Overlap.InnerLeft, Overlap.InnerRight, Overlap.Equal ].indexOf(overlap) >= 0) {
 				return mark;
 			};
@@ -264,7 +264,7 @@ class Mark {
 	adjust (marks: I.Mark[], from: number, length: number) {
 		marks = marks || [];
 
-		for (let mark of marks) {
+		for (const mark of marks) {
 			if ((mark.range.from <= from) && (mark.range.to > from)) {
 				mark.range.to += length;
 			} else
@@ -281,11 +281,11 @@ class Mark {
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
 
-		let r = text.split('');
-		let parts: I.Mark[] = [];
+		const r = text.split('');
+		const parts: I.Mark[] = [];
 		let borders: any[] = [];
-		let ranges: any[] = [];
-		let hasParam = [ 
+		const ranges: any[] = [];
+		const hasParam = [ 
 			I.MarkType.Link, 
 			I.MarkType.Object, 
 			I.MarkType.Color, 
@@ -294,7 +294,7 @@ class Mark {
 			I.MarkType.Emoji,
 		];
 		
-		for (let mark of marks) {
+		for (const mark of marks) {
 			borders.push(Number(mark.range.from));
 			borders.push(Number(mark.range.to));
 		};
@@ -313,8 +313,8 @@ class Mark {
 			ranges.push({ from: borders[i], to: borders[i + 1] });
 		};
 
-		for (let range of ranges) {
-			for (let mark of marks) {
+		for (const range of ranges) {
+			for (const mark of marks) {
 				if ((mark.range.from <= range.from) && (mark.range.to >= range.to)) {
 					parts.push({
 						type: mark.type,
@@ -358,14 +358,14 @@ class Mark {
 		};
 
 		// Render mentions
-		for (let mark of marks) {
+		for (const mark of marks) {
 			if (mark.type == I.MarkType.Mention) {
 				render(mark);
 			};
 		};
 
 		// Render everything except mentions
-		for (let mark of parts) {
+		for (const mark of parts) {
 			if (mark.type != I.MarkType.Mention) {
 				render(mark);
 			};
@@ -384,7 +384,7 @@ class Mark {
 		html = html.replace(/<br\/?>/g, '\n');
 
 		// Remove inner tags from mentions and emoji
-		let obj = $(`<div>${html}</div>`);
+		const obj = $(`<div>${html}</div>`);
 		
 		obj.find('mention').removeAttr('class').each((i: number, item: any) => {
 			item = $(item);
@@ -418,7 +418,7 @@ class Mark {
 		html = html.replace(/contenteditable="[^"]+"/g, '');
 
 		let text = html;
-		let marks: any[] = [];
+		const marks: any[] = [];
 
 		// TODO: find classes by color or background
 		html.replace(/<font([^>]*?)>([^<]*)<\/font>/g, (s: string, p1: string, p2: string) => {
@@ -455,21 +455,21 @@ class Mark {
 			p2 = String(p2 || '').trim();
 			p3 = String(p3 || '').trim();
 
-			let end = p1 == '/';
-			let offset = Number(text.indexOf(s)) || 0;
-			let type = Tags.indexOf(p2);
+			const end = p1 == '/';
+			const offset = Number(text.indexOf(s)) || 0;
+			const type = Tags.indexOf(p2);
 
 			if (end) {
 				for (let i = 0; i < marks.length; ++i) {
-					let m = marks[i];
+					const m = marks[i];
 					if ((m.type == type) && !m.range.to) {
 						marks[i].range.to = offset;
 						break;
 					};
 				};
 			} else {
-				let pm = p3.match(rp);
-				let param = pm ? pm[1]: '';
+				const pm = p3.match(rp);
+				const param = pm ? pm[1]: '';
 				
 				marks.push({
 					type,
@@ -488,8 +488,8 @@ class Mark {
 
 	fromMarkdown (html: string, marks: I.Mark[], restricted: I.MarkType[]): { marks: I.Mark[], text: string, marksChanged: boolean } {
 		let text = html;
-		let test = /[`\*_~\[]{1}/.test(text);
-		let checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
+		const test = /[`\*_~\[]{1}/.test(text);
+		const checked = marks.filter(it => [ I.MarkType.Code ].includes(it.type));
 		let marksChanged = false;
 
 		if (!test) {
@@ -497,7 +497,7 @@ class Mark {
 		};
 
 		// Markdown
-		for (let item of this.regexpMarkdown) {
+		for (const item of this.regexpMarkdown) {
 			if (restricted.includes(item.type)) {
 				continue;
 			};
@@ -510,9 +510,9 @@ class Mark {
 				p4 = String(p4 || '');
 				p5 = String(p5 || '');
 
-				let from = (Number(text.indexOf(s)) || 0) + p1.length;
-				let to = from + p3.length;
-				let replace = (p1 + p3 + ' ').replace(new RegExp('\\$', 'g'), '$$$');
+				const from = (Number(text.indexOf(s)) || 0) + p1.length;
+				const to = from + p3.length;
+				const replace = (p1 + p3 + ' ').replace(new RegExp('\\$', 'g'), '$$$');
 				let check = true;
 
 				for (const mark of checked) {
@@ -539,13 +539,13 @@ class Mark {
 			p2 = String(p2 || '');
 			p3 = String(p3 || '');
 
-			let from = (Number(text.indexOf(s)) || 0);
-			let to = from + p1.length;
-			let innerIdx = [];
+			const from = (Number(text.indexOf(s)) || 0);
+			const to = from + p1.length;
+			const innerIdx = [];
 
 			// Remove inner links and adjust other marks to new range
 			for (let i = 0; i < marks.length; ++i) {
-				let mark = marks[i];
+				const mark = marks[i];
 				if ((mark.range.from >= from) && (mark.range.to <= from + p1.length + p2.length + 4)) {
 					if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type)) {
 						marks.splice(i, 1);
@@ -558,7 +558,7 @@ class Mark {
 
 			this.adjust(marks, from, -(p2.length + 4));
 
-			for (let i of innerIdx) {
+			for (const i of innerIdx) {
 				marks[i].range.from = from;
 				marks[i].range.to = to;
 			};
@@ -576,11 +576,11 @@ class Mark {
 
 	// Unicode symbols
 	fromUnicode (html: string, marks: I.Mark[]): string {
-		let checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
+		const checked = marks.filter(it => [ I.MarkType.Code, I.MarkType.Link ].includes(it.type));
 		let text = html;
-		let keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
-		let reg = new RegExp('(' + keys.join('|') + ')', 'g');
-		let test = reg.test(text);
+		const keys = Object.keys(Patterns).map(it => UtilCommon.regexEscape(it));
+		const reg = new RegExp('(' + keys.join('|') + ')', 'g');
+		const test = reg.test(text);
 
 		if (!test) {
 			return text;
@@ -635,7 +635,7 @@ class Mark {
 
 	toggleLink (newMark: I.Mark, marks: I.Mark[]) {
 		for (let i = 0; i < marks.length; ++i) {
-			let mark = marks[i];
+			const mark = marks[i];
 			if ([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type) && 
 				(mark.range.from >= newMark.range.from) && 
 				(mark.range.to <= newMark.range.to)

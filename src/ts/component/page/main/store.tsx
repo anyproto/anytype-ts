@@ -538,7 +538,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			ret.push({ id: 'empty', className: 'block', children: [ { id: 'empty' } ] },);
 		};
 
-		for (let item of records) {
+		for (const item of records) {
 			row.children.push(item);
 
 			n++;
@@ -575,7 +575,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 	};
 
 	getSources (): string[] {
-		let sources: any[] = []
+		let sources: any[] = [];
 
 		switch (this.tab) {
 			case I.StoreTab.Type:
@@ -618,7 +618,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 			this.refFilter.forceUpdate();
 		};
 
-		for (let menu of menus) {
+		for (const menu of menus) {
 			win.trigger('resize.' + UtilCommon.toCamelCase(`menu-${menu.id}`));
 		};
 	};

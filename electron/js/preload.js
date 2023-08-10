@@ -30,9 +30,9 @@ contextBridge.exposeInMainWorld('Electron', {
 	showOpenDialog: dialog.showOpenDialog,
 
 	fileParam: (path) => {
-		let stat = fs.statSync(path);
-		let buffer = readChunk.sync(path, 0, stat.size);
-		let type = fileType(buffer);
+		const stat = fs.statSync(path);
+		const buffer = readChunk.sync(path, 0, stat.size);
+		const type = fileType(buffer);
 
 		return { buffer, type };
 	},

@@ -57,7 +57,7 @@ const MenuDataviewFileList = observer(class MenuDataviewFileList extends React.C
 
 			let content = null;
 			if (item.id == 'add') {
-				content =  (
+				content = (
 					<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>

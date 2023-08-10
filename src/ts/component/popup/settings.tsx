@@ -138,7 +138,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 			let icon = null;
 			let name = null;
-			let onlineStatus = null;
+			const onlineStatus = null;
 
 			if (action.id == 'account') {
 				const isOnline = true;
@@ -280,7 +280,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		

@@ -12,8 +12,8 @@ module.exports = (env, argv) => {
 		optimization: {
 			minimize: false,
 			removeAvailableModules: true,
-    		removeEmptyChunks: true,
-    		splitChunks: false,
+			removeEmptyChunks: true,
+			splitChunks: false,
 		},
 		
 		entry: './src/ts/entry.tsx',
@@ -22,14 +22,14 @@ module.exports = (env, argv) => {
 			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
 			alias: {
 				protobuf: path.resolve(__dirname, 'dist/lib'),
-      			json: path.resolve(__dirname, 'src/json'),
-      			Lib: path.resolve(__dirname, 'src/ts/lib'),
+				json: path.resolve(__dirname, 'src/json'),
+				Lib: path.resolve(__dirname, 'src/ts/lib'),
 				Store: path.resolve(__dirname, 'src/ts/store'),
 				Component: path.resolve(__dirname, 'src/ts/component'),
 				Interface: path.resolve(__dirname, 'src/ts/interface'),
 				Model: path.resolve(__dirname, 'src/ts/model'),
 				Docs: path.resolve(__dirname, 'src/ts/docs'),
-    		},
+			},
 			modules: [
 				path.resolve('./src/'),
 				path.resolve('./electron/'),
@@ -55,7 +55,7 @@ module.exports = (env, argv) => {
 			port,
 			client: {
 				progress: false,
-    		},
+			},
 		},
 	
 		module: {

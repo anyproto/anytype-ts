@@ -22,10 +22,10 @@ class UtilFile {
 			return Number.isInteger(n) ? 0 : afterComma;
 		};
 
-		let unit = 1024;
-		let g = v / (unit * unit * unit);
-		let m = v / (unit * unit);
-		let k = v / unit;
+		const unit = 1024;
+		const g = v / (unit * unit * unit);
+		const m = v / (unit * unit);
+		const k = v / unit;
 		if (g >= 1) {
 			v = UtilCommon.sprintf(`%0.${trimmer(g, 2)}fGB`, UtilCommon.round(g, trimmer(g, 2)));
 		} else if (m > 1) {
@@ -47,7 +47,7 @@ class UtilFile {
 		let icon = 'other';
 
 		if (mime) {
-			let a: string[] = mime.split(';');
+			const a: string[] = mime.split(';');
 			if (a.length) {
 				t = a[0].split('/');
 			};
@@ -98,7 +98,7 @@ class UtilFile {
 			icon = 'presentation';
 		};
 
-		for (let k in Constant.extension) {
+		for (const k in Constant.extension) {
 			if (Constant.extension[k].indexOf(e) >= 0) {
 				icon = k;
 				break;
@@ -132,7 +132,7 @@ class UtilFile {
 	
 	loadPreviewBase64 (file: any, param: any, success?: (image: string, param: any) => void, error?: (error: string) => void) {
 		this.loadPreviewCanvas(file, param, (canvas: any) => {
-			let image = canvas.toDataURL(param.type, param.quality);
+			const image = canvas.toDataURL(param.type, param.quality);
 			
 			if (image && success) {
 				success(image, { width: canvas.width, height: canvas.height });

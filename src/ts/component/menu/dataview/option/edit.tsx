@@ -114,7 +114,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		

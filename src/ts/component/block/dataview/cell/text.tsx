@@ -76,8 +76,8 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 				);
 			} else 
 			if (relation.format == I.RelationType.Date) {
-				let mask = [ '99.99.9999' ];
-				let ph = [];
+				const mask = [ '99.99.9999' ];
+				const ph = [];
 
 				if (viewRelation.dateFormat == I.DateFormat.ShortUS) {
 					ph.push('mm.dd.yyyy');
@@ -90,7 +90,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 					ph.push('hh:mm');
 				};
 
-				let maskOptions = {
+				const maskOptions = {
 					mask: mask.join(' '),
 					separator: '.',
 					hourFormat: 12,
@@ -166,7 +166,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 
 			if (relation.format == I.RelationType.Number) {
 				if (value !== null) {
-					let mapped = Relation.mapValue(relation, value);
+					const mapped = Relation.mapValue(relation, value);
 					if (mapped !== null) {
 						value = mapped;
 					} else {
@@ -243,7 +243,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			let value = this.value;
 
 			if (relation.format == I.RelationType.Date) {
-				let format = [
+				const format = [
 					(viewRelation.dateFormat == I.DateFormat.ShortUS) ? 'm.d.Y' : 'd.m.Y'
 				];
 				if (viewRelation.includeTime) {
@@ -261,7 +261,7 @@ const CellText = observer(class CellText extends React.Component<I.Cell, State> 
 			if (this.ref) {
 				this.ref.setValue(value);
 				if (this.ref.setRange) {
-					let length = String(value || '').length;
+					const length = String(value || '').length;
 					this.ref.setRange(this.range || { from: length, to: length });
 				};
 			};

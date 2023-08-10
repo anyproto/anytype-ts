@@ -221,8 +221,8 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 			return;
 		};
 
-		let current = data.view.get();
-		let clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
+		const current = data.view.get();
+		const clearGroups = (current.type == I.ViewType.Board) && this.param.groupRelationKey && (current.groupRelationKey != this.param.groupRelationKey);
 
 		if (withName) {
 			this.param.name = this.getViewName();
@@ -322,7 +322,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -355,7 +355,7 @@ const MenuViewEdit = observer(class MenuViewEdit extends React.Component<I.Menu>
 		};
 
 		let menuId = '';
-		let menuParam: I.MenuParam = { 
+		const menuParam: I.MenuParam = { 
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,

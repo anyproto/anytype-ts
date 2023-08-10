@@ -13,7 +13,7 @@ export enum ObjectLayout {
 	Bookmark	 = 11,
 	OptionList	 = 12,
 	Option		 = 13,
-	Collection   = 14,
+	Collection = 14,
 	Audio		 = 15,
 	Video		 = 16,
 	Date		 = 17,

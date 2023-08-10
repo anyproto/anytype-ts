@@ -962,7 +962,7 @@ class Dispatcher {
 							let title = '';
 							let text = '';
 							let textConfirm = '';
-							let showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type) && [ I.ProgressState.Done, I.ProgressState.Error ].includes(state);
+							const showPopup = [ I.ProgressType.Import, I.ProgressType.Export ].includes(type) && [ I.ProgressState.Done, I.ProgressState.Error ].includes(state);
 
 							switch (state) {
 								case I.ProgressState.Error: {

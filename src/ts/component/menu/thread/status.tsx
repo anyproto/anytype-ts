@@ -45,7 +45,7 @@ class MenuThreadStatus extends React.Component<I.Menu> {
 		} else {
 			cafeStatus = [
 				{ key: translate('menuThreadStatusSomeChangesNotBackedUp'), collapse: true },
-				{ key: translate('menuThreadStatusUpdatesRequested'), value: cafe.lastPulled ?  UtilCommon.timeAgo(cafe.lastPulled) : translate('menuThreadStatusNoInteraction') }
+				{ key: translate('menuThreadStatusUpdatesRequested'), value: cafe.lastPulled ? UtilCommon.timeAgo(cafe.lastPulled) : translate('menuThreadStatusNoInteraction') }
 			];
 		};
 

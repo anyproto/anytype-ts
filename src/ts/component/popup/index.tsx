@@ -67,7 +67,7 @@ class Popup extends React.Component<I.Popup> {
 		};
 		
 		if (!Component) {
-			return <div>{UtilCommon.sprintf(translate('popupIndexComponentNotFound'), id)}</div>
+			return <div>{UtilCommon.sprintf(translate('popupIndexComponentNotFound'), id)}</div>;
 		};
 
 		return (

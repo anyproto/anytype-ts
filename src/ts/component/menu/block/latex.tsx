@@ -288,7 +288,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 		const sections = this.getSections();
 
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			if (withSections) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};
@@ -328,7 +328,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 
 		let height = offset;
 
-		for (let item of items) {
+		for (const item of items) {
 			height += this.getRowHeight(item);
 		};
 

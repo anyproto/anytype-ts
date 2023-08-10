@@ -22,7 +22,7 @@ const langs = [
 	'vhdl', 'visual-basic', 'wasm', 'yaml', 'javascript', 'css', 'markup', 'markup-templating', 'csharp', 'php', 'go', 'swift', 'kotlin',
 	'wolfram',
 ];
-for (let lang of langs) {
+for (const lang of langs) {
 	require(`prismjs/components/prism-${lang}.js`);
 };
 
@@ -77,7 +77,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		let marker: any = null;
 		let placeholder = translate('placeholderBlock');
-		let cv: string[] = [ 'value', 'focusable', 'c' + id ];
+		const cv: string[] = [ 'value', 'focusable', 'c' + id ];
 		let additional = null;
 
 		if (color) {
@@ -88,7 +88,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 		};
 
 		// Subscriptions
-		for (let mark of marks) {
+		for (const mark of marks) {
 			if ([ I.MarkType.Mention, I.MarkType.Object ].includes(mark.type)) {
 				const object = detailStore.get(rootId, mark.param, []);
 			};
@@ -126,7 +126,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 				
 			case I.TextStyle.Code: {
 				const options: I.Option[] = [];
-				for (let i in Constant.codeLang) {
+				for (const i in Constant.codeLang) {
 					options.push({ id: i, name: Constant.codeLang[i] });
 				};
 				
@@ -946,7 +946,7 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 
 		// Parse markdown commands
 		if (block.canHaveMarks() && !isInsideTable) {
-			for (let k in Markdown) {
+			for (const k in Markdown) {
 				const reg = new RegExp(`^(${k}\\s)`);
 				const newStyle = Markdown[k];
 
@@ -1073,9 +1073,9 @@ const BlockText = observer(class BlockText extends React.Component<Props> {
 	};
 
 	onSmile () {
-		let { rootId, block } = this.props;
-		let win = $(window);
-		let range = this.getRange();
+		const { rootId, block } = this.props;
+		const win = $(window);
+		const range = this.getRange();
 		let value = this.getValue();
 
 		menuStore.open('smile', {

@@ -46,7 +46,7 @@ const MenuFilterList = observer(class MenuFilterList extends React.Component<I.M
 		const filterCnt = view.filters.length;
 		const items = this.getItems();
 
-		for (let filter of items) {
+		for (const filter of items) {
 			const { relationKey, condition, value } = filter;
 		};
 

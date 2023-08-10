@@ -265,7 +265,7 @@ const MenuBlockLinkSettings = observer(class MenuBlockLinkSettings extends React
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 

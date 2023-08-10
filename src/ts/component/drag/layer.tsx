@@ -91,7 +91,7 @@ class DragLayer extends React.Component<object, State> {
 		const inner = node.find('#inner').html('');
 		const container = UtilCommon.getPageContainer(keyboard.isPopup());
 
-		let wrap = $('<div></div>');
+		const wrap = $('<div></div>');
 		let items: any[] = [];
 
 		switch (type) {

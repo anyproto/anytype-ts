@@ -292,10 +292,10 @@ class Keyboard {
 			return;
 		};
 
-		let targetId = '';
-		let position = I.BlockPosition.Bottom;
-		let rootId = '';
-		let details: any = {};
+		const targetId = '';
+		const position = I.BlockPosition.Bottom;
+		const rootId = '';
+		const details: any = {};
 		let flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectType ];
 		
 		if (!rootId) {
@@ -402,7 +402,7 @@ class Keyboard {
 		};
 
 		if (!isPopup) {
-			let prev = history.entries[history.index - 1];
+			const prev = history.entries[history.index - 1];
 
 			if (account && !prev) {
 				return false;

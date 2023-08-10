@@ -69,11 +69,11 @@ const Marker = observer(class Marker extends React.Component<Props> {
 		
 		switch (type) {
 			case I.TextStyle.Bulleted:
-				inner = <img src={this.getBullet()} onDragStart={e => e.preventDefault()} />
+				inner = <img src={this.getBullet()} onDragStart={e => e.preventDefault()} />;
 				break;
 				
 			case I.TextStyle.Numbered:
-				inner = <span id={'marker-' + id} className={ci.join(' ')} />
+				inner = <span id={'marker-' + id} className={ci.join(' ')} />;
 				break;
 				
 			case I.TextStyle.Checkbox:

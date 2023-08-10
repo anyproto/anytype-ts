@@ -332,7 +332,12 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 	getData (subId: string, callBack?: () => void) {
 		const { block, isPreview } = this.props;
 		const child = this.getTargetBlock();
-		const { targetBlockId } = child?.content;
+
+		if (!child) {
+			return;
+		};
+
+		const { targetBlockId } = child.content;
 		const sorts = [];
 		const filters: I.Filter[] = [
 			{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes() },
@@ -420,7 +425,7 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		let blockId = '';
 		let event = 'ScreenHome';
-		let data: any = { view: 'Widget' };
+		const data: any = { view: 'Widget' };
 
 		if (!isPreview) {
 			blockId = block.id;

@@ -60,7 +60,7 @@ class Util {
 	};
 
 	getBgColor (theme) {
-		let bg = {
+		const bg = {
 			'': '#fff',
 			dark: '#060606',
 		};
@@ -121,13 +121,13 @@ class Util {
 			// Replace files loaded by url and copy them in page folder
 			try {
 				content = content.replace(/'(file:\/\/[^']+)'/g, function (s, p, o) {
-					let a = p.split('app.asar/dist/');
+					const a = p.split('app.asar/dist/');
 					let name = a[1].split('/');
 
 					name = name[name.length - 1];
 
-					let src = p.replace('file://', '').replace(/\?.*/, '').replace(/\/app.asar\//g, '/app.asar.unpacked/');
-					let dst = path.join(filesPath, name).replace(/\?.*/, '');
+					const src = p.replace('file://', '').replace(/\?.*/, '').replace(/\/app.asar\//g, '/app.asar.unpacked/');
+					const dst = path.join(filesPath, name).replace(/\?.*/, '');
 
 					fs.copyFileSync(src, dst);
 					return `'./${fn}/${name}'`;
@@ -145,7 +145,7 @@ class Util {
 
 				let replaceJs = '';
 				let replaceCss = '';
-				let replaceMeta = `
+				const replaceMeta = `
 					<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 				`;
 

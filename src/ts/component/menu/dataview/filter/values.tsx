@@ -476,7 +476,7 @@ const MenuDataviewFilterValues = observer(class MenuDataviewFilterValues extends
 		const { getView, itemId } = data;
 		const view = getView();
 		
-		let item = view.getFilter(itemId);
+		const item = view.getFilter(itemId);
 		if (!item) {
 			return;
 		};

@@ -6,44 +6,44 @@ import Constant from 'json/constant.json';
 
 class DbStore {
 
-    public relationMap: Map<string, any[]> = observable(new Map());
+	public relationMap: Map<string, any[]> = observable(new Map());
 	public relationKeyMap: any = {};
-    public viewMap: Map<string, I.View[]> = observable.map(new Map());
-    public recordMap: Map<string, string[]> = observable.map(new Map());
-    public metaMap: Map<string, any> = observable.map(new Map());
+	public viewMap: Map<string, I.View[]> = observable.map(new Map());
+	public recordMap: Map<string, string[]> = observable.map(new Map());
+	public metaMap: Map<string, any> = observable.map(new Map());
 	public groupMap: Map<string, any> = observable.map(new Map());
 
-    constructor() {
-        makeObservable(this, {
+	constructor() {
+		makeObservable(this, {
 			clearAll: action,
 			relationsSet: action,
-            viewsSet: action,
+			viewsSet: action,
 			viewsSort: action,
-            viewsClear: action,
-            viewAdd: action,
-            viewUpdate: action,
-            viewDelete: action,
-            metaSet: action,
-            metaClear: action,
-            recordsSet: action,
-            recordsClear: action,
-            recordAdd: action,
-            recordDelete: action,
+			viewsClear: action,
+			viewAdd: action,
+			viewUpdate: action,
+			viewDelete: action,
+			metaSet: action,
+			metaClear: action,
+			recordsSet: action,
+			recordsClear: action,
+			recordAdd: action,
+			recordDelete: action,
 			groupsSet: action,
 			groupsAdd: action,
 			groupsRemove: action,
 			groupsClear: action,
-        });
-    }
+		});
+	}
 
 	clearAll () {
-    	this.relationMap.clear();
-    	this.viewMap.clear();
-    	this.recordMap.clear();
-    	this.metaMap.clear();
+		this.relationMap.clear();
+		this.viewMap.clear();
+		this.recordMap.clear();
+		this.metaMap.clear();
 	};
 
-    relationsSet (rootId: string, blockId: string, list: any[]) {
+	relationsSet (rootId: string, blockId: string, list: any[]) {
 		const key = this.getId(rootId, blockId);
 		const relations = (this.relationMap.get(this.getId(rootId, blockId)) || []).
 			concat(list.map(it => ({ relationKey: it.relationKey, format: it.format })));
@@ -58,7 +58,7 @@ class DbStore {
 		this.relationMap.set(key, relations.map(it => ({ relationKey: it.relationKey, format: it.format })));
 	};
 
-    viewsSet (rootId: string, blockId: string, list: I.View[]) {
+	viewsSet (rootId: string, blockId: string, list: I.View[]) {
 		const key = this.getId(rootId, blockId);
 		const views = this.getViews(rootId, blockId);
 
@@ -94,11 +94,11 @@ class DbStore {
 		this.viewsSet(rootId, blockId, views);
 	};
 
-    viewsClear (rootId: string, blockId: string) {
+	viewsClear (rootId: string, blockId: string) {
 		this.viewMap.delete(this.getId(rootId, blockId));
 	};
 
-    viewAdd (rootId: string, blockId: string, item: any) {
+	viewAdd (rootId: string, blockId: string, item: any) {
 		const views = this.getViews(rootId, blockId);
 		const view = this.getView(rootId, blockId, item.id);
 
@@ -109,7 +109,7 @@ class DbStore {
 		};
 	};
 
-    viewUpdate (rootId: string, blockId: string, item: any) {
+	viewUpdate (rootId: string, blockId: string, item: any) {
 		const views = this.getViews(rootId, blockId);
 		const idx = views.findIndex(it => it.id == item.id);
 
@@ -123,11 +123,11 @@ class DbStore {
 		set(views[idx], item);
 	};
 
-    viewDelete (rootId: string, blockId: string, id: string) {
+	viewDelete (rootId: string, blockId: string, id: string) {
 		this.viewMap.set(this.getId(rootId, blockId), this.getViews(rootId, blockId).filter(it => it.id != id));
 	};
 
-    metaSet (rootId: string, blockId: string, meta: any) {
+	metaSet (rootId: string, blockId: string, meta: any) {
 		const data = this.metaMap.get(this.getId(rootId, blockId));
 
 		if (data) {
@@ -150,26 +150,26 @@ class DbStore {
 		};
 	};
 
-    metaClear (rootId: string, blockId: string) {
+	metaClear (rootId: string, blockId: string) {
 		this.metaMap.delete(this.getId(rootId, blockId));
 	};
 
-    recordsSet (rootId: string, blockId: string, list: string[]) {
+	recordsSet (rootId: string, blockId: string, list: string[]) {
 		this.recordMap.set(this.getId(rootId, blockId), observable.array(list));
 	};
 
-    recordsClear (rootId: string, blockId: string) {
+	recordsClear (rootId: string, blockId: string) {
 		this.recordMap.delete(this.getId(rootId, blockId));
 	};
 
-    recordAdd (rootId: string, blockId: string, id: string, index: number) {
+	recordAdd (rootId: string, blockId: string, id: string, index: number) {
 		const records = this.getRecords(rootId, blockId);
 		
 		records.splice(index, 0, id);
 		this.recordsSet(rootId, blockId, records);
 	};
 
-    recordDelete (rootId: string, blockId: string, id: string) {
+	recordDelete (rootId: string, blockId: string, id: string) {
 		this.recordMap.set(this.getId(rootId, blockId), this.getRecords(rootId, blockId).filter(it => it != id));
 	};
 
@@ -224,11 +224,11 @@ class DbStore {
 		return (this.relationMap.get(this.getId(rootId, blockId)) || []).map(it => it.relationKey);
 	};
 
-    getObjectRelations (rootId: string, blockId: string): any[] {
+	getObjectRelations (rootId: string, blockId: string): any[] {
 		return this.getObjectRelationKeys(rootId, blockId).map(it => this.getRelationByKey(it)).filter(it => it);
 	};
 
-    getRelationByKey (relationKey: string): any {
+	getRelationByKey (relationKey: string): any {
 		const id = relationKey ? this.relationKeyMap[relationKey] : '';
 		return id ? this.getRelationById(id) : null;
 	};
@@ -247,15 +247,15 @@ class DbStore {
 		return object._empty_ ? null : object;
 	};
 
-    getViews (rootId: string, blockId: string): I.View[] {
+	getViews (rootId: string, blockId: string): I.View[] {
 		return this.viewMap.get(this.getId(rootId, blockId)) || [];
 	};
 
-    getView (rootId: string, blockId: string, id: string): I.View {
+	getView (rootId: string, blockId: string, id: string): I.View {
 		return this.getViews(rootId, blockId).find(it => it.id == id);
 	};
 
-    getMeta (rootId: string, blockId: string) {
+	getMeta (rootId: string, blockId: string) {
 		const map = this.metaMap.get(this.getId(rootId, blockId)) || {};
 
 		return {
@@ -266,7 +266,7 @@ class DbStore {
 		};
 	};
 
-    getRecords (rootId: string, blockId: string) {
+	getRecords (rootId: string, blockId: string) {
 		return this.recordMap.get(this.getId(rootId, blockId)) || [];
 	};
 

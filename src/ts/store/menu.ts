@@ -169,7 +169,7 @@ class MenuStore {
 
 	getTimeout (items: I.Menu[]): number {
 		let t = 0;
-		for (let item of items) {
+		for (const item of items) {
 			if (!item.param.noAnimation) {
 				t = Constant.delay.menu;
 			};

@@ -64,7 +64,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 		);
 
 		const Item = (item: any) => {
-			let { layout, name, description, snippet } = item || {};
+			const { layout, name, description, snippet } = item || {};
 
 			return (
 				<div 

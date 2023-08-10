@@ -100,8 +100,8 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 		const ret: any[] = [];
 		const Locale = require('lib/json/locale.json');
 
-		for (let id of Constant.enabledInterfaceLang) {
-			ret.push({ id, name: Locale[id] })
+		for (const id of Constant.enabledInterfaceLang) {
+			ret.push({ id, name: Locale[id] });
 		};
 
 		return ret;

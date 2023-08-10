@@ -22,12 +22,13 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 	_isMounted = false;
 
 	render () {
-		let { id, index, relation, condition, quickOption, value, subId, readonly, style, onOver, onClick, onRemove } = this.props;
-		let conditionOptions = Relation.filterConditionsByType(relation.format);
-		let conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
-		let filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
-		let filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
+		const { id, index, relation, condition, quickOption, subId, readonly, style, onOver, onClick, onRemove } = this.props;
+		const conditionOptions = Relation.filterConditionsByType(relation.format);
+		const conditionOption: any = conditionOptions.find(it => it.id == condition) || {};
+		const filterOptions = Relation.filterQuickOptions(relation.format, conditionOption.id);
+		const filterOption: any = filterOptions.find(it => it.id == quickOption) || {};
 
+		let value = this.props.value;
 		let v: any = null;
 		let list = [];
 		let Item: any = null;
@@ -39,7 +40,7 @@ const MenuItemFilter = observer(class MenuItemFilter extends React.Component<Pro
 		switch (relation.format) {
 
 			default: {
-				v = `“${value}”`
+				v = `“${value}”`;
 				break;
 			};
 

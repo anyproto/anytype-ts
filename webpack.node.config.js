@@ -5,8 +5,8 @@ module.exports = (env) => {
 		optimization: {
 			minimize: false,
 			removeAvailableModules: false,
-    		removeEmptyChunks: false,
-    		splitChunks: false,
+			removeEmptyChunks: false,
+			splitChunks: false,
 		},
 		
 		entry: './electron.js',

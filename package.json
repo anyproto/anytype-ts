@@ -549,6 +549,7 @@
 	},
 	"lint-staged": {
 		"{src,electron}/**/*.{ts,tsx}": [
+			"npm run lint"
 		]
 	},
 	"husky": {

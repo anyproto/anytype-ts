@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Icon, Drag, Cover, Loader, Label } from 'Component';
 import { I, C, UtilCommon, UtilData, UtilObject, focus, translate, keyboard, Action } from 'Lib';
 import { commonStore, blockStore, detailStore, menuStore } from 'Store';
-import ControlButtons  from 'Component/page/head/controlButtons';
+import ControlButtons from 'Component/page/head/controlButtons';
 import Constant from 'json/constant.json';
 import Url from 'json/url.json';
 
@@ -525,13 +525,13 @@ const BlockCover = observer(class BlockCover extends React.Component<I.BlockComp
 	};
 	
 	setTransform (x: number, y: number) {
-		let mx = this.rect.cw - this.rect.width;
-		let my = this.rect.ch - this.rect.height;
+		const mx = this.rect.cw - this.rect.width;
+		const my = this.rect.ch - this.rect.height;
 
 		x = Math.max(-mx, Math.min(0, x));
 		y = Math.max(-my, Math.min(0, y));
 
-		let css: any = { transform: `translate3d(${x}px,${y}px,0px)` };
+		const css: any = { transform: `translate3d(${x}px,${y}px,0px)` };
 		
 		if (this.rect.ch < this.rect.height) {
 			css.transform = 'translate3d(0px,0px,0px)';

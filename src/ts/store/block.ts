@@ -268,7 +268,7 @@ class BlockStore {
 
 		let ret = false;
 
-		for (let childId of element.childrenIds) {
+		for (const childId of element.childrenIds) {
 			ret = this.checkIsChild(rootId, childId, blockId);
 			if (ret) {
 				break;
