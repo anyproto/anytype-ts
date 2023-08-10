@@ -28,7 +28,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	_isMounted = false;
 	node: any = null;
 	id = '';
-	hoverId =  '';
+	hoverId = '';
 	hoverPosition: I.BlockPosition = I.BlockPosition.None;
 	scrollTop = 0;
 	uiHidden = false;
@@ -306,7 +306,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	
 	focusTitle () {
 		const { rootId } = this.props;
-		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText())
+		const block = blockStore.getFirstBlock(rootId, 1, it => it.isText());
 		
 		if (!block) {
 			return;
@@ -431,17 +431,17 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			offset = featured.offset().top + featured.outerHeight() - BUTTON_OFFSET;
 		};
 
-		for (let block of blocks) {
+		for (const block of blocks) {
 			if (!block.canCreateBlock()) {
 				continue;
 			};
 
-			let obj = $(`#block-${block.id}`);
+			const obj = $(`#block-${block.id}`);
 			if (!obj.length || obj.hasClass('noPlus')) {
 				continue;
 			};
 
-			let rect = obj.get(0).getBoundingClientRect() as DOMRect;
+			const rect = obj.get(0).getBoundingClientRect() as DOMRect;
 
 			rect.y += st;
 
@@ -487,8 +487,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				return;
 			};
 
-			let buttonX = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
-			let buttonY = pageY - rectContainer.y - BUTTON_OFFSET - st;
+			const buttonX = hoveredRect.x - (rectContainer.x - Constant.size.blockMenu) + 2;
+			const buttonY = pageY - rectContainer.y - BUTTON_OFFSET - st;
 			
 			clear();
 			button.addClass('show').css({ transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
@@ -577,9 +577,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			let type = null;
 			let param = '';
-			let markParam = this.getMarkParam();
+			const markParam = this.getMarkParam();
 
-			for (let item of markParam) {
+			for (const item of markParam) {
 				keyboard.shortcut(item.key, e, (pressed: string) => {
 					type = item.type;
 					param = item.param;
@@ -815,9 +815,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		if (block.canHaveMarks() && range.to && (range.from != range.to)) {
 			let type = null;
 			let param = '';
-			let markParam = this.getMarkParam();
+			const markParam = this.getMarkParam();
 
-			for (let item of markParam) {
+			for (const item of markParam) {
 				keyboard.shortcut(item.key, e, (pressed: string) => {
 					type = item.type;
 					param = item.param;
@@ -1008,7 +1008,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parentElement = blockStore.getMapElement(rootId, block.parentId);
-		const nextElement = blockStore.getMapElement(rootId, next.id)
+		const nextElement = blockStore.getMapElement(rootId, next.id);
 		const nextParent = blockStore.getLeaf(rootId, next.parentId);
 		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
 
@@ -1075,7 +1075,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 		const element = blockStore.getMapElement(rootId, block.id);
 		const parentElement = blockStore.getMapElement(rootId, block.parentId);
-		const nextElement = blockStore.getMapElement(rootId, next.id)
+		const nextElement = blockStore.getMapElement(rootId, next.id);
 		const nextParent = blockStore.getLeaf(rootId, next.parentId);
 		const nextParentElement = blockStore.getMapElement(rootId, next.parentId);
 
@@ -1176,7 +1176,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			vRect = value.get(0).getBoundingClientRect();
 		} else 
 		if (element && element.length) {
-			vRect = element.get(0).getBoundingClientRect()
+			vRect = element.get(0).getBoundingClientRect();
 		};
 
 		if (!sRect) {
@@ -1789,7 +1789,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				onSelect: (event: any, item: any) => {
 					let value = block.content.text;
 					let to = 0;
-					let marks = UtilCommon.objectCopy(block.content.marks || []);
+					const marks = UtilCommon.objectCopy(block.content.marks || []);
 
 					switch (item.id) {
 						case 'link':
@@ -1882,13 +1882,13 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const { rootId } = this.props;
 		
 		let ret: any[] = [];
-		for (let id of ids) {
-			let element = blockStore.getMapElement(rootId, id);
+		for (const id of ids) {
+			const element = blockStore.getMapElement(rootId, id);
 			if (!element) {
 				continue;
 			};
 
-			let parent = blockStore.getLeaf(rootId, element.parentId);
+			const parent = blockStore.getLeaf(rootId, element.parentId);
 			if (!parent || !parent.isLayout() || parent.isLayoutDiv() || parent.isLayoutHeader()) {
 				continue;
 			};
@@ -1915,7 +1915,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 				callBack(message.blockId);
 			};
 
-			const event: any =  {
+			const event: any = {
 				middleTime: message.middleTime,
 				type: param.type,
 				style: param.content?.style,
@@ -2046,7 +2046,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		menuStore.closeAll();
 		popupStore.closeAll([ 'preview' ]);
 
-		let ids = selection.get(I.SelectType.Block);
+		const ids = selection.get(I.SelectType.Block);
 		let blockIds = [];
 
 		if (ids.length) {
@@ -2101,8 +2101,8 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		let length = 0;
 
 		if (last) {
-			let element = blockStore.getMapElement(rootId, last.id)
-			let parent = blockStore.getLeaf(rootId, element.parentId);
+			const element = blockStore.getMapElement(rootId, last.id);
+			const parent = blockStore.getLeaf(rootId, element.parentId);
 
 			if (!parent.isLayoutDiv() && !parent.isPage()) {
 				last = null;

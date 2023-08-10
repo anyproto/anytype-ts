@@ -1506,22 +1506,13 @@ const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (
 	dispatcher.request(ObjectSetLayout.name, request, callBack);
 };
 
-const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) =>  {
+const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetIsFavorite.Request();
 
 	request.setContextid(contextId);
     request.setIsfavorite(isFavorite);
 
 	dispatcher.request(ObjectSetIsFavorite.name, request, callBack);
-};
-
-const ObjectSetIsArchived = (contextId: string, isArchived: boolean, callBack?: (message: any) => void) =>  {
-	const request = new Rpc.Object.SetIsArchived.Request();
-
-	request.setContextid(contextId);
-    request.setIsarchived(isArchived);
-
-	dispatcher.request(ObjectSetIsArchived.name, request, callBack);
 };
 
 const ObjectGraph = (spaceId: string, filters: any[], limit: number, types: string[], keys: string[], callBack?: (message: any) => void) => {
@@ -1952,7 +1943,6 @@ export {
 	ObjectSetObjectType,
 	ObjectSetLayout,
 	ObjectSetIsFavorite,
-	ObjectSetIsArchived,
 	ObjectSetSource,
 
 	ObjectCollectionAdd,

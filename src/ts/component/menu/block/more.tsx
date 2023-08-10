@@ -113,21 +113,21 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let setDefaultTemplate = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		let print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
+		const print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
 		let search = { id: 'search', name: translate('menuBlockMoreSearchOnPage'), caption: `${cmd} + F` };
-		let move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
-		let turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
+		const move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
+		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
 		let history = { id: 'history', name: translate('menuBlockMoreVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
-		let pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
+		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('menuBlockMoreDuplicateObject') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('menuBlockMoreCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuBlockMoreReloadFromSource') };
-		let blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
+		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('menuBlockMoreCreateObject') };
 			setDefaultTemplate = { id: 'setDefault', icon: 'pin', name: translate('menuBlockMoreSetDefaultTemplate') };
-			pageCopy.name = translate('menuBlockMoreDuplicateTemplate')
+			pageCopy.name = translate('menuBlockMoreDuplicateTemplate');
 		} else {
 			template = { id: 'templateCreate', icon: 'template', name: translate('menuBlockMoreUseAsTemplate') };
 		};
@@ -223,7 +223,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 
 			sections = sections.map((it: any, i: number) => ({ ...it, id: 'page' + i }));
-		}  else {
+		} else {
 			const align = { id: 'align', name: translate('commonAlign'), icon: [ 'align', UtilData.alignIcon(block.hAlign) ].join(' '), arrow: true };
 
 			sections.push({ children: [
@@ -246,7 +246,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -276,7 +276,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		};
 		
 		let menuId = '';
-		let menuParam: I.MenuParam = {
+		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
@@ -308,7 +308,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 							onMenuSelect(item);
 						};
 					},
-				})
+				});
 				break;
 			};
 
@@ -386,7 +386,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			return;
 		};
 		
-		let close = true;
+		const close = true;
 		
 		if (onSelect) {
 			onSelect(item);
@@ -444,28 +444,19 @@ class MenuBlockMore extends React.Component<I.Menu> {
 			};
 				
 			case 'pageArchive': {
-				C.ObjectSetIsArchived(object.id, true, (message: any) => {
-					if (!message.error.code) {
-						onBack();
-						analytics.event('MoveToBin', { count: 1, route });
-					};
-				});
+				Action.archive([ object.id ]);
 				break;
 			};
 
 			case 'pageUnarchive': {
-				C.ObjectSetIsArchived(object.id, false, (message: any) => {
-					if (!message.error.code) {
-						analytics.event('RestoreFromBin', { count: 1, route });
-					};
-				});
+				Action.restore([ object.id ]);
 				break;
 			};
 
 			case 'pageRemove': {
 				C.ObjectListDelete([ object.id ], (message: any) => {
 					if (!message.error.code) {
-						keyboard.onBack();
+						onBack();
 						analytics.event('RemoveCompletely', { count: 1, route });
 					};
 				});

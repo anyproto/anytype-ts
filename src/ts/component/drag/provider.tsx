@@ -89,10 +89,11 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			const isTargetBot = item.hasClass('targetBot');
 			const isTargetCol = item.hasClass('targetCol');
 			const isEmptyToggle = item.hasClass('emptyToggle');
+			const x = offset.left;
+			const width = rect.width;
 
-			let x = offset.left;
 			let y = offset.top;
-			let { width, height } = rect;
+			let height = rect.height;
 
 			// Add block's paddings to height
 			if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
@@ -175,8 +176,8 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		if (isFileDrop) {
-			let paths: string[] = [];
-			for (let file of dataTransfer.files) {
+			const paths: string[] = [];
+			for (const file of dataTransfer.files) {
 				paths.push(file.path);
 			};
 
@@ -255,7 +256,7 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		};
 
 		e.preventDefault();
-   		e.stopPropagation();
+		e.stopPropagation();
 
 		const isPopup = keyboard.isPopup();
 		const top = UtilCommon.getScrollContainer(isPopup).scrollTop();
@@ -301,9 +302,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		let data: any = {};
 		try { data = JSON.parse(e.dataTransfer.getData('text/plain')) || {}; } catch (e) { /**/ };
 
-		let { rootId, dropType, withAlt } = data;
-		let ids = data.ids || [];
-		let contextId = rootId;
+		const { rootId, dropType, withAlt } = data;
+		const ids = data.ids || [];
+		const contextId = rootId;
 		let targetContextId = keyboard.getRootId();
 		let isToggle = false;
 
@@ -453,20 +454,20 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		const container = UtilCommon.getScrollContainer(isPopup);
 		const top = container.scrollTop();
 
-		for (let [ key, value ] of this.objectData) {
-			let rect = value.obj.get(0).getBoundingClientRect() as DOMRect;
+		for (const [ key, value ] of this.objectData) {
+			const rect = value.obj.get(0).getBoundingClientRect() as DOMRect;
 			this.objectData.set(key, { ...value, y: rect.y + top });
 		};
 	};
 
 	checkNodes (e: any, ex: number, ey: number) {
-		let dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
-		let isItemDrag = UtilCommon.getDataTransferItems(dataTransfer.items).length ? true : false;
-		let isFileDrag = dataTransfer.types.includes('Files');
+		const dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
+		const isItemDrag = UtilCommon.getDataTransferItems(dataTransfer.items).length ? true : false;
+		const isFileDrag = dataTransfer.types.includes('Files');
 		let data: any = {};
 
 		try {
-			for (let type of dataTransfer.types) {
+			for (const type of dataTransfer.types) {
 				if (type.match(/^data-/)) {
 					data = JSON.parse(type.replace(/^data-/, ''));
 					break;
@@ -477,9 +478,10 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 		this.setHoverData(null);
 		this.setPosition(I.BlockPosition.None);
 
-		for (let [ key, value ] of this.objectData) {
-			let { x, y, width, height, dropType } = value;
+		for (const [ key, value ] of this.objectData) {
+			const { y, height, dropType } = value;
 
+			let { x, width } = value;
 			if (dropType == I.DropType.Block) {
 				x -= OFFSET;
 				width += OFFSET * 2;
@@ -491,9 +493,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 			};
 		};
 
-		let dropType = String(data.droptype) || '';
-		let rootId = String(data.rootid) || '';
-		let ids = data.ids || [];
+		const dropType = String(data.droptype) || '';
+		const rootId = String(data.rootid) || '';
+		const ids = data.ids || [];
 		let x = 0;
 		let y = 0;
 		let width = 0;
@@ -659,16 +661,16 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 
 	setClass (ids: string[]) {
 		$('.block.isDragging').removeClass('isDragging');
-		for (let id of ids) {
+		for (const id of ids) {
 			$('#block-' + id).addClass('isDragging');
 		};
 	};
 
 	checkParentIds (ids: string[], id: string): boolean {
-		let parentIds: string[] = [];
+		const parentIds: string[] = [];
 		this.getParentIds(id, parentIds);
 
-		for (let dropId of ids) {
+		for (const dropId of ids) {
 			if ((dropId == id) || (parentIds.length && parentIds.includes(dropId))) {
 				return false;
 			};
@@ -708,9 +710,9 @@ const DragProvider = observer(class DragProvider extends React.Component<Props> 
 				return null;
 			};
 
-			let props = child.props || {};
-			let children = props.children;
-			let dataset = props.dataset || {};
+			const props = child.props || {};
+			const children = props.children;
+			const dataset = props.dataset || {};
 
 			if (children) {
 				child = React.cloneElement(child, { children: this.injectProps(children) });

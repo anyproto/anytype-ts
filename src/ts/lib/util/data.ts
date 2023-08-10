@@ -690,9 +690,8 @@ class UtilData {
 			noDeps: false,
 		}, param);
 
-		let { subId, ids, keys, noDeps } = param;
-
-		ids = UtilCommon.arrayUnique(ids.filter(it => it));
+		const { subId, keys, noDeps } = param;
+		const ids = UtilCommon.arrayUnique(param.ids.filter(it => it));
 
 		if (!subId) {
 			console.error('[UtilData].subscribeIds: subId is empty');

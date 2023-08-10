@@ -2,21 +2,21 @@
 
 const fs = require('fs');
 
-let stdin = process.openStdin();
+const stdin = process.openStdin();
 let data = "";
 
 stdin.on('data', function(chunk) {
 	data +=chunk;
 });
 
-let skipIds = [ 'electron' ];
+const skipIds = [ 'electron' ];
 
 stdin.on('end', function() {
 	let lines = data.split('\n').sort();
-	let baseDepsFile = fs.readFileSync('package.deps.json');
-	let baseDepsJSON = JSON.parse(baseDepsFile);
-	let packageFile = fs.readFileSync('package.json');
-	let packageJSON = JSON.parse(packageFile);
+	const baseDepsFile = fs.readFileSync('package.deps.json');
+	const baseDepsJSON = JSON.parse(baseDepsFile);
+	const packageFile = fs.readFileSync('package.json');
+	const packageJSON = JSON.parse(packageFile);
 
 	lines = [ ...new Set(lines) ];
 	lines = lines.filter((el) => { 
@@ -29,6 +29,6 @@ stdin.on('end', function() {
 	console.log(lines);
 
 	packageJSON.build.files = baseDepsJSON.concat(lines);
-	let jsonS = JSON.stringify(packageJSON, null, '\t');
+	const jsonS = JSON.stringify(packageJSON, null, '\t');
 	fs.writeFileSync('package.json', jsonS);
 });

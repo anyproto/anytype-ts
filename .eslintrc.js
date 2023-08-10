@@ -22,8 +22,9 @@ module.exports = {
 		"semi": ["warn", "always"],
 		"quotes": "off",
 		"no-mixed-spaces-and-tabs": "warn",
+		"no-multi-spaces": "warn",
 		"no-unsafe-optional-chaining": "warn",
-		"no-useless-escape": "warn",
+		"no-useless-escape": "off",
 		"no-empty": "off",
 		"no-fallthrough": "off",
 		"no-case-declarations": "off",
@@ -32,7 +33,7 @@ module.exports = {
 		// unused vars
 		"no-unused-vars": "off",
 		"@typescript-eslint/no-unused-vars": [
-			"warn",
+			"off",
 			{
 				argsIgnorePattern: "^_",
 				varsIgnorePattern: "^_",
@@ -41,7 +42,7 @@ module.exports = {
 		],
 
 		"@typescript-eslint/no-unsafe-member-access": "off",
-		"@typescript-eslint/no-extra-semi": "warn",
+		"@typescript-eslint/no-extra-semi": "off",
 		"@typescript-eslint/no-empty-function": "off",
 		"@typescript-eslint/no-inferrable-types": "off",
 		"@typescript-eslint/no-var-requires": "off",

@@ -59,7 +59,7 @@ class UtilMenu {
 		];
 
 		let i = 0;
-		for (let type of items) {
+		for (const type of items) {
 			ret.push({ 
 				id: 'object' + i++, 
 				type: I.BlockType.Page, 
@@ -91,7 +91,7 @@ class UtilMenu {
 		const types = UtilData.getObjectTypesForNewObject(); 
 
 		let i = 0;
-		for (let type of types) {
+		for (const type of types) {
 			ret.push({ 
 				type: I.BlockType.Page, 
 				id: 'object' + i++, 
@@ -176,10 +176,10 @@ class UtilMenu {
 	};
 	
 	getBgColors () {
-		let items: any[] = [
+		const items: any[] = [
 			{ id: 'bgColor-default', name: translate('commonDefault'), value: '', className: 'default', isBgColor: true }
 		];
-		for (let color of Constant.textColor) {
+		for (const color of Constant.textColor) {
 			items.push({ id: 'bgColor-' + color, name: translate('textColor-' + color), value: color, className: color, isBgColor: true });
 		};
 		return items;
@@ -321,7 +321,7 @@ class UtilMenu {
 					c._sortWeight_ = getWeight(c.description);
 				} else
 				if (c.aliases && c.aliases.length) {
-					for (let alias of c.aliases) {
+					for (const alias of c.aliases) {
 						if (alias.match(regC)) {
 							ret = true;
 							break;

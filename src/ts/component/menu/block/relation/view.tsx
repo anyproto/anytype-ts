@@ -142,7 +142,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const win = $(window);
 		const menus = menuStore.list.filter(it => Constant.menuIds.cell.includes(it.id));
 
-		for (let menu of menus) {
+		for (const menu of menus) {
 			win.trigger('resize.' + UtilCommon.toCamelCase('menu-' + menu.id));
 		};
 	};
@@ -194,7 +194,7 @@ const MenuBlockRelationView = observer(class MenuBlockRelationView extends React
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		

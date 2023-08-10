@@ -21,6 +21,18 @@ const WindowManager = require('./electron/js/window.js');
 const Server = require('./electron/js/server.js');
 const Util = require('./electron/js/util.js');
 
+const csp = [
+	"default-src 'self' 'unsafe-eval' blob: http://localhost:*",
+	"img-src 'self' http://*:* https://*:* data: blob: file://*",
+	"media-src 'self' http://*:* https://*:* data: blob: file://*",
+	"style-src 'unsafe-inline' http://localhost:* file://*",
+	"font-src data: file://* http://localhost:*",
+	"connect-src file://* http://localhost:* http://127.0.0.1:* ws://localhost:* https://*.anytype.io https://api.amplitude.com/ devtools://devtools data:",
+	"script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
+	"frame-src chrome-extension://react-developer-tools",
+	"worker-src 'self' 'unsafe-eval' blob: http://localhost:*",
+];
+
 app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
 app.removeAsDefaultProtocolClient(protocol);
 
@@ -45,17 +57,6 @@ powerMonitor.on('resume', () => {
 let deeplinkingUrl = '';
 let waitLibraryPromise = null;
 let mainWindow = null;
-let csp = [
-	"default-src 'self' 'unsafe-eval' blob: http://localhost:*",
-	"img-src 'self' http://*:* https://*:* data: blob: file://*",
-	"media-src 'self' http://*:* https://*:* data: blob: file://*",
-	"style-src 'unsafe-inline' http://localhost:* file://*",
-	"font-src data: file://* http://localhost:*",
-	"connect-src file://* http://localhost:* http://127.0.0.1:* ws://localhost:* https://*.anytype.io https://api.amplitude.com/ devtools://devtools data:",
-	"script-src-elem file: http://localhost:* https://sentry.io devtools://devtools 'unsafe-inline'",
-	"frame-src chrome-extension://react-developer-tools",
-	"worker-src 'self' 'unsafe-eval' blob: http://localhost:*",
-];
 
 if (is.development && !port) {
 	console.error('ERROR: Please define SERVER_PORT env var');
@@ -82,7 +83,7 @@ if (process.env.ANYTYPE_USE_SIDE_SERVER) {
 };
 
 function waitForLibraryAndCreateWindows () {
-	waitLibraryPromise.then((res) => {
+	waitLibraryPromise.then(() => {
 		global.serverAddress = Server.getAddress();
 		createWindow();
 	}, (err) => {
@@ -154,13 +155,13 @@ app.on('ready', () => {
 				...details.responseHeaders,
 				'Content-Security-Policy': [ csp.join('; ') ]
 			}
-		})
+		});
 	});
 
 	ConfigManager.init(waitForLibraryAndCreateWindows);
 });
 
-app.on('second-instance', (event, argv, cwd) => {
+app.on('second-instance', (event, argv) => {
 	Util.log('info', 'second-instance');
 
 	if (!is.macos) {

@@ -26,7 +26,7 @@ class Storage {
 	};
 
 	get (key: string): any {
-		let o = String(this.storage[key] || '');
+		const o = String(this.storage[key] || '');
 
 		if (this.isSpaceKey(key)) {
 			if (o) {
@@ -52,7 +52,7 @@ class Storage {
 		
 		let o = this.get(key);
 		if (typeof o === 'object') {
-			for (let i in obj) {
+			for (const i in obj) {
 				o[i] = obj[i];
 			};
 		} else {

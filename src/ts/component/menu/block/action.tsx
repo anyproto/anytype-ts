@@ -38,7 +38,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				{item.name ? <div className="name">{item.name}</div> : ''}
 				<div className="items">
 					{item.children.map((action: any, i: number) => {
-						let icn: string[] = [ 'inner' ];
+						const icn: string[] = [ 'inner' ];
 						
 						if (action.isTextColor) {
 							icn.push('textColor textColor-' + (action.value || 'default'));
@@ -222,7 +222,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			let hasBookmark = true;
 			let hasDataview = true;
 
-			for (let id of blockIds) {
+			for (const id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
 				if (!block) {
 					continue;
@@ -288,7 +288,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			let hasColor = true;
 			let hasBg = true;
 
-			for (let id of blockIds) {
+			for (const id of blockIds) {
 				const block = blockStore.getLeaf(rootId, id);
 				if (!block) {
 					continue;
@@ -388,7 +388,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -432,7 +432,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 		let ids: string[] = [];
 		let filters = [];
 		let menuId = '';
-		let menuParam: I.MenuParam = {
+		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: offsetX,
@@ -462,7 +462,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 								this.setFocus(blockIds[0]);
 
 								if (item.itemId == I.TextStyle.Toggle) {
-									blockIds.forEach(id => blockStore.toggle(rootId, id, true))
+									blockIds.forEach(id => blockStore.toggle(rootId, id, true));
 								};
 							});
 						};
@@ -503,7 +503,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 			case 'move': {
 				menuId = 'searchObject';
 
-				let skipIds = [ rootId ];
+				const skipIds = [ rootId ];
 				blockIds.forEach((id: string) => {
 					const block = blockStore.getLeaf(rootId, id);
 					if (block && block.isLink() && block.content.targetBlockId) {
@@ -595,7 +595,7 @@ class MenuBlockAction extends React.Component<I.Menu, State> {
 				const collectionType = dbStore.getCollectionType();
 				const name = translate(isCollection ? 'commonLCCollection' : 'commonLCSet');
 
-				let addParam: any = {
+				const addParam: any = {
 					name: UtilCommon.sprintf(translate('menuBlockActionsCreateNew'), name),
 				};
 				if (isCollection) {

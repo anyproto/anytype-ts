@@ -194,7 +194,13 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 	};
 
     getItems () {
-		return this.getSections().flatMap(section => section.children);
+		const sections = this.getSections();
+
+		let items = [];
+		for (const section of sections) {
+			items = items.concat(section.children);
+		};
+		return items;
 	};
 
 	getLayoutOptions () {
@@ -275,7 +281,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		switch (item.itemId) {
 			case 'source': {
-				let filters: I.Filter[] = [
+				const filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.NotIn, value: UtilObject.getFileAndSystemLayouts() },
 				];
 
@@ -442,7 +448,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 
 			let prevY = 0;
-			for (let id of widgetIds) {
+			for (const id of widgetIds) {
 				const item = $(`#widget-${id}`);
 				if (!item || !item.length) {
 					continue;

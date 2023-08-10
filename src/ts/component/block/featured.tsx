@@ -85,23 +85,20 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 			);
 		};
 
-		let types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name);
-		let relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name);
-		let setOfString = [];
-		let tl = types.length;
-		let rl = relations.length;
+		const types = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Type).map(it => it.name).slice(0, SOURCE_LIMIT);
+		const relations = Relation.getSetOfObjects(rootId, storeId, I.ObjectLayout.Relation).map(it => it.name).slice(0, SOURCE_LIMIT);
+		const setOfString = [];
+		const tl = types.length;
+		const rl = relations.length;
 
 		if (tl) {
-			const pluralType = UtilCommon.plural(tl, translate('pluralType'));
-			types = types.slice(0, SOURCE_LIMIT);
-			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), pluralType, types.join(', ')));
+			setOfString.push(UtilCommon.sprintf(translate('blockFeaturedTypesList'), UtilCommon.plural(tl, translate('pluralType')), types.join(', ')));
 
 			if (tl > SOURCE_LIMIT) {
 				setOfString.push(<div className="more">+{tl - SOURCE_LIMIT}</div>);
 			};
 		};
 		if (rl) {
-			relations = relations.slice(0, SOURCE_LIMIT);
 			setOfString.push(`${UtilCommon.plural(rl, translate('pluralUCRelation'))}: ${relations.join(', ')}`);
 
 			if (rl > SOURCE_LIMIT) {
@@ -347,7 +344,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const type = detailStore.get(rootId, object.type, []);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
-		const typeIsDeleted = type._empty_ || type.isDeleted
+		const typeIsDeleted = type._empty_ || type.isDeleted;
 		const options: any[] = [];
 
 		if (readonly) {
@@ -416,7 +413,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 
 		let menuId = '';
-		let menuParam = {
+		const menuParam = {
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
 			className: 'big single',

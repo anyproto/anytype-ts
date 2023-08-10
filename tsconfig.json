@@ -12,6 +12,7 @@
         "allowSyntheticDefaultImports": true,
         "allowJs": true,
         "baseUrl": "./src",
+
         "paths": {
             "json": [
                 "json"
@@ -57,5 +58,12 @@
             ],
           }
     },
-    "exclude": ["node_modules", "dist", "extensions"]
+	"include": [
+		"src/**/*"
+	],
+    "exclude": [ 
+		"node_modules/**/*", 
+		"dist/**/*", 
+		"extensions/**/*"
+	]
 }

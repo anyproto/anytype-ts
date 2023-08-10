@@ -94,7 +94,7 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 					{withChildren ? (
 						<div id={'children-' + item.id} className="children">
 							{item.list.map((child: any, i: number) => {
-								return <Version key={i} {...child} />
+								return <Version key={i} {...child} />;
 							})}
 						</div>
 					) : ''}
@@ -305,8 +305,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 				this.loadVersion(list[0].id);
 			};
 		});
-  	};
-  
+	};
+
 	loadVersion (id: string) {
 		const rootId = this.getRootId();
 
@@ -326,13 +326,13 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 	};
 	
 	groupData (versions: I.HistoryVersion[]) {
-		let months: any[] = [];
-    	let groups: any[] = [];
-		let groupId = 0;
+		const months: any[] = [];
+		const groups: any[] = [];
 
+		let groupId = 0;
 		for (let i = 0; i < versions.length; ++i) {
-			let version = versions[i];
-			let prev = versions[i - 1];
+			const version = versions[i];
+			const prev = versions[i - 1];
 
 			if (prev && ((prev.time - version.time > GROUP_OFFSET) || (prev.time - version.time < 0))) {
 				groupId++;
@@ -342,26 +342,26 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 			if (!group) {
 				group = { ...version, groupId: groupId, list: [] };
 				groups.push(group);
-      		} else {
+			} else {
 				version.groupId = groupId;
 				group.list.push(version);
 			};
 		};
 
-		for (let group of groups) {
+		for (const group of groups) {
 			if ((group.list.length == 1) && (group.time == group.list[0].time)) {
 				group.list = [];
 			};
 
-			let groupId = this.monthId(group.time);
+			const groupId = this.monthId(group.time);
+
 			let month = months.find(it => it.groupId == groupId);
-      
 			if (!month) {
 				month = { groupId: groupId, list: [] };
 				months.push(month);
-      		};
+			};
 
-      		month.list.push(group);
+			month.list.push(group);
 		};
 
 		return months;
@@ -369,8 +369,8 @@ const PageMainHistory = observer(class PageMainHistory extends React.Component<I
 
 	ungroupData (groups: any[]): I.HistoryVersion[] {
 		let ret: I.HistoryVersion[] = [] as I.HistoryVersion[];
-		for (let month of groups) {
-			for (let group of month.list) {
+		for (const month of groups) {
+			for (const group of month.list) {
 				ret.push(group);
 				ret = ret.concat(group.list);
 			};

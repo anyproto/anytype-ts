@@ -391,7 +391,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 				...it,
 				caption: !type || type.isDeleted ? translate('commonDeletedType') : type.name,
 				isObject: true,
-			}
+			};
 		});
 
 		items.push({ id: 'add', name: translate('popupSearchCreateObject'), icon: 'plus', shortcut: [ cmd, 'N' ] });

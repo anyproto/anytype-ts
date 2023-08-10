@@ -159,7 +159,7 @@ class CommonStore {
 	};
 
 	get isSidebarFixed(): boolean {
-		return Boolean(this.isSidebarFixedValue)  || Storage.get('isSidebarFixed');
+		return Boolean(this.isSidebarFixedValue) || Storage.get('isSidebarFixed');
 	};
 
 	get theme(): string {

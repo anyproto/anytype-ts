@@ -100,10 +100,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const isCollection = this.isCollection();
 		const cn = [ 'focusable', 'c' + block.id ];
 
-		let { groupRelationKey, pageLimit, defaultTemplateId } = view;
+		const { groupRelationKey, pageLimit, defaultTemplateId } = view;
 		let ViewComponent: any = null;
-		let className = [ UtilCommon.toCamelCase('view-' + I.ViewType[view.type]) ];
-		let head = null;
+		const className = [ UtilCommon.toCamelCase('view-' + I.ViewType[view.type]) ];
+		const head = null;
 		let body = null;
 
 		if (isCollection) {
@@ -379,7 +379,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	};
 
 	getKeys (id: string): string[] {
-		let view = this.getView(id);
+		const view = this.getView(id);
 		let keys = Constant.defaultRelationKeys.concat(Constant.coverRelationKeys);
 
 		if (view) {
@@ -441,17 +441,16 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			return {};
 		};
 
-		let { name, layout, isReadonly, isDeleted, snippet } = item;
-		if (name == UtilObject.defaultName('Page')) {
-			name = '';
+		const { layout, isReadonly, isDeleted, snippet } = item;
+
+		if (item.name == UtilObject.defaultName('Page')) {
+			item.name = '';
 		};
 		if (layout == I.ObjectLayout.Note) {
-			name = snippet;
+			item.name = snippet;
 		};
 
-		item.name = name;
 		item.isReadonly = isDeleted || isReadonly;
-
 		return item;
 	};
 
@@ -542,7 +541,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			});
 		};
 
-		for (let filter of view.filters) {
+		for (const filter of view.filters) {
 			if (!conditions.includes(filter.condition)) {
 				continue;
 			};
@@ -809,7 +808,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 									this.setDefaultTemplateForView(item.id, () => { this.menuContext.ref.reload(); });
 								},
 								onDuplicate: (object) => UtilObject.openPopup(object, {}),
-								onDelete: () => {
+								onArchive: () => {
 									if (item.isDefault) {
 										this.setDefaultTemplateForView(Constant.templateId.blank);
 									};
@@ -894,7 +893,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 		value = Relation.formatValue(relation, value, true);
 
-		let details: any = {};
+		const details: any = {};
 		details[relationKey] = value;
 		detailStore.update(subId, { id, details }, false);
 
@@ -940,7 +939,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const collectionType = dbStore.getCollectionType();
 
 		let filters: I.Filter[] = [];
-		let addParam: any = {};
+		const addParam: any = {};
 
 		if (isCollection) {
 			addParam.name = translate('blockDataviewCreateNewCollection');
@@ -1197,7 +1196,7 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 			};
 
 			orders.forEach((it: any) => {
-				let old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
+				const old = block.content.objectOrder.find(item => (view.id == item.viewId) && (item.groupId == it.groupId));
 				if (old) {
 					set(old, it);
 				} else {

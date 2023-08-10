@@ -50,7 +50,7 @@ const MenuDataviewFileValues = observer(class MenuDataviewFileValues extends Rea
 
         const Item = SortableElement((item: any) => {
 			let content = null;
-			let cn = [ 'item' ];
+			const cn = [ 'item' ];
 
 			switch (item.layout) {
 				default:

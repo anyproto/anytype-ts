@@ -155,7 +155,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		let filters: I.Filter[] = [];
-		let addParam: any = {};
+		const addParam: any = {};
 
 		if (isCollection) {
 			addParam.name = translate('blockDataviewCreateNewCollection');
@@ -191,7 +191,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 		};
 
 		let menuId = '';
-		let menuParam: any = {
+		const menuParam: any = {
 			menuKey: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,

@@ -110,12 +110,12 @@ class DetailStore {
 	};
 
 	/** Idempotent. Clears any data stored with rootId, if there happens to be any.  */
-	public clear (rootId: string):  void {
+	public clear (rootId: string): void {
 		this.map.delete(rootId);
 	};
 
 	/** Idempotent. Clears all of the data stored in DetailStore, if there happens to be any */
-	public clearAll ():  void {
+	public clearAll (): void {
 		this.map.clear();
 	};
 

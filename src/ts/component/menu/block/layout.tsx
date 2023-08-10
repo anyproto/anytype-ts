@@ -111,7 +111,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		
@@ -137,7 +137,7 @@ class MenuBlockLayout extends React.Component<I.Menu> {
 		const object = detailStore.get(rootId, rootId);
 
 		let menuId = '';
-		let menuParam: I.MenuParam = {
+		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,

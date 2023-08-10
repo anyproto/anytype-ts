@@ -46,7 +46,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			
 			let content = null;
 			if (item.isRelationAdd) {
-				content =  (
+				content = (
 					<div 
 						id="item-relation-add" 
 						className="item add" 
@@ -98,8 +98,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 					</div>
 				);
 			} else {
-				let cn = [];
-				let icn: string[] = [ 'inner' ];
+				const cn = [];
+				const icn: string[] = [ 'inner' ];
 					
 				if (item.isTextColor) {
 					icn.push('textColor textColor-' + (item.value || 'default'));
@@ -340,7 +340,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			if (withSections) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};
@@ -372,7 +372,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 		const position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace;
 
 		let menuId = '';
-		let menuParam: I.MenuParam = {
+		const menuParam: I.MenuParam = {
 			menuKey: item.itemId,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
@@ -463,8 +463,8 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 
 		keyboard.setFocus(false);
 
-		let text = String(data.text || '');
-		let length = text.length;
+		const text = String(data.text || '');
+		const length = text.length;
 		let marks = data.marks || [];
 		let position = length ? I.BlockPosition.Bottom : I.BlockPosition.Replace; 
 
@@ -516,7 +516,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 			};
 
 			if (item.isBlock) {
-				let param: any = {
+				const param: any = {
 					type: item.type,
 					bgColor: block.bgColor,
 					hAlign: block.hAlign,
@@ -669,7 +669,7 @@ const MenuBlockAdd = observer(class MenuBlockAdd extends React.Component<I.Menu>
 	moveToPage (type: string) {
 		const { param, dataset } = this.props;
 		const { data } = param;
-		const { blockId, rootId,  } = data;
+		const { blockId, rootId, } = data;
 		const { selection } = dataset || {};
 		
 		let ids = [];

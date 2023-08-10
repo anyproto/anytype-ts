@@ -41,7 +41,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 		const Handle = (item: any) => {
 			let onDragStart = null;
 			let onClick = null;
-			let cn = [ 'handle' ];
+			const cn = [ 'handle' ];
 			let canDrag = true;
 
 			switch (item.type) {
@@ -49,7 +49,7 @@ const BlockTableCell = observer(class BlockTableCell extends React.Component<Pro
 					cn.push('handleColumn canDrag');
 
 					onDragStart = (e: any) => { onDragStartColumn(e, column.id); };
-					onClick = (e: any) => { onHandleColumn(e, item.type, row.id, column.id, cellId); }
+					onClick = (e: any) => { onHandleColumn(e, item.type, row.id, column.id, cellId); };
 					break;
 
 				case I.BlockType.TableRow:

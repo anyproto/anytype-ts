@@ -194,7 +194,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 		this.skin = Number(storageGet().skin) || 1;
 		this.aliases = {};
 
-		for (let k in EmojiData.aliases) {
+		for (const k in EmojiData.aliases) {
 			this.aliases[EmojiData.aliases[k]] = k;
 		};
 
@@ -299,7 +299,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 					if (c.id.match(reg)) {
 						return true;
 					};
-					for (let w of c.keywords) {
+					for (const w of c.keywords) {
 						if (w.match(reg)) {
 							return true;
 						};
@@ -319,8 +319,8 @@ class MenuSmile extends React.Component<I.Menu, State> {
 	getItems () {
 		let sections = this.getSections();
 		let items: any[] = [];
-		let ret: any[] = [];
-		let length = sections.reduce((res: number, section: any) => { 
+		const ret: any[] = [];
+		const length = sections.reduce((res: number, section: any) => { 
 			return (section.id == ID_RECENT) ? res : res + section.children.length; 
 		}, 0);
 
@@ -335,7 +335,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			];
 		};
 
-		for (let section of sections) {
+		for (const section of sections) {
 			items.push({ id: section.id, name: section.name, isSection: true });
 			items = items.concat(section.children);
 		};
@@ -603,7 +603,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 				close();
 			};
 			window.clearTimeout(this.timeoutMenu);
-			win.off('mouseup.smile')
+			win.off('mouseup.smile');
 		});
 	};
 
@@ -684,7 +684,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 			return this.groupCache;
 		};
 
-		let items = this.getItems();
+		const items = this.getItems();
 		let t = 0;
 		let last = null;
 
@@ -712,7 +712,7 @@ class MenuSmile extends React.Component<I.Menu, State> {
 
 	onScroll ({ scrollTop }) {
 		const cache = this.getGroupCache();
-		for (let item of cache) {
+		for (const item of cache) {
 			if ((scrollTop >= item.start) && (scrollTop < item.end)) {
 				this.setActiveGroup(item.id);
 				break;

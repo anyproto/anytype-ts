@@ -334,7 +334,7 @@ const MenuSort = observer(class MenuSort extends React.Component<I.Menu> {
 	};
 	
 	onSortEnd (result: any) {
-		const { oldIndex, newIndex,  } = result;
+		const { oldIndex, newIndex, } = result;
 		const { param } = this.props;
 		const { data } = param;
 		const { rootId, blockId, getView, isInline, getTarget } = data;

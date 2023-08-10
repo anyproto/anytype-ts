@@ -14,15 +14,19 @@ class UtilCommon {
 	};
 
 	sprintf (...args: any[]) {
-		let regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
-		let a = args, i = 0, format = a[i++];
-		let pad = function (str, len, chr, leftJustify) {
-			let padding = (str.length >= len) ? '' : Array(1 + len - str.length >>> 0).join(chr);
+		const regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
+		const a = args;
+
+		let i = 0;
+
+		const format = a[i++];
+		const pad = function (str, len, chr, leftJustify) {
+			const padding = (str.length >= len) ? '' : Array(1 + len - str.length >>> 0).join(chr);
 			return leftJustify ? str + padding : padding + str;
 		};
 
-		let justify = function (value, prefix, leftJustify, minWidth, zeroPad) {
-			let diff = minWidth - value.length;
+		const justify = function (value, prefix, leftJustify, minWidth, zeroPad) {
+			const diff = minWidth - value.length;
 			if (diff > 0) {
 				if (leftJustify || !zeroPad) {
 					value = pad(value, minWidth, ' ', leftJustify);
@@ -33,21 +37,21 @@ class UtilCommon {
 			return value;
 		};
 
-		let formatBaseX = function (value, base, prefix, leftJustify, minWidth, precision, zeroPad) {
-			let number = value >>> 0;
+		const formatBaseX = function (value, base, prefix, leftJustify, minWidth, precision, zeroPad) {
+			const number = value >>> 0;
 			prefix = prefix && number && {'2': '0b', '8': '0', '16': '0x'}[base] || '';
 			value = prefix + pad(number.toString(base), precision || 0, '0', false);
 			return justify(value, prefix, leftJustify, minWidth, zeroPad);
 		};
 		
-		let formatString = function (value, leftJustify, minWidth, precision, zeroPad) {
+		const formatString = function (value, leftJustify, minWidth, precision, zeroPad) {
 			if (precision != null) {
 				value = value.slice(0, precision);
 			};
 			return justify(value, '', leftJustify, minWidth, zeroPad);
 		};
 		
-		let doFormat = function (substring, valueIndex, flags, minWidth, _, precision, type) {
+		const doFormat = function (substring, valueIndex, flags, minWidth, _, precision, type) {
 			if (substring == '%%') return '%';
 			let leftJustify = false, positivePrefix = '', zeroPad = false, prefixBaseX = false;
 			for (let j = 0; flags && j < flags.length; j++) switch (flags.charAt(j)) {
@@ -103,7 +107,7 @@ class UtilCommon {
 				case 'd': {
 					let number = +value;
 					number = parseInt(String(number));
-					let prefix = number < 0 ? '-' : positivePrefix;
+					const prefix = number < 0 ? '-' : positivePrefix;
 					value = prefix + pad(String(Math.abs(number)), precision, '0', false);
 					return justify(value, prefix, leftJustify, minWidth, zeroPad);
 				};
@@ -113,10 +117,10 @@ class UtilCommon {
 				case 'F':
 				case 'g':
 				case 'G': {
-					let number = +value;
-					let prefix = number < 0 ? '-' : positivePrefix;
-					let method = ['toExponential', 'toFixed', 'toPrecision']['efg'.indexOf(type.toLowerCase())];
-					let textTransform = ['toString', 'toUpperCase']['eEfFgG'.indexOf(type) % 2];
+					const number = +value;
+					const prefix = number < 0 ? '-' : positivePrefix;
+					const method = ['toExponential', 'toFixed', 'toPrecision']['efg'.indexOf(type.toLowerCase())];
+					const textTransform = ['toString', 'toUpperCase']['eEfFgG'.indexOf(type) % 2];
 
 					value = prefix + Math.abs(number)[method](precision);
 					return justify(value, prefix, leftJustify, minWidth, zeroPad)[textTransform]();
@@ -170,7 +174,7 @@ class UtilCommon {
 
 	// Clear object for smaller console output
 	objectClear (o: any) {
-		for (let k in o) {
+		for (const k in o) {
 			if (typeof o[k] === 'object') {
 				o[k] = this.objectClear(o[k]);
 				if (!this.objectLength(o[k])) {
@@ -188,13 +192,13 @@ class UtilCommon {
 	};
 
 	fieldsMap (a: any[]) {
-		let o = {};
+		const o = {};
 		for (let i = 0; i < a.length; ++i) {
 			if ((a[i].constructor === Array) && (a[i].length == 2)) {
-				let value = a[i][1];
+				const value = a[i][1];
 				let v = '';
 
-				for (let k in value) {
+				for (const k in value) {
 					if (value[k]) {
 						v = value[k];
 						break;
@@ -211,11 +215,11 @@ class UtilCommon {
 		o1 = o1 || {};
 		o2 = o2 || {};
 		
-		let k1 = Object.keys(o1);
-		let k2 = Object.keys(o2);
-		let v1 = Object.values(o1);
-		let v2 = Object.values(o2);
-		let sort = (c1: any, c2: any) => {
+		const k1 = Object.keys(o1);
+		const k2 = Object.keys(o2);
+		const v1 = Object.values(o1);
+		const v2 = Object.values(o2);
+		const sort = (c1: any, c2: any) => {
 			if (c1 > c2) return 1;
 			if (c1 < c2) return -1;
 			return 0;
@@ -303,7 +307,7 @@ class UtilCommon {
 	
 	cacheImages (images: string[], callBack?: () => void) {
 		let loaded = 0;
-		let cb = () => {
+		const cb = () => {
 			loaded++;
 			if ((loaded == images.length) && callBack) {
 				callBack();
@@ -356,7 +360,7 @@ class UtilCommon {
 	};
 
 	parseDate (value: string, format?: I.DateFormat): number {
-		let [ date, time ] = String(value || '').split(' ');
+		const [ date, time ] = String(value || '').split(' ');
 		let d: any = 0;
 		let m: any = 0;
 		let y: any = 0;
@@ -401,7 +405,7 @@ class UtilCommon {
 			let s = String(n);
 			if ((s = s + '').length < c ) {
 				++c;
-				let m = c - s.length;
+				const m = c - s.length;
 				return new Array(m).join('0') + s;
 			} else {
 				return s;
@@ -411,10 +415,10 @@ class UtilCommon {
 		const f: any = {
 			// Day
 			d: () => {
-			   return pad(f.j(), 2);
+				return pad(f.j(), 2);
 			},
 			D: () => {
-				let t = f.l(); 
+				const t = f.l(); 
 				return t.substring(0,3);
 			},
 			j: () => {
@@ -506,16 +510,16 @@ class UtilCommon {
 		};
 
 		let delta = this.time() - t;
-		let d = Math.floor(delta / 86400);
+		const d = Math.floor(delta / 86400);
 
 		delta -= d * 86400;
-		let h = Math.floor(delta / 3600);
+		const h = Math.floor(delta / 3600);
 
 		delta -= h * 3600;
-		let m = Math.floor(delta / 60);
+		const m = Math.floor(delta / 60);
 
 		delta -= m * 60;
-		let s = delta;
+		const s = delta;
 
 		if (d > 0) {
 			return this.sprintf('%d days ago', d);
@@ -550,16 +554,16 @@ class UtilCommon {
 			return '';
 		};
 
-		let d = Math.floor(t / 86400);
+		const d = Math.floor(t / 86400);
 
 		t -= d * 86400;
-		let h = Math.floor(t / 3600);
+		const h = Math.floor(t / 3600);
 
 		t -= h * 3600;
-		let m = Math.floor(t / 60);
+		const m = Math.floor(t / 60);
 
 		t -= m * 60;
-		let s = t;
+		const s = t;
 
 		if (d > 0) {
 			return this.sprintf('%dd', d);
@@ -577,7 +581,7 @@ class UtilCommon {
 	};
 	
 	round (v: number, l: number) {
-		let d = Math.pow(10, l);
+		const d = Math.pow(10, l);
 		return d > 0 ? Math.round(v * d) / d : Math.round(v);
 	};
 
@@ -621,8 +625,8 @@ class UtilCommon {
 	mapToArray (list: any[], field: string): any {
 		list = list|| [] as any[];
 		
-		let map = {} as any;
-		for (let item of list) {
+		const map = {} as any;
+		for (const item of list) {
 			map[item[field]] = map[item[field]] || [];
 			map[item[field]].push(item);
 		};
@@ -639,7 +643,7 @@ class UtilCommon {
 	
 	unmap (map: any) {
 		let ret: any[] = [] as any[];
-		for (let field in map) {
+		for (const field in map) {
 			ret = ret.concat(map[field]);
 		};
 		return ret;
@@ -689,7 +693,7 @@ class UtilCommon {
 	};
 
 	getSelectionRange (): Range {
-		let sel: Selection = window.getSelection();
+		const sel: Selection = window.getSelection();
 		let range: Range = null;
 
 		if (sel && (sel.rangeCount > 0)) {
@@ -701,7 +705,7 @@ class UtilCommon {
 
 	getSelectionRect () {
 		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
-		let range = this.getSelectionRange();
+		const range = this.getSelectionRange();
 		if (range) {
 			rect = range.getBoundingClientRect() as DOMRect;
 		};
@@ -884,7 +888,7 @@ class UtilCommon {
 		};
 
 		const files: any[] = [];
-		for (let item of items) {
+		for (const item of items) {
 			if (item.kind != 'file') {
 				continue;
 			};
@@ -902,8 +906,8 @@ class UtilCommon {
 			return [];
 		};
 
-		let ret = [];
-		for (let item of items) {
+		const ret = [];
+		for (const item of items) {
 			if ((item.kind == 'string') && (item.type == 'text/html')) {
 				ret.push(item);
 			};
@@ -926,7 +930,7 @@ class UtilCommon {
 			};
 		};
 
-		for (let item of items) {
+		for (const item of items) {
 			item.getAsString(cb);
 		};
 	};
@@ -936,16 +940,16 @@ class UtilCommon {
 			return;
 		};
 
-		let ret: any[] = [];
+		const ret: any[] = [];
 		let n = 0;
-		let cb = () => {
+		const cb = () => {
 			n++;
 			if (n == items.length) {
 				callBack({ ...data, files: ret });
 			};
 		};
 
-		for (let item of items) {
+		for (const item of items) {
 			if (item.path) {
 				ret.push({ name: item.name, path: item.path });
 				cb();

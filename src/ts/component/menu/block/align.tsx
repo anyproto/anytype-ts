@@ -56,8 +56,8 @@ class MenuBlockHAlign extends React.Component<I.Menu> {
 		const blockIds = data.blockIds || [];
 		
 		let hasQuote = false;
-		for (let id of blockIds) {
-			let block = blockStore.getLeaf(rootId, id);
+		for (const id of blockIds) {
+			const block = blockStore.getLeaf(rootId, id);
 			if (block && block.isTextQuote()) {
 				hasQuote = true;
 			};

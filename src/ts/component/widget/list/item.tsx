@@ -121,7 +121,7 @@ const WidgetListItem = observer(class WidgetListItem extends React.Component<Pro
 		e.preventDefault();
 		e.stopPropagation();
 
-		const { subId, id,  } = this.props;
+		const { subId, id, } = this.props;
 		const object = detailStore.get(subId, id, Constant.sidebarRelationKeys);
 
 		UtilObject.openEvent(e, object);

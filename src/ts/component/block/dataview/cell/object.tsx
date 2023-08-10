@@ -47,9 +47,9 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			return null;
 		};
 
-		let placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`)
+		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		let value = this.getItems();
-		let length = value.length;
+		const length = value.length;
 
 		if (arrayLimit) {
 			value = value.slice(0, arrayLimit);

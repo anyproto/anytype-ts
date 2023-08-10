@@ -18,71 +18,71 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 		items: [],
 	};
 
-    constructor (props: I.PageComponent) {
-        super(props);
+	constructor (props: I.PageComponent) {
+		super(props);
 
-        this.onClick = this.onClick.bind(this);
-    };
+		this.onClick = this.onClick.bind(this);
+	};
 
-    render () {
+	render () {
 		const { isLoading, items } = this.state;
 
-        const Case = (item: any) => (
-            <div className="item" onClick={e => this.onClick(e, item.id)}>
+		const Case = (item: any) => (
+			<div className="item" onClick={e => this.onClick(e, item.id)}>
 				<div className="head">
-                	<Title text={translate(`usecase${item.id}Title`)} />
-                	<Label text={translate(`usecase${item.id}Label`)} />
+					<Title text={translate(`usecase${item.id}Title`)} />
+					<Label text={translate(`usecase${item.id}Label`)} />
 				</div>
-                <div className="picture">
+				<div className="picture">
 					<img src={item.img} />
 				</div>
-            </div>
-        );
+			</div>
+		);
 
-        return (
-            <div>
-                <Frame>
+		return (
+			<div>
+				<Frame>
 					{isLoading ? <Loader /> : ''}
 
-                    <Title text={translate('pageMainUsecaseTitle')} />
-                    <Label text={translate('pageMainUsecaseLabel')} />
+					<Title text={translate('pageMainUsecaseTitle')} />
+					<Label text={translate('pageMainUsecaseLabel')} />
 
-                    <div className="list">
-                        {items.map((item: any, i: number) => (
-                            <Case key={i} {...item} />
-                        ))}
-                    </div>
+					<div className="list">
+						{items.map((item: any, i: number) => (
+							<Case key={i} {...item} />
+						))}
+					</div>
 
-                    <div className="buttons">
-                        <Button color="blank" className="c36" text={translate('pageMainUsecaseSkip')} onClick={e => this.onClick(e, I.Usecase.None)} />
-                    </div>
-                </Frame>
-            </div>
-        );
-    };
+					<div className="buttons">
+						<Button color="blank" className="c36" text={translate('pageMainUsecaseSkip')} onClick={e => this.onClick(e, I.Usecase.None)} />
+					</div>
+				</Frame>
+			</div>
+		);
+	};
 
 	componentDidMount (): void {
 		this.setState({ items: this.getItems() });
 	};
 
 	getItems () {
- 		return _.shuffle([
+		return _.shuffle([
 			{ id: I.Usecase.Personal, img: 'img/usecase/personal-projects.png' },
 			{ id: I.Usecase.Notes, img: 'img/usecase/notes-or-diary.png' },
 			{ id: I.Usecase.Knowledge, img: 'img/usecase/knowledge-base.png' },
-        ]);
+		]);
 	};
 
-    onClick (e: any, id: number) {
-        e.preventDefault();
+	onClick (e: any, id: number) {
+		e.preventDefault();
 
 		const { isLoading } = this.state;
 
-        if (isLoading) {
-            return;
-        };
+		if (isLoading) {
+			return;
+		};
 
-        this.setState({ isLoading: true });
+		this.setState({ isLoading: true });
 
         C.ObjectImportUseCase(commonStore.space, id, (message: any) => {
 			analytics.event('SelectUsecase', { type: id, middleTime: message.middleTime });
@@ -91,7 +91,7 @@ const PageMainUsecase = observer(class PageMainUsecase extends React.Component<I
 			this.setState({ isLoading: false });
 			UtilRouter.go('/main/graph', { animate: true });
         });
-    };
+	};
 
 });
 

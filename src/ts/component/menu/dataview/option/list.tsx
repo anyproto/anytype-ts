@@ -39,11 +39,11 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 
 		if (canAdd) {
 			placeholder = translate('menuDataviewOptionListFilterOrCreateOptions');
-			empty = translate('menuDataviewOptionListTypeToCreate')
+			empty = translate('menuDataviewOptionListTypeToCreate');
 		}
 		else {
 			placeholder = translate('menuDataviewOptionListFilterOptions');
-			empty = translate('menuDataviewOptionListTypeToSearch')
+			empty = translate('menuDataviewOptionListTypeToSearch');
 		};
 
 		if (!this.cache) {
@@ -56,7 +56,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 			
 			let content = null;
 			if (item.id == 'add') {
-				content =  (
+				content = (
 					<div id="item-add" className="item add" onClick={(e: any) => { this.onClick(e, item); }} style={param.style} onMouseEnter={(e: any) => { this.onOver(e, item); }}>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
@@ -199,7 +199,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	};
 
 	onKeyDown (e: any) {
-		let item = this.getItems()[this.n];
+		const item = this.getItems()[this.n];
 		let ret = false;
 
 		keyboard.shortcut('arrowright', e, () => {
@@ -334,7 +334,7 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 		const value = Relation.getArrayValue(data.value);
 
 		let items = Relation.getOptions(dbStore.getRecords(Constant.subId.option, '')).filter(it => it.relationKey == relation.relationKey);
-		let ret = [];
+		const ret = [];
 		let check = [];
 
 		if (filterMapper) {

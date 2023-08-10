@@ -138,7 +138,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		};
 
 		const groupOrder: any = {};
- 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
@@ -149,7 +149,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 				return;
 			};
 
-			let groups = (message.groups || []).map((it: any) => {
+			const groups = (message.groups || []).map((it: any) => {
 				let bgColor = 'grey';
 				let value: any = it.value;
 				let option: any = null;
@@ -179,7 +179,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 	};
 
 	getGroups (withHidden: boolean) {
-		let { rootId, block } = this.props;
+		const { rootId, block } = this.props;
 		let groups = this.applyGroupOrder(UtilCommon.objectCopy(dbStore.getGroups(rootId, block.id)));
 
 		if (!withHidden) {
@@ -263,7 +263,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		const view = node.find('.viewContent');
 		const clone = target.clone();
 		
-		this.ox =  node.find('#columns').offset().left;
+		this.ox = node.find('#columns').offset().left;
 
 		target.addClass('isDragging');
 		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
@@ -328,7 +328,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		let isLeft = false;
 		let hoverId = '';
 
-		for (let group of groups) {
+		for (const group of groups) {
 			const rect = this.cache[group.id];
 			if (!rect || (group.id == groupId)) {
 				continue;
@@ -409,7 +409,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 		let isTop = false;
 		let hoverId = '';
 
-		for (let i in this.cache) {
+		for (const i in this.cache) {
 			const rect = this.cache[i];
 			if (!rect || (rect.id == record.id)) {
 				continue;
@@ -500,7 +500,7 @@ const ViewBoard = observer(class ViewBoard extends React.Component<I.ViewCompone
 			return [];
 		};
 
- 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
+		const el = block.content.groupOrder.find(it => it.viewId == view.id);
 		const groupOrder: any = {};
 
 		if (el) {

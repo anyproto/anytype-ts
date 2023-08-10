@@ -356,7 +356,7 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 			return;
 		};
 
-		let nextStage = stage - 1;
+		const nextStage = stage - 1;
 		let nextAnimation = animationStage - 1;
 
 		if (animationStage == Stage.SoulCreating) {

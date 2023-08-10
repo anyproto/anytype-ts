@@ -19,18 +19,18 @@ class Server {
 			this.stop().then(() => {
 				
 				this.isRunning = false;
-				let logsDir = path.join(workingDir, 'logs');
+				const logsDir = path.join(workingDir, 'logs');
 
 				try { fs.mkdirSync(logsDir); } catch (e) {};
 
 				try {
-					let env = process.env;
+					const env = process.env;
 					
 					if (!process.stdout.isTTY) {
 						env['GOLOG_FILE'] = path.join(logsDir, `anytype_${Util.dateForFile()}.log`);
 					};
 					
-					let args = [ '127.0.0.1:0', '127.0.0.1:0' ];
+					const args = [ '127.0.0.1:0', '127.0.0.1:0' ];
 					this.cp = childProcess.spawn(binPath, args, { env: env });
 				} catch (err) {
 					console.error('[Server] Process start error: ', err.toString());
@@ -44,7 +44,7 @@ class Server {
 				});
 				
 				this.cp.stdout.on('data', data => {
-					let str = data.toString();
+					const str = data.toString();
 
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
 						const regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
@@ -57,7 +57,7 @@ class Server {
 				});
 
 				this.cp.stderr.on('data', data => {
-					let chunk = data.toString();
+					const chunk = data.toString();
 					
 					// max chunk size is 8192 bytes
 					// https://github.com/nodejs/node/issues/12921
@@ -85,7 +85,7 @@ class Server {
 					
 					this.isRunning = false;
 					
-					let crashReport = path.join(logsDir, `crash_${Util.dateForFile()}.log`);
+					const crashReport = path.join(logsDir, `crash_${Util.dateForFile()}.log`);
 					try {
 						fs.writeFileSync(crashReport, this.lastErrors.join('\n'), 'utf-8');
 					} catch(e) {

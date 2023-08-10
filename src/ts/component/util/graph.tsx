@@ -129,13 +129,13 @@ const Graph = observer(class Graph extends React.Component<Props> {
 		}, [ transfer ]);
 
 		d3.select(this.canvas)
-        .call(d3.drag().
+		.call(d3.drag().
 			subject(() => this.subject).
 			on('start', (e: any, d: any) => this.onDragStart(e)).
 			on('drag', (e: any, d: any) => this.onDragMove(e)).
 			on('end', (e: any, d: any) => this.onDragEnd(e))
 		)
-        .call(this.zoom)
+		.call(this.zoom)
 		.call(this.zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1.5))
 		.on('click', (e: any) => {
 			const [ x, y ] = d3.pointer(e);
@@ -246,7 +246,7 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 	onZoom ({ transform }) {
 		this.send('onZoom', { transform });
-  	};
+	};
 
 	onPreviewShow (data: any) {
 		if (this.isPreviewDisabled || !this.subject) {
@@ -351,8 +351,8 @@ const Graph = observer(class Graph extends React.Component<Props> {
 
 			case 'onTransform': {
 				d3.select(this.canvas)
-        		.call(this.zoom)
-				.call(this.zoom.transform, d3.zoomIdentity.translate(data.x, data.y).scale(data.k))
+				.call(this.zoom)
+				.call(this.zoom.transform, d3.zoomIdentity.translate(data.x, data.y).scale(data.k));
 				break;
 			};
 

@@ -226,7 +226,7 @@ const MenuViewList = observer(class MenuViewList extends React.Component<I.Menu>
 		const allowed = blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
 		const object = getTarget();
 
-		for (let relation of relations) {
+		for (const relation of relations) {
 			if (relation.isHidden || !relation.isVisible) {
 				continue;
 			};

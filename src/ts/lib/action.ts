@@ -2,6 +2,7 @@ import { I, C, focus, analytics, Renderer, Preview, UtilCommon, Storage, UtilDat
 import { commonStore, authStore, blockStore, detailStore, dbStore, popupStore } from 'Store';
 import Constant from 'json/constant.json';
 
+
 class Action {
 
 	pageClose (rootId: string, close: boolean) {
@@ -14,7 +15,7 @@ class Action {
 		const onClose = () => {
 			const blocks = blockStore.getBlocks(rootId, it => it.isDataview());
 
-			for (let block of blocks) {
+			for (const block of blocks) {
 				this.dbClearBlock(rootId, block.id);
 			};
 
@@ -126,7 +127,7 @@ class Action {
 	};
 
 	remove (rootId: string, blockId: string, blockIds: string[]) {
-		let next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
+		const next = blockStore.getNextBlock(rootId, blockId, -1, (it: any) => {
 			return it.type == I.BlockType.Text;
 		});
 		
@@ -245,7 +246,7 @@ class Action {
 				callBack(message);
 			};
 
-			let { details } = message;
+			const { details } = message;
 			let toast = '';
 			let subId = '';
 

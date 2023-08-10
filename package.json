@@ -5,6 +5,7 @@
 	"main": "electron.js",
 	"scripts": {
 		"precommit": "npx lint-staged",
+		"typecheck": "npx tsc --noEmit -p tsconfig.json",
 		"lint": "eslint .",
 		"electron": "npx electron .",
 		"electron-win": "npx electron.cmd .",
@@ -547,7 +548,9 @@
 		}
 	},
 	"lint-staged": {
-		"{src,electron}/*.{ts,tsx}": "npx tsc --noEmit -p tsconfig.json"
+		"{src,electron}/**/*.{ts,tsx}": [
+			"npm run lint"
+		]
 	},
 	"husky": {
 		"hooks": {

@@ -106,7 +106,7 @@ class Analytics {
 			return;
 		};
 
-		let converted: any = {};
+		const converted: any = {};
 		let param: any = {};
 
 		// Code mappers for common events
@@ -330,7 +330,7 @@ class Analytics {
 		param.context = String(Storage.get(KEY_CONTEXT) || '');
 		param.originalId = String(Storage.get(KEY_ORIGINAL_ID) || '');
 
-		for (let k of KEYS) {
+		for (const k of KEYS) {
 			if (undefined !== data[k]) {
 				converted[k] = data[k];
 			};

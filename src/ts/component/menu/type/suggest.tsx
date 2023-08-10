@@ -56,7 +56,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 
 			let content = null;
 			if (item.id == 'add') {
-				content =  (
+				content = (
 					<div 
 						id="item-add" 
 						className="item add" 
@@ -321,7 +321,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 	};
 	
 	getItems () {
-		let sections = this.getSections();
+		const sections = this.getSections();
 		let items: any[] = [];
 
 		sections.forEach((section: any, i: number) => {
@@ -371,7 +371,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		const className = [];
 
 		let menuId = '';
-		let menuParam: I.MenuParam = {
+		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
@@ -436,7 +436,7 @@ const MenuTypeSuggest = observer(class MenuTypeSuggest extends React.Component<I
 		e.preventDefault();
 		e.stopPropagation();
 
-		const cb  = (item: any) => {
+		const cb = (item: any) => {
 			close(); 
 
 			if (onClick) {
