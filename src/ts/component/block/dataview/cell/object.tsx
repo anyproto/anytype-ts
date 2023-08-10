@@ -47,8 +47,9 @@ const CellObject = observer(class CellObject extends React.Component<I.Cell, Sta
 			return null;
 		};
 
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		let value = this.getItems();
+
+		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		const length = value.length;
 
 		if (arrayLimit) {

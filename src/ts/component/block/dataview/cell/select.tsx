@@ -46,11 +46,12 @@ const CellSelect = observer(class CellSelect extends React.Component<I.Cell, Sta
 			return null;
 		};
 
-		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
 		let value = this.getItems();
-		const length = value.length;
 		let content = null;
 
+		const placeholder = this.props.placeholder || translate(`placeholderCell${relation.format}`);
+		const length = value.length;
+		
 		if (elementMapper) {
 			value = value.map(it => elementMapper(relation, it));
 		};
