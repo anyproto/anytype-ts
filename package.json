@@ -547,7 +547,7 @@
 		}
 	},
 	"lint-staged": {
-		"{src,electron}/*.{ts,tsx}": "npx tsc --noEmit -p tsconfig.json"
+		"{src,electron}/**/*.{ts,tsx}": "tsc --noEmit"
 	},
 	"husky": {
 		"hooks": {
