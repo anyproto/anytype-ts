@@ -23,6 +23,7 @@
 			.card { white-space: normal; }
 			.card {
 				.cellContent { margin-bottom: 4px; @include text-small; color: $colorDarkGrey; }
+				.cellContent.canEdit { cursor: default; }
 				.cellContent:empty, .cellContent.isEmpty { display: none; }
 				.cellContent.last { margin: 0px; }
 				.cellContent.c-description { color: $colorBlack; }
