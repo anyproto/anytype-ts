@@ -42,6 +42,10 @@ const request = async (lang) => {
 		},
 	};
 
+	if (process.env.GITHUB_TOKEN) {
+		options.headers['Authorization'] = `token ${process.env.GITHUB_TOKEN}`;
+	};
+
 	return new Promise((resolve, reject) => {
 		const success = response => {
 			response.on('data', d => str += d);
