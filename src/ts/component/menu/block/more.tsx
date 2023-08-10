@@ -103,6 +103,11 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const object = detailStore.get(rootId, blockId);
 		const cmd = keyboard.cmdSymbol();
 		const isTemplate = UtilObject.isTemplate(object.type);
+		const print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
+		const move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
+		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
+		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
+		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
 
 		let archive = null;
 		let remove = null;
@@ -113,16 +118,11 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		let setDefaultTemplate = null;
 
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		const print = { id: 'print', name: translate('menuBlockMorePrint'), caption: `${cmd} + P` };
 		let search = { id: 'search', name: translate('menuBlockMoreSearchOnPage'), caption: `${cmd} + F` };
-		const move = { id: 'move', name: translate('menuBlockMoreMoveTo'), arrow: true };
-		const turn = { id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true };
 		let history = { id: 'history', name: translate('menuBlockMoreVersionHistory'), caption: (UtilCommon.isPlatformMac() ? `${cmd} + Y` : `Ctrl + H`) };
-		const pageExport = { id: 'pageExport', icon: 'export', name: translate('menuBlockMoreExport') };
 		let pageCopy = { id: 'pageCopy', icon: 'copy', name: translate('menuBlockMoreDuplicateObject') };
 		let pageLink = { id: 'pageLink', icon: 'link', name: translate('menuBlockMoreCopyLink') };
 		let pageReload = { id: 'pageReload', icon: 'reload', name: translate('menuBlockMoreReloadFromSource') };
-		const blockRemove = { id: 'blockRemove', icon: 'remove', name: translate('commonDelete') };
 
 		if (isTemplate) {	
 			template = { id: 'pageCreate', icon: 'template', name: translate('menuBlockMoreCreateObject') };
@@ -163,7 +163,7 @@ class MenuBlockMore extends React.Component<I.Menu> {
 		const allowedArchive = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 		const allowedSearch = !block.isObjectSet() && !block.isObjectSpace();
 		const allowedHistory = block.canHaveHistory() && !object.templateIsBundled;
-		const allowedFav = !object.isArchived && !UtilObject.getSystemTypes().includes(object.type) && !UtilObject.getFileTypes().includes(object.type);
+		const allowedFav = !object.isArchived && !UtilObject.getSystemTypes().includes(object.type) && !UtilObject.getFileTypes().includes(object.type) && !object.templateIsBundled;
 		const allowedLock = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
 		const allowedLink = config.experimental;
 		const allowedCopy = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]);

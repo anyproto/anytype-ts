@@ -326,6 +326,7 @@ class UtilObject {
 		return [
 			Constant.storeTypeId.type,
 			Constant.storeTypeId.relation,
+			Constant.storeTypeId.template,
 		];
 	};
 
