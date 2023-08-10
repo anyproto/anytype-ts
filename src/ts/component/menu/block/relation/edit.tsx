@@ -466,7 +466,7 @@ const MenuBlockRelationEdit = observer(class MenuBlockRelationEdit extends React
 		const { relationId } = data;
 		const details: any[] = [];
 
-		for (let k in item) {
+		for (const k in item) {
 			details.push({ key: k, value: item[k] });
 		};
 

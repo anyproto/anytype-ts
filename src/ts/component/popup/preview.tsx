@@ -25,13 +25,13 @@ class PopupPreview extends React.Component<I.Popup> {
 
 		switch (type) {
 			case I.FileType.Image: {
-				content = <img className="media" src={src} onClick={() => close()} onDragStart={e => e.preventDefault()} />
+				content = <img className="media" src={src} onClick={() => close()} onDragStart={e => e.preventDefault()} />;
 				break;
 			};
 
 			case I.FileType.Video: {
 				content = <video src={src} controls={true} autoPlay={true} loop={true} />;
-				break
+				break;
 			};
 		};
 
@@ -131,7 +131,7 @@ class PopupPreview extends React.Component<I.Popup> {
 				};
 
 				const video = obj.find('video');
-				const videoEl = video.get(0)
+				const videoEl = video.get(0);
 				const width = WIDTH_VIDEO;
 				const height = HEIGHT_VIDEO;
 

@@ -79,11 +79,11 @@ const Block = observer(class Block extends React.Component<Props> {
 		let canSelect = !isInsideTable && !isSelectionDisabled;
 		let canDrop = !readonly && !isInsideTable;
 		let canDropMiddle = false;
-		let cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
-		let cd: string[] = [ 'wrapContent' ];
+		const cn: string[] = [ 'block', UtilData.blockClass(block), 'align' + hAlign, 'index' + index ];
+		const cd: string[] = [ 'wrapContent' ];
 		let blockComponent = null;
-		let empty = null;
-		let setRef = ref => this.ref = ref;
+		const empty = null;
+		const setRef = ref => this.ref = ref;
 		let additional = null;
 		let renderChildren = !isInsideTable;
 
@@ -664,7 +664,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		x = x / (sum * width);
 		
 		// Snap
-		for (let s of snaps) {
+		for (const s of snaps) {
 			if ((x >= s - SNAP) && (x <= s + SNAP)) {
 				x = s;
 			};
@@ -692,7 +692,7 @@ const Block = observer(class Block extends React.Component<Props> {
 		let c = 0;
 		let num = 0;
 
-		for (let i in children) {
+		for (const i in children) {
 			const child = children[i];
 
 			c += child.fields.width || 1 / length;
@@ -726,7 +726,7 @@ const Block = observer(class Block extends React.Component<Props> {
 			return;
 		};
 		
-		const param =  {
+		const param = {
 			type: I.BlockType.Text,
 			style: I.TextStyle.Paragraph,
 		};

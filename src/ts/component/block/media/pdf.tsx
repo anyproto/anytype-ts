@@ -49,12 +49,12 @@ const BlockPdf = observer(class BlockPdf extends React.Component<I.BlockComponen
 			object.sizeInBytes = object.size;
 		};
 
-		let { name, sizeInBytes } = object;
+		const { name, sizeInBytes } = object;
 
-		let { width } = fields;
+		const { width } = fields;
 		let element = null;
 		let pager = null;
-		let css: any = {};
+		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';

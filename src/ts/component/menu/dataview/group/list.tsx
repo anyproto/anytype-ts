@@ -86,7 +86,7 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 							value={!item.isHidden} 
 							onChange={(e: any, v: boolean) => { this.onSwitch(e, item, v); }} 
 						/>
-					 ) : ''}
+					) : ''}
 				</div>
 			);
 		});
@@ -198,8 +198,8 @@ const MenuGroupList = observer(class MenuGroupList extends React.Component<I.Men
 
 	onKeyDown (e: any) {
 		let ret = false;
-		let items = this.getItems();
-		let item = items[this.n];
+		const items = this.getItems();
+		const item = items[this.n];
 
 		keyboard.shortcut('space', e, (pressed: string) => {
 			e.preventDefault();

@@ -1469,7 +1469,7 @@ const ObjectSetLayout = (contextId: string, layout: I.ObjectLayout, callBack?: (
 	dispatcher.request(ObjectSetLayout.name, request, callBack);
 };
 
-const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) =>  {
+const ObjectSetIsFavorite = (contextId: string, isFavorite: boolean, callBack?: (message: any) => void) => {
 	const request = new Rpc.Object.SetIsFavorite.Request();
 
 	request.setContextid(contextId);

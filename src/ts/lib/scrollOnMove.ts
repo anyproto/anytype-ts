@@ -58,14 +58,14 @@ class ScrollOnMove {
 	};
 
 	adjustWindowScroll (param: any) {
-		let { 
+		const { 
 			viewportX, viewportY,
 			isInLeftEdge, isInRightEdge, isInTopEdge, isInBottomEdge, 
 			edgeLeft, edgeRight, edgeTop, edgeBottom, 
 		} = param;
 
-		let maxScrollX = this.documentWidth - this.viewportWidth; 
-		let maxScrollY = this.documentHeight - this.viewportHeight;
+		const maxScrollX = this.documentWidth - this.viewportWidth; 
+		const maxScrollY = this.documentHeight - this.viewportHeight;
 		let currentScrollX = 0;
 		let currentScrollY = 0;
 		let container;
@@ -81,13 +81,13 @@ class ScrollOnMove {
 			currentScrollY = window.pageYOffset;
 		};
 
-		let canScrollUp = (currentScrollY > 0);
-		let canScrollDown = (currentScrollY < maxScrollY);
-		let canScrollLeft = (currentScrollX > 0);
-		let canScrollRight = (currentScrollX < maxScrollX);
+		const canScrollUp = (currentScrollY > 0);
+		const canScrollDown = (currentScrollY < maxScrollY);
+		const canScrollLeft = (currentScrollX > 0);
+		const canScrollRight = (currentScrollX < maxScrollX);
 		let nextScrollX = currentScrollX;
 		let nextScrollY = currentScrollY;
-		let maxStep = 10;
+		const maxStep = 10;
 		let intensity = 0;
 
 		if (isInLeftEdge && canScrollLeft) {
@@ -128,15 +128,15 @@ class ScrollOnMove {
 	};
 	
 	onMouseMove (x: number, y: number) {
-		let edgeTop = BORDER;
-		let edgeLeft = BORDER;
-		let edgeBottom = this.viewportHeight - BORDER;
-		let edgeRight = this.viewportWidth - BORDER;
+		const edgeTop = BORDER;
+		const edgeLeft = BORDER;
+		const edgeBottom = this.viewportHeight - BORDER;
+		const edgeRight = this.viewportWidth - BORDER;
 	
-		let isInLeftEdge = x < edgeLeft;
-		let isInRightEdge = x > edgeRight;
-		let isInTopEdge = y < edgeTop;
-		let isInBottomEdge = y > edgeBottom;
+		const isInLeftEdge = x < edgeLeft;
+		const isInRightEdge = x > edgeRight;
+		const isInTopEdge = y < edgeTop;
+		const isInBottomEdge = y > edgeBottom;
 
 		if (!(isInLeftEdge || isInRightEdge || isInTopEdge || isInBottomEdge)) {
 			this.clear();

@@ -36,7 +36,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const sections = this.getSections();
 
 		let opts = null;
-		let ccn = [ 'item' ];
+		const ccn = [ 'item' ];
 		
 		if (relation) {
 			ccn.push('disabled');
@@ -255,7 +255,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const sections = this.getSections();
 
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 
@@ -623,7 +623,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { relationId } = data;
 		const details: any[] = [];
 
-		for (let k in item) {
+		for (const k in item) {
 			details.push({ key: k, value: item[k] });
 		};
 

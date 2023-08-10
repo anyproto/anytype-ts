@@ -156,7 +156,7 @@ const Column = observer(class Column extends React.Component<Props> {
 		};
 
 		let value = this.props.value;
-		let filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
+		const filter: any = { operator: I.FilterOperator.And, relationKey: relation.relationKey };
 
 		switch (relation.format) {
 			default:

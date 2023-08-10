@@ -269,7 +269,7 @@ const MenuBlockLink = observer(class MenuBlockLink extends React.Component<I.Men
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			if (withSections && section.name) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};

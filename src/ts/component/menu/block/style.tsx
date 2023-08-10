@@ -70,7 +70,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 			return 0;
 		};
 
-		let style = block.content.style;
+		const style = block.content.style;
 
 		if (block.isFile()) {
 			return style != I.FileStyle.Link ? I.FileStyle.Embed : I.FileStyle.Link;
@@ -93,9 +93,9 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		let hasTurnList = true;
 		let hasTurnDiv = true;
 		let hasTurnFile = true;
-		let sections: any[] = [];
+		const sections: any[] = [];
 
-		for (let id of blockIds) {
+		for (const id of blockIds) {
 			const block = blockStore.getLeaf(rootId, id);
 			if (!block) {
 				continue;
@@ -109,7 +109,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		if (hasTurnText)	 sections.push(turnText);
 		if (hasTurnList)	 sections.push(turnList);
 		if (hasTurnDiv)		 sections.push(turnDiv);
-		if (hasTurnFile)     sections.push(turnFile);
+		if (hasTurnFile) sections.push(turnFile);
 
 		return UtilMenu.sectionsMap(sections);
 	};
@@ -118,7 +118,7 @@ const MenuBlockStyle = observer(class MenuBlockStyle extends React.Component<I.M
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		return items;

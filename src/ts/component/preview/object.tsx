@@ -170,7 +170,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 					switch (content.type) {
 						default:
 						case I.FileType.File: {
-							bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />
+							bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
 							inner = (
 								<React.Fragment>
 									<Icon className="color" inner={bullet} />
@@ -192,7 +192,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 								css.width = (fields.width * 100) + '%';
 							};
 
-							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />
+							inner = <img className="media" src={commonStore.imageUrl(content.hash, Constant.size.image)} style={css} />;
 							break;
 						};
 
@@ -205,7 +205,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 				};
 
 				case I.BlockType.Link: {
-					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />
+					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-' + Colors[c] ].join(' ')} />;
 					inner = (
 						<React.Fragment>
 							<Icon className="color" inner={bullet} />
@@ -225,7 +225,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 						break;
 					};
 
-					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-grey' ].join(' ')} />
+					bullet = <div className={[ 'bullet', 'bgColor', 'bgColor-grey' ].join(' ')} />;
 					inner = (
 						<div className="bookmark">
 							<div className="side left">
@@ -278,7 +278,7 @@ const PreviewObject = observer(class PreviewObject extends React.Component<Props
 
 								n++;
 								n = this.checkNumber(child, n);
-								return <Block key={child.id} {...child} className={cn.join(' ')} css={css} />
+								return <Block key={child.id} {...child} className={cn.join(' ')} css={css} />;
 							})}
 						</div>
 					) : ''}

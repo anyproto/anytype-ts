@@ -4,7 +4,7 @@ class History {
 	index = 0;
 
 	clear () {
-		this.list = []
+		this.list = [];
 		this.index = 0;
 	};
 

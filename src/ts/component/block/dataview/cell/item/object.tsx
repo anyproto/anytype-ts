@@ -22,14 +22,13 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	};
 
 	render () {
-		let { object, iconSize, relation, elementMapper, canEdit } = this.props;
-		let cn = [ 'element' ];
+		const { iconSize, relation, canEdit } = this.props;
+		const cn = [ 'element' ];
+		const object = this.getObject();
+
 		let iconObject = null;
 		let iconRemove = null;
 		
-		if (elementMapper) {
-			object = elementMapper(relation, object);
-		};
 		if (object.isHidden) {
 			cn.push('isHidden');
 		};
@@ -53,11 +52,8 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 	};
 
 	onClick (e: any) {
-		let { object, relation, elementMapper, onClick, canEdit } = this.props;
-
-		if (elementMapper) {
-			object = elementMapper(relation, object);
-		};
+		const { onClick, canEdit } = this.props;
+		const object = this.getObject();
 
 		if (!canEdit && onClick) {
 			onClick(e, object);
@@ -72,6 +68,16 @@ const ItemObject = observer(class ItemObject extends React.Component<Props> {
 		if (canEdit && onRemove) {
 			onRemove(e, object.id);
 		};
+	};
+
+	getObject () {
+		const { relation, elementMapper } = this.props;
+
+		let object = this.props.object || {};
+		if (elementMapper) {
+			object = elementMapper(relation, object);
+		};
+		return object;
 	};
 
 });

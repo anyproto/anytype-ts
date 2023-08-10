@@ -283,8 +283,8 @@ class RoutePage extends React.Component<RouteComponentProps> {
 		return (
 			<SelectionProvider>
 				<DragProvider>
-					<ListPopup key='listPopup' {...this.props} />
-					<ListMenu key='listMenu' {...this.props} />
+					<ListPopup key="listPopup" {...this.props} />
+					<ListMenu key="listMenu" {...this.props} />
 
 					<Page {...this.props} />
 				</DragProvider>

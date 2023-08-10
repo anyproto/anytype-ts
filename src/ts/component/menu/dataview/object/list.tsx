@@ -68,7 +68,7 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 					</div>
 				);
 			} else if (item.id == 'add') {
-				content =  (
+				content = (
 					<div id="item-add" className="item add" onMouseEnter={(e: any) => { this.onOver(e, item); }} onClick={(e: any) => { this.onClick(e, item); }} style={param.style}>
 						<Icon className="plus" />
 						<div className="name">{item.name}</div>
@@ -354,9 +354,9 @@ const MenuDataviewObjectList = observer(class MenuDataviewObjectList extends Rea
 		};
 
 		if (item.id == 'add') {
-			let details: any = { name: filter };
-			let typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
-			let flags: I.ObjectFlag[] = [];
+			const details: any = { name: filter };
+			const typeId = relation.objectTypes.length ? relation.objectTypes[0] : '';
+			const flags: I.ObjectFlag[] = [];
 			
 			if (typeId) {
 				details.type = typeId;

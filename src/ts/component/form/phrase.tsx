@@ -247,7 +247,7 @@ class Phrase extends React.Component<Props, State> {
 	};
 
 	setError (v: boolean) {
-		this.setState({ hasError: v })
+		this.setState({ hasError: v });
 	};
 
 	focus () {

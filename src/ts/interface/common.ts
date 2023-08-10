@@ -56,7 +56,7 @@ export enum ToastAction {
 	Link		 	= 2,
 	Lock 		 	= 3,
 	Collection	 	= 4,
-	StorageFull  	= 5,
+	StorageFull = 5,
 	TemplateCreate	= 6,
 	Archive 		= 7,
 };

@@ -75,7 +75,7 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 							value={item.isVisible} 
 							onChange={(e: any, v: boolean) => { this.onSwitch(e, item, v); }} 
 						/>
-					 ) : ''}
+					) : ''}
 				</div>
 			);
 		});
@@ -206,8 +206,8 @@ const MenuRelationList = observer(class MenuRelationList extends React.Component
 
 	onKeyDown (e: any) {
 		let ret = false;
-		let items = this.getItems();
-		let item = items[this.n];
+		const items = this.getItems();
+		const item = items[this.n];
 
 		keyboard.shortcut('space', e, (pressed: string) => {
 			e.preventDefault();

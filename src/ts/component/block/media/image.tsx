@@ -34,7 +34,7 @@ const BlockImage = observer(class BlockImage extends React.Component<I.BlockComp
 		const { state, hash } = block.content;
 		
 		let element = null;
-		let css: any = {};
+		const css: any = {};
 		
 		if (width) {
 			css.width = (width * 100) + '%';

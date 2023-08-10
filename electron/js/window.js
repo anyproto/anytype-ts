@@ -111,7 +111,7 @@ class WindowManager {
 			});
 		} else {
 			const primaryDisplay = screen.getPrimaryDisplay();
-	  		const { width, height } = primaryDisplay.workAreaSize;
+			const { width, height } = primaryDisplay.workAreaSize;
 
 			param = Object.assign(param, this.getWindowPosition(param, width, height));
 		};
@@ -212,7 +212,7 @@ class WindowManager {
 	getWindowPosition (param, displayWidth, displayHeight) {
 		let x = Math.round(displayWidth / 2 - param.width / 2);
 		let y = Math.round(displayHeight / 2 - param.height / 2 + 20);
-		let currentWindow = BrowserWindow.getFocusedWindow();
+		const currentWindow = BrowserWindow.getFocusedWindow();
 
 		if (currentWindow) {
 			const [xPos, yPos] = currentWindow.getPosition();

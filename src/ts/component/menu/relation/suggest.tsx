@@ -56,7 +56,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 
 			let content = null;
 			if (item.id == 'add') {
-				content =  (
+				content = (
 					<div 
 						id="item-add" 
 						className="item add" 
@@ -311,7 +311,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	};
 	
 	getItems () {
-		let sections = this.getSections();
+		const sections = this.getSections();
 		let items: any[] = [];
 
 		sections.forEach((section: any, i: number) => {
@@ -359,9 +359,9 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 		const { classNameWrap, data } = param;
 		const skipKeys = data.skipKeys || [];
 
-		let sources = this.getLibrarySources();
+		const sources = this.getLibrarySources();
 		let menuId = '';
-		let menuParam: I.MenuParam = {
+		const menuParam: I.MenuParam = {
 			menuKey: item.id,
 			element: `#${getId()} #item-${item.id}`,
 			offsetX: getSize().width,
@@ -446,7 +446,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 			});
 		} else 
 		if (addCommand) {
-			const cb  = (item: any) => {
+			const cb = (item: any) => {
 				close(); 
 				addCommand(rootId, blockId, item);
 			};

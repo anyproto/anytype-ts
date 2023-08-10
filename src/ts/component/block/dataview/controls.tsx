@@ -37,7 +37,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const isAllowedTemplate = this.props.isAllowedTemplate();
 
 		if (isAllowedTemplate) {
-			buttonWrapperCn.push('withSelect')
+			buttonWrapperCn.push('withSelect');
 		};
 
 		if (className) {
@@ -152,7 +152,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 									/>
 								) : ''}
 							</div>
- 						) : ''}
+						) : ''}
 					</div>
 				</div>
 			</div>

@@ -120,7 +120,7 @@ const MenuGraphSettings = observer(class MenuGraphSettings extends React.Compone
 		const sections = this.getSections();
 
 		let items = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			if (withSections) {
 				items.push({ id: section.id, name: section.name, isSection: true });
 			};

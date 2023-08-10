@@ -19,7 +19,7 @@ const BlockDiv = observer(class BlockDiv extends React.Component<I.BlockComponen
 		const { id, content } = block;
 		const { style } = content;
 		
-		let cn = [ 'wrap', 'focusable', 'c' + id ];
+		const cn = [ 'wrap', 'focusable', 'c' + id ];
 		let inner: any = null;
 			
 		switch (content.style) {

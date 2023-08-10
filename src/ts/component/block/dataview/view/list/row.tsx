@@ -66,7 +66,7 @@ const Row = observer(class Row extends React.Component<Props> {
 				>
 					{content}
 				</div>
-			)
+			);
 		};
 
 		if (isCollection && !isInline) {

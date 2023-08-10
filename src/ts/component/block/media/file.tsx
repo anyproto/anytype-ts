@@ -30,7 +30,7 @@ const BlockFile = observer(class BlockFile extends React.Component<I.BlockCompon
 			object.sizeInBytes = object.size;
 		};
 
-		let { name, sizeInBytes } = object;
+		const { name, sizeInBytes } = object;
 		let element = null;
 
 		switch (state) {

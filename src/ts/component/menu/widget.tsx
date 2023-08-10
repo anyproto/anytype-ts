@@ -197,7 +197,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 		const sections = this.getSections();
 
 		let items = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		return items;
@@ -281,7 +281,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 
 		switch (item.itemId) {
 			case 'source': {
-				let filters: I.Filter[] = [
+				const filters: I.Filter[] = [
 					{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.NotIn, value: UtilObject.getSystemTypes().concat(UtilObject.getFileTypes()) },
 				];
 
@@ -448,7 +448,7 @@ const MenuWidget = observer(class MenuWidget extends React.Component<I.Menu> {
 			};
 
 			let prevY = 0;
-			for (let id of widgetIds) {
+			for (const id of widgetIds) {
 				const item = $(`#widget-${id}`);
 				if (!item || !item.length) {
 					continue;

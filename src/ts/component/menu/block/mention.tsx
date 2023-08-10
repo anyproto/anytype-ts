@@ -197,7 +197,7 @@ const MenuBlockMention = observer(class MenuBlockMention extends React.Component
 		const sections = this.getSections();
 		
 		let items: any[] = [];
-		for (let section of sections) {
+		for (const section of sections) {
 			items = items.concat(section.children);
 		};
 		return items;

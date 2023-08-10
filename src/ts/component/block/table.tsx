@@ -352,7 +352,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 					let menuSubContext = null;
 					let menuId = '';
-					let menuParam: any = {
+					const menuParam: any = {
 						element: `#${menuContext.getId()} #item-${item.id}`,
 						offsetX: menuContext.getSize().width,
 						vertical: I.MenuDirection.Center,
@@ -1206,7 +1206,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 		let width = Math.max(min, Math.min(max, w));
 		for (let x = 1; x <= steps; ++x) {
-			let s = max / steps * x;
+			const s = max / steps * x;
 			if ((width >= s - SNAP) && (width <= s + SNAP)) {
 				width = s;
 			};
@@ -1459,7 +1459,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		w += 2;
 		h += 2;
 
-		let frame = { id, x, y, w, h, type, rowId, columnId, cellId, position };
+		const frame = { id, x, y, w, h, type, rowId, columnId, cellId, position };
 		let current = this.frames.find(it => it.id == frame.id);
 		
 		if (!current) {

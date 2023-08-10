@@ -195,7 +195,7 @@ const IconObject = observer(class IconObject extends React.Component<Props> {
 
 		let icon = null;
 		let icn = [];
-		let onLetter = () => {
+		const onLetter = () => {
 			cn.push('withLetter');
 			icn = icn.concat([ 'iconCommon', 'c' + iconSize ]);
 			icon = <img src={this.commonSvg()} className={icn.join(' ')} />;

@@ -158,10 +158,10 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		});
 
 		if (keyboard.isShift()) {
-			let target = $(e.target).closest('.selectable');
-			let type = target.attr('data-type') as I.SelectType;
-			let id = target.attr('data-id');
-			let ids = this.get(type);
+			const target = $(e.target).closest('.selectable');
+			const type = target.attr('data-type') as I.SelectType;
+			const id = target.attr('data-id');
+			const ids = this.get(type);
 
 			if (!ids.length && (id != focused)) {
 				this.set(type, ids.concat([ focused ]));
@@ -242,7 +242,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			} else {
 				let needCheck = false;
 				if (keyboard.isCtrlOrMeta()) {
-					for (let i in I.SelectType) {
+					for (const i in I.SelectType) {
 						const idsOnStart = this.idsOnStart.get(I.SelectType[i]) || [];
 						needCheck = needCheck || Boolean(idsOnStart.length);
 					};
@@ -285,7 +285,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	initIds () {
-		for (let i in I.SelectType) {
+		for (const i in I.SelectType) {
 			this.ids.set(I.SelectType[i], []);
 		};
 	};
@@ -385,7 +385,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	
 	checkNodes (e: any) {
 		if (!this._isMounted) {
-			return
+			return;
 		};
 		
 		const { focused, range } = focus.state;
@@ -476,7 +476,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			if (withChildren) {
 				ids.forEach(id => this.getChildrenIds(id, ids));
 			} else {
-				let childrenIds = [];
+				const childrenIds = [];
 				ids.forEach(id => this.getChildrenIds(id, childrenIds));
 				ids = ids.filter(it => !childrenIds.includes(it));
 			};
@@ -486,7 +486,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 	};
 
 	checkSelected (type: I.SelectType) {
-		let ids = this.get(type, true);
+		const ids = this.get(type, true);
 		if (!ids.length) {
 			return;
 		};
@@ -508,7 +508,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		for (let childId of childrenIds) {
+		for (const childId of childrenIds) {
 			ids.push(childId);
 			this.getChildrenIds(childId, ids);
 		};
@@ -527,11 +527,11 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		$('.isSelectionSelected').removeClass('isSelectionSelected');
 
-		for (let i in I.SelectType) {
+		for (const i in I.SelectType) {
 			const type = I.SelectType[i];
 			const ids = this.get(type, true);
 
-			for (let id of ids) {
+			for (const id of ids) {
 				$(`#selectable-${id}`).addClass('isSelectionSelected');
 
 				if (type == I.SelectType.Block) {
@@ -567,9 +567,9 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				return;
 			};
 
-			let props = child.props || {};
-			let children = props.children;
-			let dataset = props.dataset || {};
+			const props = child.props || {};
+			const children = props.children;
+			const dataset = props.dataset || {};
 			
 			if (children) {
 				child = React.cloneElement(child, { children: this.injectProps(children) });

@@ -91,9 +91,9 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 
 		let types = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.type).map(it => it.name);
 		let relations = Relation.getSetOfObjects(rootId, storeId, Constant.typeId.relation).map(it => it.name);
-		let setOfString = [];
-		let tl = types.length;
-		let rl = relations.length;
+		const setOfString = [];
+		const tl = types.length;
+		const rl = relations.length;
 
 		if (tl) {
 			const pluralType = UtilCommon.plural(tl, translate('pluralType'));
@@ -351,7 +351,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 		const type = detailStore.get(rootId, object.type, []);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Type ]);
-		const typeIsDeleted = type._empty_ || type.isDeleted
+		const typeIsDeleted = type._empty_ || type.isDeleted;
 		const options: any[] = [];
 
 		if (readonly) {
@@ -420,7 +420,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 		const object = detailStore.get(rootId, rootId, [ 'setOf' ]);
 
 		let menuId = '';
-		let menuParam = {
+		const menuParam = {
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
 			offsetX: this.menuContext.getSize().width,
 			className: 'big single',

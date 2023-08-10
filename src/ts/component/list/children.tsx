@@ -54,7 +54,7 @@ const ListChildren = observer(class ListChildren extends React.Component<Props> 
 		const cn = [ 'children', (block.isTextToggle() ? 'canToggle' : '') ];
 		
 		let ColResize: any = (): any => null;
-		let isRow = block.isLayoutRow();
+		const isRow = block.isLayoutRow();
 		
 		if (isRow) {
 			ColResize = (item: any) => (
@@ -69,8 +69,8 @@ const ListChildren = observer(class ListChildren extends React.Component<Props> 
 		return (
 			<div id={'block-children-' + block.id} className={cn.join(' ')} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
 				{children.map((item: any, i: number) => {
-					let css: any = {};
-					let cn = [];
+					const css: any = {};
+					const cn = [];
 
 					if (isRow) {
 						css.width = (item.fields.width || 1 / length ) * 100 + '%';

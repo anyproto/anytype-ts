@@ -349,4 +349,4 @@ export default {
 		],
 	}),
 
-}
+};

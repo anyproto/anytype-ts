@@ -1,5 +1,6 @@
 tools/
 electron/env.json
+electron/about/*
 src/json/schema
 licenses.json
 **/*.min.js
@@ -15,7 +16,6 @@ windows/
 !/dist/js/export.js
 !/dist/index.html
 !/dist/index.web.html
-!/dist/polyfill.js
 !/dist/run.js
 !/dist/workers/graph.js
 !/dist/workers/lib/util.js

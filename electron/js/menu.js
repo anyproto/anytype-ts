@@ -28,14 +28,14 @@ class MenuManager {
 		const lang = Util.getLang();
 		const langMenu = [];
 
-		for (let key of Util.enabledLangs()) {
+		for (const key of Util.enabledLangs()) {
 			langMenu.push({
 				label: Locale[key], type: 'checkbox', checked: key == lang,
 				click: () => Api.changeInterfaceLang(this.win, key)
 			});
 		};
 
-		let menuParam = [
+		const menuParam = [
 			{
 				label: 'Anytype',
 				submenu: [
@@ -197,7 +197,7 @@ class MenuManager {
 			};
 			const flagMenu = [];
 
-			for (let i in flags) {
+			for (const i in flags) {
 				flagMenu.push({
 					label: flags[i], type: 'checkbox', checked: config.debug[i],
 					click: () => {

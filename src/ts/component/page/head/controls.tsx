@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import { I, C, focus, UtilObject, Action } from 'Lib';
 import { menuStore, blockStore, detailStore } from 'Store';
-import ControlButtons  from './controlButtons';
+import ControlButtons from './controlButtons';
 import Constant from 'json/constant.json';
 
 interface Props extends I.PageComponent {
@@ -31,7 +31,7 @@ const Controls = observer(class Controls extends React.Component<Props, State> {
 		this.onIcon = this.onIcon.bind(this);
 		this.onCoverOpen = this.onCoverOpen.bind(this);
 		this.onCoverClose = this.onCoverClose.bind(this);
-		this.onCoverSelect = this.onCoverSelect.bind(this)
+		this.onCoverSelect = this.onCoverSelect.bind(this);
 		this.onLayout = this.onLayout.bind(this);
 		
 		this.onDragOver = this.onDragOver.bind(this);
