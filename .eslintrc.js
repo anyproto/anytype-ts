@@ -41,7 +41,7 @@ module.exports = {
 		],
 
 		"@typescript-eslint/no-unsafe-member-access": "off",
-		"@typescript-eslint/no-extra-semi": "warn",
+		"@typescript-eslint/no-extra-semi": "off",
 		"@typescript-eslint/no-empty-function": "off",
 		"@typescript-eslint/no-inferrable-types": "off",
 		"@typescript-eslint/no-var-requires": "off",

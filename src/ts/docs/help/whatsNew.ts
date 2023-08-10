@@ -19,7 +19,59 @@ export default [
 	{ type: I.BlockType.Cover, param: { type: I.CoverType.Gradient, id: 'pinkOrange' } },
 	{ type: I.BlockType.IconPage, icon: '👋' },
 
-	title(`Enter the Void 😶‍🌫️`),
+	title(`Anytype Goes Global 🌍`),
+
+	text(`We're keeping fresh this summer with some sweeping updates which include our first push of localized interfaces and lots of polishing work on templates.`),
+	text(`Big thanks to everyone who's helped to make Anytype more wonderful this month by ${link(`https://crowdin.com/project/anytype-desktop`, `translating the interface to your native language`)}, ${link(`https://github.com/anyproto`, `making pull requests`)}, ${link(`https://community.anytype.io/c/bug-reports/7/none`, `reporting bugs`)}, and spreading the word. We see and appreciate you!`),
+
+	h2(`💎 Highlights of this Release:`),
+
+	h3(`Introduction of Localized Interfaces`),
+	img('./img/help/34/1.png', 'c70 screen'),
+	text(`With the help of our linguistically gifted community, we're thrilled to bring you the very first iteration of a localized interface. Anytype desktop is now available in 12 languages! To change your interface language, jump to Settings > Preferences and select the language of your choosing.`),
+	text(`Please note that all translations from the English language are community-contributed. If you notice any errors, you're free to submit your corrections ${link(`https://community.anytype.io/t/localization-launch/10269/13`, `using this platform`)}. Any updates will be shipped in the successive release.`),
+	text(`Don't see your language? Feel free to ${link(`https://github.com/orgs/anyproto/discussions/45`, `start contributing your own translations`)}!`),
+
+	h3(`Introduction of Blank Templates & Default Template Selection`),
+
+	text(`If you ever wished you could bypass automatic template application when creating objects, a "blank" template has now been added to all types, with the exception of Type: Note. This blank template cannot be deleted or modified in any way.`),
+	img('./img/help/34/2.png', 'c70 screen'),
+	text(`Meanwhile, it's now possible to choose a default template for each type. From the types page, click the newly-added three-dots menu for the template, and click on the menu option ${hl(`Set as default`)}.`),
+	img('./img/help/34/3.png', 'c70 screen'),
+	text(`This template will now be applied each time you create an object from sets or collections, though you can customize the template according to each set view. When creating objects from the ${hl(`+`)} button or ${hl(`/`)} command menu, you will still be presented with a panel of templates to choose from.`),
+
+	h2(`⚡ Quality-of-Life Improvements:`),
+	bullet(`<b>Template titles applied by default</b><br/>Template titles are now applied to new objects created with that template. This paves the way for future updates, such as adding automated titles to templates.`),
+	bullet(`<b>Batch updating of object type now possible from Set &amp; Collection</b><br/>
+			If you select several objects of the same type, you'll see a new menu option to ${hl(`Change type`)}, which we hope will reduce the need to update types object-by-object.`),
+	bullet(`<b>Widgets now available for recently edited & recently opened objects</b><br/>
+			<img src="./img/help/34/4.png" class="c70 screen" /><br/>
+			Depending on whether you prefer to define your recent objects according to recently modified or opened date, you can now choose the corresponding widget. Please note that recently opened widgets are device-specific and therefore will not sync across your devices due to the decentralized nature of the application.`),
+	bullet(`<b>Newly created set & collection views now copy settings from currently open view</b><br/>
+			Each time you create a new view in your sets or collections, your current view settings - including filters & sorts - will be automatically copied to the new view`),
+	bullet(`<b>Block menu control element visible on hover</b><br />
+			No need to re-create your widgets - any changes you make to your sets will be instantly reflected in the corresponding set widget`),
+	bullet(`<b>Scroll in LaTeX blocks replaced with wrap</b><br/>
+			No need for endless back and forth; content in your LaTeX blocks will now wrap automatically for better readability.`),
+
+	h2(`🛠️ Tech & Performance:`),
+	bullet(`<b>RPM build is back</b><br />For our Linux lovers, the RPM package manager is now back; you can download RPM builds from our download page.`),
+
+	h2(`🐛 Bug Fixes:`),
+	bullet(`Fixed: Status/tag relation menus no longer opening editing interface on hover`),
+	bullet(`Fixed: Cursor no longer dropping when adding link-in-text using keyboard shortcut`),
+	bullet(`Fixed: Unreadable font color in dark mode for Notion imports has been fixed. Thanks, ${link(`https://community.anytype.io/t/dark-mode-font-color-hard-to-read/8445`, `kunthawat`)}!`),
+	bullet(`Fixed: Numbered lists no longer reset from 40 onward. Thanks, ${link(`https://community.anytype.io/t/numbered-list-resets-after-40-items/10300`, `Rebo`)}!`),
+	bullet(`Fixed: Relations added to objects after set creation are now showing in column view when toggled on. Thanks, ${link(`https://community.anytype.io/t/attributes-weird-behavior/9862`, `saifeldeen`)}!`),
+	bullet(`Fixed: Text context menu is now opening properly for all selected blocks`),
+	bullet(`Fixed: Text relations no longer reverted to previous state in sets after being edited inside the object. Thanks, ${link(`https://community.anytype.io/t/url-source-relation-is-reset-or-set-to-previous-content-when-clicking-url-source-cell-in-set-grid-view/9484`, `xpdmk`)}!`),
+	bullet(`Fixed: KaTeX has been updated to the latest version, permitting LaTeX blocks to render chemical equations. Thanks, ${link(`https://community.anytype.io/t/latex-not-rendering-ce/10326`, `jannis`)}!`),
+	bullet(`Fixed: It is no longer possible to to double-press ${hl(`Enter`)} in paste menu. Thanks, ${link(`https://community.anytype.io/t/pasting-a-link-and-pressing-enter-repeatedly-results-in-pasting-the-link-twice/9453`, `sergiu`)}!`),
+	bullet(`Fixed: Horizontal scrollbar in code blocks no longer appear in PDF exports or print versions. Thanks, ${link(`https://community.anytype.io/t/double-scrollbar-on-pdf-export-for-code-blocks-with-scrollbar/9864`, `jannis`)}!`),
+
+	div(),
+
+	h2(`Release 0.33.0 - Enter the Void 😶‍🌫️`),
 
 	text(`After an enormous pre-beta launch, we're following up this month with an update to inject some magic into our onboarding experience.`),
 	text(`Before we get to the good stuff: this is our last release before we officially launch our public beta(!). On July 19, we'll be opening our repositories and celebrating this occasion with a 24-hour AMA on <a href="https://www.producthunt.com/products/anytype">Product Hunt</a>.`),
