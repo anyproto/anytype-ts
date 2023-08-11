@@ -37,6 +37,8 @@ jobs:
 
       - name: Update locale
         run: npm run update:locale
+        env:
+          GITHUB_TOKEN: ${{secrets.TOKEN}}
 
       #- name: Update Deps
       #  run: npm run build:deps

@@ -157,7 +157,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			this.cacheRect(node);
 		});
 
-		if (keyboard.isShift()) {
+		if (e.shiftKey) {
 			const target = $(e.target).closest('.selectable');
 			const type = target.attr('data-type') as I.SelectType;
 			const id = target.attr('data-id');
@@ -232,7 +232,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		};
 
 		if (!this.moved) {
-			if (!keyboard.isShift() && !keyboard.isAlt() && !keyboard.isCtrlOrMeta()) {
+			if (!e.shiftKey && !e.altKey && !(e.ctrlKey || e.metaKey)) {
 				if (!keyboard.isSelectionClearDisabled) {
 					this.initIds();
 					this.renderSelection();
@@ -241,7 +241,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				};
 			} else {
 				let needCheck = false;
-				if (keyboard.isCtrlOrMeta()) {
+				if (e.ctrlKey || e.metaKey) {
 					for (const i in I.SelectType) {
 						const idsOnStart = this.idsOnStart.get(I.SelectType[i]) || [];
 						needCheck = needCheck || Boolean(idsOnStart.length);
@@ -257,7 +257,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				const id = target.attr('data-id');
 				const type = target.attr('data-type');
 				
-				if (target.length && keyboard.isShift() && ids.length && (type == I.SelectType.Block)) {
+				if (target.length && e.shiftKey && ids.length && (type == I.SelectType.Block)) {
 					const rootId = keyboard.getRootId();
 					const first = ids.length ? ids[0] : this.focused;
 					const tree = blockStore.getTree(rootId, blockStore.getBlocks(rootId));
@@ -366,7 +366,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 
 		let ids = this.get(type, false);
 
-		if (keyboard.isCtrlOrMeta()) {
+		if (e.ctrlKey || e.metaKey) {
 			const idsOnStart = this.idsOnStart.get(type) || [];
 			if (idsOnStart.includes(id)) {
 				ids = ids.filter(it => it != id);
@@ -374,7 +374,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 				ids.push(id);
 			};
 		} else
-		if (keyboard.isAlt()) {
+		if (e.altKey) {
 			ids = ids.filter(it => it != id);
 		} else {
 			ids.push(id);
@@ -392,7 +392,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 		const { x, y } = this.recalcCoords(e.pageX, e.pageY);
 		const rect = UtilCommon.objectCopy(this.getRect(this.x, this.y, x, y));
 
-		if (!keyboard.isShift() && !keyboard.isAlt() && !keyboard.isCtrlOrMeta()) {
+		if (!e.shiftKey && !e.altKey && !e.ctrlKey || e.metaKey) {
 			this.initIds();
 		};
 
@@ -409,7 +409,7 @@ const SelectionProvider = observer(class SelectionProvider extends React.Compone
 			return;
 		};
 
-		if ((length <= 1) && !keyboard.isCtrlOrMeta()) {
+		if ((length <= 1) && !(e.ctrlKey || e.metaKey)) {
 			const selected = $(`#block-${ids[0]}`);
 			const value = selected.find('#value');
 			

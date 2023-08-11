@@ -138,6 +138,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 	onRelation () {
 		const { isPopup, rootId, menuOpen } = this.props;
 		const cnw = [ 'fixed' ];
+		const object = detailStore.get(rootId, rootId, [ 'isArchived' ]);
 
 		if (!isPopup) {
 			cnw.push('fromHeader');
@@ -152,6 +153,7 @@ const HeaderMainObject = observer(class HeaderMainObject extends React.Component
 			data: {
 				isPopup,
 				rootId,
+				readonly: object.isArchived
 			},
 		});
 	};

@@ -76,13 +76,8 @@
 				.card { display: none; }
 			}
 
-            .card { width: 246px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; }
+            .card { width: 246px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; cursor: default; }
 			.card {
-				.cellContent.isName {
-					.name { @include clamp2; white-space: normal; }
-					.input.name { padding: 0; height: unset; }
-				}
-
 				.cardContent { 
 					border: 1px solid $colorHoverMedium; border-radius: 12px; padding: 16px; background: $colorWhite; transition: border-color $transitionCommon;
 					box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
@@ -90,6 +85,11 @@
 
 				.cellContent {
 					.name:empty { display: none; }
+				}
+
+				.cellContent.isName {
+					.name { @include clamp2; white-space: normal; }
+					.input.name { padding: 0; height: unset; }
 				}
 
 				.cellContent.c-longText {

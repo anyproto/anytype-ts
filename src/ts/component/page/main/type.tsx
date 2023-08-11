@@ -61,7 +61,6 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 		const layout: any = UtilMenu.getLayouts().find(it => it.id == object.recommendedLayout) || {};
 		const showTemplates = !UtilObject.getLayoutsWithoutTemplates().includes(object.recommendedLayout);
 		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
-		const systemRelations = Relation.systemKeys();
 
 		const allowedObject = object.isInstalled && UtilObject.getPageLayouts().includes(object.recommendedLayout);
 		const allowedDetails = object.isInstalled && blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -83,7 +82,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 			if ([ 'tag', 'description' ].includes(it.relationKey)) {
 				return true;
 			};
-			if (systemRelations.includes(it.relationKey)) {
+			if (Relation.isSystem(it.relationKey)) {
 				return false;
 			};
 			return config.debug.ho ? true : !it.isHidden;
@@ -440,8 +439,8 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
-		const object = detailStore.get(rootId, rootId, [ 'recommendedRelations' ], true);
-		const recommendedRelations = Relation.getArrayValue(object.recommendedRelations);
+		const object = detailStore.get(rootId, rootId);
+		const recommendedRelations = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it.relationKey)
 
 		menuStore.open('relationSuggest', { 
 			element: '#page .section.relation #item-add',

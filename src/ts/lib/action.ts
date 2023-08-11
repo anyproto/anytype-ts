@@ -153,7 +153,7 @@ class Action {
 		};
 
 		C.BlockListDelete(widgets, [ id ]);
-		Storage.deleteToggleId('widget', id);
+		Storage.setToggle('widget', id, false);
 		Storage.deleteToggle(`widget${id}`);
 
 		const childrenIds = blockStore.getChildrenIds(widgets, id);

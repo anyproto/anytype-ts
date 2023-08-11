@@ -357,6 +357,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		if (this.ref && this.ref.unbind) {
 			this.ref.unbind();
 		};
+
 		if (rebind) {
 			rebind();
 		};

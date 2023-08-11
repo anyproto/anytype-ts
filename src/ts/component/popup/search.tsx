@@ -230,7 +230,7 @@ const PopupSearch = observer(class PopupSearch extends React.Component<I.Popup, 
 		this.unbind();
 		
 		const win = $(window);
-		win.on('keydown.search', (e: any) => { this.onKeyDown(e); });
+		win.on('keydown.search', e => this.onKeyDown(e));
 		win.on('resize.search', (e: any) => { this.resize(); });
 	};
 

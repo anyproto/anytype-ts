@@ -1008,30 +1008,6 @@ class Keyboard {
 		return UtilCommon.isPlatformMac() ? 'cmd' : 'ctrl';
 	};
 
-	checkPressed (key: string) {
-		return this.pressed.includes(key);
-	};
-
-	isShift () {
-		return this.checkPressed(Key.shift);
-	};
-
-	isAlt () {
-		return this.checkPressed(Key.alt);
-	};
-
-	isCtrl () {
-		return this.checkPressed(Key.ctrl);
-	};
-
-	isMeta () {
-		return this.checkPressed(Key.meta);
-	};
-
-	isCtrlOrMeta () {
-		return this.isCtrl() || this.isMeta();
-	};
-
 };
 
 export enum Key {

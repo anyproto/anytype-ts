@@ -291,7 +291,7 @@ const PageMainStore = observer(class PageMainStore extends React.Component<I.Pag
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.store', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.store', e => this.onKeyDown(e));
 	};
 
 	unbind () {

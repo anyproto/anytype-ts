@@ -272,7 +272,7 @@ const PageMainNavigation = observer(class PageMainNavigation extends React.Compo
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.navigation', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.navigation', e => this.onKeyDown(e));
 	};
 
 	unbind () {

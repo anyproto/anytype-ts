@@ -193,7 +193,7 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
 	};
 	
 	unbind () {
@@ -214,17 +214,24 @@ const MenuRelationEdit = observer(class MenuRelationEdit extends React.Component
 		const { rootId, blockId, extendedOptions } = data;
 		const relation = this.getRelation();
 		const isFile = relation && (relation.format == I.RelationType.File);
-		const allowed = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionDataview.Relation ]);
-		const canDelete = allowed && Relation.systemKeys().indexOf(relation.relationKey) < 0;
 		const canFilter = !isFile;
 		const canSort = !isFile;
 		const canHide = relation && (relation.relationKey != 'name');
+
+		let canDuplicate = true;
+		if (relation) {
+			canDuplicate = relation && blockStore.checkFlags(rootId, blockId, [ I.RestrictionObject.Relation ]);
+		};
+		if (relation && Relation.isSystem(relation.relationKey)) {
+			canDuplicate = false;
+		};
+		const canDelete = canDuplicate;
 
 		let sections: any[] = [
 			{
 				children: [
 					relation ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
-					allowed ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
+					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
 					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonDelete') } : null,
 				]
 			}

@@ -443,7 +443,7 @@ const BlockFeatured = observer(class BlockFeatured extends React.Component<Props
 						});
 
 						this.menuContext.close();
-						analytics.event('ChangeObjectType', { objectType: item.id });
+						analytics.event('ChangeObjectType', { objectType: item.id, count: 1, route: 'FeaturedRelations' });
 					},
 				});
 				break;

@@ -496,6 +496,10 @@ class Relation {
 	systemKeys () {
 		return require('lib/json/generated/systemRelations.json');
 	};
+
+	isSystem (relationKey: string) {
+		return this.systemKeys().includes(relationKey);
+	};
 	
 };
 

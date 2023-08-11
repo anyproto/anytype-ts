@@ -72,7 +72,7 @@ class MenuContext extends React.Component<I.Menu> {
 	rebind () {
 		this.unbind();
 		$(window).on('keydown.menu', (e: any) => { this.props.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -84,11 +84,11 @@ class MenuContext extends React.Component<I.Menu> {
 		const { data } = param;
 		const { subId, objectIds, getObject, isCollection } = data;
 		const length = objectIds.length;
+		const changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 
 		let pageCopy = { id: 'copy', icon: 'copy', name: translate('commonDuplicate') };
 		let open = { id: 'open', icon: 'expand', name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', icon: 'linkTo', name: translate('commonLinkTo'), arrow: true };
-		const changeType = { id: 'changeType', icon: 'pencil', name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let div = null;
 		let unlink = null;
 		let archive = null;
@@ -222,6 +222,8 @@ class MenuContext extends React.Component<I.Menu> {
 					],
 					onClick: (item: any) => {
 						C.ObjectListSetObjectType(objectIds, item.id);
+						analytics.event('ChangeObjectType', { objectType: item.id, count: objectIds.length, route: 'MenuDataviewContext' });
+
 						close();
 					}
 				});
