@@ -27,9 +27,11 @@
 	}
 
 	.menu.menuDataviewViewEdit,
-	.menu.menuDataviewViewSettings { width: 360px; }
+	.menu.menuDataviewViewSettings,
+	.menu.menuDataviewViewLayout { width: 360px; }
 	.menu.menuDataviewViewEdit,
-	.menu.menuDataviewViewSettings {
+	.menu.menuDataviewViewSettings,
+	.menu.menuDataviewViewLayout {
 		.content { max-height: 450px; }
 		.item.withCaption {
 			.caption { @include text-common; line-height: 20px; width: 150px; padding-right: 16px; }
