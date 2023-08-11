@@ -62,6 +62,7 @@ import MenuDataviewFilterValues from './dataview/filter/values';
 import MenuDataviewSort from './dataview/sort';
 import MenuDataviewViewList from './dataview/view/list';
 import MenuDataviewViewEdit from './dataview/view/edit';
+import MenuDataviewViewSettings from './dataview/view/settings';
 import MenuDataviewCalendar from './dataview/calendar';
 import MenuDataviewOptionList from './dataview/option/list';
 import MenuDataviewOptionEdit from './dataview/option/edit';
@@ -145,6 +146,7 @@ const Components: any = {
 	dataviewSort:			 MenuDataviewSort,
 	dataviewViewList:		 MenuDataviewViewList,
 	dataviewViewEdit:		 MenuDataviewViewEdit,
+	dataviewViewSettings:	 MenuDataviewViewSettings,
 	dataviewCalendar:		 MenuDataviewCalendar,
 	dataviewDate:			 MenuDataviewDate,
 	dataviewText:			 MenuDataviewText,

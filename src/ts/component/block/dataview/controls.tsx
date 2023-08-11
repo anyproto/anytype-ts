@@ -53,7 +53,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 		const buttons = [
 			{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: filterCnt > 0 },
 			{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
-			{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewRelationList' },
+			{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 		];
 
 		const ButtonItem = (item: any) => {
@@ -204,34 +204,6 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				view: observable.box(view),
 			},
 		};
-
-		param.getTabs = () => {
-			let tabs: any[] = [];
-
-			switch (component) {
-				case 'dataviewViewList': {
-					break;
-				};
-
-				case 'dataviewFilterList': {
-					tabs = [ { id: 'filter', name: translate('blockDataviewControlsFilters'), component } ];
-					break;
-				};
-
-				case 'dataviewSort': {
-					tabs = [ { id: 'sort', name: translate('blockDataviewControlsSorts'), component } ];
-					break;
-				};
-
-				default: {
-					tabs = Dataview.getMenuTabs(rootId, block.id, view.id);
-					break;
-				};
-			};
-
-			return tabs;
-		};
-		param.initialTab = param.getTabs().find(it => it.component == component)?.id;
 
 		menuStore.open(component, param);
 	};

@@ -1138,6 +1138,11 @@
     "menuDataviewViewEditViewAs": "View as",
     "menuDataviewViewEditDuplicateView": "Duplicate view",
     "menuDataviewViewEditRemoveView": "Remove view",
+    "menuDataviewViewSettings": "View settings",
+    "menuDataviewViewDefaultType": "Default type",
+    "menuDataviewViewFilter": "Filter",
+    "menuDataviewViewSort": "Sort",
+    "menuDataviewViewApplied": "%s applied",
 
     "menuDataviewViewListNoViewsFound": "No views found",
     "menuDataviewViewListAddView": "Add a view",
