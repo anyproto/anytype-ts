@@ -154,41 +154,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			return;
 		};
 
-		let filters: I.Filter[] = [];
 		const addParam: any = {};
-
-		if (isCollection) {
-			addParam.name = translate('blockDataviewCreateNewCollection');
-			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
-					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, onCreate);
-					analytics.event('InlineSetSetSource', { type: 'newObject' });
-				});
-			};
-
-			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
-			]);
-		} else {
-			addParam.name = translate('blockDataviewCreateNewSet');
-			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', (message: any) => {
-					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
-						$(this.node).find('#head-source-select').trigger('click');
-						onCreate(message);
-					});
-
-					analytics.event('InlineSetSetSource', { type: 'newObject' });
-				});
-			};
-
-			filters = filters.concat([
-				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
-				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
-			]);
-		};
-
-		let menuId = '';
 		const menuParam: any = {
 			menuKey: item.id,
 			element: `#${this.menuContext.getId()} #item-${item.id}`,
@@ -197,10 +163,42 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 			isSub: true,
 			data: {},
 		};
-
-		const onCreate = (message: any) => {
+		const onCreate = (message: any, isNew: boolean) => {
 			if (message.views && message.views.length) {
 				window.setTimeout(() => { loadData(message.views[0].id, 0, true); }, 50);
+			};
+
+			analytics.event('InlineSetSetSource', { type: isNew ? 'newObject' : 'externalObject' });
+		};
+
+		let filters: I.Filter[] = [];
+		let menuId = '';
+
+		if (isCollection) {
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
+			]);
+
+			addParam.name = translate('blockDataviewCreateNewCollection');
+			addParam.onClick = () => {
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => onCreate(message, true));
+				});
+			};
+		} else {
+			filters = filters.concat([
+				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
+				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
+			]);
+
+			addParam.name = translate('blockDataviewCreateNewSet');
+			addParam.onClick = () => {
+				C.ObjectCreateSet([], {}, '', (message: any) => {
+					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
+						$(this.node).find('#head-source-select').trigger('click');
+						onCreate(message, true);
+					});
+				});
 			};
 		};
 
@@ -218,8 +216,7 @@ const Head = observer(class Head extends React.Component<I.ViewComponent, State>
 					value: [ targetObjectId ],
 					addParam,
 					onSelect: (item: any) => {
-						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, onCreate);
-						analytics.event('InlineSetSetSource', { type: 'externalObject' });
+						C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => onCreate(message, false));
 						this.menuContext.close();
 					}
 				});

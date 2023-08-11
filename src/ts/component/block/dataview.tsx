@@ -935,31 +935,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { rootId, block, isPopup, isInline } = this.props;
 		const { targetObjectId } = block.content;
 		const isCollection = this.isCollection();
-
-		let filters: I.Filter[] = [];
 		const addParam: any = {};
 
+		let filters: I.Filter[] = [];
+		
 		if (isCollection) {
-			addParam.name = translate('blockDataviewCreateNewCollection');
-			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', (message: any) => { 
-					onSelect(message.details, true); 
-				});
-			};
-
 			filters = filters.concat([
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.collection },
 			]);
-		} else {
-			addParam.name = translate('blockDataviewCreateNewSet');
-			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', (message: any) => { onSelect(message.details, true); });
-			};
 
+			addParam.name = translate('blockDataviewCreateNewCollection');
+			addParam.onClick = () => {
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: Constant.typeId.collection }, [], '', message => onSelect(message.details, true));
+			};
+		} else {
 			filters = filters.concat([
 				{ operator: I.FilterOperator.And, relationKey: 'type', condition: I.FilterCondition.Equal, value: Constant.typeId.set },
 				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
+
+			addParam.name = translate('blockDataviewCreateNewSet');
+			addParam.onClick = () => {
+				C.ObjectCreateSet([], {}, '', message => onSelect(message.details, true));
+			};
 		};
 
 		const onSelect = (item: any, isNew: boolean) => {
@@ -976,10 +974,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				if (isInline) {
 					Onboarding.start(isCollection ? 'inlineCollection' : 'inlineSet', isPopup, false, {
-						parseParam: (param: any) => {
-							param.element = [ `#block-${block.id}`, param.element ].join(' ');
-							return param;
-						},
+						parseParam: param => ({
+							...param,
+							element: [ `#block-${block.id}`, param.element ].join(' '),
+						}),
 					});
 				};
 			});
