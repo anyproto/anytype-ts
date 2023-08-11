@@ -227,7 +227,7 @@ const PopupSettings = observer(class PopupSettings extends React.Component<I.Pop
 
 		this.unbind();
 		win.on('resize.settings', () => { this.resize(); });
-		win.on('keydown.settings', (e: any) => { this.onKeyDown(e); });
+		win.on('keydown.settings', e => this.onKeyDown(e));
 		win.on('mousedown.settings', (e: any) => { this.onMouseDown(e); });
 	};
 
