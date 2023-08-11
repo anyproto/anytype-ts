@@ -309,8 +309,13 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 
 		raf(() => { wrapper.css({ height }); });
 		window.setTimeout(() => { 
-			node.removeClass('isClosed');
-			wrapper.css({ height: 'auto' });
+			const { block } = this.props;
+			const isClosed = Storage.checkToggle("widget", block.id);
+
+			if (!isClosed) {
+				node.removeClass("isClosed");
+				wrapper.css({ height: "auto" });
+			}
 		}, 450);
 	};
 
@@ -326,7 +331,14 @@ const WidgetIndex = observer(class WidgetIndex extends React.Component<Props> {
 			node.addClass('isClosed'); 
 			wrapper.css({ height: 0 });
 		});
-		window.setTimeout(() => { wrapper.css({ height: '' }); }, 450);
+		window.setTimeout(() => {
+			const { block } = this.props;
+			const isClosed = Storage.checkToggle("widget", block.id);
+
+			if (isClosed) {
+				wrapper.css({ height: "" });
+			}
+		}, 450);
 	};
 
 	getData (subId: string, callBack?: () => void) {
