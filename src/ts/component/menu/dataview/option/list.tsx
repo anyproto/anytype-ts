@@ -183,27 +183,26 @@ const MenuOptionList = observer(class MenuOptionList extends React.Component<I.M
 	};
 
 	rebind () {
-		const { getId } = this.props;
-
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		$(`#${getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		$(`#${this.props.getId()}`).on('click', () => { menuStore.close('dataviewOptionEdit'); });
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 
 	unbind () {
-		const { getId } = this.props;
-
 		$(window).off('keydown.menu');
-		$(`#${getId()}`).off('ck');
+		$(`#${this.props.getId()}`).off('click');
 	};
 
 	onKeyDown (e: any) {
-		const item = this.getItems()[this.n];
+		const items = this.getItems();
+		
 		let ret = false;
 
+		console.log(e);
+
 		keyboard.shortcut('arrowright', e, () => {
-			this.onEdit(e, item);
+			this.onEdit(e, items[this.n]);
 			ret = true;
 		});
 

@@ -75,7 +75,6 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 	};
 
 	componentWillUnmount () {
-		this.unbind();
 		window.clearTimeout(this.timeout);
 	};
 
@@ -89,8 +88,8 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.menu', (e: any) => { this.onKeyDown(e); });
-		window.setTimeout(() => { this.props.setActive(); }, 15);
+		$(window).on('keydown.menu', e => this.onKeyDown(e));
+		window.setTimeout(() => this.props.setActive(), 15);
 	};
 	
 	unbind () {
@@ -126,7 +125,7 @@ const MenuOptionEdit = observer(class MenuOptionEdit extends React.Component<I.M
 
 		let ret = false;
 
-		keyboard.shortcut('enter', e, (pressed: string) => {
+		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
 
 			this.save();

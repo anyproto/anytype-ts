@@ -52,7 +52,7 @@ const PopupConfirm = observer(class PopupConfirm extends React.Component<I.Popup
 
 	rebind () {
 		this.unbind();
-		$(window).on('keydown.confirm', (e: any) => { this.onKeyDown(e); });
+		$(window).on('keydown.confirm', e => this.onKeyDown(e));
 	};
 
 	unbind () {
