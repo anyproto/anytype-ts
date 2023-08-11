@@ -80,6 +80,7 @@ import Constant from 'json/constant.json';
 
 interface State {
 	tab: string;
+	sub: string;
 };
 
 const BORDER = 10;
@@ -169,6 +170,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	state = {
 		tab: '',
+		sub: '',
 	};
 	
 	constructor (props: I.Menu) {
@@ -186,10 +188,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		this.getPosition = this.getPosition.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onDimmerClick = this.onDimmerClick.bind(this);
+		this.setSub = this.setSub.bind(this);
 	};
 
 	render () {
 		const { id, param } = this.props;
+		const { sub } = this.state;
 		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs } = param;
 		const { data } = param;
 		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
@@ -222,7 +226,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (item) {
 				Component = Components[item.component];
 			};
-		} else 
+		} else
+		if (sub) {
+			Component = Components[sub];
+		} else
 		if (component) {
 			Component = Components[component];
 		} else {
@@ -270,6 +277,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							{...this.props} 
 							setActive={this.setActive}
 							setHover={this.setHover}
+							setSub={this.setSub}
 							onKeyDown={this.onKeyDown}
 							storageGet={this.storageGet}
 							storageSet={this.storageSet}
@@ -938,6 +946,10 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		this.setState({ tab });
 	};
 
+	setSub (sub: string) {
+		this.setState({ sub })
+	};
+
 	storageGet () {
 		return Storage.get(this.getId()) || {};
 	};
@@ -949,7 +961,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	getId (): string {
 		const { param } = this.props;
 		const { getTabs } = param;
-		const { tab } = this.state;
+		const { tab, sub } = this.state;
 		const tabs = getTabs ? getTabs() : [];
 
 		let id = '';
@@ -959,6 +971,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (item) {
 				id = item.component;
 			};
+		} else if (sub) {
+			id = sub;
 		} else {
 			id = this.props.id;
 		};

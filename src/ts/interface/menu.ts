@@ -51,6 +51,7 @@ export interface Menu {
 	history?: any;
 	setActive?(item?: any, scroll?: boolean): void;
 	setHover?(item?: any, scroll?: boolean): void;
+	setSub?(id: string): void;
 	onKeyDown?(e: any): void;
 	storageGet?(): any;
 	storageSet?(data: any): void;

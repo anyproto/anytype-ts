@@ -266,11 +266,11 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const layoutSettings = [
 			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), caption: this.defaultName(type), arrow: true },
 			isBoard ? { id: 'groupBy', name: translate('menuDataviewViewEditGroupBy'), arrow: true } : null,
-			{ id: 'relations', name: translate('libDataviewRelations'), arrow: true }
+			{ id: 'relations', name: translate('libDataviewRelations'), sub: 'dataviewRelationList' }
 		];
 		const tools = [
-			{ id: 'filter', name: translate('menuDataviewViewFilter'), component: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '', arrow: true },
-			{ id: 'sort', name: translate('menuDataviewViewSort'), component: 'dataviewSort', caption: sortCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '', arrow: true }
+			{ id: 'filter', name: translate('menuDataviewViewFilter'), sub: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
+			{ id: 'sort', name: translate('menuDataviewViewSort'), sub: 'dataviewSort', caption: sortCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '' }
 		];
 
 		let sections: any[] = [
@@ -397,7 +397,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	onClick (e: any, item: any) {
-		const { param, close } = this.props;
+		const { param, close, setSub } = this.props;
 		const { data } = param;
 		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly, isInline, getTarget } = data;
 		const view = data.view.get();
@@ -406,6 +406,11 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const object = getTarget();
 
 		if (readonly || item.arrow) {
+			return;
+		};
+
+		if (item.sub) {
+			setSub(item.sub);
 			return;
 		};
 
