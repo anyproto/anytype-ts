@@ -2,7 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import $ from 'jquery';
 import raf from 'raf';
-import { Dimmer, Icon } from 'Component';
+import { Dimmer, Icon, Button, Title } from 'Component';
 import { I, keyboard, UtilCommon, analytics, Storage } from 'Lib';
 import { menuStore, popupStore } from 'Store';
 
@@ -80,7 +80,7 @@ import Constant from 'json/constant.json';
 
 interface State {
 	tab: string;
-	sub: string;
+	sub: any;
 };
 
 const BORDER = 10;
@@ -170,7 +170,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	state = {
 		tab: '',
-		sub: '',
+		sub: null,
 	};
 	
 	constructor (props: I.Menu) {
@@ -197,29 +197,36 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs } = param;
 		const { data } = param;
 		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
-		
-		let tab = '';
-		if (tabs.length) {
-			tab = this.state.tab || tabs[0].id;
-		};
-		
 		const menuId = this.getId();
-		let Component = null;
 		const arrowDirection = this.getArrowDirection();
-
-		const cn = [ 
-			'menu', 
+		const cn = [
+			'menu',
 			(type == I.MenuType.Horizontal ? 'horizontal' : 'vertical'),
 			'v' + vertical,
 			'h' + horizontal
 		];
+		const cd = [];
+		
+		let tab = '';
+		let title = '';
+		let Component = null;
+
+		if (tabs.length) {
+			tab = this.state.tab || tabs[0].id;
+		};
+
+		if (data.menuTitle) {
+			title = data.menuTitle;
+		};
+		if (sub && sub.menuTitle) {
+			title = sub.menuTitle;
+		};
+
 		if (component) {
 			cn.push(UtilCommon.toCamelCase('menu-' + component));
 		} else {
 			cn.push(menuId);
 		};
-
-		const cd = [];
 
 		if (tab) {
 			const item = tabs.find(it => it.id == tab);
@@ -227,8 +234,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				Component = Components[item.component];
 			};
 		} else
-		if (sub) {
-			Component = Components[sub];
+		if (sub && sub.component) {
+			Component = Components[sub.component];
 		} else
 		if (component) {
 			Component = Components[component];
@@ -266,6 +273,13 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							{tabs.map((item: any, i: number) => (
 								<Tab key={i} {...item} />
 							))}
+						</div>
+					) : ''}
+
+					{title ? (
+						<div className="menuTitleWrapper">
+							{sub ? <Icon className="arrow back" onClick={() => this.setSub(null)} /> : ''}
+							<Title text={title} />
 						</div>
 					) : ''}
 
@@ -946,7 +960,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		this.setState({ tab });
 	};
 
-	setSub (sub: string) {
+	setSub (sub: any) {
 		this.setState({ sub })
 	};
 
@@ -971,8 +985,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (item) {
 				id = item.component;
 			};
-		} else if (sub) {
-			id = sub;
+		} else if (sub && sub.component) {
+			id = sub.component;
 		} else {
 			id = this.props.id;
 		};

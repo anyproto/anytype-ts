@@ -202,6 +202,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				isInline,
 				isCollection,
 				view: observable.box(view),
+				menuTitle: translate('menuDataviewViewSettings')
 			},
 		};
 

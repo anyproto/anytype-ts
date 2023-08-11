@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
-import { Input, MenuItemVertical, Title } from 'Component';
+import { Input, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -53,7 +53,6 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 
 		return (
 			<div>
-				<Title text={translate('menuDataviewViewSettings')} />
 				<div className="filter isName">
 					<div className="inner">
 						<Input 
@@ -261,11 +260,11 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const filterCnt = filters.length;
 
 		const defaultSettings = [
-			{ id: 'defaultType', name: translate('menuDataviewViewDefaultType'), arrow: true }
+			{ id: 'defaultType', name: translate('menuDataviewViewDefaultType') }
 		];
 		const layoutSettings = [
-			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), caption: this.defaultName(type), arrow: true },
-			isBoard ? { id: 'groupBy', name: translate('menuDataviewViewEditGroupBy'), arrow: true } : null,
+			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), caption: this.defaultName(type) },
+			isBoard ? { id: 'groupBy', name: translate('menuDataviewViewEditGroupBy') } : null,
 			{ id: 'relations', name: translate('libDataviewRelations'), sub: 'dataviewRelationList' }
 		];
 		const tools = [
@@ -410,7 +409,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		if (item.sub) {
-			setSub(item.sub);
+			setSub({ component: item.sub, menuTitle: item.name });
 			return;
 		};
 
