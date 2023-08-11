@@ -339,7 +339,7 @@ const MenuRelationSuggest = observer(class MenuRelationSuggest extends React.Com
 	onMouseEnter (e: any, item: any) {
 		e.persist();
 
-		if (!keyboard.isMouseDisabled) {
+		if (!keyboard.isMouseDisabled && !menuStore.isAnimating(this.props.id)) {
 			this.props.setActive(item, false);
 			this.onOver(e, item);
 		};
