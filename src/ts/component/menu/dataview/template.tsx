@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import { analytics, C, I, keyboard, UtilObject, translate, Action } from 'Lib';
-import { dbStore } from 'Store';
+import { dbStore, commonStore } from 'Store';
 import Constant from 'json/constant.json';
 
 class MenuTemplate extends React.Component<I.Menu> {
