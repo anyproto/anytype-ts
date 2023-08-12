@@ -60,7 +60,7 @@ export const Mapper = {
 				workspaceObjectId: obj.getWorkspaceobjectid(),
 				widgetsId: obj.getWidgetsid(),
 				analyticsId: obj.getAnalyticsid(),
-				networkId: '',//obj.getNetworkid(),
+				networkId: obj.getNetworkid(),
 			};
 		},
 

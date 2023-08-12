@@ -482,8 +482,8 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 	getTypeId (): string {
 		const { rootId } = this.props;
 		const objectId = this.getObjectId();
-		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type).map(it => it.id);
-		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation).map(it => it.id);
+		const types = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Type);
+		const relations = Relation.getSetOfObjects(rootId, objectId, I.ObjectLayout.Relation);
 
 		let typeId = '';
 
