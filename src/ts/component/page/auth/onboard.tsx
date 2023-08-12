@@ -333,11 +333,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (stage == Stage.Void) {
-			this.refNext.setLoading(true);
-			this.accountCreate(() => {
-				this.refNext.setLoading(false);
-				run();
-			});
+			this.refNext?.setLoading(true);
+			this.accountCreate(() => run());
 		} else {
 			run();
 		};

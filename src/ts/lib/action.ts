@@ -331,7 +331,7 @@ class Action {
 					callBack();
 					analytics.event('RemoveCompletely', { count });
 				},
-				onCancel: () => { callBack(); }
+				onCancel: () => callBack(),
 			},
 		});
 	};
