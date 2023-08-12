@@ -36,6 +36,7 @@ module.exports = {
 		'no-fallthrough': 'off',
 		'no-case-declarations': 'off',
 		'no-console': 'off',
+		'no-var': 'warn',
 
 		// unused vars
 		'no-unused-vars': 'off',
