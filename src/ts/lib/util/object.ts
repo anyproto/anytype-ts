@@ -115,7 +115,9 @@ class UtilObject {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (e.shiftKey || popupStore.isOpen('page')) {
+		console.log(e, e.shiftKey);
+
+		if (e.shiftKey || keyboard.isPopup()) {
 			this.openPopup(object, param);
 		} else
 		if ((e.metaKey || e.ctrlKey)) {
@@ -133,7 +135,7 @@ class UtilObject {
 			return;
 		};
 
-		popupStore.isOpen('page') ? this.openPopup(object, param) : this.openRoute(object, param);
+		keyboard.isPopup() ? this.openPopup(object, param) : this.openRoute(object, param);
 	};
 	
 	openRoute (object: any, param?: any) {
@@ -157,9 +159,9 @@ class UtilObject {
 		if (!object) {
 			return;
 		};
-	
+
 		// Prevent opening object in popup from different space
-		if (object.spaceId != commonStore.space) {
+		if (object.spaceId && (object.spaceId != commonStore.space)) {
 			this.openRoute(object, param);
 			return;
 		};

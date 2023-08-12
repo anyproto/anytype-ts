@@ -212,7 +212,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	onScroll () {
 		const { dataset, isPopup } = this.props;
 
-		if (!isPopup && popupStore.isOpen('page')) {
+		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
@@ -225,7 +225,7 @@ const PageMainSet = observer(class PageMainSet extends React.Component<I.PageCom
 	onKeyDown (e: any): void {
 		const { dataset, isPopup } = this.props;
 
-		if (!isPopup && popupStore.isOpen('page')) {
+		if (!isPopup && keyboard.isPopup()) {
 			return;
 		};
 
