@@ -937,31 +937,29 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 		const { targetObjectId } = block.content;
 		const isCollection = this.isCollection();
 		const collectionType = dbStore.getCollectionType();
-
-		let filters: I.Filter[] = [];
 		const addParam: any = {};
 
+		let filters: I.Filter[] = [];
+		
 		if (isCollection) {
-			addParam.name = translate('blockDataviewCreateNewCollection');
-			addParam.onClick = () => {
-				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: collectionType?.id }, [], '', commonStore.space, (message: any) => { 
-					onSelect(message.details, true); 
-				});
-			};
-
 			filters = filters.concat([
 				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Collection },
 			]);
-		} else {
-			addParam.name = translate('blockDataviewCreateNewSet');
-			addParam.onClick = () => {
-				C.ObjectCreateSet([], {}, '', commonStore.space, (message: any) => { onSelect(message.details, true); });
-			};
 
+			addParam.name = translate('blockDataviewCreateNewCollection');
+			addParam.onClick = () => {
+				C.ObjectCreate({ layout: I.ObjectLayout.Collection, type: collectionType?.id }, [], '', commonStore.space, message => onSelect(message.details, true));
+			};
+		} else {
 			filters = filters.concat([
 				{ operator: I.FilterOperator.And, relationKey: 'layout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Set },
 				{ operator: I.FilterOperator.And, relationKey: 'setOf', condition: I.FilterCondition.NotEmpty, value: null },
 			]);
+
+			addParam.name = translate('blockDataviewCreateNewSet');
+			addParam.onClick = () => {
+				C.ObjectCreateSet([], {}, '', commonStore.space, message => onSelect(message.details, true));
+			};
 		};
 
 		const onSelect = (item: any, isNew: boolean) => {
@@ -978,10 +976,10 @@ const BlockDataview = observer(class BlockDataview extends React.Component<Props
 
 				if (isInline) {
 					Onboarding.start(isCollection ? 'inlineCollection' : 'inlineSet', isPopup, false, {
-						parseParam: (param: any) => {
-							param.element = [ `#block-${block.id}`, param.element ].join(' ');
-							return param;
-						},
+						parseParam: param => ({
+							...param,
+							element: [ `#block-${block.id}`, param.element ].join(' '),
+						}),
 					});
 				};
 			});
