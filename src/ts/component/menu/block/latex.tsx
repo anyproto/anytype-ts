@@ -205,7 +205,7 @@ const MenuBlockLatex = observer(class MenuBlockLatex extends React.Component<I.M
 			isSub: true,
 			data: {
 				text: item.comment || item.symbol,
-				example: item.comment == "" ? false : true
+				example: item.comment ? true : false,
 			}
 		});
 	};

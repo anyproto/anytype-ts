@@ -8,12 +8,12 @@ function processLicenses(licenses, allowedLicenses) {
 	
 		// The hyphenation language patterns are licensed under the LGPL (unless otherwise noted) and copyrighted to their respective creators and maintainers.
 		// https://github.com/bramstein/hyphenation-patterns
-		if (pkg.startsWith("hyphenation.")) {
-			pkgLicenses = "LGPL";
+		if (pkg.startsWith('hyphenation.')) {
+			pkgLicenses = 'LGPL';
 		};
 
 		// Solutions developed by Anytype or Any Association are allowed
-		if (licenses[pkg].publisher == "Anytype" || licenses[pkg].publisher == "Any" || licenses[pkg].publisher == "Any Association") {
+		if (licenses[pkg].publisher == 'Anytype' || licenses[pkg].publisher == 'Any' || licenses[pkg].publisher == 'Any Association') {
 			return false;
 		};
 		
