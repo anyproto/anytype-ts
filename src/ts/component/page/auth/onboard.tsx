@@ -300,6 +300,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		const run = () => {
 			Animation.from(() => {
+				this.refNext?.setLoading(false);
+
 				// Move animation forward, wait for delay, move onboarding forward
 				if (stage == Stage.Void) {
 					incrementAnimation(delay(incrementOnboarding(), 100))();

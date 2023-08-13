@@ -384,6 +384,7 @@
     "editorControlLayout": "Layout",
     "editorControlRelation": "Relations",
 
+	"editorPagePasteLink": "Paste as link",
     "editorPageCreateBookmarkObject": "Create bookmark object",
     "editorPageCreateBookmark": "Create bookmark",
     "editorPagePasteText": "Paste as text",

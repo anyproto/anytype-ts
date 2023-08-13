@@ -58,6 +58,10 @@ html.bodyAuthOnboard, html.bodyAuthLogin, html.bodyAuthDeleted {
 		b { display: block; font-weight: 500; color: $colorPrimary; }
 		ul { list-style-position: inside; padding-left: 0.75em; }
 	}
+
+	.loaderWrapper {
+		.loader { border-color: #555; border-left-color: $colorOrange; }
+	}
 }
 
 html.bodyAuthDeleted {

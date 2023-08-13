@@ -1765,7 +1765,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const isEmpty = first && (focused == first.id) && !first.getLength() && (object.internalFlags || []).includes(I.ObjectFlag.DeleteEmpty);
 
 		const options: any[] = [
-			{ id: 'link', name: 'Paste as link' },
+			{ id: 'link', name: translate('editorPagePasteLink') },
 			isEmpty && !isInsideTable ? { id: 'object', name: translate('editorPageCreateBookmarkObject') } : null,
 			!isInsideTable ? { id: 'block', name: translate('editorPageCreateBookmark') } : null,
 			{ id: 'cancel', name: translate('editorPagePasteText') },
