@@ -212,7 +212,23 @@ class Util {
 	};
 
 	enabledLangs () {
-		return [ 'da-DK', 'de-DE', 'en-US', 'es-ES', 'fr-FR', 'hi-IN', 'id-ID', 'it-IT', 'no-NO', 'ro-RO', 'ru-RU', 'uk-UA', 'zh-CN', 'zh-TW' ];
+		return [
+			"da-DK",
+			"de-DE",
+			"en-US",
+			"es-ES",
+			"fr-FR",
+			"hi-IN",
+			"id-ID",
+			"it-IT",
+			"nl-NL",
+			"no-NO",
+			"ro-RO",
+			"ru-RU",
+			"uk-UA",
+			"zh-CN",
+			"zh-TW"
+		];
 	};
 
 	translate (key) {
