@@ -244,7 +244,7 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 	getItems () {
 		const { param } = this.props;
 		const { data } = param;
-		const { filter, label, canAdd, addParam, mapElement } = data;
+		const { filter, label, canAdd, addParam } = data;
 
 		let items = [].concat(this.items);
 		const length = items.length;
@@ -264,10 +264,6 @@ const MenuSearchObject = observer(class MenuSearchObject extends React.Component
 			if (filter) {
 				items.push({ id: 'add', icon: 'plus', name: UtilCommon.sprintf(translate('commonCreateObject'), filter), isAdd: true });
 			};
-		};
-
-		if (mapElement) {
-			items = items.map(mapElement);
 		};
 
 		return items;

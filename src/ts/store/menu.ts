@@ -32,15 +32,7 @@ class MenuStore {
 			return;
 		};
 
-		param.type = Number(param.type) || I.MenuType.Vertical;
-		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
-		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
-		param.data = param.data || {};
-
-		if (param.isSub) {
-			param.noAnimation = true;
-			param.passThrough = true;
-		};
+		param = this.normaliseParam(param);
 
 		const item = this.get(id);
 		if (item) {
@@ -52,10 +44,24 @@ class MenuStore {
 		Preview.previewHide(true);
 	};
 
+	normaliseParam (param: I.MenuParam) {
+		param.type = Number(param.type) || I.MenuType.Vertical;
+		param.vertical = Number(param.vertical) || I.MenuDirection.Bottom;
+		param.horizontal = Number(param.horizontal) || I.MenuDirection.Left;
+		param.data = param.data || {};
+
+		if (param.isSub) {
+			param.noAnimation = true;
+			param.passThrough = true;
+		};
+
+		return param;
+	};
+
     update (id: string, param: any) {
 		const item = this.get(id);
-
 		if (item) {
+			param = this.normaliseParam(param);
 			param.data = Object.assign(item.param.data, param.data);
 			set(item, { param: Object.assign(item.param, param) });
 		};
@@ -66,6 +72,15 @@ class MenuStore {
 		if (item) {
 			set(item.param.data, data);
 		};
+	};
+
+	replace (oldId: string, newId: string, param: I.MenuParam) {
+		param = this.normaliseParam(param);
+
+		const idx = this.menuList.findIndex(it => it.id == oldId);
+
+		this.menuList = this.menuList.filter(it => it.id != oldId);
+		idx >= 0 ? this.menuList.splice(idx, 0, { id: newId, param }) : this.menuList.push({ id: newId, param });
 	};
 
     get (id: string): I.Menu {
