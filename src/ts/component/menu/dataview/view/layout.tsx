@@ -90,19 +90,6 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 	unbind () {
 		$(window).off('keydown.menu');
 	};
-
-	setName () {
-		const { name } = this.param;
-		
-		let n = name;
-		for (const i in I.ViewType) {
-			if (n == this.defaultName(Number(i))) {
-				n = '';
-				break;
-			};
-		};
-		this.ref.setValue(n);
-	};
 	
 	onKeyDown (e: any) {
 		const { param, close } = this.props;
@@ -371,10 +358,6 @@ const MenuViewLayout = observer(class MenuViewLayout extends React.Component<I.M
 		if (onSelect) {
 			onSelect();
 		};
-	};
-
-	defaultName (type: I.ViewType): string {
-		return translate(`viewName${type}`);
 	};
 
 	resize () {
