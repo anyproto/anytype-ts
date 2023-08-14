@@ -2,7 +2,7 @@ import * as React from 'react';
 import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { I, C, analytics, keyboard, Key, translate, Dataview, UtilMenu, Relation, UtilCommon } from 'Lib';
-import { Input, MenuItemVertical } from 'Component';
+import { Input, InputWithLabel, MenuItemVertical } from 'Component';
 import { blockStore, dbStore, menuStore } from 'Store';
 import Constant from 'json/constant.json';
 
@@ -54,21 +54,19 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		return (
 			<div>
 				<div className="filter isName">
-					<div className="inner">
-						<Input 
-							ref={ref => this.ref = ref} 
-							value={name}
-							readonly={readonly}
-							placeholder={this.defaultName(type)}
-							maxLength={32} 
-							onKeyUp={this.onKeyUp} 
-							onFocus={this.onNameFocus}
-							onBlur={this.onNameBlur}
-							onMouseEnter={this.onNameEnter}
-						/>
-					</div>
-					<div className="line" />
-				</div>	
+					<InputWithLabel
+						ref={ref => this.ref = ref}
+						value={name}
+						label={translate('menuDataviewViewName')}
+						readonly={readonly}
+						placeholder={this.defaultName(type)}
+						maxLength={32}
+						onKeyUp={this.onKeyUp}
+						onFocus={this.onNameFocus}
+						onBlur={this.onNameBlur}
+						onMouseEnter={this.onNameEnter}
+					/>
+				</div>
 
 				{sections.map((item: any, i: number) => (
 					<Section key={i} index={i} {...item} />

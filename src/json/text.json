@@ -1143,6 +1143,7 @@
     "menuDataviewViewFilter": "Filter",
     "menuDataviewViewSort": "Sort",
     "menuDataviewViewApplied": "%s applied",
+    "menuDataviewViewName": "View name",
 
     "menuDataviewViewListNoViewsFound": "No views found",
     "menuDataviewViewListAddView": "Add a view",

@@ -26,6 +26,11 @@
 		}
 	}
 
+	.menu.menuDataviewViewSettings {
+		.content { padding-top: 0; }
+		.filter.isName { margin-bottom: 4px; }
+	}
+
 	.menu.menuDataviewViewEdit,
 	.menu.menuDataviewViewSettings,
 	.menu.menuDataviewViewLayout { width: 360px; }
