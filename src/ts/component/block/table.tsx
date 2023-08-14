@@ -503,7 +503,7 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		};
 
 		const { rootId } = this.props;
-		const { rows, columns } = this.getData();
+		const { columns } = this.getData();
 
 		let position: I.BlockPosition = I.BlockPosition.None;
 		let next: any = null;
@@ -549,11 +549,9 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 			case 'rowMoveTop':
 			case 'rowMoveBottom': {
 				position = (item.id == 'rowMoveTop') ? I.BlockPosition.Top : I.BlockPosition.Bottom;
-				idx = rows.findIndex(it => it.id == rowId);
-				nextIdx = idx + (position == I.BlockPosition.Top ? -1 : 1);
-				next = rows[nextIdx];
+				next = this.getNextRow(rowId, position == I.BlockPosition.Top ? -1 : 1);
 
-				if (next) {
+				if (next && !next.content.isHeader) {
 					this.onSortEndRow(rowId, next.id, position);
 				};
 				break;
@@ -1241,11 +1239,25 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 		];
 
 		if (!isHeader) {
+			const nextTop = this.getNextRow(id, -1);
+			const nextBot = this.getNextRow(id, 1);
+
+			let moveTop = null;
+			let moveBot = null;
+
+			if (nextTop && !nextTop.content.isHeader && (idx > 0)) {
+				moveTop = { id: 'rowMoveTop', icon: 'table-move-top', name: translate('blockTableOptionsRowRowMoveTop') };
+			};
+
+			if (nextBot && !nextBot.content.isHeader && (idx < length - 1)) {
+				moveBot = { id: 'rowMoveBottom', icon: 'table-move-bottom', name: translate('blockTableOptionsRowRowMoveBottom') };
+			};
+
 			options = options.concat([
 				{ id: 'rowBefore', icon: 'table-insert-top', name: translate('blockTableOptionsRowRowBefore') },
 				{ id: 'rowAfter', icon: 'table-insert-bottom', name: translate('blockTableOptionsRowRowAfter') },
-				(idx > 0) ? { id: 'rowMoveTop', icon: 'table-move-top', name: translate('blockTableOptionsRowRowMoveTop') } : null,
-				(idx < length - 1) ? { id: 'rowMoveBottom', icon: 'table-move-bottom', name: translate('blockTableOptionsRowRowMoveBottom') } : null,
+				moveTop,
+				moveBot,
 				{ id: 'rowCopy', icon: 'copy', name: translate('commonDuplicate') },
 				{ isDiv: true },
 			]);
@@ -1504,6 +1516,15 @@ const BlockTable = observer(class BlockTable extends React.Component<I.BlockComp
 
 	getClassByPosition (position: I.BlockPosition) {
 		return I.BlockPosition[position].toLowerCase();
+	};
+
+	getNextRow (id: string, dir: number) {
+		const { rows } = this.getData();
+		const idx = rows.findIndex(it => it.id == id);
+		const nextIdx = idx + dir;
+		const next = rows[nextIdx];
+
+		return next;
 	};
 
 	resize () {
