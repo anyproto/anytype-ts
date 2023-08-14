@@ -10,18 +10,14 @@ import HeadRow from './grid/head/row';
 import BodyRow from './grid/body/row';
 import Constant from 'json/constant.json';
 
-interface Props extends I.ViewComponent {
-	getWrapperWidth?(): number;
-};
-
 const PADDING = 46;
 
-const ViewGrid = observer(class ViewGrid extends React.Component<Props> {
+const ViewGrid = observer(class ViewGrid extends React.Component<I.ViewComponent> {
 
 	node: any = null;
 	ox = 0;
 
-	constructor (props: Props) {
+	constructor (props: I.ViewComponent) {
 		super (props);
 
 		this.cellPosition = this.cellPosition.bind(this);
