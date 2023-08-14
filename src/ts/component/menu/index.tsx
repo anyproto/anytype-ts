@@ -196,7 +196,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	render () {
 		const { id, param } = this.props;
 		const { submenu } = this.state;
-		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs } = param;
+		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs, withBack, onBack } = param;
 		const { data } = param;
 		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
 		const menuId = this.getId();
@@ -280,7 +280,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 					{title ? (
 						<div className="titleWrapper">
-							{submenu ? <Icon className="arrow back" onClick={() => this.setSubmenu(null)} /> : ''}
+							{withBack ? <Icon className="arrow back" onClick={() => onBack(id)} /> : ''}
 							<Title text={title} />
 						</div>
 					) : ''}

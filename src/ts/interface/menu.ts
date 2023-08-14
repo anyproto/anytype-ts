@@ -32,6 +32,7 @@ export interface MenuParam {
 	className?: string;
 	classNameWrap?: string;
 	withArrow?: boolean;
+	withBack?: boolean;
 	commonFilter?: boolean;
 	noAnimation?: boolean;
 	noDimmer?: boolean;
@@ -41,6 +42,7 @@ export interface MenuParam {
 	recalcRect?(): { width: number, height: number, x: number, y: number };
 	onClose?(): void;
 	onOpen?(component?: any): void;
+	onBack?(id: string): void;
 	getTabs?(): I.MenuTab[];
 	force?: boolean;
 };

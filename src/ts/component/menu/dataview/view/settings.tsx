@@ -256,7 +256,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		const defaultSettings = [
-			{ id: 'defaultType', name: translate('menuDataviewViewDefaultType') }
+			{ id: 'defaultType', name: translate('menuDataviewViewDefaultType'), subComponent: 'typeSuggest' }
 		];
 		const layoutSettings = [
 			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
@@ -328,7 +328,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		if (item.subComponent) {
-			setSubmenu({ component: item.subComponent, title: item.name });
+			// setSubmenu({ component: item.subComponent, title: item.name });
+			menuStore.update('dataviewViewSettings', { component: item.subComponent, title: item.title, withBack: true })
 			return;
 		};
 
