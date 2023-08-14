@@ -191,7 +191,7 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				obj.removeClass('active');
 			},
 			onBack: (id) => {
-				menuStore.update(id, {...UtilCommon.objectCopy(param), component: component});
+				menuStore.replace(id, component, param);
 			},
 			data: {
 				readonly,

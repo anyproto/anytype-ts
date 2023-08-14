@@ -256,7 +256,14 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		const defaultSettings = [
-			{ id: 'defaultType', name: translate('menuDataviewViewDefaultType'), subComponent: 'typeSuggest' }
+			{
+				id: 'defaultType',
+				name: translate('menuDataviewViewDefaultType'),
+				subComponent: 'typeSuggest',
+				onSubClick: (type) => {
+					console.log('SET DEFAULT TYPE: ', type.name);
+				}
+			}
 		];
 		const layoutSettings = [
 			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
@@ -315,7 +322,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	onClick (e: any, item: any) {
-		const { param, close, setSubmenu } = this.props;
+		const { id, param, close, getSize } = this.props;
 		const { data } = param;
 		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly, isInline, getTarget } = data;
 		const view = data.view.get();
@@ -328,8 +335,20 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		if (item.subComponent) {
-			// setSubmenu({ component: item.subComponent, title: item.name });
-			menuStore.update('dataviewViewSettings', { component: item.subComponent, title: item.title, withBack: true })
+			const size = getSize();
+			const addParam = {
+				component: item.subComponent,
+				title: item.name,
+				withBack: true,
+				width: size.width,
+				data: param.data
+			};
+
+			if (item.onSubClick) {
+				param.data = Object.assign(addParam.data, { onClick: item.onSubClick });
+			};
+
+			menuStore.replace(id, item.subComponent, Object.assign(param, addParam));
 			return;
 		};
 

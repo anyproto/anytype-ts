@@ -47,11 +47,6 @@ export interface MenuParam {
 	force?: boolean;
 };
 
-export interface SubmenuParam {
-	component?: string;
-	title?: string;
-};
-
 export interface Menu {
 	id: string;
 	param: MenuParam;
@@ -59,7 +54,6 @@ export interface Menu {
 	history?: any;
 	setActive?(item?: any, scroll?: boolean): void;
 	setHover?(item?: any, scroll?: boolean): void;
-	setSubmenu?(item?: any): void;
 	onKeyDown?(e: any): void;
 	storageGet?(): any;
 	storageSet?(data: any): void;

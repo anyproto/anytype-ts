@@ -33,7 +33,7 @@ import { ThreadStatus, ThreadSummary, ThreadDevice, ThreadAccount, ThreadCafe, F
 import { Progress, ProgressType, ProgressState } from './progress';
 import { PopupParam, Popup, PopupSettings } from './popup';
 import { Preview, PreviewLink, PreviewType } from './preview';
-import { MenuTab, MenuType, MenuDirection, MenuParam, SubmenuParam, Menu, MenuItem } from './menu';
+import { MenuTab, MenuType, MenuDirection, MenuParam, Menu, MenuItem } from './menu';
 import { ObjectLayout, ObjectFlag, RelationType, RelationScope, OptionScope } from './object';
 import { RestrictionObject, RestrictionDataview } from './restriction';
 
@@ -135,7 +135,6 @@ export {
 	MenuType,
 	MenuDirection,
 	MenuParam,
-	SubmenuParam,
 	Menu,
 	MenuItem,
 
