@@ -248,13 +248,20 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		const filters = view.filters.filter(it => dbStore.getRelationByKey(it.relationKey));
 		const filterCnt = filters.length;
 
+		const relations = view.getVisibleRelations().map(it => UtilCommon.toUpperCamelCase(UtilCommon.shorten(it.relationKey, 16)));
+
+		let relationCnt = relations.join(', ');
+		if (relations.length > 2) {
+			relationCnt = [relations[0], relations[1], `+${relations.length - 2}`].join(', ');
+		};
+
 		const defaultSettings = [
 			{ id: 'defaultType', name: translate('menuDataviewViewDefaultType') }
 		];
 		const layoutSettings = [
 			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
 			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
-			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList' }
+			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList', caption: relationCnt }
 		];
 		const tools = [
 			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
