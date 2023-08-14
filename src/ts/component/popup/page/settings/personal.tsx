@@ -55,7 +55,7 @@ const PopupSettingsPagePersonal = observer(class PopupSettingsPagePersonal exten
 
 						<Select
 							id="interfaceLang"
-							value={config.interfaceLang}
+							value={config.interfaceLang || Constant.default.interfaceLang}
 							options={interfaceLanguages}
 							onChange={v => Renderer.send('changeInterfaceLang', v)}
 							arrowClassName="black"
