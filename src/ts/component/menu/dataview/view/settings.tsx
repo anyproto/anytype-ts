@@ -321,7 +321,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		if (item.subComponent) {
-			setSubMenu({ component: item.subComponent, menuTitle: item.name });
+			setSubMenu({ component: item.subComponent, title: item.name });
 			return;
 		};
 

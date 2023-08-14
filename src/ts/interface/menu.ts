@@ -11,6 +11,7 @@ export interface MenuTab {
 
 export interface MenuParam {
 	component?: string;
+	title?: string;
 	menuKey?: string;
 	element?: any;
 	rect?: any;
@@ -42,6 +43,11 @@ export interface MenuParam {
 	onOpen?(component?: any): void;
 	getTabs?(): I.MenuTab[];
 	force?: boolean;
+};
+
+export interface SubMenuParam {
+	component?: string;
+	title?: string;
 };
 
 export interface Menu {

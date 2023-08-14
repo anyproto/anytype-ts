@@ -81,7 +81,7 @@ import Constant from 'json/constant.json';
 
 interface State {
 	tab: string;
-	subMenu: any;
+	subMenu: I.SubMenuParam;
 };
 
 const BORDER = 10;
@@ -217,11 +217,11 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			tab = this.state.tab || tabs[0].id;
 		};
 
-		if (data.menuTitle) {
-			title = data.menuTitle;
+		if (param.title) {
+			title = param.title;
 		};
-		if (subMenu && subMenu.menuTitle) {
-			title = subMenu.menuTitle;
+		if (subMenu && subMenu.title) {
+			title = subMenu.title;
 		};
 
 		if (component) {

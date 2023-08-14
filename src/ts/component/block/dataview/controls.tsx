@@ -201,9 +201,12 @@ const Controls = observer(class Controls extends React.Component<I.ViewComponent
 				getTarget,
 				isInline,
 				isCollection,
-				view: observable.box(view),
-				menuTitle: translate('menuDataviewViewSettings')
+				view: observable.box(view)
 			},
+		};
+
+		if (component == 'dataviewViewSettings') {
+			param.title = translate('menuDataviewViewSettings');
 		};
 
 		menuStore.open(component, param);
