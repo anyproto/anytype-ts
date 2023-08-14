@@ -308,7 +308,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	onClick (e: any, item: any) {
-		const { param, close, setSubMenu } = this.props;
+		const { param, close, setSubmenu } = this.props;
 		const { data } = param;
 		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly, isInline, getTarget } = data;
 		const view = data.view.get();
@@ -321,7 +321,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 		};
 
 		if (item.subComponent) {
-			setSubMenu({ component: item.subComponent, title: item.name });
+			setSubmenu({ component: item.subComponent, title: item.name });
 			return;
 		};
 

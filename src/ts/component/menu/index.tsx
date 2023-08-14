@@ -81,7 +81,7 @@ import Constant from 'json/constant.json';
 
 interface State {
 	tab: string;
-	subMenu: I.SubMenuParam;
+	submenu: I.SubmenuParam;
 };
 
 const BORDER = 10;
@@ -172,7 +172,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 
 	state = {
 		tab: '',
-		subMenu: null,
+		submenu: null,
 	};
 	
 	constructor (props: I.Menu) {
@@ -190,12 +190,12 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		this.getPosition = this.getPosition.bind(this);
 		this.onMouseLeave = this.onMouseLeave.bind(this);
 		this.onDimmerClick = this.onDimmerClick.bind(this);
-		this.setSubMenu = this.setSubMenu.bind(this);
+		this.setSubmenu = this.setSubmenu.bind(this);
 	};
 
 	render () {
 		const { id, param } = this.props;
-		const { subMenu } = this.state;
+		const { submenu } = this.state;
 		const { element, type, vertical, horizontal, passThrough, noDimmer, component, withArrow, getTabs } = param;
 		const { data } = param;
 		const tabs: I.MenuTab[] = getTabs ? getTabs() : [];
@@ -220,8 +220,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		if (param.title) {
 			title = param.title;
 		};
-		if (subMenu && subMenu.title) {
-			title = subMenu.title;
+		if (submenu && submenu.title) {
+			title = submenu.title;
 		};
 
 		if (component) {
@@ -236,8 +236,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 				Component = Components[item.component];
 			};
 		} else
-		if (subMenu && subMenu.component) {
-			Component = Components[subMenu.component];
+		if (submenu && submenu.component) {
+			Component = Components[submenu.component];
 		} else
 		if (component) {
 			Component = Components[component];
@@ -279,8 +279,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 					) : ''}
 
 					{title ? (
-						<div className="menuTitleWrapper">
-							{subMenu ? <Icon className="arrow back" onClick={() => this.setSubMenu(null)} /> : ''}
+						<div className="titleWrapper">
+							{submenu ? <Icon className="arrow back" onClick={() => this.setSubmenu(null)} /> : ''}
 							<Title text={title} />
 						</div>
 					) : ''}
@@ -293,7 +293,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 							{...this.props} 
 							setActive={this.setActive}
 							setHover={this.setHover}
-							setSubMenu={this.setSubMenu}
+							setSubmenu={this.setSubmenu}
 							onKeyDown={this.onKeyDown}
 							storageGet={this.storageGet}
 							storageSet={this.storageSet}
@@ -962,8 +962,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 		this.setState({ tab });
 	};
 
-	setSubMenu (subMenu: any) {
-		this.setState({ subMenu })
+	setSubmenu (submenu: any) {
+		this.setState({ submenu })
 	};
 
 	storageGet () {
@@ -977,7 +977,7 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 	getId (): string {
 		const { param } = this.props;
 		const { getTabs } = param;
-		const { tab, subMenu } = this.state;
+		const { tab, submenu } = this.state;
 		const tabs = getTabs ? getTabs() : [];
 
 		let id = '';
@@ -987,8 +987,8 @@ const Menu = observer(class Menu extends React.Component<I.Menu, State> {
 			if (item) {
 				id = item.component;
 			};
-		} else if (subMenu && subMenu.component) {
-			id = subMenu.component;
+		} else if (submenu && submenu.component) {
+			id = submenu.component;
 		} else {
 			id = this.props.id;
 		};

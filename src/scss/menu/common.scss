@@ -68,9 +68,9 @@
 			.tab:last-child { margin: 0px; }
 		}
 
-		.menuTitleWrapper { display: flex; gap: 0 6px; padding: 8px 14px; align-items: center; }
-		.menuTitleWrapper {
-			.icon.back { width: 20px; height: 20px; background-image: url('~img/arrow/menu.svg'); transform: rotateZ(180deg); cursor: pointer; }
+		.titleWrapper { display: flex; gap: 0 6px; padding: 8px 14px; align-items: center; }
+		.titleWrapper {
+			.icon.back { width: 20px; height: 20px; background-image: url('~img/arrow/menu.svg'); transform: rotateZ(180deg); }
 			.title { @include text-common; font-weight: 600; color: $colorBlack; padding: 0; }
 		}
 		
