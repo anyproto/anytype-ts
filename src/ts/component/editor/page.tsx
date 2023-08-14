@@ -89,7 +89,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 		const length = childrenIds.length;
 		const width = root.fields?.width;
 		const object = detailStore.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
-		const readonly = this.isReadonly() || object.isArchived;
+		const readonly = this.isReadonly();
 
 		return (
 			<div 
@@ -712,6 +712,7 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 			return;
 		};
 
+		const readonly = this.isReadonly();
 		const styleParam = this.getStyleParam();
 		const cmd = keyboard.cmdKey();
 
@@ -864,7 +865,9 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 
 			// Backspace
 			keyboard.shortcut('backspace, delete', e, (pressed: string) => {
-				this.onBackspaceBlock(e, range, pressed, length, props);
+				if (!readonly) {
+					this.onBackspaceBlock(e, range, pressed, length, props);
+				};
 			});
 
 			keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
@@ -2244,10 +2247,11 @@ const EditorPage = observer(class EditorPage extends React.Component<Props, Stat
 	isReadonly () {
 		const { rootId } = this.props;
 		const { isDeleted } = this.state;
+		const object = detailStore.get(rootId, rootId);
 		const root = blockStore.getLeaf(rootId, rootId);
 		const allowed = blockStore.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
 
-		if (isDeleted) {
+		if (isDeleted || object.isArchived) {
 			return true;
 		};
 		return root?.isLocked() || !allowed;
