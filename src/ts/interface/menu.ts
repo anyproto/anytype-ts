@@ -51,7 +51,7 @@ export interface Menu {
 	history?: any;
 	setActive?(item?: any, scroll?: boolean): void;
 	setHover?(item?: any, scroll?: boolean): void;
-	setSub?(item?: any): void;
+	setSubMenu?(item?: any): void;
 	onKeyDown?(e: any): void;
 	storageGet?(): any;
 	storageSet?(data: any): void;
@@ -87,7 +87,7 @@ export interface MenuItem {
 	withSwitch?: boolean;
 	withSelect?: boolean;
 	withMore?: boolean;
-	sub?: string;
+	subComponent?: string;
 	onClick?(e: any): void;
 	onMouseEnter?(e: any): void;
 	onMouseLeave?(e: any): void;

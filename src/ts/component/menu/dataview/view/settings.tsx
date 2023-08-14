@@ -252,13 +252,13 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			{ id: 'defaultType', name: translate('menuDataviewViewDefaultType') }
 		];
 		const layoutSettings = [
-			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), sub: 'dataviewViewLayout', caption: this.defaultName(type) },
-			isBoard ? { id: 'group', name: translate('libDataviewGroups'), sub: 'dataviewGroupList' } : null,
-			{ id: 'relations', name: translate('libDataviewRelations'), sub: 'dataviewRelationList' }
+			{ id: 'layout', name: translate('menuDataviewObjectTypeEditLayout'), subComponent: 'dataviewViewLayout', caption: this.defaultName(type) },
+			isBoard ? { id: 'group', name: translate('libDataviewGroups'), subComponent: 'dataviewGroupList' } : null,
+			{ id: 'relations', name: translate('libDataviewRelations'), subComponent: 'dataviewRelationList' }
 		];
 		const tools = [
-			{ id: 'filter', name: translate('menuDataviewViewFilter'), sub: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
-			{ id: 'sort', name: translate('menuDataviewViewSort'), sub: 'dataviewSort', caption: sortCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '' }
+			{ id: 'filter', name: translate('menuDataviewViewFilter'), subComponent: 'dataviewFilterList', caption: filterCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), filterCnt) : '' },
+			{ id: 'sort', name: translate('menuDataviewViewSort'), subComponent: 'dataviewSort', caption: sortCnt ? UtilCommon.sprintf(translate('menuDataviewViewApplied'), sortCnt) : '' }
 		];
 
 		let sections: any[] = [
@@ -308,7 +308,7 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 	};
 
 	onClick (e: any, item: any) {
-		const { param, close, setSub } = this.props;
+		const { param, close, setSubMenu } = this.props;
 		const { data } = param;
 		const { rootId, blockId, loadData, getView, getSources, onSelect, onSave, readonly, isInline, getTarget } = data;
 		const view = data.view.get();
@@ -320,8 +320,8 @@ const MenuViewSettings = observer(class MenuViewSettings extends React.Component
 			return;
 		};
 
-		if (item.sub) {
-			setSub({ component: item.sub, menuTitle: item.name });
+		if (item.subComponent) {
+			setSubMenu({ component: item.subComponent, menuTitle: item.name });
 			return;
 		};
 
