@@ -1,11 +1,10 @@
 'use strict';
 
 const fs = require('fs');
-
 const stdin = process.openStdin();
-let data = "";
 
-stdin.on('data', function(chunk) {
+let data = '';
+stdin.on('data', (chunk) => {
 	data +=chunk;
 });
 

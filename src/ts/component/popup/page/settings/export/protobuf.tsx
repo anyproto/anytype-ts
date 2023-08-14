@@ -12,7 +12,6 @@ const PopupSettingsPageExportProtobuf = observer(class PopupSettingsPageExportPr
 		const { onExport } = this.props;
 		const items = [
 			{ id: 'zip', name: translate('popupExportZipArchive'), control: 'switch' },
-			{ id: 'nested', name: translate('popupExportIncludeLinkedObjects'), control: 'switch' },
 			{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
 			{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 		];

@@ -300,6 +300,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 
 		const run = () => {
 			Animation.from(() => {
+				this.refNext?.setLoading(false);
+
 				// Move animation forward, wait for delay, move onboarding forward
 				if (stage == Stage.Void) {
 					incrementAnimation(delay(incrementOnboarding(), 100))();
@@ -333,11 +335,8 @@ const PageAuthOnboard = observer(class PageAuthOnboard extends React.Component<I
 		};
 
 		if (stage == Stage.Void) {
-			this.refNext.setLoading(true);
-			this.accountCreate(() => {
-				this.refNext.setLoading(false);
-				run();
-			});
+			this.refNext?.setLoading(true);
+			this.accountCreate(() => run());
 		} else {
 			run();
 		};

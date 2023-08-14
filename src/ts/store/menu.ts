@@ -9,6 +9,7 @@ class MenuStore {
     public menuList: I.Menu[] = [];
 
     timeout = 0;
+	isAnimatingFlag: Map<string, boolean> = new Map();
 
     constructor () {
         makeObservable(this, {
@@ -134,13 +135,24 @@ class MenuStore {
 			if (callBack) {
 				callBack();
 			};
+
+			this.setIsAnimating(id, false);
 		};
 
 		if (t) {
+			this.setIsAnimating(id, true);
 			window.setTimeout(onTimeout, t);
 		} else {
 			onTimeout();
 		};
+	};
+
+	setIsAnimating (id: string, v: boolean) {
+		this.isAnimatingFlag.set(id, v);
+	};
+
+	isAnimating (id: string): boolean {
+		return this.isAnimatingFlag.get(id);
 	};
 
     closeAll (ids?: string[], callBack?: () => void) {

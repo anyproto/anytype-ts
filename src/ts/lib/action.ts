@@ -331,7 +331,7 @@ class Action {
 					callBack();
 					analytics.event('RemoveCompletely', { count });
 				},
-				onCancel: () => { callBack(); }
+				onCancel: () => callBack(),
 			},
 		});
 	};
@@ -372,7 +372,7 @@ class Action {
 
 	archive (ids: string[], callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, true, (message: any) => {
-			if (!message.error.code) {
+			if (message.error.code) {
 				return;
 			};
 
@@ -387,7 +387,7 @@ class Action {
 
 	restore (ids: string[], callBack?: () => void) {
 		C.ObjectListSetIsArchived(ids, false, (message: any) => {
-			if (!message.error.code) {
+			if (message.error.code) {
 				return;
 			};
 

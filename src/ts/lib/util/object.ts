@@ -301,6 +301,10 @@ class UtilObject {
 		return type == Constant.typeId.template;
 	};
 
+	getSystemAndFileTypes () {
+		return this.getSystemTypes().concat(this.getFileTypes());
+	};
+
 	getFileTypes () {
 		return [
 			Constant.typeId.file, 

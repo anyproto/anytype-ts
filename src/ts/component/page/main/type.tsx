@@ -437,7 +437,7 @@ const PageMainType = observer(class PageMainType extends React.Component<I.PageC
 	onRelationAdd (e: any) {
 		const rootId = this.getRootId();
 		const object = detailStore.get(rootId, rootId);
-		const recommendedRelations = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it.relationKey)
+		const recommendedRelations = object.recommendedRelations.map(id => dbStore.getRelationById(id)).map(it => it.relationKey);
 
 		menuStore.open('relationSuggest', { 
 			element: '#page .section.relation #item-add',
