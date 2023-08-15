@@ -1,18 +1,14 @@
 import * as React from 'react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
-import { I, UtilCommon, translate, keyboard, analytics } from 'Lib';
+import { I, translate, keyboard, Action } from 'Lib';
 import { menuStore } from 'Store';
 import Head from '../head';
-
-interface Props extends I.PopupSettings {
-	onImport: (type: I.ImportType, param: any, callBack?: (message: any) => void) => void;
-};
 
 interface State {
 	error: string;
 };
 
-class PopupSettingsPageImportCsv extends React.Component<Props, State> {
+class PopupSettingsPageImportCsv extends React.Component<I.PopupSettings, State> {
 
 	refMode = null;
 	refDelimiter = null;
@@ -21,7 +17,7 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 		error: '',
 	};
 
-	constructor (props: Props) {
+	constructor (props: I.PopupSettings) {
 		super(props);
 
 		this.onImport = this.onImport.bind(this);
@@ -190,41 +186,20 @@ class PopupSettingsPageImportCsv extends React.Component<Props, State> {
 	};
 
 	onImport () {
-		const { close, onImport } = this.props;
-		const options: any = { 
-			properties: [ 'openFile' ],
-			filters: [
-				{ name: 'ZIP & CSV', extensions: [ 'csv', 'zip' ] }
-			]
-		};
+		const { close } = this.props;
 
-		if (UtilCommon.isPlatformMac()) {
-			options.properties.push('openDirectory');
-		};
-
-		analytics.event('ClickImport', { type: I.ImportType.Csv });
-
-		window.Electron.showOpenDialog(options).then((result: any) => {
-			const paths = result.filePaths;
-			if ((paths == undefined) || !paths.length) {
+		Action.import(I.ImportType.Csv, [ 'csv', 'zip' ], this.data, (message: any) => {
+			if (message.error.code) {
+				this.setState({ error: message.error.description });
 				return;
 			};
 
-			onImport(I.ImportType.Csv, { paths, ...this.data }, (message: any) => {
-				if (message.error.code) {
-					this.setState({ error: message.error.description });
-					return;
-				};
-
-				close();
-			});
+			close();
 		});
 	};
 
 	save () {
-		const { storageSet } = this.props;
-
-		storageSet({ csv: this.data });
+		this.props.storageSet({ csv: this.data });
 	};
 
 	getDelimiters () {
