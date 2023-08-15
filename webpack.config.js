@@ -16,8 +16,17 @@ module.exports = (env, argv) => {
 			splitChunks: false,
 		},
 		
-		entry: './src/ts/entry.tsx',
-	
+		entry: {
+			app: { 
+				import: './src/ts/entry.tsx', 
+				filename: './dist/[name][ext]',
+			},
+			extension: {
+				import: './src/ts/entry.tsx', 
+				filename: './extension/dist/[name][ext]',
+			},
+		},
+
 		resolve: {
 			extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
 			alias: {
